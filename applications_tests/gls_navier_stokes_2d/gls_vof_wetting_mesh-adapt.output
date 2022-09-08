@@ -1,0 +1,56 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      0.04
+   Number of VOF degrees of freedom: 1089
+
+*****************************************************************
+Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 0       
+*****************************************************************
+Peeling/wetting correction at step 1
+  -number of wet cells: 0
+  -number of peeled cells: 0
+
+*****************************************************************
+Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 1.10334 
+*****************************************************************
+   Number of active cells:       1210
+   Number of degrees of freedom: 4029
+   Volume of triangulation:      0.04
+   Number of VOF degrees of freedom: 1343
+Peeling/wetting correction at step 2
+  -number of wet cells: 28
+  -number of peeled cells: 0
+
+*****************************************************************
+Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.19539 
+*****************************************************************
+   Number of active cells:       3040
+   Number of degrees of freedom: 9930
+   Volume of triangulation:      0.04
+   Number of VOF degrees of freedom: 3310
+Peeling/wetting correction at step 3
+  -number of wet cells: 66
+  -number of peeled cells: 0
+
+*****************************************************************
+Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 2.68869 
+*****************************************************************
+   Number of active cells:       5344
+   Number of degrees of freedom: 16827
+   Volume of triangulation:      0.04
+   Number of VOF degrees of freedom: 5609
+Peeling/wetting correction at step 4
+  -number of wet cells: 69
+  -number of peeled cells: 0
+
+*****************************************************************
+Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 2.83106 
+*****************************************************************
+   Number of active cells:       5665
+   Number of degrees of freedom: 17727
+   Volume of triangulation:      0.04
+   Number of VOF degrees of freedom: 5909
+Peeling/wetting correction at step 5
+  -number of wet cells: 60
+  -number of peeled cells: 0

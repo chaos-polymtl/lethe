@@ -48,7 +48,7 @@ Running on 1 MPI rank(s)...
 Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 0       
 *****************************************************************
 L2 error velocity : 1.72002e-07
-L2 error phase : 0.000461591
+L2 error phase : 0.000174451
 
 *****************************************************************
 Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 1.11397e-05
@@ -58,7 +58,7 @@ Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 1.1139
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 2316
 L2 error velocity : 1.72007e-07
-L2 error phase : 0.00046159
+L2 error phase : 0.000174456
 
 *****************************************************************
 Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.11401e-05
@@ -68,12 +68,12 @@ Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 1.1140
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 1641
 L2 error velocity : 3.0225e-07
-L2 error phase : 0.000461588
+L2 error phase : 0.00017446
  time  error_velocity error_pressure 
 0.0200 1.720018e-07   0.0028         
 0.0400 1.720071e-07   0.0028         
 0.0600 3.022505e-07   0.0028         
  time  error_phase  
-0.0200 4.615910e-04 
-0.0400 4.615899e-04 
-0.0600 4.615877e-04 
+0.0200 1.744510e-04 
+0.0400 1.744559e-04 
+0.0600 1.744603e-04 

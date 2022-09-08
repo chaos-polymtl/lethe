@@ -27,7 +27,9 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   const double sdt = 1. / dt;
 
   // Add a small diffusivity, used in the context of the wetting mechanism
-  const double diffusivity = this->vof_parameters.peeling_wetting.diffusivity;
+  double diffusivity = 0.;
+  if (this->vof_parameters.peeling_wetting.enable)
+    diffusivity = this->vof_parameters.diffusivity;
 
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
@@ -166,7 +168,9 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const auto method = this->simulation_control->get_assembly_method();
 
   // Add a small diffusivity, used in the context of the wetting mechanism
-  const double diffusivity = this->vof_parameters.peeling_wetting.diffusivity;
+  double diffusivity = 0.;
+  if (this->vof_parameters.peeling_wetting.enable)
+    diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;

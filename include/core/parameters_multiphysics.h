@@ -67,42 +67,21 @@ namespace Parameters
    * Peeling/wetting mechanism (on boundaries explicitely stated in the
    * "subsection boundary conditions VOF" of the .prm) works as such:
    *  - Peeling of the higher density occurs if:
-   *    o the pressure is below peeling_pressure_value, and
-   *    o the pressure gradient is below the peeling_grad_p
+   *    o the cell is in the domain of the higher density fluid,
+   *    o the average pressure in the cell is below the average pressure on the
+   * monitored fluid, and
+   *    o the pressure gradient is negative for more than half of the quadrature
+   * points
    *  - Wetting of the lower density phase occurs if:
-   *    o the pressure is above wetting_pressure_value, and
-   *    o the boundary is at a wetting_phase_distance from the
-   * interface.
+   *    o the cell is in the domain of the lower density fluid,
+   *    o the average pressure in the cell is above the average pressure on the
+   * monitored fluid, and
+   *    o the pressure gradient is positive for more than half of the quadrature
+   * points
    */
   struct VOF_PeelingWetting
   {
     bool enable;
-
-    // Value used as conditions for the peeling mechanism (fluid detached from
-    // a solid boundary). Peeling of the higher density fluid occurs where those
-    // conditions are met:
-    // - the cell is in the domain of the higher density fluid,
-    // - the cell pressure value is below peeling_p_value, and
-    // - more than half of the quadrature points in the cell have a pressure
-    // gradient below peeling_grad_p.
-    double peeling_p_value;
-    double peeling_grad_p;
-
-    // Value used as conditions for the wetting mechanism (fluid attached to a
-    // solid boundary). Wetting of the lower density fluid occurs where those
-    // conditions are met:
-    // - the cell is in the domain of the lower density fluid,
-    // - the cell pressure value is above wetting_p_value, and
-    // - the distance (on the phase value) to the interface is above
-    // wetting_phase_distance.
-    double wetting_p_value;
-    double wetting_phase_distance;
-
-    // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
-    // VOF transport equation. This parameter is zero by default, and can be
-    // increased to improve the wetting mechanism. See the documentation for
-    // more details.
-    double diffusivity;
 
     // Type of verbosity for the peeling-wetting mechanism
     Parameters::Verbosity verbosity;
@@ -215,6 +194,12 @@ namespace Parameters
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
+
+    // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
+    // VOF transport equation. This parameter is zero by default, and can be
+    // increased to improve the wetting mechanism. See the documentation for
+    // more details.
+    double diffusivity;
 
     void
     declare_parameters(ParameterHandler &prm);

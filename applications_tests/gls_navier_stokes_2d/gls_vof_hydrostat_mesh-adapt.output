@@ -8,7 +8,7 @@ Running on 1 MPI rank(s)...
 Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 0       
 *****************************************************************
 L2 error velocity : 3.07121e-05
-L2 error phase : 0.00369306
+L2 error phase : 0.0104167
 
 *****************************************************************
 Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 8.8806e-05
@@ -18,7 +18,7 @@ Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 8.8806
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 532
 L2 error velocity : 4.14391e-06
-L2 error phase : 0.00656581
+L2 error phase : 0.00425552
 
 *****************************************************************
 Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 2.1861e-05
@@ -28,7 +28,7 @@ Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 2.1861
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 553
 L2 error velocity : 3.31246e-06
-L2 error phase : 0.00656588
+L2 error phase : 0.00425561
 
 *****************************************************************
 Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 1.96295e-05
@@ -38,7 +38,7 @@ Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 1.9629
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 650
 L2 error velocity : 2.7637e-06
-L2 error phase : 0.00656595
+L2 error phase : 0.0042557
 
 *****************************************************************
 Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 1.89363e-05
@@ -48,7 +48,7 @@ Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 1.8936
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 929
 L2 error velocity : 3.56824e-06
-L2 error phase : 0.00656601
+L2 error phase : 0.00425576
  time  error_velocity error_pressure 
 0.0200 3.071207e-05   0.0682         
 0.0400 4.143914e-06   0.0668         
@@ -56,8 +56,8 @@ L2 error phase : 0.00656601
 0.0800 2.763695e-06   0.0669         
 0.1000 3.568241e-06   0.0669         
  time  error_phase  
-0.0200 3.693057e-03 
-0.0400 6.565815e-03 
-0.0600 6.565883e-03 
-0.0800 6.565952e-03 
-0.1000 6.566007e-03 
+0.0200 1.041667e-02 
+0.0400 4.255519e-03 
+0.0600 4.255607e-03 
+0.0800 4.255695e-03 
+0.1000 4.255762e-03 
