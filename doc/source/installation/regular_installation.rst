@@ -1,22 +1,39 @@
-#####################
-Regular installation
-#####################
+##############################
+Regular installation on Linux
+##############################
 
-Lethe can be installed on Linux, Mac OS and under the Windows Subsystem for Linux (WSL). Lethe has been tested on numerous distributions, including Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Centos 7 and Manjaro. Lethe requires a modern version of the deal.II library. At the time of this writing, ''deal.II 9.3'' and ''deal.II 10.0pre'' (the master branch version) are supported. The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions. A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by the Lethe organization. This fork does not include any modification to the library, but is the latest deal.II version against which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
+.. figure:: ./images/linux.png
+   :height: 100px
 
-The installation of Lethe consists in three major steps:
-1. Installation of deal.II dependencies (mpi, numdiff, p4est, trilinos and METIS)
-2. Installation of the deal.II library
-3. Installation of Lethe
+.. important::
+	Distributions compatibility: Ubuntu 18.04 LTS, Ubuntu 20.04 LTS, Ubuntu 22.04 LTS, Centos 7 and Manjaro
 
-There are two methods to install the dependencies. They can be either installed manually or through ``candi``. The candi.sh shell script can download, configure, build, and install all the dependencies along with deal.II. **This is the easiest way**, since it requires much less manual intervention. Even if you do not want to use candi to install deal.II, you can use it for the dependencies. This is by far the easiest way to proceed. On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially Trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
+* Dependencies: deal.II library (`deal.II website <https://www.dealii.org/>`_) and its dependencies (MPI, numdiff, p4est, trilinos and METIS)
+	* Lethe requires a modern version of the deal.II library. At the time of this writing, ``deal.II 9.4`` and ``deal.II 10.0pre`` (the ``master`` branch version) are supported. 
+	* The compatibility with these two branches is ensured by Continuous Integration (CI) using Github Actions. 
+	* A `dealii fork <https://github.com/lethe-cfd/dealii>`_ is maintained by Lethe team. This fork does not include any modification to deal.II library, but it is the latest version with which Lethe was tested. We work hard to ensure compatibility with the latest deal.II version and we do not modify the library except through pull requests on the official deal.II repository.
 
-Lethe cannot be installed if deal.II has not been configured with p4est, Trilinos and METIS. Although Lethe can be run in serial and parallel mode (through mpi), it uses p4est, METIS and Trilinos for mesh decomposition and the linear solvers respectively. 
+.. warning:: 
+	Lethe cannot be installed if deal.II has not been configured with p4est, trilinos and METIS. Although Lethe can be run in serial and parallel mode (through MPI), it uses p4est, METIS and trilinos for mesh decomposition and the linear solvers respectively. 
+
+* Lethe installation steps:
+	1. Installation of deal.II dependencies (MPI, numdiff, p4est, trilinos and METIS)
+	2. Installation of the deal.II library
+	3. Installation of Lethe
+
+* Methods to install deal.II and its dependencies:
+	1. through candi shell script (`candi github page <https://github.com/dealii/candi>`_): **this is by far the easiest way to proceed**, since it requires much less manual intervention. Even if you do not want to use candi to install deal.II, you can use it for the dependencies.	
+	
+	2. manually 
+
+.. warning::
+	On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
+
 
 Installing deal.II using candi (Step #1)
 -----------------------------------------
 
-To install the dependencies (mpi, p4est, trilinos and METIS) all together by Candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
+To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
 
 Clone the candi git repository in a folder of your choice  (e.g. ``/home/username/software``). You can edit the ``candi.cfg`` file if you want to alter which dependencies are compiled. This can notably be used to force the installation of the deal.II master version instead of the current stable version by setting the ``STABLE_BUILD=false``
 
@@ -33,13 +50,13 @@ where ``$num_proc`` is the number of threads you want to use to compile deal.II 
   For a computer with 8Gb of RAM, 1 thread (``num_proc=1``) should be used. For 16 Gb, 4 threads is reasonable. For 32 Gb, 16 threads or more can be used.
 
 
-After installation, you should have a ``deal.ii-candi`` folder in the installation prefix directory, with the dealii folder of the desired version (see section :ref:`update-dealii`), as well as the required dependencies (p4est, trilinos, etc.).
+After installation, you should have a ``deal.II-candi`` folder in the installation prefix directory, with the dealii folder of the desired version (see section :ref:`update-dealii`), as well as the required dependencies (p4est, trilinos, etc.).
 
 After installation, add an environment variable to your ``.bashrc`` either manually or through the following command:
 
 .. code-block:: text
 
-   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc`
+   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc
 
 Installing deal.II manually (Step #1)
 --------------------------------------
@@ -52,7 +69,7 @@ We first need to install the deal.II dependencies.
 MPI
 ~~~~~
 
-MPI, for Message Passing Interface, is required for the installation of all components of Lethe. Therefore it should be the first thing you install. On Debian Linux based OS, MPI can be installed directly from your package manager. 
+MPI, for Message Passing Interface, is required for the installation of all components of Lethe. Therefore it should be the first thing you install. On Debian Linux-based OS, MPI can be installed directly from your package manager. 
 
 As an example, in Ubuntu:
 
@@ -70,7 +87,7 @@ In Manjaro or other arch based linux distribution:
 numdiff
 ~~~~~~~~
 
-numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. Numdiff can be installed directly from your package manager.
+numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. numdiff can be installed directly from your package manager.
 
 .. code-block:: text
 
@@ -88,7 +105,7 @@ To install p4est, the usual `installation <https://www.dealii.org/current/extern
 Trilinos
 ~~~~~~~~~
 
-The installation of Trilinos should be done using the `installation procedure <https://www.dealii.org/current/external-libs/trilinos.html>`_ of deal.II.
+The installation of trilinos should be done using the `installation procedure <https://www.dealii.org/current/external-libs/trilinos.html>`_ of deal.II.
 
 
 
@@ -102,7 +119,7 @@ METIS is used for mesh partitioning for parallel computing purposes, specificall
 Installation of deal.II
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Clone deal.II from the `official repository <https://github.com/dealii/dealii>`_
+Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_
 
 .. code-block:: text
 
@@ -141,10 +158,10 @@ It is generally recommended to add the variable to your bashrc so it is always l
 
 .. _install-lethe:
 
-Installation of lethe (Step #2)
+Installing lethe (Step #2)
 -------------------------------
 
-Clone lethe from the `official repository <https://github.com/lethe-cfd/lethe>`
+Clone lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
 
 .. code-block:: text
 
@@ -157,7 +174,7 @@ Create a build folder at the same level as the lethe folder
   mkdir build
   cd build
 
-Compile Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
+Build Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text
 

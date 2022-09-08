@@ -2,7 +2,7 @@
 Lethe
 #####
 
-.. image:: ../../logo/logo_black.png
+.. image:: ../../logo/logo_black2.png
   :alt: Lethe
   :align: center
 
