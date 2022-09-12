@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# * hyphenate-examples — hyphenate file and directory names of Lethe's examples
+#
+# SPDX-FileCopyrightText: Copyright (c) 2022 The Lethe Authors
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# * Synopsis
+#
+# hyphenate-examples
+#
+# * Description
+#
+# The hyphenate-examples utility replaces any underscores in the file
+# and directory names of Lethe's examples with hyphens, printing to
+# standard output the old and new names as it renames the paths, and
+# also updates any references to these paths in the example files and
+# documentation.
+# It considers only files tracked by git(1).
+#
+# This utility depends on the nonstandard git(1) and perl(1) programs.
+# Also, it should be run from the top-level directory of Lethe.
+#
+# * Exit status
+#
+# The hyphenate-examples utility exits 0 on success, and >0 if an error
+# occurs.
+#
+# * Bugs
+#
+# The correction of the paths in the example files and documentation is
+# fragile; it may be incorrect or miss some cases.
+#
+# * Code
+#
+# shellcheck disable=SC1112
+
+shopt -s lastpipe
+shopt -so pipefail
+
+main() {
+  if test "$#" -gt 0; then
+    printf 'hyphenate-examples: excess arguments: %s\n' "$*" >&2
+    return 1
+  fi
+
+  for cmd in git perl; do
+    if ! command -v "$cmd" >/dev/null; then
+      printf 'hyphenate-examples: missing command: %s\n' "$cmd" >&2
+      return 1
+    fi
+  done
+
+  local ret=0
+  local path
+  local f
+  local newf
+
+  # Sort by basename length to prevent partial filenames from being
+  # substituted in the loop.
+  git ls-files -z examples doc/source/examples |
+    perl -MFile::Basename -0e 'print sort { length(basename($b)) <=> length(basename($a)) } <>' |
+    while IFS='' read -r -d '' path; do
+      f="$(basename -- "$path")" || { ret=1; continue; }
+      case "$f" in
+      *.py) ;; # Python modules, i.e., files, are better off with underscores.
+      *_*)
+        path="$(dirname -- "$path")" || { ret=1; continue; }
+        newf="${f//_/-}"
+        printf 'hyphenate-examples: ‘%s’ → ‘%s’\n' "$path/$f" "$path/$newf"
+        git mv -- "$path/$f" "$path/$newf" || { ret=1; continue; }
+        # Some documentation files describe gmsh -o, for which the
+        # output file doesn't exist yet.
+        git ls-files -z examples doc/source/examples |
+          xargs -0 perl -pi -e "s/\Q$f\E/$newf/g; \
+            s/\Q${f/%.geo/.msh}\E/${newf/%.geo/.msh}/g if q/$f/ =~ /\.geo$/" ||
+          ret=1
+        ;;
+      esac
+    done || ret=1
+
+  local d
+  local newd
+  find examples doc/source/examples -type d -name '*_*' -print0 |
+    while IFS='' read -r -d '' path; do
+      while test "$path" != '.'; do
+        d="$(basename -- "$path")" || { ret=1; break; }
+        path="$(dirname -- "$path")" || { ret=1; break; }
+        case "$d" in
+        *_*)
+          newd="${d//_/-}"
+          printf 'hyphenate-examples: ‘%s’ → ‘%s’\n' "$path/$d" "$path/$newd"
+          git mv -- "$path/$d" "$path/$newd" || { ret=1; break; }
+          git ls-files -z examples doc/source/examples |
+            xargs -0 perl -pi -e "s/\Q$d\E/$newd/g" ||
+            ret=1
+          ;;
+        esac
+      done
+    done || ret=1
+
+  return "$ret"
+}
+
+main "$@"

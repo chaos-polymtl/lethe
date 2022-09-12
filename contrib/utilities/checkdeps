@@ -13,9 +13,8 @@
 # The checkdeps utility checks Lethe's core, dem, solvers, fem-dem and
 # rpt libraries for unintended dependencies, including circular
 # dependencies.
-# Run it from the top-level directory of Lethe, and it prints the
-# filename, line number and line of every include directive that refers
-# to a potentially problematic header.
+# It prints the filename, line number and line of every include
+# directive that refers to a potentially problematic header.
 #
 # The checkdeps utility considers all headers that end in one of the
 # common C++ header extensions .h, .h++, .hh, .hpp, .hxx and .H, and if
@@ -27,6 +26,8 @@
 # Also, Lethe headers should be included through the angle-bracket form,
 # with a fully qualified path, e.g., as <core/parameters.h> rather than
 # "parameters.h".
+#
+# This utility should be run from the top-level directory of Lethe.
 #
 # * Exit status
 #
