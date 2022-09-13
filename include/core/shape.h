@@ -547,12 +547,12 @@ public:
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
    */
-  RBFShape<dim>(std::vector<double>         support_radius,
-                std::vector<unsigned int>   basis_function,
-                std::vector<double>         weight,
-                std::vector<Tensor<1, dim>> nodes,
-                const Point<dim> &          position,
-                const Tensor<1, 3> &        orientation)
+  RBFShape<dim>(const std::vector<double>         support_radius,
+                const std::vector<unsigned int>   basis_function,
+                const std::vector<double>         weight,
+                const std::vector<Tensor<1, dim>> nodes,
+                const Point<dim> &                position,
+                const Tensor<1, 3> &              orientation)
     : Shape<dim>(support_radius[0], position, orientation)
     , weight(weight)
     , nodes(nodes)
@@ -584,7 +584,7 @@ public:
       }
     bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
                                                     bounding_box_center,
-                                                    orientation);
+                                                    Tensor<1, 3>());
   }
 
   double
@@ -598,7 +598,7 @@ public:
   displaced_volume(const double fluid_density) override;
 
   double
-  // TODO How to properly cite bitpit
+  // Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   evaluate_basis_function(const unsigned int basis_function_id,
                           const double       distance) const;
 
@@ -629,7 +629,6 @@ public:
   double
   c2c2(double) const;
 
-
   std::pair<std::string, int>
   get_shape_name() override
   {
@@ -638,7 +637,6 @@ public:
 
   /**
    * Class taken from Optimad Bitpit. https://github.com/optimad/bitpit
-   * // TODO How to properly introduce the code/citation
    * @enum RBFBasisFunction
    * @ingroup RBF
    * @brief Enum class defining types of RBF kernel functions that could be used in bitpit::RBF class

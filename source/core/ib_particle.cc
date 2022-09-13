@@ -223,40 +223,38 @@ template <int dim>
 void
 IBParticle<dim>::initialize_rbf_shape(const std::string shape_name)
 {
-  if constexpr (dim == 3)
+  std::map<std::string, std::vector<double>> rbf_data;
+  fill_vectors_from_file(rbf_data, shape_name, ";");
+  unsigned int number_of_nodes = rbf_data["weight"].size();
+
+  std::vector<double>         weight;
+  std::vector<unsigned int>   basis_function;
+  std::vector<double>         support_radius;
+  std::vector<Tensor<1, dim>> nodes;
+
+  weight.resize(number_of_nodes);
+  basis_function.resize(number_of_nodes);
+  support_radius.resize(number_of_nodes);
+  nodes.resize(number_of_nodes);
+
+  Tensor<1, dim> temp_node_position;
+  for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
     {
-      std::map<std::string, std::vector<double>> rbf_data;
-      fill_vectors_from_file(rbf_data, shape_name, ";");
-      unsigned int number_of_nodes = rbf_data["weight"].size();
-
-      std::vector<double>         weight;
-      std::vector<unsigned int>   basis_function;
-      std::vector<double>         support_radius;
-      std::vector<Tensor<1, dim>> nodes;
-
-      weight.resize(number_of_nodes);
-      basis_function.resize(number_of_nodes);
-      support_radius.resize(number_of_nodes);
-      nodes.resize(number_of_nodes);
-
-      for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
-        {
-          weight[n_i]         = rbf_data["weight"][n_i];
-          support_radius[n_i] = rbf_data["support_radius"][n_i];
-          basis_function[n_i] = rbf_data["basis_function"][n_i];
-          Tensor<1, dim> temp_node_position;
-          temp_node_position[0] = rbf_data["xnode"][n_i];
-          temp_node_position[1] = rbf_data["ynode"][n_i];
-          temp_node_position[2] = rbf_data["znode"][n_i];
-          nodes[n_i]            = temp_node_position;
-        }
-      shape = std::make_shared<RBFShape<dim>>(support_radius,
-                                              basis_function,
-                                              weight,
-                                              nodes,
-                                              this->position,
-                                              this->orientation);
+      weight[n_i]           = rbf_data["weight"][n_i];
+      support_radius[n_i]   = rbf_data["support_radius"][n_i];
+      basis_function[n_i]   = rbf_data["basis_function"][n_i];
+      temp_node_position[0] = rbf_data["xnode"][n_i];
+      temp_node_position[1] = rbf_data["ynode"][n_i];
+      if constexpr (dim == 3)
+        temp_node_position[2] = rbf_data["znode"][n_i];
+      nodes[n_i] = temp_node_position;
     }
+  shape = std::make_shared<RBFShape<dim>>(support_radius,
+                                          basis_function,
+                                          weight,
+                                          nodes,
+                                          this->position,
+                                          this->orientation);
 }
 
 template <int dim>

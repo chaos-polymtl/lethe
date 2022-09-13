@@ -510,7 +510,6 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double       dist, basis;
   unsigned int number_of_nodes = weight.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  // TODO How to properly introduce the code/citation
   for (unsigned int i = 0; i < number_of_nodes; ++i)
     {
       dist  = (centered_point - nodes[i]).norm() / support_radius[i];

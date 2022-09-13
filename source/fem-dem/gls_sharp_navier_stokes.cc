@@ -3602,7 +3602,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           else if (restart_data["type"][p_i] ==
                    Shape<dim>::ShapeType::rbf_shape)
             {
-              // std::string shape_name = restart_data["shape_name"][p_i];
+              // std::string shape_name = restart_data["shape_argument_0"][p_i];
               // TODO make restart possible
               particles[p_i].initialize_rbf_shape("dummy_todo.txt");
             }
