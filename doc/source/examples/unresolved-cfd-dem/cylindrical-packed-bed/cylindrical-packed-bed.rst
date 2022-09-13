@@ -14,7 +14,7 @@ Features
 
 Location of the example
 ------------------------
- ``/examples/unresolved-cfd-dem/cylindrical-packed-bed``
+``/examples/unresolved-cfd-dem/cylindrical-packed-bed``
 
 
 Description of the case

@@ -18,8 +18,8 @@ Features
 Locations of Files Used in the Example
 --------------------------------------------------
 
- - Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
- - Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
+- Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
+- Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
 
 
 

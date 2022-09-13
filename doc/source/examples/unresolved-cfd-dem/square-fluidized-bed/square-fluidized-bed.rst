@@ -14,7 +14,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/unresolved-cfd-dem/square-fluidized-bed``
+``/examples/unresolved-cfd-dem/square-fluidized-bed``
 
 
 Description of the case

@@ -13,7 +13,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
+``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 
 Description of the case

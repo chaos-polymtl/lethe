@@ -14,7 +14,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d-silo/silo-Golshan.prm``
+``/examples/dem/3d-silo/silo-Golshan.prm``
 
 
 Description of the case

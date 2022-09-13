@@ -12,7 +12,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
+``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 
 Description of the case

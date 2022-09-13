@@ -14,7 +14,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d-granular-mixer/granular-mixer.prm``
+``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 
 Description of the case

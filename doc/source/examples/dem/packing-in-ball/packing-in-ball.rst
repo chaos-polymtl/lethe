@@ -13,7 +13,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
+``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
 
 
 Description of the case

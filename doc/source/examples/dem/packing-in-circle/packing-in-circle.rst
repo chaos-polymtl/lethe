@@ -13,7 +13,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/2d-packing-in-circle/packing-in-circle.prm``
+``/examples/dem/2d-packing-in-circle/packing-in-circle.prm``
 
 
 Description of the case
