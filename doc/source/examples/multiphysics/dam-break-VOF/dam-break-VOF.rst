@@ -19,7 +19,7 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/dam_break_VOF/gls_VOF_dam-break_Martin_and_Moyce.prm``
+``examples/multiphysics/dam-break-VOF/gls-VOF-dam-break-Martin-and-Moyce.prm``
 
 
 ---------------------------
@@ -31,11 +31,11 @@ a rectangular domain as shown in the figure below.
 At :math:`t = 0` s, the dam is removed, and 
 the liquid is released into the total simulation domain. 
 The corresponding parameter file is 
-``gls_VOF_dam-break_Martin_and_Moyce.prm``.
+``gls-VOF-dam-break-Martin-and-Moyce.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/VOF_dam_break_configuration.png
+.. image:: images/VOF-dam-break-configuration.png
     :alt: Schematic
     :align: center
     :width: 400
@@ -261,7 +261,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 2 gls_navier_stokes_2d gls_VOF_dam-break_Martin_and_Moyce.prm``
+``mpirun -np 2 gls_navier_stokes_2d gls-VOF-dam-break-Martin-and-Moyce.prm``
 
 to run the simulation using two CPU cores. Feel free to use more.
 
@@ -293,7 +293,7 @@ through time and compared with the experiments of Martin and Moyce
 (1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_. The following figure shows the result of
 the post-processing, with a very good agreement between the simulation and the experiment:
 
-.. image:: images/xmax_t.png
+.. image:: images/xmax-t.png
     :alt: xmax_t
     :align: center
 

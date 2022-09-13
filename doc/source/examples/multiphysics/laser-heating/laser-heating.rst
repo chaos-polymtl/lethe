@@ -18,7 +18,7 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/laser_heating/laser_heating.prm``
+``examples/multiphysics/laser-heating/laser-heating.prm``
 
 
 -----------------------------
@@ -33,7 +33,7 @@ A laser beam heats a three-dimensional solid block. The laser beam is emitted pe
     :width: 400
 
 The laser path changes with time. The laser beam radius and penetration depth are both set to :math:`0.00005` m. Because of this small radius and penetration depth, we use adaptive mesh refinement based on the temperature. Thermal boundary conditions are ``convection-radiation`` with a convective heat transfer coefficient of 5 and an emissivity of 0.4. The corresponding parameter file is: 
-``laser_heating.prm``.
+``laser-heating.prm``.
 
 --------------
 Parameter file
@@ -52,7 +52,7 @@ time step of :math:`5.0 \times 10^{-5}` seconds.
         set method                      = bdf2
         set time end                    = 0.003
         set time step                   = 0.00005
-        set output name                 = laser_heating
+        set output name                 = laser-heating
         set output frequency            = 1
         set output path                 = ./output/
         set subdivision                 = 1
@@ -156,7 +156,7 @@ Running the simulation
 
 Call the gls_navier_stokes_3d by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_3d laser_heating.prm``
+``mpirun -np 8 gls_navier_stokes_3d laser-heating.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

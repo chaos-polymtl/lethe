@@ -13,13 +13,13 @@ Features
 
 Locations of Files Used in the Example
 ---------------------------------------
-- Parameter file: ``examples/rpt/count_calculation/rpt_count_calculation.prm``
-- File containing detector positions: ``examples/rpt/count_calculation/positions.detector``
-- File containing particle positions for the first scenario:  ``examples/rpt/count_calculation/positions_horizontalx.particle``
-- File containing particle positions for the second scenario  ``examples/rpt/count_calculation/positions_horizontaly.particle``
-- File containing particle positions for the third scenario:  ``examples/rpt/count_calculation/positions_vertical.particle``
-- File containing particle positions for the fourth scenario:  ``examples/rpt/count_calculation/positions_diagonal.particle``
-- Python script for post-processing the data: ``examples/rpt/count_calculation/rpt_count_calculation_plot.py``
+- Parameter file: ``examples/rpt/count-calculation/rpt-count-calculation.prm``
+- File containing detector positions: ``examples/rpt/count-calculation/positions.detector``
+- File containing particle positions for the first scenario:  ``examples/rpt/count-calculation/positions-horizontalx.particle``
+- File containing particle positions for the second scenario  ``examples/rpt/count-calculation/positions-horizontaly.particle``
+- File containing particle positions for the third scenario:  ``examples/rpt/count-calculation/positions-vertical.particle``
+- File containing particle positions for the fourth scenario:  ``examples/rpt/count-calculation/positions-diagonal.particle``
+- Python script for post-processing the data: ``examples/rpt/count-calculation/rpt_count-calculation_plot.py``
 
 
 Description of the Case
@@ -122,7 +122,7 @@ In the subsection ``rpt parameters``, we define the values of the set of paramet
     # RPT Monte Carlo technique
     #---------------------------------------------------
     subsection rpt parameters
-        set particle positions file           = positions_horizontalx.particle
+        set particle positions file           = positions-horizontalx.particle
         set verbosity                         = verbose
         set export counts                     = true
         set counts file                       = counts_horizontalx.csv
@@ -168,27 +168,27 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-    rpt_3d rpt_count_calculation.prm
+    rpt_3d rpt-count-calculation.prm
   
-Lethe will generate a ``.csv`` file with the name specified next to the ``counts file`` parameter in ``rpt_count_calculation.prm``. The generated ``.csv`` file will contain the :math:`(x,y,z)` coordinates of the particle with its respective photon count measured by a given detector. Each detector is identified by its id number (``detector_id``). In this example, as we have only one detector, all values in the ``detector_id`` column should be :math:`0`.
+Lethe will generate a ``.csv`` file with the name specified next to the ``counts file`` parameter in ``rpt-count-calculation.prm``. The generated ``.csv`` file will contain the :math:`(x,y,z)` coordinates of the particle with its respective photon count measured by a given detector. Each detector is identified by its id number (``detector_id``). In this example, as we have only one detector, all values in the ``detector_id`` column should be :math:`0`.
 
 
 .. warning::
-    When running the code with different particle position files, don't forget to change the name of the exporting ``counts file`` in ``rpt_count_calculation.prm`` so that the previous ``.csv`` file isn't overwritten.
+    When running the code with different particle position files, don't forget to change the name of the exporting ``counts file`` in ``rpt-count-calculation.prm`` so that the previous ``.csv`` file isn't overwritten.
 
 
 Results
 --------
 
-To visualize the data and obtain the figures shown below, a Python script (``rpt_count_calculation_plot.py``) is provided. When running the script, the name of the ``.csv`` file you wish to open and read must be specified as an argument.
+To visualize the data and obtain the figures shown below, a Python script (``rpt_count-calculation_plot.py``) is provided. When running the script, the name of the ``.csv`` file you wish to open and read must be specified as an argument.
 
 .. tip::
-    You may use the ``rpt_count_calculation_plot.py`` script to plot any other set of data saved in a ``.csv`` file format.
+    You may use the ``rpt_count-calculation_plot.py`` script to plot any other set of data saved in a ``.csv`` file format.
 
 
 Scenario 1: Horizontal Translation of a Particle Along the X-Axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. image:: images/counts_along_x-axis.png
+.. image:: images/counts-along-x-axis.png
     :alt: Results for the horizontal translation of a particle along the x-axis (Scenario 1)
     :align: center
     :name: Results for the horizontal translation of a particle along the x-axis 
@@ -199,7 +199,7 @@ In the figure shown above, as one would expect, as the particle approaches the d
 Scenario 2: Horizontal Translation of a Particle Along the Y-Axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: images/counts_along_y-axis_case1.png
+.. figure:: images/counts-along-y-axis-case1.png
     :alt: Results for the horizontal translation of a particle along the y-axis results when reactor attenuation coefficient is set at 10 and detector attenuation coefficient is set at 21.477 (Scenario 2)
     :align: center
     :name: Results for the horizontal translation of a particle along the y-axis (Case I)
@@ -216,7 +216,7 @@ Secondly, we can notice that the variation in photon count as the particle trave
 Lastly, as the particle travels across the vessel, we notice fluctuations in the photon count. Starting from the back of the vessel, the photon count decreases rapidly until a local minimal value at approximately :math:`y = -6` cm and then increases until a local maximum at :math:`y = 0` cm (center of the detector's face). Then, from the center to the front of the vessel, a mirrored image of the photon count's evolution can be seen. To understand the fluctuations, let's look at three other figures (Case II, Case III, and Case IV) while focusing on the first half of the studied domain (:math:`y \in ]-10, 0]` cm) since the evolution of the count is symmetrical from :math:`y = 0` cm.
 
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/counts_along_y-axis_case2.png                                                       |   .. figure:: images/counts_along_y-axis_case3.png                                                      |
+|  .. figure:: images/counts-along-y-axis-case2.png                                                       |   .. figure:: images/counts-along-y-axis-case3.png                                                      |
 |    :alt: Results for the horizontal translation of a particle along the y-axis when the efficiency of   |     :alt: Results for the horizontal translation of a particle along the y-axis when                    |
 |       the detector is the product of the weighting factors; fa and fd are constant and tend to 1        |         reactor attenuation coefficient is set at 0; fa is fixed to 1  (case III)                       |
 |       (case II)                                                                                         |     :align: center                                                                                      |
@@ -226,7 +226,7 @@ Lastly, as the particle travels across the vessel, we notice fluctuations in the
 |    Case II: :math:`\mu_r = 0, \ \mu_d = 1e9`                                                            |                                                                                                         |
 |                                                                                                         |                                                                                                         |
 +---------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/counts_along_y-axis_case4.png                                                       | .. figure:: images/reactor_path_lengths.png                                                             |
+|  .. figure:: images/counts-along-y-axis-case4.png                                                       | .. figure:: images/reactor-path-lengths.png                                                             |
 |    :alt: Results for the horizontal translation of a particle along the y-axis when detector attenuation|     :alt: Reactor path lengths for the horizontal translation of a particle along the y-axis            |
 |        coefficient is set at 1e9; fd tends to 1 (case IV)                                               |     :align: center                                                                                      |
 |    :align: center                                                                                       |     :name: Reactor path lengths for the horizontal translation of a particle along the y-axis           |
@@ -247,7 +247,7 @@ Coming back to the Case I figure, we can see that photon count follows a pattern
 
 Scenario 3: Vertical Translation of a Particle Along the Z-Axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. image:: images/counts_along_z-axis.png
+.. image:: images/counts-along-z-axis.png
     :alt: Results for the vertical translation of a particle along the z-axis (Scenario 3)
     :align: center
     :name: Results for the vertical translation of a particle along the z-axis
@@ -258,7 +258,7 @@ Similar to the first scenario, as the particle approaches the detector, we notic
 
 Scenario 4: Particle Going Across the Vessel on a Diagonal Line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. image:: images/counts_across_vessel_on_a_diagonal_line.png
+.. image:: images/counts-across-vessel-on-a-diagonal-line.png
     :alt: Results for the particle going across the vessel on a diagonal line (Scenario 4)
     :align: center
     :name: Results for the particle going across the vessel on a diagonal line
@@ -272,7 +272,7 @@ Sensitivity Analysis of the Monte Carlo Method
 Looking back at the second scenario's results (Case A), we notice that the counts are a little scattered. This is caused by the stochastic nature of the Monte Carlo method. Increasing the number of Monte Carlo iterations (:math:`N`), generates much smoother results as seen in the Case C figure where we have multiplied :math:`N` by a factor of :math:`10`. By increasing :math:`N`, we're covering more of the solid angle, making the simulation more representative of the physical system. Therefore, we see a better continuity in the photon counts. In the Case B figure, :math:`N` was divided by a factor of :math:`10`. As expected, in this figure, we see much more scattering.
 
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|  .. figure:: images/counts_along_y-axis_case1.png                                                                                                             |
+|  .. figure:: images/counts-along-y-axis-case1.png                                                                                                             |
 |    :alt: Results for the horizontal translation of a particle along the y-axis results when reactor attenuation coefficient is set at 10 and detector         |
 |       attenuation coefficient is set at 21.477 (Scenario 2)                                                                                                   |
 |    :align: center                                                                                                                                             |
@@ -282,7 +282,7 @@ Looking back at the second scenario's results (Case A), we notice that the count
 |    Case A: :math:`N = 1e5`                                                                                                                                    |
 |                                                                                                                                                               |
 +-----------------------------------------------------------------------------+---------------------------------------------------------------------------------+
-|  .. figure:: images/sensitivity_analysis_caseB.png                          | .. figure:: images/sensitivity_analysis_caseC.png                               |
+|  .. figure:: images/sensitivity-analysis-caseB.png                          | .. figure:: images/sensitivity-analysis-caseC.png                               |
 |    :alt: Scenario 2 results when reactor N = 10000                          |     :alt: Scenario 2 results when N = 1000000                                   |
 |    :align: center                                                           |     :align: center                                                              |
 |    :name: Sensitivity analysis when N = 10000 (Case B)                      |     :name: Sensitivity analysis when N = 1000000 (Case C)                       |

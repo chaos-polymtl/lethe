@@ -20,7 +20,7 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/melting_cavity/melting_cavity.prm``
+``examples/multiphysics/melting-cavity/melting-cavity.prm``
 
 
 -----------------------------
@@ -29,7 +29,7 @@ Description of the case
 
 The melting of metals (gallium in this example) with natural convection within a cavity is a well-known benchmark. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/melting_cavity.png
+.. image:: images/melting-cavity.png
     :alt: Schematic
     :align: center
     :width: 400
@@ -141,7 +141,7 @@ The ``source term`` subsection defines the gravitational acceleration. The value
         end
     end
 
-The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan_problem/stefan_problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
+The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan-problem/stefan-problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
 
 
 .. code-block:: text
@@ -194,7 +194,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 12 gls_navier_stokes_2d melting_cavity.prm``
+``mpirun -np 12 gls_navier_stokes_2d melting-cavity.prm``
 
 to run the simulation using twelve CPU cores. Feel free to use more.
 
@@ -216,19 +216,19 @@ The following animation shows the results of this simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/tivAPjdCJeA" frameborder="0" allowfullscreen></iframe>
 
 
-A python post-processing code `(melting_cavity.py)` 
+A python post-processing code `(melting-cavity.py)` 
 is added to the example folder to post-process the results.
-Run ``python3 ./melting_cavity.py ./output`` to execute this 
+Run ``python3 ./melting-cavity.py ./output`` to execute this 
 post-processing code, where ``./output`` is the directory that 
 contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta `[2] <https://doi.org/10.1115/1.3246884>`_. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais et al. `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_.
 
 
-.. image:: images/xmax_t.png
+.. image:: images/xmax-t.png
     :alt: bubble_rise_velocity
     :align: center
     :width: 500
 
-.. image:: images/melted_volume_fraction.png
+.. image:: images/melted-volume-fraction.png
     :alt: ymean_t
     :align: center
     :width: 500
