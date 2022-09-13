@@ -17,9 +17,9 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/incompressible-flow/2d_flow_around_cylinder/cylinder.prm``
-- Mesh file: ``/examples/incompressible-flow/2d_flow_around_cylinder/cylinder-structured.msh``
-- Geometry file: ``/examples/incompressible-flow/2d_flow_around_cylinder/cylinder-structured.geo``
+- Parameter file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder.prm``
+- Mesh file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder-structured.msh``
+- Geometry file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder-structured.geo``
 
 Description of the case
 -----------------------

@@ -15,7 +15,7 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/resolved-cfd-dem/sphere_carreau_with_sharp_inferface/sphere_carreau_with_sharp_inferface.prm``
+- Parameter file: ``/examples/resolved-cfd-dem/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-inferface.prm``
 
 
 Description of the case

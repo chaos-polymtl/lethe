@@ -13,7 +13,7 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/incompressible-flow/3d_periodic_hills/periodic-hills.prm``
+- Parameter file: ``/examples/incompressible-flow/3d-periodic-hills/periodic-hills.prm``
 
 Description of the case
 -----------------------

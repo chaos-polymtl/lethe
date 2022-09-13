@@ -28,7 +28,7 @@ All the container walls have no-slip boundary conditions except at the top of th
 
 Location of the examples
 ------------------------
- ``/examples/resolved-cfd-dem/sedimentation_1_particle/sedimentation-1-particle.prm``
+ ``/examples/resolved-cfd-dem/sedimentation-1-particle/sedimentation-1-particle.prm``
  
 Parameter file
 ---------------
