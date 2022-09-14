@@ -13,8 +13,8 @@ Features
 
 Location of the examples
 ------------------------
-- Base case (:math:`Re=400`) : ``/examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm``
-- Higher-Reynolds case (:math:`Re=7500`) : ``/examples/incompressible_flow/2d_lid_driven_cavity/Reynolds_7500/cavity.prm``
+- Base case (:math:`Re=400`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
+- Higher-Reynolds case (:math:`Re=7500`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/cavity.prm``
 
 
 Description of the case
@@ -199,13 +199,13 @@ Base case results (Re=400)
 
 Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
-.. image:: images/result_re_400.png
+.. image:: images/result-re-400.png
     :alt: velocity distribution
     :align: center
 
 It is also very interesting to compare the results with those obtained in the literature. A python script provided in the example folder allows to compare the velocity profile along de y axis for :math:`x=0.5` with results from the literature. Using this script, the following resuts are obtained for ``initial refinement = 6``
 
-.. image:: images/lethe_ghia_re_400_comparison.png
+.. image:: images/lethe-ghia-re-400-comparison.png
     :alt: re_400_comparison
     :align: center
 
@@ -255,7 +255,7 @@ Results
 
 We first carry out the simulations with an initial refinement 7. Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
-.. image:: images/result_re_7500.png
+.. image:: images/result-re-7500.png
     :alt: velocity distribution
     :align: center
 
@@ -263,21 +263,21 @@ We see that new recirculation regions occur in the flow.
 
 Using a similar python script, we can compare the results obtained with those from the literature. We note that there is quite a good agreement with the results from the literature, even in the top region where the velocity field changes abruptly.
 
-.. image:: images/re_7500_mesh_7/lethe_ghia_re_7500_comparison.png
+.. image:: images/re-7500-mesh-7/lethe-ghia-re-7500-comparison.png
     :alt: re_7500_comparison_mesh_7
     :align: center
 
-.. image:: images/re_7500_mesh_7/lethe_ghia_re_7500_comparison_zoom.png
+.. image:: images/re-7500-mesh-7/lethe-ghia-re-7500-comparison-zoom.png
     :alt: re_7500_comparison_mesh_7
     :align: center
 
 Increasing the number of cells by a factor 4 (to ~65k) allows for an even slightly better agreement.
 
-.. image:: images/re_7500_mesh_8/lethe_ghia_re_7500_comparison.png
+.. image:: images/re-7500-mesh-8/lethe-ghia-re-7500-comparison.png
     :alt: re_7500_comparison_mesh_8
     :align: center
 
-.. image:: images/re_7500_mesh_8/lethe_ghia_re_7500_comparison_zoom.png
+.. image:: images/re-7500-mesh-8/lethe-ghia-re-7500-comparison-zoom.png
     :alt: re_7500_comparison_mesh_8
     :align: center
 

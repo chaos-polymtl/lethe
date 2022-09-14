@@ -15,7 +15,7 @@ Features
 
 Location of the example
 ------------------------
-``examples/multiphysics/tracer-through-cad-junction/tracer_through_cad_junction.prm``
+``examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.prm``
 
 Description of the case
 -----------------------
@@ -34,17 +34,17 @@ Complex geometries can be set up and meshed with the SALOME platform.
 
 First, the geometry module must be loaded as such, and geometric shapes can be added. For example, here, disks are drawn alongside sinusoidal curves that will be used for pipe generation through extrusion. The ``Fuse`` command can then be used to obtain a single geometry.
 
-.. image:: images/salome_menu.png
+.. image:: images/salome-menu.png
     :alt: Salome menu with geometry visible
     :align: center
 
-.. image:: images/salome_geometry.png
+.. image:: images/salome-geometry.png
     :alt: Geometry generated with Salome
     :align: center
 
 Second, the mesh module can be loaded to generate a ``.mesh`` file. A new mesh must be created with an associated geometry, algorithm and hypothesis. ``NETGEN 1D-2D-3D`` works well, and automatic hypothesis selection can be used. The element size can be edited to specific requirements, and then the Compute command must be used to generate the grid. Through ``File -> Export -> GMF File``, the ``.mesh`` file can be output.
 
-.. image:: images/salome_mesh_creation.png
+.. image:: images/salome-mesh-creation.png
     :alt: Contextual menu for mesh generation in Salome
     :align: center
 
@@ -60,7 +60,7 @@ In this specific case, there are four boundaries: inlets with no tracer (1), inl
 
 .. code-block:: text
 
-    Merge "Mesh_1.mesh";
+    Merge "Mesh-1.mesh";
     Physical Surface(1) = {729, 712};
     Physical Surface(2) = {10};
     Physical Surface(3) = {1:9,11:711,713:728,730:848,850,852:5000};
@@ -224,12 +224,12 @@ transient and the time steps are short:
 
 .. code-block:: sh
     
-    ../../exe/bin/gls_navier_stokes_3d tracer_through_cad_junction.prm
+    ../../exe/bin/gls_navier_stokes_3d tracer-through-cad-junction.prm
 
 
 The results in ``.pvd`` format can then be viewed using visualisation software such as Paraview. 
 
-.. image:: images/paraview_tracer.png
+.. image:: images/paraview-tracer.png
     :alt: Simulation results in Meshgrid format
     :align: center
 

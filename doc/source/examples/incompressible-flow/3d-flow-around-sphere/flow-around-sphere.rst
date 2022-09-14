@@ -15,9 +15,9 @@ Features
 
 Location of the examples
 ------------------------
-- For Re = 0.1 : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_0.1.prm``
-- For Re = 150 : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_150.prm``
-- For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_adapt.prm``
+- For Re = 0.1 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
+- For Re = 150 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
+- For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
 
 
 Description of the case
@@ -25,7 +25,7 @@ Description of the case
 
 The following schematic describes the simulation and its boundary condition indices.
 
-.. image:: images/example_4_setup.png
+.. image:: images/example-4-setup.png
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
@@ -119,7 +119,7 @@ Recall the definition of the Reynolds number for a flow past a sphere:
 
 Taking this into account and the fact that the sphere diameter :math:`D` is 1 m, and :math:`u_{\infty}` is set to 1 m/s, we set the ``kinematic viscosity`` parameter to obtain the targeted Reynolds number.
 
-* In ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_0.1.prm`` (Re = 0.1)
+* In ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-0.1.prm`` (Re = 0.1)
 
 .. code-block:: text
 
@@ -129,7 +129,7 @@ Taking this into account and the fact that the sphere diameter :math:`D` is 1 m,
     end
   end
 
-* In ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_150.prm`` and ``/examples/incompressible_flow/3d_flow_around_sphere/sphere_adapt.prm`` (:math:`Re=150`)
+* In ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-150.prm`` and ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-adapt.prm`` (:math:`Re=150`)
 
 .. code-block:: text
 
@@ -241,19 +241,19 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  gls_navier_stokes_3d sphere_0.1.prm
+  gls_navier_stokes_3d sphere-0.1.prm
 
 or 
 
 .. code-block:: text
 
-  gls_navier_stokes_3d sphere_150.prm
+  gls_navier_stokes_3d sphere-150.prm
 
 or
 
 .. code-block:: text
 
-  gls_navier_stokes_3d sphere_adapt.prm
+  gls_navier_stokes_3d sphere-adapt.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -263,11 +263,11 @@ First case results (Re = 0.1)
 
 Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
 
-.. image:: images/velocity_0.1.png
+.. image:: images/velocity-0.1.png
     :alt: velocity distribution 0.1
     :align: center
 
-.. image:: images/pressure_0.1.png
+.. image:: images/pressure-0.1.png
     :alt: pressure distribution 0.1
     :align: center
 
@@ -290,14 +290,14 @@ We now consider the case at a Reynolds number of 150. At this value of the Reyno
 
 The velocity and pressure are once again visualised as well as the mesh used:
 
-.. image:: images/velocity_150.png
+.. image:: images/velocity-150.png
     :alt: velocity distribution 150
     :align: center
-.. image:: images/velocity_mesh_150.png
+.. image:: images/velocity-mesh-150.png
     :alt: velocity distribution mesh 150
     :align: center
 
-.. image:: images/pressure_150.png
+.. image:: images/pressure-150.png
     :alt: pressure distribution 150
     :align: center
 
@@ -308,11 +308,11 @@ Third case results (Re = 150 with an adaptative mesh refinement)
 
 Using mesh adaptative refinement, the final mesh contains slightly more than 101,000 cells. The resulting velocity profile is shown without and with the underlying mesh. Refinement around the sphere and wake can be observed:
 
-.. image:: images/adapt_without_mesh.png
+.. image:: images/adapt-without-mesh.png
     :alt: velocity distribution 150
     :align: center
 
-.. image:: images/adapt_with_mesh.png
+.. image:: images/adapt-with-mesh.png
     :alt: pressure distribution 150
     :align: center
 

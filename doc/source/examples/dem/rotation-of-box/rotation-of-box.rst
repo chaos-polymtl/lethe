@@ -12,7 +12,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d_grid_rotation_in_box/grid_rotation_box.prm``
+``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 
 Description of the case
@@ -127,7 +127,7 @@ This simulation can be launched by:
 
 .. code-block:: text
 
-  dem_3d grid_rotation_box.prm
+  dem_3d grid-rotation-box.prm
 
 
 Results

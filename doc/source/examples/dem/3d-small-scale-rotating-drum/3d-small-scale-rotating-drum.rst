@@ -18,8 +18,8 @@ Features
 Locations of Files Used in the Example
 --------------------------------------------------
 
- - Parameters file for particle insertion: ``/examples/dem/3d_small_scale_rotating_drum/packing_rotating_drum.prm``
- - Parameters file for drum rotation: ``/examples/dem/3d_small_scale_rotating_drum/small_rotating_drum_dem.prm``
+- Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
+- Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
 
 
 
@@ -177,8 +177,8 @@ The simulation is launched in two steps: the first step packs the particle in th
 
 .. code-block:: text
 
-   mpirun -np 6 dem_3d packing_rotating_drum.prm
-   mpirun -np 6 dem_3d small_rotating_drum_dem.prm
+   mpirun -np 6 dem_3d packing-rotating-drum.prm
+   mpirun -np 6 dem_3d small-rotating-drum-dem.prm
 
 
 .. note::

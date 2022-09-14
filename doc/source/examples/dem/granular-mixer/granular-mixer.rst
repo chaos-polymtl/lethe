@@ -14,7 +14,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d_granular_mixer/granular_mixer.prm``
+``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 
 Description of the case
@@ -94,7 +94,7 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
         subsection  solid object 0
         subsection mesh
             set type                = gmsh
-            set file name           = pitched_blade_impeller.msh
+            set file name           = pitched-blade-impeller.msh
             set simplex		       = true
             set initial refinement  = 0
         end
@@ -127,7 +127,7 @@ This simulation can be launched by (in parallel mode on 16 processes):
 
 .. code-block:: text
 
-  mpirun -np 16 dem_3d granular_mixer.prm
+  mpirun -np 16 dem_3d granular-mixer.prm
 
 .. warning::
 	This example takes approximately 30 hours on 16 cores.

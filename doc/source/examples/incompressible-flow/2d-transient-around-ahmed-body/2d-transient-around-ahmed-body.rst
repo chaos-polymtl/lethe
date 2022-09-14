@@ -12,9 +12,9 @@ Features
 
 Location of the examples
 -------------------------
-- Parameter file: ``/examples/incompressible_flow/2d_ahmed_body/ahmed.prm``
-- Geometry file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.geo``
-- Mesh file: ``/examples/incompressible_flow/2d_ahmed_body/Ahmed_Body_20_2D.msh``
+- Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
+- Geometry file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.geo``
+- Mesh file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.msh``
 
 Description of the case
 --------------------------
@@ -22,7 +22,7 @@ In this example, a flow is passing across a fixed Ahmed body (simplified version
 
 The following schematic describes the simulation.
 
-.. image:: images/ahmed_bc.png
+.. image:: images/ahmed-bc.png
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry_and_bc
@@ -34,7 +34,7 @@ The following schematic describes the simulation.
 
 The basic geometry for the Ahmed body is given below, as defined in Ahmed et al. `[1] <https://www.jstor.org/stable/44434262>`_, with all measures in mm.
 
-.. image:: images/ahmed_geometry.png
+.. image:: images/ahmed-geometry.png
     :alt: Geometry detailed description
     :align: center
     :name: geometry_detailed
@@ -71,13 +71,13 @@ Geometry parameters can be adapted in the "Parameters" section of the ``.geo`` f
 
 The initial `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ is built with `Gmsh <https://gmsh.info/#Download>`_. It is defined as transfinite at the body boundary layer and between the body and the road, and free for the rest of the domain. The mesh is dynamically refined throughout the simulation. This will be explained later in this example.
 
-The input mesh ``Ahmed_Body_20_2D.msh`` is in the same folder as the ``.prm`` file. The mesh subsection is set to use this file.
+The input mesh ``Ahmed-Body-20-2D.msh`` is in the same folder as the ``.prm`` file. The mesh subsection is set to use this file.
 
 .. code-block:: text
 
     subsection mesh
         set type                 = gmsh
-        set file name            = Ahmed_Body_20_2D.msh
+        set file name            = Ahmed-Body-20-2D.msh
     end
 
 .. note::
@@ -173,20 +173,20 @@ Transient results are shown for three ``Re`` values:
 +-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
 | Re    | :math:`{\nu}`   | Video              | t = 0.5 s                             | t = 4 s                              |
 +=======+=================+====================+=======================================+======================================+
-| 28.8  | 1e-2            | |video_1_ahmed|_   | .. image:: images/Re28_speed_t05.png  | .. image:: images/Re28_speed_t4.png  |
+| 28.8  | 1e-2            | |video_1_ahmed|_   | .. image:: images/Re28-speed-t05.png  | .. image:: images/Re28-speed-t4.png  |
 +-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
-| 288   | 1e-3            | |video_2_ahmed|_   | .. image:: images/Re288_speed_t05.png | .. image:: images/Re288_speed_t4.png |
+| 288   | 1e-3            | |video_2_ahmed|_   | .. image:: images/Re288-speed-t05.png | .. image:: images/Re288-speed-t4.png |
 +-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
-| 720   | 4e-2            | |video_3_ahmed|_   | .. image:: images/Re720_speed_t05.png | .. image:: images/Re720_speed_t4.png |
+| 720   | 4e-2            | |video_3_ahmed|_   | .. image:: images/Re720-speed-t05.png | .. image:: images/Re720-speed-t4.png |
 +-------+-----------------+--------------------+---------------------------------------+--------------------------------------+
 
-.. |video_1_ahmed| image:: images/video_1_ahmed.jfif 
+.. |video_1_ahmed| image:: images/video-1-ahmed.jfif 
 .. _video_1_ahmed: http://www.youtube.com/watch?feature=player_embedded&v=5iqMJ7O_AcU
 
-.. |video_2_ahmed| image:: images/video_2_ahmed.jfif 
+.. |video_2_ahmed| image:: images/video-2-ahmed.jfif 
 .. _video_2_ahmed: http://www.youtube.com/watch?feature=player_embedded&v=22salV0Q8_0
 
-.. |video_3_ahmed| image:: images/video_3_ahmed.jfif 
+.. |video_3_ahmed| image:: images/video-3-ahmed.jfif 
 .. _video_3_ahmed: http://www.youtube.com/watch?feature=player_embedded&v=SVReNMeDNiE
 
 The mesh and processors load is adapted dynamically throughout the simulation, as shown below for ``Re = 720``.
@@ -194,11 +194,11 @@ The mesh and processors load is adapted dynamically throughout the simulation, a
 +-------------+----------------------------------------+
 | Time        | Image                                  |
 +=============+========================================+
-| t = 0 s     | .. image:: images/Re720_mesh_t0.png    |
+| t = 0 s     | .. image:: images/Re720-mesh-t0.png    |
 +-------------+----------------------------------------+
-| t = 0.05 s  | .. image:: images/Re720_mesh_t005.png  |
+| t = 0.05 s  | .. image:: images/Re720-mesh-t005.png  |
 +-------------+----------------------------------------+
-| t = 4 s     | .. image:: images/Re720_mesh_t4.png    |
+| t = 4 s     | .. image:: images/Re720-mesh-t4.png    |
 +-------------+----------------------------------------+
 
 Possibilities for extension

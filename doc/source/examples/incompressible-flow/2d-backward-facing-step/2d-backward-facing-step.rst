@@ -13,8 +13,8 @@ Features
 Location of the example
 -----------------------
 
-- Base case (:math:`Re < 700`): ``/examples/incompressible_flow/2d-backward-facing-step/Reynolds100-600``
-- Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible_flow/2d-backward-facing-step/Reynolds700-1000``
+- Base case (:math:`Re < 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds100-600``
+- Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds700-1000``
 
 
 Description of the case
@@ -22,7 +22,7 @@ Description of the case
 
 In this example, a bidimensional flow goes past a backward-facing step. The flow enters from the left inlet and separates from the bottom wall at the step, and then reattaches to it further downstream at a distance :math:`x_r` from the step.  
 
-.. image:: image/backward_facing_step_description.png
+.. image:: image/backward-facing-step-description.png
 
 The backward-facing step problem is a classical computational fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters used to solve the backward-facing step problem will be exposed. A solution to several Reynolds numbers (from :math:`Re = 100` to :math:`Re =1000`) will then be presented and compared to experimental and numerical data. A mesh adaptation and numerical error analysis will be carried on.
 
@@ -105,7 +105,7 @@ Mesh
 
 	subsection mesh
 	  set type = gmsh
-	  set file name = ../backward_facing_step.msh
+	  set file name = ../backward-facing-step.msh
 	end
 	
 The mesh features quadrilateral elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet lengths should be long enough that they allow the formation of a fully developed flow. Finally, since a ``gmsh`` mesh file is used, the initial mesh should be as coarse as possible, since these cells cannot be coarsened with the mesh adaptation algorithm.
@@ -129,15 +129,15 @@ Here is an example of mesh adaptation using the Kelly error estimator for :math:
 
 Initial coarse mesh:
 
-.. image:: image/0th_mesh.png
+.. image:: image/0th-mesh.png
 
 After four refinement steps:
 
-.. image:: image/4th_mesh.png
+.. image:: image/4th-mesh.png
 
 After eight refinement steps:
 
-.. image:: image/8th_mesh.png
+.. image:: image/8th-mesh.png
 
 FEM
 ~~~
@@ -237,13 +237,13 @@ The simulation can be executed using the following command (assuming that the so
 
 .. code-block:: text
 
-	gls_navier_stokes_2d 2D_backward_facing_step_steady.prm
+	gls_navier_stokes_2d 2D-backward-facing-step-steady.prm
 	
 However, mpi can be used to lower calculation time by using several CPUs (especially useful for pseudo-steady simulations) :
 
 .. code-block:: text
 
-	mpirun -np j gls_navier_stokes_2d 2D_backward_facing_step_steady.prm
+	mpirun -np j gls_navier_stokes_2d 2D-backward-facing-step-steady.prm
 	
 where ``j`` is the number of CPUs used for the computations.
 
@@ -260,7 +260,7 @@ For :math:`Re = 100` :
 
 .. image:: image/Reynolds100.png
 
-.. image:: image/Reynolds100_zoom.png
+.. image:: image/Reynolds100-zoom.png
 
 It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 17.9`). With the Python module Pyvista, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically. This can be calculated with the following equation. 
 
@@ -269,11 +269,11 @@ It is possible to notice that there seems to be a lot of diffusion past the step
 
 which can be resolved with a bisection algorithm or with any other appropriate numerical approach. By doing this step for each successively refined mesh (10 meshes as specified by ``set number mesh adapt`` in the simulation control section), a mesh refinement analysis can be achieved.
 
-.. image:: image/Reynolds100_mesh_refinement.png
+.. image:: image/Reynolds100-mesh-refinement.png
 
 where the final value of :math:`x_r` is :math:`2.893`. We notice from the graph that convergence is obtained quite quickly. In addition, the following figure illustrates the evolution of the relative error as the number of elements increases.
 
-.. image:: image/Reynolds100_error_analysis.png
+.. image:: image/Reynolds100-error-analysis.png
 
 The reference value used in the error analysis is taken from Erturk (2008).
 
@@ -287,7 +287,7 @@ For :math:`Re = 1000` :
 
 .. image:: image/Reynolds1000.png
 
-.. image:: image/Reynolds1000_zoom.png
+.. image:: image/Reynolds1000-zoom.png
 
 On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python algorithm as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
@@ -300,7 +300,7 @@ Reattachment Length
 
 In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific literature (Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_ and Velivelli and Bryden (2015) `[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
 
-.. image:: image/xr_comparison.png
+.. image:: image/xr-comparison.png
 
 First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ diverge from the experimental data of Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_. According to `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less significant but clearly noticeable error between *Lethe* and Erturk  `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_: the fact that certain tolerances have been set higher for higher Reynolds number cases might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds numbers, however, at a higher computational cost. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
 
@@ -321,11 +321,11 @@ To validate the quality of the mesh/geometry as well, it is interesting to compa
 
 For :math:`Re = 100`:
 
-.. image:: image/Reynolds100_poiseuille.png
+.. image:: image/Reynolds100-poiseuille.png
 
 For :math:`Re = 1000`:
 
-.. image:: image/Reynolds1000_poiseuille.png
+.. image:: image/Reynolds1000-poiseuille.png
 
 For :math:`Re = 1000`, an error in the velocity profile is visually noticeable. We can assume that the outlet is not long enough for the flow to be fully developed at its end, meaning that there is still traction on the fluid. Consequently, increasing this length is essential in order to be able to validate cases where :math:`Re \geq 1000`.
 

@@ -101,7 +101,7 @@ while for Model B, since the pressure is totally in the fluid, we write:
 
 where :math:`n_p` is the number of particles inside the cell :math:`\Omega` with volume :math:`V_{\Omega}`.
 
-Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../parameters/unresolved_cfd-dem/cfd_dem` page of this guide).
+Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
 
 Void fraction
 --------------

@@ -21,9 +21,9 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/rayleigh_taylor_instability/rayleigh_taylor_instability_constant_refinement.prm``
+``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-refinement.prm``
 
-``examples/multiphysics/rayleigh_taylor_instability/rayleigh_taylor_instability_adaptive_refinement.prm``
+``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-refinement.prm``
 
 
 -----------------------------
@@ -262,7 +262,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_2d rayleigh_taylor_instability.prm``
+``mpirun -np 8 gls_navier_stokes_2d rayleigh-taylor-instability.prm``
 
 
 to run the simulations using eight CPU cores. Feel free to use more.
@@ -296,7 +296,7 @@ In the following figure, we compare the simulation results with that of Garoosi 
 The following figure shows the mass of fluid 1 throughout the simulation with a constant interface sharpening.
 
 
-.. image:: images/mass_of_fluid1.png
+.. image:: images/mass-of-fluid1.png
     :alt: Schematic
     :align: center
     :width: 400

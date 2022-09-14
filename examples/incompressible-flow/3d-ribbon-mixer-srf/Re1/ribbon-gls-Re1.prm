@@ -1,0 +1,115 @@
+# Listing of Parameters
+# ---------------------
+
+
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = steady
+  set output name             = mixer
+  set output boundaries       = true
+  set output path = ./output/
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity            = 0.11602395351399172
+   end
+end
+
+#--------------------------------------------------
+# Timer
+#--------------------------------------------------
+subsection timer
+    set type = iteration
+end
+
+#--------------------------------------------------
+# Velocity Source
+#--------------------------------------------------
+subsection velocity source
+    set type=srf
+    set omega_z=-10
+end
+
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+subsection forces
+    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
+    set calculate torque      = true      # Enable torque calculation
+    set torque name           = torque    # Name prefix of torque files
+    set output precision      = 14        # Output precision
+    set calculation frequency = 1         # Frequency of the force calculation
+    set output frequency      = 1         # Frequency of file update
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = gmsh
+    set file name            = diff-step-mesh.msh
+    set simplex = true
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 3
+    subsection bc 0
+        set id = 1
+        set type              = function
+        subsection u
+            set Function expression = -10*y
+        end
+        subsection v
+            set Function expression = 10*x
+        end
+        subsection w
+            set Function expression = 0
+        end
+    end
+    subsection bc 1
+        set id = 2
+        set type              = slip
+    end
+
+    subsection bc 2
+        set id  = 3
+        set type              = noslip
+    end
+end
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-10
+  end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set method                    = amg
+  set max iters                 = 100
+  set relative residual         = 1e-4
+  set minimum residual          = 1e-10
+  set amg preconditioner ilu fill                  = 0
+  set amg preconditioner ilu absolute tolerance    = 1e-11
+  set amg preconditioner ilu relative tolerance    = 1.00
+  set amg aggregation threshold = 1e-14  # Aggregation
+  set amg n cycles              = 2      # Number of AMG cycles
+  set amg w cycles              = false  # W cycles, otherwise V cycles
+  set amg smoother sweeps       = 2      # Sweeps
+  set amg smoother overlap      = 1      # Overlap
+  set verbosity               = verbose
+  set max krylov vectors = 500
+end

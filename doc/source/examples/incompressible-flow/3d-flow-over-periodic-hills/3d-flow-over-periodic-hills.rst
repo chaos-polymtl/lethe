@@ -13,13 +13,13 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/incompressible_flow/3d_periodic_hills/periodic_hills.prm``
+- Parameter file: ``/examples/incompressible-flow/3d-periodic-hills/periodic-hills.prm``
 
 Description of the case
 -----------------------
 In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC `[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_):
 
-.. image:: images/geometry_description.jpg
+.. image:: images/geometry-description.jpg
     :alt: The geometry
     :align: center
     :name: geometry_description
@@ -111,7 +111,7 @@ Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
 In this section, we specify the boundary conditions taking into account the IDs presented in the following scheme:
 
-.. image:: images/boundary_conditions.png
+.. image:: images/boundary-conditions.png
     :alt: bcs
     :align: center
     :name: boundary_conditions
@@ -229,7 +229,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  gls_navier_stokes_3d periodic_hills.prm
+  gls_navier_stokes_3d periodic-hills.prm
 
 Lethe will generate a number of files. The most important ones have the extension ``.vtu`` that can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -241,21 +241,21 @@ To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.
 
 The following image shows the average velocity profiles in the x-direction:
 
-.. image:: images/average_velocity.png
+.. image:: images/average-velocity.png
     :alt: average velocity
     :align: center
     :name: average_velocity
 
 The values obtained for the reynolds normal stress in the x-direction:
 
-.. image:: images/reynolds_normal_stress.png
+.. image:: images/reynolds-normal-stress.png
     :alt: reynolds normal stress
     :align: center
     :name: reynolds_normal_stress
 
 and the Reynolds shear stress:
 
-.. image:: images/reynolds_shear_stress.png
+.. image:: images/reynolds-shear-stress.png
     :alt: reynolds shear stress
     :align: center
     :name: reynolds_shear_stress

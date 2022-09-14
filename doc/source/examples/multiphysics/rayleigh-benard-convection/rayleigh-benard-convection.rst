@@ -18,8 +18,8 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/rayleigh_benard_convection/rayleigh_benard_convection_Ra10k.prm``
-``examples/multiphysics/rayleigh_benard_convection/rayleigh_benard_convection_Ra25k.prm``
+``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra10k.prm``
+``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra25k.prm``
 
 
 -----------------------------
@@ -147,11 +147,11 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_2d rayleigh_benard_convection_Ra10k.prm``
+``mpirun -np 8 gls_navier_stokes_2d rayleigh-benard-convection-Ra10k.prm``
 
 and
 
-``mpirun -np 8 gls_navier_stokes_2d rayleigh_benard_convection_Ra25k.prm``
+``mpirun -np 8 gls_navier_stokes_2d rayleigh-benard-convection-Ra25k.prm``
 
 to run the simulations using eight CPU cores. Feel free to use more. Note that the first and second commands belong to the simulations at :math:`Ra=10^4` and :math:`Ra=2.5 \times 10^4`, repectively.
 
