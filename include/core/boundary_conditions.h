@@ -21,7 +21,9 @@
 #define lethe_boundary_conditions_h
 
 #include <deal.II/base/function.h>
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+#include <deal.II/base/patterns.h>
 
 using namespace dealii;
 

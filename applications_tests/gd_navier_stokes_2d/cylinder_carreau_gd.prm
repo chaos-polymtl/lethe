@@ -7,17 +7,11 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 1
+  set number mesh adapt       = 0
   set output name             = output
   set output frequency        = 0
-  set subdivision             = 1
 end
-#---------------------------------------------------
-# TESTING
-#---------------------------------------------------
-subsection test
-    set enable = true
-end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
