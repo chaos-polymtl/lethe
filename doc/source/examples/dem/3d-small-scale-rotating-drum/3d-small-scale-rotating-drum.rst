@@ -155,7 +155,7 @@ The packing dem simulation was run for 2 seconds in real time.
       set time end       			 = 2
       set log frequency				 = 2000
       set output frequency            		 = 10000
-      set output path                  	 	 = ./output_dem/
+      set output path                  	 	 = ./output-dem/
     end
     
 The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation.
@@ -167,7 +167,7 @@ The actual rotation of the drum is 3 seconds in real time. We set the time equal
       set time end       			 = 5
       set log frequency				 = 2000
       set output frequency            		 = 10000
-      set output path                  	 	 = ./output_dem/
+      set output path                  	 	 = ./output-dem/
     end
 
 Running the Simulation

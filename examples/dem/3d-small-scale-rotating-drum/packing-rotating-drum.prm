@@ -8,7 +8,7 @@ subsection simulation control
   set time end       					 = 2
   set log frequency				         = 2000
   set output frequency            			 = 10000
-  set output path                  	 		 = ./output_dem/
+  set output path                  	 		 = ./output-dem/
 end
 
 #---------------------------------------------------

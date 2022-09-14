@@ -14,7 +14,7 @@ Features
 Location of the examples
 ------------------------
 - Base case (:math:`Re=400`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
-- Higher-Reynolds case (:math:`Re=7500`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/cavity.prm``
+- Higher-Reynolds case (:math:`Re=7500`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds-7500/cavity.prm``
 
 
 Description of the case

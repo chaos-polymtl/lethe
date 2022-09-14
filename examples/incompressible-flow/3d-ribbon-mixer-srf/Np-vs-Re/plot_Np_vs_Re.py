@@ -24,5 +24,5 @@ plt.xlabel("$Re$")
 plt.ylabel("$N_p$")
 plt.legend()
 
-plt.savefig("./Np_vs_Re.png", dpi=300)
+plt.savefig("./Np-vs-Re.png", dpi=300)
 plt.show()

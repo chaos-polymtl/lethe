@@ -29,15 +29,15 @@ Features
 Locations of Files Used in the Example
 ---------------------------------------
 - Parameter file for :math:`Re = 1`: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Re1/ribbon-gls-Re1.prm``
-- Parameter file for generating multiple cases: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/ribbon-gls.prm``
+- Parameter file for generating multiple cases: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/ribbon-gls.prm``
 - Geometry file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/diff-step-mesh.geo``
 - Step file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/db-helical.step``
-- Python script for generating different cases: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/template/lethe_case_generator.py``
-- Bash script for running simulations on a cluster (job script): ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/template/launch-mixer.sh``
-- Python script for launching all the simulations on the cluster: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/launch_all_mixers.py``
-- Bash script for gathering torques: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/gather-torques.sh``
-- Experimental data file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/experimental.dat``
-- Python script for generating the :math:`N_p` vs :math:`Re` curves: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/plot_Np_vs_Re.py``
+- Python script for generating different cases: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/template/lethe_case_generator.py``
+- Bash script for running simulations on a cluster (job script): ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/template/launch-mixer.sh``
+- Python script for launching all the simulations on the cluster: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/launch_all_mixers.py``
+- Bash script for gathering torques: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/gather-torques.sh``
+- Experimental data file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/experimental.dat``
+- Python script for generating the :math:`N_p` vs :math:`Re` curves: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np-vs-Re/plot_Np-vs-Re.py``
 
 
 Description of the Case
@@ -259,11 +259,11 @@ You can then copy this file in the ``Re1`` folder:
 
      cp diff-step-mesh.msh Re1
 
-and then move it to the ``Np_vs_Re`` folder:
+and then move it to the ``Np-vs-Re`` folder:
 
 .. code-block:: text
 
-     mv diff-step-mesh.msh Np_vs_Re
+     mv diff-step-mesh.msh Np-vs-Re
 
 Simulating for a Specific Flow Condition :math:`(Re = 1)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -337,13 +337,13 @@ After running the ``lethe_case_generator.py`` script you should have :math:`25` 
 
 Copying Files to the Cluster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We will now copy the ``Np_vs_Re`` folder to the cluster.
+We will now copy the ``Np-vs-Re`` folder to the cluster.
 
-On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scratch`` folder in the cluster with:
+On your **local computer**, you may copy the ``Np-vs-Re`` folder to your ``scratch`` folder in the cluster with:
 
 .. code-block:: text
 
-    scp -r Path/To/Np_vs_Re username@clustername.computecanada.ca:/scratchPathInCluster
+    scp -r Path/To/Np-vs-Re username@clustername.computecanada.ca:/scratchPathInCluster
 
 
 .. tip::
@@ -354,15 +354,15 @@ On your **local computer**, you may copy the ``Np_vs_Re`` folder to your ``scrat
 
         export SCRATCH_PATH=username@clustername.computecanada.ca:/scratchPathInCluster
 
-    By doing so, you may copy the ``Np_vs_Re`` folder from your local computer with:
+    By doing so, you may copy the ``Np-vs-Re`` folder from your local computer with:
 
     .. code-block:: text
 
-        scp -r Path/To/Np_vs_Re $SCRATCH_PATH
+        scp -r Path/To/Np-vs-Re $SCRATCH_PATH
 
 .. seealso::
 
-	To avoid copying the ``Np_vs_Re`` folder, it is also possible to run the ``lethe_case_generator.py`` script directly into the cluster. To do so, you need to create a Python virtual environment and install Jinja2. See here the `documentation <https://docs.alliancecan.ca/wiki/Python>`_ from the Alliance.
+	To avoid copying the ``Np-vs-Re`` folder, it is also possible to run the ``lethe_case_generator.py`` script directly into the cluster. To do so, you need to create a Python virtual environment and install Jinja2. See here the `documentation <https://docs.alliancecan.ca/wiki/Python>`_ from the Alliance.
 
 Submitting Jobs and Launching Simulations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -372,7 +372,7 @@ The next step is to connect to an Alliance cluster:
 
     ssh username@clustername.computecanada.ca
 
-After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all_mixers.py`` Python script located in the ``Np_vs_Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it is the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
+After connecting to your preferred cluster, you can submit your jobs by running the ``launch_all_mixers.py`` Python script located in the ``Np-vs-Re`` folder. After running the script, :math:`25` new jobs should have been generated. You may check if it is the case with the ``sq`` command. In the ``ST`` column of the output, you may see the status of each job. The two most common states are ``PD`` for *pending* or ``R`` for *running*.
 
 .. admonition:: Have trouble submitting the jobs?
     :class: caution
@@ -418,19 +418,19 @@ Before postprocessing the results of the simulations, you may want to copy the f
 
     sftp username@clustername.computecanada.ca
 
-With the ``get`` command you may copy the remote ``Np_vs_Re`` folder:
+With the ``get`` command you may copy the remote ``Np-vs-Re`` folder:
 
 .. code-block:: text
 
-    get -r Path/To/Remote_Np_vs_Re Path/To/Local_directory
+    get -r Path/To/Remote_Np-vs-Re Path/To/Local_directory
 
 .. note::
 
-    Earlier, before launching the simulations, we could have also uploaded the initial ``Np_vs_Re`` folder using this method with the ``put`` command:
+    Earlier, before launching the simulations, we could have also uploaded the initial ``Np-vs-Re`` folder using this method with the ``put`` command:
 
     .. code-block:: text
 
-        put -r Path/To/Local_Np_vs_Re Path/To/Remote_scratch_directory
+        put -r Path/To/Local_Np-vs-Re Path/To/Remote_scratch_directory
 
 Once the transfer is completed, you may exit with the ``exit`` command.
 
@@ -446,7 +446,7 @@ In order to generate the :math:`N_p` vs :math:`Re` curves, we must first gather 
 
         chmod +x Path/To/gather-torques.sh
 
-After that, you may run the ``plot_Np_vs_Re.py`` Python script to get the figure shown below.
+After that, you may run the ``plot_Np-vs-Re.py`` Python script to get the figure shown below.
 
 .. image:: images/Np-Re.png
    :alt: Power curve

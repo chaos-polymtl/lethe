@@ -50,7 +50,7 @@ In this example, we are simulating a squared fluidized bed that has a half lengt
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log, and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 1 s was chosen with a time step of 0.000005. It is important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder output_dem:
+Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log, and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 1 s was chosen with a time step of 0.000005. It is important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder output-dem:
 
 
 .. code-block:: text
@@ -60,7 +60,7 @@ Another subsection, which is generally the one we put at the top of the paramete
   	set time end       					 = 0.5
   	set log frequency				         = 1000
   	set output frequency            			 = 1000
-  	set output path                                      	 = ./output_dem/
+  	set output path                                      	 = ./output-dem/
     end
 
 Restart
