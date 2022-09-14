@@ -134,7 +134,7 @@ where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`
   3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
   4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
-The interface sharpening method and its parameters are explained in :doc:`../dam-break-VOF/dam-break-VOF`
+The interface sharpening method and its parameters are explained in :doc:`../dam-break/dam-break`
 
 .. code-block:: text
 
