@@ -12,9 +12,9 @@ Features
 
 Location of the examples
 -------------------------
-- Parameter file: ``/examples/incompressible-flow/2d_ahmed_body/ahmed.prm``
-- Geometry file: ``/examples/incompressible-flow/2d_ahmed_body/Ahmed-Body-20-2D.geo``
-- Mesh file: ``/examples/incompressible-flow/2d_ahmed_body/Ahmed-Body-20-2D.msh``
+- Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
+- Geometry file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.geo``
+- Mesh file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.msh``
 
 Description of the case
 --------------------------

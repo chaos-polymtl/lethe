@@ -14,7 +14,7 @@ Features
 
 Location of the example
 ------------------------
-``examples/incompressible-flow/2d_taylor-couette/taylor-couette.prm``
+``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
 
 
 Description of the case

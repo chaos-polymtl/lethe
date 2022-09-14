@@ -11,7 +11,7 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/resolved-cfd-dem/cylinder_with_sharp_interface/cylinder-with-sharp-interface.prm``
+- Parameter file: ``/examples/resolved-cfd-dem/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
 
 
 Description of the case

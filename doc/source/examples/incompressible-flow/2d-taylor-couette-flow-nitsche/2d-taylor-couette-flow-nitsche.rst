@@ -21,8 +21,8 @@ Features
 
 Location of the examples
 ------------------------
-``examples/incompressible-flow/2d_nitsche_taylor-couette/uniform-nitsche-taylor-couette.prm``
-``examples/incompressible-flow/2d_nitsche_taylor-couette/adaptative-nitsche-taylor-couette.prm``
+``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
+``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
 
 
 Description of the case

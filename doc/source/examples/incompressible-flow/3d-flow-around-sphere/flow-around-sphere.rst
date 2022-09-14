@@ -15,9 +15,9 @@ Features
 
 Location of the examples
 ------------------------
-- For Re = 0.1 : ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-0.1.prm``
-- For Re = 150 : ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-150.prm``
-- For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-adapt.prm``
+- For Re = 0.1 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
+- For Re = 150 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
+- For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
 
 
 Description of the case
@@ -119,7 +119,7 @@ Recall the definition of the Reynolds number for a flow past a sphere:
 
 Taking this into account and the fact that the sphere diameter :math:`D` is 1 m, and :math:`u_{\infty}` is set to 1 m/s, we set the ``kinematic viscosity`` parameter to obtain the targeted Reynolds number.
 
-* In ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-0.1.prm`` (Re = 0.1)
+* In ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm`` (Re = 0.1)
 
 .. code-block:: text
 
@@ -129,7 +129,7 @@ Taking this into account and the fact that the sphere diameter :math:`D` is 1 m,
     end
   end
 
-* In ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-150.prm`` and ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-adapt.prm`` (:math:`Re=150`)
+* In ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm`` and ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm`` (:math:`Re=150`)
 
 .. code-block:: text
 

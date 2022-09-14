@@ -28,16 +28,16 @@ Features
 
 Locations of Files Used in the Example
 ---------------------------------------
-- Parameter file for :math:`Re = 1`: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Re1/ribbon-gls-Re1.prm``
-- Parameter file for generating multiple cases: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/ribbon-gls.prm``
-- Geometry file: ``examples/incompressible-flow/3d_ribbon_mixer_srf/diff-step-mesh.geo``
-- Step file: ``examples/incompressible-flow/3d_ribbon_mixer_srf/db-helical.step``
-- Python script for generating different cases: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/template/lethe_case_generator.py``
-- Bash script for running simulations on a cluster (job script): ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/template/launch-mixer.sh``
-- Python script for launching all the simulations on the cluster: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/launch_all_mixers.py``
-- Bash script for gathering torques: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/gather-torques.sh``
-- Experimental data file: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/experimental.dat``
-- Python script for generating the :math:`N_p` vs :math:`Re` curves: ``examples/incompressible-flow/3d_ribbon_mixer_srf/Np_vs_Re/plot_Np_vs_Re.py``
+- Parameter file for :math:`Re = 1`: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Re1/ribbon-gls-Re1.prm``
+- Parameter file for generating multiple cases: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/ribbon-gls.prm``
+- Geometry file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/diff-step-mesh.geo``
+- Step file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/db-helical.step``
+- Python script for generating different cases: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/template/lethe_case_generator.py``
+- Bash script for running simulations on a cluster (job script): ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/template/launch-mixer.sh``
+- Python script for launching all the simulations on the cluster: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/launch_all_mixers.py``
+- Bash script for gathering torques: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/gather-torques.sh``
+- Experimental data file: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/experimental.dat``
+- Python script for generating the :math:`N_p` vs :math:`Re` curves: ``examples/incompressible-flow/3d-ribbon-mixer_srf/Np_vs_Re/plot_Np_vs_Re.py``
 
 
 Description of the Case
