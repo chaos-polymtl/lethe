@@ -6,9 +6,6 @@ This subsection controls the mesh adaptation method, with default values given b
 .. code-block:: text
 
 	subsection mesh adaptation
-	  # Number of initial (pre-solve) refinement steps
-	  set initial refinement steps = 0
-
 	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
 	  set type                     = none
 
@@ -36,9 +33,12 @@ This subsection controls the mesh adaptation method, with default values given b
 
 	  # Maximum number of elements
 	  set max number elements      = 100000000
+	
+	  # Number of initial (pre-solve) refinement steps
+	  set initial refinement steps = 0
 	end
 
-* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem.
+
 * Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 
 * The variable for kelly estimation should be specified with ``set variable``, and can be:
 	* velocity
@@ -75,4 +75,6 @@ This subsection controls the mesh adaptation method, with default values given b
 
 .. warning::
 	The ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased.
+
+* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 
