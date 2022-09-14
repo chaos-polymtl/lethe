@@ -34,28 +34,23 @@ L1 = 3.5
 g  = 1.0
 time_correction = 0.175
 
-#Take case path as argument and store at currentPath
-currentPath = sys.argv[1]
-
-#Define list of VTK files and time list:
-list_vtu = os.listdir(currentPath)
-list_vtu = [x for x in list_vtu if "pvd" not in x ]
-list_vtu = [x for x in list_vtu if "pvtu" not in x ]
-list_vtu = [x for x in list_vtu if "vtu" in x ]
-
-
-#Create a list of time_steps
-data = pd.read_csv("output/dam-break.pvd",sep='"',header=5, usecols=[1],skiprows=[41,42,43]) 
-data.columns = ["a"] 
-time_list_duplicates = data['a']
-# Remove duplicates
-time_list = list(dict.fromkeys(time_list_duplicates))
-
 #Set phase_limit to search for maximum x
 phase_limit = 0.5
 
-#Sort list
-time_list, list_vtu = (list(t) for t in zip(*sorted(zip(time_list, list_vtu))))
+#Take case path as argument and store it
+output_path = sys.argv[1]
+
+# Read the pvd file to extract the times
+reader = pv.get_reader("output/dam-break.pvd")
+# Get active times
+time_list = reader.time_values
+
+#Define list of VTU files
+list_vtu = os.listdir(output_path)
+list_vtu = [x for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
+
+# Sort VTU files to ensure they are in the same order as the time step
+list_vtu = sorted(list_vtu)
 
 #Create a list to fill with maximum x in which phase > phase_limit
 x_list = []
@@ -63,7 +58,7 @@ x_list = []
 #Read vtu data
 for i in range(0, len(list_vtu)):
     #Read DF from VTK files
-    exec(f'df_{i} = pv.read(f\'{currentPath}/{list_vtu[i]}\')')
+    exec(f'df_{i} = pv.read(f\'{output_path}/{list_vtu[i]}\')')
 
     #Select a data to apply the slice   
     exec(f'df = df_{i}')
@@ -75,9 +70,6 @@ for i in range(0, len(list_vtu)):
     x_max = max(points[phase[0] > phase_limit].values)[0]
     x_list.append(x_max)
 
-
-#Sort x_list, since the time_list is extracted from the .pvd file, the x_list and time_list are not consistent
-x_list.sort()
 
 #Experimental data from Martin & Moyce 1952
 x_exp = [0, 0.41, 0.84, 1.19, 1.43, 1.63, 1.82, 1.97, 2.2, 2.32, 2.5, 2.64, 2.82, 2.96]
