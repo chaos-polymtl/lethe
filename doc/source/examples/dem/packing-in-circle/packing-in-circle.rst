@@ -13,7 +13,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/2d_packing_in_circle/packing_in_circle.prm``
+``/examples/dem/2d-packing-in-circle/packing-in-circle.prm``
 
 
 Description of the case
@@ -191,7 +191,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  dem_2d packing_in_circle.prm
+  dem_2d packing-in-circle.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -205,6 +205,6 @@ Results
 
 Packed particles at the end of simulation:
 
-.. image:: images/packing_in_circle.png
+.. image:: images/packing-in-circle.png
     :alt: velocity distribution
     :align: center

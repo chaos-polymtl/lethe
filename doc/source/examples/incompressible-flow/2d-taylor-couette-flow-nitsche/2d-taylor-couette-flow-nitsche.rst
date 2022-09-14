@@ -21,8 +21,8 @@ Features
 
 Location of the examples
 ------------------------
-``examples/incompressible_flow/2d_nitsche_taylor-couette/uniform_nitsche_taylor-couette.prm``
-``examples/incompressible_flow/2d_nitsche_taylor-couette/adaptative_nitsche_taylor-couette.prm``
+``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
+``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
 
 
 Description of the case
@@ -33,7 +33,7 @@ We simulate the same case as the regular Taylor-Couette flow where the inner cyl
 while the outer cylinder is fixed. 
 The following figure shows the geometry of this problem and the corresponding boundary conditions. 
 
-.. image:: images/taylor_couette.svg
+.. image:: images/taylor-couette.svg
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
@@ -67,7 +67,7 @@ The last parameter specifies the ``initial refinement`` of the grid.
 
   Most deal.II grid generators contain a minimal number of cells. The 2D *hyper_ball* mesh is made of five cells, a square one in the middle and four ones surrounding it. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 320 cells.
 
-.. image:: images/background_mesh_taylor-couette.png
+.. image:: images/background-mesh-taylor-couette.png
     :alt: The fluid mesh
     :align: center
     :name: fluid
@@ -107,7 +107,7 @@ subsection. Finally, the motion of the particle is disabled. This means that eve
 
 The following figure illustrates the background mesh as well as the particles used to represent the IB on top of it:
 
-.. image:: images/taylor_couette_with_nitsche_mesh.png
+.. image:: images/taylor-couette-with-nitsche-mesh.png
     :alt: The background mesh and the embedded particles
     :align: center
     :name: nitsche_particles
@@ -265,13 +265,13 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  gls_nitsche_navier_stokes_22 uniform_nitsche_taylor-couette.prm
+  gls_nitsche_navier_stokes_22 uniform-nitsche-taylor-couette.prm
 
 or 
 
 .. code-block:: text
 
-  gls_nitsche_navier_stokes_22 adaptative_nitsche_taylor-couette.prm
+  gls_nitsche_navier_stokes_22 adaptative-nitsche-taylor-couette.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -327,7 +327,7 @@ Adaptative mesh refinement
 
 Using Paraview, the steady-state velocity profile can be visualized for the adaptative mesh refinement case:
 
-.. image:: images/taylor_couette_with_nitsche_velocity_adapt.png
+.. image:: images/taylor-couette-with-nitsche-velocity-adapt.png
     :alt: velocity distribution
     :align: center
     :height: 10cm

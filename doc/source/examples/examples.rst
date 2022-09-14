@@ -10,6 +10,6 @@ Examples
     incompressible-flow/incompressible-flow
     multiphysics/multiphysics
     dem/dem
-    unresolved_cfd-dem/unresolved_cfd-dem
-    resolved_cfd-dem/resolved_cfd-dem
+    unresolved-cfd-dem/unresolved-cfd-dem
+    resolved-cfd-dem/resolved-cfd-dem
     rpt/rpt

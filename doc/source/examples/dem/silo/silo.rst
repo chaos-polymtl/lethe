@@ -14,7 +14,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d_silo/silo_Golshan.prm``
+``/examples/dem/3d-silo/silo-Golshan.prm``
 
 
 Description of the case
@@ -35,7 +35,7 @@ Contrary to previous examples, in this example, we use a mesh generated using Gm
 
     subsection mesh
         set type 		         = gmsh
-        set file name	          = ./silo_Golshan.msh
+        set file name	          = ./silo-Golshan.msh
         set check diamond cells	= true
     end
 
@@ -174,7 +174,7 @@ This simulation can be launched by (in parallel mode on 32 processes):
 
 .. code-block:: text
 
-  mpirun -np 32 dem_3d silo_Golshan.prm
+  mpirun -np 32 dem_3d silo-Golshan.prm
 
 .. warning::
 	This example takes approximately 48 hours on 32 cores. This high computational cost is because of the long time of the simulation (40 s).

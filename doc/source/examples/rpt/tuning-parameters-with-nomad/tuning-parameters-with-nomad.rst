@@ -18,14 +18,14 @@ Features
 
 Locations of Files Used in the Example
 ---------------------------------------
-- Parameter file for tuning parameters: ``examples/rpt/parameters_tuning/rpt_parameters.prm``
-- Parameter file for calculating photon counts: ``examples/rpt/parameters_tuning/rpt_count_calculation.prm``
-- File containing particle positions: ``examples/rpt/parameters_tuning/positions.particle``
-- File containing experimental particle counts: ``examples/rpt/parameters_tuning/counts.experimental``
-- File containing detector positions: ``examples/rpt/parameters_tuning/positions.detector``
-- Python script for NOMAD: ``examples/rpt/parameters_tuning/rpt_lethe_nomad.py``
-- Text file used when running NOMAD: ``examples/rpt/parameters_tuning/param_nomad.txt``
-- Python script for post-processing the data: ``examples/rpt/parameters_tuning/rpt_parameter_tuning_plot.py``
+- Parameter file for tuning parameters: ``examples/rpt/parameters-tuning/rpt-parameters.prm``
+- Parameter file for calculating photon counts: ``examples/rpt/parameters-tuning/rpt-count-calculation.prm``
+- File containing particle positions: ``examples/rpt/parameters-tuning/positions.particle``
+- File containing experimental particle counts: ``examples/rpt/parameters-tuning/counts.experimental``
+- File containing detector positions: ``examples/rpt/parameters-tuning/positions.detector``
+- Python script for NOMAD: ``examples/rpt/parameters-tuning/rpt_lethe_nomad.py``
+- Text file used when running NOMAD: ``examples/rpt/parameters-tuning/param-nomad.txt``
+- Python script for post-processing the data: ``examples/rpt/parameters-tuning/rpt_parameter_tuning_plot.py``
 
 
 Description of the Case
@@ -34,7 +34,7 @@ In this example, using the NOMAD optimization software and the experimental data
 
 The illustration below depicts the geometry of the vessel, the detector, and the path traveled by the particle in our system:
 
-.. image:: images/system_from_above.png
+.. image:: images/system-from-above.png
     :alt: The geometry
     :align: center
     :name: geometry_description
@@ -91,7 +91,7 @@ where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alph
 Parameter Files
 ----------------
 
-*rpt_parameters.prm* File
+*rpt-parameters.prm* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RPT Parameters
@@ -159,10 +159,10 @@ In the subsection ``detector parameters``, we specify the file that contains the
         set attenuation coefficient reactor  = 10
     end
 
-*param_nomad.txt* File
+*param-nomad.txt* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``param_nomad.txt`` file is used when running NOMAD. This file provides initial guess and constraints when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
+The ``param-nomad.txt`` file is used when running NOMAD. This file provides initial guess and constraints when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
 
 .. code-block:: text
 
@@ -194,9 +194,9 @@ Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may
 
 .. code-block:: text
 
-    nomad param_nomad.txt
+    nomad param-nomad.txt
 
-NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param_nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the ``rpt_3d`` application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
+NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param-nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the ``rpt_3d`` application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
 
 Results
 --------
@@ -223,14 +223,14 @@ We may now verify if these values correspond to the physical system. To do so, a
 
 .. code-block:: text
 
-    rpt_3d rpt_count_calculation.prm
+    rpt_3d rpt-count-calculation.prm
 
 .. attention::
-    It is important to launch the simulation with ``rpt_count_calculation.prm`` and not ``rpt_parameters.prm``. The parameters in both files are set for different purposes. ``rpt_count_calculation.prm`` is suited for count calculation with the Monte Carlo technique, and ``rpt_parameters.prm`` is suited for tuning parameters.
+    It is important to launch the simulation with ``rpt-count-calculation.prm`` and not ``rpt-parameters.prm``. The parameters in both files are set for different purposes. ``rpt-count-calculation.prm`` is suited for count calculation with the Monte Carlo technique, and ``rpt-parameters.prm`` is suited for tuning parameters.
 
-The differences between ``rpt_count_calculation.prm`` and ``rpt_parameters.prm`` are described below.
+The differences between ``rpt-count-calculation.prm`` and ``rpt-parameters.prm`` are described below.
 
-- First, in ``rpt_count_calculation.prm``, in the ``rpt parameters`` subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
+- First, in ``rpt-count-calculation.prm``, in the ``rpt parameters`` subsection, the ``verbosity`` parameter has been set to ``verbose`` since NOMAD is not used anymore, we can display counts on the terminal. To be able to export the counts in a file, the ``export counts`` parameter was set to ``true``. The name of the ``counts file`` that will be exported may be changed in this subsection.
 
 - Second, in the ``parameter tuning`` subsection, the ``tuning`` parameter was set to ``false`` since we're not trying to tune parameters anymore.
 
@@ -245,7 +245,7 @@ To visualize the data and obtain the figures shown below, a Python script (``rpt
 
     Experimental and calculated counts comparison
 
-.. figure:: images/results_linear_fit_graph.png
+.. figure:: images/results-linear-fit-graph.png
     :alt: Linear fit graph
     :align: center
     :name: Linear fit graph

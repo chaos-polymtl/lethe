@@ -20,7 +20,7 @@ Features
 ------------------------
 Location of the example
 ------------------------
-``examples/multiphysics/rising_bubble_VOF/rising_bubble_VOF.prm``
+``examples/multiphysics/rising-bubble-VOF/rising-bubble-VOF.prm``
 
 
 -----------------------------
@@ -28,11 +28,11 @@ Description of the case
 -----------------------------
 
 A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionless) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
-``rising_bubble_VOF.prm``.
+``rising-bubble-VOF.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/bubble_initial_configuration.png
+.. image:: images/bubble-initial-configuration.png
     :alt: Schematic
     :align: center
     :width: 400
@@ -66,7 +66,7 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
         set stop tolerance                 = 1e-5
         set adaptative time step scaling   = 1.1
         set number mesh adapt              = 0
-        set output name                    = rising_bubble_VOF
+        set output name                    = rising-bubble-VOF
         set output control                 = time
         set output time                    = 0.03
         set output path                    = ./output/
@@ -258,7 +258,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_2d rising_bubble_VOF.prm``
+``mpirun -np 8 gls_navier_stokes_2d rising-bubble-VOF.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 
@@ -286,12 +286,12 @@ Run ``python3 ./rising_bubble.py ./output`` to execute this
 post-processing code, where ``./output`` is the directory that 
 contains the simulation results. In post-processing, the maximum and minimum axial positions of the light phase (bubble) are tracked to monitor the location of the center of the bubble as a function of time. Then, the bubble rise velocity is calculated as the derivation of the bubble axial position. These results are compared with the simulations of Zahedi, Kronbichler, and Kreiss [2]. The following images show the results of these comparisons. The oscillations in the bubble rise velocity are attributed to the different methods used for finding the centroid of the bubble, first order derivation, and smoothing of the bubble location and rise velocity.
 
-.. image:: images/ymean_t.png
+.. image:: images/ymean-t.png
     :alt: ymean_t
     :align: center
     :width: 400
 
-.. image:: images/bubble_rise_velocity.png
+.. image:: images/bubble-rise-velocity.png
     :alt: bubble_rise_velocity
     :align: center
     :width: 400

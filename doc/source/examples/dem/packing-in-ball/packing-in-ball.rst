@@ -13,7 +13,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d_packing_in_ball/packing_in_ball.prm``
+``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
 
 
 Description of the case
@@ -133,13 +133,13 @@ This simulation can be launched by:
 
 .. code-block:: text
 
-  dem_3d packing_in_ball.prm
+  dem_3d packing-in-ball.prm
 
 We can also launch this simulation in parallel mode. For example, to launch the simulation on 8 processes:
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d packing_in_ball.prm
+  mpirun -np 8 dem_3d packing-in-ball.prm
 
 .. note::
 	The parallel simulations are generally faster than simulations on a single process. However, to leverage the full performance of a parallel simulation, it should be performed with a load-balancing strategy throughout the simulation. Load-balancing is explained in the `next example <../rotating-drum/rotating-drum.html>`_.
@@ -149,6 +149,6 @@ Results
 
 Packed particles at the end of simulation:
 
-.. image:: images/packing_in_ball.jpeg
+.. image:: images/packing-in-ball.jpeg
     :alt: velocity distribution
     :align: center

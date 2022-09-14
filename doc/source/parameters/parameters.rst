@@ -11,8 +11,8 @@ Launching an application requires an executable of the required solver, and a pa
 
     cfd/cfd
     dem/dem
-    unresolved_cfd-dem/unresolved_cfd-dem
-    resolved_cfd-dem/resolved_cfd-dem
+    unresolved-cfd-dem/unresolved-cfd-dem
+    resolved-cfd-dem/resolved-cfd-dem
     rpt/rpt
 
 .. tip:: 

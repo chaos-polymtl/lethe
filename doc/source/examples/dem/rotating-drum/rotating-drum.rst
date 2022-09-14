@@ -13,7 +13,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d_rotating_drum/rotating_drum.prm``
+``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 
 Description of the case
@@ -163,7 +163,7 @@ This simulation can be launched (in parallel mode on 64 processes) by:
 
 .. code-block:: text
 
-  mpirun -np 64 dem_3d rotating_drum.prm
+  mpirun -np 64 dem_3d rotating-drum.prm
 
 
 .. warning::

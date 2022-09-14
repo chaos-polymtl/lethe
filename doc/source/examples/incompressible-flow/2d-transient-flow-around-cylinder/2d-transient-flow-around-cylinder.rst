@@ -14,15 +14,15 @@ Features
 Location of the example
 ------------------------
 
-- Parameter file: ``/examples/incompressible_flow/2d_transient-flow_around_cylinder/cylinder.prm``
-- Mesh file: ``/examples/incompressible_flow/2d_transient-flow_around_cylinder/cylinder_structured.msh``
-- Geometry file: ``/examples/incompressible_flow/2d_transient-flow_around_cylinder/cylinder_structured.geo``
+- Parameter file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder.prm``
+- Mesh file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.msh``
+- Geometry file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.geo``
 
 Description of the case
 -----------------------
 We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais et al. `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
 
-.. image:: images/geometry_description.png
+.. image:: images/geometry-description.png
     :alt: The geometry
     :align: center
     :name: geometry_description
@@ -73,7 +73,7 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 
     subsection mesh
         set type                = gmsh
-        set file name           = cylinder_structured.msh
+        set file name           = cylinder-structured.msh
         set initial refinement  = 1
     end
 

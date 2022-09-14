@@ -187,6 +187,6 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 .. seealso::
 	The Nitsche immersed boundary method is used in the examples:
 	  * :doc:`../../examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche`
-	  * :doc:`../../examples/incompressible-flow/3d_nitsche_mixer_with_pbt_impeller/nitsche_mixer_with_pbt_impeller`
+	  * :doc:`../../examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller`
 
 

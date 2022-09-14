@@ -14,7 +14,7 @@ Features
 
 Location of the example
 ------------------------
-``examples/incompressible_flow/2d_taylor-couette/taylor-couette.prm``
+``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
 
 
 Description of the case
@@ -214,7 +214,7 @@ Results
 
 Using Paraview, the steady-state velocity profile can be visualized:
 
-.. image:: images/flow_patterns.png
+.. image:: images/flow-patterns.png
     :alt: velocity distribution
     :align: center
     :height: 10cm
@@ -226,7 +226,7 @@ As can be seen, each cell is curved because a Q2 isoparametric mapping was used 
 
 A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh:
 
-.. image:: images/lethe_analytical_taylor_couette_comparison.png
+.. image:: images/lethe-analytical-taylor-couette-comparison.png
     :alt: Azimuthal velocity compared with the analytical solution
     :align: center
     :height: 10cm

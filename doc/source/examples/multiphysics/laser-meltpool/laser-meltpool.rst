@@ -30,11 +30,11 @@ Description of the case
 -----------------------------
 
 A Ti-6Al-4 V powder bed (assumed as a solid block in this example) melts using a laser beam that is emitted perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the solid block melts in the direction of the laser. The corresponding parameter file is 
-``laser_meltpool.prm``.
+``laser-meltpool.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/laser_phasechange.png
+.. image:: images/laser-phasechange.png
     :alt: Schematic
     :align: center
     :width: 400
@@ -58,7 +58,7 @@ time step of :math:`5.0 \times 10^{-6}` seconds.
       set method                  		= bdf2
       set time end                		= 0.005
       set time step               		= 0.000005
-      set output name             		= laser_meltpool
+      set output name             		= laser-meltpool
       set output frequency        		= 1
       set output path                  	= ./output/
     end
@@ -173,7 +173,7 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
     end    
 
 
-The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. Interested readers may find more information on phase change model in the `Stefan problem example <https://lethe-cfd.github.io/lethe/examples/multiphysics/stefan_problem/stefan_problem.html>`_ . In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
+The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. Interested readers may find more information on phase change model in the `Stefan problem example <https://lethe-cfd.github.io/lethe/examples/multiphysics/stefan-problem/stefan-problem.html>`_ . In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
 
 
 .. code-block:: text
@@ -251,7 +251,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 12 gls_navier_stokes_2d laser_meltpool.prm``
+``mpirun -np 12 gls_navier_stokes_2d laser-meltpool.prm``
 
 to run the simulation using twelve CPU cores. Feel free to use more.
 
@@ -269,7 +269,7 @@ Results
 
 The following animation shows the temperature distribution in the simulations domain, as well the melted zone (using white contour lines at the liquidus and solidus temperatures).
 
-.. image:: images/laser_meltpool.gif
+.. image:: images/laser-meltpool.gif
     :alt: temperature
     :align: center
     :width: 600

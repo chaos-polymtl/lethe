@@ -14,7 +14,7 @@ Features
 
 Location of the examples
 ------------------------
- ``/examples/dem/3d_rotating_drum_with_post_processing/rotating_drum_with_post_processing.prm``
+``/examples/dem/3d-rotating-drum-with-post-processing/rotating-drum-with-post-processing.prm``
 
 
 Description of the case
