@@ -10,8 +10,7 @@ subsection simulation control
   set adapt                        = true
   set max cfl                      = 0.4
   set output name                  = rising-bubble
-  set output control               = time
-  set output time                  = 0.03
+  set output frequency             = 20
   set output path                  = ./output/
 end
 
@@ -32,7 +31,8 @@ subsection VOF
     set enable              = true
     set threshold           = 0.5
     set interface sharpness = 1.4
-    set frequency           = 50
+    set frequency           = 10
+    set type                = constant
   end
   subsection surface tension force
     set enable                         = true

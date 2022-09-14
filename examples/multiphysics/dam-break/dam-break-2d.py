@@ -1,6 +1,6 @@
 #############################################################################
 """
-Postprocessing code for gls_VOF_dam-break_Martin_and_Moyce example
+Postprocessing code for gls_dam-break_Martin_and_Moyce example
 
 """
 #############################################################################
@@ -21,9 +21,7 @@ import glob
 
 import os
 import sys
-from pyvista.plotting.renderer import CameraPosition
 
-from scipy.linalg.special_matrices import dft
 #############################################################################
 
 #############################################################################
@@ -47,13 +45,14 @@ list_vtu = [x for x in list_vtu if "vtu" in x ]
 
 
 #Create a list of time_steps
-data = pd.read_csv("output/dam-break_VOF.pvd",sep='"',header=5, usecols=[1],skiprows=[38,39]) 
+data = pd.read_csv("output/dam-break.pvd",sep='"',header=5, usecols=[1],skiprows=[41,42,43]) 
 data.columns = ["a"] 
-time_list = data['a']
-print(data['a'])
+time_list_duplicates = data['a']
+# Remove duplicates
+time_list = list(dict.fromkeys(time_list_duplicates))
 
 #Set phase_limit to search for maximum x
-phase_limit = 0.1
+phase_limit = 0.5
 
 #Sort list
 time_list, list_vtu = (list(t) for t in zip(*sorted(zip(time_list, list_vtu))))
@@ -76,8 +75,6 @@ for i in range(0, len(list_vtu)):
     x_max = max(points[phase[0] > phase_limit].values)[0]
     x_list.append(x_max)
 
-print('List of maximum values for x:')
-print(x_list)
 
 #Sort x_list, since the time_list is extracted from the .pvd file, the x_list and time_list are not consistent
 x_list.sort()
