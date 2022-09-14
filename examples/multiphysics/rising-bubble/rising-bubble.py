@@ -74,7 +74,6 @@ for i in range(length):
     elif i == (length-1) :
         bubble_rise_vel[i] = (smoothed_y[-1] -  smoothed_y[-2]) / (time_list[-1]-time_list[-2])
     else :
-        print (i)
         dt_0 = time_list[i]-time_list[i-1]
         dt_1 = time_list[i+1]-time_list[i]
         bubble_rise_vel[i] = (smoothed_y[i+1] - (dt_0/dt_1)*smoothed_y[i-1] - (1-dt_0/dt_1)*smoothed_y[i]) / (dt_1*(1+dt_0/dt_1))
