@@ -1343,7 +1343,9 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable, Parameters::MultipleAdaptationParameters> &ivar,
+VolumeOfFluid<dim>::compute_kelly(
+  const std::pair<const Parameters::MeshAdaptation::Variable,
+                  Parameters::MultipleAdaptationParameters> &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (ivar.first == Parameters::MeshAdaptation::Variable::phase)
