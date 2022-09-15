@@ -161,7 +161,7 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   virtual void
-  compute_kelly(const std::pair<Parameters::MeshAdaptation::Variable,
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
                 dealii::Vector<float> &estimated_error_per_cell) = 0;
 

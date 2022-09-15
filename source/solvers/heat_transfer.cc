@@ -276,8 +276,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  HeatTransferScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  HeatTransferScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -422,8 +422,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  HeatTransferScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  HeatTransferScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -720,7 +720,7 @@ HeatTransfer<dim>::post_mesh_adaptation()
 template <int dim>
 void
 HeatTransfer<dim>::compute_kelly(
-  const std::pair<Parameters::MeshAdaptation::Variable,
+  const std::pair<const Parameters::MeshAdaptation::Variable,
                   Parameters::MultipleAdaptationParameters> &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {

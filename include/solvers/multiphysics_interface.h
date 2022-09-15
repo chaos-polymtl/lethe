@@ -22,6 +22,15 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
+#include <core/exceptions.h>
+#include <core/multiphysics.h>
+#include <core/parameters_multiphysics.h>
+#include <core/simulation_control.h>
+#include <core/solid_base.h>
+
+#include <solvers/auxiliary_physics.h>
+#include <solvers/simulation_parameters.h>
+
 #include <deal.II/base/exceptions.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -30,13 +39,6 @@
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-#include <core/exceptions.h>
-#include <core/multiphysics.h>
-#include <core/parameters_multiphysics.h>
-#include <core/simulation_control.h>
-#include <solvers/auxiliary_physics.h>
-#include <solvers/simulation_parameters.h>
 
 #include <map>
 #include <memory>
@@ -57,7 +59,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
-    ConditionalOStream &               p_pcout);
+    ConditionalOStream                &p_pcout);
 
   std::vector<PhysicsID>
   get_active_physics()
@@ -795,7 +797,7 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   virtual void
-  compute_kelly(const std::pair<Parameters::MeshAdaptation::Variable,
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
                 dealii::Vector<float> &estimated_error_per_cell)
   {

@@ -53,7 +53,7 @@ public:
    * @brief VOF - Base constructor.
    */
   VolumeOfFluid<dim>(
-    MultiphysicsInterface<dim> *     multiphysics_interface,
+    MultiphysicsInterface<dim>      *multiphysics_interface,
     const SimulationParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
@@ -197,7 +197,7 @@ public:
   double
   find_monitored_fluid_avg_pressure(
     const TrilinosWrappers::MPI::Vector &solution,
-    const VectorType &                   current_solution_fd,
+    const VectorType                    &current_solution_fd,
     const Parameters::FluidIndicator     monitored_fluid);
 
   /**
@@ -261,7 +261,7 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   void
-  compute_kelly(const std::pair<Parameters::MeshAdaptation::Variable,
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
                 dealii::Vector<float> &estimated_error_per_cell);
 
@@ -407,8 +407,8 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFScratchData<dim> &                                 scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    VOFScratchData<dim>                                  &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -426,8 +426,8 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    VOFScratchData<dim> &                                 scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    VOFScratchData<dim>                                  &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
@@ -523,7 +523,7 @@ private:
   template <typename VectorType>
   void
   apply_peeling_wetting(const unsigned int i_bc,
-                        const VectorType & current_solution_fd);
+                        const VectorType  &current_solution_fd);
 
   /**
    * @brief Change cell phase, small method called to avoid code repetition and reduce sloppy
@@ -539,9 +539,9 @@ private:
    */
   void
   change_cell_phase(
-    const PhaseChange &                         type,
-    const double &                              new_phase,
-    TrilinosWrappers::MPI::Vector &             solution_pw,
+    const PhaseChange                          &type,
+    const double                               &new_phase,
+    TrilinosWrappers::MPI::Vector              &solution_pw,
     const std::vector<types::global_dof_index> &dof_indices_vof);
 
   /**
@@ -650,7 +650,7 @@ private:
 
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
-  MultiphysicsInterface<dim> *     multiphysics;
+  MultiphysicsInterface<dim>      *multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
   // Core elements for the VOF simulation

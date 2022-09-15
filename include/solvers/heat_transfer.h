@@ -52,7 +52,7 @@ template <int dim>
 class HeatTransfer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  HeatTransfer<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+  HeatTransfer<dim>(MultiphysicsInterface<dim>      *multiphysics_interface,
                     const SimulationParameters<dim> &p_simulation_parameters,
                     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                        p_triangulation,
@@ -199,7 +199,7 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   void
-  compute_kelly(const std::pair<Parameters::MeshAdaptation::Variable,
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
                 dealii::Vector<float> &estimated_error_per_cell);
 
@@ -318,8 +318,8 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    HeatTransferScratchData<dim> &                        scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    HeatTransferScratchData<dim>                         &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -337,8 +337,8 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    HeatTransferScratchData<dim> &                        scratch_data,
-    StabilizedMethodsCopyData &                           copy_data);
+    HeatTransferScratchData<dim>                         &scratch_data,
+    StabilizedMethodsCopyData                            &copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
@@ -362,7 +362,7 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
-  MultiphysicsInterface<dim> *     multiphysics;
+  MultiphysicsInterface<dim>      *multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
 
