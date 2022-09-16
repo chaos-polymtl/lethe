@@ -19,9 +19,9 @@ Features
 - Mesh adaptation using temperature
 
 
-------------------------
-Location of the example
-------------------------
+--------------------------------------------
+Location of the files used in this example
+--------------------------------------------
 ``examples/multiphysics/laser-meltpool/laser-meltpool.prm``
 
 

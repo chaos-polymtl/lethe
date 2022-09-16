@@ -10,8 +10,8 @@ Features
 - Solver: ``gls_navier_stokes_3d`` (with Q1-Q1) 
 - Transient problem
 
-Location of the example
-------------------------
+Location of the files used in this example
+--------------------------------------------
 
 - Parameter file: ``/examples/incompressible-flow/3d-periodic-hills/periodic-hills.prm``
 

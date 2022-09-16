@@ -12,8 +12,8 @@ Features
 - Lagrangian post-processing
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/dem/3d-rotating-drum-with-post-processing/rotating-drum-with-post-processing.prm``
 
 

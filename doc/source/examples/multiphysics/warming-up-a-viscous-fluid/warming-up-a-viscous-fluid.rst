@@ -12,8 +12,8 @@ Features
 * Displays the use of heat transfer physics
 * Analytical solution
 
-Location of the example
------------------------
+Location of the files used in this example
+--------------------------------------------
 ``examples/multiphysics/warming-up-viscous-fluid``
 
 Description of the case

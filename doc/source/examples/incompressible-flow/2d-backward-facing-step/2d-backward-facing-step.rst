@@ -10,8 +10,8 @@ Features
 - Comparison with benchmark solutions
 - Mesh refinement and error analysis
 
-Location of the example
------------------------
+Location of the files used in this example
+--------------------------------------------
 
 - Base case (:math:`Re < 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds100-600``
 - Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds700-1000``

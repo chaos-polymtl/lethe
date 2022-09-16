@@ -26,8 +26,8 @@ The E4 experiment consists in the release of a particle made of Nylon (:math:`\r
 All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
  ``/examples/resolved-cfd-dem/sedimentation-1-particle/sedimentation-1-particle.prm``
  
 Parameter file

@@ -12,8 +12,8 @@ Features
 - Displays the selection of models and physical properties
 
 
-Location of the example
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/unresolved-cfd-dem/cylindrical-packed-bed``
 
 

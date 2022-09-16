@@ -10,8 +10,8 @@ Features
 - Rotating a triangulation
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 

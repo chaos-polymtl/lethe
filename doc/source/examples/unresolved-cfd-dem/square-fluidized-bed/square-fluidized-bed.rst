@@ -12,8 +12,8 @@ Features
 - Simulates a solid-gas fluidized bed.
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/unresolved-cfd-dem/square-fluidized-bed``
 
 

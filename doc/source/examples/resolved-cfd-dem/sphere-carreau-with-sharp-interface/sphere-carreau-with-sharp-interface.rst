@@ -12,8 +12,8 @@ Features
 - Ramping initial condition
 - Non-uniform mesh adaptation 
 
-Location of the example
-------------------------
+Location of the files used in this example
+--------------------------------------------
 
 - Parameter file: ``/examples/resolved-cfd-dem/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-inferface.prm``
 

@@ -11,8 +11,8 @@ Features
 - Load-balancing
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 

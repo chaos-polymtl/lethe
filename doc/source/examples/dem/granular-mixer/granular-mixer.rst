@@ -12,8 +12,8 @@ Features
 - Bidispersed particles (same size and properties, but different types)
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 

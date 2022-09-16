@@ -11,8 +11,8 @@ Features
 - Displays the selection of models and physical properties
 
 
-Location of the examples
-------------------------
+Location of the files used in this example
+--------------------------------------------
 ``/examples/dem/2d-packing-in-circle/packing-in-circle.prm``
 
 
