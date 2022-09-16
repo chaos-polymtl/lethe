@@ -263,7 +263,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 2 gls_navier_stokes_2d gls-dam-break-Martin-and-Moyce.prm``
+``mpirun -np 2 gls_navier_stokes_2d dam-break-Martin-and-Moyce.prm``
 
 to run the simulation using two CPU cores. Feel free to use more.
 
