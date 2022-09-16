@@ -1,6 +1,6 @@
 #############################################################################
 """
-Postprocessing code for gls_dam-break_Martin_and_Moyce example
+Postprocessing code for dam-break_Martin_and_Moyce example
 
 """
 #############################################################################
