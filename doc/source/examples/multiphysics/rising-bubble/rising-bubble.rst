@@ -253,7 +253,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_2d rising-bubble_VOF.prm``
+``mpirun -np 8 gls_navier_stokes_2d rising-bubble.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 
