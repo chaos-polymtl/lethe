@@ -285,7 +285,7 @@ with the red area and the blue area corresponding conversely to the water locati
     :alt: time-shots
     :align: center
 
-A python post-processing code `(dambreak_2d_lethe.py)` 
+A python post-processing code `(dam-break-2d.py)` 
 is added to the example folder to post-process the results.
 Run ``python3 ./dam_break_2d.py ./output`` to execute this 
 post-processing code, where ``./output`` is the directory that 
