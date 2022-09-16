@@ -276,7 +276,7 @@ A python post-processing code `(rising-bubble.py)`
 is added to the example folder to post-process the results.
 Run ``python3 ./rising-bubble.py ./output`` to execute this 
 post-processing code, where ``./output`` is the directory that 
-contains the simulation results. In post-processing, the maximum and minimum axial positions of the light phase (bubble) are tracked to monitor the location of the center of the bubble as a function of time. Then, the bubble rise velocity is calculated as the derivation of the bubble axial position. These results are compared with the simulations of Zahedi, Kronbichler, and Kreiss [2]. The following images show the results of these comparisons. The oscillations in the bubble rise velocity are attributed to the different methods used for finding the centroid of the bubble, numerical derivation, and smoothing of the bubble location and rise velocity.
+contains the simulation results. In post-processing, the maximum and minimum axial positions of the light phase (bubble) are tracked to monitor the location of the center of the bubble as a function of time. Then, the bubble rise velocity is calculated as the derivation of the bubble axial position. These results are compared with the simulations of Zahedi, Kronbichler, and Kreiss [`2 <https://doi.org/10.1002/fld.2643>`_]. The following images show the results of these comparisons. The oscillations in the bubble rise velocity are attributed to the different methods used for finding the centroid of the bubble, numerical derivation, and smoothing of the bubble location and rise velocity.
 
 .. image:: images/ymean-t.png
     :alt: ymean_t
