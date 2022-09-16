@@ -791,18 +791,23 @@ public:
 
   /**
    * @brief Mesh refinement according to an auxiliary physic parameter
-   * NB : only implemented for VOF for now
+   *
+   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   *
+   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   virtual void
-  compute_kelly(dealii::Vector<float> &estimated_error_per_cell)
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
+                                Parameters::MultipleAdaptationParameters> &ivar,
+                dealii::Vector<float> &estimated_error_per_cell)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->compute_kelly(estimated_error_per_cell);
+        iphys.second->compute_kelly(ivar, estimated_error_per_cell);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->compute_kelly(estimated_error_per_cell);
+        iphys.second->compute_kelly(ivar, estimated_error_per_cell);
       }
   };
 

@@ -3658,12 +3658,18 @@ GLSSharpNavierStokesSolver<dim>::solve()
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
       // To change once refinement is split into two function
+      // Warning: variables.begin() only takes the first values given (not
+      // generalized for multivariables mesh adaptation)
       double temp_refine =
-        this->simulation_parameters.mesh_adaptation.refinement_fraction;
+        this->simulation_parameters.mesh_adaptation.variables.begin()
+          ->second.refinement_fraction;
       double temp_coarse =
-        this->simulation_parameters.mesh_adaptation.coarsening_fraction;
-      this->simulation_parameters.mesh_adaptation.refinement_fraction = 0;
-      this->simulation_parameters.mesh_adaptation.coarsening_fraction = 0;
+        this->simulation_parameters.mesh_adaptation.variables.begin()
+          ->second.coarsening_fraction;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.refinement_fraction = 0;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.coarsening_fraction = 0;
 
       for (unsigned int i = 0;
            i <
@@ -3680,10 +3686,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
         }
-      this->simulation_parameters.mesh_adaptation.refinement_fraction =
-        temp_refine;
-      this->simulation_parameters.mesh_adaptation.coarsening_fraction =
-        temp_coarse;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.refinement_fraction = temp_refine;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.coarsening_fraction = temp_coarse;
 
       vertices_cell_mapping();
 

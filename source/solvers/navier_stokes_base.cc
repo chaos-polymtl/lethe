@@ -865,52 +865,58 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
 
-  if (this->simulation_parameters.mesh_adaptation.variable ==
-      Parameters::MeshAdaptation::Variable::pressure)
+  for (const std::pair<const Parameters::MeshAdaptation::Variable,
+                       Parameters::MultipleAdaptationParameters> &ivar :
+       this->simulation_parameters.mesh_adaptation.variables)
     {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(pressure));
-    }
-  else if (this->simulation_parameters.mesh_adaptation.variable ==
-           Parameters::MeshAdaptation::Variable::velocity)
-    {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(velocity));
-    }
-  else
-    {
-      // refine_mesh on an auxiliary physic parameter
-      multiphysics->compute_kelly(estimated_error_per_cell);
-    }
+      if (ivar.first == Parameters::MeshAdaptation::Variable::pressure)
+        {
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            present_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(pressure));
+        }
+      else if (ivar.first == Parameters::MeshAdaptation::Variable::velocity)
+        {
+          KellyErrorEstimator<dim>::estimate(
+            *this->mapping,
+            this->dof_handler,
+            *this->face_quadrature,
+            typename std::map<types::boundary_id,
+                              const Function<dim, double> *>(),
+            present_solution,
+            estimated_error_per_cell,
+            this->fe->component_mask(velocity));
+        }
+      else
+        {
+          // refine_mesh on an auxiliary physic parameter
+          multiphysics->compute_kelly(ivar, estimated_error_per_cell);
+        }
 
-  if (this->simulation_parameters.mesh_adaptation.fractionType ==
-      Parameters::MeshAdaptation::FractionType::number)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-      tria,
-      estimated_error_per_cell,
-      this->simulation_parameters.mesh_adaptation.refinement_fraction,
-      this->simulation_parameters.mesh_adaptation.coarsening_fraction,
-      this->simulation_parameters.mesh_adaptation.maximum_number_elements);
 
-  else if (this->simulation_parameters.mesh_adaptation.fractionType ==
-           Parameters::MeshAdaptation::FractionType::fraction)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
-      tria,
-      estimated_error_per_cell,
-      this->simulation_parameters.mesh_adaptation.refinement_fraction,
-      this->simulation_parameters.mesh_adaptation.coarsening_fraction);
+      if (this->simulation_parameters.mesh_adaptation.fractionType ==
+          Parameters::MeshAdaptation::FractionType::number)
+        parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
+          tria,
+          estimated_error_per_cell,
+          ivar.second.refinement_fraction,
+          ivar.second.coarsening_fraction,
+          this->simulation_parameters.mesh_adaptation.maximum_number_elements);
+
+      else if (this->simulation_parameters.mesh_adaptation.fractionType ==
+               Parameters::MeshAdaptation::FractionType::fraction)
+        parallel::distributed::GridRefinement::
+          refine_and_coarsen_fixed_fraction(tria,
+                                            estimated_error_per_cell,
+                                            ivar.second.refinement_fraction,
+                                            ivar.second.coarsening_fraction);
+    }
 
   if (tria.n_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
