@@ -17,6 +17,20 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/lethe_grid_tools.h>
+#include <core/sdirk.h>
+#include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/flow_control.h>
+#include <solvers/navier_stokes_base.h>
+#include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
+
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
@@ -37,18 +51,6 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/lethe_grid_tools.h>
-#include <core/sdirk.h>
-#include <core/solutions_output.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/flow_control.h>
-#include <solvers/navier_stokes_base.h>
-#include <solvers/post_processors.h>
-#include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
 #include <sys/stat.h>
 
 
@@ -861,7 +863,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
+
+  // Global falgs
+  std::vector<bool> global_refine_flags(dim * tria.n_active_cells(), false);
+  std::vector<bool> global_coarsen_flags(dim * tria.n_active_cells(), false);
 
   for (const std::pair<const Parameters::MeshAdaptation::Variable,
                        Parameters::MultipleAdaptationParameters> &ivar :
@@ -914,30 +920,31 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                                             ivar.second.refinement_fraction,
                                             ivar.second.coarsening_fraction);
 
-      // WIP create flag map/vector
+      std::vector<bool> current_refine_flags;
+      std::vector<bool> current_coarsen_flags;
+
+      tria.save_refine_flags(current_refine_flags);
+      tria.save_coarsen_flags(current_coarsen_flags);
+
+      // Opération logique boolean sur tes flags globaux
+      // Si je suis le premier, global = current
+      // Si t'es pas le premier, appliquer la logique
+      //     for
+      //       k... global_refine_flags[k] =
+      //         global_refine_flags[k] || current_refine_flags[k];
+      //     global_refine_flags[k] = global_refine_flags[k] &&
+      //     current_refine_flags[k];
+
+      // Vide la triangulation de ses flags
       for (const auto &cell : tria.active_cell_iterators())
         {
-          // https://www.dealii.org/current/doxygen/deal.II/classTriangulation.html#aca5cfa9068a5d3ad32dfca87e2901a87
-          // void Triangulation< dim, spacedim >::save_refine_flags(
-          // std::vector< bool > &  	v	) 	const
-          // => vecteur refine_flags
-
-          // void Triangulation< dim, spacedim >::save_coarsen_flags 	(
-          // std::vector< bool > &  	v	) 	const
-          //
-          // => vecteur coarsen_flags
-          // voir comment accéder aux éléments des vecteurs refine_flags et
-          // coarsen_flags
+          cell->clear_coarsen_flag();
+          cell->clear_refine_flag();
         }
     }
 
-  // WIP set flags on cells
-  for (const auto &cell : tria.active_cell_iterators())
-    {
-      // https://www.dealii.org/current/doxygen/deal.II/group__CPP11.html#ga9bd9f259f5b6c617c9ed88aa8b140ee8
-
-      // cell->set_refine_flag ();
-    }
+  tria.load_refine_flags(global_refine_flags);
+  tria.load_coarsen_flags(global_coarsen_flags);
 
   if (tria.n_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
