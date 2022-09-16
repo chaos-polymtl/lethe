@@ -190,7 +190,7 @@ We set ``initial refinement steps = 4`` to adapt the mesh to the initial value o
       set frequency               	= 1
       set fraction refinement     	= 0.99
       set fraction coarsening     	= 0.01
-      set initial refinement steps  = 4
+      set initial refinement steps  	= 4
     end
 
 
