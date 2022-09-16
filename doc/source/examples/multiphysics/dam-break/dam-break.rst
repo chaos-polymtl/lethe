@@ -287,7 +287,7 @@ with the red area and the blue area corresponding conversely to the water locati
 
 A python post-processing code `(dam-break-2d.py)` 
 is added to the example folder to post-process the results.
-Run ``python3 ./dam_break_2d.py ./output`` to execute this 
+Run ``python3 ./dam-break-2d.py ./output`` to execute this 
 post-processing code, where ``./output`` is the directory that 
 contains the simulation results. In post-processing, the maximum 
 dimensionless lateral position of the liquid phase is tracked 
