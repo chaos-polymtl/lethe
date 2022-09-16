@@ -40,7 +40,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 .. note:: 
     All the four boundary conditions are ``slip``, and an external 
-    gravity field of :math:`-1`` is applied in the y direction.
+    gravity field of :math:`-1` is applied in the y direction.
 
 
 --------------
@@ -97,8 +97,9 @@ If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters
 
 1. Phase fraction limiter   
 
-    .. math:: 
-        \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
+.. math:: 
+
+    \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
  
 The phase fraction :math:`\phi` is a physical parameter that is bounded in the interval :math:`[0,1]`.
 The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
@@ -106,12 +107,13 @@ The phase fraction limiter above will update the phase fraction if it failed to 
 
 2. Interface sharpening 
 
-    .. math::
-        \phi :=
-        \begin{cases}
-        c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
-        1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
-        \end{cases}
+.. math::
+
+    \phi :=
+    \begin{cases}
+    c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
+    1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
+    \end{cases}
 
 ``frequency`` is an integer parameter that defines the 
 frequency of the interface sharpening; ``threshold`` defines 

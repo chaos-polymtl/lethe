@@ -39,7 +39,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 .. note:: 
     All the four boundary conditions are ``noslip``, and an external 
-    gravity field of :math:`-0.98`` is applied in the y direction.
+    gravity field of :math:`-0.98` is applied in the y direction.
 
 
 --------------
@@ -101,18 +101,21 @@ Volume of Fluid (VOF)
 
 In Lethe, the surface tension force (:math:`{\bf{F_{\sigma}}}`) is calculated using the continuous surface force (CSF) [1, 2]:
 
-    .. math::
-        {\bf{F_{\sigma}}} = 2 \frac{\rho}{\rho_0 + \rho_1} \sigma k {\bf{\psi}}
+.. math::
+
+    {\bf{F_{\sigma}}} = 2 \frac{\rho}{\rho_0 + \rho_1} \sigma k {\bf{\psi}}
 
 where :math:`\sigma`, :math:`k` and :math:`\bf{\psi}` denote respectively the surface tension coefficient, the filtered curvature and the filtered phase fraction gradient. :math:`\rho`, :math:`\rho_1`, and :math:`\rho_2` are the density of the flow, the density of phase 0, and the density of phase 1, respectively.
 
 The following equations calculate the filtered phase fraction gradient and filtered curvature, respectively.
 
-    .. math:: 
-        \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
+.. math:: 
 
-    .. math:: 
-        \int_\Omega \left( v k + \eta_k \nabla v \cdot \nabla k \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
+    \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
+
+.. math:: 
+
+    \int_\Omega \left( v k + \eta_k \nabla v \cdot \nabla k \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
 where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`k`, and :math:`\eta_k \geq 0` denote a test function, filtered phase fraction gradient, phase fraction gradient filter value, phase fraction, filtered curvature, and curvature filter value, respectively.
 
