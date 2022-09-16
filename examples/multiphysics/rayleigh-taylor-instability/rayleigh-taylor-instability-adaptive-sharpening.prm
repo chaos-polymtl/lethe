@@ -10,7 +10,7 @@ subsection simulation control
   set time step      = 0.0002
   set adapt          = true
   set max cfl        = 0.9
-  set output name    = rayleigh-taylor_adaptive_sharpening
+  set output name    = rayleigh-taylor-adaptive-sharpening
   set output path    = ./output/
   set output control = time
   set output time    = 0.005
