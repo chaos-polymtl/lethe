@@ -17,20 +17,6 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/lethe_grid_tools.h>
-#include <core/sdirk.h>
-#include <core/solutions_output.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/flow_control.h>
-#include <solvers/navier_stokes_base.h>
-#include <solvers/post_processors.h>
-#include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
-
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
@@ -51,6 +37,18 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/lethe_grid_tools.h>
+#include <core/sdirk.h>
+#include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/flow_control.h>
+#include <solvers/navier_stokes_base.h>
+#include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
 #include <sys/stat.h>
 
 
@@ -899,7 +897,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           multiphysics->compute_kelly(ivar, estimated_error_per_cell);
         }
 
-
       if (this->simulation_parameters.mesh_adaptation.fractionType ==
           Parameters::MeshAdaptation::FractionType::number)
         parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
@@ -916,6 +913,30 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                                             estimated_error_per_cell,
                                             ivar.second.refinement_fraction,
                                             ivar.second.coarsening_fraction);
+
+      // WIP create flag map/vector
+      for (const auto &cell : tria.active_cell_iterators())
+        {
+          // https://www.dealii.org/current/doxygen/deal.II/classTriangulation.html#aca5cfa9068a5d3ad32dfca87e2901a87
+          // void Triangulation< dim, spacedim >::save_refine_flags(
+          // std::vector< bool > &  	v	) 	const
+          // => vecteur refine_flags
+
+          // void Triangulation< dim, spacedim >::save_coarsen_flags 	(
+          // std::vector< bool > &  	v	) 	const
+          //
+          // => vecteur coarsen_flags
+          // voir comment accéder aux éléments des vecteurs refine_flags et
+          // coarsen_flags
+        }
+    }
+
+  // WIP set flags on cells
+  for (const auto &cell : tria.active_cell_iterators())
+    {
+      // https://www.dealii.org/current/doxygen/deal.II/group__CPP11.html#ga9bd9f259f5b6c617c9ed88aa8b140ee8
+
+      // cell->set_refine_flag ();
     }
 
   if (tria.n_levels() >
