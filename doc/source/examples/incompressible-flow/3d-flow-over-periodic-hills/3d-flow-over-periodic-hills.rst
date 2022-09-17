@@ -105,7 +105,7 @@ The following image displays a coarse mesh for this example. It can be seen that
 .. image:: images/mesh.png
     :alt: Mesh
     :align: center
-    :name: mesh
+    :name: mesh_periodic_hills_3d
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
