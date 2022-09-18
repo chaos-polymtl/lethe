@@ -215,21 +215,38 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                                  position,
                                                  orientation);
     }
+  else if (type == "rbf")
+    {
+      constexpr unsigned int numbers_per_nodes = dim + 3;
+      unsigned int number_of_nodes = shape_arguments.size() / numbers_per_nodes;
+      std::vector<double>         support_radius;
+      std::vector<unsigned int>   basis_function;
+      std::vector<double>         weight;
+      std::vector<Tensor<1, dim>> nodes;
+      support_radius.resize(number_of_nodes);
+      basis_function.resize(number_of_nodes);
+      weight.resize(number_of_nodes);
+      nodes.resize(number_of_nodes);
+      // The data is stored in this order: all weights, all radii, all basis
+      // functions, all x positions, all y positions(, all z positions)
+      for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
+        {
+          weight[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
+          support_radius[n_i] = shape_arguments[1 * number_of_nodes + n_i];
+          basis_function[n_i] =
+            (unsigned int)round(shape_arguments[2 * number_of_nodes + n_i]);
+          nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
+          nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
+          if constexpr (dim == 3)
+            nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
+        }
+      shape = std::make_shared<RBFShape<dim>>(
+        support_radius, basis_function, weight, nodes, position, orientation);
+    }
   else
     StandardExceptions::ExcNotImplemented();
 }
 
-template <int dim>
-void
-IBParticle<dim>::initialize_rbf_shape(
-  const std::vector<double> &        support_radius,
-  const std::vector<unsigned int> &  basis_function,
-  const std::vector<double> &        weight,
-  const std::vector<Tensor<1, dim>> &nodes)
-{
-  shape = std::make_shared<RBFShape<dim>>(
-    support_radius, basis_function, weight, nodes, position, orientation);
-}
 
 template <int dim>
 unsigned int

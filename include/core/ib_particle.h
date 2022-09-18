@@ -16,7 +16,6 @@
  */
 
 #include <core/shape.h>
-#include <core/utilities.h>
 
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function_signed_distance.h>
@@ -141,24 +140,12 @@ public:
    * Sets up a shape in accordance with the given type and arguments
    *
    * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
-   * rectangle, death star, cut hollow sphere, or torus
+   * rectangle, death star, cut hollow sphere, torus, or rbf
    * @param shape_arguments The dimensions to be used for shape initialization
    */
   void
   initialize_shape(const std::string         type,
                    const std::vector<double> shape_arguments);
-
-  /**
-   * @brief
-   * Sets up a shape in accordance with the given name
-   *
-   * @param shape_name The name of the file containing the RBF information
-   */
-  void
-  initialize_rbf_shape(const std::vector<double> &        support_radius,
-                       const std::vector<unsigned int> &  basis_function,
-                       const std::vector<double> &        weight,
-                       const std::vector<Tensor<1, dim>> &nodes);
 
   /**
    * @brief

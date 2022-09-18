@@ -32,6 +32,7 @@
 #define lethe_parameters_h
 
 #include <core/ib_particle.h>
+#include <core/utilities.h>
 #include <core/multiphysics.h>
 
 #include <deal.II/base/conditional_ostream.h>
