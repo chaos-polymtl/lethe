@@ -3604,7 +3604,8 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
             {
               // std::string shape_name = restart_data["shape_argument_0"][p_i];
               // TODO make restart possible
-              particles[p_i].initialize_rbf_shape("dummy_todo.txt");
+              // particles[p_i].initialize_rbf_shape("dummy_todo.txt");
+              StandardExceptions::ExcNotImplemented();
             }
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;

@@ -155,7 +155,10 @@ public:
    * @param shape_name The name of the file containing the RBF information
    */
   void
-  initialize_rbf_shape(const std::string shape_name);
+  initialize_rbf_shape(const std::vector<double> &        support_radius,
+                       const std::vector<unsigned int> &  basis_function,
+                       const std::vector<double> &        weight,
+                       const std::vector<Tensor<1, dim>> &nodes);
 
   /**
    * @brief
