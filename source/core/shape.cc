@@ -503,7 +503,10 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-
+  // The computation and addition of the bounding box distance is necessary
+  // since the RBF nodes may not cover the whole simulation domain. In that
+  // case, it is assumed that the distance from the RBF object is approximately
+  // the same as the distance from the corresponding bounding box.
   double bounding_box_distance = bounding_box->value(centered_point);
   double value = bounding_box_distance > 0. ? bounding_box_distance : 0.;
 
