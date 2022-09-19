@@ -3602,10 +3602,57 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           else if (restart_data["type"][p_i] ==
                    Shape<dim>::ShapeType::rbf_shape)
             {
-              // std::string shape_name = restart_data["shape_argument_0"][p_i];
-              // TODO make restart possible
-              // particles[p_i].initialize_rbf_shape("dummy_todo.txt");
-              StandardExceptions::ExcNotImplemented();
+              std::shared_ptr<RBFShape<dim>> shape =
+                std::dynamic_pointer_cast<RBFShape<dim>>(
+                  this->simulation_parameters.particlesParameters
+                    ->particles[p_i]
+                    .shape);
+
+              std::vector<double> shape_arguments;
+
+              unsigned int        number_of_nodes = shape->weight.size();
+              std::vector<double> weight;
+              std::vector<double> basis_function;
+              std::vector<double> support_radius;
+              std::vector<double> nodes_x;
+              std::vector<double> nodes_y;
+              std::vector<double> nodes_z;
+              weight.resize(number_of_nodes);
+              basis_function.resize(number_of_nodes);
+              support_radius.resize(number_of_nodes);
+              nodes_x.resize(number_of_nodes);
+              nodes_y.resize(number_of_nodes);
+              nodes_z.resize(number_of_nodes);
+
+              for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
+                {
+                  weight[n_i]         = shape->weight[n_i];
+                  support_radius[n_i] = shape->support_radius[n_i];
+                  basis_function[n_i] = shape->basis_function[n_i];
+                  nodes_x[n_i]        = shape->nodes[n_i][0];
+                  nodes_y[n_i]        = shape->nodes[n_i][1];
+                  nodes_z[n_i]        = shape->nodes[n_i][2];
+                }
+              shape_arguments.reserve((dim + 3) * number_of_nodes);
+              shape_arguments.insert(shape_arguments.end(),
+                                     weight.begin(),
+                                     weight.end());
+              shape_arguments.insert(shape_arguments.end(),
+                                     support_radius.begin(),
+                                     support_radius.end());
+              shape_arguments.insert(shape_arguments.end(),
+                                     basis_function.begin(),
+                                     basis_function.end());
+              shape_arguments.insert(shape_arguments.end(),
+                                     nodes_x.begin(),
+                                     nodes_x.end());
+              shape_arguments.insert(shape_arguments.end(),
+                                     nodes_y.begin(),
+                                     nodes_y.end());
+              shape_arguments.insert(shape_arguments.end(),
+                                     nodes_z.begin(),
+                                     nodes_z.end());
+              particles[p_i].initialize_shape("rbf", shape_arguments);
             }
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;

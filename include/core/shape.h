@@ -659,11 +659,12 @@ public:
     C2C2       = 13,
   };
 
+  std::vector<double>         weight;
+  std::vector<Tensor<1, dim>> nodes;
+  std::vector<double>         support_radius;
+  std::vector<unsigned int>   basis_function;
+
 private:
-  std::vector<double>             weight;
-  std::vector<Tensor<1, dim>>     nodes;
-  std::vector<double>             support_radius;
-  std::vector<unsigned int>       basis_function;
   std::shared_ptr<Rectangle<dim>> bounding_box;
 };
 
