@@ -1,5 +1,5 @@
 ============================
-Rayleigh-Taylor Instability
+Rayleigh-Taylor instability
 ============================
 
 This example simulates the dynamic evolution of the single-mode `Rayleigh-Taylor instability`_ by density contrast. 
