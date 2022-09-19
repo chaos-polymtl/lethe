@@ -15,7 +15,7 @@ Transient iteration : 1        Time : 0.2      Time step : 0.2      CFL : 0
 *****************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.417811
-L2 error phase : 0.195496
+L2 error phase : 0.00208462
 
 *****************************************************************
 Transient iteration : 2        Time : 0.4      Time step : 0.2      CFL : 0       
@@ -27,7 +27,7 @@ Transient iteration : 2        Time : 0.4      Time step : 0.2      CFL : 0
    Number of VOF degrees of freedom: 775
 L2 error velocity : 0
 L2 error temperature : 0.0955313
-L2 error phase : 0.195753
+L2 error phase : 0.00208364
 
 *****************************************************************
 Transient iteration : 3        Time : 0.6      Time step : 0.2      CFL : 0       
@@ -39,7 +39,7 @@ Transient iteration : 3        Time : 0.6      Time step : 0.2      CFL : 0
    Number of VOF degrees of freedom: 873
 L2 error velocity : 0
 L2 error temperature : 0.0239307
-L2 error phase : 0.195743
+L2 error phase : 0.00208379
 
 *****************************************************************
 Transient iteration : 4        Time : 0.8      Time step : 0.2      CFL : 0       
@@ -51,7 +51,7 @@ Transient iteration : 4        Time : 0.8      Time step : 0.2      CFL : 0
    Number of VOF degrees of freedom: 873
 L2 error velocity : 0
 L2 error temperature : 0.00540909
-L2 error phase : 0.195741
+L2 error phase : 0.00208394
 
 *****************************************************************
 Transient iteration : 5        Time : 1        Time step : 0.2      CFL : 0       
@@ -63,7 +63,7 @@ Transient iteration : 5        Time : 1        Time step : 0.2      CFL : 0
    Number of VOF degrees of freedom: 840
 L2 error velocity : 0
 L2 error temperature : 0.00109053
-L2 error phase : 0.195741
+L2 error phase : 0.00208412
  time  error_velocity error_pressure 
 0.2000 0.000000e+00   0.0000         
 0.4000 0.000000e+00   0.0000         
@@ -77,8 +77,8 @@ cells error_temperature
 784   5.409094e-03      
 736   1.090529e-03      
  time  error_phase  
-0.2000 1.954961e-01 
-0.4000 1.957534e-01 
-0.6000 1.957427e-01 
-0.8000 1.957411e-01 
-1.0000 1.957406e-01 
+0.2000 2.084619e-03 
+0.4000 2.083642e-03 
+0.6000 2.083790e-03 
+0.8000 2.083938e-03 
+1.0000 2.084123e-03 

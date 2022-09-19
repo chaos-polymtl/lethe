@@ -94,7 +94,7 @@ subsection analytical solution
     set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
   end  
   subsection phase
-    set Function expression = if(x<=0,0,1)
+    set Function expression = if(x<=0,1,0)
   end
 end
 
