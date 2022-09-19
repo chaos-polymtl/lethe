@@ -21,9 +21,9 @@ Features
 --------------------------------------------
 Location of the files used in this example
 --------------------------------------------
-``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability_constant_sharpening.prm``
+``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-sharpening.prm``
 
-``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability_adaptive_sharpening.prm``
+``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-sharpening.prm``
 
 
 -----------------------------
