@@ -10,35 +10,35 @@ Transient iteration : 1        Time : 0.2      Time step : 0.2      CFL : 0
 *****************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.420327
-L2 error phase : 0.195496
+L2 error phase : 0.00208465
 
 *****************************************************************
 Transient iteration : 2        Time : 0.4      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.0961539
-L2 error phase : 0.195451
+L2 error temperature : 0.096154
+L2 error phase : 0.00208505
 
 *****************************************************************
 Transient iteration : 3        Time : 0.6      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.0231137
-L2 error phase : 0.195637
+L2 error phase : 0.00208424
 
 *****************************************************************
 Transient iteration : 4        Time : 0.8      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.00487389
-L2 error phase : 0.195636
+L2 error phase : 0.00208425
 
 *****************************************************************
 Transient iteration : 5        Time : 1        Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.000955305
-L2 error phase : 0.195636
+L2 error temperature : 0.000955306
+L2 error phase : 0.00208425
  time  error_velocity error_pressure 
 0.2000 0.000000e+00   0.0000         
 0.4000 0.000000e+00   0.0000         
@@ -47,13 +47,13 @@ L2 error phase : 0.195636
 1.0000 0.000000e+00   0.0000         
 cells error_temperature 
 1024  4.203271e-01      
-1024  9.615391e-02      
-1024  2.311367e-02      
-1024  4.873888e-03      
-1024  9.553052e-04      
+1024  9.615396e-02      
+1024  2.311368e-02      
+1024  4.873893e-03      
+1024  9.553056e-04      
  time  error_phase  
-0.2000 1.954964e-01 
-0.4000 1.954506e-01 
-0.6000 1.956370e-01 
-0.8000 1.956360e-01 
-1.0000 1.956358e-01 
+0.2000 2.084655e-03 
+0.4000 2.085054e-03 
+0.6000 2.084241e-03 
+0.8000 2.084251e-03 
+1.0000 2.084253e-03 

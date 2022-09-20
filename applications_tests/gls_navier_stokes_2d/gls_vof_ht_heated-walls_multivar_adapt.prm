@@ -8,7 +8,7 @@ subsection simulation control
   set number mesh adapt       = 0
   set time end                = 1
   set time step               = 0.2
-  set output name             = vof_ht_heated-walls
+  set output name             = vof_ht_heated-walls_multivar_adapt
   set output frequency        = 0
 end
 
@@ -78,7 +78,7 @@ subsection mesh
   set type = dealii
   set grid type = hyper_rectangle
   set grid arguments = -0.5, -0.1 : 0.5, 0.1 : true
-  set initial refinement = 5
+  set initial refinement = 4
 end
 
 # --------------------------------------------------
@@ -155,14 +155,14 @@ end
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-    set type                    = none #kelly
-    set variable                = phase
-    set fraction type           = fraction
-    set max refinement level    = 5
-    set min refinement level    = 3
-    set frequency               = 1
-    set fraction refinement     = 0.95
-    set fraction coarsening     = 0.02
+   set type = kelly
+   set initial refinement steps = 1
+   set variable = temperature,phase
+   set fraction type = fraction
+   set fraction coarsening = 0.2,0.02
+   set fraction refinement = 0.3,0.95
+   set max refinement level = 6
+   set min refinement level = 4
 end
 
 # --------------------------------------------------

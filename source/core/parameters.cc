@@ -1572,7 +1572,7 @@ namespace Parameters
         "velocity",
         Patterns::List(
           Patterns::Selection("velocity|pressure|phase|temperature")),
-        "Variables for kelly estimation"
+        "Variable(s) for kelly estimation"
         "Choices are <velocity|pressure|phase|temperature>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");

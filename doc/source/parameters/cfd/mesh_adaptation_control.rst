@@ -9,7 +9,8 @@ This subsection controls the mesh adaptation method, with default values given b
 	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
 	  set type                     = none
 
-	  # Variable for kelly estimation. Choices are velocity, pressure, phase or temperature.
+	  # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
+	  # For multi-variables refinement, separate the different variables with a comma
 	  set variable                 = velocity
 
 	  # Frequency of the mesh refinement
@@ -22,9 +23,11 @@ This subsection controls the mesh adaptation method, with default values given b
 	  set max refinement level     = 10
 
 	  # Fraction of coarsened elements
+	  # For multi-variables refinement, separate the different fractions with a comma
 	  set fraction coarsening      = 0.05
 
 	  # Fraction of refined elements
+	  # For multi-variables refinement, separate the different fractions with a comma
 	  set fraction refinement      = 0.1
 
 	  # How the fraction of refinement/coarsening are interpreted
@@ -40,11 +43,17 @@ This subsection controls the mesh adaptation method, with default values given b
 
 
 * Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 
-* The variable for kelly estimation should be specified with ``set variable``, and can be:
-	* velocity
-	* pressure
-	* phase (for multiphase flows)
-	* temperature
+* The variable for kelly estimation should be specified with ``set variable``, and can be: velocity, pressure, phase (for multiphase flows), temperature
+	* Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. ``set variable = velocity,temperature``, or ``set variable = velocity,phase,pressure`` etc.).
+
+	.. warning::
+		The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).
+
+.. important::
+	In the case of multiple variable mesh adaptation, the cells are:
+		* refined if refinement is necessary for at least one variable
+		* coarsened if coarsening is necessary for *all* variables
+
 * The frequency at which the mesh is refined is controlled with the ``frequency`` parameter. If ``set frequency = 1``, the mesh is refined at every iteration. 
 	* For transient simulation, this means at every time-step. 
 	* For steady-state simulation in which the steady-state problem is solved on successively refined meshes, the user should have ``set frequency = 1``, which is the default value.
@@ -60,6 +69,10 @@ This subsection controls the mesh adaptation method, with default values given b
 	For a good compromise between speed and precision, ``max refinement level`` should be set to ``2`` or ``3`` more than the ``min refinement level``
 
 * The fraction of cell that are refined and coarsened are controlled with the ``fraction refinement`` and ``fraction coarsening`` parameters. 
+	* Fractions for mesh adaptation on multiple variables must be separated with a coma (e.g. ``set fraction refinement = 0.2,0.2``, or ``set fraction coarsening = 0.1,0.3`` etc.).
+
+	.. warning::
+		The different ``variable`` must be defined explicitly (see this parameter definition above).
 
 .. tip:: 
 	For ``set type = kelly``, and ``set variable = velocity`` or ``pressure``, a good first start is achieve with ``set fraction refinement = 0.2`` and ``set fraction coarsening = 0.1``.
