@@ -1,5 +1,5 @@
 ==========================
-Dam break VOF
+Dam-break
 ==========================
 
 This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
@@ -10,16 +10,16 @@ This example simulates the dam break experiments of `Martin and Moyce (1952)`_.
 ----------------------------------
 Features
 ----------------------------------
-- Solver: ``gls_navier_stokes_2d`` 
-- Two phase flow handled by the Volume of fluids (VOF) approach, with a phase fraction limiter and phase sharpening
+- Solver: ``gls_navier_stokes_2d``  (with Q1-Q1)
+- Two phase flow handled by the Volume of fluids (VOF) approach with interface sharpening
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
 
-------------------------
-Location of the example
-------------------------
-``examples/multiphysics/dam-break-VOF/gls-VOF-dam-break-Martin-and-Moyce.prm``
+--------------------------------------------
+Location of the files used in this example
+--------------------------------------------
+``examples/multiphysics/dam-break/``
 
 
 ---------------------------
@@ -30,8 +30,6 @@ A liquid is fixed behind a dam at the left most corner of
 a rectangular domain as shown in the figure below.
 At :math:`t = 0` s, the dam is removed, and 
 the liquid is released into the total simulation domain. 
-The corresponding parameter file is 
-``gls-VOF-dam-break-Martin-and-Moyce.prm``.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
@@ -42,7 +40,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 .. note:: 
     All the four boundary conditions are ``slip``, and an external 
-    gravity field of :math:`-1`` is applied in the y direction.
+    gravity field of :math:`-1` is applied in the y direction.
 
 
 --------------
@@ -70,17 +68,10 @@ time step of :math:`0.01` seconds.
         set adapt                          = true
         set max cfl                        = 0.5
         set stop tolerance                 = 1e-5
-        set adaptative time step scaling   = 1.1
-        set number mesh adapt              = 0
-        set output name                    = dam-break_VOF
+        set output name                    = dam-break
         set output frequency               = 10
-        set output path                    = ./Output/
-        set subdivision                    = 1      
+        set output path                    = ./output/
     end
-
-.. warning::
-    Make sure to create a directory named ``Output`` in the same directory 
-    you are calling the solver from.  Otherwise, the solver will be unable to generate the results files and will break.
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
 and off `(false)` the physics of interest. Here ``VOF`` is chosen.
@@ -106,8 +97,9 @@ If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters
 
 1. Phase fraction limiter   
 
-    .. math:: 
-        \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
+.. math:: 
+
+    \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
  
 The phase fraction :math:`\phi` is a physical parameter that is bounded in the interval :math:`[0,1]`.
 The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
@@ -115,12 +107,13 @@ The phase fraction limiter above will update the phase fraction if it failed to 
 
 2. Interface sharpening 
 
-    .. math::
-        \phi :=
-        \begin{cases}
-        c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
-        1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
-        \end{cases}
+.. math::
+
+    \phi :=
+    \begin{cases}
+    c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
+    1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
+    \end{cases}
 
 ``frequency`` is an integer parameter that defines the 
 frequency of the interface sharpening; ``threshold`` defines 
@@ -218,10 +211,14 @@ We define two fluids here simply by setting the number of fluids to be :math:`2`
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
 Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
+""""""""""""""""""""""""""""""""
+Mesh
+""""""""""""""""""""""""""""""""
+
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
 :math:`[14,10]`. The first :math:`14,10` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
-This makes our initial mesh composed of perfect squares. We proceed then to redefine the mesh globally four times by setting
-``set initial refinement=4``. 
+This makes our initial mesh composed of perfect squares. We proceed then to redefine the mesh globally three times by setting
+``set initial refinement=3``. 
 
 .. code-block:: text
         
@@ -232,12 +229,16 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
             set type = dealii
             set grid type = subdivided_hyper_rectangle
             set grid arguments = 14, 10 : 0, 0 : 14, 10 : true
-            set initial refinement = 4
+            set initial refinement = 3
     end
     
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
-defined for ``velocity``. ``min refinement level`` and ``max refinement 
-level`` are 3 and 5, respectively.
+defined for ``phase``. ``min refinement level`` and ``max refinement 
+level`` are 3 and 5, respectively. The adaptation strategy ``fraction type`` is set to ``fraction``, which leads
+the mesh adaptation to refine the cells contributing to a certain fraction of the total error. This is highly
+appropriate for VOF simulations since the error for the VOF field is highly localized to the
+vicinity of the interface. We set ``initial refinement steps=4`` to ensure that the initial mesh
+is adapted to the initial condition for the phase.
 
 .. code-block:: text
 
@@ -251,8 +252,9 @@ level`` are 3 and 5, respectively.
         set max refinement level    = 5
         set min refinement level    = 3
         set frequency               = 1
-        set fraction refinement     = 0.95
-        set fraction coarsening     = 0.02
+        set fraction refinement     = 0.99
+        set fraction coarsening     = 0.01
+        set initial refinement steps = 4
     end
 
 ----------------------
@@ -261,7 +263,7 @@ Running the simulation
 
 Call the gls_navier_stokes_2d by invoking:  
 
-``mpirun -np 2 gls_navier_stokes_2d gls-VOF-dam-break-Martin-and-Moyce.prm``
+``mpirun -np 2 gls_navier_stokes_2d dam-break-Martin-and-Moyce.prm``
 
 to run the simulation using two CPU cores. Feel free to use more.
 
@@ -283,10 +285,10 @@ with the red area and the blue area corresponding conversely to the water locati
     :alt: time-shots
     :align: center
 
-A python post-processing code `(Dambreak_2d_lethe.py)` 
+A python post-processing code `(dam-break-2d.py)` 
 is added to the example folder to post-process the results.
-Run ``python3 ./Dambreak_2d_lethe.py ./Output`` to execute this 
-post-processing code, where ``./Output`` is the directory that 
+Run ``python3 ./dam-break-2d.py ./output`` to execute this 
+post-processing code, where ``./output`` is the directory that 
 contains the simulation results. In post-processing, the maximum 
 dimensionless lateral position of the liquid phase is tracked 
 through time and compared with the experiments of Martin and Moyce
