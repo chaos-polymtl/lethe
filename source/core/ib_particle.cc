@@ -220,8 +220,7 @@ IBParticle<dim>::initialize_shape(const std::string         type,
       if constexpr (dim == 3)
         {
           constexpr unsigned int numbers_per_nodes = dim + 3;
-          unsigned int           number_of_nodes =
-            shape_arguments.size() / numbers_per_nodes;
+          size_t number_of_nodes = shape_arguments.size() / numbers_per_nodes;
           std::vector<double>         support_radius;
           std::vector<unsigned int>   basis_function;
           std::vector<double>         weight;
@@ -232,7 +231,7 @@ IBParticle<dim>::initialize_shape(const std::string         type,
           nodes.resize(number_of_nodes);
           // The data is stored in this order: all weights, all radii, all basis
           // functions, all x positions, all y positions(, all z positions)
-          for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
+          for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
             {
               weight[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
               support_radius[n_i] = shape_arguments[1 * number_of_nodes + n_i];

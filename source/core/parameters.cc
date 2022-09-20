@@ -2207,7 +2207,7 @@ namespace Parameters
                   std::string shape_name = shape_arguments_str_list[0];
                   std::map<std::string, std::vector<double>> rbf_data;
                   fill_vectors_from_file(rbf_data, shape_name, ";");
-                  unsigned int number_of_nodes = rbf_data["weight"].size();
+                  size_t number_of_nodes = rbf_data["weight"].size();
 
                   std::vector<double> weight;
                   std::vector<double> basis_function;
@@ -2223,7 +2223,7 @@ namespace Parameters
                   nodes_y.resize(number_of_nodes);
                   nodes_z.resize(number_of_nodes);
 
-                  for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
+                  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
                     {
                       weight[n_i]         = rbf_data["weight"][n_i];
                       support_radius[n_i] = rbf_data["support_radius"][n_i];
@@ -2360,8 +2360,7 @@ namespace Parameters
         if constexpr (dim == 3)
           {
             constexpr unsigned int numbers_per_nodes = dim + 3;
-            unsigned int           number_of_nodes =
-              shape_arguments.size() / numbers_per_nodes;
+            size_t number_of_nodes = shape_arguments.size() / numbers_per_nodes;
             std::vector<double>         support_radius;
             std::vector<unsigned int>   basis_function;
             std::vector<double>         weight;
@@ -2370,7 +2369,7 @@ namespace Parameters
             basis_function.resize(number_of_nodes);
             weight.resize(number_of_nodes);
             nodes.resize(number_of_nodes);
-            for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
+            for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
               {
                 weight[n_i] = shape_arguments[0 * number_of_nodes + n_i];
                 support_radius[n_i] =

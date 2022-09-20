@@ -22,7 +22,7 @@ double
 Shape<dim>::displaced_volume(const double /*fluid_density*/)
 {
   StandardExceptions::ExcNotImplemented();
-  return 1.;
+  return 1.0;
 }
 
 template <int dim>
@@ -77,7 +77,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
           if (std::abs(theta[i]) > 1e-10)
             {
               Tensor<1, 3> axis;
-              axis[i] = 1.;
+              axis[i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
                   axis, theta[i]);
@@ -216,10 +216,10 @@ Rectangle<dim>::value(const Point<dim> &evaluation_point,
   Point<dim> max_q_0;
   for (unsigned int i = 0; i < dim; ++i)
     {
-      max_q_0[i] = std::max(q[i], 0.);
+      max_q_0[i] = std::max(q[i], 0.0);
     }
   double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
-  return max_q_0.norm() + std::min(max_q, 0.);
+  return max_q_0.norm() + std::min(max_q, 0.0);
 }
 
 template <int dim>
@@ -227,7 +227,7 @@ std::shared_ptr<Shape<dim>>
 Rectangle<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Rectangle<dim>>(half_lengths,
+    std::make_shared<Rectangle<dim>>(this->half_lengths,
                                      this->position,
                                      this->orientation);
   return copy;
@@ -237,10 +237,10 @@ template <int dim>
 double
 Rectangle<dim>::displaced_volume(const double /*fluid_density*/)
 {
-  double solid_volume = 1.;
+  double solid_volume = 1.0;
   for (unsigned int i = 0; i < dim; i++)
     {
-      solid_volume = solid_volume * 2. * half_lengths[dim];
+      solid_volume = solid_volume * 2.0 * half_lengths[dim];
     }
   return solid_volume;
 }
@@ -270,7 +270,9 @@ std::shared_ptr<Shape<dim>>
 Ellipsoid<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Ellipsoid<dim>>(radii, this->position, this->orientation);
+    std::make_shared<Ellipsoid<dim>>(this->radii,
+                                     this->position,
+                                     this->orientation);
   return copy;
 }
 
@@ -279,7 +281,7 @@ double
 Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  double solid_volume = PI * 4. / 3.;
+  double solid_volume = PI * 4.0 / 3.0;
   for (unsigned int i = 0; i < dim; i++)
     {
       solid_volume = solid_volume * radii[dim];
@@ -306,7 +308,7 @@ std::shared_ptr<Shape<dim>>
 Torus<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Torus<dim>>(
-    ring_radius, ring_thickness, this->position, this->orientation);
+    this->ring_radius, this->ring_thickness, this->position, this->orientation);
   return copy;
 }
 
@@ -315,7 +317,7 @@ double
 Torus<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  return 2. * PI * PI * ring_radius * ring_thickness * ring_thickness;
+  return 2.0 * PI * PI * ring_radius * ring_thickness * ring_thickness;
 }
 
 template <int dim>
@@ -333,8 +335,8 @@ Cone<dim>::value(const Point<dim> &evaluation_point,
   double   dot_w_q = scalar_product<1, 2, double>(w, intermediate_q);
   double dot_q_q = scalar_product<1, 2, double>(intermediate_q, intermediate_q);
   Point<2> a;
-  a = w - intermediate_q * std::clamp(dot_w_q / dot_q_q, 0., 1.);
-  Point<2> b_intermediate1({std::clamp(w[0] / intermediate_q[0], 0., 1.), 1.});
+  a = w - intermediate_q * std::clamp(dot_w_q / dot_q_q, 0., 1.0);
+  Point<2> b_intermediate1({std::clamp(w[0] / intermediate_q[0], 0.0, 1.), 1.});
   Point<2> b_intermediate2({intermediate_q[0] * b_intermediate1[0],
                             intermediate_q[1] * b_intermediate1[1]});
   Point<2> b;
@@ -353,7 +355,7 @@ std::shared_ptr<Shape<dim>>
 Cone<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Cone<dim>>(
-    tan_base_angle, height, this->position, this->orientation);
+    this->tan_base_angle, this->height, this->position, this->orientation);
   return copy;
 }
 
@@ -362,7 +364,7 @@ double
 Cone<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  return PI / 3. * base_radius * base_radius * height;
+  return PI / 3.0 * base_radius * base_radius * height;
 }
 
 template <int dim>
@@ -392,8 +394,12 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 CutHollowSphere<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy = std::make_shared<CutHollowSphere<dim>>(
-    radius, cut_depth, shell_thickness, this->position, this->orientation);
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<CutHollowSphere<dim>>(this->radius,
+                                           this->cut_depth,
+                                           this->shell_thickness,
+                                           this->position,
+                                           this->orientation);
   return copy;
 }
 
@@ -407,7 +413,7 @@ CutHollowSphere<dim>::displaced_volume(const double /*fluid_density*/)
     << std::endl;
   using numbers::PI;
   double small_radius = radius - shell_thickness;
-  return 4. * PI / 3. *
+  return 4.0 * PI / 3.0 *
          (radius * radius * radius -
           small_radius * small_radius * small_radius);
 }
@@ -424,7 +430,7 @@ DeathStar<dim>::value(const Point<dim> &evaluation_point,
   Point<2> p_yz({centered_point[1], centered_point[2]});
   Point<2> corrected_p_2d({centered_point[0], p_yz.norm()});
   if (corrected_p_2d[0] * intermediate_b - corrected_p_2d[1] * intermediate_a >
-      spheres_distance * std::max(intermediate_b - corrected_p_2d[1], 0.))
+      spheres_distance * std::max(intermediate_b - corrected_p_2d[1], 0.0))
     {
       Point<2> ab({intermediate_a, intermediate_b});
       return (corrected_p_2d - ab).norm();
@@ -441,8 +447,12 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 DeathStar<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy = std::make_shared<DeathStar<dim>>(
-    radius, hole_radius, spheres_distance, this->position, this->orientation);
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<DeathStar<dim>>(this->radius,
+                                     this->hole_radius,
+                                     this->spheres_distance,
+                                     this->position,
+                                     this->orientation);
   return copy;
 }
 
@@ -508,12 +518,12 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   // case, it is assumed that the distance from the RBF object is approximately
   // the same as the distance from the corresponding bounding box.
   double bounding_box_distance = bounding_box->value(centered_point);
-  double value = bounding_box_distance > 0. ? bounding_box_distance : 0.;
+  double value                 = std::max(bounding_box_distance, 0.0);
 
   double       dist, basis;
   unsigned int number_of_nodes = weight.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  for (unsigned int i = 0; i < number_of_nodes; ++i)
+  for (size_t i = 0; i < number_of_nodes; ++i)
     {
       dist  = (centered_point - nodes[i]).norm() / support_radius[i];
       basis = evaluate_basis_function(basis_function[i], dist);
@@ -527,10 +537,10 @@ std::shared_ptr<Shape<dim>>
 RBFShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<RBFShape<dim>>(support_radius,
-                                    basis_function,
-                                    weight,
-                                    nodes,
+    std::make_shared<RBFShape<dim>>(this->support_radius,
+                                    this->basis_function,
+                                    this->weight,
+                                    this->nodes,
                                     this->position,
                                     this->orientation);
   return copy;
@@ -555,14 +565,7 @@ template <int dim>
 double
 RBFShape<dim>::wendlandc2(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return std::pow(1. - dist, 4.) * (4. * dist + 1.);
-    }
+  return dist > 1.0 ? 0.0 : std::pow(1. - dist, 4.0) * (4.0 * dist + 1.0);
 }
 
 /*!
@@ -574,18 +577,11 @@ template <int dim>
 double
 RBFShape<dim>::linear(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1. - dist);
-    }
+  return dist > 1.0 ? 0.0 : (1.0 - dist);
 }
 
 /*!
- * Non compact gaussian function with 0.1 value at dist equal to 1
+ * Non-compact Gaussian function with 0.1 value at dist equal to 1
  * @param[in] dist distance normalized with respect to support radius
  * @return rbf value
  */
@@ -594,12 +590,11 @@ double
 RBFShape<dim>::gauss90(double dist) const
 {
   double eps = std::pow(-1.0 * std::log(0.1), 0.5);
-
-  return std::exp(-1.0 * std::pow(dist * eps, 2.));
+  return std::exp(-1.0 * std::pow(dist * eps, 2.0));
 }
 
 /*!
- * Non compact gaussian function with 0.05 value at dist equal to 1
+ * Non-compact Gaussian function with 0.05 value at dist equal to 1
  * @param[in] dist distance normalized with respect to support radius
  * @return rbf value
  */
@@ -608,12 +603,11 @@ double
 RBFShape<dim>::gauss95(double dist) const
 {
   double eps = std::pow(-1.0 * std::log(0.05), 0.5);
-
-  return std::exp(-1.0 * std::pow(dist * eps, 2.));
+  return std::exp(-1.0 * std::pow(dist * eps, 2.0));
 }
 
 /*!
- * Non compact gaussian function with 0.01 value at dist equal to 1
+ * Non-compact Gaussian function with 0.01 value at dist equal to 1
  * @param[in] dist distance normalized with respect to support radius
  * @return rbf value
  */
@@ -622,8 +616,7 @@ double
 RBFShape<dim>::gauss99(double dist) const
 {
   double eps = std::pow(-1.0 * std::log(0.01), 0.5);
-
-  return std::exp(-1.0 * std::pow(dist * eps, 2.));
+  return std::exp(-1.0 * std::pow(dist * eps, 2.0));
 }
 
 /*!
@@ -636,14 +629,7 @@ template <int dim>
 double
 RBFShape<dim>::c1c0(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - std::pow(dist, 2.));
-    }
+  return dist > 1.0 ? 0.0 : (1.0 - std::pow(dist, 2.0));
 }
 
 /*!
@@ -656,14 +642,7 @@ template <int dim>
 double
 RBFShape<dim>::c2c0(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - std::pow(dist, 3.));
-    }
+  return dist > 1.0 ? 0.0 : (1.0 - std::pow(dist, 3.0));
 }
 
 /*!
@@ -676,14 +655,7 @@ template <int dim>
 double
 RBFShape<dim>::c0c1(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - 2.0 * dist + std::pow(dist, 2.));
-    }
+  return dist > 1.0 ? 0.0 : (1.0 - 2.0 * dist + std::pow(dist, 2.0));
 }
 
 /*!
@@ -696,14 +668,9 @@ template <int dim>
 double
 RBFShape<dim>::c1c1(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - 3.0 * std::pow(dist, 2.) + 2.0 * std::pow(dist, 3.));
-    }
+  return dist > 1.0 ?
+           0.0 :
+           (1.0 - 3.0 * std::pow(dist, 2.0) + 2.0 * std::pow(dist, 3.0));
 }
 
 /*!
@@ -716,14 +683,9 @@ template <int dim>
 double
 RBFShape<dim>::c2c1(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - 4.0 * std::pow(dist, 3.) + 3.0 * std::pow(dist, 4.));
-    }
+  return dist > 1.0 ?
+           0.0 :
+           (1.0 - 4.0 * std::pow(dist, 3.0) + 3.0 * std::pow(dist, 4.0));
 }
 
 /*!
@@ -736,14 +698,9 @@ template <int dim>
 double
 RBFShape<dim>::c0c2(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - 3.0 * dist + 3.0 * std::pow(dist, 2.) - std::pow(dist, 3.));
-    }
+  return dist > 1.0 ?
+           0.0 :
+           (1.0 - 3.0 * dist + 3.0 * std::pow(dist, 2.0) - std::pow(dist, 3.0));
 }
 
 /*!
@@ -756,15 +713,9 @@ template <int dim>
 double
 RBFShape<dim>::c1c2(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - 6.0 * std::pow(dist, 2.) + 8.0 * std::pow(dist, 3.) -
-              3.0 * std::pow(dist, 4.));
-    }
+  return dist > 1.0 ? 0.0 :
+                      (1.0 - 6.0 * std::pow(dist, 2.0) +
+                       8.0 * std::pow(dist, 3.0) - 3.0 * std::pow(dist, 4.0));
 }
 
 /*!
@@ -777,15 +728,9 @@ template <int dim>
 double
 RBFShape<dim>::c2c2(double dist) const
 {
-  if (dist > 1.)
-    {
-      return 0.;
-    }
-  else
-    {
-      return (1.0 - 10.0 * std::pow(dist, 3.) + 15.0 * std::pow(dist, 4.) -
-              6.0 * std::pow(dist, 5.));
-    }
+  return dist > 1.0 ? 0.0 :
+                      (1.0 - 10.0 * std::pow(dist, 3.0) +
+                       15.0 * std::pow(dist, 4.0) - 6.0 * std::pow(dist, 5.0));
 }
 
 template <int dim>

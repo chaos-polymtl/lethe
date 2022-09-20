@@ -3610,7 +3610,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
 
               std::vector<double> shape_arguments;
 
-              unsigned int        number_of_nodes = shape->weight.size();
+              size_t              number_of_nodes = shape->weight.size();
               std::vector<double> weight;
               std::vector<double> basis_function;
               std::vector<double> support_radius;
@@ -3624,7 +3624,7 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               nodes_y.resize(number_of_nodes);
               nodes_z.resize(number_of_nodes);
 
-              for (unsigned int n_i = 0; n_i < number_of_nodes; n_i++)
+              for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
                 {
                   weight[n_i]         = shape->weight[n_i];
                   support_radius[n_i] = shape->support_radius[n_i];

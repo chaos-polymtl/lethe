@@ -559,7 +559,7 @@ public:
     , support_radius(support_radius)
     , basis_function(basis_function)
   {
-    unsigned int number_of_nodes = weight.size();
+    size_t number_of_nodes = weight.size();
 
     Point<dim>     high_bounding_point = Point<dim>();
     Point<dim>     low_bounding_point  = Point<dim>();
@@ -567,9 +567,9 @@ public:
     Tensor<1, dim> half_lengths        = Tensor<1, dim>();
     for (int d = 0; d < dim; d++)
       {
-        high_bounding_point[d] = DBL_MIN;
-        low_bounding_point[d]  = DBL_MAX;
-        for (unsigned int i = 0; i < number_of_nodes; i++)
+        high_bounding_point[d] = std::numeric_limits<double>::lowest();
+        low_bounding_point[d]  = std::numeric_limits<double>::max();
+        for (size_t i = 0; i < number_of_nodes; i++)
           {
             if (low_bounding_point[d] > nodes[i][d])
               low_bounding_point[d] = nodes[i][d];
@@ -577,8 +577,7 @@ public:
               high_bounding_point[d] = nodes[i][d];
           }
         bounding_box_center[d] =
-          0.5 *
-          (low_bounding_point[d] + high_bounding_point[d]); // + position[d];
+          0.5 * (low_bounding_point[d] + high_bounding_point[d]);
         half_lengths[d] =
           0.5 * (high_bounding_point[d] - low_bounding_point[d]);
       }
