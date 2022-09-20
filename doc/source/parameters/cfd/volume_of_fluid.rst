@@ -130,7 +130,7 @@ The default values of the VOF parameters are given in the text box below.
 
 .. seealso::
 
-  The :doc:`../../examples/multiphysics/dam-break-VOF/dam-break-VOF` example using VOF represents well the interface sharpening issue.
+  The :doc:`../../examples/multiphysics/dam-break/dam-break` example using VOF represents well the interface sharpening issue.
 
 * ``subsection peeling wetting``: Peeling and wetting mechanisms are very important to consider when there are solid boundaries in the domain, like a wall. If the fluid is already on the wall and its velocity drives it away from it, the fluid should be able to detach from the wall, meaning to `peel` from it. If the fluid is not already on the wall and its velocity drives it toward it, the fluid should be able to attach to the wall, meaning to `wet` it. This subsection defines the parameters for peeling and wetting mechanisms at the VOF boundaries, as defined in :doc:`boundary_conditions_multiphysics`. 
 
@@ -256,7 +256,7 @@ The default values of the VOF parameters are given in the text box below.
 
 .. seealso::
 
-  The surface tension force is used in the :doc:`../../examples/multiphysics/rising-bubble-VOF/rising-bubble-VOF` example.
+  The surface tension force is used in the :doc:`../../examples/multiphysics/rising-bubble/rising-bubble` example.
 
 
 .. _improve wetting:

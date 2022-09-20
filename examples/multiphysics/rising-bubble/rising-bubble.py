@@ -1,6 +1,6 @@
 #############################################################################
 """
-Postprocessing code for rising-bubble-VOF example
+Postprocessing code for rising-bubble example
 
 """
 #############################################################################
@@ -11,43 +11,32 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import pyvista as pv
-from scipy.signal import savgol_filter
 
 import glob
 
 import os
 import sys
-
-from scipy.linalg.special_matrices import dft
 #############################################################################
 
-#############################################################################
-'''Functions'''
+#Take case path as argument and store it
+output_path = sys.argv[1]
 
-#############################################################################
+# Read the pvd file to extract the times
+reader = pv.get_reader("output/rising-bubble.pvd")
+# Get active times
+time_list = reader.time_values
 
-#Take case path as argument and store at currentPath
-currentPath = sys.argv[1]
 
-#Define list of VTK files and time list:
-list_vtu = os.listdir(currentPath)
-list_vtu = [x for x in list_vtu if "pvd" not in x ]
-list_vtu = [x for x in list_vtu if "pvtu" not in x ]
 
-#Create a list of time_steps
-data = pd.read_csv("output/rising-bubble-VOF.pvd",sep='"',header=5, usecols=[1]) 
-data.columns = ["a"] 
-time_list = data['a']
-print(data['a'])
+#Define list of VTU files
+list_vtu = os.listdir(output_path)
+list_vtu = [x for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
+
+# Sort VTU files to ensure they are in the same order as the time step
+list_vtu = sorted(list_vtu)
 
 #Set phase_limit to search for maximum x
 phase_limit = 0.5
-
-#Ouput time-step
-dt = 0.03
-
-#Sort list
-time_list, list_vtu = (list(t) for t in zip(*sorted(zip(time_list, list_vtu))))
 
 #Create lists to fill with average y, dy, dt and bubble rise velocity
 y_list = []
@@ -58,7 +47,7 @@ bubble_rise_vel = []
 #Read vtu data
 for i in range(0, len(list_vtu)):
     #Read DF from VTK files
-    exec(f'df_{i} = pv.read(f\'{currentPath}/{list_vtu[i]}\')')
+    exec(f'df_{i} = pv.read(f\'{output_path}/{list_vtu[i]}\')')
 
     #Select a data to apply the slice   
     exec(f'df = df_{i}')
@@ -72,27 +61,22 @@ for i in range(0, len(list_vtu)):
     y_mean = (y_min + y_max) * 0.5
     y_list.append(y_mean)
        
-#Print('List of average values for y:')
-print(y_list)
 
-#Sort y_list, since the time_list is extracted from the .pvd file, the y_list and time_list are not consistent
-y_list.sort()
-
-#Smooth average y
-smoothed_y = savgol_filter(y_list, 41, 3)
+# This array could be smoothed to obtain a better velocity field
+smoothed_y= np.array(y_list)
 
 #Calculate bubble rise velocity
-t_diff_list = np.diff(time_list)
-
 length = len(smoothed_y)
 bubble_rise_vel = [None] * length
-for i in range(length-2):
+for i in range(length):
     if i == 0 :
-        bubble_rise_vel[i] = (-3.0 * smoothed_y[0] + 4.0 * smoothed_y[1] - smoothed_y[2]) / (2.0 * dt)
-    elif i == -1 :
-        bubble_rise_vel[i] = (3.0 * smoothed_y[-1] - 4.0 * smoothed_y[-2] + smoothed_y[-3]) / (2.0 * dt)
+        bubble_rise_vel[i] = (smoothed_y[1] - smoothed_y[0]) / (time_list[1]-time_list[0])
+    elif i == (length-1) :
+        bubble_rise_vel[i] = (smoothed_y[-1] -  smoothed_y[-2]) / (time_list[-1]-time_list[-2])
     else :
-        bubble_rise_vel[i] = (smoothed_y[i+1] - smoothed_y[i-1]) / (2.0 * dt)
+        dt_0 = time_list[i]-time_list[i-1]
+        dt_1 = time_list[i+1]-time_list[i]
+        bubble_rise_vel[i] = (smoothed_y[i+1] - (dt_0/dt_1)*smoothed_y[i-1] - (1-dt_0/dt_1)*smoothed_y[i]) / (dt_1*(1+dt_0/dt_1))
 
 
 #Data from Zahedi, Kronbichler and Kreiss (2012)

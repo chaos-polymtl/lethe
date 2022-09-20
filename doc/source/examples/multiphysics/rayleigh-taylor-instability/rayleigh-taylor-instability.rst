@@ -1,5 +1,5 @@
 ============================
-Rayleigh-Taylor Instability
+Rayleigh-Taylor instability
 ============================
 
 This example simulates the dynamic evolution of the single-mode `Rayleigh-Taylor instability`_ by density contrast. 
@@ -18,12 +18,12 @@ Features
 - Interface sharpening
 
 
-------------------------
-Location of the example
-------------------------
-``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-refinement.prm``
+--------------------------------------------
+Location of the files used in this example
+--------------------------------------------
+``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-sharpening.prm``
 
-``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-refinement.prm``
+``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-sharpening.prm``
 
 
 -----------------------------
@@ -62,8 +62,9 @@ Parameter file
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme 
-`(bdf1)`, for a :math:`0.75` s simulation time with an initial 
-time step of :math:`0.0002` second.
+(`bdf1`), for a :math:`0.75` s simulation time with an initial 
+time step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt=true``
+and the max CFL is :math:`0.9`.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
@@ -76,17 +77,19 @@ time step of :math:`0.0002` second.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                  		= bdf1
-        set time end                		= 0.75
-        set time step               		= 0.0002
-        set output name             		= rayleigh_taylor
-        set output path                  	= ./output/
-        set output control               	= time
-        set output time                  	= 0.005
+        set method         = bdf1
+        set time end       = 0.75
+        set time step      = 0.0002
+        set adapt          = true
+        set max cfl        = 0.9
+        set output name    = rayleigh-taylor
+        set output path    = ./output/
+        set output control = time
+        set output time    = 0.005
     end
 
 
-The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``VOF``, and ``fluid dynamics`` are chosen.
+The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``VOF`` and ``fluid dynamics`` are chosen (``fluid dynamics`` is true by default).
 
 .. code-block:: text
 
@@ -95,7 +98,6 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
     #---------------------------------------------------
     subsection multiphysics
         set VOF       = true
-        set fluid dynamics      = true
     end 
     
 The ``source term`` subsection defines gravitational acceleration.
@@ -153,8 +155,25 @@ In the ``initial condition`` subsection, we need to define the interface between
         end
     end
 
+In the ``mesh`` subsection we configure the simulation domain. The ``initial refinement`` of the mesh is equal to 5, but we use mesh adaptation to coarsen the mesh in cells far from the interface to improve the computation performance.
 
-The ``initial refinement`` of the mesh is equal to 7, but we use a mesh adaptation to coarsen the mesh in cells far from the interface to improve the computation performance. Here, we choose ``phase`` as the ``refinement variable`` and 5 as the ``min refinement level``. 
+.. code-block:: text
+    
+    #---------------------------------------------------
+    # Mesh
+    #---------------------------------------------------
+    
+    subsection mesh
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 1, 4 : 0.25, 1 : 0 , 0 : true
+      set initial refinement = 5
+    end
+
+
+
+The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase`` as the ``refinement variable`` and 5 as the ``min refinement level``.
+We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field. 
 
 
 .. code-block:: text
@@ -169,8 +188,9 @@ The ``initial refinement`` of the mesh is equal to 7, but we use a mesh adaptati
       set max refinement level    	= 7
       set min refinement level    	= 5
       set frequency               	= 1
-      set fraction refinement     	= 0.9
-      set fraction coarsening     	= 0.001
+      set fraction refinement     	= 0.99
+      set fraction coarsening     	= 0.01
+      set initial refinement steps  	= 4
     end
 
 
@@ -183,7 +203,7 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
     # Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions
-      set number                  = 4
+      set number                  = 3
         subsection bc 0
         set id = 0
             set type              = periodic

@@ -51,6 +51,6 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
    
 .. seealso::
 
-  The VOF solver is used in the example :doc:`../../examples/multiphysics/dam-break-VOF/dam-break-VOF`.
+  The VOF solver is used in the example :doc:`../../examples/multiphysics/dam-break/dam-break`.
 
 
