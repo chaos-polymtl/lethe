@@ -865,6 +865,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
 
+  // Global flags
+  // Their dimension is consistent with the dimension returned by
+  // save_refine_flags(), in order to be able to use load_refine_flags()
+  std::vector<bool> global_refine_flags(dim * tria.n_active_cells(), false);
+  std::vector<bool> global_coarsen_flags(dim * tria.n_active_cells(), false);
+
+  bool first_variable(true);
+
   for (const std::pair<const Parameters::MeshAdaptation::Variable,
                        Parameters::MultipleAdaptationParameters> &ivar :
        this->simulation_parameters.mesh_adaptation.variables)
@@ -899,7 +907,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           multiphysics->compute_kelly(ivar, estimated_error_per_cell);
         }
 
-
       if (this->simulation_parameters.mesh_adaptation.fractionType ==
           Parameters::MeshAdaptation::FractionType::number)
         parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
@@ -916,7 +923,49 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                                             estimated_error_per_cell,
                                             ivar.second.refinement_fraction,
                                             ivar.second.coarsening_fraction);
+
+      std::vector<bool> current_refine_flags;
+      std::vector<bool> current_coarsen_flags;
+
+      tria.save_refine_flags(current_refine_flags);
+      tria.save_coarsen_flags(current_coarsen_flags);
+
+      // Fill global flags
+      if (first_variable)
+        {
+          // special case of the first refinement variable
+          global_refine_flags  = current_refine_flags;
+          global_coarsen_flags = current_coarsen_flags;
+
+          first_variable = false;
+        }
+      else
+        {
+          // for subsequent refinement variables
+          for (std::vector<bool>::size_type i = 0;
+               i != global_refine_flags.size();
+               ++i)
+            {
+              // refine if at least refinement flag on one variable
+              global_refine_flags[i] =
+                global_refine_flags[i] || current_refine_flags[i];
+              // coarsen if refinement flag on all variables
+              global_coarsen_flags[i] =
+                global_coarsen_flags[i] && current_coarsen_flags[i];
+            }
+        }
+
+      // Clear flags in the triangulation
+      for (const auto &cell : tria.active_cell_iterators())
+        {
+          cell->clear_coarsen_flag();
+          cell->clear_refine_flag();
+        }
     }
+
+  // Load global flags
+  tria.load_refine_flags(global_refine_flags);
+  tria.load_coarsen_flags(global_coarsen_flags);
 
   if (tria.n_levels() >
       this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
