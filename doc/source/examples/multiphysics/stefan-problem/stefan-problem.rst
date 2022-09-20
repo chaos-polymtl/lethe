@@ -16,8 +16,8 @@ Features
 - Phase change specific heat model
 
 
-Location of the files used in this example
---------------------------------------------
+Files used in this example
+---------------------------
 ``examples/multiphysics/stefan-problem/stefan.prm``
 
 

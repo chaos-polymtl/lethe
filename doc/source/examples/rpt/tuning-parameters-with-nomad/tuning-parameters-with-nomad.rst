@@ -16,8 +16,8 @@ Features
 - Displays the use of NOMAD to calibrate the parameters of the Beam model
 
 
-Locations of Files Used in the Example
----------------------------------------
+Files used in this example
+---------------------------
 - Parameter file for tuning parameters: ``examples/rpt/parameters-tuning/rpt-parameters.prm``
 - Parameter file for calculating photon counts: ``examples/rpt/parameters-tuning/rpt-count-calculation.prm``
 - File containing particle positions: ``examples/rpt/parameters-tuning/positions.particle``
@@ -28,7 +28,7 @@ Locations of Files Used in the Example
 - Python script for post-processing the data: ``examples/rpt/parameters-tuning/rpt_parameter_tuning_plot.py``
 
 
-Description of the Case
+Description of the case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
@@ -88,13 +88,13 @@ And
 
 where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha_j,\theta_j)` is the length of the path traveled by the photon inside the detector.
 
-Parameter Files
+Parameter files
 ----------------
 
-*rpt-parameters.prm* File
+*rpt-parameters.prm* file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-RPT Parameters
+RPT parameters
 ^^^^^^^^^^^^^^^^
 
 As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel`), in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the :doc:`../../../parameters/rpt/rpt_parameters` documentation page.
@@ -123,7 +123,7 @@ As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindri
     ``verbosity`` **must** be set to **quiet** since NOMAD gets the cost function value from the terminal for its MADS algorithm.
 
 
-Parameter Tuning
+Parameter tuning
 ^^^^^^^^^^^^^^^^^^
 
 In the subsection ``parameter tuning``, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the :doc:`../../../parameters/rpt/parameter_tuning` documentation page.
@@ -140,7 +140,7 @@ In the subsection ``parameter tuning``, we enable parameters tuning, we specify 
     end
 
 
-Detector Parameters
+Detector parameters
 ^^^^^^^^^^^^^^^^^^^^
 
 In the subsection ``detector parameters``, we specify the file that contains the position of the detector face center and the position of a point inside the detector on its axis. In this example, the detector face center position is :math:`(0.2,0,0.0750)` and :math:`(0.2381,0,0.075)` is another point on the detector’s axis. The detector parameters are described in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
@@ -159,7 +159,7 @@ In the subsection ``detector parameters``, we specify the file that contains the
         set attenuation coefficient reactor  = 10
     end
 
-*param-nomad.txt* File
+*param-nomad.txt* file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``param-nomad.txt`` file is used when running NOMAD. This file provides initial guess and constraints when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
@@ -187,7 +187,7 @@ The ``param-nomad.txt`` file is used when running NOMAD. This file provides init
 .. note::
     In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
 
-Running the Simulation
+Running the simulation
 ----------------------------------
 
 Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may run NOMAD by typing :

@@ -17,9 +17,9 @@ Features
 - Usage of a python script for post-processing data
 
 
---------------------------------------------
-Location of the files used in this example
---------------------------------------------
+---------------------------
+Files used in this example
+---------------------------
 ``examples/multiphysics/melting-cavity/melting-cavity.prm``
 
 

@@ -1,5 +1,5 @@
 ==================================================
-Photon Count Calculation in a Cylindrical Vessel
+Photon count calculation in a cylindrical vessel
 ==================================================
 
 In this example, using a Monte Carlo technique, we perform the calculation of photon counts of a single radioactive particle that emits :math:`\gamma`-rays. The calculation is performed for a given set of positions inside a cylindrical vessel. The Monte Carlo method allows us to estimate the photon counts of a particle at a given position inside the vessel with respect to a given detector.
@@ -11,8 +11,8 @@ Features
 - Displays the use of the Monte Carlo method in the calculation of photon count
 
 
-Locations of Files Used in the Example
----------------------------------------
+Files used in this example
+---------------------------
 - Parameter file: ``examples/rpt/count-calculation/rpt-count-calculation.prm``
 - File containing detector positions: ``examples/rpt/count-calculation/positions.detector``
 - File containing particle positions for the first scenario:  ``examples/rpt/count-calculation/positions-horizontalx.particle``
@@ -22,7 +22,7 @@ Locations of Files Used in the Example
 - Python script for post-processing the data: ``examples/rpt/count-calculation/rpt_count-calculation_plot.py``
 
 
-Description of the Case
+Description of the case
 -------------------------
 In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are:
 
@@ -107,10 +107,10 @@ where
 - :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`.
 
 
-Parameter File
+Parameter file
 ----------------
 
-RPT Parameters
+RPT parameters
 ~~~~~~~~~~~~~~~
 
 
@@ -137,7 +137,7 @@ In the subsection ``rpt parameters``, we define the values of the set of paramet
     end
 
 
-Detector Parameters
+Detector parameters
 ~~~~~~~~~~~~~~~~~~~~
 
 
@@ -162,7 +162,7 @@ In the subsection ``detector parameters``, we specify the file that contains two
     The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example :doc:`../tuning-parameters-with-nomad/tuning-parameters-with-nomad` explains how we can obtain the values of these parameters using NOMAD.
 
 
-Running the Simulation
+Running the simulation
 ----------------------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
 
@@ -186,7 +186,7 @@ To visualize the data and obtain the figures shown below, a Python script (``rpt
     You may use the ``rpt_count-calculation_plot.py`` script to plot any other set of data saved in a ``.csv`` file format.
 
 
-Scenario 1: Horizontal Translation of a Particle Along the X-Axis
+Scenario 1: horizontal translation of a particle along the x-axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. image:: images/counts-along-x-axis.png
     :alt: Results for the horizontal translation of a particle along the x-axis (Scenario 1)
@@ -196,7 +196,7 @@ Scenario 1: Horizontal Translation of a Particle Along the X-Axis
 
 In the figure shown above, as one would expect, as the particle approaches the detector, the photon count grows. Such evolution may be explained by the efficiency of the detector getting greater as the particle advances toward the detector's exposed surface. Since the photon's path length in the vessel decreases, :math:`f_a(\alpha, \theta)` increases, and therefore the efficiency gets greater. In addition to that, as the particle approaches the detector, the solid angle gets greater, the product :math:`\omega(\alpha) \omega(\theta)` increases, making the efficiency increase also.
 
-Scenario 2: Horizontal Translation of a Particle Along the Y-Axis
+Scenario 2: horizontal translation of a particle along the y-axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: images/counts-along-y-axis-case1.png
@@ -245,7 +245,7 @@ The last case studied (Case IV) shows the evolution of the photon count when :ma
 Coming back to the Case I figure, we can see that photon count follows a pattern similar to the one seen in Case IV. We may interpret from it that :math:`f_d(\alpha, \theta)` varies very little as opposed to :math:`f_a(\alpha, \theta)` that fluctuates greatly. The local minimal values, in this case, are at :math:`y \approx -6` cm and :math:`y \approx 6` cm, as opposed to :math:`y \approx -4.6` cm and :math:`y \approx -4.6` cm for the fourth case. This is due to the change in the value of :math:`\mu_d`. :math:`f_d(\alpha,\theta)` function of :math:`y` increases at a slower rate, making the minimums further way from the center. To summarize, the fluctuations seen in the Case I figure is the result of the combined influence of the values of the attenuation coefficients, the variation of the path lengths of the photon in the vessel and the detector, and the evolution of the weighting factors.
 
 
-Scenario 3: Vertical Translation of a Particle Along the Z-Axis
+Scenario 3: vertical translation of a particle along the z-axis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. image:: images/counts-along-z-axis.png
     :alt: Results for the vertical translation of a particle along the z-axis (Scenario 3)
@@ -256,7 +256,7 @@ Scenario 3: Vertical Translation of a Particle Along the Z-Axis
 Similar to the first scenario, as the particle approaches the detector, we notice an increase in photon count. The photon count reaches its maximal value at around :math:`z = 7.1` cm, which is close to the center of the detector's face.
 
 
-Scenario 4: Particle Going Across the Vessel on a Diagonal Line
+Scenario 4: particle going across the vessel on a diagonal Line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. image:: images/counts-across-vessel-on-a-diagonal-line.png
     :alt: Results for the particle going across the vessel on a diagonal line (Scenario 4)
@@ -266,7 +266,7 @@ Scenario 4: Particle Going Across the Vessel on a Diagonal Line
 
 After analyzing the past three scenarios, we get much-expected results for this scenario. As seen in the first scenario, the photon count varies greatly with the :math:`x` coordinate of the position vector of the particle. That is because the path of the photon inside the vessel gets longer when :math:`x` gets smaller. In other words, the ray is more attenuated by the material inside the vessel before getting to the detector, therefore the photon count gets smaller. Consequently, even though the particle is further away from the detector if the :math:`x` coordinate of the tracer's position is closer to the detector's exposed surface, the photon count could get greater and that's what we see on the figure above for high :math:`z` values.
 
-Sensitivity Analysis of the Monte Carlo Method
+Sensitivity analysis of the Monte Carlo method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Looking back at the second scenario's results (Case A), we notice that the counts are a little scattered. This is caused by the stochastic nature of the Monte Carlo method. Increasing the number of Monte Carlo iterations (:math:`N`), generates much smoother results as seen in the Case C figure where we have multiplied :math:`N` by a factor of :math:`10`. By increasing :math:`N`, we're covering more of the solid angle, making the simulation more representative of the physical system. Therefore, we see a better continuity in the photon counts. In the Case B figure, :math:`N` was divided by a factor of :math:`10`. As expected, in this figure, we see much more scattering.
