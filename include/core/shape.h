@@ -48,6 +48,22 @@ class Shape : public AutoDerivativeFunction<dim>
 {
 public:
   /**
+   * @brief enum class that associate an integer index tp each type of shape
+   */
+  enum ShapeType : int
+  {
+    sphere            = 0,
+    rectangle         = 1,
+    ellipsoid         = 2,
+    torus             = 3,
+    cone              = 4,
+    cut_hollow_sphere = 5,
+    death_star        = 6,
+    composite_shape   = 7,
+    rbf_shape         = 8,
+  } type;
+
+  /**
    * @brief A general constructor for the Shapes
    *
    * @param radius The effective radius to be set for the shape. It's necessary for some calculations since not all shapes are spheres.
@@ -64,24 +80,9 @@ public:
     , orientation(orientation)
   {}
 
-  /**
-   * @brief enum class that associate an integer index tp each type of shape
-   */
-  enum ShapeType : int
-  {
-    sphere            = 0,
-    rectangle         = 1,
-    ellipsoid         = 2,
-    torus             = 3,
-    cone              = 4,
-    cut_hollow_sphere = 5,
-    death_star        = 6,
-    composite_shape   = 7,
-    rbf_shape         = 8,
-  } type;
 
 
-  virtual std::pair<std::string, int>
+  virtual std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() = 0;
 
   /**
@@ -218,7 +219,7 @@ public:
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("sphere", Shape<dim>::ShapeType::sphere);
@@ -263,7 +264,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("rectangle", Shape<dim>::ShapeType::rectangle);
@@ -301,7 +302,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("ellipsoid", Shape<dim>::ShapeType::ellipsoid);
@@ -342,7 +343,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("torus", Shape<dim>::ShapeType::torus);
@@ -386,7 +387,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("cone", Shape<dim>::ShapeType::cone);
@@ -435,7 +436,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("cut_hollow_sphere",
@@ -491,7 +492,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("death_star", Shape<dim>::ShapeType::death_star);
@@ -543,7 +544,7 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("composite_shape",
@@ -568,7 +569,7 @@ public:
    * @ingroup RBF
    * @brief Enum class defining types of RBF kernel functions that could be used in bitpit::RBF class
    */
-  enum class RBFBasisFunction
+  enum class RBFBasisFunction : int
   {
     CUSTOM,
     WENDLANDC2,
@@ -592,19 +593,19 @@ public:
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
    */
-  RBFShape<dim>(const std::vector<double>           support_radius,
-                const std::vector<RBFBasisFunction> basis_function,
-                const std::vector<double>           weight,
+  RBFShape<dim>(const std::vector<double>           support_radii,
+                const std::vector<RBFBasisFunction> basis_functions,
+                const std::vector<double>           weights,
                 const std::vector<Point<dim>>       nodes,
                 const Point<dim> &                  position,
                 const Tensor<1, 3> &                orientation)
-    : Shape<dim>(support_radius[0], position, orientation)
-    , weight(weight)
+    : Shape<dim>(support_radii[0], position, orientation)
+    , weights(weights)
     , nodes(nodes)
-    , support_radius(support_radius)
-    , basis_function(basis_function)
+    , support_radii(support_radii)
+    , basis_functions(basis_functions)
   {
-    size_t number_of_nodes = weight.size();
+    size_t number_of_nodes = weights.size();
 
     Point<dim>     high_bounding_point{};
     Point<dim>     low_bounding_point{};
@@ -675,16 +676,16 @@ public:
   double
   c2c2(const double) const;
 
-  std::pair<std::string, int>
+  std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override
   {
     return std::make_pair("rbf_shape", Shape<dim>::ShapeType::rbf_shape);
   }
 
-  std::vector<double>           weight;
+  std::vector<double>           weights;
   std::vector<Point<dim>>       nodes;
-  std::vector<double>           support_radius;
-  std::vector<RBFBasisFunction> basis_function;
+  std::vector<double>           support_radii;
+  std::vector<RBFBasisFunction> basis_functions;
 
 private:
   std::shared_ptr<Rectangle<dim>> bounding_box;

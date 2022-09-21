@@ -20,7 +20,7 @@
 template <int dim>
 double
 Shape<dim>::displaced_volume(const double /*fluid_density*/,
-                             std::shared_ptr<ConditionalOStream> pcout)
+                             std::shared_ptr<ConditionalOStream> /*pcout*/)
 {
   StandardExceptions::ExcNotImplemented();
   return 1.0;
@@ -172,8 +172,8 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
 
 template <int dim>
 double
-Sphere<dim>::displaced_volume(const double                        fluid_density,
-                              std::shared_ptr<ConditionalOStream> pcout)
+Sphere<dim>::displaced_volume(const double fluid_density,
+                              std::shared_ptr<ConditionalOStream> /*pcout*/)
 {
   double solid_volume;
   using numbers::PI;
@@ -238,7 +238,7 @@ Rectangle<dim>::static_copy() const
 template <int dim>
 double
 Rectangle<dim>::displaced_volume(const double /*fluid_density*/,
-                                 std::shared_ptr<ConditionalOStream> pcout)
+                                 std::shared_ptr<ConditionalOStream> /*pcout*/)
 {
   double solid_volume = 1.0;
   for (unsigned int i = 0; i < dim; i++)
@@ -282,7 +282,7 @@ Ellipsoid<dim>::static_copy() const
 template <int dim>
 double
 Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/,
-                                 std::shared_ptr<ConditionalOStream> pcout)
+                                 std::shared_ptr<ConditionalOStream> /*pcout*/)
 {
   using numbers::PI;
   double solid_volume = PI * 4.0 / 3.0;
@@ -319,7 +319,7 @@ Torus<dim>::static_copy() const
 template <int dim>
 double
 Torus<dim>::displaced_volume(const double /*fluid_density*/,
-                             std::shared_ptr<ConditionalOStream> pcout)
+                             std::shared_ptr<ConditionalOStream> /*pcout*/)
 {
   using numbers::PI;
   return 2.0 * PI * PI * ring_radius * ring_thickness * ring_thickness;
@@ -367,7 +367,7 @@ Cone<dim>::static_copy() const
 template <int dim>
 double
 Cone<dim>::displaced_volume(const double /*fluid_density*/,
-                            std::shared_ptr<ConditionalOStream> pcout)
+                            std::shared_ptr<ConditionalOStream> /*pcout*/)
 {
   using numbers::PI;
   return PI / 3.0 * base_radius * base_radius * height;
@@ -533,13 +533,13 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value                 = std::max(bounding_box_distance, 0.0);
 
   double       dist, basis;
-  unsigned int number_of_nodes = weight.size();
+  unsigned int number_of_nodes = weights.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (size_t i = 0; i < number_of_nodes; ++i)
     {
-      dist  = (centered_point - nodes[i]).norm() / support_radius[i];
-      basis = evaluate_basis_function(basis_function[i], dist);
-      value += basis * weight[i];
+      dist  = (centered_point - nodes[i]).norm() / support_radii[i];
+      basis = evaluate_basis_function(basis_functions[i], dist);
+      value += basis * weights[i];
     }
   return value;
 }
@@ -549,9 +549,9 @@ std::shared_ptr<Shape<dim>>
 RBFShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<RBFShape<dim>>(this->support_radius,
-                                    this->basis_function,
-                                    this->weight,
+    std::make_shared<RBFShape<dim>>(this->support_radii,
+                                    this->basis_functions,
+                                    this->weights,
                                     this->nodes,
                                     this->position,
                                     this->orientation);
@@ -752,7 +752,6 @@ double
 RBFShape<dim>::evaluate_basis_function(const RBFBasisFunction basis_function,
                                        const double           distance) const
 {
-  double value;
   switch (basis_function)
     {
       case RBFBasisFunction::WENDLANDC2:

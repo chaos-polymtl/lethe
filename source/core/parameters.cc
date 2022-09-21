@@ -2209,39 +2209,39 @@ namespace Parameters
                   fill_vectors_from_file(rbf_data, shape_name, ";");
                   size_t number_of_nodes = rbf_data["weight"].size();
 
-                  std::vector<double> weight;
-                  std::vector<double> basis_function;
-                  std::vector<double> support_radius;
+                  std::vector<double> weights;
+                  std::vector<double> basis_functions;
+                  std::vector<double> support_radii;
                   std::vector<double> nodes_x;
                   std::vector<double> nodes_y;
                   std::vector<double> nodes_z;
 
-                  weight.resize(number_of_nodes);
-                  basis_function.resize(number_of_nodes);
-                  support_radius.resize(number_of_nodes);
+                  weights.resize(number_of_nodes);
+                  basis_functions.resize(number_of_nodes);
+                  support_radii.resize(number_of_nodes);
                   nodes_x.resize(number_of_nodes);
                   nodes_y.resize(number_of_nodes);
                   nodes_z.resize(number_of_nodes);
 
                   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
                     {
-                      weight[n_i]         = rbf_data["weight"][n_i];
-                      support_radius[n_i] = rbf_data["support_radius"][n_i];
-                      basis_function[n_i] = rbf_data["basis_function"][n_i];
-                      nodes_x[n_i]        = rbf_data["xnode"][n_i];
-                      nodes_y[n_i]        = rbf_data["ynode"][n_i];
-                      nodes_z[n_i]        = rbf_data["znode"][n_i];
+                      weights[n_i]         = rbf_data["weight"][n_i];
+                      support_radii[n_i]   = rbf_data["support_radius"][n_i];
+                      basis_functions[n_i] = rbf_data["basis_function"][n_i];
+                      nodes_x[n_i]         = rbf_data["xnode"][n_i];
+                      nodes_y[n_i]         = rbf_data["ynode"][n_i];
+                      nodes_z[n_i]         = rbf_data["znode"][n_i];
                     }
                   shape_arguments.reserve((dim + 3) * number_of_nodes);
                   shape_arguments.insert(shape_arguments.end(),
-                                         weight.begin(),
-                                         weight.end());
+                                         weights.begin(),
+                                         weights.end());
                   shape_arguments.insert(shape_arguments.end(),
-                                         support_radius.begin(),
-                                         support_radius.end());
+                                         support_radii.begin(),
+                                         support_radii.end());
                   shape_arguments.insert(shape_arguments.end(),
-                                         basis_function.begin(),
-                                         basis_function.end());
+                                         basis_functions.begin(),
+                                         basis_functions.end());
                   shape_arguments.insert(shape_arguments.end(),
                                          nodes_x.begin(),
                                          nodes_x.end());
@@ -2361,31 +2361,29 @@ namespace Parameters
           {
             constexpr unsigned int numbers_per_nodes = dim + 3;
             size_t number_of_nodes = shape_arguments.size() / numbers_per_nodes;
-            std::vector<double> support_radius;
-            std::vector<typename RBFShape<dim>::RBFBasisFunction>
-                                    basis_function;
-            std::vector<double>     weight;
-            std::vector<Point<dim>> nodes;
-            support_radius.resize(number_of_nodes);
-            basis_function.resize(number_of_nodes);
-            weight.resize(number_of_nodes);
+            std::vector<double>                               support_radii;
+            std::vector<enum RBFShape<dim>::RBFBasisFunction> basis_functions;
+            std::vector<double>                               weights;
+            std::vector<Point<dim>>                           nodes;
+            support_radii.resize(number_of_nodes);
+            basis_functions.resize(number_of_nodes);
+            weights.resize(number_of_nodes);
             nodes.resize(number_of_nodes);
             for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
               {
-                weight[n_i] = shape_arguments[0 * number_of_nodes + n_i];
-                support_radius[n_i] =
-                  shape_arguments[1 * number_of_nodes + n_i];
-                basis_function[n_i] =
-                  static_cast<typename RBFShape<dim>::RBFBasisFunction>(
+                weights[n_i]       = shape_arguments[0 * number_of_nodes + n_i];
+                support_radii[n_i] = shape_arguments[1 * number_of_nodes + n_i];
+                basis_functions[n_i] =
+                  static_cast<enum RBFShape<dim>::RBFBasisFunction>(
                     round(shape_arguments[2 * number_of_nodes + n_i]));
                 nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
                 nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
                 nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
               }
             particles[i].shape =
-              std::make_shared<RBFShape<dim>>(support_radius,
-                                              basis_function,
-                                              weight,
+              std::make_shared<RBFShape<dim>>(support_radii,
+                                              basis_functions,
+                                              weights,
                                               nodes,
                                               particles[i].position,
                                               particles[i].orientation);
