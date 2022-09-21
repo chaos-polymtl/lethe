@@ -13,8 +13,8 @@ Features
 - Displays the use of the tracer physics
 - Displays the use of a simplex mesh generated with a CAD platform
 
-Location of the example
-------------------------
+Files used in this example
+---------------------------
 ``examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.prm``
 
 Description of the case

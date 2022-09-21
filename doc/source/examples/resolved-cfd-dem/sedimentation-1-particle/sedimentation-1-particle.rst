@@ -1,5 +1,5 @@
 ==============================================================================
-Sedimentation of one particle.
+Sedimentation of one particle
 ==============================================================================
 
 This example aims to numerically reproduce the results obtained by Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_ for the E4 experience. This experience measures the velocity of the sedimentation of a 1.5 cm particle in a container filled with a viscous fluid. The container is sufficiently small to impact the particle sedimentation.
@@ -16,6 +16,10 @@ Features
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around one particle
 
+Files used in this example
+---------------------------
+ ``/examples/resolved-cfd-dem/sedimentation-1-particle/sedimentation-1-particle.prm``
+
 Description of the case
 -----------------------
 The E4 experiment consists in the release of a particle made of Nylon (:math:`\rho_p=0.001120 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 1.5cm. The center of the particle is located 12.75 cm above the bottom of a 10x16x10 cm container. The viscosity of the fluid is :math:`\mu_f=0.00058 \frac{\text{kg}}{\text{s cm}}` which is equivalent to :math:`\mu_f=0.058 \frac{\text{N s}}{\text{m}^{2}}`. The density of the fluid is :math:`\rho_f=0.000960 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
@@ -25,17 +29,12 @@ The E4 experiment consists in the release of a particle made of Nylon (:math:`\r
     
 All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
-
-Location of the examples
-------------------------
- ``/examples/resolved-cfd-dem/sedimentation-1-particle/sedimentation-1-particle.prm``
- 
 Parameter file
 ---------------
 
 We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the :doc:`../../../parameters/parameters`.
  
-Simulation and IO Control
+Simulation and IO control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -60,7 +59,7 @@ Simulation and IO Control
 
 
 
-Physical Properties
+Physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -106,7 +105,7 @@ The domain is a rectangular box as such we can directly use a subdivided hyper r
 * The ``initial refinement`` is set to 1. This will ensure to have a base mesh that is a bit smaller than the particle.
 
 
-Mesh Adaptation Control
+Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -201,7 +200,7 @@ Initial condition
 
 The initial condition for this case is simple to define. At the start of the simulation, we assume that the particle and the fluid are at rest. From there, we define a uniform velocity field of 0 everywhere. To do that, we used the ``type = nodal`` and then specified a function expression of 0 for all the velocity components.  
 
-Non-Linear Solver Control
+Non-Linear solver control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -226,7 +225,7 @@ Non-Linear Solver Control
 	* reevaluate the RHS to check the convergence.
 	
 	
-Linear Solver Control
+Linear solver control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 

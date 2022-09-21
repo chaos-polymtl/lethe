@@ -10,8 +10,8 @@ Features
 - Displays how to import and easily adapt a gmsh file
 - Displays how to run case in parallel with mpirun
 
-Location of the examples
--------------------------
+Files used in this example
+----------------------------
 - Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
 - Geometry file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.geo``
 - Mesh file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.msh``

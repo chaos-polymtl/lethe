@@ -12,8 +12,8 @@ Features
 * Displays the use of heat transfer physics
 * Analytical solution
 
-Location of the example
------------------------
+Files used in this example
+---------------------------
 ``examples/multiphysics/warming-up-viscous-fluid``
 
 Description of the case
@@ -36,7 +36,7 @@ The following schematic describes the simulation.
 Parameter file
 ---------------
 
-Simulation Control
+Simulation control
 ~~~~~~~~~~~~~~~~~~
 
 Time integration is defined by a 2nd order backward differentiation (``bdf2``), for a 7.0 seconds simulation (``time end``) with a 0.05 second ``time step``, as stated in the subsection ``simulation control``:
@@ -73,7 +73,7 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
       set temperature order     = 2
     end
 
-Physical Properties
+Physical properties
 ~~~~~~~~~~~~~~~~~~~
 
 The fluid's ``physical properties`` are defined in the following subsection, according to the properties of oil.
@@ -131,7 +131,7 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
       set viscous dissipation = true
     end
 
-Analytical Solution
+Analytical solution
 ~~~~~~~~~~~~~~~~~~~
 
 The ``analytical solution`` is defined, according to the fluid and simulation properties:
@@ -158,7 +158,7 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
         end
     end
 
-Boundary Conditions
+Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` are set for:
@@ -255,7 +255,7 @@ Temperature evolution over time:
 Physical interpretation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-From :math:`t=0s`` to :math:`t=2s`, the right plate (:math:`T=80^\circ`) heats up the fluid (initially at :math:`T=0^\circ`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80^\circ`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80^\circ` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
+From :math:`t=0s` to :math:`t=2s`, the right plate (:math:`T=80^\circ`) heats up the fluid (initially at :math:`T=0^\circ`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80^\circ`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80^\circ` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
 
 Bonuses
 --------------

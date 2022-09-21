@@ -12,8 +12,8 @@ Features
 - Checkpointing (restart)
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 ``/examples/dem/3d-silo/silo-Golshan.prm``
 
 
