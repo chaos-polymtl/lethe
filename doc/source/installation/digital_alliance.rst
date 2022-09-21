@@ -169,11 +169,11 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
 
   module load CCEnv #if on Niagara
   module load nixpkgs/16.09
-  module load gcc/7.3.0
-  module load openmpi/3.1.2
-  module load p4est/2.0
-  module load trilinos/12.12.1
+  module load gcc/9.3.0
+  module load openmpi/4.0.3
+  module load trilinos/13.0.1
   module load parmetis/4.0.3
+  module load p4est/2.2
 
   export DEAL_II_DIR=$HOME/dealii/inst/
   export PATH=$PATH:$HOME/lethe/inst/bin/
