@@ -15,9 +15,9 @@ Features
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 
 
-------------------------
-Location of the example
-------------------------
+---------------------------
+Files used in this example
+---------------------------
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra10k.prm``
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra25k.prm``
 

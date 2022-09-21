@@ -11,8 +11,8 @@ Features
 - Displays the use of adjoint time-stepping for steady-state problems
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 - Base case (:math:`Re=400`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
 - Higher-Reynolds case (:math:`Re=7500`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/cavity.prm``
 

@@ -1,5 +1,5 @@
 ==================================
-Rotating Drum
+Rotating drum
 ==================================
 
 This is the third example of Lethe-DEM. This example simulates a rotating drum. We setup this simulation according to the experiments of Alizadeh et al `[1] <https://doi.org/10.1002/aic.13982>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
@@ -11,8 +11,8 @@ Features
 - Load-balancing
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 

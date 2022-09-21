@@ -1,6 +1,6 @@
 
 ==================================
-Small Scale Rotating Drum (3D)
+Small scale rotating drum (3D)
 ==================================
 
 This example of Lethe-DEM simulates dry granular flow behaviour in a small scale rotating drum. The discrete element method (DEM) is responsible for describing the behaviour of particles.  More information regarding the DEM parameters are given in the Lethe-DEM documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
@@ -15,22 +15,22 @@ Features
 
 
 
-Locations of Files Used in the Example
---------------------------------------------------
+Files used in this example
+----------------------------
 
 - Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
 - Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
 
 
 
-Description of the Case
+Description of the case
 -----------------------
 
 This example simulates a rolling regime in a small scale rotating drum. First, we use Lethe-DEM to fill the bed with 20000 particles. We enable check-pointing in order to write the DEM checkpoint files for the packing which then will be used as the starting point of the DEM simulation of the rotating drum. The solver ``dem_3d`` is used to simulate the behaviour of dry granular flow within the rotating drum.
 
 
 
-Parameter File
+Parameter file
 --------------
 
 Mesh
@@ -48,7 +48,7 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
     end
 
 
-Packing Information
+Packing information
 ~~~~~~~~~~~~~~~~~~~~
 
 An insertion box is defined inside the cylindrical domain, inserting 8000 particles every 0.5 seconds while the cylinder is at rest. It is important to note the size of the insertion box to make sure it is completely inside our geometry. Otherwise, particles will be lost during the insertion stage.
@@ -73,7 +73,7 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
 
 Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.
 
-Lagrangian Physical Properties
+Lagrangian physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500 kg/m3, respectively. All other particles' physical parameters are taken arbitrary and should be changed based on the physical properties and the experimental values.
@@ -104,7 +104,7 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
     end
 
 
-Model Parameters
+Model parameters
 ~~~~~~~~~~~~~~~~~
 
 In this example, we use the ``dynamic`` load balancing method. This method checks frequently if load balancing should be applied based on a user inputted frequency. Load balancing is dynamically applied if a certain condition is applied. More details regarding load balancing are explained in the `Rotating Drum example <../rotating-drum/rotating-drum.html>`_. 
@@ -123,7 +123,7 @@ In this example, we use the ``dynamic`` load balancing method. This method check
       set integration method				 = velocity_verlet
     end
 
-Boundary Condition
+Boundary condition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on `deal.II boundary colouring <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the hull of the cylinder (rotating drum) has an id = 0.
@@ -143,7 +143,7 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
     end
 
 
-Simulation Control
+Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The packing dem simulation was run for 2 seconds in real time.
@@ -170,7 +170,7 @@ The actual rotation of the drum is 3 seconds in real time. We set the time equal
       set output path                  	 	 = ./output_dem/
     end
 
-Running the Simulation
+Running the simulation
 -----------------------
 
 The simulation is launched in two steps: the first step packs the particle in the cylinder, while the second step rotates the drum and simulates the movement of the particles. The simulation could have been performed in a single step, however; doing it this way allows us to use the restart files of the packing to run the simulation using DEM for a dry simulation and a CFD-DEM for a wet simulation without having to pack the particles twice.
@@ -203,7 +203,7 @@ The following movie displays the centrifuging regime inside the rotating drum fo
     <iframe width="560" height="315" src="https://www.youtube.com/embed/Rx0AOmD2rU0" frameborder="0" allowfullscreen></iframe>
     
 
-Possibilities for Extension
+Possibilities for extension
 ----------------------------
 
 - Use two types of particles with different radius to prove the Brazil-Nut effect.

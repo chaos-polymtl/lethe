@@ -1,5 +1,5 @@
 ==================================
-Rotation of Box
+Rotation of box
 ==================================
 
 This is the fifth example of Lethe-DEM. This example simulates a triangulation (box) rotation. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
@@ -10,8 +10,8 @@ Features
 - Rotating a triangulation
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 ``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 

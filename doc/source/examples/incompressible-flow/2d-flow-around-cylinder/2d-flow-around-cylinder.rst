@@ -14,8 +14,8 @@ Features
 - Specifies an initial condition
 - Displays the use of non-uniform mesh adaptation 
 
-Location of the example
-------------------------
+Files used in this example
+----------------------------
 
 - Parameter file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder.prm``
 - Mesh file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder-structured.msh``

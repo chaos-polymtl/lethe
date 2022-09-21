@@ -11,8 +11,8 @@ Features
 - Transient problem
 - Usage of Gnuplot and Python scripts for the data post-processing
 
-Location of the example
-------------------------
+Files used in this example
+----------------------------
 
 - Parameter file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder.prm``
 - Mesh file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.msh``

@@ -10,8 +10,8 @@ Features
 - Solver: ``gls_navier_stokes_3d`` (with Q1-Q1) 
 - Transient problem
 
-Location of the example
-------------------------
+Files used in this example
+----------------------------
 
 - Parameter file: ``/examples/incompressible-flow/3d-periodic-hills/periodic-hills.prm``
 
@@ -204,7 +204,7 @@ The FEM subsection specifies the order of the elements used for both velocity an
 
 For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements. In that case, it is important to remember to add the ``set qmapping all = true`` line after the velocity and pressure orders.
 
-Non-Linear Solver Control
+Non-Linear solver control
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The non-linear solver control section allows us to choose a method suitable for the problem that we are solving:

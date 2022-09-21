@@ -19,8 +19,8 @@ Features
 - Displays the calculation of the torque induced by the fluid on a boundary
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 ``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
 ``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
 
