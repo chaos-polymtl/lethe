@@ -644,37 +644,114 @@ public:
     const double                        fluid_density,
     std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
+  /**
+   * Returns the value of the basis function for a given distance.
+   * Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+   *
+   * @param basis_function basis function to be used for calculation
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  // Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   evaluate_basis_function(const RBFBasisFunction basis_function,
                           const double           distance) const;
+  /**
+   * Compact Wendland C2 function defined from 0 to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  double
+  wendlandc2(const double distance) const;
 
+  /**
+   * Compact linear function defined from 0 to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  wendlandc2(const double) const;
+  linear(const double distance) const;
+
+  /**
+   * Non-compact Gaussian function with 0.1 value at distance equal to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  linear(const double) const;
+  gauss90(const double distance) const;
+
+  /**
+   * Non-compact Gaussian function with 0.05 value at distance equal to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  gauss90(const double) const;
+  gauss95(const double distance) const;
+
+  /**
+   * Non-compact Gaussian function with 0.01 value at distance equal to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  gauss95(const double) const;
+  gauss99(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C1 continuity at distance=0, and C0 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  gauss99(const double) const;
+  c1c0(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C2 continuity at distance=0, and C0 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c1c0(const double) const;
+  c2c0(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C0 continuity at distance=0, and C1 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c2c0(const double) const;
+  c0c1(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C1 continuity at distance=0, and C1 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c0c1(const double) const;
+  c1c1(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C2 continuity at distance=0, and C1 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c1c1(const double) const;
+  c2c1(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C0 continuity at distance=0, and C2 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c2c1(const double) const;
+  c0c2(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C1 continuity at distance=0, and C2 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c0c2(const double) const;
+  c1c2(const double distance) const;
+
+  /**
+   * Compact polynomial function defined from 0 to 1.
+   * It preserves C2 continuity at distance=0, and C2 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
   double
-  c1c2(const double) const;
-  double
-  c2c2(const double) const;
+  c2c2(const double distance) const;
 
   std::pair<std::string, enum Shape<dim>::ShapeType>
   get_shape_name() override

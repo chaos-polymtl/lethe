@@ -570,181 +570,113 @@ RBFShape<dim>::displaced_volume(const double fluid_density,
   return bounding_box->displaced_volume(fluid_density);
 }
 
-/*!
- * Wendland C2 function
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::wendlandc2(double dist) const
+RBFShape<dim>::wendlandc2(const double distance) const
 {
-  return dist > 1.0 ? 0.0 : std::pow(1. - dist, 4.0) * (4.0 * dist + 1.0);
+  return distance > 1.0 ? 0.0 :
+                          std::pow(1. - distance, 4.0) * (4.0 * distance + 1.0);
 }
 
-/*!
- * Linear function
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::linear(double dist) const
+RBFShape<dim>::linear(const double distance) const
 {
-  return dist > 1.0 ? 0.0 : (1.0 - dist);
+  return distance > 1.0 ? 0.0 : (1.0 - distance);
 }
 
-/*!
- * Non-compact Gaussian function with 0.1 value at dist equal to 1
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::gauss90(double dist) const
+RBFShape<dim>::gauss90(const double distance) const
 {
   double eps = std::pow(-1.0 * std::log(0.1), 0.5);
-  return std::exp(-1.0 * std::pow(dist * eps, 2.0));
+  return std::exp(-1.0 * std::pow(distance * eps, 2.0));
 }
 
-/*!
- * Non-compact Gaussian function with 0.05 value at dist equal to 1
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::gauss95(double dist) const
+RBFShape<dim>::gauss95(const double distance) const
 {
   double eps = std::pow(-1.0 * std::log(0.05), 0.5);
-  return std::exp(-1.0 * std::pow(dist * eps, 2.0));
+  return std::exp(-1.0 * std::pow(distance * eps, 2.0));
 }
 
-/*!
- * Non-compact Gaussian function with 0.01 value at dist equal to 1
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::gauss99(double dist) const
+RBFShape<dim>::gauss99(const double distance) const
 {
   double eps = std::pow(-1.0 * std::log(0.01), 0.5);
-  return std::exp(-1.0 * std::pow(dist * eps, 2.0));
+  return std::exp(-1.0 * std::pow(distance * eps, 2.0));
 }
 
-/*!
- * Polynomial function defined between 0,1. Preserve C1 continuity at dist=0, C0
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::c1c0(double dist) const
+RBFShape<dim>::c1c0(const double distance) const
 {
-  return dist > 1.0 ? 0.0 : (1.0 - std::pow(dist, 2.0));
+  return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 2.0));
 }
 
-/*!
- * Polynomial function defined between 0,1. Preserve C2 continuity at dist=0, C0
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::c2c0(double dist) const
+RBFShape<dim>::c2c0(const double distance) const
 {
-  return dist > 1.0 ? 0.0 : (1.0 - std::pow(dist, 3.0));
+  return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 3.0));
 }
 
-/*!
- * Polynomial function defined between 0,1. Preserve C0 continuity at dist=0, C1
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::c0c1(double dist) const
+RBFShape<dim>::c0c1(const double distance) const
 {
-  return dist > 1.0 ? 0.0 : (1.0 - 2.0 * dist + std::pow(dist, 2.0));
+  return distance > 1.0 ? 0.0 :
+                          (1.0 - 2.0 * distance + std::pow(distance, 2.0));
 }
 
-/*!
- * Polynomial function defined between 0,1. Preserve C1 continuity at dist=0, C1
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::c1c1(double dist) const
+RBFShape<dim>::c1c1(const double distance) const
 {
-  return dist > 1.0 ?
+  return distance > 1.0 ? 0.0 :
+                          (1.0 - 3.0 * std::pow(distance, 2.0) +
+                           2.0 * std::pow(distance, 3.0));
+}
+
+template <int dim>
+double
+RBFShape<dim>::c2c1(const double distance) const
+{
+  return distance > 1.0 ? 0.0 :
+                          (1.0 - 4.0 * std::pow(distance, 3.0) +
+                           3.0 * std::pow(distance, 4.0));
+}
+
+template <int dim>
+double
+RBFShape<dim>::c0c2(const double distance) const
+{
+  return distance > 1.0 ?
            0.0 :
-           (1.0 - 3.0 * std::pow(dist, 2.0) + 2.0 * std::pow(dist, 3.0));
+           (1.0 - 3.0 * distance + 3.0 * std::pow(distance, 2.0) -
+            std::pow(distance, 3.0));
 }
 
-/*!
- * Polynomial function defined between 0,1. Preserve C2 continuity at dist=0, C1
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::c2c1(double dist) const
+RBFShape<dim>::c1c2(const double distance) const
 {
-  return dist > 1.0 ?
+  return distance > 1.0 ?
            0.0 :
-           (1.0 - 4.0 * std::pow(dist, 3.0) + 3.0 * std::pow(dist, 4.0));
+           (1.0 - 6.0 * std::pow(distance, 2.0) +
+            8.0 * std::pow(distance, 3.0) - 3.0 * std::pow(distance, 4.0));
 }
 
-/*!
- * Polynomial function defined between 0,1. Preserve C0 continuity at dist=0, C2
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
 template <int dim>
 double
-RBFShape<dim>::c0c2(double dist) const
+RBFShape<dim>::c2c2(const double distance) const
 {
-  return dist > 1.0 ?
+  return distance > 1.0 ?
            0.0 :
-           (1.0 - 3.0 * dist + 3.0 * std::pow(dist, 2.0) - std::pow(dist, 3.0));
-}
-
-/*!
- * Polynomial function defined between 0,1. Preserve C1 continuity at dist=0, C2
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
-template <int dim>
-double
-RBFShape<dim>::c1c2(double dist) const
-{
-  return dist > 1.0 ? 0.0 :
-                      (1.0 - 6.0 * std::pow(dist, 2.0) +
-                       8.0 * std::pow(dist, 3.0) - 3.0 * std::pow(dist, 4.0));
-}
-
-/*!
- * Polynomial function defined between 0,1. Preserve C2 continuity at dist=0, C2
- * continuity at dist=1. At dist > 1 is 0.
- * @param[in] dist distance normalized with respect to support radius
- * @return rbf value
- */
-template <int dim>
-double
-RBFShape<dim>::c2c2(double dist) const
-{
-  return dist > 1.0 ? 0.0 :
-                      (1.0 - 10.0 * std::pow(dist, 3.0) +
-                       15.0 * std::pow(dist, 4.0) - 6.0 * std::pow(dist, 5.0));
+           (1.0 - 10.0 * std::pow(distance, 3.0) +
+            15.0 * std::pow(distance, 4.0) - 6.0 * std::pow(distance, 5.0));
 }
 
 template <int dim>
