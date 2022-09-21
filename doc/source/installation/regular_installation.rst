@@ -40,6 +40,7 @@ Clone the candi git repository in a folder of your choice  (e.g. ``/home/usernam
 From the candi folder, the installation of candi can be launched using:
 
 .. code-block:: text
+  :class: copy-button
 
   ./candi.sh -j $num_proc --prefix=$path
 
@@ -55,8 +56,9 @@ After installation, you should have a ``deal.II-candi`` folder in the installati
 After installation, add an environment variable to your ``.bashrc`` either manually or through the following command:
 
 .. code-block:: text
+  :class: copy-button
 
-   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc
+  echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc
 
 Installing deal.II manually (Step #1)
 --------------------------------------
@@ -74,13 +76,15 @@ MPI, for Message Passing Interface, is required for the installation of all comp
 As an example, in Ubuntu:
 
 .. code-block:: text
+  :class: copy-button
 
   sudo apt-get install libopenmpi-dev openmpi-bin openmpi-common
 
 In Manjaro or other arch based linux distribution:
 
 .. code-block:: text
-  
+  :class: copy-button
+
   sudo pacman -Sy openmpi
 
 
@@ -90,6 +94,7 @@ numdiff
 numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. numdiff can be installed directly from your package manager.
 
 .. code-block:: text
+  :class: copy-button
 
   sudo apt-get install numdiff
 
@@ -122,12 +127,14 @@ Installation of deal.II
 Clone deal.II from the `deal.ii official repository <https://github.com/dealii/dealii>`_
 
 .. code-block:: text
+  :class: copy-button
 
   git clone https://github.com/dealii/dealii 
 
 Configure deal.II in a build folder at the same level as the source code
 
 .. code-block:: text
+  :class: copy-button
 
   mkdir build
   cd build
@@ -135,26 +142,30 @@ Configure deal.II in a build folder at the same level as the source code
 Depending on how you have installed p4est, Trilinos and METIS, you may need to specify the installation folder of the three libraries
 
 .. code-block:: text
+  :class: copy-button
 
   cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation  -DDEAL_II_WITH_METIS=ON -DMETIS_DIR=path/to/your/metis/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
 
 Compile deal.II
 
 .. code-block:: text
+  :class: copy-button
 
   make -j<nprocessor> install
 
 Create an environment variable for the deal.II directory
 
 .. code-block:: text
- 
+  :class: copy-button
+
   export DEAL_II_DIR=/path/to/dealii/installation
 
 It is generally recommended to add the variable to your bashrc so it is always loaded:
 
 .. code-block:: text
+  :class: copy-button
 
- echo "export DEAL_II_DIR=/path/to/dealii/installation" >> ~/.bashrc
+  echo "export DEAL_II_DIR=/path/to/dealii/installation" >> ~/.bashrc
 
 .. _install-lethe:
 
@@ -164,12 +175,14 @@ Installing lethe (Step #2)
 Clone lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
 
 .. code-block:: text
+  :class: copy-button
 
   git clone https://github.com/lethe-cfd/lethe 
 
 Create a build folder at the same level as the lethe folder
 
 .. code-block:: text
+  :class: copy-button
 
   mkdir build
   cd build
@@ -177,18 +190,21 @@ Create a build folder at the same level as the lethe folder
 Build Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text
+  :class: copy-button
 
   cmake ../lethe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/home/username/path/to/installation
 
 or
 
 .. code-block:: text
+  :class: copy-button
 
   cmake ../lethe -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/username/path/to/installation
 
 Then you can compile:
 
 .. code-block:: text
+  :class: copy-button
 
   make -j<numprocs>
 
@@ -198,6 +214,7 @@ Testing your installation (Step #3)
 Lethe comes pre-packaged with an extensive test suit for all of its modules. It can be used to test the validity of your installation. Within the build folder, the test suite can be launched with the following command:
 
 .. code-block:: text
+  :class: copy-button
 
   ctest -j $numprocs
 
@@ -217,6 +234,7 @@ With candi
 In the candi folder (for instance, ``/home/username/software/candi``), modify the ``candi.cfg`` to get the latest dealii version, by changing the ``DEAL_II_VERSION`` variable in the case of an official release, or by changing the ``STABLE_BUILD`` in the case of a development release. The ``candi.cfg`` should contain:
 
 .. code-block:: text
+  :class: copy-button
 
   # Install the following deal.II version:
   DEAL_II_VERSION=v9.3.0
