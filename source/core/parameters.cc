@@ -2206,7 +2206,7 @@ namespace Parameters
                 {
                   std::string shape_name = shape_arguments_str_list[0];
                   std::map<std::string, std::vector<double>> rbf_data;
-                  fill_vectors_from_file(rbf_data, shape_name, ";");
+                  fill_vectors_from_file(rbf_data, shape_name, ",");
                   size_t number_of_nodes = rbf_data["weight"].size();
 
                   std::vector<double> weights;

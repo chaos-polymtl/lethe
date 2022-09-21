@@ -532,8 +532,8 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double bounding_box_distance = bounding_box->value(centered_point);
   double value                 = std::max(bounding_box_distance, 0.0);
 
-  double       dist, basis;
-  unsigned int number_of_nodes = weights.size();
+  double dist, basis;
+  size_t number_of_nodes = weights.size();
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (size_t i = 0; i < number_of_nodes; ++i)
     {
