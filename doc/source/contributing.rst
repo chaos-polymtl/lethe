@@ -55,6 +55,12 @@ To install Sphinx globally:
 
     pip install 'sphinx==4.*'
 
+To install additional packages:
+
+.. code-block:: shell
+
+    pip install sphinx-copybutton
+
 Then, install the Sphinx requirements:
 
 .. code-block:: shell

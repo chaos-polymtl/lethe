@@ -21,6 +21,7 @@ jobs:
       - name: Setup Sphinx
         run: |
           pip install sphinx==${{ env.SPHINX_VERSION }}
+          pip install sphinx-copybutton
           pip install -r doc/requirements.txt
 
       - name: Build HTML
