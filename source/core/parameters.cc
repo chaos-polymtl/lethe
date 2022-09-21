@@ -1855,7 +1855,7 @@ namespace Parameters
       "cut thickness, wall thickness. "
       "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers."
-      "The parameter for a rbf is the file name.");
+      "The parameter for an rbf is the file name.");
     prm.declare_entry("shape arguments",
                       "1",
                       Patterns::Anything(),
@@ -2361,10 +2361,11 @@ namespace Parameters
           {
             constexpr unsigned int numbers_per_nodes = dim + 3;
             size_t number_of_nodes = shape_arguments.size() / numbers_per_nodes;
-            std::vector<double>         support_radius;
-            std::vector<unsigned int>   basis_function;
-            std::vector<double>         weight;
-            std::vector<Tensor<1, dim>> nodes;
+            std::vector<double> support_radius;
+            std::vector<typename RBFShape<dim>::RBFBasisFunction>
+                                    basis_function;
+            std::vector<double>     weight;
+            std::vector<Point<dim>> nodes;
             support_radius.resize(number_of_nodes);
             basis_function.resize(number_of_nodes);
             weight.resize(number_of_nodes);
@@ -2374,8 +2375,9 @@ namespace Parameters
                 weight[n_i] = shape_arguments[0 * number_of_nodes + n_i];
                 support_radius[n_i] =
                   shape_arguments[1 * number_of_nodes + n_i];
-                basis_function[n_i] = (unsigned int)round(
-                  shape_arguments[2 * number_of_nodes + n_i]);
+                basis_function[n_i] =
+                  static_cast<typename RBFShape<dim>::RBFBasisFunction>(
+                    round(shape_arguments[2 * number_of_nodes + n_i]));
                 nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
                 nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
                 nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];

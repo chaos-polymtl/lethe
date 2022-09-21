@@ -735,56 +735,41 @@ RBFShape<dim>::c2c2(double dist) const
 
 template <int dim>
 double
-RBFShape<dim>::evaluate_basis_function(const unsigned int basis_function_id,
-                                       const double       distance) const
+RBFShape<dim>::evaluate_basis_function(const RBFBasisFunction basis_function,
+                                       const double           distance) const
 {
   double value;
-  switch (basis_function_id)
+  switch (basis_function)
     {
-      case 1:
-        value = RBFShape<dim>::wendlandc2(distance);
-        break;
-      case 2:
-        value = RBFShape<dim>::linear(distance);
-        break;
-      case 3:
-        value = RBFShape<dim>::gauss90(distance);
-        break;
-      case 4:
-        value = RBFShape<dim>::gauss95(distance);
-        break;
-      case 5:
-        value = RBFShape<dim>::gauss99(distance);
-        break;
-      case 6:
-        value = RBFShape<dim>::c1c0(distance);
-        break;
-      case 7:
-        value = RBFShape<dim>::c2c0(distance);
-        break;
-      case 8:
-        value = RBFShape<dim>::c0c1(distance);
-        break;
-      case 9:
-        value = RBFShape<dim>::c1c1(distance);
-        break;
-      case 10:
-        value = RBFShape<dim>::c2c1(distance);
-        break;
-      case 11:
-        value = RBFShape<dim>::c0c2(distance);
-        break;
-      case 12:
-        value = RBFShape<dim>::c1c2(distance);
-        break;
-      case 13:
-        value = RBFShape<dim>::c2c2(distance);
-        break;
+      case RBFBasisFunction::WENDLANDC2:
+        return RBFShape<dim>::wendlandc2(distance);
+      case RBFBasisFunction::LINEAR:
+        return RBFShape<dim>::linear(distance);
+      case RBFBasisFunction::GAUSS90:
+        return RBFShape<dim>::gauss90(distance);
+      case RBFBasisFunction::GAUSS95:
+        return RBFShape<dim>::gauss95(distance);
+      case RBFBasisFunction::GAUSS99:
+        return RBFShape<dim>::gauss99(distance);
+      case RBFBasisFunction::C1C0:
+        return RBFShape<dim>::c1c0(distance);
+      case RBFBasisFunction::C2C0:
+        return RBFShape<dim>::c2c0(distance);
+      case RBFBasisFunction::C0C1:
+        return RBFShape<dim>::c0c1(distance);
+      case RBFBasisFunction::C1C1:
+        return RBFShape<dim>::c1c1(distance);
+      case RBFBasisFunction::C2C1:
+        return RBFShape<dim>::c2c1(distance);
+      case RBFBasisFunction::C0C2:
+        return RBFShape<dim>::c0c2(distance);
+      case RBFBasisFunction::C1C2:
+        return RBFShape<dim>::c1c2(distance);
+      case RBFBasisFunction::C2C2:
+        return RBFShape<dim>::c2c2(distance);
       default:
-        value = RBFShape<dim>::linear(distance);
-        break;
+        return RBFShape<dim>::linear(distance);
     }
-  return value;
 }
 
 template class Sphere<2>;

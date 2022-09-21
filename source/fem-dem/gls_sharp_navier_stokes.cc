@@ -3628,10 +3628,11 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
                 {
                   weight[n_i]         = shape->weight[n_i];
                   support_radius[n_i] = shape->support_radius[n_i];
-                  basis_function[n_i] = shape->basis_function[n_i];
-                  nodes_x[n_i]        = shape->nodes[n_i][0];
-                  nodes_y[n_i]        = shape->nodes[n_i][1];
-                  nodes_z[n_i]        = shape->nodes[n_i][2];
+                  basis_function[n_i] =
+                    static_cast<double>(shape->basis_function[n_i]);
+                  nodes_x[n_i] = shape->nodes[n_i][0];
+                  nodes_y[n_i] = shape->nodes[n_i][1];
+                  nodes_z[n_i] = shape->nodes[n_i][2];
                 }
               shape_arguments.reserve((dim + 3) * number_of_nodes);
               shape_arguments.insert(shape_arguments.end(),

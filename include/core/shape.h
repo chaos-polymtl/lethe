@@ -542,17 +542,41 @@ class RBFShape : public Shape<dim>
 {
 public:
   /**
+   * Class taken from Optimad Bitpit. https://github.com/optimad/bitpit
+   * @enum RBFBasisFunction
+   * @ingroup RBF
+   * @brief Enum class defining types of RBF kernel functions that could be used in bitpit::RBF class
+   */
+  enum class RBFBasisFunction
+  {
+    CUSTOM,
+    WENDLANDC2,
+    LINEAR,
+    GAUSS90,
+    GAUSS95,
+    GAUSS99,
+    C1C0,
+    C2C0,
+    C0C1,
+    C1C1,
+    C2C1,
+    C0C2,
+    C1C2,
+    C2C2,
+  };
+
+  /**
    * @param support_radius the scaling of the reach of the nodes
    * @param basis_function the basis function that was used to parametrize the RBF object
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
    */
-  RBFShape<dim>(const std::vector<double>         support_radius,
-                const std::vector<unsigned int>   basis_function,
-                const std::vector<double>         weight,
-                const std::vector<Tensor<1, dim>> nodes,
-                const Point<dim> &                position,
-                const Tensor<1, 3> &              orientation)
+  RBFShape<dim>(const std::vector<double>           support_radius,
+                const std::vector<RBFBasisFunction> basis_function,
+                const std::vector<double>           weight,
+                const std::vector<Point<dim>>       nodes,
+                const Point<dim> &                  position,
+                const Tensor<1, 3> &                orientation)
     : Shape<dim>(support_radius[0], position, orientation)
     , weight(weight)
     , nodes(nodes)
@@ -561,10 +585,10 @@ public:
   {
     size_t number_of_nodes = weight.size();
 
-    Point<dim>     high_bounding_point = Point<dim>();
-    Point<dim>     low_bounding_point  = Point<dim>();
-    Point<dim>     bounding_box_center = Point<dim>();
-    Tensor<1, dim> half_lengths        = Tensor<1, dim>();
+    Point<dim>     high_bounding_point{};
+    Point<dim>     low_bounding_point{};
+    Point<dim>     bounding_box_center{};
+    Tensor<1, dim> half_lengths = Tensor<1, dim>();
     for (int d = 0; d < dim; d++)
       {
         high_bounding_point[d] = std::numeric_limits<double>::lowest();
@@ -598,35 +622,35 @@ public:
 
   double
   // Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  evaluate_basis_function(const unsigned int basis_function_id,
-                          const double       distance) const;
+  evaluate_basis_function(const RBFBasisFunction basis_function,
+                          const double           distance) const;
 
   double
-  wendlandc2(double) const;
+  wendlandc2(const double) const;
   double
-  linear(double) const;
+  linear(const double) const;
   double
-  gauss90(double) const;
+  gauss90(const double) const;
   double
-  gauss95(double) const;
+  gauss95(const double) const;
   double
-  gauss99(double) const;
+  gauss99(const double) const;
   double
-  c1c0(double) const;
+  c1c0(const double) const;
   double
-  c2c0(double) const;
+  c2c0(const double) const;
   double
-  c0c1(double) const;
+  c0c1(const double) const;
   double
-  c1c1(double) const;
+  c1c1(const double) const;
   double
-  c2c1(double) const;
+  c2c1(const double) const;
   double
-  c0c2(double) const;
+  c0c2(const double) const;
   double
-  c1c2(double) const;
+  c1c2(const double) const;
   double
-  c2c2(double) const;
+  c2c2(const double) const;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -634,34 +658,10 @@ public:
     return std::make_pair("rbf_shape", Shape<dim>::ShapeType::rbf_shape);
   }
 
-  /**
-   * Class taken from Optimad Bitpit. https://github.com/optimad/bitpit
-   * @enum RBFBasisFunction
-   * @ingroup RBF
-   * @brief Enum class defining types of RBF kernel functions that could be used in bitpit::RBF class
-   */
-  enum class RBFBasisFunction
-  {
-    CUSTOM     = 0,
-    WENDLANDC2 = 1,
-    LINEAR     = 2,
-    GAUSS90    = 3,
-    GAUSS95    = 4,
-    GAUSS99    = 5,
-    C1C0       = 6,
-    C2C0       = 7,
-    C0C1       = 8,
-    C1C1       = 9,
-    C2C1       = 10,
-    C0C2       = 11,
-    C1C2       = 12,
-    C2C2       = 13,
-  };
-
-  std::vector<double>         weight;
-  std::vector<Tensor<1, dim>> nodes;
-  std::vector<double>         support_radius;
-  std::vector<unsigned int>   basis_function;
+  std::vector<double>           weight;
+  std::vector<Point<dim>>       nodes;
+  std::vector<double>           support_radius;
+  std::vector<RBFBasisFunction> basis_function;
 
 private:
   std::shared_ptr<Rectangle<dim>> bounding_box;
