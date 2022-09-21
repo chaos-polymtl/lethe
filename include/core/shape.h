@@ -52,15 +52,15 @@ public:
    */
   enum ShapeType : int
   {
-    sphere            = 0,
-    rectangle         = 1,
-    ellipsoid         = 2,
-    torus             = 3,
-    cone              = 4,
-    cut_hollow_sphere = 5,
-    death_star        = 6,
-    composite_shape   = 7,
-    rbf_shape         = 8,
+    sphere,
+    rectangle,
+    ellipsoid,
+    torus,
+    cone,
+    cut_hollow_sphere,
+    death_star,
+    composite_shape,
+    rbf_shape,
   } type;
 
   /**
