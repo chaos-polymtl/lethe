@@ -19,7 +19,8 @@
 
 template <int dim>
 double
-Shape<dim>::displaced_volume(const double /*fluid_density*/)
+Shape<dim>::displaced_volume(const double /*fluid_density*/,
+                             std::shared_ptr<ConditionalOStream> pcout)
 {
   StandardExceptions::ExcNotImplemented();
   return 1.0;
@@ -171,7 +172,8 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
 
 template <int dim>
 double
-Sphere<dim>::displaced_volume(const double fluid_density)
+Sphere<dim>::displaced_volume(const double                        fluid_density,
+                              std::shared_ptr<ConditionalOStream> pcout)
 {
   double solid_volume;
   using numbers::PI;
@@ -235,7 +237,8 @@ Rectangle<dim>::static_copy() const
 
 template <int dim>
 double
-Rectangle<dim>::displaced_volume(const double /*fluid_density*/)
+Rectangle<dim>::displaced_volume(const double /*fluid_density*/,
+                                 std::shared_ptr<ConditionalOStream> pcout)
 {
   double solid_volume = 1.0;
   for (unsigned int i = 0; i < dim; i++)
@@ -278,7 +281,8 @@ Ellipsoid<dim>::static_copy() const
 
 template <int dim>
 double
-Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/)
+Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/,
+                                 std::shared_ptr<ConditionalOStream> pcout)
 {
   using numbers::PI;
   double solid_volume = PI * 4.0 / 3.0;
@@ -314,7 +318,8 @@ Torus<dim>::static_copy() const
 
 template <int dim>
 double
-Torus<dim>::displaced_volume(const double /*fluid_density*/)
+Torus<dim>::displaced_volume(const double /*fluid_density*/,
+                             std::shared_ptr<ConditionalOStream> pcout)
 {
   using numbers::PI;
   return 2.0 * PI * PI * ring_radius * ring_thickness * ring_thickness;
@@ -361,7 +366,8 @@ Cone<dim>::static_copy() const
 
 template <int dim>
 double
-Cone<dim>::displaced_volume(const double /*fluid_density*/)
+Cone<dim>::displaced_volume(const double /*fluid_density*/,
+                            std::shared_ptr<ConditionalOStream> pcout)
 {
   using numbers::PI;
   return PI / 3.0 * base_radius * base_radius * height;
@@ -405,12 +411,14 @@ CutHollowSphere<dim>::static_copy() const
 
 template <int dim>
 double
-CutHollowSphere<dim>::displaced_volume(const double /*fluid_density*/)
+CutHollowSphere<dim>::displaced_volume(
+  const double /*fluid_density*/,
+  std::shared_ptr<ConditionalOStream> pcout)
 {
-  std::cout
-    << "Warning: For a cut hollow sphere, the real volume will be lower than "
-       "output."
-    << std::endl;
+  if (pcout)
+    *pcout
+      << "Warning: For a cut hollow sphere, the real volume will be lower than "
+      << "output." << std::endl;
   using numbers::PI;
   double small_radius = radius - shell_thickness;
   return 4.0 * PI / 3.0 *
@@ -458,11 +466,13 @@ DeathStar<dim>::static_copy() const
 
 template <int dim>
 double
-DeathStar<dim>::displaced_volume(const double /*fluid_density*/)
+DeathStar<dim>::displaced_volume(const double /*fluid_density*/,
+                                 std::shared_ptr<ConditionalOStream> pcout)
 {
-  std::cout
-    << "Warning: For a death star, the real volume will be lower than output."
-    << std::endl;
+  if (pcout)
+    *pcout
+      << "Warning: For a death star, the real volume will be lower than output."
+      << std::endl;
   using numbers::PI;
   return 4. * PI / 3. * radius * radius * radius;
 }
@@ -491,16 +501,18 @@ CompositeShape<dim>::static_copy() const
 
 template <int dim>
 double
-CompositeShape<dim>::displaced_volume(const double fluid_density)
+CompositeShape<dim>::displaced_volume(const double fluid_density,
+                                      std::shared_ptr<ConditionalOStream> pcout)
 {
   double solid_volume = 0;
-  std::cout
-    << "Warning: For composite shapes, the real volume may be bigger than output "
-       "since intersections aren't considered in the calculation."
-    << std::endl;
+  if (pcout)
+    *pcout
+      << "Warning: For composite shapes, the real volume may be bigger than "
+      << "output since intersections aren't considered in the calculation."
+      << std::endl;
   for (const std::shared_ptr<Shape<dim>> &elem : components)
     {
-      solid_volume += elem->displaced_volume(fluid_density);
+      solid_volume += elem->displaced_volume(fluid_density, pcout);
     }
   return solid_volume;
 }
@@ -548,11 +560,13 @@ RBFShape<dim>::static_copy() const
 
 template <int dim>
 double
-RBFShape<dim>::displaced_volume(const double fluid_density)
+RBFShape<dim>::displaced_volume(const double fluid_density,
+                                std::shared_ptr<ConditionalOStream> pcout)
 {
-  std::cout
-    << "Warning: For a RBF shape, the real volume will be lower than output."
-    << std::endl;
+  if (pcout)
+    *pcout
+      << "Warning: For a RBF shape, the real volume will be lower than output."
+      << std::endl;
   return bounding_box->displaced_volume(fluid_density);
 }
 

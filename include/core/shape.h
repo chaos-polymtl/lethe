@@ -25,6 +25,8 @@
 #endif
 
 
+#include <deal.II/base/conditional_ostream.h>
+
 #include <deal.II/physics/transformations.h>
 
 #include <cfloat>
@@ -106,9 +108,12 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
    */
   virtual double
-  displaced_volume(const double fluid_density) = 0;
+  displaced_volume(const double                        fluid_density,
+                   std::shared_ptr<ConditionalOStream> pcout = nullptr) = 0;
 
   /**
    * @brief
@@ -208,7 +213,9 @@ public:
            const unsigned int component = 0) const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
 
   std::pair<std::string, int>
@@ -252,7 +259,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -288,7 +297,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -327,7 +338,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -369,7 +382,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -416,7 +431,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -470,7 +487,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -520,7 +539,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   std::pair<std::string, int>
   get_shape_name() override
@@ -618,7 +639,9 @@ public:
   static_copy() const override;
 
   double
-  displaced_volume(const double fluid_density) override;
+  displaced_volume(
+    const double                        fluid_density,
+    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
 
   double
   // Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
