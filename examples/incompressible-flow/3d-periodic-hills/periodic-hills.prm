@@ -17,7 +17,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
+    subsection fluid 0
     set kinematic viscosity        = 1.78571E-04 # Re = 5600
+    end
 end
 
 #---------------------------------------------------
@@ -25,7 +27,7 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                       = periodic_hills
-    set initial refinement         = 5
+    set initial refinement         = 1
     set grid arguments 		         = 1;1;4;2;1
 end
 
