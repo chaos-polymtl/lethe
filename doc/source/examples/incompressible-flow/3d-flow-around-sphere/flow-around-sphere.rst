@@ -13,8 +13,8 @@ Features
 - Displays the effect of the Reynolds number on the convergence
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 - For Re = 0.1 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
 - For Re = 150 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
 - For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``

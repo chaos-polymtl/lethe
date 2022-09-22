@@ -1,5 +1,5 @@
 ==================================
-Granular Mixer
+Granular mixer
 ==================================
 
 This example simulates the packing and mixing of particles in a mixer with a pitched-blade impeller. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
@@ -12,8 +12,8 @@ Features
 - Bidispersed particles (same size and properties, but different types)
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 ``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 

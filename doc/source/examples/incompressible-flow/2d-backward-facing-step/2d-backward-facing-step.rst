@@ -10,8 +10,8 @@ Features
 - Comparison with benchmark solutions
 - Mesh refinement and error analysis
 
-Location of the example
------------------------
+Files used in this example
+----------------------------
 
 - Base case (:math:`Re < 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds100-600``
 - Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds700-1000``
@@ -26,7 +26,7 @@ In this example, a bidimensional flow goes past a backward-facing step. The flow
 
 The backward-facing step problem is a classical computational fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters used to solve the backward-facing step problem will be exposed. A solution to several Reynolds numbers (from :math:`Re = 100` to :math:`Re =1000`) will then be presented and compared to experimental and numerical data. A mesh adaptation and numerical error analysis will be carried on.
 
-Parameter File
+Parameter file
 --------------
 
 The following subsections show the different parameters used in the simulations. While they all remain more or less the same throughout the various cases, some of them change as the Reynolds number is increased.
@@ -69,7 +69,7 @@ However, for :math:`Re \geq 700`, convergence can be quite difficult to obtain w
   
 ``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady simulation. In this case, choosing ``stop tolerance = 1e-6`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
 
-Physical Properties
+Physical properties
 ~~~~~~~~~~~~~~~~~~~
 
 In this problem, the Reynolds number is defined as follows: 
@@ -110,7 +110,7 @@ Mesh
 	
 The mesh features quadrilateral elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet lengths should be long enough that they allow the formation of a fully developed flow. Finally, since a ``gmsh`` mesh file is used, the initial mesh should be as coarse as possible, since these cells cannot be coarsened with the mesh adaptation algorithm.
 
-Mesh Adaptation
+Mesh adaptation
 ~~~~~~~~~~~~~~~
 
 In this example, the mesh adaptation algorithm is based on the Kelly error estimator applied on the velocity variable. This strategy is suitable here, since a fine mesh is required in the vicinity of the step while a coarser mesh is acceptable far way from it.
@@ -151,7 +151,7 @@ In this example, the interpolation order has been set to one for both velocity a
 	  set velocity order = 1
 	end
 
-Boundary Conditions
+Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
 As presented in the description of the case (see figure above), three different boundary conditions (or boundary IDs) are necessary to define this particular problem.
@@ -180,7 +180,7 @@ As presented in the description of the case (see figure above), three different 
 	
 First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered a natural boundary condition (also known as the *do nothing* boundary condition) and it is used since we can consider the outlet to be very far from the step. In fact, this condition specifies :math:`p \rightarrow 0` or in other words, that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is automatically loaded when nothing is assigned to a specific ID  (in our case, there is none at the outlet).
 
-Non-linear Solver
+Non-linear solver
 ~~~~~~~~~~~~~~~~~
 
 The ``newton`` non-linear solver is used with a medium ``tolerance``, since convergence can be hard to obtain for high Reynolds number.
@@ -193,7 +193,7 @@ The ``newton`` non-linear solver is used with a medium ``tolerance``, since conv
 	  set max iterations          = 10
 	end
 
-Linear Solver
+Linear solver
 ~~~~~~~~~~~~~
 
 For :math:`Re < 700`, standard parameters are suitable to achieve convergence.
@@ -230,7 +230,7 @@ For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtion
 .. tip::
 	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the nonlinear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
 	
-Running the Simulations
+Running the simulations
 -----------------------
 
 The simulation can be executed using the following command (assuming that the solver's location is in your PATH environment variable):
@@ -248,10 +248,10 @@ However, mpi can be used to lower calculation time by using several CPUs (especi
 where ``j`` is the number of CPUs used for the computations.
 
 
-Results and Discussion
+Results and discussion
 ----------------------
 
-Low Reynolds Number (:math:`Re = 100`)
+Low Reynolds number (:math:`Re = 100`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After opening the file ``backward_facing_step_output.pvd`` with Paraview, the following results are obtained.
@@ -278,7 +278,7 @@ where the final value of :math:`x_r` is :math:`2.893`. We notice from the graph 
 The reference value used in the error analysis is taken from Erturk (2008).
 
 
-Higher Reynolds Number (:math:`Re=1000`)
+Higher Reynolds number (:math:`Re=1000`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In a similar way as we did in the last subsection, the solution for :math:`Re = 1000` can be obtained.
@@ -292,10 +292,10 @@ For :math:`Re = 1000` :
 On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python algorithm as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
 
-Validation and Comparison
+Validation and comparison
 -------------------------
 
-Reattachment Length
+Reattachment length
 ~~~~~~~~~~~~~~~~~~~
 
 In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific literature (Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_ and Velivelli and Bryden (2015) `[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.

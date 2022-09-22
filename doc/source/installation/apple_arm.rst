@@ -24,6 +24,7 @@ Clone the candi git repository in a folder of your choice  (e.g. ``$HOME/sofware
 From the candi folder, the installation of candi can be launched using:
 
 .. code-block:: text
+  :class: copy-button
 
   ./candi.sh -j $num_proc --prefix=$path --packages="parmetis p4est trilinos dealii"
 
@@ -32,8 +33,9 @@ After installation, you should have a ``deal.ii-candi`` folder in the installati
 After installation, add an environment variable to your ``~/.zshrc`` either manually or through the following command:
 
 .. code-block:: text
+  :class: copy-button
 
-   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.zshrc
+  echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.zshrc
 
 Setting the Library and Include paths
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,6 +43,7 @@ Setting the Library and Include paths
 The deal.II installation procedure might not set the correct path for the libraries agaisnt which it needs to link. These include parmetis, p4est and trilinos. To fix this issue, the include and library path must be manually added by appending the following lines to the ``~/.zshrc`` file.
 
 .. code-block::
+  :class: copy-button
 
   export PATH=/opt/homebrew/bin:$PATH
   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:path/to/candi/install/trilinos-release-12-18-1/lib/
@@ -63,6 +66,7 @@ Lethe compiles using the C++ 17 standard. There is a header file in the Trilinos
 The following file needs to be modified in the include dir of your Trilinos installation:
 
 .. code-block::
+  :class: copy-button
 
   path/to/candi/install/trilinos-release-12-18-1/include/Tpetra_Import_def.hpp
 
@@ -77,7 +81,8 @@ At line 1169, the following line:
 Should be replaced by:
 
 .. code-block:: cpp
-  
+  :class: copy-button
+
   const size_type numInvalidRemote = 0;
 
 .. warning::
@@ -89,6 +94,7 @@ numdiff
 numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. Numdiff can be installed directly from your package manager.
 
 .. code-block:: text
+  :class: copy-button
 
   brew install numdiff
 
@@ -101,12 +107,14 @@ Installation of lethe (Step #2)
 Clone lethe from the `official repository <https://github.com/lethe-cfd/lethe>`
 
 .. code-block:: text
+  :class: copy-button
 
   git clone https://github.com/lethe-cfd/lethe 
 
 Create a build folder at the same level as the lethe folder
 
 .. code-block:: text
+  :class: copy-button
 
   mkdir build
   cd build
@@ -114,17 +122,20 @@ Create a build folder at the same level as the lethe folder
 Compile Lethe choosing the compilation option (Debug or Release). You can also optionally specify a path to an installation directory of your choice. We recommend that you do so, since this makes using Lethe much more comfortable.
 
 .. code-block:: text
+  :class: copy-button
 
   cmake ../lethe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/home/username/path/to/installation
 
 or
 
 .. code-block:: text
+  :class: copy-button
 
   cmake ../lethe -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/username/path/to/installation
 
 Then you can compile:
 
 .. code-block:: text
+  :class: copy-button
 
   make -j<numprocs>

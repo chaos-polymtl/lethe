@@ -12,8 +12,8 @@ Features
 - Displays the calculation of the torque induced by the fluid on a boundary
 
 
-Location of the example
-------------------------
+Files used in this example
+----------------------------
 ``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
 
 

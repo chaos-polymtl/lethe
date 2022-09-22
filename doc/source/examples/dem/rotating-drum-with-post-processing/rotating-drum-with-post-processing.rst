@@ -1,5 +1,5 @@
 ==================================
-Rotating Drum with Post-Processing
+Rotating drum with post-processing
 ==================================
 
 This is the fourth example of Lethe-DEM. This is a mini-example that only adds Lagrangian post-processing features to the rotating drum example (example 3). Hence, we only explain the post-processing subsection in this example.
@@ -12,8 +12,8 @@ Features
 - Lagrangian post-processing
 
 
-Location of the examples
-------------------------
+Files used in this example
+----------------------------
 ``/examples/dem/3d-rotating-drum-with-post-processing/rotating-drum-with-post-processing.prm``
 
 

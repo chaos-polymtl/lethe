@@ -33,8 +33,13 @@ author = 'Lethe-CFD'
 extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.githubpages',
-    'sphinx.ext.todo'
+    'sphinx.ext.todo',
+    'sphinx_copybutton'
 ]
+
+# Create a copybitton selector to be able to turn on a copybutton in a code
+# block
+copybutton_selector = "div.copy-button pre"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

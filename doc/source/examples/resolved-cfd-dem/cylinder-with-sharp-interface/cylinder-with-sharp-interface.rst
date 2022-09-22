@@ -8,8 +8,8 @@ Features
 - Explains how to set sharp interface immersed boundary to represent a particle
 - Displays the use of non-uniform mesh adaptation 
 
-Location of the example
-------------------------
+Files used in this example
+---------------------------
 
 - Parameter file: ``/examples/resolved-cfd-dem/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
 

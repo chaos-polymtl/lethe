@@ -16,9 +16,9 @@ Features
 - The use of a python script for post-processing data
 
 
---------------------------------------------
-Location of the files used in this example
---------------------------------------------
+---------------------------
+Files used in this example
+---------------------------
 ``examples/multiphysics/dam-break/``
 
 
@@ -88,7 +88,7 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 
 
 """"""""""""""""""""""""""""""""
-Interface Sharpening Parameters
+Interface sharpening parameters
 """"""""""""""""""""""""""""""""
 
 

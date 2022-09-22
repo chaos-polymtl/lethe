@@ -12,8 +12,8 @@ Features
 - Ramping initial condition
 - Non-uniform mesh adaptation 
 
-Location of the example
-------------------------
+Files used in this example
+---------------------------
 
 - Parameter file: ``/examples/resolved-cfd-dem/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-inferface.prm``
 
@@ -206,7 +206,7 @@ The simulation is solved at steady-state with 2 mesh adaptations.
 	  set subdivision             = 1
 	end
 
-Mesh Adaptation Control
+Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
