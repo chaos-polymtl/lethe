@@ -46,20 +46,30 @@ To build the doc on your personal machine, you'll need the following requirement
 To install required system packages:
 
 .. code-block:: shell
+  :class: copy-button
 
-    sudo apt-get install python3 build-essential
+  sudo apt-get install python3 build-essential
 
 To install Sphinx globally:
 
 .. code-block:: shell
+  :class: copy-button
 
-    pip install 'sphinx==4.*'
+  pip install 'sphinx==4.*'
+
+To install additional packages:
+
+.. code-block:: shell
+  :class: copy-button
+
+  pip install sphinx-copybutton
 
 Then, install the Sphinx requirements:
 
 .. code-block:: shell
+  :class: copy-button
 
-    pip install -r doc/requirements.txt
+  pip install -r doc/requirements.txt
 
 Build HTML
 ^^^^^^^^^^
@@ -67,9 +77,10 @@ Build HTML
 To build standalone HTML files like the CI would, enter the following commands:
 
 .. code-block:: shell
+  :class: copy-button
 
-    cd doc
-    make html
+  cd doc
+  make html
 
 The generated files should be in the ``build/html`` directory. Open ``index.html`` in a browser to view the rendered documents.
 

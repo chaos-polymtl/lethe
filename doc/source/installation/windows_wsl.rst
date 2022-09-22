@@ -35,17 +35,19 @@ Installing WSL and Ubuntu (Step #0)
 	In the windows command prompt (Start menu > ``cmd``):
 
 	.. code-block:: text
+  	  :class: copy-button
 
-		wsl -l -v
+  	  wsl -l -v
 
 	should indicate ``version 2``. If not, follow this to update WSL: https://docs.microsoft.com/fr-fr/windows/wsl/install#upgrade-version-from-wsl-1-to-wsl-2
 
 2. |win_shell| Launch Ubuntu (from the start menu) and |linux_shell| update Ubuntu: 
 
 .. code-block:: text
+  :class: copy-button
 
-	sudo apt update
-	sudo apt upgrade
+  sudo apt update
+  sudo apt upgrade
 
 .. tip::
 	The ``sudo`` command will ask you to type your user password, as defined during Ubuntu installation. Note that Linux does not show any symbol while typing a password, contrary to Windows with ``*``: simply type your password and press ``Enter``.
@@ -82,12 +84,13 @@ Installing deal.II using candi (Step #1)
 1. |linux_shell| Install candi required packages:
 
 .. code-block:: text
+  :class: copy-button
 
-	sudo apt-get install lsb-release git subversion wget \
-	bc libgmp-dev build-essential autoconf automake cmake \
-	libtool gfortran libboost-all-dev zlib1g-dev openmpi-bin \
-	openmpi-common libopenmpi-dev libblas3 libblas-dev \
-	liblapack3 liblapack-dev libsuitesparse-dev
+  sudo apt-get install lsb-release git subversion wget \
+  bc libgmp-dev build-essential autoconf automake cmake \
+  libtool gfortran libboost-all-dev zlib1g-dev openmpi-bin \
+  openmpi-common libopenmpi-dev libblas3 libblas-dev \
+  liblapack3 liblapack-dev libsuitesparse-dev
 
 .. tip::
 	The symbols ``\`` indicate that this a single command written on multiple lines.
@@ -95,23 +98,26 @@ Installing deal.II using candi (Step #1)
 2. |linux_shell| Install compilers:
 
 .. code-block:: text
+  :class: copy-button
 
-	sudo apt-get install gcc-10 g++-10 gfortran-10
+  sudo apt-get install gcc-10 g++-10 gfortran-10
 
 3. |linux_shell| Create folders (suggested structure):
 
 .. code-block:: text
+  :class: copy-button
 
-	mkdir Softwares; cd Softwares
-	mkdir candi; cd candi
+  mkdir Softwares; cd Softwares
+  mkdir candi; cd candi
 
 Note the use of ``;`` which enable to serialize operations on a single execution line.
 
 4. |linux_shell| Download candi:
 
 .. code-block:: text
+  :class: copy-button
 
-	git clone https://github.com/dealii/candi.git .
+  git clone https://github.com/dealii/candi.git .
 
 Do not forget the ``.`` at the end of the command, which means "here".
 
@@ -154,8 +160,9 @@ Do not forget the ``.`` at the end of the command, which means "here".
 6. |linux_shell| Still in the candi subfolder, run candi installation script:
 
 .. code-block:: text
+  :class: copy-button
 
-	./candi.sh -j$numprocs
+  ./candi.sh -j$numprocs
 
 Where ``$numprocs`` corresponds to the number of processors used for the compilation:
 	* if you have less than 8Gb of RAM, use 1 to 2 procs: ``./candi.sh -j1`` or ``./candi.sh -j2``
@@ -178,8 +185,9 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 8. |linux_shell| Add a deal.II environment variable in Ubuntu through the following command:
 
 .. code-block:: text
+  :class: copy-button
 
-	echo "export DEAL_II_DIR=$HOME/deal.ii-candi/deal.II-master" >> ~/.bashrc
+  echo "export DEAL_II_DIR=$HOME/deal.ii-candi/deal.II-master" >> ~/.bashrc
 
 
 Installing Lethe (Step #2)
@@ -188,8 +196,9 @@ Installing Lethe (Step #2)
 1. |linux_shell| Set-up the folder structure: in the ``Softwares`` folder created at the beginning of Step #1 (if you are in the candi folder, type ``cd ..``), type:
 
 .. code-block:: text
+  :class: copy-button
 
-	mkdir -p lethe/{git,build,inst}
+  mkdir -p lethe/{git,build,inst}
 
 After installation is complete, the folder structure will be:
 
@@ -200,22 +209,25 @@ After installation is complete, the folder structure will be:
 2. |linux_shell| Download lethe:
 
 .. code-block:: text
+  :class: copy-button
 
-	cd lethe
-	git clone https://github.com/lethe-cfd/lethe git
+  cd lethe
+  git clone https://github.com/lethe-cfd/lethe git
 
 3. |linux_shell| Build lethe:
 
 .. code-block:: text
+  :class: copy-button
 
-	cd build
-	cmake ../git -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../inst/
+  cd build
+  cmake ../git -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../inst/
 
 4. |linux_shell| Compile lethe:
 
 .. code-block:: text
+  :class: copy-button
 
-	make -j$numprocs
+  make -j$numprocs
 
 Where ``$numprocs`` corresponds to the number of processors used for the compilation:
 	* if you have less than 8Gb of RAM, use 1 to 2 procs: ``make -j1`` or ``make -j2``
@@ -224,8 +236,9 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 5. |linux_shell| (optional) Test your installation, still in the build folder:
 
 .. code-block:: text
+  :class: copy-button
 
-	ctest -j$numprocs
+  ctest -j$numprocs
 
 This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
 
@@ -243,18 +256,20 @@ If you have already installed deal.II and lethe, you can update them without doi
 1. |linux_shell| Update deal.ii by typing, from your home directory:
 
 .. code-block:: text
+  :class: copy-button
 
-	cd Softwares/candi
-	./candi.sh -j$numprocs
+  cd Softwares/candi
+  ./candi.sh -j$numprocs
 
 2. |linux_shell| Then, update lethe:
 
 .. code-block:: text
+  :class: copy-button
 
-	cd ../lethe/git
-	git pull
-	cd ../build
-	cmake ../git -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../inst/
-	make -j$numprocs
+  cd ../lethe/git
+  git pull
+  cd ../build
+  cmake ../git -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../inst/
+  make -j$numprocs
 	
 
