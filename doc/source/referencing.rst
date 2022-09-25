@@ -21,4 +21,8 @@ Sharp-Edge Immersed Boundary Method
 
 * `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_. 
 
+Non-Newtonian (shear thinning)
+-------------------------------
+
+* (pre-print) `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", September 2022 <http://dx.doi.org/10.2139/ssrn.4224480>`_.
 

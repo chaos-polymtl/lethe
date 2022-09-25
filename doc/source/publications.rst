@@ -29,4 +29,5 @@ This section regroups preprints of journal articles already submitted, but which
 
 * `L. Prieto Saavedra, C. E. N. Radburn, A. Collard-Daigneault and B. Blais, "An implicit large-eddy simulation perspective on the flow over periodic hills", June 2022 <https://doi.org/10.48550/arXiv.2206.08145>`_.
 
+* `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", September 2022 <http://dx.doi.org/10.2139/ssrn.4224480>`_.
 
