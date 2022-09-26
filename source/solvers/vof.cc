@@ -1636,20 +1636,16 @@ VolumeOfFluid<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::VOF, &this->dof_handler);
   multiphysics->set_solution(PhysicsID::VOF, &this->present_solution);
+  multiphysics->set_previous_solutions(PhysicsID::VOF,
+                                       &this->previous_solutions);
 
-  // the fluid at present iteration is solved BEFORE the VOF (see map
-  // solve_pre_fluid defined in multiphysics_interface.h), and after percolate
-  // is called for the previous iteration.
-  // NB: for now, inertia in fluid dynamics is considered with a constant
-  // density (see if needed / to be debugged)
-  multiphysics->set_solution_m1(PhysicsID::VOF, &this->previous_solutions[0]);
 
   mass_matrix_phase_fraction.reinit(this->locally_owned_dofs,
                                     this->locally_owned_dofs,
                                     dsp,
                                     mpi_communicator);
 
-  assemble_mass_matrix_diagonal(mass_matrix_phase_fraction);
+  assemble_mass_matrix(mass_matrix_phase_fraction);
 }
 
 template <int dim>
@@ -1967,14 +1963,9 @@ VolumeOfFluid<dim>::solve_interface_sharpening(
   solution = completely_distributed_phase_fraction_solution;
 }
 
-// This function is explained in detail in step-41 of deal.II tutorials:
-// We get the mass matrix to be diagonal by choosing the trapezoidal rule
-// for quadrature. Doing so we do not really need the triple loop over
-// quadrature points, indices i and indices j any more and can, instead, just
-// use a double loop.
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_mass_matrix_diagonal(
+VolumeOfFluid<dim>::assemble_mass_matrix(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
   QGauss<dim> quadrature_formula(this->cell_quadrature->size());

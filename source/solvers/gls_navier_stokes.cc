@@ -625,13 +625,10 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_vof);
 
-      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
-      previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
-
       scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
-                              previous_solutions,
+                              *this->multiphysics->get_previous_solutions(
+                                PhysicsID::VOF),
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
       if (this->simulation_parameters.multiphysics.vof_parameters
@@ -808,14 +805,10 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_vof);
 
-      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
-      previous_solutions.push_back(
-        *this->multiphysics->get_solution_m1(PhysicsID::VOF));
-
-
       scratch_data.reinit_vof(phase_cell,
                               *this->multiphysics->get_solution(PhysicsID::VOF),
-                              previous_solutions,
+                              *this->multiphysics->get_previous_solutions(
+                                PhysicsID::VOF),
                               std::vector<TrilinosWrappers::MPI::Vector>());
 
       if (this->simulation_parameters.multiphysics.vof_parameters
