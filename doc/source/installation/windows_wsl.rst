@@ -102,13 +102,23 @@ Installing deal.II using candi (Step #1)
 
   sudo apt-get install gcc-10 g++-10 gfortran-10
 
+.. admonition:: Check the default version of the compilers
+
+	In the Ubuntu terminal:
+
+	.. code-block:: text
+
+		gcc --version
+
+	should return ``gcc (Ubuntu 10.X.X...) 10.X.X``. If not, go to :ref:`change compiler default version`.
+
 3. |linux_shell| Create folders (suggested structure):
 
 .. code-block:: text
   :class: copy-button
 
-  mkdir Softwares; cd Softwares
-  mkdir candi; cd candi
+	mkdir Software; cd Software
+	mkdir candi; cd candi
 
 Note the use of ``;`` which enable to serialize operations on a single execution line.
 
@@ -123,7 +133,11 @@ Do not forget the ``.`` at the end of the command, which means "here".
 
 5. |win_shell| Modify installation parameters (deal.II version and trilinos version):
 	* open Windows file manager, and on the left panel (along with ``Files``, ``Computer`` etc.) click on the ``Ubuntu`` mount.
-	* navigate to reach the candi folder, in: ``/home/<user_name>/Softwares/candi``
+
+	.. tip::
+		If you do not see any ``Ubuntu`` mount, use this alternative method: :ref:`modify candi installation parameters with nano`.
+
+	* navigate to reach the candi folder, in: ``/home/<user_name>/Software/candi``
 	* open the ``candi.cfg`` file with notepad (or other text editor) and change the following lines:
 
 	+--------+------------------------------------------+----------------------------------------+
@@ -156,6 +170,26 @@ Do not forget the ``.`` at the end of the command, which means "here".
 	+--------+------------------------------------------------+-----------------------------------------------+
 
 	* save and close 
+	* still in the subfolder ``deal.II-toolchain/packages/``, open the ``p4est.package`` file with notepad and change the following lines:
+
+	.. tip::
+		The prefix ``#`` is used to comment a line. Here we are simply uncommenting line 7, and commenting lines 9 to 12, to change the p4est version.
+
+	+--------+------------------------------------------------+-----------------------------------------------+
+	| line # | initial parameter                              | changed parameter                             |
+	+========+================================================+===============================================+
+	|     7  | ``#VERSION=2.2;CHECKSUM=6943949a...``          | ``VERSION=2.2;CHECKSUM=6943949a...``          |
+	+--------+------------------------------------------------+-----------------------------------------------+
+	|     9  | ``VERSION=2.3.2``                              | ``#VERSION=2.3.2``                            |
+	+--------+------------------------------------------------+-----------------------------------------------+
+	|     10 | ``CHECKSUM=076df9e...``                        | ``#CHECKSUM=076df9e...``                      |
+	+--------+------------------------------------------------+-----------------------------------------------+
+	|     11 | ``CHECKSUM="${CHECKSUM} b41c8ef29ca...``       | ``#CHECKSUM="${CHECKSUM} b41c8ef29ca...``     |
+	+--------+------------------------------------------------+-----------------------------------------------+
+	|     12 | ``CHECKSUM="${CHECKSUM} 0ea6e4806b6...``       | ``#CHECKSUM="${CHECKSUM} 0ea6e4806b6...``     |
+	+--------+------------------------------------------------+-----------------------------------------------+
+
+	* save and close 
 
 6. |linux_shell| Still in the candi subfolder, run candi installation script:
 
@@ -178,7 +212,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 
 7. |win_shell| At the end of the installation, check that you have deal.II and its dependencies installed:
 	* on Windows file manager, go to the Ubuntu mount
-	* in ``home/<user_name>`` you should have a folder ``deal.ii-candi``
+	* in ``home/<user_name>`` you should have a folder ``deal.ii-candi``, or ``dealii-candi``
 	* inside this folder, you should have folders for the dependencies, namely: p4est, petsc, parmetis, trilinos
 	* you should also see this folder: ``deal.II-master``
 
@@ -189,11 +223,19 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 
   echo "export DEAL_II_DIR=$HOME/deal.ii-candi/deal.II-master" >> ~/.bashrc
 
+.. note::
+
+	Even if we use a ``echo`` command, nothing will be outputted in the terminal: the text is written directly at the end the ``.bashrc`` file.
+
+.. warning::
+
+	For this change to be effective, you may need to restart your Ubuntu terminal.
+
 
 Installing Lethe (Step #2)
 -------------------------------------
 
-1. |linux_shell| Set-up the folder structure: in the ``Softwares`` folder created at the beginning of Step #1 (if you are in the candi folder, type ``cd ..``), type:
+1. |linux_shell| Set-up the folder structure: in the ``Software`` folder created at the beginning of Step #1 (if you are in the candi folder, type ``cd ..``), type:
 
 .. code-block:: text
   :class: copy-button
@@ -219,8 +261,8 @@ After installation is complete, the folder structure will be:
 .. code-block:: text
   :class: copy-button
 
-  cd build
-  cmake ../git -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../inst/
+	cd build
+	cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
 
 4. |linux_shell| Compile lethe:
 
@@ -233,20 +275,28 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 	* if you have less than 8Gb of RAM, use 1 to 2 procs: ``make -j1`` or ``make -j2``
 	* if you have 16Gb of RAM and above, ``$numprocs`` can be the number of physical cores minus 1. For instance, for a computer with 6 physical cores: ``make -j5``
 
-5. |linux_shell| (optional) Test your installation, still in the build folder:
+5. |linux_shell| (optional) Finally, it is recommended to test your installation:
+	* If you are running these tests for the first time, install ``numdiff``:
+
+	.. code-block:: text
+	  :class: copy-button
+    
+		apt-get numdiff
+
+	* Run the tests in the build folder:
 
 .. code-block:: text
   :class: copy-button
 
   ctest -j$numprocs
 
-This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
+	This will take from a few minutes to an hour, depending on your hardware. At the end, you should have this message on the console:
 
-.. code-block:: text
+	.. code-block:: text
 
-	100% tests passed
+		100% tests passed
 
-Congratulations, you are ready to use lethe! You are now ready for :doc:`../first_simulation`.
+Congratulations, you are now ready to use lethe! For instance, proceed to :doc:`../first_simulation`.
 
 Updating deal.II and lethe
 -------------------------------------
@@ -258,18 +308,81 @@ If you have already installed deal.II and lethe, you can update them without doi
 .. code-block:: text
   :class: copy-button
 
-  cd Softwares/candi
-  ./candi.sh -j$numprocs
+	cd Software/candi
+	./candi.sh -j$numprocs
 
 2. |linux_shell| Then, update lethe:
 
 .. code-block:: text
   :class: copy-button
 
-  cd ../lethe/git
-  git pull
-  cd ../build
-  cmake ../git -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../inst/
-  make -j$numprocs
+	cd ../lethe/git
+	git pull
+	cd ../build
+	cmake ../git -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../inst/
+	make -j$numprocs
 	
+
+Troubleshooting
+-------------------------------------
+
+.. _change compiler default version:
+
+Change compiler default version
++++++++++++++++++++++++++++++++++++++
+
+|linux_shell| After you installed ``gcc-10``, ``g++-10`` and ``gfortran-10``, manually update default versions in the terminal:
+
+.. code-block:: text
+
+	sudo update-alternatives --remove-all gcc
+	sudo update-alternatives --remove-all g++
+	sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
+	sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+	sudo update-alternatives --set cc /usr/bin/gcc
+	sudo update-alternatives --set c++ /usr/bin/g++
+
+Then, check again the version used:
+
+.. code-block:: text
+
+	gcc --version
+
+Should return ``gcc (Ubuntu 10.X.X...) 10.X.X``.
+
+
+.. _modify candi installation parameters with nano:
+
+Modify candi installation parameters with nano
++++++++++++++++++++++++++++++++++++++++++++++++
+
+|linux_shell| If you do not see the Ubuntu mount in the Windows file manager, you can modify the candi parameter files in the Ubuntu terminal directly. 
+
+.. note::
+	You cannot click, so use the keyboard arrows to move inside the text.
+
+1. Open the desired file in the terminal with ``nano`` (built-in text editor):
+
+.. code-block:: text
+
+	cd <folder_name>
+	nano <file_name>
+
+.. admonition:: Example for the candi.cfg
+
+	.. code-block:: text
+
+		cd /home/<user_name>/Software/candi
+		nano candi.cfg
+
+2. Modify the text in the file, using only the keyboard. 
+
+3. Save the file: 
+	* hit ``Ctrl + X``
+	* a prompt will appear at the bottom of the terminal asking ``Save modified buffer?``
+	* confirm by hitting ``y`` 
+	* a prompt will appear at the bottom of the terminal to recall the file name
+	* hit ``Enter`` to confirm
+	* the file will be closed automatically and you will be back on the Ubuntu terminal
+
 
