@@ -80,11 +80,6 @@ public:
     , orientation(orientation)
   {}
 
-
-
-  virtual std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() = 0;
-
   /**
    * @brief Return the evaluation of the signed distance function of this solid
    * at the given point evaluation point
@@ -113,8 +108,7 @@ public:
    * calculation
    */
   virtual double
-  displaced_volume(const double                        fluid_density,
-                   std::shared_ptr<ConditionalOStream> pcout = nullptr) = 0;
+  displaced_volume(const double fluid_density) = 0;
 
   /**
    * @brief
@@ -202,10 +196,20 @@ public:
 #endif
   }
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
@@ -213,17 +217,16 @@ public:
   gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("sphere", Shape<dim>::ShapeType::sphere);
-  };
+  displaced_volume(const double fluid_density) override;
 
   void
   set_position(const Point<dim> &position) override;
@@ -252,23 +255,33 @@ public:
     , half_lengths(half_lengths)
   {}
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("rectangle", Shape<dim>::ShapeType::rectangle);
-  };
+  displaced_volume(const double fluid_density) override;
 
 private:
   Tensor<1, dim> half_lengths;
@@ -290,23 +303,33 @@ public:
     , radii(radii)
   {}
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("ellipsoid", Shape<dim>::ShapeType::ellipsoid);
-  }
+  displaced_volume(const double fluid_density) override;
 
 private:
   Tensor<1, dim> radii;
@@ -331,23 +354,33 @@ public:
     , ring_thickness(ring_thickness)
   {}
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("torus", Shape<dim>::ShapeType::torus);
-  }
+  displaced_volume(const double fluid_density) override;
 
 private:
   double ring_radius;
@@ -375,23 +408,33 @@ public:
     , intermediate_q({height * tan_base_angle, -height})
   {}
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("cone", Shape<dim>::ShapeType::cone);
-  }
+  displaced_volume(const double fluid_density) override;
 
 private:
   double tan_base_angle;
@@ -424,24 +467,33 @@ public:
     , intermediate_w(sqrt(radius * radius - cut_depth * cut_depth))
   {}
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("cut_hollow_sphere",
-                          Shape<dim>::ShapeType::cut_hollow_sphere);
-  }
+  displaced_volume(const double fluid_density) override;
 
 private:
   double radius;
@@ -480,23 +532,33 @@ public:
         sqrt(std::max(radius * radius - intermediate_a * intermediate_a, 0.)))
   {}
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("death_star", Shape<dim>::ShapeType::death_star);
-  }
+  displaced_volume(const double fluid_density) override;
 
 private:
   double radius;
@@ -507,10 +569,13 @@ private:
   double intermediate_b;
 };
 
-// Composite Shapes are currently used only to output the signed distance of
-// particles in the GLS Sharp Navier Stokes solver. The class was however
-// designed so that specific composite shapes could be defined through the
-// parameter file, although this functionality has not been implemented yet.
+/**
+ * Composite Shapes are currently used only to output the signed distance of
+ * particles in the GLS Sharp Navier Stokes solver. The class was however
+ * designed so that specific composite shapes could be defined through the
+ * parameter file, although this functionality has not been implemented yet.
+ * @tparam dim
+ */
 template <int dim>
 class CompositeShape : public Shape<dim>
 {
@@ -532,33 +597,45 @@ public:
       }
   }
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("composite_shape",
-                          Shape<dim>::ShapeType::composite_shape);
-  }
+  displaced_volume(const double fluid_density) override;
 
 private:
   std::vector<std::shared_ptr<Shape<dim>>> components;
 };
 
 
-// RBF Shapes express the signed distance function as a linear combination of
-// Radial Basis Functions, which have a defined support radius and basis
-// function. A collection of nodes and weights compose the object.
+/**
+ * RBF Shapes express the signed distance function as a linear combination of
+ * Radial Basis Functions, which have a defined support radius and basis
+ * function. A collection of nodes and weights compose the object.
+ * @tparam dim
+ */
 template <int dim>
 class RBFShape : public Shape<dim>
 {
@@ -593,12 +670,12 @@ public:
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
    */
-  RBFShape<dim>(const std::vector<double>           support_radii,
-                const std::vector<RBFBasisFunction> basis_functions,
-                const std::vector<double>           weights,
-                const std::vector<Point<dim>>       nodes,
-                const Point<dim> &                  position,
-                const Tensor<1, 3> &                orientation)
+  RBFShape<dim>(const std::vector<double> &          support_radii,
+                const std::vector<RBFBasisFunction> &basis_functions,
+                const std::vector<double> &          weights,
+                const std::vector<Point<dim>> &      nodes,
+                const Point<dim> &                   position,
+                const Tensor<1, 3> &                 orientation)
     : Shape<dim>(support_radii[0], position, orientation)
     , weights(weights)
     , nodes(nodes)
@@ -607,6 +684,13 @@ public:
   {
     size_t number_of_nodes = weights.size();
 
+    // A bounding box is constructed around the collection of nodes defining the
+    // RBF. It solves a problem where the collection of nodes is located only
+    // around the object itself, which would result in an undefined distance
+    // when the value is evaluated outside of all support radii. The rectangle
+    // shape doesn't have this limitation, as its distance can be evaluated
+    // anywhere. The distance computed by an RBF object will therefore use an
+    // approximated distance when the evaluation point is too far.
     Point<dim>     high_bounding_point{};
     Point<dim>     low_bounding_point{};
     Point<dim>     bounding_box_center{};
@@ -632,17 +716,33 @@ public:
                                                     Tensor<1, 3>());
   }
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   * @param pcout An optional output stream to display warnings regarding volume
+   * calculation
+   */
   double
-  displaced_volume(
-    const double                        fluid_density,
-    std::shared_ptr<ConditionalOStream> pcout = nullptr) override;
+  displaced_volume(const double fluid_density) override;
 
   /**
    * Returns the value of the basis function for a given distance.
@@ -752,12 +852,6 @@ public:
    */
   double
   c2c2(const double distance) const;
-
-  std::pair<std::string, enum Shape<dim>::ShapeType>
-  get_shape_name() override
-  {
-    return std::make_pair("rbf_shape", Shape<dim>::ShapeType::rbf_shape);
-  }
 
   std::vector<double>           weights;
   std::vector<Point<dim>>       nodes;
