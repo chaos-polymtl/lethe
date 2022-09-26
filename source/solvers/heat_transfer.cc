@@ -892,6 +892,8 @@ HeatTransfer<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::heat_transfer, &this->dof_handler);
   multiphysics->set_solution(PhysicsID::heat_transfer, &this->present_solution);
+  multiphysics->set_previous_solutions(PhysicsID::heat_transfer,
+                                       &this->previous_solutions);
 }
 
 template <int dim>

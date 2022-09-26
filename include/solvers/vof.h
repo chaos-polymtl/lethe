@@ -500,7 +500,7 @@ private:
    * @param mass_matrix
    */
   void
-  assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
+  assemble_mass_matrix(TrilinosWrappers::SparseMatrix &mass_matrix);
 
 
   /**

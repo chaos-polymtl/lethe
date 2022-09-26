@@ -59,7 +59,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
-    ConditionalOStream                &p_pcout);
+    ConditionalOStream &               p_pcout);
 
   std::vector<PhysicsID>
   get_active_physics()
@@ -470,7 +470,7 @@ public:
    * @param physics_id The physics of the DOF handler being requested
    */
   DoFHandler<dim> *
-  get_dof_handler(PhysicsID physics_id)
+  get_dof_handler(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -486,7 +486,7 @@ public:
    * @param physics_id The physics of the solution being requested
    */
   TrilinosWrappers::MPI::Vector *
-  get_solution(PhysicsID physics_id)
+  get_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -496,12 +496,28 @@ public:
   }
 
   /**
+   * @brief Request the present block solution of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::BlockVector *
+  get_block_solution(const PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return block_physics_solutions[physics_id];
+  }
+
+
+  /**
    * @brief Request the time-average solution of a given physics
    *
    * @param physics_id The physics of the solution being requested
    */
   TrilinosWrappers::MPI::Vector *
-  get_time_average_solution(PhysicsID physics_id)
+  get_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -516,7 +532,7 @@ public:
    * @param physics_id The physics of the solution being requested
    */
   TrilinosWrappers::MPI::BlockVector *
-  get_block_time_average_solution(PhysicsID physics_id)
+  get_block_time_average_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -532,7 +548,7 @@ public:
    * @param physics_id The physics of the solution being requested
    */
   TrilinosWrappers::MPI::Vector *
-  get_reynolds_stress_solution(PhysicsID physics_id)
+  get_reynolds_stress_solution(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -584,20 +600,6 @@ public:
   DoFHandler<dim> *
   get_filtered_phase_fraction_gradient_dof_handler();
 
-  /**
-   * @brief Request the present block solution of a given physics
-   *
-   * @param physics_id The physics of the solution being requested
-   */
-  TrilinosWrappers::MPI::BlockVector *
-  get_block_solution(PhysicsID physics_id)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    return block_physics_solutions[physics_id];
-  }
 
   /**
    * @brief Request the previous solutions of a given physics
@@ -616,36 +618,19 @@ public:
 
 
   /**
-   * @brief Request the past (minus 1) solution of a given physics
+   * @brief Request the previous solutions of a given block physics
    *
    * @param physics_id The physics of the solution being requested
    */
-  TrilinosWrappers::MPI::Vector *
-  get_solution_m1(PhysicsID physics_id)
+  std::vector<TrilinosWrappers::MPI::BlockVector> *
+  get_block_previous_solutions(const PhysicsID physics_id)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
-    return physics_solutions_m1[physics_id];
+    return block_physics_previous_solutions[physics_id];
   }
-
-
-  /**
-   * @brief Request the past (minus 1) block solution of a given physics
-   *
-   * @param physics_id The physics of the solution being requested
-   */
-  TrilinosWrappers::MPI::BlockVector *
-  get_block_solution_m1(PhysicsID physics_id)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    return block_physics_solutions_m1[physics_id];
-  }
-
 
   /**
    * @brief Sets the reference to the DOFHandler of the physics in the multiphysics interface
@@ -655,7 +640,7 @@ public:
    * @param dof_handler The dof handler for which the reference is stored
    */
   void
-  set_dof_handler(PhysicsID physics_id, DoFHandler<dim> *dof_handler)
+  set_dof_handler(const PhysicsID physics_id, DoFHandler<dim> *dof_handler)
   {
     AssertThrow((std::find(active_physics.begin(),
                            active_physics.end(),
@@ -683,7 +668,7 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_solution(PhysicsID                      physics_id,
+  set_solution(const PhysicsID                physics_id,
                TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -701,7 +686,7 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_time_average_solution(PhysicsID                      physics_id,
+  set_time_average_solution(const PhysicsID                physics_id,
                             TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -721,7 +706,7 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_reynolds_stress_solutions(PhysicsID                      physics_id,
+  set_reynolds_stress_solutions(const PhysicsID                physics_id,
                                 TrilinosWrappers::MPI::Vector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -740,7 +725,7 @@ public:
    * @param solution_vector The reference to the solution vector of the physics
    */
   void
-  set_block_solution(PhysicsID                           physics_id,
+  set_block_solution(const PhysicsID                     physics_id,
                      TrilinosWrappers::MPI::BlockVector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -759,7 +744,7 @@ public:
    */
   void
   set_block_time_average_solution(
-    PhysicsID                           physics_id,
+    const PhysicsID                     physics_id,
     TrilinosWrappers::MPI::BlockVector *solution_vector)
   {
     AssertThrow((std::find(active_physics.begin(),
@@ -768,43 +753,6 @@ public:
                 ExcInternalError());
     block_physics_time_average_solutions[physics_id] = solution_vector;
   }
-
-  /**
-   * @brief Sets the reference to the solution of the physics in the multiphysics interface
-   *
-   * @param physics_id The physics of the DOF handler being requested
-   *
-   * @param solution_vector The reference to the solution vector of the physics
-   */
-  void
-  set_solution_m1(PhysicsID                      physics_id,
-                  TrilinosWrappers::MPI::Vector *solution_vector)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    physics_solutions_m1[physics_id] = solution_vector;
-  }
-
-  /**
-   * @brief Sets the reference to the solution of the physics in the multiphysics interface
-   *
-   * @param physics_id The physics of the DOF handler being requested
-   *
-   * @param solution_vector The reference to the solution vector of the physics
-   */
-  void
-  set_block_solution_m1(PhysicsID                           physics_id,
-                        TrilinosWrappers::MPI::BlockVector *solution_vector)
-  {
-    AssertThrow((std::find(active_physics.begin(),
-                           active_physics.end(),
-                           physics_id) != active_physics.end()),
-                ExcInternalError());
-    block_physics_solutions_m1[physics_id] = solution_vector;
-  }
-
 
   /**
    * @brief Sets the pointer to the vector of previous solutions of the physics in the multiphysics interface
