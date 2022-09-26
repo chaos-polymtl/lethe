@@ -59,7 +59,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
-    ConditionalOStream &               p_pcout);
+    ConditionalOStream                &p_pcout);
 
   std::vector<PhysicsID>
   get_active_physics()
@@ -600,6 +600,22 @@ public:
   }
 
   /**
+   * @brief Request the previous solutions of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  std::vector<TrilinosWrappers::MPI::Vector> *
+  get_previous_solutions(const PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return physics_previous_solutions[physics_id];
+  }
+
+
+  /**
    * @brief Request the past (minus 1) solution of a given physics
    *
    * @param physics_id The physics of the solution being requested
@@ -789,6 +805,46 @@ public:
     block_physics_solutions_m1[physics_id] = solution_vector;
   }
 
+
+  /**
+   * @brief Sets the pointer to the vector of previous solutions of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler
+   *
+   * @param previous_solutions_vector The pointer to the vector of previous solutions
+   */
+  void
+  set_previous_solutions(
+    const PhysicsID                             physics_id,
+    std::vector<TrilinosWrappers::MPI::Vector> *previous_solutions_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_previous_solutions[physics_id] = previous_solutions_vector;
+  }
+
+  /**
+   * @brief  Sets the pointer to the vector of previous solutions of the block physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler
+   *
+   * @param previous_solutions_vector The pointer to the vector of previous block solutions
+   */
+  void
+  set_previous_block_solutions(
+    const PhysicsID                                  physics_id,
+    std::vector<TrilinosWrappers::MPI::BlockVector> *previous_solutions_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    block_physics_previous_solutions[physics_id] = previous_solutions_vector;
+  }
+
+
   /**
    * @brief Mesh refinement according to an auxiliary physic parameter
    *
@@ -880,6 +936,15 @@ private:
 
   // present solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;
+  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
+    block_physics_solutions;
+
+  // previous solutions
+  std::map<PhysicsID, std::vector<TrilinosWrappers::MPI::Vector> *>
+    physics_previous_solutions;
+  std::map<PhysicsID, std::vector<TrilinosWrappers::MPI::BlockVector> *>
+    block_physics_previous_solutions;
+
 
   // average solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *>
@@ -893,8 +958,7 @@ private:
   // solver.
   TrilinosWrappers::MPI::Vector *reynolds_stress_solutions;
 
-  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
-    block_physics_solutions;
+
 
   // past (minus 1) solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions_m1;
