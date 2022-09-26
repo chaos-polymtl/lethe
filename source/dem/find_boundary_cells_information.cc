@@ -192,8 +192,8 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                       boundary_information.normal_vector = normal_vector;
                       boundary_information.point_on_face = quad_point;
 
-                      // Searching to see if boundary with these information
-                      // were already found or not. If this is a new
+                      // Searching to see if boundary with this information was
+                      // already found or not. If this is a new
                       // boundary face, it will be added to the
                       // output_vector as well as the search_vector to avoid
                       // repetition
@@ -433,7 +433,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
 
   // If a cell does not have any boundary line, but has boundary vertex, it is
   // added to boundary_cells_with_points container Iterating over the active
-  // cells in the trangulation
+  // cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned() && !(cell->has_boundary_lines()))
@@ -469,7 +469,7 @@ BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const std::vector<unsigned int> &                outlet_boundaries)
 {
-  // Iterating over the active cells in the trangulation
+  // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       // Iterating over the faces of each cell
@@ -638,18 +638,20 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
 
                                               // Update cell to the cell with
                                               // boundary line
-                                              boundary_cells_information.insert(
-                                                {imaginary_face_id,
-                                                 global_boundary_cells_information
-                                                   .at(cell_two->face_index(
-                                                     face_id_two))});
-                                              boundary_cells_information
-                                                .at(imaginary_face_id)
-                                                .cell = cell_with_boundary_line;
-                                              boundary_cells_information
-                                                .at(imaginary_face_id)
+                                              boundary_cells_info_struct<dim>
+                                                imaginary_information =
+                                                  global_boundary_cells_information
+                                                    .at(cell_two->face_index(
+                                                      face_id_two));
+                                              imaginary_information.cell =
+                                                cell_with_boundary_line;
+                                              imaginary_information
                                                 .global_face_id =
                                                 imaginary_face_id;
+
+                                              boundary_cells_information.insert(
+                                                {imaginary_face_id,
+                                                 imaginary_information});
                                             }
                                         }
                                     }
