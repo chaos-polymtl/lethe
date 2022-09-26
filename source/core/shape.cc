@@ -502,10 +502,6 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  // The computation and addition of the bounding box distance is necessary
-  // since the RBF nodes may not cover the whole simulation domain. In that
-  // case, it is assumed that the distance from the RBF object is approximately
-  // the same as the distance from the corresponding bounding box.
   double bounding_box_distance = bounding_box->value(centered_point);
   double value                 = std::max(bounding_box_distance, 0.0);
 
@@ -568,115 +564,6 @@ RBFShape<dim>::initialize_bounding_box()
   bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
                                                   bounding_box_center,
                                                   Tensor<1, 3>());
-}
-
-template <int dim>
-double
-RBFShape<dim>::wendlandc2(const double distance) const
-{
-  return distance > 1.0 ? 0.0 :
-                          std::pow(1. - distance, 4.0) * (4.0 * distance + 1.0);
-}
-
-template <int dim>
-double
-RBFShape<dim>::linear(const double distance) const
-{
-  return distance > 1.0 ? 0.0 : (1.0 - distance);
-}
-
-template <int dim>
-double
-RBFShape<dim>::gauss90(const double distance) const
-{
-  double eps = std::pow(-1.0 * std::log(0.1), 0.5);
-  return std::exp(-1.0 * std::pow(distance * eps, 2.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::gauss95(const double distance) const
-{
-  double eps = std::pow(-1.0 * std::log(0.05), 0.5);
-  return std::exp(-1.0 * std::pow(distance * eps, 2.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::gauss99(const double distance) const
-{
-  double eps = std::pow(-1.0 * std::log(0.01), 0.5);
-  return std::exp(-1.0 * std::pow(distance * eps, 2.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c1c0(const double distance) const
-{
-  return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 2.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c2c0(const double distance) const
-{
-  return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 3.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c0c1(const double distance) const
-{
-  return distance > 1.0 ? 0.0 :
-                          (1.0 - 2.0 * distance + std::pow(distance, 2.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c1c1(const double distance) const
-{
-  return distance > 1.0 ? 0.0 :
-                          (1.0 - 3.0 * std::pow(distance, 2.0) +
-                           2.0 * std::pow(distance, 3.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c2c1(const double distance) const
-{
-  return distance > 1.0 ? 0.0 :
-                          (1.0 - 4.0 * std::pow(distance, 3.0) +
-                           3.0 * std::pow(distance, 4.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c0c2(const double distance) const
-{
-  return distance > 1.0 ?
-           0.0 :
-           (1.0 - 3.0 * distance + 3.0 * std::pow(distance, 2.0) -
-            std::pow(distance, 3.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c1c2(const double distance) const
-{
-  return distance > 1.0 ?
-           0.0 :
-           (1.0 - 6.0 * std::pow(distance, 2.0) +
-            8.0 * std::pow(distance, 3.0) - 3.0 * std::pow(distance, 4.0));
-}
-
-template <int dim>
-double
-RBFShape<dim>::c2c2(const double distance) const
-{
-  return distance > 1.0 ?
-           0.0 :
-           (1.0 - 10.0 * std::pow(distance, 3.0) +
-            15.0 * std::pow(distance, 4.0) - 6.0 * std::pow(distance, 5.0));
 }
 
 template <int dim>

@@ -628,10 +628,12 @@ private:
 
 
 /**
- * RBF Shapes express the signed distance function as a linear combination of
- * Radial Basis Functions, which have a defined support radius and basis
- * function. A collection of nodes and weights compose the object.
  * @tparam dim
+ * @class RBF Shapes express the signed distance function as a linear
+ * combination of Radial Basis Functions, which have a defined support radius
+ * and basis function. A collection of nodes and weights compose the object.
+ * Outside of the domain covered by the nodes, the distance is computed by using
+ * the distance to a bounding box instead.
  */
 template <int dim>
 class RBFShape : public Shape<dim>
@@ -724,7 +726,11 @@ public:
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
-   * at the given point evaluation point.
+   * at the given point evaluation point. The computation and addition of the
+   * bounding box distance are necessary since the RBF nodes may not cover the
+   * whole simulation domain. In that case, it is assumed that the distance from
+   * the RBF object is approximately the same as the distance from the
+   * corresponding bounding box.
    *
    * @param evaluation_point The point at which the function will be evaluated
    * @param component Not applicable
@@ -769,107 +775,165 @@ public:
    * @param basis_function basis function to be used for calculation
    * @param distance distance to the node normalized by the support radius
    */
-  double
+  inline double
   evaluate_basis_function(const RBFBasisFunction basis_function,
                           const double           distance) const;
   /**
    * Compact Wendland C2 function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  wendlandc2(const double distance) const;
+  inline double
+  wendlandc2(const double distance) const
+  {
+    return distance > 1.0 ?
+             0.0 :
+             std::pow(1. - distance, 4.0) * (4.0 * distance + 1.0);
+  }
 
   /**
    * Compact linear function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  linear(const double distance) const;
+  inline double
+  linear(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : (1.0 - distance);
+  }
 
   /**
    * Non-compact Gaussian function with 0.1 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  gauss90(const double distance) const;
+  inline double
+  gauss90(const double distance) const
+  {
+    double eps = std::pow(-1.0 * std::log(0.1), 0.5);
+    return std::exp(-1.0 * std::pow(distance * eps, 2.0));
+  }
 
   /**
    * Non-compact Gaussian function with 0.05 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  gauss95(const double distance) const;
+  inline double
+  gauss95(const double distance) const
+  {
+    double eps = std::pow(-1.0 * std::log(0.05), 0.5);
+    return std::exp(-1.0 * std::pow(distance * eps, 2.0));
+  }
 
   /**
    * Non-compact Gaussian function with 0.01 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  gauss99(const double distance) const;
+  inline double
+  gauss99(const double distance) const
+  {
+    double eps = std::pow(-1.0 * std::log(0.01), 0.5);
+    return std::exp(-1.0 * std::pow(distance * eps, 2.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C1 continuity at distance=0, and C0 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c1c0(const double distance) const;
+  inline double
+  c1c0(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 2.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C2 continuity at distance=0, and C0 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c2c0(const double distance) const;
+  inline double
+  c2c0(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : (1.0 - std::pow(distance, 3.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C0 continuity at distance=0, and C1 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c0c1(const double distance) const;
+  inline double
+  c0c1(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 :
+                            (1.0 - 2.0 * distance + std::pow(distance, 2.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C1 continuity at distance=0, and C1 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c1c1(const double distance) const;
+  inline double
+  c1c1(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 :
+                            (1.0 - 3.0 * std::pow(distance, 2.0) +
+                             2.0 * std::pow(distance, 3.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C2 continuity at distance=0, and C1 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c2c1(const double distance) const;
+  inline double
+  c2c1(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 :
+                            (1.0 - 4.0 * std::pow(distance, 3.0) +
+                             3.0 * std::pow(distance, 4.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C0 continuity at distance=0, and C2 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c0c2(const double distance) const;
+  inline double
+  c0c2(const double distance) const
+  {
+    return distance > 1.0 ?
+             0.0 :
+             (1.0 - 3.0 * distance + 3.0 * std::pow(distance, 2.0) -
+              std::pow(distance, 3.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C1 continuity at distance=0, and C2 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c1c2(const double distance) const;
+  inline double
+  c1c2(const double distance) const
+  {
+    return distance > 1.0 ?
+             0.0 :
+             (1.0 - 6.0 * std::pow(distance, 2.0) +
+              8.0 * std::pow(distance, 3.0) - 3.0 * std::pow(distance, 4.0));
+  }
 
   /**
    * Compact polynomial function defined from 0 to 1.
    * It preserves C2 continuity at distance=0, and C2 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
-  double
-  c2c2(const double distance) const;
+  inline double
+  c2c2(const double distance) const
+  {
+    return distance > 1.0 ?
+             0.0 :
+             (1.0 - 10.0 * std::pow(distance, 3.0) +
+              15.0 * std::pow(distance, 4.0) - 6.0 * std::pow(distance, 5.0));
+  }
 
 private:
   size_t                          number_of_nodes;
