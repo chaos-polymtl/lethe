@@ -356,7 +356,10 @@ Should return ``gcc (Ubuntu 10.X.X...) 10.X.X``.
 Modify candi installation parameters with nano
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-|linux_shell| If you do not see the Ubuntu mount in the Windows file manager, you can modify the candi parameter files in the Ubuntu terminal directly. The procedure is:
+|linux_shell| If you do not see the Ubuntu mount in the Windows file manager, you can modify the candi parameter files in the Ubuntu terminal directly. 
+
+.. note::
+	You cannot click, so use the keyboard arrows to move inside the text.
 
 1. Open the desired file in the terminal with ``nano`` (built-in text editor):
 
@@ -373,9 +376,6 @@ Modify candi installation parameters with nano
 		nano candi.cfg
 
 2. Modify the text in the file, using only the keyboard. 
-
-.. tip::
-	You cannot click, so use the keyboard arrows to move inside the text.
 
 3. Save the file: 
 	* hit ``Ctrl + X``
