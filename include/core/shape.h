@@ -104,8 +104,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   virtual double
   displaced_volume(const double fluid_density) = 0;
@@ -150,7 +148,7 @@ public:
    * and that the shape is aligned with one of the main axes. This function
    * returns a point that is rotated and translated, in accordance with the
    * current shape position and orientation, so that subsequent calculations for
-   * the value function are made more easily; it abstract a step that is
+   * the value function are made more easily; it abstracts a step that is
    * required in the value function for most shapes.
    *
    * Returns the centered and aligned point used on the levelset evaluation.
@@ -179,6 +177,7 @@ class Sphere : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructor for a sphere
    * @param radius The sphere radius
    * @param position The sphere center
    * @param orientation The sphere orientation
@@ -213,6 +212,11 @@ public:
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
 
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
@@ -222,8 +226,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
@@ -244,6 +246,7 @@ class Rectangle : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructs a box with the given parameters
    * @param half_lengths The half lengths of each direction
    * @param position The rectangle center
    * @param orientation The rectangle orientation
@@ -277,13 +280,12 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
 
 private:
+  // Half-lengths of every side of the box
   Tensor<1, dim> half_lengths;
 };
 
@@ -292,6 +294,7 @@ class Ellipsoid : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructs an ellipsoid with the given arguments
    * @param radii The radii of each direction
    * @param position The ellipsoid center
    * @param orientation The ellipsoid orientation
@@ -325,13 +328,12 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
 
 private:
+  // The radii of all directions in which the ellipsoid is defined
   Tensor<1, dim> radii;
 };
 
@@ -340,6 +342,7 @@ class Torus : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructs a torus with a given thickness and radius
    * @param ring_radius The ring radius
    * @param ring_thickness The ring thickness radius/half-thickness
    * @param position The torus center
@@ -376,8 +379,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
@@ -392,6 +393,7 @@ class Cone : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructs a cone
    * @param tan_base_angle The tangent of the angle between the base of the cone and its curve side
    * @param height The height of the cone
    * @param position The position of the center of cone's base
@@ -430,8 +432,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
@@ -449,6 +449,8 @@ class CutHollowSphere : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
+   * by a given depth
    * @param radius The radius of the smallest sphere containing the cut hollow sphere
    * @param cut_depth The height of the slice removed from the sphere
    * @param shell_thickness The thickness of the hollow sphere shell
@@ -489,8 +491,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
@@ -508,7 +508,7 @@ class DeathStar : public Shape<dim>
 {
 public:
   /**
-   * The Death Star is the result of a boolean substraction of one sphere from
+   * @brief The Death Star is the result of a boolean substraction of one sphere from
    * another
    * @param radius The main sphere radius
    * @param hole_radius The removed sphere radius
@@ -554,8 +554,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
@@ -581,6 +579,7 @@ class CompositeShape : public Shape<dim>
 {
 public:
   /**
+   * @brief Constructs an assembly of shapes into a composite shape
    * @param components The shapes from which this composite sphere will be composed
    */
   CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
@@ -619,8 +618,6 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
@@ -643,8 +640,8 @@ public:
   /**
    * Class taken from Optimad Bitpit. https://github.com/optimad/bitpit
    * @enum RBFBasisFunction
-   * @ingroup RBF
-   * @brief Enum class defining types of RBF kernel functions that could be used in bitpit::RBF class
+   * @brief Enum class defining types of RBF kernel functions that could be used
+   * in the class
    */
   enum class RBFBasisFunction : int
   {
@@ -665,10 +662,17 @@ public:
   };
 
   /**
+   * @brief An RBFShape represents a physical object by describing its signed
+   * distance field with a linear combination of radial basis functions. Each
+   * radial basis function has a location and properties that are used in the
+   * sum.
    * @param support_radius the scaling of the reach of the nodes
    * @param basis_function the basis function that was used to parametrize the RBF object
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
+   * @param position the location of the RBF shape
+   * @param orientation the orientation of the shape in relation to each main
+   * axis
    */
   RBFShape<dim>(const std::vector<double> &          support_radii,
                 const std::vector<RBFBasisFunction> &basis_functions,
@@ -677,43 +681,45 @@ public:
                 const Point<dim> &                   position,
                 const Tensor<1, 3> &                 orientation)
     : Shape<dim>(support_radii[0], position, orientation)
+    , number_of_nodes(weights.size())
     , weights(weights)
     , nodes(nodes)
     , support_radii(support_radii)
     , basis_functions(basis_functions)
   {
-    size_t number_of_nodes = weights.size();
+    initialize_bounding_box();
+  }
 
-    // A bounding box is constructed around the collection of nodes defining the
-    // RBF. It solves a problem where the collection of nodes is located only
-    // around the object itself, which would result in an undefined distance
-    // when the value is evaluated outside of all support radii. The rectangle
-    // shape doesn't have this limitation, as its distance can be evaluated
-    // anywhere. The distance computed by an RBF object will therefore use an
-    // approximated distance when the evaluation point is too far.
-    Point<dim>     high_bounding_point{};
-    Point<dim>     low_bounding_point{};
-    Point<dim>     bounding_box_center{};
-    Tensor<1, dim> half_lengths = Tensor<1, dim>();
-    for (int d = 0; d < dim; d++)
+  /**
+   * @brief An RBFShape represents a physical object by describing its signed
+   * distance field with a linear combination of radial basis functions. Each
+   * radial basis function has a location and properties that are used in the
+   * sum.
+   * @param shape_arguments the concatenated vector of all shape arguments for
+   * an RBF
+   */
+  RBFShape<dim>(const std::vector<double> &shape_arguments,
+                const Point<dim> &         position,
+                const Tensor<1, 3> &       orientation)
+    : Shape<dim>(support_radii[0], position, orientation)
+    , number_of_nodes(shape_arguments.size() / (dim + 3))
+    , weights(number_of_nodes)
+    , nodes(number_of_nodes)
+    , support_radii(number_of_nodes)
+    , basis_functions(number_of_nodes)
+  {
+    for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
       {
-        high_bounding_point[d] = std::numeric_limits<double>::lowest();
-        low_bounding_point[d]  = std::numeric_limits<double>::max();
-        for (size_t i = 0; i < number_of_nodes; i++)
-          {
-            if (low_bounding_point[d] > nodes[i][d])
-              low_bounding_point[d] = nodes[i][d];
-            if (high_bounding_point[d] < nodes[i][d])
-              high_bounding_point[d] = nodes[i][d];
-          }
-        bounding_box_center[d] =
-          0.5 * (low_bounding_point[d] + high_bounding_point[d]);
-        half_lengths[d] =
-          0.5 * (high_bounding_point[d] - low_bounding_point[d]);
+        weights[n_i]       = shape_arguments[0 * number_of_nodes + n_i];
+        support_radii[n_i] = shape_arguments[1 * number_of_nodes + n_i];
+        basis_functions[n_i] =
+          static_cast<enum RBFShape<dim>::RBFBasisFunction>(
+            round(shape_arguments[2 * number_of_nodes + n_i]));
+        nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
+        nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
+        nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
       }
-    bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
-                                                    bounding_box_center,
-                                                    Tensor<1, 3>());
+    initialize_bounding_box();
   }
 
   /**
@@ -738,16 +744,28 @@ public:
    * Return the volume displaced by the solid
    *
    * @param fluid_density The density of the fluid that is displaced
-   * @param pcout An optional output stream to display warnings regarding volume
-   * calculation
    */
   double
   displaced_volume(const double fluid_density) override;
 
   /**
-   * Returns the value of the basis function for a given distance.
-   * Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+   *A bounding box is constructed around the collection of nodes defining the
+   * RBF. It solves an issue where the collection of nodes is located only
+   * around the object itself, which would result in an undefined distance
+   * when the value is evaluated outside of all support radii. The rectangle
+   * shape doesn't have this limitation, as its distance can be evaluated
+   * anywhere. The distance computed by an RBF object will therefore use an
+   * approximated distance when the evaluation point is too far.
    *
+   * @brief Initializes the bounding box around the nodes which enables distance
+   * calculation even if the RBF nodes don't cover the whole domain
+   */
+  void
+  initialize_bounding_box();
+
+  /**
+   * @brief Returns the value of the basis function for a given distance.
+   * Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
    * @param basis_function basis function to be used for calculation
    * @param distance distance to the node normalized by the support radius
    */
@@ -859,6 +877,7 @@ public:
   std::vector<RBFBasisFunction> basis_functions;
 
 private:
+  size_t                          number_of_nodes;
   std::shared_ptr<Rectangle<dim>> bounding_box;
 };
 

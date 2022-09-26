@@ -217,28 +217,8 @@ IBParticle<dim>::initialize_shape(const std::string         type,
     }
   else if (type == "rbf")
     {
-      constexpr unsigned int numbers_per_nodes = dim + 3;
-      size_t number_of_nodes = shape_arguments.size() / numbers_per_nodes;
-      std::vector<double> support_radius(number_of_nodes);
-      std::vector<enum RBFShape<dim>::RBFBasisFunction> basis_function(
-        number_of_nodes);
-      std::vector<double>     weight(number_of_nodes);
-      std::vector<Point<dim>> nodes(number_of_nodes);
-      // The data is stored in this order: all weights, all radii, all basis
-      // functions, all x positions, all y positions, all z positions
-      for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
-        {
-          weight[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
-          support_radius[n_i] = shape_arguments[1 * number_of_nodes + n_i];
-          basis_function[n_i] =
-            static_cast<enum RBFShape<dim>::RBFBasisFunction>(
-              round(shape_arguments[2 * number_of_nodes + n_i]));
-          nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
-          nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
-          nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
-        }
-      shape = std::make_shared<RBFShape<dim>>(
-        support_radius, basis_function, weight, nodes, position, orientation);
+      shape =
+        std::make_shared<RBFShape<dim>>(shape_arguments, position, orientation);
     }
   else
     StandardExceptions::ExcNotImplemented();

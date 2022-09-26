@@ -543,6 +543,34 @@ RBFShape<dim>::displaced_volume(const double fluid_density)
 }
 
 template <int dim>
+void
+RBFShape<dim>::initialize_bounding_box()
+{
+  Point<dim>     high_bounding_point{};
+  Point<dim>     low_bounding_point{};
+  Point<dim>     bounding_box_center{};
+  Tensor<1, dim> half_lengths = Tensor<1, dim>();
+  for (int d = 0; d < dim; d++)
+    {
+      high_bounding_point[d] = std::numeric_limits<double>::lowest();
+      low_bounding_point[d]  = std::numeric_limits<double>::max();
+      for (size_t i = 0; i < number_of_nodes; i++)
+        {
+          if (low_bounding_point[d] > nodes[i][d])
+            low_bounding_point[d] = nodes[i][d];
+          if (high_bounding_point[d] < nodes[i][d])
+            high_bounding_point[d] = nodes[i][d];
+        }
+      bounding_box_center[d] =
+        0.5 * (low_bounding_point[d] + high_bounding_point[d]);
+      half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
+    }
+  bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
+                                                  bounding_box_center,
+                                                  Tensor<1, 3>());
+}
+
+template <int dim>
 double
 RBFShape<dim>::wendlandc2(const double distance) const
 {
