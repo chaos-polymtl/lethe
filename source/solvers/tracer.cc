@@ -662,6 +662,8 @@ Tracer<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::tracer, &this->dof_handler);
   multiphysics->set_solution(PhysicsID::tracer, &this->present_solution);
+  multiphysics->set_previous_solutions(PhysicsID::tracer,
+                                       &this->previous_solutions);
 }
 
 template <int dim>
