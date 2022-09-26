@@ -871,14 +871,15 @@ public:
   double
   c2c2(const double distance) const;
 
+private:
+  size_t                          number_of_nodes;
+  std::shared_ptr<Rectangle<dim>> bounding_box;
+
+public:
   std::vector<double>           weights;
   std::vector<Point<dim>>       nodes;
   std::vector<double>           support_radii;
   std::vector<RBFBasisFunction> basis_functions;
-
-private:
-  size_t                          number_of_nodes;
-  std::shared_ptr<Rectangle<dim>> bounding_box;
 };
 
 #endif // lethe_shape_h
