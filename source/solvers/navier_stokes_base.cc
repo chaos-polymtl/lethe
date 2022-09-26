@@ -572,8 +572,8 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  // If the fluid dynamics is not to be solved, update initial condition
-  // and move on
+  // If the fluid dynamics is not to be solved, but rather specified
+  // via an initial condition. Update condition and move on.
   if (!simulation_parameters.multiphysics.fluid_dynamics)
     {
       // Solve the auxiliary physics that should be treated BEFORE the fluid
