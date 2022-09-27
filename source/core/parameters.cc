@@ -2202,34 +2202,46 @@ namespace Parameters
           std::vector<double> shape_arguments;
           if (shape_type == "rbf")
             {
-              // The following lines retrieve information regarding an RBF with
-              // a given file name. Then, it converts the information into one
-              // vector which is used to initialize the RBF shape.
-              // All the information is concatenated into only one object so
-              // that the usual initialization function can be called.
-              std::string shape_name = shape_arguments_str_list[0];
-              std::map<std::string, std::vector<double>> rbf_data;
-              fill_vectors_from_file(rbf_data, shape_name, " ");
-              size_t number_of_nodes = rbf_data["weight"].size();
-              shape_arguments.reserve((dim + 3) * number_of_nodes);
-              shape_arguments.insert(shape_arguments.end(),
-                                     rbf_data["weight"].begin(),
-                                     rbf_data["weight"].end());
-              shape_arguments.insert(shape_arguments.end(),
-                                     rbf_data["support_radius"].begin(),
-                                     rbf_data["support_radius"].end());
-              shape_arguments.insert(shape_arguments.end(),
-                                     rbf_data["basis_function"].begin(),
-                                     rbf_data["basis_function"].end());
-              shape_arguments.insert(shape_arguments.end(),
-                                     rbf_data["xnode"].begin(),
-                                     rbf_data["xnode"].end());
-              shape_arguments.insert(shape_arguments.end(),
-                                     rbf_data["ynode"].begin(),
-                                     rbf_data["ynode"].end());
-              shape_arguments.insert(shape_arguments.end(),
-                                     rbf_data["znode"].begin(),
-                                     rbf_data["znode"].end());
+              if (shape_arguments_str == "1") // Default case
+                {
+                  // Default weight, support radius, basis function, x, y
+                  shape_arguments = {2.0, 1.0, 2.0, 0.0, 0.0};
+                  if constexpr (dim == 3)
+                    // and z
+                    shape_arguments.insert(shape_arguments.end(), 0.0);
+                }
+
+              else
+                {
+                  // The following lines retrieve information regarding an RBF
+                  // with a given file name. Then, it converts the information
+                  // into one vector which is used to initialize the RBF shape.
+                  // All the information is concatenated into only one object so
+                  // that the usual initialization function can be called.
+                  std::string shape_name = shape_arguments_str_list[0];
+                  std::map<std::string, std::vector<double>> rbf_data;
+                  fill_vectors_from_file(rbf_data, shape_name, " ");
+                  size_t number_of_nodes = rbf_data["weight"].size();
+                  shape_arguments.reserve((dim + 3) * number_of_nodes);
+                  shape_arguments.insert(shape_arguments.end(),
+                                         rbf_data["weight"].begin(),
+                                         rbf_data["weight"].end());
+                  shape_arguments.insert(shape_arguments.end(),
+                                         rbf_data["support_radius"].begin(),
+                                         rbf_data["support_radius"].end());
+                  shape_arguments.insert(shape_arguments.end(),
+                                         rbf_data["basis_function"].begin(),
+                                         rbf_data["basis_function"].end());
+                  shape_arguments.insert(shape_arguments.end(),
+                                         rbf_data["xnode"].begin(),
+                                         rbf_data["xnode"].end());
+                  shape_arguments.insert(shape_arguments.end(),
+                                         rbf_data["ynode"].begin(),
+                                         rbf_data["ynode"].end());
+                  shape_arguments.insert(shape_arguments.end(),
+                                         rbf_data["znode"].begin(),
+                                         rbf_data["znode"].end());
+                }
             }
           else
             {
