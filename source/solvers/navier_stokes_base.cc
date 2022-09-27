@@ -571,9 +571,27 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
-  if (simulation_control->get_assembly_method() ==
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22 &&
-      simulation_parameters.multiphysics.fluid_dynamics)
+
+  // If the fluid dynamics is not to be solved, but rather specified
+  // via an initial condition. Update condition and move on.
+  if (!simulation_parameters.multiphysics.fluid_dynamics)
+    {
+      // Solve the auxiliary physics that should be treated BEFORE the fluid
+      // dynamics
+      multiphysics->pre_solve(simulation_parameters.simulation_control.method);
+
+      this->simulation_parameters.initial_condition->uvwp.set_time(
+        this->simulation_control->get_current_time());
+      set_initial_condition_fd(
+        this->simulation_parameters.initial_condition->type);
+
+      // Solve the auxiliary physics that should be treated AFTER the fluid
+      // dynamics
+      multiphysics->post_solve(simulation_parameters.simulation_control.method);
+    }
+  else if (simulation_control->get_assembly_method() ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk22 &&
+           simulation_parameters.multiphysics.fluid_dynamics)
     {
       this->simulation_control->set_assembly_method(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1);
@@ -612,8 +630,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // dynamics
       multiphysics->pre_solve(simulation_parameters.simulation_control.method);
 
-      if (simulation_parameters.multiphysics.fluid_dynamics)
-        PhysicsSolver<VectorType>::solve_non_linear_system(false);
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       // Solve the auxiliary physics that should be treated AFTER the fluid
       // dynamics

@@ -93,7 +93,7 @@ subsection analytical solution
     #temperature for fluid 0 (x>0) : T = k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
     set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
   end  
-  subsection phase
+  subsection VOF
     set Function expression = if(x<=0,1,0)
   end
 end
