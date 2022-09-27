@@ -703,13 +703,16 @@ public:
   RBFShape<dim>(const std::vector<double> &shape_arguments,
                 const Point<dim> &         position,
                 const Tensor<1, 3> &       orientation)
-    : Shape<dim>(support_radii[0], position, orientation)
-    , number_of_nodes(shape_arguments.size() / (dim + 3))
-    , weights(number_of_nodes)
-    , nodes(number_of_nodes)
-    , support_radii(number_of_nodes)
-    , basis_functions(number_of_nodes)
+    : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
+                 position,
+                 orientation)
+  // The effective radius is extracted at the proper index from shape_arguments
   {
+    number_of_nodes = shape_arguments.size() / (dim + 3);
+    weights.resize(number_of_nodes);
+    support_radii.resize(number_of_nodes);
+    basis_functions.resize(number_of_nodes);
+    nodes.resize(number_of_nodes);
     for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
       {
         weights[n_i]       = shape_arguments[0 * number_of_nodes + n_i];

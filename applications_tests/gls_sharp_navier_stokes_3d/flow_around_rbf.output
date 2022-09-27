@@ -1,11 +1,11 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 500
-   Volume of triangulation:      512
+   Volume of triangulation:      64
 Initial refinement around IB particles - Step : 1 of 1
-   Number of active cells:       120
-   Number of degrees of freedom: 892
-   Volume of triangulation:      512
+   Number of active cells:       512
+   Number of degrees of freedom: 2916
+   Volume of triangulation:      64
 
 *****************************************************************
 Steady iteration :        1/1
@@ -13,5 +13,5 @@ Steady iteration :        1/1
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_x      T_y       T_z      f_x       f_y       f_z      f_xv     f_yv      f_zv      f_xp     f_yp      f_zp    
-          0 1.0000 0.830851 1.185410 -2.708051 0.153245 -3.974355 -3.130269 0.138170 -1.132311 -0.258238 0.015075 -2.842044 -2.872032 
+particle_ID  time      T_x         T_y         T_z          f_x         f_y         f_z        f_xv       f_yv       f_zv       f_xp        f_yp        f_zp
+          0 1.0000 2109.739317 4471.547305 -3949.504645 1104.818505 1145.138326 2095.753601 1577.351953 -0.590654 -16.311399 -472.533447 1145.728980 2112.065000
