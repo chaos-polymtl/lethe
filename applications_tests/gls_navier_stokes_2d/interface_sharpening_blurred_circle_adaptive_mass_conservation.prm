@@ -167,7 +167,7 @@ subsection analytical solution
       subsection uvwp
             set Function expression = 0; 0; 0
     end
-    subsection phase
+    subsection VOF
                 set Function constants = eta=5, ro=1.65
             set Function expression =    if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , 1 , 0)
     end

@@ -86,14 +86,6 @@ subsection mesh
 		set initial refinement = 5
 end
 
-# --------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-subsection analytical solution
-  set enable     	= false
-  set verbosity 	= quiet
-end
-
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------

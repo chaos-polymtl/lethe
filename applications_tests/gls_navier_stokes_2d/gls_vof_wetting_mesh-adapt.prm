@@ -87,21 +87,6 @@ subsection mesh
 end
 
 # --------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-subsection analytical solution
-  set enable     	= false
-  set verbosity 	= quiet
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-subsection timer
-   set type = none
-end
-
-# --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions

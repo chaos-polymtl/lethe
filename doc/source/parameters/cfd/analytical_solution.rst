@@ -21,7 +21,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection tracer
       set Function expression = 0
     end
-    subsection phase
+    subsection VOF
       set Function expression = 0
     end
    end
@@ -53,9 +53,9 @@ If there is an analytical solution for a tracer, enter the ``tracer`` subsection
 
 * The ``Function expression`` parameter sets the expression of the tracer.
 
-If there is an analytical solution for the fluid's phase, enter the ``phase`` subsection.
+If there is an analytical solution for the VOF physics, enter the ``VOF`` subsection.
 
-* The ``Function expression`` parameter sets the expression of the phase.
+* The ``Function expression`` parameter sets the expression of the VOF indicator.
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependant) can be used in the function expressions.

@@ -85,7 +85,7 @@ end
 subsection analytical solution
   set enable     	= true
   set verbosity 	= verbose
-    subsection phase
+    subsection VOF
 	set Function constants = h=0.4
     	set Function expression = if (y<h, 1, 0)
     end

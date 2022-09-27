@@ -83,7 +83,7 @@ subsection analytical solution
 	set Function constants = rho=2., g=9.81, h=0.4
         set Function expression =  0 ; 0 ; if (y<h, rho*g*(h-y), 0)
     end
-    subsection phase
+    subsection VOF
 	set Function constants = h=0.4
     	set Function expression = if (y<h, 1, 0)
     end

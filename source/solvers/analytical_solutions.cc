@@ -68,7 +68,7 @@ namespace AnalyticalSolutions
       prm.leave_subsection();
     }
     {
-      prm.enter_subsection("phase");
+      prm.enter_subsection("VOF");
       phase.declare_parameters(prm);
       prm.set("Function expression", "0");
       prm.leave_subsection();
@@ -109,7 +109,7 @@ namespace AnalyticalSolutions
     }
 
     {
-      prm.enter_subsection("phase");
+      prm.enter_subsection("VOF");
       phase.parse_parameters(prm);
       prm.leave_subsection();
     }
