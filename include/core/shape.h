@@ -568,11 +568,11 @@ private:
 };
 
 /**
- * Composite Shapes are currently used only to output the signed distance of
- * particles in the GLS Sharp Navier Stokes solver. The class was however
+ * @class Composite Shapes are currently used only to output the signed distance
+ * of particles in the GLS Sharp Navier Stokes solver. The class was however
  * designed so that specific composite shapes could be defined through the
  * parameter file, although this functionality has not been implemented yet.
- * @tparam dim
+ * @tparam dim Dimension of the shape
  */
 template <int dim>
 class CompositeShape : public Shape<dim>
@@ -628,7 +628,7 @@ private:
 
 
 /**
- * @tparam dim
+ * @tparam dim Dimension of the shape
  * @class RBF Shapes express the signed distance function as a linear
  * combination of Radial Basis Functions, which have a defined support radius
  * and basis function. A collection of nodes and weights compose the object.
@@ -698,7 +698,11 @@ public:
    * radial basis function has a location and properties that are used in the
    * sum.
    * @param shape_arguments the concatenated vector of all shape arguments for
-   * an RBF
+   * an RBF in the order: weights, support_radii, basis_functions, nodes_x,
+   * nodes_y, nodes_z
+   * @param position the location of the RBF shape
+   * @param orientation the orientation of the shape in relation to each main
+   * axis
    */
   RBFShape<dim>(const std::vector<double> &shape_arguments,
                 const Point<dim> &         position,
@@ -758,7 +762,7 @@ public:
   displaced_volume(const double fluid_density) override;
 
   /**
-   *A bounding box is constructed around the collection of nodes defining the
+   * A bounding box is constructed around the collection of nodes defining the
    * RBF. It solves an issue where the collection of nodes is located only
    * around the object itself, which would result in an undefined distance
    * when the value is evaluated outside of all support radii. The rectangle
@@ -782,7 +786,7 @@ public:
   evaluate_basis_function(const RBFBasisFunction basis_function,
                           const double           distance) const;
   /**
-   * Compact Wendland C2 function defined from 0 to 1.
+   * @brief Compact Wendland C2 function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
   inline double
@@ -794,7 +798,7 @@ public:
   }
 
   /**
-   * Compact linear function defined from 0 to 1.
+   * @brief Compact linear function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
    */
   inline double
@@ -804,7 +808,7 @@ public:
   }
 
   /**
-   * Non-compact Gaussian function with 0.1 value at distance equal to 1.
+   * @brief Non-compact Gaussian function with 0.1 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
   inline double
@@ -815,7 +819,7 @@ public:
   }
 
   /**
-   * Non-compact Gaussian function with 0.05 value at distance equal to 1.
+   * @brief Non-compact Gaussian function with 0.05 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
   inline double
@@ -826,7 +830,7 @@ public:
   }
 
   /**
-   * Non-compact Gaussian function with 0.01 value at distance equal to 1.
+   * @brief Non-compact Gaussian function with 0.01 value at distance equal to 1.
    * @param distance distance to the node normalized by the support radius
    */
   inline double
@@ -837,7 +841,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C1 continuity at distance=0, and C0 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -848,7 +852,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C2 continuity at distance=0, and C0 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -859,7 +863,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C0 continuity at distance=0, and C1 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -871,7 +875,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C1 continuity at distance=0, and C1 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -884,7 +888,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C2 continuity at distance=0, and C1 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -897,7 +901,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C0 continuity at distance=0, and C2 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -911,7 +915,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C1 continuity at distance=0, and C2 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
@@ -925,7 +929,7 @@ public:
   }
 
   /**
-   * Compact polynomial function defined from 0 to 1.
+   * @brief Compact polynomial function defined from 0 to 1.
    * It preserves C2 continuity at distance=0, and C2 continuity at distance=1.
    * @param distance distance to the node normalized by the support radius
    */
