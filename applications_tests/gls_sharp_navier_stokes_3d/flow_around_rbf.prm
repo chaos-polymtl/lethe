@@ -27,7 +27,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 1,1,1: -2,-1,-2 : 2,3,2  : true
-  set initial refinement = 2
+  set initial refinement = 3
 end
 
 subsection boundary conditions
@@ -66,9 +66,6 @@ end
 subsection particles
   set number of particles                     = 1
   set stencil order                           = 2
-  set refine mesh inside radius factor        = 0.3
-  set refine mesh outside radius factor       = 4
-  set initial refinement                      = 1
   set integrate motion                        = false
   set assemble Navier-Stokes inside particles = false
   subsection particle info 0
