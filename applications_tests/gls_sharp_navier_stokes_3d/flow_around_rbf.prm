@@ -84,18 +84,6 @@ subsection forces
   set verbosity = verbose
 end
 
-subsection mesh adaptation
-  set type                 = kelly
-  set variable             = pressure
-  set fraction type        = number
-  set max number elements  = 200000
-  set max refinement level = 7
-  set min refinement level = 2
-  set frequency            = 1
-  set fraction refinement  = 0.3
-  set fraction coarsening  = 0.1
-end
-
 subsection non-linear solver
   set verbosity      = quiet
   set tolerance      = 1e-4
