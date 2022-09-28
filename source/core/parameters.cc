@@ -454,6 +454,43 @@ namespace Parameters
   }
 
   void
+  Dimensionality::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("dimensionality");
+    {
+      prm.declare_entry(
+        "length",
+        "1",
+        Patterns::Double(),
+        "Length scale. The default value assumed is meters. If the simulation is carried out in centimeters,"
+        " a length of 0.01 should be specified. If the simulation is carried out in kilometers, a length of 1000 should be specified.");
+
+      prm.declare_entry(
+        "time",
+        "1",
+        Patterns::Double(),
+        "Time scale. The default value assumed is seconds. If the simulation is carried out in milliseconds,"
+        " a time of 0.001 should be specified.");
+
+      prm.declare_entry(
+        "mass",
+        "1",
+        Patterns::Double(),
+        "Mass scale. The default value assumed is kilogram. If the simulation is carried out in grams,"
+        " a mass of 0.001 should be specified.");
+    }
+  }
+
+
+  void
+  Dimensionality::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("dimensionality");
+    {}
+    prm.leave_subsection();
+  }
+
+  void
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
   {
     fluids.resize(max_fluids);
@@ -476,7 +513,8 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &prm)
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
+                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
     {
