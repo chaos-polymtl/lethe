@@ -261,13 +261,21 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &prm)
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
+                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
     {
-      K              = prm.get_double("K");
-      n              = prm.get_double("n");
+      K = prm.get_double("K");
+      // K is in L^2 T^-1
+      K *= 1. / dimensions.length / dimensions.length * dimensions.time;
+
+      // n is dimensionless
+      n = prm.get_double("n");
+
+      // The shear rate min is in T^-1
       shear_rate_min = prm.get_double("shear rate min");
+      shear_rate_min *= dimensions.time;
     }
     prm.leave_subsection();
   }
@@ -293,15 +301,28 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &prm)
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
+                                      const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
     {
       viscosity_0   = prm.get_double("viscosity_0");
       viscosity_inf = prm.get_double("viscosity_inf");
-      lambda        = prm.get_double("lambda");
-      a             = prm.get_double("a");
-      n             = prm.get_double("n");
+
+      // Both viscosities are in L^2/T
+      viscosity_0 *=
+        1. / dimensions.length / dimensions.length * dimensions.time;
+      viscosity_inf *=
+        1. / dimensions.length / dimensions.length * dimensions.time;
+
+      lambda = prm.get_double("lambda");
+
+      // lambda is in T
+      lambda *= 1. / dimensions.time;
+
+      // a and n are dimensionless
+      a = prm.get_double("a");
+      n = prm.get_double("n");
     }
     prm.leave_subsection();
   }
@@ -318,12 +339,13 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &prm)
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
+                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
     {
-      powerlaw_parameters.parse_parameters(prm);
-      carreau_parameters.parse_parameters(prm);
+      powerlaw_parameters.parse_parameters(prm, dimensions);
+      carreau_parameters.parse_parameters(prm, dimensions);
     }
     prm.leave_subsection();
   }
@@ -368,7 +390,8 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &prm)
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
+                                const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
     {
@@ -478,6 +501,13 @@ namespace Parameters
         Patterns::Double(),
         "Mass scale. The default value assumed is kilogram. If the simulation is carried out in grams,"
         " a mass of 0.001 should be specified.");
+
+      prm.declare_entry(
+        "temperature",
+        "1",
+        Patterns::Double(),
+        "Temperature scale. The default value assumed is Kelvin. If the simulation is carried out in kiloKelvin,"
+        " a temperature of 1000 should be specified.");
     }
   }
 
@@ -525,7 +555,7 @@ namespace Parameters
 
       for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
         {
-          fluids[i_fluid].parse_parameters(prm, i_fluid);
+          fluids[i_fluid].parse_parameters(prm, i_fluid, dimensions);
         }
     }
     prm.leave_subsection();
@@ -624,56 +654,37 @@ namespace Parameters
   }
 
   void
-  Fluid::parse_parameters(ParameterHandler &prm, unsigned int id)
+  Fluid::parse_parameters(ParameterHandler                &prm,
+                          const unsigned int               id,
+                          const Parameters::Dimensionality dimensions)
   {
     prm.enter_subsection("fluid " + Utilities::int_to_string(id, 1));
     {
-      density              = prm.get_double("density");
-      viscosity            = prm.get_double("kinematic viscosity");
-      specific_heat        = prm.get_double("specific heat");
-      thermal_conductivity = prm.get_double("thermal conductivity");
-      thermal_expansion    = prm.get_double("thermal expansion");
-      tracer_diffusivity   = prm.get_double("tracer diffusivity");
-
-
-      // Parse models for the physical properties
+      // String that will be used to parse the models
       std::string op;
 
+      // Extract length, mass, time, temperature from dimensions
+      // We use the notation from wikipedia
+      const double L     = dimensions.length;
+      const double M     = dimensions.mass;
+      const double T     = dimensions.time;
+      const double theta = dimensions.temperature;
+
+      //---------------------------------------------------
       // Density
+      //---------------------------------------------------
+
       op = prm.get("density model");
       if (op == "constant")
         density_model = DensityModel::constant;
+      density = prm.get_double("density");
+      // Density is in m^3 / kg, rescale
+      density *= M / L / L / L;
 
-      // Thermal conductivity
-      op = prm.get("thermal conductivity model");
-      if (op == "constant")
-        thermal_conductivity_model = ThermalConductivityModel::constant;
-      else if (op == "linear")
-        thermal_conductivity_model = ThermalConductivityModel::linear;
-      else if (op == "phase_change")
-        thermal_conductivity_model = ThermalConductivityModel::phase_change;
 
-      // Linear conductivity model parameters
-      k_A0 = prm.get_double("k_A0");
-      k_A1 = prm.get_double("k_A1");
-
-      // Thermal expansion
-      op = prm.get("thermal expansion model");
-      if (op == "constant")
-        thermal_expansion_model = ThermalExpansionModel::constant;
-      else if (op == "phase_change")
-        thermal_expansion_model = ThermalExpansionModel::phase_change;
-
-      // Specific heat
-      op = prm.get("specific heat model");
-      if (op == "constant")
-        specific_heat_model = SpecificHeatModel::constant;
-      else if (op == "phase_change")
-        specific_heat_model = SpecificHeatModel::phase_change;
-
-      phase_change_parameters.parse_parameters(prm);
-
-      // Rheology
+      //---------------------------------------------------
+      // Viscosity and Rheology
+      //---------------------------------------------------
       op = prm.get("rheological model");
       if (op == "power-law")
         {
@@ -692,7 +703,77 @@ namespace Parameters
           rheological_model = RheologicalModel::phase_change;
         }
 
-      non_newtonian_parameters.parse_parameters(prm);
+      viscosity = prm.get_double("kinematic viscosity");
+      // Kinematic viscosity is in L^2 / T, rescale
+      viscosity *= T / L / L;
+      non_newtonian_parameters.parse_parameters(prm, dimensions);
+
+
+      //--------------
+      // Specific heat
+      //--------------
+      op = prm.get("specific heat model");
+      if (op == "constant")
+        specific_heat_model = SpecificHeatModel::constant;
+      else if (op == "phase_change")
+        specific_heat_model = SpecificHeatModel::phase_change;
+      specific_heat = prm.get_double("specific heat");
+
+      // specific heat is in J/kg/K or in L^2 T^-2 theta^-1
+      specific_heat *= 1. / L / L * T * T * theta;
+
+
+      //----------------------
+      // Thermal conductivity
+      //----------------------
+      op = prm.get("thermal conductivity model");
+      if (op == "constant")
+        thermal_conductivity_model = ThermalConductivityModel::constant;
+      else if (op == "linear")
+        thermal_conductivity_model = ThermalConductivityModel::linear;
+      else if (op == "phase_change")
+        thermal_conductivity_model = ThermalConductivityModel::phase_change;
+
+      thermal_conductivity = prm.get_double("thermal conductivity");
+      // thermal conductivity is in M L T^-3 theta ^-1
+      thermal_conductivity *= 1 / M / L * T * T * T * theta;
+
+
+      // Linear conductivity model parameters
+      k_A0 = prm.get_double("k_A0");
+      // k_A0 is in M L T^-3 theta ^-1
+      k_A0 *= 1 / M / L * T * T * T * theta;
+
+      k_A1 = prm.get_double("k_A1");
+      // k_A0 is in M L T^-3 theta ^-2
+      k_A1 *= 1 / M / L * T * T * T * theta * theta;
+
+
+      //------------------
+      // Thermal expansion
+      //------------------
+      op = prm.get("thermal expansion model");
+      if (op == "constant")
+        thermal_expansion_model = ThermalExpansionModel::constant;
+      else if (op == "phase_change")
+        thermal_expansion_model = ThermalExpansionModel::phase_change;
+
+      thermal_expansion = prm.get_double("thermal expansion");
+      // thermal expansion is in theta^-1
+      thermal_expansion *= theta;
+
+
+      //-------------------
+      // Tracer diffusivity
+      //-------------------
+      tracer_diffusivity = prm.get_double("tracer diffusivity");
+      // Diffusivity is in L^2 T^-1
+      tracer_diffusivity *= 1 / L / L * T;
+
+      //--------------------------------
+      // Phase change properties
+      //--------------------------------
+      phase_change_parameters.parse_parameters(prm, dimensions);
     }
     prm.leave_subsection();
   }

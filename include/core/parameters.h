@@ -51,6 +51,28 @@ namespace Parameters
   };
 
   /**
+   * @brief Dimensionality - This is used to rescale physical properties and other elements for cases where the main dimensions
+   * of the problems (Length, Mass, Time) are not expressed in SI, but are
+   * expressed in another set of unit. For example, this can be used to carry
+   * out a simulation where the mesh is expressed in millimeter instead of
+   * meters
+   */
+
+  struct Dimensionality
+  {
+    double length      = 1;
+    double mass        = 1;
+    double time        = 1;
+    double temperature = 1;
+
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
    * as well as the frequency of the output of the solutions.
    */
@@ -201,7 +223,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -221,7 +243,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -244,7 +266,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -261,7 +283,7 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
 
@@ -278,7 +300,9 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
     void
-    parse_parameters(ParameterHandler &prm, unsigned int id);
+    parse_parameters(ParameterHandler    &prm,
+                     const unsigned int   id,
+                     const Dimensionality dimensions);
 
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double viscosity;
@@ -336,26 +360,6 @@ namespace Parameters
   };
 
 
-  /**
-   * @brief Dimensionality - This is used to rescale physical properties and other elements for cases where the main dimensions
-   * of the problems (Length, Mass, Time) are not expressed in SI, but are
-   * expressed in another set of unit. For example, this can be used to carry
-   * out a simulation where the mesh is expressed in millimeter instead of
-   * meters
-   */
-
-  struct Dimensionality
-  {
-    double length = 1;
-    double mass   = 1;
-    double time   = 1;
-
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
 
   /**
    * @brief PhysicalProperties - Define the possible physical properties.
@@ -380,8 +384,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler    &prm,
                      const Dimensionality dimensions = Dimensionality());
-    void
-    rescale_physical_properties(const Dimensionality dimensions);
   };
 
   /**
