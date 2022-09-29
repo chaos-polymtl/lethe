@@ -31,6 +31,7 @@
 #ifndef lethe_parameters_h
 #define lethe_parameters_h
 
+#include <core/dimensionality.h>
 #include <core/ib_particle.h>
 #include <core/multiphysics.h>
 
@@ -50,27 +51,7 @@ namespace Parameters
     extra_verbose
   };
 
-  /**
-   * @brief Dimensionality - This is used to rescale physical properties and other elements for cases where the main dimensions
-   * of the problems (Length, Mass, Time) are not expressed in SI, but are
-   * expressed in another set of unit. For example, this can be used to carry
-   * out a simulation where the mesh is expressed in millimeter instead of
-   * meters
-   */
 
-  struct Dimensionality
-  {
-    double length      = 1;
-    double mass        = 1;
-    double time        = 1;
-    double temperature = 1;
-
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
 
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation

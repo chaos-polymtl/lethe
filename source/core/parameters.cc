@@ -268,7 +268,7 @@ namespace Parameters
     {
       K = prm.get_double("K");
       // K is in L^2 T^-1
-      K *= 1. / dimensions.length / dimensions.length * dimensions.time;
+      K *= dimensions.viscosity_scaling;
 
       // n is dimensionless
       n = prm.get_double("n");
@@ -310,10 +310,8 @@ namespace Parameters
       viscosity_inf = prm.get_double("viscosity_inf");
 
       // Both viscosities are in L^2/T
-      viscosity_0 *=
-        1. / dimensions.length / dimensions.length * dimensions.time;
-      viscosity_inf *=
-        1. / dimensions.length / dimensions.length * dimensions.time;
+      viscosity_0 *= dimensions.viscosity_scaling;
+      viscosity_inf *= dimensions.viscosity_scaling;
 
       lambda = prm.get_double("lambda");
 
@@ -393,10 +391,21 @@ namespace Parameters
   PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
+    const double L     = dimensions.length;
+    const double M     = dimensions.mass;
+    const double T     = dimensions.time;
+    const double theta = dimensions.temperature;
+
     prm.enter_subsection("phase change");
     {
-      T_solidus              = prm.get_double("solidus temperature");
-      T_liquidus             = prm.get_double("liquidus temperature");
+      T_solidus = prm.get_double("solidus temperature");
+      // T_solidus has units of theta
+      T_solidus *= 1 / theta;
+
+      T_liquidus = prm.get_double("liquidus temperature");
+      // T_liquidus has units of theta
+      T_liquidus *= 1 / theta;
+
       latent_enthalpy        = prm.get_double("latent enthalpy");
       cp_l                   = prm.get_double("specific heat liquid");
       cp_s                   = prm.get_double("specific heat solid");
@@ -476,49 +485,7 @@ namespace Parameters
     prm.leave_subsection();
   }
 
-  void
-  Dimensionality::declare_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("dimensionality");
-    {
-      prm.declare_entry(
-        "length",
-        "1",
-        Patterns::Double(),
-        "Length scale. The default value assumed is meters. If the simulation is carried out in centimeters,"
-        " a length of 0.01 should be specified. If the simulation is carried out in kilometers, a length of 1000 should be specified.");
 
-      prm.declare_entry(
-        "time",
-        "1",
-        Patterns::Double(),
-        "Time scale. The default value assumed is seconds. If the simulation is carried out in milliseconds,"
-        " a time of 0.001 should be specified.");
-
-      prm.declare_entry(
-        "mass",
-        "1",
-        Patterns::Double(),
-        "Mass scale. The default value assumed is kilogram. If the simulation is carried out in grams,"
-        " a mass of 0.001 should be specified.");
-
-      prm.declare_entry(
-        "temperature",
-        "1",
-        Patterns::Double(),
-        "Temperature scale. The default value assumed is Kelvin. If the simulation is carried out in kiloKelvin,"
-        " a temperature of 1000 should be specified.");
-    }
-  }
-
-
-  void
-  Dimensionality::parse_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("dimensionality");
-    {}
-    prm.leave_subsection();
-  }
 
   void
   PhysicalProperties::declare_parameters(ParameterHandler &prm)
@@ -663,23 +630,15 @@ namespace Parameters
       // String that will be used to parse the models
       std::string op;
 
-      // Extract length, mass, time, temperature from dimensions
-      // We use the notation from wikipedia
-      const double L     = dimensions.length;
-      const double M     = dimensions.mass;
-      const double T     = dimensions.time;
-      const double theta = dimensions.temperature;
-
       //---------------------------------------------------
       // Density
       //---------------------------------------------------
-
       op = prm.get("density model");
       if (op == "constant")
         density_model = DensityModel::constant;
       density = prm.get_double("density");
       // Density is in m^3 / kg, rescale
-      density *= M / L / L / L;
+      density *= dimensions.density_scaling;
 
 
       //---------------------------------------------------
@@ -705,7 +664,7 @@ namespace Parameters
 
       viscosity = prm.get_double("kinematic viscosity");
       // Kinematic viscosity is in L^2 / T, rescale
-      viscosity *= T / L / L;
+      viscosity *= dimensions.viscosity_scaling;
       non_newtonian_parameters.parse_parameters(prm, dimensions);
 
 
@@ -720,7 +679,7 @@ namespace Parameters
       specific_heat = prm.get_double("specific heat");
 
       // specific heat is in J/kg/K or in L^2 T^-2 theta^-1
-      specific_heat *= 1. / L / L * T * T * theta;
+      specific_heat *= dimensions.specific_heat_scaling;
 
 
       //----------------------
@@ -736,17 +695,17 @@ namespace Parameters
 
       thermal_conductivity = prm.get_double("thermal conductivity");
       // thermal conductivity is in M L T^-3 theta ^-1
-      thermal_conductivity *= 1 / M / L * T * T * T * theta;
+      thermal_conductivity *= dimensions.thermal_conductivity_scaling;
 
 
       // Linear conductivity model parameters
       k_A0 = prm.get_double("k_A0");
       // k_A0 is in M L T^-3 theta ^-1
-      k_A0 *= 1 / M / L * T * T * T * theta;
+      k_A0 *= dimensions.thermal_conductivity_scaling;
 
       k_A1 = prm.get_double("k_A1");
       // k_A0 is in M L T^-3 theta ^-2
-      k_A1 *= 1 / M / L * T * T * T * theta * theta;
+      k_A1 *= dimensions.thermal_conductivity_scaling * dimensions.temperature;
 
 
       //------------------
@@ -760,7 +719,7 @@ namespace Parameters
 
       thermal_expansion = prm.get_double("thermal expansion");
       // thermal expansion is in theta^-1
-      thermal_expansion *= theta;
+      thermal_expansion *= dimensions.temperature;
 
 
       //-------------------
@@ -768,7 +727,7 @@ namespace Parameters
       //-------------------
       tracer_diffusivity = prm.get_double("tracer diffusivity");
       // Diffusivity is in L^2 T^-1
-      tracer_diffusivity *= 1 / L / L * T;
+      tracer_diffusivity *= dimensions.diffusivity_scaling;
 
       //--------------------------------
       // Phase change properties

@@ -21,6 +21,7 @@
 #define lethe_navier_stokes_solver_parameters_h
 
 #include <core/boundary_conditions.h>
+#include <core/dimensionality.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
@@ -40,6 +41,7 @@ public:
   Parameters::NonLinearSolver                       non_linear_solver;
   Parameters::MeshAdaptation                        mesh_adaptation;
   Parameters::Mesh                                  mesh;
+  Parameters::Dimensionality                        dimensionality;
   std::shared_ptr<Parameters::MeshBoxRefinement>    mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::SimulationControl                     simulation_control;
@@ -54,9 +56,9 @@ public:
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
+  Parameters::InitialConditions<dim>               *initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim>     *analytical_solution;
+  SourceTerms::SourceTerm<dim>                     *source_term;
   Parameters::VelocitySource                        velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
   Parameters::DynamicFlowControl                    flow_control;
@@ -68,6 +70,7 @@ public:
   void
   declare(ParameterHandler &prm)
   {
+    dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
@@ -116,6 +119,7 @@ public:
   void
   parse(ParameterHandler &prm)
   {
+    dimensionality.parse_parameters(prm);
     test.parse_parameters(prm);
     linear_solver.parse_parameters(prm);
     non_linear_solver.parse_parameters(prm);
@@ -123,7 +127,7 @@ public:
     mesh.parse_parameters(prm);
     mesh_box_refinement->parse_parameters(prm);
     nitsche->parse_parameters(prm);
-    physical_properties.parse_parameters(prm);
+    physical_properties.parse_parameters(prm, dimensionality);
     multiphysics.parse_parameters(prm);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);
