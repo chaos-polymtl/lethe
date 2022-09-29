@@ -72,7 +72,7 @@ The residual is:
 
     \mathbf{\mathcal{R}} &=    \int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega 
     +   \int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega \\
-    &  - \int_{\Omega} v_k \left( \partial_k   p\right) \mathrm{d}\Omega  
+    &  - \int_{\Omega} p\left( \partial_k   v_k\right) \mathrm{d}\Omega  
     + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  
   
   
@@ -91,7 +91,7 @@ The Jacobian is:
 
     \mathbf{\mathcal{J}} &=    \int_{\Omega}  q  \partial_l \phi_{l,j} \mathrm{d}\Omega 
     +   \int_{\Omega}  v_k \left(\partial_t \phi_{k,j}+ \phi_{l,j} \partial_l u_k + u_l \partial_l \phi_{k,j}  \right) \mathrm{d}\Omega \\
-    &  - \int_{\Omega} v_k \left( \partial_k   \psi_j  \right)\mathrm{d}\Omega  
+    &  - \int_{\Omega} \psi_j  \left( \partial_k   v_k \right)\mathrm{d}\Omega  
     + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l \phi_{k,j}  \right) \mathrm{d}\Omega  
 
 
