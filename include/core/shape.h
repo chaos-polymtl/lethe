@@ -676,16 +676,7 @@ public:
                 const std::vector<double> &          weights,
                 const std::vector<Point<dim>> &      nodes,
                 const Point<dim> &                   position,
-                const Tensor<1, 3> &                 orientation)
-    : Shape<dim>(support_radii[0], position, orientation)
-    , number_of_nodes(weights.size())
-    , weights(weights)
-    , nodes(nodes)
-    , support_radii(support_radii)
-    , basis_functions(basis_functions)
-  {
-    initialize_bounding_box();
-  }
+                const Tensor<1, 3> &                 orientation);
 
   /**
    * @brief An RBFShape represents a physical object by describing its signed
@@ -701,30 +692,7 @@ public:
    */
   RBFShape<dim>(const std::vector<double> &shape_arguments,
                 const Point<dim> &         position,
-                const Tensor<1, 3> &       orientation)
-    : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
-                 position,
-                 orientation)
-  // The effective radius is extracted at the proper index from shape_arguments
-  {
-    number_of_nodes = shape_arguments.size() / (dim + 3);
-    weights.resize(number_of_nodes);
-    support_radii.resize(number_of_nodes);
-    basis_functions.resize(number_of_nodes);
-    nodes.resize(number_of_nodes);
-    for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
-      {
-        weights[n_i]       = shape_arguments[0 * number_of_nodes + n_i];
-        support_radii[n_i] = shape_arguments[1 * number_of_nodes + n_i];
-        basis_functions[n_i] =
-          static_cast<enum RBFShape<dim>::RBFBasisFunction>(
-            round(shape_arguments[2 * number_of_nodes + n_i]));
-        nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
-        nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
-        nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
-      }
-    initialize_bounding_box();
-  }
+                const Tensor<1, 3> &       orientation);
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
