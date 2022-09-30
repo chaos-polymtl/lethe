@@ -10,6 +10,9 @@ file(COPY sliding_restart_files/sliding_restart.triangulation.info DESTINATION "
 file(COPY sliding_restart_files/sliding_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/sliding_restart.${_build_type}")
 file(COPY sliding_restart_files/sliding_restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/sliding_restart.${_build_type}")
 
+file(COPY periodic_gmsh_files/pipe.geo DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_periodic_boundary_gmsh.${_build_type}")
+file(COPY periodic_gmsh_files/pipe.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/insert_periodic_boundary_gmsh.${_build_type}")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
