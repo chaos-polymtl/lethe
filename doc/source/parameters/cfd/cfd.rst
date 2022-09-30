@@ -7,6 +7,7 @@ General, CFD and Multiphysics
    :maxdepth: 1
 
    simulation_control
+   dimensionality
    physical_properties
    initial_conditions
    mesh

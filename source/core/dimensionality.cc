@@ -5,6 +5,24 @@ using namespace dealii;
 namespace Parameters
 {
   void
+  Dimensionality::define_all_scales()
+  {
+    // Define fundamental quantities using Wikipedia's notation
+    const double L     = length;
+    const double M     = mass;
+    const double theta = temperature;
+    const double T     = time;
+
+    density_scaling              = 1 * L * L * L / M;
+    viscosity_scaling            = 1 * L * L / T;
+    specific_heat_scaling        = 1. / L / L * T * T * theta;
+    thermal_conductivity_scaling = 1. / M / L * T * T * T * theta;
+    enthalpy_scaling             = 1. / M / L * T * T * T;
+    diffusivity_scaling          = 1. / L / L * T;
+    thermal_expansion_scaling    = T;
+  }
+
+  void
   Dimensionality::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("dimensionality");

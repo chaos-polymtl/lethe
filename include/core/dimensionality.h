@@ -22,17 +22,25 @@
 using namespace dealii;
 
 /**
- * @brief Dimensionality - This is used to rescale physical properties and other elements for cases where the main dimensions
+ * @brief Dimensionality - This is used to rescale physical properties for cases where the main dimensions
  * of the problems (Length, Mass, Time) are not expressed in SI, but are
  * expressed in another set of unit. For example, this can be used to carry
  * out a simulation where the mesh is expressed in millimeter instead of
- * meters
+ * meters. This class is currently only used to calculate to rescale the
+ * physical properties in the FEM-based physics (e.g. all of those that are
+ * solvers). Support for DEM, CFD-DEM and rescaling of boundary conditions is
+ * planned in the mid-term.
  */
 namespace Parameters
 {
   class Dimensionality
   {
   public:
+    /**
+     * @brief
+     * Default constructor that assumes that the units used in the simulation
+     * are consistent.
+     */
     Dimensionality()
       : length(1)
       , mass(1)
@@ -42,40 +50,57 @@ namespace Parameters
       define_all_scales();
     }
 
+    /**
+     * @brief
+     * Defines all the sub scales that are relevant to simulations. This is used
+     * to define scaling laws for kinematic viscosity or other quantities which
+     * appear multiple times in the simulation. This prevents the recalculation
+     * of these scales (and thus, human errors).
+     */
     void
-    define_all_scales()
-    {
-      // Define fundamental quantities using Wikipedia's notation
-      const double L     = length;
-      const double M     = mass;
-      const double theta = temperature;
-      const double T     = time;
+    define_all_scales();
 
-      density_scaling              = 1 * L * L * L / M;
-      viscosity_scaling            = 1 * L * L / T;
-      specific_heat_scaling        = 1. / L / L * T * T * theta;
-      thermal_conductivity_scaling = 1. / M / L * T * T * T * theta;
-      enthalpy_scaling             = 1. / M / L * T * T * T;
-      diffusivity_scaling          = 1. / L / L * T;
-    }
-
+    /**
+     * @brief
+     * Declares the fundamental dimensions in the parameter file
+     *
+     * @param prm The parameter handler being used
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief
+     * Parses the fundamental dimensions from the parameter file
+     *
+     * @param prm The parameter handler being used
+     */
     void
     parse_parameters(ParameterHandler &prm);
 
+    /*
+     * Fundamental dimensions. These are the dimensions that are read from the
+     * user
+     */
+    double length;
+    double mass;
+    double time;
+    double temperature;
+
+    /*
+     * Scaling laws. These are constants that are used to rescale quantities are
+     * arise frequently. Some of these quantities are not trivial to calculate
+     * (e.g. thermal conductivity). Thus, it is better to pre-calculate these
+     * scalings and to reuse them instead of calculating them on the fly
+     * everywhere.
+     */
     double density_scaling;
     double viscosity_scaling;
     double specific_heat_scaling;
     double thermal_conductivity_scaling;
     double enthalpy_scaling;
     double diffusivity_scaling;
-
-
-    double length;
-    double mass;
-    double time;
-    double temperature;
+    double thermal_expansion_scaling;
   };
 } // namespace Parameters
 

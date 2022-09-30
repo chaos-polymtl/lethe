@@ -261,7 +261,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
+  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -301,7 +301,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler    &prm,
+  CarreauParameters::parse_parameters(ParameterHandler &   prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -337,7 +337,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler    &prm,
+  NonNewtonian::parse_parameters(ParameterHandler &   prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -388,33 +388,37 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler    &prm,
+  PhaseChange::parse_parameters(ParameterHandler &   prm,
                                 const Dimensionality dimensions)
   {
-    const double L     = dimensions.length;
-    const double M     = dimensions.mass;
-    const double T     = dimensions.time;
-    const double theta = dimensions.temperature;
-
     prm.enter_subsection("phase change");
     {
       T_solidus = prm.get_double("solidus temperature");
       // T_solidus has units of theta
-      T_solidus *= 1 / theta;
+      T_solidus *= 1 / dimensions.temperature;
 
       T_liquidus = prm.get_double("liquidus temperature");
       // T_liquidus has units of theta
-      T_liquidus *= 1 / theta;
+      T_liquidus *= 1 / dimensions.temperature;
 
-      latent_enthalpy        = prm.get_double("latent enthalpy");
-      cp_l                   = prm.get_double("specific heat liquid");
-      cp_s                   = prm.get_double("specific heat solid");
-      viscosity_l            = prm.get_double("viscosity liquid");
-      viscosity_s            = prm.get_double("viscosity solid");
+      latent_enthalpy = prm.get_double("latent enthalpy");
+      latent_enthalpy *= dimensions.enthalpy_scaling;
+      cp_l = prm.get_double("specific heat liquid");
+      cp_l *= dimensions.specific_heat_scaling;
+      cp_s = prm.get_double("specific heat solid");
+      cp_s *= dimensions.specific_heat_scaling;
+      viscosity_l = prm.get_double("viscosity liquid");
+      viscosity_l *= dimensions.viscosity_scaling;
+      viscosity_s = prm.get_double("viscosity solid");
+      viscosity_s *= dimensions.viscosity_scaling;
       thermal_conductivity_l = prm.get_double("thermal conductivity liquid");
+      thermal_conductivity_l *= dimensions.thermal_conductivity_scaling;
       thermal_conductivity_s = prm.get_double("thermal conductivity solid");
-      thermal_expansion_l    = prm.get_double("thermal expansion liquid");
-      thermal_expansion_s    = prm.get_double("thermal expansion solid");
+      thermal_conductivity_s *= dimensions.thermal_conductivity_scaling;
+      thermal_expansion_l = prm.get_double("thermal expansion liquid");
+      thermal_expansion_l *= dimensions.thermal_expansion_scaling;
+      thermal_expansion_s = prm.get_double("thermal expansion solid");
+      thermal_expansion_s *= dimensions.thermal_expansion_scaling;
     }
 
     Assert(T_liquidus > T_solidus,
@@ -510,7 +514,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
+  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -621,7 +625,7 @@ namespace Parameters
   }
 
   void
-  Fluid::parse_parameters(ParameterHandler                &prm,
+  Fluid::parse_parameters(ParameterHandler &               prm,
                           const unsigned int               id,
                           const Parameters::Dimensionality dimensions)
   {
