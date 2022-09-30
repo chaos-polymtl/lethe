@@ -74,6 +74,7 @@ BoundaryCellsInformation<dim>::build(
 
       add_boundary_neighbors_of_boundary_cells(
         triangulation,
+        outlet_boundaries,
         boundary_cells_information,
         global_boundary_cells_information);
     }
@@ -721,42 +722,54 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
+  const std::vector<unsigned int> &                outlet_boundaries,
   std::map<int, boundary_cells_info_struct<dim>> & boundary_cells_information,
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {
-  auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
+  // Create a vector of a set of adjacent cells of all the vertices
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+    v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
   for (auto &&boundary_cells_info :
        boundary_cells_information | boost::adaptors::map_values)
     {
       // The boundary cell is local by definition
-      // Get the neighbors of the boundary cells
+      // This loop will check for all the cell neighbors located at vertices of
+      // a boundary cell and will add the proper information in the boundary
+      // cell list if faces are not at outlet nor periodic boundary.
 
       // Iterate over the vertices of each boundary cell
-      for (unsigned int vertex = 0;
-           vertex < GeometryInfo<dim>::vertices_per_cell;
-           ++vertex)
+      for (auto vertex_id : GeometryInfo<dim>::vertex_indices())
         {
-          // Iterate over the neighbors of each boundary cell
+          // Iterate over the neighbors of each boundary cell having vertex_id
           for (const auto &neighbor :
-               v_to_c[boundary_cells_info.cell->vertex_index(vertex)])
+               v_to_c[boundary_cells_info.cell->vertex_index(vertex_id)])
             {
-              // check if the neighbor locates at boundary
-              // (has boundary face)
-              if (neighbor->at_boundary())
+              // Iterate over the faces of the neighbor cell
+              for (const auto &face : neighbor->face_iterators())
                 {
-                  // Iterate over the faces of each neighbor boundary cell
-                  for (int face_id = 0;
-                       face_id < int(GeometryInfo<dim>::faces_per_cell);
-                       ++face_id)
+                  // Check if the face of the neighbor is located at boundary
+                  if (face->at_boundary())
                     {
-                      // Find the boundary faces of neighbor boundary cell
-                      if (neighbor->face(face_id)->at_boundary())
+                      // Check if face is on a wall boundary (not outlet nor
+                      // periodic)
+                      unsigned int face_id =
+                        neighbor->face_iterator_to_index(face);
+                      bool face_is_wall =
+                        (std::find(outlet_boundaries.begin(),
+                                   outlet_boundaries.end(),
+                                   face->boundary_id()) ==
+                           outlet_boundaries.end() &&
+                         !neighbor->has_periodic_neighbor(face_id));
+
+                      if (face_is_wall)
                         {
-                          auto boundary_neighbor_information =
-                            global_boundary_cells_information.at(
-                              neighbor->face_index(face_id));
+                          // Get the boundary neighbor cell info
+                          boundary_cells_info_struct<dim>
+                            boundary_neighbor_information =
+                              global_boundary_cells_information.at(
+                                neighbor->face_index(face_id));
 
                           // Add the main boundary cell with the information
                           // (point and normal vector) of the neighbor boundary
@@ -771,7 +784,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                           // + b where a and b are global boundary face ids of
                           // the main boundary cell and the neighbor boundary
                           // cell.
-                          int imaginary_key =
+                          int imaginary_face_id =
                             -0.5 *
                               (boundary_cells_info.global_face_id +
                                boundary_neighbor_information.global_face_id) *
@@ -780,19 +793,15 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                                1) +
                             boundary_neighbor_information.global_face_id;
 
-                          boundary_cells_info_struct<dim> boundary_information;
+                          // Create a cell info object which is a copy of all
+                          // the boundary neighbor information applied to the
+                          // boundary cell & store in map with imaginary key.
+                          boundary_cells_info_struct<dim> boundary_information =
+                            boundary_neighbor_information;
                           boundary_information.cell = boundary_cells_info.cell;
-                          boundary_information.normal_vector =
-                            boundary_neighbor_information.normal_vector;
-                          boundary_information.point_on_face =
-                            boundary_neighbor_information.point_on_face;
-                          boundary_information.global_face_id =
-                            boundary_neighbor_information.global_face_id;
-                          boundary_information.boundary_id =
-                            boundary_neighbor_information.boundary_id;
 
                           boundary_cells_information.insert(
-                            {imaginary_key, boundary_information});
+                            {imaginary_face_id, boundary_information});
                         }
                     }
                 }

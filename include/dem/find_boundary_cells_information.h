@@ -225,12 +225,13 @@ private:
    *
    * @param boundary_cells_information A container that contains the information
    * of all the boundary cells with boundary faces
-   * @param global_boundary_cells_informationA vector that contains the geometrical
+   * @param global_boundary_cells_information A vector that contains the geometrical
    * information of all (global) boundary cells
    */
   void
   add_boundary_neighbors_of_boundary_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
+    const std::vector<unsigned int> &                outlet_boundaries,
     std::map<int, boundary_cells_info_struct<dim>> & boundary_cells_information,
     const std::map<int, boundary_cells_info_struct<dim>>
       &global_boundary_cells_information);
