@@ -148,7 +148,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                                    update_values | update_quadrature_points |
                                      update_normal_vectors);
 
-  // Iterating over the active cells in the trangulation
+  // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       // Iterating over the faces of each cell
@@ -192,8 +192,8 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                       boundary_information.normal_vector = normal_vector;
                       boundary_information.point_on_face = quad_point;
 
-                      // Searching to see if boundary with these information
-                      // were already found or not. If this is a new
+                      // Searching to see if boundary with this information was
+                      // already found or not. If this is a new
                       // boundary face, it will be added to the
                       // output_vector as well as the search_vector to avoid
                       // repetition
@@ -433,7 +433,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
 
   // If a cell does not have any boundary line, but has boundary vertex, it is
   // added to boundary_cells_with_points container Iterating over the active
-  // cells in the trangulation
+  // cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned() && !(cell->has_boundary_lines()))
@@ -469,7 +469,7 @@ BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const std::vector<unsigned int> &                outlet_boundaries)
 {
-  // Iterating over the active cells in the trangulation
+  // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       // Iterating over the faces of each cell
@@ -514,19 +514,18 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
       for (auto &cell_with_boundary_line : local_cells_with_boundary_lines)
         {
           // Each cell with boundary line must have two neighbor cells with
-          // boundary faces. We have to find these two neighbors first. Finding
-          // neighbors of the cell
+          // boundary faces. We have to find these two neighbors first.
+          // Finding neighbors of the cell
           std::vector<typename Triangulation<dim>::active_cell_iterator>
             active_neighbors;
-
           GridTools::get_active_neighbors<Triangulation<dim>>(
             cell_with_boundary_line, active_neighbors);
 
+          // Looping through the neighbors and storing the ones with boundary
+          // faces
           boundary_neighbor_cells.clear();
-          // Looping through the neighbors
           for (auto &neighbor : active_neighbors)
             {
-              // If the neighbor exists in the global_boundary_cells_with_faces
               if (std::count(global_boundary_cells_with_faces.begin(),
                              global_boundary_cells_with_faces.end(),
                              neighbor))
@@ -536,7 +535,7 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
             }
 
           // Find the information of every combination of two cells in
-          // global_boundary_cells_normals
+          // global_boundary_cells_normals with counters
           for (unsigned int counter_one = 0;
                counter_one < boundary_neighbor_cells.size();
                ++counter_one)
@@ -547,37 +546,59 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                 {
                   if (counter_one > counter_two)
                     {
-                      for (int face_id = 0;
-                           face_id < int(GeometryInfo<dim>::faces_per_cell);
-                           ++face_id)
-                        {
-                          // Check to see if the face is not located at boundary
-                          if (boundary_neighbor_cells[counter_one]
-                                ->face(face_id)
-                                ->at_boundary())
-                            {
-                              // Get the normal vector of the first cell
-                              Tensor<1, dim> normal_vector_one =
-                                global_boundary_cells_information
-                                  .at(boundary_neighbor_cells[counter_one]
-                                        ->face_index(face_id))
-                                  .normal_vector;
+                      // Get the pair of cells
+                      typename Triangulation<dim>::active_cell_iterator
+                        cell_one = boundary_neighbor_cells[counter_one];
+                      typename Triangulation<dim>::active_cell_iterator
+                        cell_two = boundary_neighbor_cells[counter_two];
 
-                              // Get the normal vector of the second cell
-                              for (int face_id = 0;
-                                   face_id <
-                                   int(GeometryInfo<dim>::faces_per_cell);
-                                   ++face_id)
+                      // Loop on all faces of the 2 cells
+                      for (const auto &face_one : cell_one->face_iterators())
+                        {
+                          for (const auto &face_two :
+                               cell_two->face_iterators())
+                            {
+                              // Check if faces are located at boundaries
+                              if (face_one->at_boundary() &&
+                                  face_two->at_boundary())
                                 {
-                                  if (boundary_neighbor_cells[counter_two]
-                                        ->face(face_id)
-                                        ->at_boundary())
+                                  unsigned int face_id_one, face_id_two;
+                                  face_id_one =
+                                    cell_one->face_iterator_to_index(face_one);
+                                  face_id_two =
+                                    cell_two->face_iterator_to_index(face_two);
+
+                                  // Check if faces are on a wall boundary
+                                  // (not outlet nor periodic)
+                                  bool face_one_is_wall, face_two_is_wall;
+                                  face_one_is_wall =
+                                    (std::find(outlet_boundaries.begin(),
+                                               outlet_boundaries.end(),
+                                               face_one->boundary_id()) ==
+                                       outlet_boundaries.end() &&
+                                     !cell_one->has_periodic_neighbor(
+                                       face_id_one));
+                                  face_two_is_wall =
+                                    (std::find(outlet_boundaries.begin(),
+                                               outlet_boundaries.end(),
+                                               face_two->boundary_id()) ==
+                                       outlet_boundaries.end() &&
+                                     !cell_two->has_periodic_neighbor(
+                                       face_id_two));
+
+                                  if (face_one_is_wall && face_two_is_wall)
                                     {
-                                      Tensor<1, dim> normal_vector_two =
+                                      // Get the normal vector of the first cell
+                                      Tensor<1, dim> normal_vector_one,
+                                        normal_vector_two;
+                                      normal_vector_one =
                                         global_boundary_cells_information
-                                          .at(
-                                            boundary_neighbor_cells[counter_two]
-                                              ->face_index(face_id))
+                                          .at(cell_one->face_index(face_id_one))
+                                          .normal_vector;
+
+                                      normal_vector_two =
+                                        global_boundary_cells_information
+                                          .at(cell_two->face_index(face_id_two))
                                           .normal_vector;
 
                                       // Check to see if the dot product of the
@@ -612,26 +633,25 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                               // boundary_cells_information with
                                               // a negative key
                                               int imaginary_face_id =
-                                                -1 * boundary_neighbor_cells
-                                                       [counter_two]
-                                                         ->face_index(face_id);
+                                                -1 * cell_two->face_index(
+                                                       face_id_two);
 
                                               // Update cell to the cell with
                                               // boundary line
-                                              boundary_cells_information.insert(
-                                                {imaginary_face_id,
-                                                 global_boundary_cells_information
-                                                   .at(boundary_neighbor_cells
-                                                         [counter_two]
-                                                           ->face_index(
-                                                             face_id))});
-                                              boundary_cells_information
-                                                .at(imaginary_face_id)
-                                                .cell = cell_with_boundary_line;
-                                              boundary_cells_information
-                                                .at(imaginary_face_id)
+                                              boundary_cells_info_struct<dim>
+                                                imaginary_information =
+                                                  global_boundary_cells_information
+                                                    .at(cell_two->face_index(
+                                                      face_id_two));
+                                              imaginary_information.cell =
+                                                cell_with_boundary_line;
+                                              imaginary_information
                                                 .global_face_id =
                                                 imaginary_face_id;
+
+                                              boundary_cells_information.insert(
+                                                {imaginary_face_id,
+                                                 imaginary_information});
                                             }
                                         }
                                     }
@@ -645,8 +665,7 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
     }
 }
 
-// This function finds the triangulation cells adjacent to the floating
-// walls
+// This function finds the triangulation cells adjacent to the floating walls
 template <int dim>
 void
 BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
