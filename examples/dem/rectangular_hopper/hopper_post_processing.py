@@ -75,7 +75,6 @@ for i in range(len(particle.list_vtu)):
     # Store results in 'df'
     exec(f'df = particle.df_{i}')
 
-
     # Select the data (if particle is completly under hopper outlet)
     vertical_position = df.points[:, normal_vect]
     vertical_position_below = vertical_position[vertical_position < (hopper_outlet - particle.prm_dict['diameter']/2.)]
@@ -84,6 +83,7 @@ for i in range(len(particle.list_vtu)):
     number_of_particles_below.append(len(vertical_position_below))
     mass_discharge.append(len(vertical_position_below) * density * volume)
 
+    # Calculate the rate of discharge
     if i == 0:
         rate.append(0.0)
     else:
@@ -92,8 +92,8 @@ for i in range(len(particle.list_vtu)):
 # Export data to csv
 data = pd.DataFrame({'time': particle.time_list, 'rate': rate,
                     'number_of_particles': number_of_particles_below, 'mass_discharge': mass_discharge})
-# Export data to csv
 
+# Export data to csv
 data.to_csv(save_path + '/results_' + pvd_name + '.csv')
 
 # Read data from paper
