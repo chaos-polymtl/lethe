@@ -2210,7 +2210,6 @@ namespace Parameters
                     // and z
                     shape_arguments.insert(shape_arguments.end(), 0.0);
                 }
-
               else
                 {
                   // The following lines retrieve information regarding an RBF
@@ -2233,14 +2232,14 @@ namespace Parameters
                                          rbf_data["basis_function"].begin(),
                                          rbf_data["basis_function"].end());
                   shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["xnode"].begin(),
-                                         rbf_data["xnode"].end());
+                                         rbf_data["node_x"].begin(),
+                                         rbf_data["node_x"].end());
                   shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["ynode"].begin(),
-                                         rbf_data["ynode"].end());
+                                         rbf_data["node_y"].begin(),
+                                         rbf_data["node_y"].end());
                   shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["znode"].begin(),
-                                         rbf_data["znode"].end());
+                                         rbf_data["node_z"].begin(),
+                                         rbf_data["node_z"].end());
                 }
             }
           else

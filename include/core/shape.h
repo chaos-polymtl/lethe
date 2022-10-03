@@ -625,10 +625,10 @@ private:
 /**
  * @tparam dim Dimension of the shape
  * @class RBF Shapes express the signed distance function as a linear
- * combination of Radial Basis Functions (RBF), which have a defined support radius
- * and basis function. A collection of nodes and weights compose the object.
- * Outside of the domain covered by the nodes, the distance is computed by using
- * the distance to a bounding box instead.
+ * combination of Radial Basis Functions (RBF), which have a defined support
+ * radius and basis function. A collection of nodes and weights compose the
+ * object. Outside of the domain covered by the nodes, the distance is computed
+ * by using the distance to a bounding box instead.
  */
 template <int dim>
 class RBFShape : public Shape<dim>

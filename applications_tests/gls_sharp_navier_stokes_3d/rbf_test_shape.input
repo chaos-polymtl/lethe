@@ -1,4 +1,4 @@
-support_radius basis_function xnode ynode znode weight
+support_radius basis_function node_x node_y node_z weight
 0.659974 3 -0.754913 -0.0350064 -0.535006 0.573375
 0.659974 3 -0.424926 -0.0350064 -0.535006 0.61883
 0.659974 3 -0.754913 0.294981 -0.535006 0.555496
