@@ -664,7 +664,7 @@ public:
    * radial basis function has a location and properties that are used in the
    * sum.
    * @param support_radius the scaling of the reach of the nodes
-   * @param basis_function the basis function that was used to parametrize the RBF object
+   * @param basis_function the basis function that is used to parametrize the RBF object
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
    * @param position the location of the RBF shape
