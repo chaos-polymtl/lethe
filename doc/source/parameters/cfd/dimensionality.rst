@@ -15,4 +15,4 @@ the fundamental dimensions (length, time, mass, temperature) that are used are n
     set temperature = 1 #Kelvin
 
 ``length``, ``mass``, ``time`` and ``temperature`` are the fundamental dimensions that may be required. By default, it is assumed that SI units are used.
-For example, if a mesh is made in millimeters, such that an height of 0.100m is 100 in the mesh file, but the user still wishes to specify the viscosity in m^2/s, the user can set ``length=0.001`` to automatically rescale the physical properties.
+For example, if a mesh is made in millimeters, such that a height of :math:`0.100`m is :math:`100` in the mesh file, but the user still wishes to specify the viscosity in :math:`m^2/s`, the user can set ``length=0.001`` to automatically rescale the physical properties.
