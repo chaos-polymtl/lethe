@@ -30,14 +30,21 @@ using namespace dealii;
  * @param viscosity Kinematic viscosity
  *
  * @param h Cell size. Should be calculated using the diameter of a sphere of equal volume to that of the cell
+ *
+ * @param density Density of the fluid, assumed to be 1 by default.
+ * This is because most of Lethe simulations (except the VOF ones) assume a
+ * density of 1 and use the kinetic viscosity to set the Reynolds number
+ *
  */
 inline double
 calculate_navier_stokes_gls_tau_steady(const double u_mag,
                                        const double viscosity,
-                                       const double h)
+                                       const double h,
+                                       const double density = 1)
 {
-  return 1. / std::sqrt(Utilities::fixed_power<2>(2. * u_mag / h) +
-                        9 * Utilities::fixed_power<2>(4 * viscosity / (h * h)));
+  return 1. / std::sqrt(Utilities::fixed_power<2>(2. * density * u_mag / h) +
+                        9 * Utilities::fixed_power<2>(4 * density * viscosity /
+                                                      (h * h)));
 }
 
 /**
@@ -50,16 +57,22 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
  *
  * @param h Cell size. Should be calculated using the diameter of a sphere of equal volume to that of the cell
  *
- * \param sdt Inverse of the time-step (1/dt)
+ * @param sdt Inverse of the time-step (1/dt)
+ *
+ * @param density Density of the fluid, assumed to be 1 by default.
+ * This is because most of Lethe simulations (except the VOF ones) assume a
+ * density of 1 and use the kinetic viscosity to set the Reynolds number
  */
 
 inline double
 calculate_navier_stokes_gls_tau_transient(const double u_mag,
                                           const double viscosity,
                                           const double h,
-                                          const double sdt)
+                                          const double sdt,
+                                          const double density = 1)
 {
-  return 1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
-                        Utilities::fixed_power<2>(2. * u_mag / h) +
-                        9 * Utilities::fixed_power<2>(4 * viscosity / (h * h)));
+  return 1. / std::sqrt(Utilities::fixed_power<2>(density * sdt) +
+                        Utilities::fixed_power<2>(2. * density * u_mag / h) +
+                        9 * Utilities::fixed_power<2>(4 * density * viscosity /
+                                                      (h * h)));
 }
