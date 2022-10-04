@@ -3599,6 +3599,16 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               shape_argument[2] = restart_data["shape_argument_2"][p_i];
               particles[p_i].initialize_shape("death star", shape_argument);
             }
+          else if (restart_data["type"][p_i] ==
+                   Shape<dim>::ShapeType::rbf_shape)
+            {
+              particles[p_i].shape =
+                std::dynamic_pointer_cast<RBFShape<dim>>(
+                  this->simulation_parameters.particlesParameters
+                    ->particles[p_i]
+                    .shape)
+                  ->static_copy();
+            }
 
           particles[p_i].radius = particles[p_i].shape->effective_radius;
           particles[p_i].mass   = 4.0 / 3.0 * PI * particles[p_i].radius *
