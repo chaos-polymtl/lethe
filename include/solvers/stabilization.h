@@ -32,6 +32,8 @@ using namespace dealii;
  * @param h Cell size. Should be calculated using the diameter of a sphere of equal volume to that of the cell
  *
  * @param density Density of the fluid, assumed to be 1 by default.
+ * This is because most of Lethe simulations (except the VOF ones) assume a
+ * density of 1 and use the kinetic viscosity to set the Reynolds number
  *
  */
 inline double
@@ -58,6 +60,8 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
  * @param sdt Inverse of the time-step (1/dt)
  *
  * @param density Density of the fluid, assumed to be 1 by default.
+ * This is because most of Lethe simulations (except the VOF ones) assume a
+ * density of 1 and use the kinetic viscosity to set the Reynolds number
  */
 
 inline double

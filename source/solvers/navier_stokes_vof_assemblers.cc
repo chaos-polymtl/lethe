@@ -382,10 +382,10 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 
       densities[0] = scratch_data.density[q];
 
-      for (unsigned int p = 1; p < number_of_previous_solutions(method) + 1;
+      for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          densities[p] = scratch_data.previous_density[p - 1][q];
+          densities[p + 1] = scratch_data.previous_density[p][q];
         }
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
