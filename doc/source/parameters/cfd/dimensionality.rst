@@ -1,7 +1,7 @@
 Dimensionality
 ---------------
 This subsection is used to automatically rescale the physical properties of a simulation for cases in which 
-the fundamental dimensions (length, time, mass, temperature) that are used are not SI units but the physical properties (e.g. thermal conductivity) are known in SI units.
+the fundamental dimensions (length, time, mass, temperature) that are used are not in SI units but the physical properties (e.g. thermal conductivity) are known in SI units.
 
 .. code-block:: text
 
