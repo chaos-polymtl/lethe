@@ -33,6 +33,7 @@
 
 #include <core/ib_particle.h>
 #include <core/multiphysics.h>
+#include <core/utilities.h>
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/parameter_handler.h>
@@ -990,7 +991,7 @@ namespace Parameters
      *
      * @param i The particle id
      * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
-     * rectangle, death star, cut hollow sphere, or torus
+     * rectangle, death star, cut hollow sphere, torus, or rbf
      * @param shape_arguments The dimensions to be used for shape initialization
      */
     void
@@ -1024,7 +1025,6 @@ namespace Parameters
     std::string                  particles_file;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
-
 
     double      particle_nonlinear_tolerance;
     double      length_ratio;

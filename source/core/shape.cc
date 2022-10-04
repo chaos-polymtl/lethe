@@ -22,7 +22,7 @@ double
 Shape<dim>::displaced_volume(const double /*fluid_density*/)
 {
   StandardExceptions::ExcNotImplemented();
-  return 1.;
+  return 1.0;
 }
 
 template <int dim>
@@ -77,7 +77,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
           if (std::abs(theta[i]) > 1e-10)
             {
               Tensor<1, 3> axis;
-              axis[i] = 1.;
+              axis[i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
                   axis, theta[i]);
@@ -216,10 +216,10 @@ Rectangle<dim>::value(const Point<dim> &evaluation_point,
   Point<dim> max_q_0;
   for (unsigned int i = 0; i < dim; ++i)
     {
-      max_q_0[i] = std::max(q[i], 0.);
+      max_q_0[i] = std::max(q[i], 0.0);
     }
   double max_q = std::max(q[0], std::max(q[1], q[dim - 1]));
-  return max_q_0.norm() + std::min(max_q, 0.);
+  return max_q_0.norm() + std::min(max_q, 0.0);
 }
 
 template <int dim>
@@ -227,7 +227,7 @@ std::shared_ptr<Shape<dim>>
 Rectangle<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Rectangle<dim>>(half_lengths,
+    std::make_shared<Rectangle<dim>>(this->half_lengths,
                                      this->position,
                                      this->orientation);
   return copy;
@@ -237,10 +237,10 @@ template <int dim>
 double
 Rectangle<dim>::displaced_volume(const double /*fluid_density*/)
 {
-  double solid_volume = 1.;
+  double solid_volume = 1.0;
   for (unsigned int i = 0; i < dim; i++)
     {
-      solid_volume = solid_volume * 2. * half_lengths[dim];
+      solid_volume = solid_volume * 2.0 * half_lengths[dim];
     }
   return solid_volume;
 }
@@ -270,7 +270,9 @@ std::shared_ptr<Shape<dim>>
 Ellipsoid<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Ellipsoid<dim>>(radii, this->position, this->orientation);
+    std::make_shared<Ellipsoid<dim>>(this->radii,
+                                     this->position,
+                                     this->orientation);
   return copy;
 }
 
@@ -279,7 +281,7 @@ double
 Ellipsoid<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  double solid_volume = PI * 4. / 3.;
+  double solid_volume = PI * 4.0 / 3.0;
   for (unsigned int i = 0; i < dim; i++)
     {
       solid_volume = solid_volume * radii[dim];
@@ -306,7 +308,7 @@ std::shared_ptr<Shape<dim>>
 Torus<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Torus<dim>>(
-    ring_radius, ring_thickness, this->position, this->orientation);
+    this->ring_radius, this->ring_thickness, this->position, this->orientation);
   return copy;
 }
 
@@ -315,7 +317,7 @@ double
 Torus<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  return 2. * PI * PI * ring_radius * ring_thickness * ring_thickness;
+  return 2.0 * PI * PI * ring_radius * ring_thickness * ring_thickness;
 }
 
 template <int dim>
@@ -333,8 +335,8 @@ Cone<dim>::value(const Point<dim> &evaluation_point,
   double   dot_w_q = scalar_product<1, 2, double>(w, intermediate_q);
   double dot_q_q = scalar_product<1, 2, double>(intermediate_q, intermediate_q);
   Point<2> a;
-  a = w - intermediate_q * std::clamp(dot_w_q / dot_q_q, 0., 1.);
-  Point<2> b_intermediate1({std::clamp(w[0] / intermediate_q[0], 0., 1.), 1.});
+  a = w - intermediate_q * std::clamp(dot_w_q / dot_q_q, 0., 1.0);
+  Point<2> b_intermediate1({std::clamp(w[0] / intermediate_q[0], 0.0, 1.), 1.});
   Point<2> b_intermediate2({intermediate_q[0] * b_intermediate1[0],
                             intermediate_q[1] * b_intermediate1[1]});
   Point<2> b;
@@ -353,7 +355,7 @@ std::shared_ptr<Shape<dim>>
 Cone<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Cone<dim>>(
-    tan_base_angle, height, this->position, this->orientation);
+    this->tan_base_angle, this->height, this->position, this->orientation);
   return copy;
 }
 
@@ -362,7 +364,7 @@ double
 Cone<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  return PI / 3. * base_radius * base_radius * height;
+  return PI / 3.0 * base_radius * base_radius * height;
 }
 
 template <int dim>
@@ -392,8 +394,12 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 CutHollowSphere<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy = std::make_shared<CutHollowSphere<dim>>(
-    radius, cut_depth, shell_thickness, this->position, this->orientation);
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<CutHollowSphere<dim>>(this->radius,
+                                           this->cut_depth,
+                                           this->shell_thickness,
+                                           this->position,
+                                           this->orientation);
   return copy;
 }
 
@@ -401,13 +407,9 @@ template <int dim>
 double
 CutHollowSphere<dim>::displaced_volume(const double /*fluid_density*/)
 {
-  std::cout
-    << "Warning: For a cut hollow sphere, the real volume will be lower than "
-       "output."
-    << std::endl;
   using numbers::PI;
   double small_radius = radius - shell_thickness;
-  return 4. * PI / 3. *
+  return 4.0 * PI / 3.0 *
          (radius * radius * radius -
           small_radius * small_radius * small_radius);
 }
@@ -424,7 +426,7 @@ DeathStar<dim>::value(const Point<dim> &evaluation_point,
   Point<2> p_yz({centered_point[1], centered_point[2]});
   Point<2> corrected_p_2d({centered_point[0], p_yz.norm()});
   if (corrected_p_2d[0] * intermediate_b - corrected_p_2d[1] * intermediate_a >
-      spheres_distance * std::max(intermediate_b - corrected_p_2d[1], 0.))
+      spheres_distance * std::max(intermediate_b - corrected_p_2d[1], 0.0))
     {
       Point<2> ab({intermediate_a, intermediate_b});
       return (corrected_p_2d - ab).norm();
@@ -441,8 +443,12 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 DeathStar<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy = std::make_shared<DeathStar<dim>>(
-    radius, hole_radius, spheres_distance, this->position, this->orientation);
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<DeathStar<dim>>(this->radius,
+                                     this->hole_radius,
+                                     this->spheres_distance,
+                                     this->position,
+                                     this->orientation);
   return copy;
 }
 
@@ -450,9 +456,6 @@ template <int dim>
 double
 DeathStar<dim>::displaced_volume(const double /*fluid_density*/)
 {
-  std::cout
-    << "Warning: For a death star, the real volume will be lower than output."
-    << std::endl;
   using numbers::PI;
   return 4. * PI / 3. * radius * radius * radius;
 }
@@ -484,15 +487,164 @@ double
 CompositeShape<dim>::displaced_volume(const double fluid_density)
 {
   double solid_volume = 0;
-  std::cout
-    << "Warning: For composite shapes, the real volume may be bigger than output "
-       "since intersections aren't considered in the calculation."
-    << std::endl;
   for (const std::shared_ptr<Shape<dim>> &elem : components)
     {
       solid_volume += elem->displaced_volume(fluid_density);
     }
   return solid_volume;
+}
+
+template <int dim>
+RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
+                        const std::vector<RBFBasisFunction> &basis_functions,
+                        const std::vector<double> &          weights,
+                        const std::vector<Point<dim>> &      nodes,
+                        const Point<dim> &                   position,
+                        const Tensor<1, 3> &                 orientation)
+  : Shape<dim>(support_radii[0], position, orientation)
+  , number_of_nodes(weights.size())
+  , weights(weights)
+  , nodes(nodes)
+  , support_radii(support_radii)
+  , basis_functions(basis_functions)
+{
+  initialize_bounding_box();
+}
+
+template <int dim>
+RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
+                        const Point<dim> &         position,
+                        const Tensor<1, 3> &       orientation)
+  : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
+               position,
+               orientation)
+// The effective radius is extracted at the proper index from shape_arguments
+{
+  number_of_nodes = shape_arguments.size() / (dim + 3);
+  weights.resize(number_of_nodes);
+  support_radii.resize(number_of_nodes);
+  basis_functions.resize(number_of_nodes);
+  nodes.resize(number_of_nodes);
+  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
+    {
+      weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
+      support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
+      basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
+        round(shape_arguments[2 * number_of_nodes + n_i]));
+      nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
+      nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
+      nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
+    }
+  initialize_bounding_box();
+}
+
+template <int dim>
+double
+RBFShape<dim>::value(const Point<dim> &evaluation_point,
+                     const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  double bounding_box_distance = bounding_box->value(centered_point);
+  double value                 = std::max(bounding_box_distance, 0.0);
+
+  double dist, basis;
+  size_t number_of_nodes = weights.size();
+  // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+  for (size_t i = 0; i < number_of_nodes; ++i)
+    {
+      dist  = (centered_point - nodes[i]).norm() / support_radii[i];
+      basis = evaluate_basis_function(basis_functions[i], dist);
+      value += basis * weights[i];
+    }
+  return value;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+RBFShape<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<RBFShape<dim>>(this->support_radii,
+                                    this->basis_functions,
+                                    this->weights,
+                                    this->nodes,
+                                    this->position,
+                                    this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+RBFShape<dim>::displaced_volume(const double fluid_density)
+{
+  return bounding_box->displaced_volume(fluid_density);
+}
+
+template <int dim>
+void
+RBFShape<dim>::initialize_bounding_box()
+{
+  Point<dim>     high_bounding_point{};
+  Point<dim>     low_bounding_point{};
+  Point<dim>     bounding_box_center{};
+  Tensor<1, dim> half_lengths = Tensor<1, dim>();
+  for (int d = 0; d < dim; d++)
+    {
+      high_bounding_point[d] = std::numeric_limits<double>::lowest();
+      low_bounding_point[d]  = std::numeric_limits<double>::max();
+      for (size_t i = 0; i < number_of_nodes; i++)
+        {
+          if (low_bounding_point[d] > nodes[i][d])
+            low_bounding_point[d] = nodes[i][d];
+          if (high_bounding_point[d] < nodes[i][d])
+            high_bounding_point[d] = nodes[i][d];
+        }
+      bounding_box_center[d] =
+        0.5 * (low_bounding_point[d] + high_bounding_point[d]);
+      half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
+    }
+  bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
+                                                  bounding_box_center,
+                                                  Tensor<1, 3>());
+}
+
+template <int dim>
+double
+RBFShape<dim>::evaluate_basis_function(const RBFBasisFunction basis_function,
+                                       const double           distance) const
+{
+  switch (basis_function)
+    {
+      case RBFBasisFunction::WENDLANDC2:
+        return RBFShape<dim>::wendlandc2(distance);
+      case RBFBasisFunction::LINEAR:
+        return RBFShape<dim>::linear(distance);
+      case RBFBasisFunction::GAUSS90:
+        return RBFShape<dim>::gauss90(distance);
+      case RBFBasisFunction::GAUSS95:
+        return RBFShape<dim>::gauss95(distance);
+      case RBFBasisFunction::GAUSS99:
+        return RBFShape<dim>::gauss99(distance);
+      case RBFBasisFunction::C1C0:
+        return RBFShape<dim>::c1c0(distance);
+      case RBFBasisFunction::C2C0:
+        return RBFShape<dim>::c2c0(distance);
+      case RBFBasisFunction::C0C1:
+        return RBFShape<dim>::c0c1(distance);
+      case RBFBasisFunction::C1C1:
+        return RBFShape<dim>::c1c1(distance);
+      case RBFBasisFunction::C2C1:
+        return RBFShape<dim>::c2c1(distance);
+      case RBFBasisFunction::C0C2:
+        return RBFShape<dim>::c0c2(distance);
+      case RBFBasisFunction::C1C2:
+        return RBFShape<dim>::c1c2(distance);
+      case RBFBasisFunction::C2C2:
+        return RBFShape<dim>::c2c2(distance);
+      default:
+        return RBFShape<dim>::linear(distance);
+    }
 }
 
 template class Sphere<2>;
@@ -507,3 +659,5 @@ template class CutHollowSphere<3>;
 template class DeathStar<3>;
 template class CompositeShape<2>;
 template class CompositeShape<3>;
+template class RBFShape<2>;
+template class RBFShape<3>;

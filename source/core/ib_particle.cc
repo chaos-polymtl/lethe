@@ -215,6 +215,11 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                                  position,
                                                  orientation);
     }
+  else if (type == "rbf")
+    {
+      shape =
+        std::make_shared<RBFShape<dim>>(shape_arguments, position, orientation);
+    }
   else
     StandardExceptions::ExcNotImplemented();
 }
