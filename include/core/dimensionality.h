@@ -26,7 +26,7 @@ using namespace dealii;
  * of the problems (Length, Mass, Time) are not expressed in SI, but are
  * expressed in another set of unit. For example, this can be used to carry
  * out a simulation where the mesh is expressed in millimeter instead of
- * meters. This class is currently only used to calculate to rescale the
+ * meters. This class is currently only used to rescale the
  * physical properties in the FEM-based physics (e.g. all of those that are
  * solvers). Support for DEM, CFD-DEM and rescaling of boundary conditions is
  * planned in the mid-term.
