@@ -43,8 +43,11 @@ This subsection includes parameters related to multiphase flow simulations using
       \Delta t_{DEM} = \frac{\Delta t_{CFD}}{coupling frequency}
 
 * The ``inlet boundary`` and ``outlet boundary`` parameters allow us to specify the ID of the inlet and outlet for pressure drop calculations.
-* The implicit stabilization parameter determines wehether or not we calculate the :math:`\tau` for the SUPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
-* The grad-div length scale determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`. 
+* The ``implicit stabilization`` parameter determines wehether or not we calculate the :math:`\tau` for the SUPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
+* The ``grad-div length scale`` parameter determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`.
+
+.. tip::
+   Experience shows that simulations are more numerically stable when the ``grad-div length scale`` is of the same length as the characteristic length of the flow. For example, for a pipe, the recommended value for the ``grad-div length scale`` would be the pipe's diameter.
 
 `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, J. Chaouki, Lethe: An open-source parallel high- order adaptative cfd solver for incompressible flows, SoftwareX 12 (2020) 100579.
 
