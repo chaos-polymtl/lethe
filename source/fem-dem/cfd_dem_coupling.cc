@@ -356,6 +356,9 @@ CFDDEMSolver<dim>::write_checkpoint()
       this->simulation_control->save(prefix);
       this->pvdhandler.save(prefix);
       particles_pvdhandler.save(prefix_particles);
+
+      if (this->simulation_parameters.flow_control.enable_flow_control)
+        this->flow_control.save(prefix);
     }
 
   std::ostringstream            oss;
@@ -544,6 +547,18 @@ CFDDEMSolver<dim>::read_checkpoint()
     }
 
   vf_system.clear();
+
+  if (this->simulation_parameters.flow_control.enable_flow_control)
+    {
+      this->flow_control.read(prefix);
+
+      this->flow_rate = calculate_flow_rate(
+        this->dof_handler,
+        this->present_solution,
+        this->simulation_parameters.flow_control.boundary_flow_id,
+        *this->face_quadrature,
+        *this->mapping);
+    }
 
   this->multiphysics->read_checkpoint();
 
