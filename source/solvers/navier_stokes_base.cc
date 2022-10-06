@@ -17,6 +17,20 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/lethe_grid_tools.h>
+#include <core/sdirk.h>
+#include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/flow_control.h>
+#include <solvers/navier_stokes_base.h>
+#include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
+
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
@@ -37,18 +51,6 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include <core/bdf.h>
-#include <core/grids.h>
-#include <core/lethe_grid_tools.h>
-#include <core/sdirk.h>
-#include <core/solutions_output.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/flow_control.h>
-#include <solvers/navier_stokes_base.h>
-#include <solvers/post_processors.h>
-#include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
 #include <sys/stat.h>
 
 
