@@ -25,14 +25,6 @@
 #ifndef lethe_tracer_h
 #define lethe_tracer_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/tracer_assemblers.h>
-#include <solvers/tracer_scratch_data.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 
@@ -46,6 +38,13 @@
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/tracer_assemblers.h>
+#include <solvers/tracer_scratch_data.h>
 
 
 template <int dim>
@@ -125,7 +124,7 @@ public:
   finish_simulation() override;
 
   /**
-   * @brief Carry out the operations require to finish a time step correctly. This
+   * @brief Carry out the operations required to finish a time step correctly. This
    * includes setting the previous values
    */
   void

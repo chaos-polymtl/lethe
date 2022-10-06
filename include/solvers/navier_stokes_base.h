@@ -26,7 +26,6 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
-
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
@@ -150,17 +149,18 @@ protected:
     finish_time_step_fd();
   };
 
-  /**
-   * @brief percolate_time_vectors
-   * Rearranges the time vector due to the end of an iteration of the fd (fluid
-   * dynamics) physic and calls the associated methods for all subphysics
-   */
-  virtual void
-  percolate_time_vectors()
-  {
-    percolate_time_vectors_fd();
-    multiphysics->percolate_time_vectors();
-  };
+  //  /**
+  //   * @brief percolate_time_vectors
+  //   * Rearranges the time vector due to the end of an iteration of the fd
+  //   (fluid
+  //   * dynamics) physic and calls the associated methods for all subphysics
+  //   */
+  //  virtual void
+  //  percolate_time_vectors()
+  //  {
+  //    percolate_time_vectors_fd();
+  //    multiphysics->percolate_time_vectors_post_fd();
+  //  };
 
   /**
    * @brief postprocess
