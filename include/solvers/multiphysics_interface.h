@@ -232,44 +232,21 @@ public:
   }
 
   /**
-   * @brief Carry out the operations required to finish a time step correctly for
+   * @brief Rearrange vector solution correctly for transient simulations for
    * all auxiliary physics.
    */
   void
-  finish_time_step()
+  percolate_time_vectors()
   {
     for (auto &iphys : physics)
       {
-        iphys.second->finish_time_step();
+        iphys.second->percolate_time_vectors();
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->finish_time_step();
+        iphys.second->percolate_time_vectors();
       }
   }
-
-  //  /**
-  //   * @brief Carry out the operations required to percolate the time vectors
-  //   * correctly at the end of a simulation
-  //   */
-  //  void
-  //  percolate_time_vectors_post_fd()
-  //  {
-  //    for (auto &iphys : physics)
-  //      {
-  //        if (solve_pre_fluid[iphys.first] == false)
-  //          {
-  //            iphys.second->percolate_time_vectors();
-  //          }
-  //      }
-  //    for (auto &iphys : block_physics)
-  //      {
-  //        if (solve_pre_fluid[iphys.first] == false)
-  //          {
-  //            iphys.second->percolate_time_vectors();
-  //          }
-  //      }
-  //  }
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies

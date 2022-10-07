@@ -207,12 +207,6 @@ public:
   finish_simulation() override;
 
   /**
-   * @brief Carry out the operations required to finish a time step correctly.
-   */
-  void
-  finish_time_step() override;
-
-  /**
    * @brief Carry out the operations required to rearrange the values of the
    * previous solution at the end of a time step
    */
