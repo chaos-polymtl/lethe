@@ -22,15 +22,6 @@
 #ifndef lethe_multiphysics_interface_h
 #define lethe_multiphysics_interface_h
 
-#include <core/exceptions.h>
-#include <core/multiphysics.h>
-#include <core/parameters_multiphysics.h>
-#include <core/simulation_control.h>
-#include <core/solid_base.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/simulation_parameters.h>
-
 #include <deal.II/base/exceptions.h>
 
 #include <deal.II/distributed/tria_base.h>
@@ -39,6 +30,14 @@
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <core/exceptions.h>
+#include <core/multiphysics.h>
+#include <core/parameters_multiphysics.h>
+#include <core/simulation_control.h>
+#include <core/solid_base.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/simulation_parameters.h>
 
 #include <map>
 #include <memory>
@@ -799,7 +798,7 @@ private:
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
-                                            {VOF, false},
+                                            {VOF, true},
                                             {heat_transfer, false},
                                             {tracer, false}};
 

@@ -14,7 +14,7 @@ Running on 1 MPI rank(s)...
 Transient iteration : 1        Time : 0.2      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.417811
+L2 error temperature : 0.410732
 L2 error phase : 0.00208462
 
 *****************************************************************
@@ -26,43 +26,43 @@ Transient iteration : 2        Time : 0.4      Time step : 0.2      CFL : 0
    Number of thermal degrees of freedom: 775
    Number of VOF degrees of freedom: 775
 L2 error velocity : 0
-L2 error temperature : 0.0955313
+L2 error temperature : 0.0948012
 L2 error phase : 0.00208364
 
 *****************************************************************
 Transient iteration : 3        Time : 0.6      Time step : 0.2      CFL : 0       
 *****************************************************************
-   Number of active cells:       784
-   Number of degrees of freedom: 2619
+   Number of active cells:       832
+   Number of degrees of freedom: 2766
    Volume of triangulation:      0.2
-   Number of thermal degrees of freedom: 873
-   Number of VOF degrees of freedom: 873
+   Number of thermal degrees of freedom: 922
+   Number of VOF degrees of freedom: 922
 L2 error velocity : 0
-L2 error temperature : 0.0239307
+L2 error temperature : 0.0237114
 L2 error phase : 0.00208379
 
 *****************************************************************
 Transient iteration : 4        Time : 0.8      Time step : 0.2      CFL : 0       
 *****************************************************************
-   Number of active cells:       784
-   Number of degrees of freedom: 2619
+   Number of active cells:       832
+   Number of degrees of freedom: 2766
    Volume of triangulation:      0.2
-   Number of thermal degrees of freedom: 873
-   Number of VOF degrees of freedom: 873
+   Number of thermal degrees of freedom: 922
+   Number of VOF degrees of freedom: 922
 L2 error velocity : 0
-L2 error temperature : 0.00540909
+L2 error temperature : 0.00536548
 L2 error phase : 0.00208394
 
 *****************************************************************
 Transient iteration : 5        Time : 1        Time step : 0.2      CFL : 0       
 *****************************************************************
-   Number of active cells:       736
-   Number of degrees of freedom: 2520
+   Number of active cells:       832
+   Number of degrees of freedom: 2766
    Volume of triangulation:      0.2
-   Number of thermal degrees of freedom: 840
-   Number of VOF degrees of freedom: 840
+   Number of thermal degrees of freedom: 922
+   Number of VOF degrees of freedom: 922
 L2 error velocity : 0
-L2 error temperature : 0.00109053
+L2 error temperature : 0.00108962
 L2 error phase : 0.00208412
  time  error_velocity error_pressure 
 0.2000 0.000000e+00   0.0000         
@@ -71,14 +71,14 @@ L2 error phase : 0.00208412
 0.8000 0.000000e+00   0.0000         
 1.0000 0.000000e+00   0.0000         
 cells error_temperature 
-496   4.178111e-01      
-688   9.553132e-02      
-784   2.393069e-02      
-784   5.409094e-03      
-736   1.090529e-03      
+496   4.107319e-01      
+688   9.480115e-02      
+832   2.371144e-02      
+832   5.365481e-03      
+832   1.089624e-03      
  time  error_phase  
 0.2000 2.084619e-03 
 0.4000 2.083642e-03 
 0.6000 2.083790e-03 
 0.8000 2.083938e-03 
-1.0000 2.084123e-03 
+1.0000 2.084124e-03 
