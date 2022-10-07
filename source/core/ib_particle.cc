@@ -234,6 +234,14 @@ IBParticle<dim>::get_number_properties()
 
 template <int dim>
 double
+IBParticle<dim>::get_levelset(
+  const Point<dim> &                                   p,
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+{
+  return shape->value_with_cell_guess(p, cell_guess);
+}
+template <int dim>
+double
 IBParticle<dim>::get_levelset(const Point<dim> &p)
 {
   return shape->value(p);
@@ -241,15 +249,48 @@ IBParticle<dim>::get_levelset(const Point<dim> &p)
 
 template <int dim>
 void
+IBParticle<dim>::closest_surface_point(
+  const Point<dim> &                                   p,
+  Point<dim> &                                         closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+{
+  Tensor<1, dim> actual_gradient;
+  double         distance_from_surface;
+  actual_gradient       = shape->gradient_with_cell_guess(p, cell_guess);
+  distance_from_surface = shape->value_with_cell_guess(p, cell_guess);
+
+  closest_point =
+    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+}
+template <int dim>
+void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
                                        Point<dim> &      closest_point)
 {
-  Tensor<1, dim> actual_gradient       = shape->gradient(p);
-  double         distance_from_surface = shape->value(p);
+  Tensor<1, dim> actual_gradient;
+  double         distance_from_surface;
+  actual_gradient       = shape->gradient(p);
+  distance_from_surface = shape->value(p);
   closest_point =
     p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
 }
 
+template <int dim>
+bool
+IBParticle<dim>::is_inside_crown(
+  const Point<dim> &                                   evaluation_point,
+  const double                                         outer_radius,
+  const double                                         inside_radius,
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+{
+  const double radius = shape->effective_radius;
+
+  double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
+  bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
+  bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+
+  return is_inside_outer_ring && is_outside_inner_ring;
+}
 template <int dim>
 bool
 IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
@@ -288,6 +329,23 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> orientation)
 {
   this->orientation = orientation;
   this->shape->set_orientation(this->orientation);
+}
+
+template <int dim>
+void
+IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
+                                        std::shared_ptr<Mapping<dim>> mapping)
+{
+  if (typeid(*shape) == typeid(RBFShape<dim>))
+    {
+      std::static_pointer_cast<RBFShape<dim>>(shape)->update_precalculations(
+        updated_dof_handler, mapping);
+    }
+  else if (typeid(*shape) == typeid(CompositeShape<dim>))
+    {
+      std::static_pointer_cast<CompositeShape<dim>>(shape)
+        ->update_precalculations(updated_dof_handler, mapping);
+    }
 }
 
 template class IBParticle<2>;

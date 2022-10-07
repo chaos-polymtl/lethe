@@ -13,6 +13,7 @@
  *
  * ---------------------------------------------------------------------
  */
+#include <core/lethe_grid_tools.h>
 #include <core/shape.h>
 
 #include <cfloat>
@@ -130,6 +131,26 @@ Tensor<1, 3>
 Shape<dim>::get_orientation()
 {
   return orientation;
+}
+
+template <int dim>
+double
+Shape<dim>::value_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
+{
+  return this->value(evaluation_point);
+}
+
+template <int dim>
+Tensor<1, dim>
+Shape<dim>::gradient_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
+{
+  return this->gradient(evaluation_point);
 }
 
 template <int dim>
@@ -465,10 +486,26 @@ double
 CompositeShape<dim>::value(const Point<dim> &evaluation_point,
                            const unsigned int /*component*/) const
 {
-  double levelset = DBL_MAX;
+  double levelset = std::numeric_limits<double>::max();
   for (const std::shared_ptr<Shape<dim>> &elem : components)
     {
       levelset = std::min(elem->value(evaluation_point), levelset);
+    }
+  return levelset;
+}
+
+template <int dim>
+double
+CompositeShape<dim>::value_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  double levelset = std::numeric_limits<double>::max();
+  for (const std::shared_ptr<Shape<dim>> &elem : components)
+    {
+      levelset =
+        std::min(elem->value_with_cell_guess(evaluation_point, cell), levelset);
     }
   return levelset;
 }
@@ -495,6 +532,27 @@ CompositeShape<dim>::displaced_volume(const double fluid_density)
 }
 
 template <int dim>
+void
+CompositeShape<dim>::update_precalculations(
+  DoFHandler<dim> &             updated_dof_handler,
+  std::shared_ptr<Mapping<dim>> mapping)
+{
+  for (const std::shared_ptr<Shape<dim>> &elem : components)
+    {
+      if (typeid(*elem) == typeid(RBFShape<dim>))
+        {
+          std::static_pointer_cast<RBFShape<dim>>(elem)->update_precalculations(
+            updated_dof_handler, mapping);
+        }
+      else if (typeid(*elem) == typeid(CompositeShape<dim>))
+        {
+          std::static_pointer_cast<CompositeShape<dim>>(elem)
+            ->update_precalculations(updated_dof_handler, mapping);
+        }
+    }
+}
+
+template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
                         const std::vector<double> &          weights,
@@ -503,12 +561,22 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const Tensor<1, 3> &                 orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
+  , iterable_nodes(weights.size())
+  , likely_nodes_map()
+  , dof_handler_ref(nullptr)
+  , cell_guess_given(false)
+  , nodes_id(weights.size())
   , weights(weights)
-  , nodes(nodes)
+  , nodes_positions(nodes)
   , support_radii(support_radii)
   , basis_functions(basis_functions)
 {
+  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
+    this->effective_radius =
+      std::max(this->effective_radius, support_radii[n_i]);
+  std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   initialize_bounding_box();
+  this->effective_radius = bounding_box->half_lengths.norm();
 }
 
 template <int dim>
@@ -524,18 +592,53 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   weights.resize(number_of_nodes);
   support_radii.resize(number_of_nodes);
   basis_functions.resize(number_of_nodes);
-  nodes.resize(number_of_nodes);
+  nodes_positions.resize(number_of_nodes);
+  nodes_id.resize(number_of_nodes);
+  iterable_nodes.resize(number_of_nodes);
+  std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
+  dof_handler_ref  = nullptr;
+  cell_guess_given = false;
+
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
-      weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
-      support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
+      weights[n_i]       = shape_arguments[0 * number_of_nodes + n_i];
+      support_radii[n_i] = shape_arguments[1 * number_of_nodes + n_i];
+      this->effective_radius =
+        std::max(this->effective_radius, support_radii[n_i]);
       basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
         round(shape_arguments[2 * number_of_nodes + n_i]));
-      nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
-      nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
-      nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
+      nodes_positions[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
+      nodes_positions[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
+      nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
     }
   initialize_bounding_box();
+  this->effective_radius = bounding_box->half_lengths.norm();
+}
+
+template <int dim>
+double
+RBFShape<dim>::value_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  prepare_iterable_nodes(cell);
+  double value = this->value(evaluation_point);
+  reset_iterable_nodes();
+  return value;
+}
+
+template <int dim>
+Tensor<1, dim>
+RBFShape<dim>::gradient_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  prepare_iterable_nodes(cell);
+  Tensor<1, dim> gradient = this->gradient(evaluation_point);
+  reset_iterable_nodes();
+  return gradient;
 }
 
 template <int dim>
@@ -548,16 +651,77 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double bounding_box_distance = bounding_box->value(centered_point);
   double value                 = std::max(bounding_box_distance, 0.0);
 
-  double dist, basis;
-  size_t number_of_nodes = weights.size();
+  double              normalized_distance, basis;
+  std::vector<size_t> current_iterable_nodes =
+    get_iterable_nodes(centered_point);
+
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  for (size_t i = 0; i < number_of_nodes; ++i)
+  for (const size_t &node_id : current_iterable_nodes)
     {
-      dist  = (centered_point - nodes[i]).norm() / support_radii[i];
-      basis = evaluate_basis_function(basis_functions[i], dist);
-      value += basis * weights[i];
+      normalized_distance = (centered_point - nodes_positions[node_id]).norm() /
+                            support_radii[node_id];
+      basis =
+        evaluate_basis_function(basis_functions[node_id], normalized_distance);
+      value += basis * weights[node_id];
     }
   return value;
+}
+
+template <int dim>
+Tensor<1, dim>
+RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
+                        const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  double         bounding_box_distance = bounding_box->value(centered_point);
+  Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
+  if (bounding_box_distance >
+      *std::max_element(support_radii.begin(), support_radii.end()))
+    return bounding_box_gradient;
+
+  double     distance, normalized_distance;
+  Point<dim> relative_position{};
+  // We use chain derivation to express the gradient of the basis in regards to
+  // the position d(basis)/dx = d(basis)              /d(normalized_distance)
+  //             * d(normalized_distance)/d(distance)
+  //             * d(distance)           /dx
+  double         dbasis_drnorm_derivative;
+  double         drnorm_dr_derivative;
+  Tensor<1, dim> dr_dx_derivative{};
+  Tensor<1, dim> gradient{};
+
+  std::vector<size_t> current_iterable_nodes =
+    get_iterable_nodes(centered_point);
+
+  if (current_iterable_nodes.size() > 0)
+    {
+      for (const size_t &node_id : current_iterable_nodes)
+        {
+          // Calculation of the dr/dx
+          relative_position   = centered_point - nodes_positions[node_id];
+          distance            = (relative_position).norm();
+          normalized_distance = distance / support_radii[node_id];
+          if (distance > 0.0)
+            dr_dx_derivative = relative_position / distance;
+          else
+            for (int d = 0; d < dim; d++)
+              // Can be proved by taking the limit (definition of a derivative)
+              dr_dx_derivative[d] = 1.0;
+          // Calculation of the dr_norm/dr
+          drnorm_dr_derivative = 1.0 / support_radii[node_id];
+          // Calculation of the d(basis)/dr
+          dbasis_drnorm_derivative =
+            evaluate_basis_function_derivative(basis_functions[node_id],
+                                               normalized_distance);
+          // Sum
+          gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
+                      dr_dx_derivative * weights[node_id];
+        }
+    }
+  else
+    gradient = bounding_box_gradient;
+  return gradient;
 }
 
 template <int dim>
@@ -568,7 +732,7 @@ RBFShape<dim>::static_copy() const
     std::make_shared<RBFShape<dim>>(this->support_radii,
                                     this->basis_functions,
                                     this->weights,
-                                    this->nodes,
+                                    this->nodes_positions,
                                     this->position,
                                     this->orientation);
   return copy;
@@ -595,10 +759,10 @@ RBFShape<dim>::initialize_bounding_box()
       low_bounding_point[d]  = std::numeric_limits<double>::max();
       for (size_t i = 0; i < number_of_nodes; i++)
         {
-          if (low_bounding_point[d] > nodes[i][d])
-            low_bounding_point[d] = nodes[i][d];
-          if (high_bounding_point[d] < nodes[i][d])
-            high_bounding_point[d] = nodes[i][d];
+          if (low_bounding_point[d] > nodes_positions[i][d])
+            low_bounding_point[d] = nodes_positions[i][d];
+          if (high_bounding_point[d] < nodes_positions[i][d])
+            high_bounding_point[d] = nodes_positions[i][d];
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
@@ -608,6 +772,77 @@ RBFShape<dim>::initialize_bounding_box()
                                                   bounding_box_center,
                                                   Tensor<1, 3>());
 }
+
+template <int dim>
+void
+RBFShape<dim>::determine_likely_nodes_for_one_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  const Point<dim>                                      support_point)
+{
+  if (!cell->is_locally_owned())
+    return;
+  // We exit the function immediately if the cell is already in the map
+  if (likely_nodes_map.find(cell) != likely_nodes_map.end())
+    return;
+
+  try
+    {
+      const auto cell_parent     = cell->parent();
+      const auto parent_iterator = likely_nodes_map.find(cell_parent);
+      if (parent_iterator != likely_nodes_map.end())
+        iterable_nodes = parent_iterator->second;
+      else
+        iterable_nodes = nodes_id;
+    }
+  catch (...)
+    {
+      iterable_nodes = nodes_id;
+    }
+
+  double     distance, max_distance;
+  double     cell_diameter = cell->diameter();
+  Point<dim> centered_support_point;
+
+  std::vector<size_t> temporary_node_vector = std::vector<size_t>();
+  for (auto &node_id : iterable_nodes)
+    {
+      // We only check for one support point, but we use a high security
+      // factor. This allows not to loop over all support points.
+      centered_support_point = this->align_and_center(support_point);
+      distance = (centered_support_point - nodes_positions[node_id]).norm();
+      // We check if the distance is lower than 1 cell diagonal, since we
+      // only check the distance with 1 support point, added to the support
+      // radius
+      max_distance = cell_diameter + support_radii[node_id];
+      if (distance < max_distance)
+        temporary_node_vector.push_back(node_id);
+    }
+  likely_nodes_map[cell] = temporary_node_vector;
+}
+
+template <int dim>
+void
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &             dof_handler,
+                                      std::shared_ptr<Mapping<dim>> mapping)
+{
+  dof_handler_ref           = &dof_handler;
+  const auto &cell_iterator = dof_handler.active_cell_iterators();
+  std::map<types::global_dof_index, Point<dim>> support_points;
+  DoFTools::map_dofs_to_support_points(*mapping, dof_handler, support_points);
+  const size_t dofs_per_cell = dof_handler.get_fe().dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  for (const auto &cell : cell_iterator)
+    {
+      if (cell->is_locally_owned())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          Point<dim> support_point = support_points[local_dof_indices[0]];
+          determine_likely_nodes_for_one_cell(cell, support_point);
+        }
+    }
+}
+
 
 template <int dim>
 double
@@ -642,9 +877,104 @@ RBFShape<dim>::evaluate_basis_function(const RBFBasisFunction basis_function,
         return RBFShape<dim>::c1c2(distance);
       case RBFBasisFunction::C2C2:
         return RBFShape<dim>::c2c2(distance);
+      case RBFBasisFunction::COSINUS:
+        return RBFShape<dim>::cosinus(distance);
       default:
         return RBFShape<dim>::linear(distance);
     }
+}
+
+template <int dim>
+double
+RBFShape<dim>::evaluate_basis_function_derivative(
+  const RBFBasisFunction basis_function,
+  const double           distance) const
+{
+  switch (basis_function)
+    {
+      case RBFBasisFunction::WENDLANDC2:
+        return RBFShape<dim>::wendlandc2_derivative(distance);
+      case RBFBasisFunction::LINEAR:
+        return RBFShape<dim>::linear_derivative(distance);
+      case RBFBasisFunction::GAUSS90:
+        return RBFShape<dim>::gauss90_derivative(distance);
+      case RBFBasisFunction::GAUSS95:
+        return RBFShape<dim>::gauss95_derivative(distance);
+      case RBFBasisFunction::GAUSS99:
+        return RBFShape<dim>::gauss99_derivative(distance);
+      case RBFBasisFunction::C1C0:
+        return RBFShape<dim>::c1c0_derivative(distance);
+      case RBFBasisFunction::C2C0:
+        return RBFShape<dim>::c2c0_derivative(distance);
+      case RBFBasisFunction::C0C1:
+        return RBFShape<dim>::c0c1_derivative(distance);
+      case RBFBasisFunction::C1C1:
+        return RBFShape<dim>::c1c1_derivative(distance);
+      case RBFBasisFunction::C2C1:
+        return RBFShape<dim>::c2c1_derivative(distance);
+      case RBFBasisFunction::C0C2:
+        return RBFShape<dim>::c0c2_derivative(distance);
+      case RBFBasisFunction::C1C2:
+        return RBFShape<dim>::c1c2_derivative(distance);
+      case RBFBasisFunction::C2C2:
+        return RBFShape<dim>::c2c2_derivative(distance);
+      case RBFBasisFunction::COSINUS:
+        return RBFShape<dim>::cosinus_derivative(distance);
+      default:
+        return RBFShape<dim>::linear_derivative(distance);
+    }
+}
+
+template <int dim>
+void
+RBFShape<dim>::prepare_iterable_nodes(
+  const typename DoFHandler<dim>::active_cell_iterator cell)
+{
+  if (!cell->is_locally_owned())
+    return;
+  cell_guess_given = true;
+  // Here we check if the likely nodes have been identified
+  auto iterator = likely_nodes_map.find(cell);
+  if (iterator != likely_nodes_map.end())
+    iterable_nodes = iterator->second;
+  else
+    iterable_nodes = nodes_id;
+}
+
+template <int dim>
+void
+RBFShape<dim>::reset_iterable_nodes()
+{
+  cell_guess_given = false;
+  iterable_nodes   = nodes_id;
+}
+
+template <int dim>
+std::vector<size_t>
+RBFShape<dim>::get_iterable_nodes(const Point<dim> centered_point) const
+{
+  std::vector<size_t> current_iterable_nodes;
+  if (!cell_guess_given && dof_handler_ref)
+    {
+      try
+        {
+          const typename DoFHandler<dim>::active_cell_iterator cell =
+            LetheGridTools::find_cell_around_point_with_tree(*dof_handler_ref,
+                                                             centered_point);
+          auto iterator = likely_nodes_map.find(cell);
+          if (iterator != likely_nodes_map.end())
+            current_iterable_nodes = iterator->second;
+          else
+            current_iterable_nodes = nodes_id;
+        }
+      catch (...)
+        {
+          current_iterable_nodes = nodes_id;
+        }
+    }
+  else
+    current_iterable_nodes = iterable_nodes;
+  return current_iterable_nodes;
 }
 
 template class Sphere<2>;

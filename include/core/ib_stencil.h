@@ -61,6 +61,12 @@ public:
    * @param dof_point, the support point of the DOF.
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
+  points(const unsigned int                                   order,
+         const double                                         length_ratio,
+         IBParticle<dim> &                                    p,
+         const Point<dim> &                                   dof_point,
+         const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+  virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
   points(const unsigned int order,
          const double       length_ratio,
          IBParticle<dim> &  p,
@@ -73,6 +79,11 @@ public:
    * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
    */
+  virtual Point<dim>
+  point_for_cell_detection(
+    IBParticle<dim> &                                    p,
+    const Point<dim> &                                   dof_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell_guess);
   virtual Point<dim>
   point_for_cell_detection(IBParticle<dim> &p, const Point<dim> &dof_point);
 
@@ -99,6 +110,11 @@ public:
    * @param dof_point, the support point of the DOF.
    * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
    */
+  virtual double
+  ib_velocity(IBParticle<dim> &                                    p,
+              const Point<dim> &                                   dof_point,
+              const unsigned int                                   component,
+              const typename DoFHandler<dim>::active_cell_iterator cell_guess);
   virtual double
   ib_velocity(IBParticle<dim> &  p,
               const Point<dim> & dof_point,

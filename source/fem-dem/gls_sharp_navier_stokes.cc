@@ -137,7 +137,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   if (0 == this->fe->system_to_component_index(j).first)
                     {
                       if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]]) <= 0)
+                            support_points[local_dof_indices[j]], cell) <= 0)
                         ++nb_dof_inside;
                     }
                 }
@@ -535,7 +535,8 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                         this->simulation_parameters.particlesParameters
                           ->outside_radius,
                         this->simulation_parameters.particlesParameters
-                          ->inside_radius))
+                          ->inside_radius,
+                        cell))
                     {
                       ++count_small;
                     }
@@ -701,7 +702,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // of the particles. If all the DOfs are on one side
                       // the cell is not cut by the boundary.
                       if (particles[p].get_levelset(
-                            support_points[local_face_dof_indices[j]]) <= 0)
+                            support_points[local_face_dof_indices[j]], cell) <=
+                          0)
                         ++nb_dof_inside;
                     }
 
@@ -718,7 +720,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Define the vertices of the surface cell.
                           Point<dim> vertex_projection;
                           particles[p].closest_surface_point(
-                            local_face->vertex(i), vertex_projection);
+                            local_face->vertex(i), vertex_projection, cell);
 
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)
@@ -783,8 +785,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       order,
                                       length_ratio,
                                       particles[p],
-                                      support_points
-                                        [local_face_dof_indices[i]]);
+                                      support_points[local_face_dof_indices[i]],
+                                      cell);
 
                                   auto cell_2 =
                                     ib_done[local_face_dof_indices[i]].second;
@@ -800,7 +802,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         stencil.point_for_cell_detection(
                                           particles[p],
                                           support_points
-                                            [local_face_dof_indices[i]]);
+                                            [local_face_dof_indices[i]],
+                                          cell);
 
                                       try
                                         {
@@ -964,7 +967,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       particles[p].closest_surface_point(
                                         support_points
                                           [local_face_dof_indices[i]],
-                                        point_projection);
+                                        point_projection,
+                                        cell);
 
                                       auto projected_point_unit =
                                         local_face_map
@@ -2482,6 +2486,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           std::tie(cell_is_cut, ib_particle_id, count_particles) =
             cut_cells_map[cell];
 
+          std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
           if (cell_is_cut)
             {
               // If we are here, the cell is cut by the IB.
@@ -2494,7 +2499,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   unsigned int global_index_overwrite = local_dof_indices[i];
                   bool         dof_is_inside =
                     particles[ib_particle_id].get_levelset(
-                      support_points[local_dof_indices[i]]) < 0;
+                      support_points[local_dof_indices[i]], cell) < 0;
 
                   // If multiple particles cut the cell, we treat the dof of
                   // pressure as a dummy dof. We don't use them to set the
@@ -2537,15 +2542,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         stencil.points(order,
                                        length_ratio,
                                        particles[ib_particle_id],
-                                       support_points[local_dof_indices[i]]);
-
-
-
+                                       support_points[local_dof_indices[i]],
+                                       cell);
                       // Find the cell used for the stencil definition.
                       auto point_to_find_cell =
                         stencil.point_for_cell_detection(
                           particles[ib_particle_id],
-                          support_points[local_dof_indices[i]]);
+                          support_points[local_dof_indices[i]],
+                          cell);
                       typename DoFHandler<dim>::active_cell_iterator cell_2;
                       bool particle_close_to_wall = false;
                       (void)particle_close_to_wall;
@@ -2616,7 +2620,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Tolerance to define an intersection of
                           // the DOF and IB
                           if (abs(particles[ib_particle_id].get_levelset(
-                                support_points[local_dof_indices[i]])) <=
+                                support_points[local_dof_indices[i]], cell)) <=
                               1e-12 * dr)
                             {
                               dof_on_ib = true;
@@ -2716,7 +2720,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       double v_ib = stencil.ib_velocity(
                         particles[ib_particle_id],
                         support_points[local_dof_indices[i]],
-                        component_i);
+                        component_i,
+                        cell);
 
                       //  If the pressure is imposed trough IB inside the
                       //  particle we use an approximation of the pressure
@@ -2730,7 +2735,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               // particle.
                               bool dof_is_inside_p =
                                 particles[ib_particle_id].get_levelset(
-                                  support_points[local_dof_indices[k]]) < 0;
+                                  support_points[local_dof_indices[k]], cell) <
+                                0;
                               const unsigned int component_k =
                                 this->fe->system_to_component_index(k).first;
                               if (component_k == dim &&
@@ -2879,9 +2885,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // it's not cut this dof must not
                                       // be overwritten
                                       bool cell_is_cut;
-                                      std::tie(cell_is_cut,
-                                               std::ignore,
-                                               std::ignore) =
+                                      std::tie(cell_is_cut, std::ignore) =
                                         cut_cells_map[cell_3];
 
 
@@ -3048,8 +3052,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
-  copy_data.cell_is_cut                              = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+  copy_data.cell_is_cut                 = cell_is_cut;
 
   if (cell_is_cut)
     return;
@@ -3138,8 +3142,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
-  copy_data.cell_is_cut                              = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+  copy_data.cell_is_cut                 = cell_is_cut;
 
   if (cell_is_cut)
     return;
@@ -3230,7 +3234,6 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
         ".ib_particles";
       std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
-      ib_particles_pvdhandler.save(prefix + ".ib_particles");
 
       this->pvdhandler.save(prefix);
       for (unsigned int i_particle = 0; i_particle < particles.size();
@@ -3361,7 +3364,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
 
-  ib_particles_pvdhandler.read(prefix + ".ib_particles");
   // refill the table from checkpoint
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -3535,16 +3537,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
 
-  // Finish the time step of the particles.
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-    {
-      particles[p_i].velocity_iter        = particles[p_i].velocity;
-      particles[p_i].impulsion_iter       = particles[p_i].impulsion;
-      particles[p_i].omega_iter           = particles[p_i].omega;
-      particles[p_i].omega_impulsion_iter = particles[p_i].omega_impulsion;
-      particles[p_i].residual_velocity    = DBL_MAX;
-      particles[p_i].residual_omega       = DBL_MAX;
-    }
+  // Finish the time step of the particle.
 }
 
 template <int dim>
@@ -3763,6 +3756,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
   define_particles();
   this->setup_dofs();
   this->box_refine_mesh();
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].update_precalculations(this->dof_handler, this->mapping);
+    }
 
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
@@ -3794,6 +3791,11 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+            {
+              particles[p_i].update_precalculations(this->dof_handler,
+                                                    this->mapping);
+            }
         }
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.refinement_fraction = temp_refine;
@@ -3856,6 +3858,11 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+            {
+              particles[p_i].update_precalculations(this->dof_handler,
+                                                    this->mapping);
+            }
           vertices_cell_mapping();
 
           if (all_spheres)

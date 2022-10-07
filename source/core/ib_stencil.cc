@@ -94,6 +94,52 @@ IBStencil<dim>::coefficients(const unsigned int order,
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
+IBStencil<dim>::points(
+  const unsigned int                                   order,
+  const double                                         length_ratio,
+  IBParticle<dim> &                                    p,
+  const Point<dim> &                                   dof_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+{
+  // Create the vector of points used for the stencil based on the order of the
+  // stencil. Also return the DOF position or the position of the point on the
+  // IB depending if the cell is used directly
+  p_base(order);
+  Point<dim> point;
+  Point<dim> surface_point;
+  p.closest_surface_point(dof_point, surface_point, cell_guess);
+  std::vector<Point<dim>> interpolation_points;
+
+  if (order > 4)
+    {
+      // In this case the cell is directly used to find the solution at the IB
+      // position. In this case only one point is needed (the position of the
+      // point on the IB).
+      Tensor<1, dim, double> vect_ib = dof_point - surface_point;
+      point                          = surface_point;
+
+      Point<dim, double> interpolation_point_1(dof_point +
+                                               vect_ib * 1. / length_ratio);
+
+      interpolation_points.resize(1);
+      interpolation_points[0] = interpolation_point_1;
+    }
+  else
+    {
+      interpolation_points.resize(order);
+      Tensor<1, dim, double> vect_ib = dof_point - surface_point;
+      point                          = dof_point;
+      for (unsigned int i = 1; i < order + 1; ++i)
+        {
+          interpolation_points[i - 1] =
+            dof_point +
+            vect_ib * (1 - reference_points[order - i]) / (length_ratio);
+        }
+    }
+  return {point, interpolation_points};
+}
+template <int dim>
+std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::points(const unsigned int order,
                        const double       length_ratio,
                        IBParticle<dim> &  p,
@@ -139,6 +185,24 @@ IBStencil<dim>::points(const unsigned int order,
 
 template <int dim>
 Point<dim>
+IBStencil<dim>::point_for_cell_detection(
+  IBParticle<dim> &                                    p,
+  const Point<dim> &                                   dof_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+{
+  // Create the vector of points used for the stencil based on the order of the
+  // stencil. Also return the DOF position or the position of the point on the
+  // IB depending if the cell is used directly
+
+  Point<dim> surface_point;
+  p.closest_surface_point(dof_point, surface_point, cell_guess);
+  Tensor<1, dim, double> vect_ib = dof_point - surface_point;
+  Point<dim>             point   = dof_point + vect_ib * 1.0 / 16;
+
+  return point;
+}
+template <int dim>
+Point<dim>
 IBStencil<dim>::point_for_cell_detection(IBParticle<dim> & p,
                                          const Point<dim> &dof_point)
 {
@@ -154,6 +218,72 @@ IBStencil<dim>::point_for_cell_detection(IBParticle<dim> & p,
   return point;
 }
 
+template <int dim>
+double
+IBStencil<dim>::ib_velocity(
+  IBParticle<dim> &                                    p,
+  const Point<dim> &                                   dof_point,
+  unsigned int                                         component,
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+{
+  // Return the value of the IB condition for that specific stencil.
+  double v_ib = 0;
+
+  Tensor<1, 3, double> radial_vector;
+  Point<dim>           closest_point;
+  p.closest_surface_point(dof_point, closest_point, cell_guess);
+  Point<dim> position_to_surface;
+  position_to_surface    = closest_point - p.position;
+  double radial_distance = position_to_surface.norm();
+  if (dim == 2)
+    {
+      // have to do that conversion as there is no proper conversion from tensor
+      // of dim 2 to 3.
+      radial_vector[0] =
+        radial_distance * (position_to_surface / radial_distance)[0];
+      radial_vector[1] =
+        radial_distance * (position_to_surface / radial_distance)[1];
+      radial_vector[2]   = 0;
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      if (component == 0)
+        {
+          // vx in 2D
+          v_ib = v_rot[0] + p.velocity[0];
+        }
+      if (component == 1)
+        {
+          // vy in 2D
+          v_ib = v_rot[1] + p.velocity[1];
+        }
+    }
+  if (dim == 3)
+    {
+      radial_vector[0] =
+        radial_distance * (position_to_surface / radial_distance)[0];
+      radial_vector[1] =
+        radial_distance * (position_to_surface / radial_distance)[1];
+      radial_vector[2] =
+        radial_distance * (position_to_surface / radial_distance)[2];
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      if (component == 0)
+        {
+          // vx in 3D
+          v_ib = v_rot[0] + p.velocity[0];
+        }
+      if (component == 1)
+        {
+          // vy in 3D
+          v_ib = v_rot[1] + p.velocity[1];
+        }
+      if (component == 2)
+        {
+          // vz in 3D
+          v_ib = v_rot[2] + p.velocity[2];
+        }
+    }
+
+  return v_ib;
+}
 template <int dim>
 double
 IBStencil<dim>::ib_velocity(IBParticle<dim> & p,

@@ -89,6 +89,7 @@ public:
    */
   unsigned int
   get_number_properties();
+
   /**
    * @brief
    * Returns the evaluation of the signed distance function of this shape
@@ -97,6 +98,9 @@ public:
    *
    * @param p The point at which the evaluation is performed
    */
+  double
+  get_levelset(const Point<dim> &                                   p,
+               const typename DoFHandler<dim>::active_cell_iterator cell_guess);
   double
   get_levelset(const Point<dim> &p);
 
@@ -108,6 +112,11 @@ public:
    * @param p The point at which the evaluation is performed
    * @param closest_point The reference to the closest point. This point will be modified by the function.
    */
+  void
+  closest_surface_point(
+    const Point<dim> &                                   p,
+    Point<dim> &                                         closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell_guess);
   void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
 
@@ -121,6 +130,12 @@ public:
    *  @param outer_radius The factor to be multiplied by the effective radius to check if the evaluation point is inside the outer limits
    *  @param inside_radius The factor to be multiplied by the effective radius to check if the evaluation point is outside the inner limits
    */
+  bool
+  is_inside_crown(
+    const Point<dim> &                                   evaluation_point,
+    const double                                         outer_radius,
+    const double                                         inside_radius,
+    const typename DoFHandler<dim>::active_cell_iterator cell_guess);
   bool
   is_inside_crown(const Point<dim> &evaluation_point,
                   const double      outer_radius,
@@ -167,6 +182,15 @@ public:
    */
   void
   set_orientation(const Tensor<1, 3> orientation);
+
+  /**
+   * @brief Sets the proper dof handler, then computes/updates the map of cells
+   * and their likely non-null nodes
+   * @param updated_dof_handler the reference to the new dof_handler
+   */
+  void
+  update_precalculations(DoFHandler<dim> &             updated_dof_handler,
+                         std::shared_ptr<Mapping<dim>> mapping);
 
 
   // This class defines values related to a particle used in the sharp interface
