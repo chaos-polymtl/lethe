@@ -533,7 +533,7 @@ NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
+NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 {
   if (simulation_parameters.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)

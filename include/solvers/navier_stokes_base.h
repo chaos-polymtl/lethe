@@ -137,20 +137,6 @@ protected:
   }
 
   /**
-   * @brief finish_time_step
-   * Finish the time step of the fluid dynamics physic
-   * Post-processing and time stepping
-   */
-  virtual void
-  finish_time_step()
-  {
-    // Dear future Bruno, this shifted order is necessary because of the
-    // checkpointing mechanism You spent an evening debugging this, trust me.
-    // multiphysics->percolate_time_vectors(true);
-    finish_time_step_fd();
-  };
-
-  /**
    * @brief postprocess
    * Post-process simulation after an iteration
    *
@@ -221,7 +207,7 @@ protected:
    * Post-processing and time stepping
    */
   virtual void
-  finish_time_step_fd();
+  finish_time_step();
 
   /**
    * @brief finish_time_step
