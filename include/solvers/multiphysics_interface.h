@@ -124,17 +124,16 @@ public:
 
     for (auto &iphys : block_physics)
       {
-        // If fluid_dynamics has not been solved yet, and iphys.first should be
-        // solved BEFORE fluid dynamics
+        // If iphys.first should be solved BEFORE fluid dynamics
         if (fluid_dynamics_solved == false &&
             solve_pre_fluid[iphys.first] == true)
           solve_block_physics(iphys.first, time_stepping_method);
 
-        // If fluid_dynamics has been solved, and iphys.first should be solved
-        // AFTER fluid dynamics OR if is not present in solve_pre_fluid map
-        if (fluid_dynamics_solved == true &&
-            (solve_pre_fluid[iphys.first] == false ||
-             solve_pre_fluid.count(iphys.first) == 0))
+        // If iphys.first should be solved AFTER fluid dynamics OR if is not
+        // present in solve_pre_fluid map
+        else if (fluid_dynamics_solved == true &&
+                 (solve_pre_fluid[iphys.first] == false ||
+                  solve_pre_fluid.count(iphys.first) == 0))
           solve_block_physics(iphys.first, time_stepping_method);
       }
   }
@@ -234,17 +233,45 @@ public:
   /**
    * @brief Rearrange vector solution correctly for transient simulations for
    * all auxiliary physics.
+   *
+   * @param fluid_dynamics_solved Boolean that states if the fluid dynamics has been
+   * already solved or not. See the map `solve_pre_fluid` to know which
+   * subphysics are solved before the fluid dynamics.
    */
   void
-  percolate_time_vectors()
+  percolate_time_vectors(bool fluid_dynamics_solved)
   {
+    // Loop through all the elements in the physics map. Consequently, iphys is
+    // an std::pair where iphys.first is the PhysicsID and iphys.second is the
+    // AuxiliaryPhysics pointer. This is how the map can be traversed
+    // sequentially.
     for (auto &iphys : physics)
       {
-        iphys.second->percolate_time_vectors();
+        // If iphys.first should be percolated BEFORE fluid dynamics is solved
+        if (fluid_dynamics_solved == false &&
+            solve_pre_fluid[iphys.first] == true)
+          iphys.second->percolate_time_vectors();
+
+        // If iphys.first should be percolated AFTER fluid dynamics is solved OR
+        // if is not present in solve_pre_fluid map
+        else if (fluid_dynamics_solved == true &&
+                 (solve_pre_fluid[iphys.first] == false ||
+                  solve_pre_fluid.count(iphys.first) == 0))
+          iphys.second->percolate_time_vectors();
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->percolate_time_vectors();
+        // If iphys.first should be percolated BEFORE fluid dynamics is solved
+        if (fluid_dynamics_solved == false &&
+            solve_pre_fluid[iphys.first] == true)
+          iphys.second->percolate_time_vectors();
+
+        // If iphys.first should be percolated AFTER fluid dynamics is solved OR
+        // if is not present in solve_pre_fluid map
+        else if (fluid_dynamics_solved == true &&
+                 (solve_pre_fluid[iphys.first] == false ||
+                  solve_pre_fluid.count(iphys.first) == 0))
+          iphys.second->percolate_time_vectors();
       }
   }
 
@@ -772,7 +799,7 @@ private:
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
-                                            {VOF, true},
+                                            {VOF, false},
                                             {heat_transfer, false},
                                             {tracer, false}};
 
