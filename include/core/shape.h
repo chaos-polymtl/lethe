@@ -34,6 +34,7 @@
 
 #include <cfloat>
 #include <memory>
+#include <unordered_set>
 
 using namespace dealii;
 

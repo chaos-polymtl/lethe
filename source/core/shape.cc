@@ -13,6 +13,7 @@
  *
  * ---------------------------------------------------------------------
  */
+#include <core/lethe_grid_tools.h>
 #include <core/shape.h>
 
 #include <deal.II/grid/manifold_lib.h>
@@ -106,6 +107,26 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   return translated_point;
 }
 
+
+template <int dim>
+double
+Shape<dim>::value_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
+{
+  return this->value(evaluation_point);
+}
+
+template <int dim>
+Tensor<1, dim>
+Shape<dim>::gradient_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
+{
+  return this->gradient(evaluation_point);
+}
 
 template <int dim>
 double
@@ -663,8 +684,10 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
-      weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
-      support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
+      weights[n_i]       = shape_arguments[0 * number_of_nodes + n_i];
+      support_radii[n_i] = shape_arguments[1 * number_of_nodes + n_i];
+      this->effective_radius =
+        std::max(this->effective_radius, support_radii[n_i]);
       basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
         round(shape_arguments[2 * number_of_nodes + n_i]));
       nodes_positions[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
