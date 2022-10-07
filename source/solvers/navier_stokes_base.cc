@@ -576,20 +576,22 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   // via an initial condition. Update condition and move on.
   if (!simulation_parameters.multiphysics.fluid_dynamics)
     {
-      // Solve the auxiliary physics that should be treated BEFORE the fluid
-      // dynamics
+      // Solve and percolate the auxiliary physics that should be treated BEFORE
+      // the fluid dynamics
       multiphysics->solve(false,
                           simulation_parameters.simulation_control.method);
+      multiphysics->percolate_time_vectors(false);
 
       this->simulation_parameters.initial_condition->uvwp.set_time(
         this->simulation_control->get_current_time());
       set_initial_condition_fd(
         this->simulation_parameters.initial_condition->type);
 
-      // Solve the auxiliary physics that should be treated AFTER the fluid
-      // dynamics
+      // Solve and percolate the auxiliary physics that should be treated AFTER
+      // the fluid dynamics
       multiphysics->solve(true,
                           simulation_parameters.simulation_control.method);
+      multiphysics->percolate_time_vectors(true);
     }
   else if (simulation_control->get_assembly_method() ==
              Parameters::SimulationControl::TimeSteppingMethod::sdirk22 &&
@@ -628,17 +630,22 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     {
       // sdirk schemes are not implemented for multiphysics simulations
 
-      // Solve the auxiliary physics that should be treated BEFORE the fluid
-      // dynamics
+      // Solve and percolate the auxiliary physics that should be treated BEFORE
+      // the fluid dynamics
       multiphysics->solve(false,
                           simulation_parameters.simulation_control.method);
+      multiphysics->percolate_time_vectors(false);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
-      // Solve the auxiliary physics that should be treated AFTER the fluid
-      // dynamics
+      // Solve and percolate the auxiliary physics that should be treated AFTER
+      // the fluid dynamics
       multiphysics->solve(true,
                           simulation_parameters.simulation_control.method);
+      // Dear future Bruno, percolating auxiliary physics before fluid dynamics
+      // is necessary because of the checkpointing mechanism. You spent an
+      // evening debugging this, trust me.
+      multiphysics->percolate_time_vectors(true);
     }
 }
 

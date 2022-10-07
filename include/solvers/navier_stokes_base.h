@@ -146,7 +146,7 @@ protected:
   {
     // Dear future Bruno, this shifted order is necessary because of the
     // checkpointing mechanism You spent an evening debugging this, trust me.
-    multiphysics->percolate_time_vectors(true);
+    // multiphysics->percolate_time_vectors(true);
     finish_time_step_fd();
   };
 
