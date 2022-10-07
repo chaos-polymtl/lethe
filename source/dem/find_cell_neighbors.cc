@@ -52,9 +52,7 @@ FindCellNeighbors<dim>::find_cell_neighbors(
 
           total_cell_list.push_back(cell);
 
-          for (unsigned int vertex = 0;
-               vertex < GeometryInfo<dim>::vertices_per_cell;
-               ++vertex)
+          for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
             {
               for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
                 {
@@ -105,6 +103,7 @@ FindCellNeighbors<dim>::find_cell_neighbors(
         cells_local_neighbor_list.push_back(local_neighbor_vector);
       if (!ghost_neighbor_vector.empty())
         cells_ghost_neighbor_list.push_back(ghost_neighbor_vector);
+
       local_neighbor_vector.clear();
       ghost_neighbor_vector.clear();
       ++cell_number_iterator;
@@ -136,9 +135,7 @@ FindCellNeighbors<dim>::find_full_cell_neighbors(
 
           full_neighbor_vector.push_back(cell);
 
-          for (unsigned int vertex = 0;
-               vertex < GeometryInfo<dim>::vertices_per_cell;
-               ++vertex)
+          for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
             {
               for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
                 {

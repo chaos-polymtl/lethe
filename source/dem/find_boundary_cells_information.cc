@@ -74,6 +74,7 @@ BoundaryCellsInformation<dim>::build(
 
       add_boundary_neighbors_of_boundary_cells(
         triangulation,
+        outlet_boundaries,
         boundary_cells_information,
         global_boundary_cells_information);
     }
@@ -142,7 +143,6 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
   // obtain a single sample point on the boundary faces
   const FE_Q<dim>   fe(1);
   QGauss<dim - 1>   face_quadrature_formula(1);
-  unsigned int      n_face_q_points = face_quadrature_formula.size();
   FEFaceValues<dim> fe_face_values(fe,
                                    face_quadrature_formula,
                                    update_values | update_quadrature_points |
@@ -152,71 +152,64 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       // Iterating over the faces of each cell
-      for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
-           ++face_id)
+      for (const auto &face : cell->face_iterators())
         {
           // We search to see if the boundary is defined as an outlet, periodic
           // or not. If it is not defined as one of those, we proceed.
-          bool is_outlet = std::find(outlet_boundaries.begin(),
-                                     outlet_boundaries.end(),
-                                     cell->face(face_id)->boundary_id()) !=
-                           outlet_boundaries.end();
+          int  face_id = cell->face_iterator_to_index(face);
+          bool is_outlet =
+            std::find(outlet_boundaries.begin(),
+                      outlet_boundaries.end(),
+                      face->boundary_id()) != outlet_boundaries.end();
           bool is_periodic = cell->has_periodic_neighbor(face_id);
 
           if (!is_outlet && !is_periodic)
             {
-              // Check to see if the face is located at boundary
-              if (cell->face(face_id)->at_boundary())
+              // Check if the face is located at boundary
+              if (face->at_boundary())
                 {
                   fe_face_values.reinit(cell, face_id);
 
-                  for (unsigned int f_q_point = 0; f_q_point < n_face_q_points;
-                       ++f_q_point)
+                  // Finding the normal vector of the boundary face
+                  Tensor<1, dim> normal_vector =
+                    -fe_face_values.normal_vector(0);
+
+                  // Finding a point on the boundary face
+                  Point<dim> quad_point = fe_face_values.quadrature_point(0);
+
+                  // Get global index of the face
+                  unsigned int global_face_id = cell->face_index(face_id);
+
+                  // Storing these information into the
+                  // boundary_cells_info_struct
+                  boundary_cells_info_struct<dim> boundary_information;
+                  boundary_information.cell           = cell;
+                  boundary_information.boundary_id    = face->boundary_id();
+                  boundary_information.global_face_id = global_face_id;
+                  boundary_information.normal_vector  = normal_vector;
+                  boundary_information.point_on_face  = quad_point;
+
+                  // Searching to see if boundary with this information was
+                  // already found or not. If this is a new
+                  // boundary face, it will be added to the
+                  // output_vector as well as the search_vector to avoid
+                  // repetition
+                  auto information_search_element =
+                    std::make_pair(face_id, cell);
+                  auto search_iterator = std::find(search_vector.begin(),
+                                                   search_vector.end(),
+                                                   information_search_element);
+                  if (search_iterator == search_vector.end())
                     {
-                      // Finding the normal vector of the boundary face
-                      Tensor<1, dim> normal_vector =
-                        -fe_face_values.normal_vector(f_q_point);
-
-                      // Finding a point on the boundary face
-                      Point<dim> quad_point =
-                        fe_face_values.quadrature_point(0);
-
-                      // Storing these information into the
-                      // boundary_cells_info_struct
-                      boundary_cells_info_struct<dim> boundary_information;
-                      boundary_information.cell = cell;
-                      boundary_information.boundary_id =
-                        cell->face(face_id)->boundary_id();
-                      boundary_information.global_face_id =
-                        cell->face_index(face_id);
-                      boundary_information.normal_vector = normal_vector;
-                      boundary_information.point_on_face = quad_point;
-
-                      // Searching to see if boundary with this information was
-                      // already found or not. If this is a new
-                      // boundary face, it will be added to the
-                      // output_vector as well as the search_vector to avoid
-                      // repetition
-                      auto information_search_element =
-                        std::make_pair(face_id, cell);
-                      auto search_iterator =
-                        std::find(search_vector.begin(),
-                                  search_vector.end(),
-                                  information_search_element);
-                      if (search_iterator == search_vector.end())
+                      if (cell->is_locally_owned())
                         {
-                          if (cell->is_locally_owned())
-                            {
-                              boundary_cells_information.insert(
-                                {cell->face_index(face_id),
-                                 boundary_information});
-                              boundary_cells_with_faces.push_back(cell);
-                              search_vector.push_back(
-                                information_search_element);
-                            }
-                          global_boundary_cells_information.insert(
-                            {cell->face_index(face_id), boundary_information});
+                          boundary_cells_information.insert(
+                            {global_face_id, boundary_information});
+                          boundary_cells_with_faces.push_back(cell);
+                          search_vector.push_back(information_search_element);
                         }
+                      global_boundary_cells_information.insert(
+                        {global_face_id, boundary_information});
                     }
                 }
             }
@@ -238,55 +231,45 @@ void BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
   // obtain a single sample point on the boundary faces
   const FE_Q<dim>   fe(1);
   QGauss<dim - 1>   face_quadrature_formula(1);
-  unsigned int      n_face_q_points = face_quadrature_formula.size();
   FEFaceValues<dim> fe_face_values(fe,
                                    face_quadrature_formula,
                                    update_values | update_quadrature_points |
                                      update_normal_vectors);
-  // Create a vector to store all the
-
   for (auto &cell : boundary_cells_with_faces)
     {
       if (cell->is_locally_owned())
         {
           // Iterating over the faces of each cell
-          for (int face_id = 0;
-               face_id < int(GeometryInfo<dim>::faces_per_cell);
-               ++face_id)
+          for (const auto &face : cell->face_iterators())
             {
               // Check to see if the face is located at boundary
-              if (cell->face(face_id)->at_boundary())
+              if (face->at_boundary())
                 {
+                  int face_id = cell->face_iterator_to_index(face);
                   fe_face_values.reinit(cell, face_id);
 
-                  for (unsigned int f_q_point = 0; f_q_point < n_face_q_points;
-                       ++f_q_point)
-                    {
-                      // Finding the normal vector of the boundary face
-                      Tensor<1, 3> normal_vector;
+                  // Finding the normal vector of the boundary face
+                  Tensor<1, 3> normal_vector;
 
-                      if constexpr (dim == 3)
-                        normal_vector =
-                          -fe_face_values.normal_vector(f_q_point);
+                  if constexpr (dim == 3)
+                    normal_vector = -fe_face_values.normal_vector(0);
 
-                      if constexpr (dim == 2)
-                        normal_vector = tensor_nd_to_3d(
-                          -fe_face_values.normal_vector(f_q_point));
+                  if constexpr (dim == 2)
+                    normal_vector =
+                      tensor_nd_to_3d(-fe_face_values.normal_vector(0));
 
-                      // Finding a point on the boundary face
-                      Point<3> quad_point;
+                  // Finding a point on the boundary face
+                  Point<3> quad_point;
 
-                      if constexpr (dim == 3)
-                        quad_point = fe_face_values.quadrature_point(0);
+                  if constexpr (dim == 3)
+                    quad_point = fe_face_values.quadrature_point(0);
 
-                      if constexpr (dim == 2)
-                        quad_point =
-                          point_nd_to_3d(fe_face_values.quadrature_point(0));
+                  if constexpr (dim == 2)
+                    quad_point =
+                      point_nd_to_3d(fe_face_values.quadrature_point(0));
 
-                      updated_boundary_points_and_normal_vectors
-                        [cell->face_index(face_id)] =
-                          std::make_pair(normal_vector, quad_point);
-                    }
+                  updated_boundary_points_and_normal_vectors[cell->face_index(
+                    face_id)] = std::make_pair(normal_vector, quad_point);
                 }
             }
         }
@@ -314,34 +297,29 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
         std::unordered_map<unsigned int, std::pair<Point<dim>, Point<dim>>>>
         all_cells_with_boundary_lines;
 
-      // Iterating over the active cells in the trangulation
+      // Iterating over the active cells in the triangulation
       for (const auto &cell : triangulation.active_cell_iterators())
         {
           if (cell->is_locally_owned())
             {
               // Looping through all the faces of the cell
-              for (int face_id = 0;
-                   face_id < int(GeometryInfo<dim>::faces_per_cell);
-                   ++face_id)
+              for (const auto &face : cell->face_iterators())
                 {
                   // Check to see if the face is not located at boundary
-                  if (!(cell->face(face_id)->at_boundary()))
+                  if (!face->at_boundary())
                     {
                       // Adding all the boundary lines of these faces into the
                       // all_cells_with_boundary_lines container
-                      for (unsigned int l = 0;
-                           l < GeometryInfo<dim>::lines_per_face;
-                           ++l)
+                      for (unsigned int l = 0; l < face->n_lines(); ++l)
                         {
-                          if (cell->face(face_id)->line(l)->at_boundary())
+                          if (face->line(l)->at_boundary())
                             {
                               all_cells_with_boundary_lines[cell->id()
                                                               .to_string()]
                                 .insert(
-                                  {cell->face(face_id)->line_index(l),
-                                   std::make_pair(
-                                     cell->face(face_id)->line(l)->vertex(0),
-                                     cell->face(face_id)->line(l)->vertex(1))});
+                                  {face->line_index(l),
+                                   std::make_pair(face->line(l)->vertex(0),
+                                                  face->line(l)->vertex(1))});
                             }
                         }
                     }
@@ -358,20 +336,16 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
             {
               if (cell->is_locally_owned())
                 {
-                  for (int face_id = 0;
-                       face_id < int(GeometryInfo<dim>::faces_per_cell);
-                       ++face_id)
+                  for (const auto &face : cell->face_iterators())
                     {
                       // Check to see if the face is located at boundary
-                      if ((cell->face(face_id)->at_boundary()))
+                      if (face->at_boundary())
                         {
-                          for (unsigned int l = 0;
-                               l < GeometryInfo<dim>::lines_per_face;
-                               ++l)
+                          for (unsigned int l = 0; l < face->n_lines(); ++l)
                             {
                               all_cells_with_boundary_lines[cell->id()
                                                               .to_string()]
-                                .erase(cell->face(face_id)->line_index(l));
+                                .erase(face->line_index(l));
                             }
                         }
                     }
@@ -388,8 +362,10 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
               if (cell->is_locally_owned())
                 {
                   std::string cell_id_string = cell->id().to_string();
-                  auto &      cell_boundary_lines =
-                    all_cells_with_boundary_lines[cell_id_string];
+                  std::unordered_map<unsigned int,
+                                     std::pair<Point<dim>, Point<dim>>>
+                    &cell_boundary_lines =
+                      all_cells_with_boundary_lines[cell_id_string];
 
                   if (!cell_boundary_lines.empty())
                     {
@@ -423,8 +399,7 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
     {
       if (face->at_boundary())
         {
-          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_face;
-               ++v)
+          for (unsigned int v = 0; v < face->n_vertices(); ++v)
             {
               boundary_vertices.insert(face->vertex_index(v));
             }
@@ -436,25 +411,19 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      if (cell->is_locally_owned() && !(cell->has_boundary_lines()))
+      if (cell->is_locally_owned() && !cell->has_boundary_lines())
         {
-          for (int face_id = 0;
-               face_id < int(GeometryInfo<dim>::faces_per_cell);
-               ++face_id)
+          for (const auto &face : cell->face_iterators())
             {
-              if (!(cell->face(face_id)->at_boundary()))
+              if (!face->at_boundary())
                 {
-                  for (unsigned int v = 0;
-                       v < GeometryInfo<dim>::vertices_per_face;
-                       ++v)
+                  for (unsigned int v = 0; v < face->n_vertices(); ++v)
                     {
-                      if (boundary_vertices.count(
-                            cell->face(face_id)->vertex_index(v)) > 0)
+                      if (boundary_vertices.count(face->vertex_index(v)) > 0)
                         {
                           boundary_cells_with_points.insert(
                             {cell->id().to_string(),
-                             std::make_pair(cell,
-                                            cell->face(face_id)->vertex(v))});
+                             std::make_pair(cell, face->vertex(v))});
                         }
                     }
                 }
@@ -473,18 +442,16 @@ BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       // Iterating over the faces of each cell
-      for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
-           ++face_id)
+      for (const auto &face : cell->face_iterators())
         {
           // We search to see if the boundary is defined as an outlet or
           // not. If it is not defined as an outlet we proceed.
           if (std::find(outlet_boundaries.begin(),
                         outlet_boundaries.end(),
-                        cell->face(face_id)->boundary_id()) ==
-              outlet_boundaries.end())
+                        face->boundary_id()) == outlet_boundaries.end())
             {
               // Check to see if the face is located at boundary
-              if (cell->face(face_id)->at_boundary())
+              if (face->at_boundary())
                 {
                   global_boundary_cells_with_faces.push_back(cell);
                 }
@@ -693,8 +660,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
           if (cell->is_locally_owned())
             {
               // Looping over vertices of each cell
-              for (unsigned int vertex = 0;
-                   vertex < GeometryInfo<dim>::vertices_per_cell;
+              for (unsigned int vertex = 0; vertex < cell->n_vertices();
                    ++vertex)
                 {
                   // Finding vertex-floating wall distance
@@ -721,42 +687,54 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
+  const std::vector<unsigned int> &                outlet_boundaries,
   std::map<int, boundary_cells_info_struct<dim>> & boundary_cells_information,
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
 {
-  auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
+  // Create a vector of a set of adjacent cells of all the vertices
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+    v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
   for (auto &&boundary_cells_info :
        boundary_cells_information | boost::adaptors::map_values)
     {
       // The boundary cell is local by definition
-      // Get the neighbors of the boundary cells
+      // This loop will check for all the cell neighbors located at vertices of
+      // a boundary cell and will add the proper information in the boundary
+      // cell list if faces are not at outlet nor periodic boundary.
 
       // Iterate over the vertices of each boundary cell
-      for (unsigned int vertex = 0;
-           vertex < GeometryInfo<dim>::vertices_per_cell;
-           ++vertex)
+      for (auto vertex_id : GeometryInfo<dim>::vertex_indices())
         {
-          // Iterate over the neighbors of each boundary cell
+          // Iterate over the neighbors of each boundary cell having vertex_id
           for (const auto &neighbor :
-               v_to_c[boundary_cells_info.cell->vertex_index(vertex)])
+               v_to_c[boundary_cells_info.cell->vertex_index(vertex_id)])
             {
-              // check if the neighbor locates at boundary
-              // (has boundary face)
-              if (neighbor->at_boundary())
+              // Iterate over the faces of the neighbor cell
+              for (const auto &face : neighbor->face_iterators())
                 {
-                  // Iterate over the faces of each neighbor boundary cell
-                  for (int face_id = 0;
-                       face_id < int(GeometryInfo<dim>::faces_per_cell);
-                       ++face_id)
+                  // Check if the face of the neighbor is located at boundary
+                  if (face->at_boundary())
                     {
-                      // Find the boundary faces of neighbor boundary cell
-                      if (neighbor->face(face_id)->at_boundary())
+                      // Check if face is on a wall boundary (not outlet nor
+                      // periodic)
+                      unsigned int face_id =
+                        neighbor->face_iterator_to_index(face);
+                      bool face_is_wall =
+                        (std::find(outlet_boundaries.begin(),
+                                   outlet_boundaries.end(),
+                                   face->boundary_id()) ==
+                           outlet_boundaries.end() &&
+                         !neighbor->has_periodic_neighbor(face_id));
+
+                      if (face_is_wall)
                         {
-                          auto boundary_neighbor_information =
-                            global_boundary_cells_information.at(
-                              neighbor->face_index(face_id));
+                          // Get the boundary neighbor cell info
+                          boundary_cells_info_struct<dim>
+                            boundary_neighbor_information =
+                              global_boundary_cells_information.at(
+                                neighbor->face_index(face_id));
 
                           // Add the main boundary cell with the information
                           // (point and normal vector) of the neighbor boundary
@@ -771,7 +749,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                           // + b where a and b are global boundary face ids of
                           // the main boundary cell and the neighbor boundary
                           // cell.
-                          int imaginary_key =
+                          int imaginary_face_id =
                             -0.5 *
                               (boundary_cells_info.global_face_id +
                                boundary_neighbor_information.global_face_id) *
@@ -780,19 +758,15 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                                1) +
                             boundary_neighbor_information.global_face_id;
 
-                          boundary_cells_info_struct<dim> boundary_information;
+                          // Create a cell info object which is a copy of all
+                          // the boundary neighbor information applied to the
+                          // boundary cell & store in map with imaginary key.
+                          boundary_cells_info_struct<dim> boundary_information =
+                            boundary_neighbor_information;
                           boundary_information.cell = boundary_cells_info.cell;
-                          boundary_information.normal_vector =
-                            boundary_neighbor_information.normal_vector;
-                          boundary_information.point_on_face =
-                            boundary_neighbor_information.point_on_face;
-                          boundary_information.global_face_id =
-                            boundary_neighbor_information.global_face_id;
-                          boundary_information.boundary_id =
-                            boundary_neighbor_information.boundary_id;
 
                           boundary_cells_information.insert(
-                            {imaginary_key, boundary_information});
+                            {imaginary_face_id, boundary_information});
                         }
                     }
                 }
