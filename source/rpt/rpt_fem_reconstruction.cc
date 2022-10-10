@@ -219,11 +219,13 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 {
   TimerOutput::Scope t(computing_timer, "solve_linear_system");
 
-  SolverControl   solver_control(solution.size(), 1e-8);
+  this->pcout << "Norm of RHS is : " << system_rhs.l2_norm() << std::endl;
+
+  SolverControl   solver_control(10000000, std::max(1e-6,system_rhs.l2_norm()*1e-6);
   LA::SolverGMRES solver(solver_control);
 
   LA::MPI::PreconditionILU                 preconditioner;
-  LA::MPI::PreconditionILU::AdditionalData data;
+  LA::MPI::PreconditionILU::AdditionalData data(0,1e-10,1,0);
   preconditioner.initialize(system_matrix, data);
 
   solver.solve(system_matrix, solution, system_rhs, preconditioner);
