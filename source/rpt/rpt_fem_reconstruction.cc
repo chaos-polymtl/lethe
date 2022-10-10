@@ -221,11 +221,12 @@ RPTL2Projection<dim>::solve_linear_system(unsigned detector_no)
 
   this->pcout << "Norm of RHS is : " << system_rhs.l2_norm() << std::endl;
 
-  SolverControl   solver_control(10000000, std::max(1e-6,system_rhs.l2_norm()*1e-6));
+  SolverControl   solver_control(10000000,
+                               std::max(1e-6, system_rhs.l2_norm() * 1e-6));
   LA::SolverGMRES solver(solver_control);
 
   LA::MPI::PreconditionILU                 preconditioner;
-  LA::MPI::PreconditionILU::AdditionalData data(0,1e-10,1,0);
+  LA::MPI::PreconditionILU::AdditionalData data(0, 1e-10, 1, 0);
   preconditioner.initialize(system_matrix, data);
 
   solver.solve(system_matrix, solution, system_rhs, preconditioner);
@@ -290,10 +291,16 @@ RPTL2Projection<dim>::assemble_system(unsigned no_detector)
                          fe_values.shape_value(j, q_index) * // phi_j(x_q)
                          fe_values.JxW(q_index));            // dx
                     }
-                  cell_rhs(i) +=
-                    (count *                             // f(x)
-                     fe_values.shape_value(i, q_index) * // phi_i(x_q)
-                     fe_values.JxW(q_index));            // dx
+
+                  if (count < 0)
+                    this->pcout
+                      << "Invalid value encountered in count calculation, this should be investigated furthermore"
+                      << std::endl;
+                  else
+                    cell_rhs(i) +=
+                      (count *                             // f(x)
+                       fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                       fe_values.JxW(q_index));            // dx
                 }
             }
           cell->get_dof_indices(local_dof_indices);
@@ -1049,7 +1056,8 @@ RPTFEMReconstruction<dim>::export_found_positions()
 
           for (const Point<dim> &position : found_positions)
             {
-                myfile << position[0] << sep << position[1] << sep << position[2] << std::endl;
+              myfile << position[0] << sep << position[1] << sep << position[2]
+                     << std::endl;
             }
         }
     }
