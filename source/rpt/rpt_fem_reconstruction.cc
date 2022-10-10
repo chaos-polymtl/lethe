@@ -284,10 +284,10 @@ RPTL2Projection<dim>::assemble_system(unsigned no_detector)
 
               if (count < 0 || count != count)
                 this->pcout
-                    << "Invalid value encountered in count calculation, this should be investigated furthermore : "
-                    << count < <
+                  << "Invalid value encountered in count calculation, this should be investigated furthermore : "
+                  << count <<
 
-                  < < std::endl;
+                  std::endl;
               else
                 {
                   for (const unsigned int i : fe_values.dof_indices())
