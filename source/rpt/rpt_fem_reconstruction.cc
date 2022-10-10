@@ -1047,9 +1047,7 @@ RPTFEMReconstruction<dim>::export_found_positions()
 
           for (const Point<dim> &position : found_positions)
             {
-              for (unsigned int i = 0; i < dim; ++i)
-                myfile << position[i] << sep;
-              myfile << std::endl;
+                myfile << position[0] << sep << position[1] << sep << position[2] << std::endl;
             }
         }
     }
