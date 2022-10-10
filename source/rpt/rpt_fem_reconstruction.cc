@@ -282,25 +282,30 @@ RPTL2Projection<dim>::assemble_system(unsigned no_detector)
 
               double count = p_q_interaction.calculate_count();
 
-              for (const unsigned int i : fe_values.dof_indices())
+              if (count < 0 || count != count)
+                this->pcout
+                    << "Invalid value encountered in count calculation, this should be investigated furthermore : "
+                    << count < <
+
+                  < < std::endl;
+              else
                 {
-                  for (const unsigned int j : fe_values.dof_indices())
+                  for (const unsigned int i : fe_values.dof_indices())
                     {
-                      cell_matrix(i, j) +=
-                        (fe_values.shape_value(i, q_index) * // phi_i(x_q)
-                         fe_values.shape_value(j, q_index) * // phi_j(x_q)
+                      for (const unsigned int j : fe_values.dof_indices())
+                        {
+                          cell_matrix(i, j) +=
+                            (fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                             fe_values.shape_value(j, q_index) * // phi_j(x_q)
+                             fe_values.JxW(q_index));            // dx
+                        }
+
+
+                      cell_rhs(i) +=
+                        (count *                             // f(x)
+                         fe_values.shape_value(i, q_index) * // phi_i(x_q)
                          fe_values.JxW(q_index));            // dx
                     }
-
-                  if (count < 0)
-                    this->pcout
-                      << "Invalid value encountered in count calculation, this should be investigated furthermore"
-                      << std::endl;
-                  else
-                    cell_rhs(i) +=
-                      (count *                             // f(x)
-                       fe_values.shape_value(i, q_index) * // phi_i(x_q)
-                       fe_values.JxW(q_index));            // dx
                 }
             }
           cell->get_dof_indices(local_dof_indices);
