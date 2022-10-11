@@ -402,13 +402,13 @@ namespace Parameters
       T_liquidus *= 1 / dimensions.temperature;
 
       latent_enthalpy = prm.get_double("latent enthalpy");
-     // latent_enthalpy  in M L^2 T^-2
+      // latent_enthalpy  in M L^2 T^-2
       latent_enthalpy *= dimensions.enthalpy_scaling;
       cp_l = prm.get_double("specific heat liquid");
       // cp_l  in L^2 theta^-1 T^-2
       cp_l *= dimensions.specific_heat_scaling;
       cp_s = prm.get_double("specific heat solid");
-     // cp_s  in L^2 theta^-1 T^-2
+      // cp_s  in L^2 theta^-1 T^-2
       cp_s *= dimensions.specific_heat_scaling;
       viscosity_l = prm.get_double("viscosity liquid");
       // viscosity_l  in L^2 T^-1
@@ -423,10 +423,10 @@ namespace Parameters
       // thermal_conductivity_s is in M L T^-3 theta ^-1
       thermal_conductivity_s *= dimensions.thermal_conductivity_scaling;
       thermal_expansion_l = prm.get_double("thermal expansion liquid");
-     // thermal_expansion_l is in theta^-1
+      // thermal_expansion_l is in theta^-1
       thermal_expansion_l *= dimensions.thermal_expansion_scaling;
       thermal_expansion_s = prm.get_double("thermal expansion solid");
-     // thermal_expansion_l is in theta^-1
+      // thermal_expansion_l is in theta^-1
       thermal_expansion_s *= dimensions.thermal_expansion_scaling;
     }
 
