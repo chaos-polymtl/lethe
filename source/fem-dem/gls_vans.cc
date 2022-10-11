@@ -1676,7 +1676,7 @@ GLSVANSSolver<dim>::solve()
         }
 
       this->postprocess(false);
-      this->finish_time_step();
+      finish_time_step_fd();
 
       if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
         post_processing();

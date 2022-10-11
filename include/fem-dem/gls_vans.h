@@ -89,14 +89,6 @@ private:
   void
   solve_L2_system_void_fraction();
 
-  /**
-   * @brief finish_time_step
-   * Finishes the time step
-   * Post-processing and time stepping
-   */
-  virtual void
-  finish_time_step_fd();
-
   void
   read_dem();
 
@@ -122,6 +114,15 @@ protected:
 
   virtual void
   post_processing();
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step
+   * Post-processing and time stepping
+   */
+
+  virtual void
+  finish_time_step_fd();
 
   /**
    *  @brief Assembles the matrix associated with the solver
