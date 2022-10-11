@@ -14,10 +14,10 @@ namespace Parameters
     const double T     = time;
 
     density_scaling              = 1. * L * L * L / M;
-    viscosity_scaling            = 1. * L * L / T;
+    viscosity_scaling            = 1. / L / L * T;
     specific_heat_scaling        = 1. / L / L * T * T * theta;
     thermal_conductivity_scaling = 1. / M / L * T * T * T * theta;
-    enthalpy_scaling             = 1. / M / L * T * T * T;
+    enthalpy_scaling             = 1. / M / L / L * T * T;
     diffusivity_scaling          = 1. / L / L * T;
     thermal_expansion_scaling    = T;
   }
@@ -45,7 +45,7 @@ namespace Parameters
         "mass",
         "1",
         Patterns::Double(),
-        "Mass scale. The default value assumed is kilogram. If the simulation is carried out in grams,"
+        "Mass scale. The default value assumed is kilograms. If the simulation is carried out in grams,"
         " a mass of 0.001 should be specified.");
 
       prm.declare_entry(

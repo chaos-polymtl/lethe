@@ -23,9 +23,9 @@ using namespace dealii;
 
 /**
  * @brief Dimensionality - This is used to rescale physical properties for cases where the main dimensions
- * of the problems (Length, Mass, Time) are not expressed in SI, but are
- * expressed in another set of unit. For example, this can be used to carry
- * out a simulation where the mesh is expressed in millimeter instead of
+ * of the problems (Length, Mass, Time and Temperature) are not expressed in SI, but are
+ * expressed in another set of units. For example, this can be used to carry
+ * out a simulation where the mesh is expressed in millimeters instead of
  * meters. This class is currently only used to rescale the
  * physical properties in the FEM-based physics (e.g. all of those that are
  * solvers). Support for DEM, CFD-DEM and rescaling of boundary conditions is
@@ -62,7 +62,7 @@ namespace Parameters
 
     /**
      * @brief
-     * Declares the fundamental dimensions in the parameter file
+     * Declares the fundamental dimensions of the parameter file
      *
      * @param prm The parameter handler being used
      */
@@ -80,7 +80,7 @@ namespace Parameters
 
     /*
      * Fundamental dimensions. These are the dimensions that are read from the
-     * user
+     * parameter file
      */
     double length;
     double mass;
@@ -88,8 +88,8 @@ namespace Parameters
     double temperature;
 
     /*
-     * Scaling laws. These are constants that are used to rescale quantities are
-     * arise frequently. Some of these quantities are not trivial to calculate
+     * Scaling laws. These are constants that are used to rescale quantities 
+     * arising frequently. Some of these quantities are not trivial to calculate
      * (e.g. thermal conductivity). Thus, it is better to pre-calculate these
      * scalings and to reuse them instead of calculating them on the fly
      * everywhere.

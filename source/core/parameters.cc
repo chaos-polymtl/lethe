@@ -309,7 +309,7 @@ namespace Parameters
       viscosity_0   = prm.get_double("viscosity_0");
       viscosity_inf = prm.get_double("viscosity_inf");
 
-      // Both viscosities are in L^2/T
+      // Both viscosities are in L^2 T^-1
       viscosity_0 *= dimensions.viscosity_scaling;
       viscosity_inf *= dimensions.viscosity_scaling;
 
@@ -402,22 +402,31 @@ namespace Parameters
       T_liquidus *= 1 / dimensions.temperature;
 
       latent_enthalpy = prm.get_double("latent enthalpy");
+     // latent_enthalpy  in M L^2 T^-2
       latent_enthalpy *= dimensions.enthalpy_scaling;
       cp_l = prm.get_double("specific heat liquid");
+      // cp_l  in L^2 theta^-1 T^-2
       cp_l *= dimensions.specific_heat_scaling;
       cp_s = prm.get_double("specific heat solid");
+     // cp_s  in L^2 theta^-1 T^-2
       cp_s *= dimensions.specific_heat_scaling;
       viscosity_l = prm.get_double("viscosity liquid");
+      // viscosity_l  in L^2 T^-1
       viscosity_l *= dimensions.viscosity_scaling;
       viscosity_s = prm.get_double("viscosity solid");
+      // viscosity_l  in L^2 T^-1
       viscosity_s *= dimensions.viscosity_scaling;
       thermal_conductivity_l = prm.get_double("thermal conductivity liquid");
+      // thermal_conductivity_l is in M L T^-3 theta ^-1
       thermal_conductivity_l *= dimensions.thermal_conductivity_scaling;
       thermal_conductivity_s = prm.get_double("thermal conductivity solid");
+      // thermal_conductivity_s is in M L T^-3 theta ^-1
       thermal_conductivity_s *= dimensions.thermal_conductivity_scaling;
       thermal_expansion_l = prm.get_double("thermal expansion liquid");
+     // thermal_expansion_l is in theta^-1
       thermal_expansion_l *= dimensions.thermal_expansion_scaling;
       thermal_expansion_s = prm.get_double("thermal expansion solid");
+     // thermal_expansion_l is in theta^-1
       thermal_expansion_s *= dimensions.thermal_expansion_scaling;
     }
 
@@ -641,7 +650,7 @@ namespace Parameters
       if (op == "constant")
         density_model = DensityModel::constant;
       density = prm.get_double("density");
-      // Density is in m^3 / kg, rescale
+      // Density is in M L^-3, rescale
       density *= dimensions.density_scaling;
 
 
@@ -667,7 +676,7 @@ namespace Parameters
         }
 
       viscosity = prm.get_double("kinematic viscosity");
-      // Kinematic viscosity is in L^2 / T, rescale
+      // Kinematic viscosity is in L^2 T^-1, rescale
       viscosity *= dimensions.viscosity_scaling;
       non_newtonian_parameters.parse_parameters(prm, dimensions);
 
@@ -682,7 +691,7 @@ namespace Parameters
         specific_heat_model = SpecificHeatModel::phase_change;
       specific_heat = prm.get_double("specific heat");
 
-      // specific heat is in J/kg/K or in L^2 T^-2 theta^-1
+      // specific heat is in L^2 T^-2 theta^-1
       specific_heat *= dimensions.specific_heat_scaling;
 
 
@@ -698,17 +707,17 @@ namespace Parameters
         thermal_conductivity_model = ThermalConductivityModel::phase_change;
 
       thermal_conductivity = prm.get_double("thermal conductivity");
-      // thermal conductivity is in M L T^-3 theta ^-1
+      // thermal conductivity is in M L T^-3 theta^-1
       thermal_conductivity *= dimensions.thermal_conductivity_scaling;
 
 
       // Linear conductivity model parameters
       k_A0 = prm.get_double("k_A0");
-      // k_A0 is in M L T^-3 theta ^-1
+      // k_A0 is in M L T^-3 theta^-1
       k_A0 *= dimensions.thermal_conductivity_scaling;
 
       k_A1 = prm.get_double("k_A1");
-      // k_A0 is in M L T^-3 theta ^-2
+      // k_A1 is in M L T^-3 theta ^-2
       k_A1 *= dimensions.thermal_conductivity_scaling * dimensions.temperature;
 
 
