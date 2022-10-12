@@ -25,7 +25,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 .. tip::
 
-  ``fluid dynamics = false`` and ``heat transfer = true`` enables to solve the heat transfer equations with a large time step, with the fluid velocity being defined as an :doc:`initial_conditions`.
+  ``fluid dynamics = false`` and ``heat transfer = true`` enables to solve the heat transfer equations with a large time step, with the fluid velocity being defined from the :doc:`initial_conditions`.
 
 * ``heat transfer``: controls if the heat transfer auxiliary physics are solved. This is an advection-diffusion equation. 
 
