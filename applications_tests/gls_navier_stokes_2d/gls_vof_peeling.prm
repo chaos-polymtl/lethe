@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
-  set time end                = 0.02
+  set time end                = 0.04
   set time step               = 0.02
   set output name             = drop_peeling_VOF
   set output frequency        = 0

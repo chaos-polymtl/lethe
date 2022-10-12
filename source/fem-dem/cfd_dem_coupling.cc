@@ -1394,7 +1394,7 @@ CFDDEMSolver<dim>::solve()
                   << std::endl;
 
       this->postprocess(false);
-      this->finish_time_step();
+      this->finish_time_step_fd();
 
       post_processing();
 

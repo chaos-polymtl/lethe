@@ -120,7 +120,7 @@ RestartNavierStokes<dim>::run()
                                       *this->mapping);
   double error1    = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
-  this->finish_time_step_fd();
+  this->finish_time_step();
   this->write_checkpoint(); // write_checkpoint needs to be called explicitly
 
   this->present_solution = 0;
