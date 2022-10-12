@@ -546,7 +546,7 @@ private:
    * if that cell is cut (bool) and what particle cut this cell (unsigned int).
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int>>
+           std::tuple<bool, unsigned int, unsigned int >>
     cut_cells_map;
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
