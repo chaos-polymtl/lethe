@@ -1448,8 +1448,8 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
               undisturbed_flow_force[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
+          particle_number += 1;
         }
-      particle_number += 1;
     }
 }
 
