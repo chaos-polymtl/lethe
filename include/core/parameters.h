@@ -31,6 +31,7 @@
 #ifndef lethe_parameters_h
 #define lethe_parameters_h
 
+#include <core/dimensionality.h>
 #include <core/ib_particle.h>
 #include <core/multiphysics.h>
 #include <core/utilities.h>
@@ -50,6 +51,8 @@ namespace Parameters
     verbose,
     extra_verbose
   };
+
+
 
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
@@ -202,7 +205,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -222,7 +225,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -245,7 +248,7 @@ namespace Parameters
     static void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
   /**
@@ -262,8 +265,10 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
+
+
 
   /**
    * @brief Fluid - Class for fluid definition
@@ -277,7 +282,9 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
     void
-    parse_parameters(ParameterHandler &prm, unsigned int id);
+    parse_parameters(ParameterHandler &   prm,
+                     const unsigned int   id,
+                     const Dimensionality dimensions);
 
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double viscosity;
@@ -335,6 +342,7 @@ namespace Parameters
   };
 
 
+
   /**
    * @brief PhysicalProperties - Define the possible physical properties.
    * All continuum equations share the same physical properties object but only
@@ -356,7 +364,8 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &   prm,
+                     const Dimensionality dimensions = Dimensionality());
   };
 
   /**
@@ -441,6 +450,8 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
+
+
 
   /**
    * @brief Laser parameters - Defines the parameters for the
