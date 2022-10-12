@@ -334,6 +334,7 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
 
 
 template class GLSVansAssemblerCoreModelB<2>;
+
 template class GLSVansAssemblerCoreModelB<3>;
 
 template <int dim>
@@ -673,6 +674,7 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
 }
 
 template class GLSVansAssemblerCoreModelA<2>;
+
 template class GLSVansAssemblerCoreModelA<3>;
 
 template <int dim>
@@ -831,13 +833,13 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
 }
 
 template class GLSVansAssemblerBDF<2>;
+
 template class GLSVansAssemblerBDF<3>;
 
 template <int dim>
 void
 GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
   // It is incremented at the end of the loop over particles and is used to
@@ -908,13 +910,13 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerDiFelice<2>;
+
 template class GLSVansAssemblerDiFelice<3>;
 
 template <int dim>
 void
 GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   unsigned int particle_number;
   double       cell_void_fraction = 0;
@@ -978,13 +980,13 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerRong<2>;
+
 template class GLSVansAssemblerRong<3>;
 
 template <int dim>
 void
 GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   unsigned int particle_number;
   double       C_d = 0;
@@ -1042,6 +1044,7 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerDallavalle<2>;
+
 template class GLSVansAssemblerDallavalle<3>;
 
 template <int dim>
@@ -1130,13 +1133,13 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerKochHill<2>;
+
 template class GLSVansAssemblerKochHill<3>;
 
 template <int dim>
 void
 GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   unsigned int particle_number;
   double       cell_void_fraction = 0;
@@ -1208,13 +1211,13 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerBeetstra<2>;
+
 template class GLSVansAssemblerBeetstra<3>;
 
 template <int dim>
 void
 GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
   // It is incremented at the end of the loop over particles and is used to
@@ -1309,13 +1312,13 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerGidaspow<2>;
+
 template class GLSVansAssemblerGidaspow<3>;
 
 template <int dim>
 void
 GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
   // It is incremented at the end of the loop over particles and is used to
@@ -1448,19 +1451,191 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
               undisturbed_flow_force[d] +=
                 lift_force[d] / scratch_data.cell_volume;
             }
+          particle_number += 1;
         }
-      particle_number += 1;
     }
 }
 
 template class GLSVansAssemblerSaffmanMei<2>;
+
 template class GLSVansAssemblerSaffmanMei<3>;
+
+template <int dim>
+void
+GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+{
+  // particle_number is an increment that goes from 0 to n_particles_in_cell.
+  // It is incremented at the end of the loop over particles and is used to
+  // point to the element of the vectors relative_velocity and
+  // fluid_velocity_at_particle_location corresponding to the particle being
+  // looped over.
+
+  // This implementation follows the formulation in the book "Multiphase Flows
+  // with Droplets and Particles" by Crowe et al. (2011).
+  unsigned int particle_number;
+  double       alpha = 0;
+
+  const auto &relative_velocity =
+    scratch_data.fluid_particle_relative_velocity_at_particle_location;
+  const auto &Re_p = scratch_data.Re_particle;
+
+  auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+
+  Tensor<1, dim> lift_force;
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
+  const double viscosity = scratch_data.properties_manager.viscosity_scale;
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
+  const double density = scratch_data.properties_manager.density_scale;
+
+  const auto pic  = scratch_data.pic;
+  particle_number = 0;
+
+  if constexpr (dim == 2)
+    {
+      for (auto &particle : pic)
+        {
+          auto particle_properties = particle.get_properties();
+
+          Tensor<1, dim> C_m;
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Spin parameter
+              double spin_parameter =
+                particle_properties[DEM::PropertiesIndex::dp] *
+                particle_properties[DEM::PropertiesIndex::omega_z] /
+                (2.0 * relative_velocity[particle_number].norm());
+
+              // Magnus lift coefficient
+              if (spin_parameter > 1.0 && spin_parameter < 6.0 &&
+                  Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
+                {
+                  // Oesterlé and Dinh (1998)
+                  C_m[d] = 0.45 + (2 * spin_parameter - 0.45) *
+                                    exp(-0.075 * pow(spin_parameter, 0.4) *
+                                        pow(Re_p[particle_number], 0.7));
+                }
+              else
+                C_m[d] = 2.0 * spin_parameter;
+            }
+
+          // Magnus Lift force
+          lift_force[0] =
+            0.125 * M_PI *
+            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
+            abs(relative_velocity[particle_number][0]) *
+            (particle_properties[DEM::PropertiesIndex::omega_z] /
+             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
+             relative_velocity[particle_number][1]);
+
+          lift_force[1] =
+            0.125 * M_PI *
+            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
+            abs(relative_velocity[particle_number][0]) *
+            (particle_properties[DEM::PropertiesIndex::omega_z] /
+             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
+             relative_velocity[particle_number][0]);
+
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Apply lift force on the particle
+              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+                lift_force[d];
+
+              // Apply lift force on the fluid
+              undisturbed_flow_force[d] +=
+                lift_force[d] / scratch_data.cell_volume;
+            }
+          particle_number += 1;
+        }
+    }
+
+  else if constexpr (dim == 3)
+    {
+      for (auto &particle : pic)
+        {
+          auto particle_properties = particle.get_properties();
+
+          Tensor<1, dim> C_m;
+          Tensor<1, dim> omega;
+
+          for (int d = 0; d < dim; ++d)
+            {
+              omega[d] = particle_properties[DEM::PropertiesIndex::omega_x + d];
+            }
+
+          // Spin parameter
+          auto spin_parameter =
+            particle_properties[DEM::PropertiesIndex::dp] * omega /
+            (2.0 * relative_velocity[particle_number].norm());
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Magnus lift coefficient
+              if (spin_parameter[d] > 1.0 && spin_parameter[d] < 6.0 &&
+                  Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
+                {
+                  // Oesterlé and Dinh (1998)
+                  C_m[d] = 0.45 + (2 * spin_parameter[d] - 0.45) *
+                                    exp(-0.075 * pow(spin_parameter[d], 0.4) *
+                                        pow(Re_p[particle_number], 0.7));
+                }
+              else
+                C_m[d] = 2.0 * spin_parameter[d];
+            }
+
+          // Magnus Lift force
+          lift_force[0] =
+            0.125 * M_PI *
+            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
+            abs(relative_velocity[particle_number][0]) *
+            (particle_properties[DEM::PropertiesIndex::omega_z] /
+             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
+             relative_velocity[particle_number][1]);
+
+          lift_force[1] =
+            0.125 * M_PI *
+            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
+            abs(relative_velocity[particle_number][0]) *
+            (particle_properties[DEM::PropertiesIndex::omega_z] /
+             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
+             relative_velocity[particle_number][0]);
+
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Apply lift force on the particle
+              particle_properties[DEM::PropertiesIndex::fem_force_x + d] +=
+                lift_force[d];
+
+              // Apply lift force on the fluid
+              undisturbed_flow_force[d] +=
+                lift_force[d] / scratch_data.cell_volume;
+            }
+          particle_number += 1;
+        }
+    }
+}
+
+template class GLSVansAssemblerMagnus<2>;
+
+template class GLSVansAssemblerMagnus<3>;
 
 template <int dim>
 void
 GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   const auto   pic = scratch_data.pic;
   Tensor<1, 3> buoyancy_force;
@@ -1492,13 +1667,13 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerBuoyancy<2>;
+
 template class GLSVansAssemblerBuoyancy<3>;
 
 template <int dim>
 void
 GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   unsigned int particle_number;
   const auto   pic                    = scratch_data.pic;
@@ -1549,13 +1724,13 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerPressureForce<2>;
+
 template class GLSVansAssemblerPressureForce<3>;
 
 template <int dim>
 void
 GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
-
 {
   unsigned int particle_number;
   const auto   pic                    = scratch_data.pic;
@@ -1613,6 +1788,7 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerShearForce<2>;
+
 template class GLSVansAssemblerShearForce<3>;
 
 
@@ -1750,4 +1926,5 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
 }
 
 template class GLSVansAssemblerFPI<2>;
+
 template class GLSVansAssemblerFPI<3>;
