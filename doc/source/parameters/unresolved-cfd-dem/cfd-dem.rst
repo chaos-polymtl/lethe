@@ -52,7 +52,7 @@ This subsection includes parameters related to multiphase flow simulations using
       \Delta t_{DEM} = \frac{\Delta t_{CFD}}{coupling frequency}
 
 * The ``inlet boundary`` and ``outlet boundary`` parameters allow us to specify the ID of the inlet and outlet for pressure drop calculations.
-* The ``implicit stabilization`` parameter determines wehether or not we calculate the :math:`\tau` for the SUPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
+* The ``implicit stabilization`` parameter determines whether or not we calculate the :math:`\tau` for the SUPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
 * The ``grad-div length scale`` parameter determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`.
 
 .. tip::
