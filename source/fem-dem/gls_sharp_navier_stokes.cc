@@ -156,7 +156,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                     }
                   else
                     {
-                      p_count += 1;
                       if (p_count == 0)
                         {
                           cell_is_cut    = true;
@@ -164,6 +163,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                           cell_is_inside = false;
                           p_id_inside    = 0;
                         }
+                      p_count += 1;
                     }
                 }
               else
