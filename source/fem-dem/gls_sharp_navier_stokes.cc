@@ -146,28 +146,35 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 {
                   if (nb_dof_inside == dofs_per_cell_local_v_x)
                     {
-                      cell_is_cut    = false;
-                      p_id_cut       = 0;
-                      cell_is_inside = true;
-                      p_id_inside    = p;
-                      break;
+                      if (p_count == 0)
+                        {
+                          cell_is_cut    = false;
+                          p_id_cut       = 0;
+                          cell_is_inside = true;
+                          p_id_inside    = p;
+                        }
                     }
                   else
                     {
                       p_count += 1;
-                      cell_is_cut    = true;
-                      p_id_cut       = p;
-                      cell_is_inside = false;
-                      p_id_inside    = 0;
-                      break;
+                      if (p_count == 0)
+                        {
+                          cell_is_cut    = true;
+                          p_id_cut       = p;
+                          cell_is_inside = false;
+                          p_id_inside    = 0;
+                        }
                     }
                 }
               else
                 {
-                  cell_is_cut    = false;
-                  p_id_cut       = 0;
-                  cell_is_inside = false;
-                  p_id_inside    = 0;
+                  if (p_count == 0)
+                    {
+                      cell_is_cut    = false;
+                      p_id_cut       = 0;
+                      cell_is_inside = false;
+                      p_id_inside    = 0;
+                    }
                 }
             }
 
