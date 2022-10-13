@@ -1519,14 +1519,14 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
           // Magnus Lift force
           lift_force[0] =
-            0.25 * M_PI * C_m * particle_properties[DEM::PropertiesIndex::dp] *
+            0.5 * C_m * particle_properties[DEM::PropertiesIndex::dp] *
             density * relative_velocity[particle_number].norm() *
             (particle_properties[DEM::PropertiesIndex::omega_z] /
              abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
              relative_velocity[particle_number][1]);
 
           lift_force[1] =
-            0.25 * M_PI * C_m * particle_properties[DEM::PropertiesIndex::dp] *
+            0.5 * C_m * particle_properties[DEM::PropertiesIndex::dp] *
             density * relative_velocity[particle_number].norm() *
             (particle_properties[DEM::PropertiesIndex::omega_z] /
              abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
