@@ -19,11 +19,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_particle_candidates &ghost_contact_pair_candidates)
 {
-  // First we will handle the local-local candidate pairs
+  // First we handle the local-local candidate pairs
   // Clearing local_contact_pair_candidates
   local_contact_pair_candidates.clear();
 
-  // Looping over the list of cells with neighbors
+  // Looping over the potential cells which may contain particles.
+  // This includes the cell itself as well as the neighbouring cells that
+  // were identified.
   // cell_neighbor_list_iterator is [cell_it, neighbor_0_it, neighbor_1_it, ...]
   for (auto cell_neighbor_list_iterator = cells_local_neighbor_list.begin();
        cell_neighbor_list_iterator != cells_local_neighbor_list.end();
@@ -128,31 +130,6 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                 }
             }
         }
-    }
-}
-
-template <int dim>
-void
-ParticleParticleBroadSearch<dim>::store_candidates(
-  typename Particles::ParticleHandler<dim>::particle_iterator_range::iterator
-    particle_begin,
-  typename Particles::ParticleHandler<dim>::particle_iterator_range
-    &                                 particles_to_evaluate,
-  std::vector<types::particle_index> &contact_pair_candidates_container)
-{
-  // Create a temporary empty container
-  if (contact_pair_candidates_container.empty())
-    {
-      contact_pair_candidates_container.reserve(40);
-    }
-
-  // Store particle ids from the selected particle iterator
-  for (auto particle_iterator = particle_begin;
-       particle_iterator != particles_to_evaluate.end();
-       ++particle_iterator)
-    {
-      contact_pair_candidates_container.emplace_back(
-        particle_iterator->get_id());
     }
 }
 

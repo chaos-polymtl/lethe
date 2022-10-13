@@ -81,7 +81,11 @@ public:
 
   /**
    * Stores the candidate particle-particle collision pairs with a given
-   * particle iterator.
+   * particle iterator. particle_begin iterator is useful to skip storage of the
+   * first particle in main cell (particle_begin will be the iterator after the
+   * particles_to_evaluate.begin() in that case). When particle_begin is
+   * particles_to_evaluate.begin(), it stores all the particle id in
+   * contact_pair_candidates_container.
    *
    * @param particle_begin The particle iterator to start storing particle id
    * @param particles_to_evaluate The particle range to evaluate with the
@@ -89,13 +93,29 @@ public:
    * @param contact_pair_candidates_container A vector which will contain all
    * the particle pairs which are collision candidates
    */
-  void
+  inline void
   store_candidates(
-    typename Particles::ParticleHandler<dim>::particle_iterator_range::iterator
-      particle_begin,
-    typename Particles::ParticleHandler<dim>::particle_iterator_range
+    const typename Particles::ParticleHandler<
+      dim>::particle_iterator_range::iterator &particle_begin,
+    const typename Particles::ParticleHandler<dim>::particle_iterator_range
       &                                 particles_to_evaluate,
-    std::vector<types::particle_index> &contact_pair_candidates_container);
+    std::vector<types::particle_index> &contact_pair_candidates_container)
+  {
+    // Create a arbitrary temporary empty container
+    if (contact_pair_candidates_container.empty())
+      {
+        contact_pair_candidates_container.reserve(40);
+      }
+
+    // Store particle ids from the selected particle iterator
+    for (auto particle_iterator = particle_begin;
+         particle_iterator != particles_to_evaluate.end();
+         ++particle_iterator)
+      {
+        contact_pair_candidates_container.emplace_back(
+          particle_iterator->get_id());
+      }
+  }
 };
 
 #endif /* particle_particle_broad_search_h */

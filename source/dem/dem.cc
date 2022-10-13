@@ -963,7 +963,9 @@ DEMSolver<dim>::solve()
           // Reset checkpoint step
           checkpoint_step = false;
 
-          // Fill containers of particle-particle contact pair candidates
+          // Fill containers of particle-particle
+          // (local_contact_pair_candidates) and particle-ghost contact pair
+          // candidates (ghost_contact_pair_candidates) by using broad search
           particle_particle_broad_search_object
             .find_particle_particle_contact_pairs(
               particle_handler,
