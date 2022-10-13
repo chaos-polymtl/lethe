@@ -43,9 +43,6 @@ using namespace dealii;
 template <int dim>
 class ParticleParticleBroadSearch
 {
-private:
-  // std::vector<int> particle_candidate_container;
-
 public:
   ParticleParticleBroadSearch<dim>();
 
@@ -58,10 +55,10 @@ public:
    * search
    * @param cells_local_neighbor_list This vector is the output of
    * find_cell_neighbors class and shows the local neighbor cells of all local
-   * celsl in the triangulation
+   * cells in the triangulation
    * @param cells_ghost_neighbor_list This vector is the output of
    * find_cell_neighbors class and shows the ghost neighbor cells of all local
-   * celsl in the triangulation
+   * cells in the triangulation
    * @param local_contact_pair_candidates A map of vectors which contains all
    * the local-local particle pairs in adjacent cells which are collision
    * candidates
@@ -81,6 +78,24 @@ public:
       dim>::particle_particle_candidates &local_contact_pair_candidates,
     typename dem_data_containers::dem_data_structures<
       dim>::particle_particle_candidates &ghost_contact_pair_candidates);
+
+  /**
+   * Stores the candidate particle-particle collision pairs with a given
+   * particle iterator.
+   *
+   * @param particle_begin The particle iterator to start storing particle id
+   * @param particles_to_evaluate The particle range to evaluate with the
+   * particle iterator prior storing ids
+   * @param contact_pair_candidates_container A vector which will contain all
+   * the particle pairs which are collision candidates
+   */
+  void
+  store_candidates(
+    typename Particles::ParticleHandler<dim>::particle_iterator_range::iterator
+      particle_begin,
+    typename Particles::ParticleHandler<dim>::particle_iterator_range
+      &                                 particles_to_evaluate,
+    std::vector<types::particle_index> &contact_pair_candidates_container);
 };
 
 #endif /* particle_particle_broad_search_h */
