@@ -27,220 +27,41 @@ localize_contacts(
   typename dem_data_containers::dem_data_structures<
     dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates)
-
 {
-  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
-       adjacent_particles_iterator != local_adjacent_particles.end();
-       ++adjacent_particles_iterator)
-    {
-      auto particle_one_id = adjacent_particles_iterator->first;
-      auto particle_one_contact_candidates =
-        &local_contact_pair_candidates[particle_one_id];
+  // Update particle-particle contacts in local_adjacent_particles of fine
+  // search step with local_contact_pair_candidates
+  update_particle_fine_search_candidates<dim>(local_adjacent_particles,
+                                              local_contact_pair_candidates,
+                                              "local");
 
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto particle_particle_map_iterator =
-             pairs_in_contant_content->begin();
-           particle_particle_map_iterator != pairs_in_contant_content->end();)
-        {
-          auto particle_two_id = particle_particle_map_iterator->first;
-          auto particle_two_contact_candidates =
-            &local_contact_pair_candidates[particle_two_id];
+  // Update particle-particle contacts in global_adjacent_particles of fine
+  // search step with global_contact_pair_candidates
+  update_particle_fine_search_candidates<dim>(ghost_adjacent_particles,
+                                              ghost_contact_pair_candidates,
+                                              "ghost");
 
-          auto search_iterator_one =
-            std::find(particle_one_contact_candidates->begin(),
-                      particle_one_contact_candidates->end(),
-                      particle_two_id);
+  // Update particle-wall contacts in particle_wall_pairs_in_contact of fine
+  // search step with particle_wall_contact_candidates
+  update_wall_fine_search_candidates<
+    dim,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_candidates>(particle_wall_pairs_in_contact,
+                                      particle_wall_contact_candidates);
 
-          auto search_iterator_two =
-            std::find(particle_two_contact_candidates->begin(),
-                      particle_two_contact_candidates->end(),
-                      particle_one_id);
+  // Update particle-floating wall contacts in particle_floating_wall_in_contact
+  // of fine search step with particle_floating_wall_contact_candidates
+  update_wall_fine_search_candidates<
+    dim,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_floating_wall_candidates>(
+    particle_floating_wall_in_contact,
+    particle_floating_wall_contact_candidates);
 
-          if (search_iterator_one != particle_one_contact_candidates->end())
-            {
-              particle_one_contact_candidates->erase(search_iterator_one);
-              ++particle_particle_map_iterator;
-            }
-          else if (search_iterator_two !=
-                   particle_two_contact_candidates->end())
-            {
-              particle_two_contact_candidates->erase(search_iterator_two);
-              ++particle_particle_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(particle_particle_map_iterator++);
-            }
-        }
-    }
-
-  // The same for local-ghost particle containers
-  for (auto adjacent_particles_iterator = ghost_adjacent_particles.begin();
-       adjacent_particles_iterator != ghost_adjacent_particles.end();
-       ++adjacent_particles_iterator)
-    {
-      auto particle_one_id = adjacent_particles_iterator->first;
-      auto particle_one_contact_candidates =
-        &ghost_contact_pair_candidates[particle_one_id];
-
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto particle_particle_map_iterator =
-             pairs_in_contant_content->begin();
-           particle_particle_map_iterator != pairs_in_contant_content->end();)
-        {
-          auto particle_two_id = particle_particle_map_iterator->first;
-          auto particle_two_contact_candidates =
-            &ghost_contact_pair_candidates[particle_two_id];
-
-          auto search_iterator_one =
-            std::find(particle_one_contact_candidates->begin(),
-                      particle_one_contact_candidates->end(),
-                      particle_two_id);
-          auto search_iterator_two =
-            std::find(particle_two_contact_candidates->begin(),
-                      particle_two_contact_candidates->end(),
-                      particle_one_id);
-
-          if (search_iterator_one != particle_one_contact_candidates->end())
-            {
-              particle_one_contact_candidates->erase(search_iterator_one);
-              ++particle_particle_map_iterator;
-            }
-          else if (search_iterator_two !=
-                   particle_two_contact_candidates->end())
-            {
-              pairs_in_contant_content->erase(particle_particle_map_iterator++);
-            }
-          else
-            {
-              pairs_in_contant_content->erase(particle_particle_map_iterator++);
-            }
-        }
-    }
-
-  // Particle-wall contacts
-  for (auto particle_wall_pairs_in_contact_iterator =
-         particle_wall_pairs_in_contact.begin();
-       particle_wall_pairs_in_contact_iterator !=
-       particle_wall_pairs_in_contact.end();
-       ++particle_wall_pairs_in_contact_iterator)
-    {
-      auto particle_id = particle_wall_pairs_in_contact_iterator->first;
-
-      auto pairs_in_contant_content =
-        &particle_wall_pairs_in_contact_iterator->second;
-
-      for (auto particle_wall_map_iterator = pairs_in_contant_content->begin();
-           particle_wall_map_iterator != pairs_in_contant_content->end();)
-        {
-          auto face_id = particle_wall_map_iterator->first;
-          auto particle_wall_contact_candidate_element =
-            &particle_wall_contact_candidates[particle_id];
-
-          auto search_iterator =
-            particle_wall_contact_candidate_element->find(face_id);
-
-          if (search_iterator != particle_wall_contact_candidate_element->end())
-            {
-              particle_wall_contact_candidate_element->erase(search_iterator);
-              ++particle_wall_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(particle_wall_map_iterator++);
-            }
-        }
-    }
-
-  // Particle-floating wall contacts
-  for (auto particle_floating_wall_pairs_iterator =
-         particle_floating_wall_in_contact.begin();
-       particle_floating_wall_pairs_iterator !=
-       particle_floating_wall_in_contact.end();
-       ++particle_floating_wall_pairs_iterator)
-    {
-      auto particle_id = particle_floating_wall_pairs_iterator->first;
-
-      auto pairs_in_contant_content =
-        &particle_floating_wall_pairs_iterator->second;
-
-      for (auto particle_floating_wall_map_iterator =
-             pairs_in_contant_content->begin();
-           particle_floating_wall_map_iterator !=
-           pairs_in_contant_content->end();)
-        {
-          auto floating_wall_id = particle_floating_wall_map_iterator->first;
-          auto particle_floating_wall_contact_candidate_element =
-            &particle_floating_wall_contact_candidates[particle_id];
-
-          auto search_iterator =
-            particle_floating_wall_contact_candidate_element->find(
-              floating_wall_id);
-
-          if (search_iterator !=
-              particle_floating_wall_contact_candidate_element->end())
-            {
-              particle_floating_wall_contact_candidate_element->erase(
-                search_iterator);
-              ++particle_floating_wall_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(
-                particle_floating_wall_map_iterator++);
-            }
-        }
-    }
-
-  // Particle-floating mesh contacts
-  for (unsigned int solid_counter = 0;
-       solid_counter < particle_floating_mesh_in_contact.size();
-       ++solid_counter)
-    {
-      auto &particle_floating_mesh_contact_pair =
-        particle_floating_mesh_in_contact[solid_counter];
-
-      for (auto particle_floating_mesh_pairs_in_contact_iterator =
-             particle_floating_mesh_contact_pair.begin();
-           particle_floating_mesh_pairs_in_contact_iterator !=
-           particle_floating_mesh_contact_pair.end();
-           ++particle_floating_mesh_pairs_in_contact_iterator)
-        {
-          auto triangle =
-            particle_floating_mesh_pairs_in_contact_iterator->first;
-
-          auto pairs_in_contant_content =
-            &particle_floating_mesh_pairs_in_contact_iterator->second;
-
-          for (auto particle_floating_mesh_map_iterator =
-                 pairs_in_contant_content->begin();
-               particle_floating_mesh_map_iterator !=
-               pairs_in_contant_content->end();)
-            {
-              auto particle_id = particle_floating_mesh_map_iterator->first;
-
-              auto particle_floating_mesh_candidate_element =
-                &particle_floating_mesh_contact_candidates[solid_counter]
-                                                          [triangle];
-
-              auto search_iterator =
-                particle_floating_mesh_candidate_element->find(particle_id);
-
-              if (search_iterator !=
-                  particle_floating_mesh_candidate_element->end())
-                {
-                  particle_floating_mesh_candidate_element->erase(
-                    search_iterator);
-                  ++particle_floating_mesh_map_iterator;
-                }
-              else
-                {
-                  pairs_in_contant_content->erase(
-                    particle_floating_mesh_map_iterator++);
-                }
-            }
-        }
-    }
+  // Update particle-floating mesh contacts in particle_floating_mesh_in_contact
+  // of fine search step with particle_floating_mesh_contact_candidates
+  update_mesh_fine_search_candidates<dim>(
+    particle_floating_mesh_in_contact,
+    particle_floating_mesh_contact_candidates);
 }
 
 template void localize_contacts<2>(

@@ -20,6 +20,7 @@
 #include <dem/data_containers.h>
 #include <dem/particle_particle_contact_info_struct.h>
 #include <dem/particle_wall_contact_info_struct.h>
+#include <dem/update_fine_search_contacts.h>
 
 using namespace std;
 
