@@ -1475,6 +1475,7 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   // with Droplets and Particles" by Crowe et al. (2011).
   unsigned int particle_number;
   double       alpha = 0;
+  double       C_m   = 0;
 
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
@@ -1506,34 +1507,29 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
         {
           auto particle_properties = particle.get_properties();
 
-          Tensor<1, dim> C_m;
+          // Spin parameter
+          double spin_parameter =
+            particle_properties[DEM::PropertiesIndex::dp] *
+            abs(particle_properties[DEM::PropertiesIndex::omega_z]) /
+            (2.0 * relative_velocity[particle_number].norm());
 
-          for (int d = 0; d < dim; ++d)
+          // Magnus lift coefficient
+          if (spin_parameter > 1.0 && spin_parameter < 6.0 &&
+              Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
             {
-              // Spin parameter
-              double spin_parameter =
-                particle_properties[DEM::PropertiesIndex::dp] *
-                particle_properties[DEM::PropertiesIndex::omega_z] /
-                (2.0 * relative_velocity[particle_number].norm());
-
-              // Magnus lift coefficient
-              if (spin_parameter > 1.0 && spin_parameter < 6.0 &&
-                  Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
-                {
-                  // Oesterlé and Dinh (1998)
-                  C_m[d] = 0.45 + (2 * spin_parameter - 0.45) *
-                                    exp(-0.075 * pow(spin_parameter, 0.4) *
-                                        pow(Re_p[particle_number], 0.7));
-                }
-              else
-                C_m[d] = 2.0 * spin_parameter;
+              // Oesterlé and Dinh (1998)
+              C_m = 0.45 + (2 * spin_parameter - 0.45) *
+                             exp(-0.075 * pow(spin_parameter, 0.4) *
+                                 pow(Re_p[particle_number], 0.7));
             }
+          else
+            C_m = 2.0 * spin_parameter;
 
           // Magnus Lift force
           lift_force[0] =
             0.125 * M_PI *
             pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
-            abs(relative_velocity[particle_number][0]) *
+            relative_velocity[particle_number].norm() *
             (particle_properties[DEM::PropertiesIndex::omega_z] /
              abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
              relative_velocity[particle_number][1]);
@@ -1541,7 +1537,7 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           lift_force[1] =
             0.125 * M_PI *
             pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
-            abs(relative_velocity[particle_number][0]) *
+            relative_velocity[particle_number].norm() *
             (particle_properties[DEM::PropertiesIndex::omega_z] /
              abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
              relative_velocity[particle_number][0]);
@@ -1567,7 +1563,6 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
         {
           auto particle_properties = particle.get_properties();
 
-          Tensor<1, dim> C_m;
           Tensor<1, dim> omega;
 
           for (int d = 0; d < dim; ++d)
@@ -1576,41 +1571,30 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
             }
 
           // Spin parameter
-          auto spin_parameter =
-            particle_properties[DEM::PropertiesIndex::dp] * omega /
+          double spin_parameter =
+            particle_properties[DEM::PropertiesIndex::dp] * omega.norm() /
             (2.0 * relative_velocity[particle_number].norm());
 
-          for (int d = 0; d < dim; ++d)
+          // Magnus lift coefficient
+          if (spin_parameter > 1.0 && spin_parameter < 6.0 &&
+              Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
             {
-              // Magnus lift coefficient
-              if (spin_parameter[d] > 1.0 && spin_parameter[d] < 6.0 &&
-                  Re_p[particle_number] > 10.0 && Re_p[particle_number] < 140.0)
-                {
-                  // Oesterlé and Dinh (1998)
-                  C_m[d] = 0.45 + (2 * spin_parameter[d] - 0.45) *
-                                    exp(-0.075 * pow(spin_parameter[d], 0.4) *
-                                        pow(Re_p[particle_number], 0.7));
-                }
-              else
-                C_m[d] = 2.0 * spin_parameter[d];
+              // Oesterlé and Dinh (1998)
+              C_m = 0.45 + (2 * spin_parameter - 0.45) *
+                             exp(-0.075 * pow(spin_parameter, 0.4) *
+                                 pow(Re_p[particle_number], 0.7));
             }
+          else
+            C_m = 2.0 * spin_parameter;
+
+          Tensor<1, dim> rotational_vector = omega / omega.norm();
 
           // Magnus Lift force
-          lift_force[0] =
-            0.125 * M_PI *
-            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
-            abs(relative_velocity[particle_number][0]) *
-            (particle_properties[DEM::PropertiesIndex::omega_z] /
-             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
-             relative_velocity[particle_number][1]);
-
-          lift_force[1] =
-            0.125 * M_PI *
-            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
-            abs(relative_velocity[particle_number][0]) *
-            (particle_properties[DEM::PropertiesIndex::omega_z] /
-             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
-             relative_velocity[particle_number][0]);
+          lift_force = 0.125 * M_PI *
+                       pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) *
+                       density * relative_velocity[particle_number].norm() *
+                       (cross_product_3d(rotational_vector,
+                                         relative_velocity[particle_number]));
 
 
           for (int d = 0; d < dim; ++d)
@@ -1629,8 +1613,8 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerMagnus<2>;
-
 template class GLSVansAssemblerMagnus<3>;
+
 
 template <int dim>
 void
