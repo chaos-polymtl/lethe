@@ -1457,7 +1457,6 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerSaffmanMei<2>;
-
 template class GLSVansAssemblerSaffmanMei<3>;
 
 template <int dim>
@@ -1488,7 +1487,7 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
   const auto pic  = scratch_data.pic;

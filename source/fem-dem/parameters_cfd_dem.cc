@@ -115,6 +115,10 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply Saffman-Mei lift force");
+    prm.declare_entry("magnus lift force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply Magnus lift force");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection(
