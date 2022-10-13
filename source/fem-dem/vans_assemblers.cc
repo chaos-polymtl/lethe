@@ -1519,17 +1519,15 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
           // Magnus Lift force
           lift_force[0] =
-            0.125 * M_PI *
-            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
-            relative_velocity[particle_number].norm() *
+            0.5 * M_PI * C_m * particle_properties[DEM::PropertiesIndex::dp] *
+            density * relative_velocity[particle_number].norm() *
             (particle_properties[DEM::PropertiesIndex::omega_z] /
              abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
              relative_velocity[particle_number][1]);
 
           lift_force[1] =
-            0.125 * M_PI *
-            pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) * density *
-            relative_velocity[particle_number].norm() *
+            0.5 * M_PI * C_m * particle_properties[DEM::PropertiesIndex::dp] *
+            density * relative_velocity[particle_number].norm() *
             (particle_properties[DEM::PropertiesIndex::omega_z] /
              abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
              relative_velocity[particle_number][0]);
@@ -1584,7 +1582,8 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           // Magnus Lift force
           lift_force = 0.125 * M_PI *
                        pow(particle_properties[DEM::PropertiesIndex::dp], 2.0) *
-                       density * relative_velocity[particle_number].norm() *
+                       C_m * density *
+                       relative_velocity[particle_number].norm() *
                        (cross_product_3d(rotational_vector,
                                          relative_velocity[particle_number]));
 
