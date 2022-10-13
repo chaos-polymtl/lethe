@@ -1474,8 +1474,7 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   // This implementation follows the formulation in the book "Multiphase Flows
   // with Droplets and Particles" by Crowe et al. (2011).
   unsigned int particle_number;
-  double       alpha = 0;
-  double       C_m   = 0;
+  double       C_m = 0;
 
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
@@ -1486,12 +1485,6 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
   Tensor<1, dim> lift_force;
 
   // Physical Properties
-  Assert(
-    !scratch_data.properties_manager.is_non_newtonian(),
-    RequiresConstantViscosity(
-      "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
-  const double viscosity = scratch_data.properties_manager.viscosity_scale;
-
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
