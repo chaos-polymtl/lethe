@@ -524,6 +524,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
         }
     }
 
+  // Determine the new contributions of the particles necessary for void
+  // fraction calculation
   for (const auto &cell :
        this->void_fraction_dof_handler.active_cell_iterators())
     {
@@ -557,9 +559,14 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
               const double r_particle =
                 particle_properties[DEM::PropertiesIndex::dp] * 0.5;
 
+              // Loop over neighboring cells to determine if a given neighboring
+              // particle contributes to the solid volume of the current
+              // reference sphere
               //***********************************************************************
               for (unsigned int n = 0; n < active_neighbors.size(); n++)
                 {
+                  // Define the volume of the reference sphere to be used as the
+                  // averaging volume for the QCM
                   double reference_sphere_volume;
                   if (this->cfd_dem_simulation_parameters.void_fraction
                         ->qcm_sphere_diameter < 1e-16)
@@ -583,6 +590,9 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       reference_sphere_volume =
                         M_PI * pow((qcm_sphere_diameter), dim) / (2 * dim);
                     }
+
+                  // From the defined volume, get the actual radius of the
+                  // reference sphere
                   if (dim == 2)
                     R_sphere = (std::sqrt(reference_sphere_volume / M_PI));
                   else if (dim == 3)
@@ -650,6 +660,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
       particle_handler.update_ghost_particles();
     }
 
+  // After the particles' contributions have been determined, calculate and
+  // normalize the void fraction
   for (const auto &cell :
        this->void_fraction_dof_handler.active_cell_iterators())
     {
@@ -667,6 +679,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
               sum_quadrature_weights += fe_values_void_fraction.JxW(q);
             }
 
+          // Define the volume of the reference sphere to be used as the
+          // averaging volume for the QCM
           double reference_sphere_volume;
 
           if (this->cfd_dem_simulation_parameters.void_fraction
@@ -689,6 +703,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                 M_PI * pow((qcm_sphere_diameter), dim) / (2 * dim);
             }
 
+          // From the defined volume, get the actual radius of the
+          // reference sphere
           if (dim == 2)
             R_sphere = (std::sqrt(reference_sphere_volume / M_PI));
           else if (dim == 3)
