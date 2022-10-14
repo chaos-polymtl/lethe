@@ -104,8 +104,8 @@ public:
 
   {}
   /**
-   * @brief Using the L2 projection, builds a dictionary of particle counts
-   * with respect to a detector for a given reactor.
+   * @brief Using the L2 projection, builds a dictionary of photon counts
+   * with respect to a detector for given positions inside a reactor.
    */
   void
   L2_project();
@@ -159,7 +159,7 @@ public:
   output_raw_results();
 
   /**
-   * @brief Saves the built dictionary so it may be used later for the 3D
+   * @brief Saves the built dictionary which will be used later for the 3D
    * FEM reconstruction.
    */
   void
