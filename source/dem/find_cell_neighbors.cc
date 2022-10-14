@@ -39,8 +39,6 @@ FindCellNeighbors<dim>::find_cell_neighbors(
   // The reason is to find the cells located on the corners of the main cell.
   auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
-  unsigned int cell_number_iterator = 0;
-
   // Looping over cells
   for (const auto &cell : triangulation.active_cell_iterators())
     {
@@ -106,7 +104,6 @@ FindCellNeighbors<dim>::find_cell_neighbors(
 
       local_neighbor_vector.clear();
       ghost_neighbor_vector.clear();
-      ++cell_number_iterator;
     }
 }
 

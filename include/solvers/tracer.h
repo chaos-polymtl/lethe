@@ -125,13 +125,6 @@ public:
   finish_simulation() override;
 
   /**
-   * @brief Carry out the operations require to finish a time step correctly. This
-   * includes setting the previous values
-   */
-  void
-  finish_time_step() override;
-
-  /**
    * @brief Rearrange vector solution correctly for transient simulations
    */
   void

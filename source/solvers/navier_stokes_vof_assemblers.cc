@@ -371,6 +371,8 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
+  std::vector<double> densities(number_of_previous_solutions(method) + 1);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -378,12 +380,10 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
 
-      std::vector<double> densities(number_of_previous_solutions(method) + 1);
 
       densities[0] = scratch_data.density[q];
 
-      for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
-           ++p)
+      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         {
           densities[p + 1] = scratch_data.previous_density[p][q];
         }

@@ -90,12 +90,6 @@ public:
   finish_simulation() = 0;
 
   /**
-   * @brief Carry out the operations required to finish a time step correctly.
-   */
-  virtual void
-  finish_time_step() = 0;
-
-  /**
    * @brief Carry out the operations required to rearrange the values of the
    * previous solution at the end of a time step
    */

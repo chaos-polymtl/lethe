@@ -779,12 +779,12 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
       this->present_solution = this->newton_update;
-      this->finish_time_step_fd();
+      this->finish_time_step();
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
       this->set_nodal_values();
-      this->finish_time_step_fd();
+      this->finish_time_step();
     }
 
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
@@ -806,7 +806,7 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
         Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<
         TrilinosWrappers::MPI::BlockVector>::solve_non_linear_system(false);
-      this->finish_time_step_fd();
+      this->finish_time_step();
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
         original_viscosity_model);

@@ -90,13 +90,18 @@ public:
   }
 
   /**
-   * @brief Call for the solution of the physics that should be solved BEFORE the fluid dynamics (called "pre-solving")
+   * @brief Call for the solution of the physics that should be solved
+   *
+   * @param fluid_dynamics_has_been_solved Boolean that states if the fluid dynamics has been
+   * already solved or not. See the map `solve_pre_fluid` to know which
+   * subphysics are solved before the fluid dynamics.
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   void
-  pre_solve(const Parameters::SimulationControl::TimeSteppingMethod
-              time_stepping_method)
+  solve(const bool fluid_dynamics_has_been_solved,
+        const Parameters::SimulationControl::TimeSteppingMethod
+          time_stepping_method)
   {
     // Loop through all the elements in the physics map. Consequently, iphys is
     // an std::pair where iphys.first is the PhysicsID and iphys.second is the
@@ -104,124 +109,30 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
-        // Ensure that iphys.first is present in solve_pre_fluid map
-        if (solve_pre_fluid.count(iphys.first) != 0)
-          {
-            if (solve_pre_fluid[iphys.first] == true)
-              {
-                // Announce physic solved (verbosity =
-                // non_linear_solver.verbosity)
-                if (verbosity != Parameters::Verbosity::quiet)
-                  announce_physics(iphys.first);
+        // If iphys.first should be solved BEFORE fluid dynamics
+        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
+          solve_physics(iphys.first, time_stepping_method);
 
-                solve_physics(iphys.first, time_stepping_method);
-
-                // Embellish the console output
-                if (verbosity != Parameters::Verbosity::quiet)
-                  pcout << "-----------------------" << std::endl;
-              }
-          }
-        else
-          {
-            pcout
-              << "Solution order is not specified for this auxiliary physic "
-              << std::endl
-              << "will be solved after the fluid dynamics by default."
-              << std::endl
-              << "For clarity, please specify a solution order for this physic "
-              << std::endl
-              << "in the map solve_pre_fluid, member of multiphysics_interface.h"
-              << std::endl
-              << "-------------" << std::endl;
-          }
+        // If iphys.first should be solved AFTER fluid dynamics OR if is not
+        // present in solve_pre_fluid map
+        else if (fluid_dynamics_has_been_solved &&
+                 (!solve_pre_fluid[iphys.first] ||
+                  solve_pre_fluid.count(iphys.first) == 0))
+          solve_physics(iphys.first, time_stepping_method);
       }
 
     for (auto &iphys : block_physics)
       {
-        // Ensure that iphys.first is present in solve_pre_fluid map
-        if (solve_pre_fluid.count(iphys.first) != 0)
-          {
-            if (solve_pre_fluid[iphys.first] == true)
-              {
-                // Announce physic solved (verbosity =
-                // non_linear_solver.verbosity)
-                if (verbosity != Parameters::Verbosity::quiet)
-                  announce_physics(iphys.first);
+        // If iphys.first should be solved BEFORE fluid dynamics
+        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
+          solve_block_physics(iphys.first, time_stepping_method);
 
-                solve_block_physics(iphys.first, time_stepping_method);
-
-                // Embellish the console output
-                if (verbosity != Parameters::Verbosity::quiet)
-                  pcout << "-----------------------" << std::endl;
-              }
-          }
-        else
-          {
-            pcout
-              << "Solution order is not specified for this auxiliary physic "
-              << std::endl
-              << "will be solved after the fluid dynamics by default."
-              << std::endl
-              << "For clarity, please specify a solution order for this physic "
-              << std::endl
-              << "in the map solve_pre_fluid, member of multiphysics_interface.h"
-              << std::endl
-              << "-------------" << std::endl;
-          }
-      }
-  }
-
-  /**
-   * @brief Call for the solution of the physics that should be solved AFTER the fluid dynamics (called "post-solving")
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   */
-  void
-  post_solve(const Parameters::SimulationControl::TimeSteppingMethod
-               time_stepping_method)
-  {
-    // Loop through all the elements in the physics map. Consequently, iphys is
-    // an std::pair where iphys.first is the PhysicsID and iphys.second is the
-    // AuxiliaryPhysics pointer. This is how the map can be traversed
-    // sequentially.
-    for (auto &iphys : physics)
-      {
-        // If iphys.first should be solved after fluid dynamics OR if is not
+        // If iphys.first should be solved AFTER fluid dynamics OR if is not
         // present in solve_pre_fluid map
-        if (solve_pre_fluid[iphys.first] == false ||
-            solve_pre_fluid.count(iphys.first) == 0)
-          {
-            // Announce physic solved (verbosity =
-            // non_linear_solver.verbosity)
-            if (verbosity != Parameters::Verbosity::quiet)
-              {
-                // Embellish the console output
-                pcout << "-----------------------" << std::endl;
-                announce_physics(iphys.first);
-              }
-
-            solve_physics(iphys.first, time_stepping_method);
-          }
-      }
-
-    for (auto &iphys : block_physics)
-      {
-        // If iphys.first should be solved after fluid dynamics OR if is not
-        // present in solve_pre_fluid map
-        if (solve_pre_fluid[iphys.first] == false ||
-            solve_pre_fluid.count(iphys.first) == 0)
-          {
-            // Announce physic solved (verbosity =
-            // non_linear_solver.verbosity)
-            if (verbosity != Parameters::Verbosity::quiet)
-              {
-                // Embellish the console output
-                pcout << "-----------------------" << std::endl;
-                announce_physics(iphys.first);
-              }
-
-            solve_block_physics(iphys.first, time_stepping_method);
-          }
+        else if (fluid_dynamics_has_been_solved &&
+                 (!solve_pre_fluid[iphys.first] ||
+                  solve_pre_fluid.count(iphys.first) == 0))
+          solve_block_physics(iphys.first, time_stepping_method);
       }
   }
 
@@ -235,6 +146,10 @@ public:
                 const Parameters::SimulationControl::TimeSteppingMethod
                   time_stepping_method)
   {
+    // Announce physic solved (verbosity = non_linear_solver.verbosity)
+    if (verbosity != Parameters::Verbosity::quiet)
+      announce_physics(physics_id);
+
     AssertThrow(std::find(active_physics.begin(),
                           active_physics.end(),
                           physics_id) != active_physics.end(),
@@ -243,6 +158,10 @@ public:
     physics[physics_id]->time_stepping_method = time_stepping_method;
     physics[physics_id]->solve_non_linear_system(false);
     physics[physics_id]->modify_solution();
+
+    // Embellish the console output
+    if (verbosity != Parameters::Verbosity::quiet)
+      pcout << "-----------------------" << std::endl;
   }
 
   /**
@@ -255,6 +174,10 @@ public:
                       const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method)
   {
+    // Announce physic solved (verbosity = non_linear_solver.verbosity)
+    if (verbosity != Parameters::Verbosity::quiet)
+      announce_physics(physics_id);
+
     AssertThrow(std::find(active_physics.begin(),
                           active_physics.end(),
                           physics_id) != active_physics.end(),
@@ -263,6 +186,10 @@ public:
     block_physics[physics_id]->time_stepping_method = time_stepping_method;
     block_physics[physics_id]->solve_non_linear_system(false);
     block_physics[physics_id]->modify_solution();
+
+    // Embellish the console output
+    if (verbosity != Parameters::Verbosity::quiet)
+      pcout << "-----------------------" << std::endl;
   }
 
 
@@ -302,36 +229,45 @@ public:
   }
 
   /**
-   * @brief Carry out the operations required to finish a time step correctly for
+   * @brief Rearrange vector solution correctly for transient simulations for
    * all auxiliary physics.
+   *
+   * @param fluid_dynamics_has_been_solved Boolean that states if the fluid dynamics has been
+   * already solved or not. See the map `solve_pre_fluid` to know which
+   * subphysics are solved before the fluid dynamics.
    */
   void
-  finish_time_step()
+  percolate_time_vectors(const bool fluid_dynamics_has_been_solved)
   {
+    // Loop through all the elements in the physics map. Consequently, iphys is
+    // an std::pair where iphys.first is the PhysicsID and iphys.second is the
+    // AuxiliaryPhysics pointer. This is how the map can be traversed
+    // sequentially.
     for (auto &iphys : physics)
       {
-        iphys.second->finish_time_step();
-      }
-    for (auto &iphys : block_physics)
-      {
-        iphys.second->finish_time_step();
-      }
-  }
+        // If iphys.first should be percolated BEFORE fluid dynamics is solved
+        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
+          iphys.second->percolate_time_vectors();
 
-  /**
-   * @brief Carry out the operations required to percolate the time vectors
-   * correctly at the end of a simulation
-   */
-  void
-  percolate_time_vectors()
-  {
-    for (auto &iphys : physics)
-      {
-        iphys.second->percolate_time_vectors();
+        // If iphys.first should be percolated AFTER fluid dynamics is solved OR
+        // if is not present in solve_pre_fluid map
+        else if (fluid_dynamics_has_been_solved &&
+                 (!solve_pre_fluid[iphys.first] ||
+                  solve_pre_fluid.count(iphys.first) == 0))
+          iphys.second->percolate_time_vectors();
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->percolate_time_vectors();
+        // If iphys.first should be percolated BEFORE fluid dynamics is solved
+        if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
+          iphys.second->percolate_time_vectors();
+
+        // If iphys.first should be percolated AFTER fluid dynamics is solved OR
+        // if is not present in solve_pre_fluid map
+        else if (fluid_dynamics_has_been_solved &&
+                 (!solve_pre_fluid[iphys.first] ||
+                  solve_pre_fluid.count(iphys.first) == 0))
+          iphys.second->percolate_time_vectors();
       }
   }
 
@@ -859,7 +795,7 @@ private:
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
-                                            {VOF, false},
+                                            {VOF, true},
                                             {heat_transfer, false},
                                             {tracer, false}};
 

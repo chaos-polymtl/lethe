@@ -331,13 +331,6 @@ Tracer<dim>::percolate_time_vectors()
 
 template <int dim>
 void
-Tracer<dim>::finish_time_step()
-{
-  percolate_time_vectors();
-}
-
-template <int dim>
-void
 Tracer<dim>::postprocess(bool first_iteration)
 {
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
@@ -676,7 +669,7 @@ Tracer<dim>::set_initial_conditions()
                            newton_update);
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
-  finish_time_step();
+  percolate_time_vectors();
 }
 
 template <int dim>

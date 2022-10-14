@@ -4,6 +4,7 @@ add_library(lethe-core
   boundary_conditions.cc
   dem_properties.cc
   density_model.cc
+  dimensionality.cc
   grids.cc
   ib_particle.cc
   ib_stencil.cc
@@ -32,6 +33,7 @@ add_library(lethe-core
   ../../include/core/boundary_conditions.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
+  ../../include/core/dimensionality.h
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h

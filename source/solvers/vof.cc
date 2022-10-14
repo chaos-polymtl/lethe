@@ -554,13 +554,6 @@ VolumeOfFluid<dim>::percolate_time_vectors()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::finish_time_step()
-{
-  percolate_time_vectors();
-}
-
-template <int dim>
-void
 VolumeOfFluid<dim>::postprocess(bool first_iteration)
 {
   if (simulation_parameters.analytical_solution->calculate_error() &&
@@ -1659,7 +1652,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
 
-  finish_time_step();
+  percolate_time_vectors();
 }
 
 template <int dim>

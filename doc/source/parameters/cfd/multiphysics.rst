@@ -5,8 +5,9 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 .. code-block:: text
 
   subsection multiphysics
+    set fluid dynamics 		= true
+
     # Thermal physics
-    set fluid mechanics 	= true
     set heat transfer 		= false
     set viscous dissipation 	= false
     set buoyancy force 		= false
@@ -19,6 +20,12 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set VOF 			= false
   end
 
+
+* ``fluid dynamics``: controls if the fluid dynamics are solved. This is ``true`` by default and can be turned to ``false`` to enable calculation of an auxiliary physic only. When appropriate, this can decrease drastically the computation time. 
+
+.. tip::
+
+  ``fluid dynamics = false`` and ``heat transfer = true`` enables to solve the heat transfer equations with a large time step, with the fluid velocity being defined from the :doc:`initial_conditions`.
 
 * ``heat transfer``: controls if the heat transfer auxiliary physics are solved. This is an advection-diffusion equation. 
 
