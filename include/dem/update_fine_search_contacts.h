@@ -14,6 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
+#include <dem/contact_type.h>
 #include <dem/data_containers.h>
 
 using namespace dealii;
@@ -28,6 +29,12 @@ using namespace dealii;
  * @param
  */
 
+template <int dim, typename pairs_structure, typename candidates_structure>
+void
+update_fine_search_candidates(pairs_structure &     pairs_in_contact,
+                              candidates_structure &contact_candidates,
+                              const ContactType     contact_type);
+
 template <int dim>
 void
 update_particle_fine_search_candidates(
@@ -35,7 +42,7 @@ update_particle_fine_search_candidates(
     dim>::adjacent_particle_pairs &adjacent_particles,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_particle_candidates &contact_pair_candidates,
-  const std::string                     check_type);
+  const ContactType                     contact_type);
 
 
 template <int dim, typename pairs_structure, typename candidates_structure>

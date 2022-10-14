@@ -51,6 +51,7 @@ add_library(lethe-dem
   write_checkpoint.cc
   # Headers
   ../../include/dem/boundary_cells_info_struct.h
+  ../../include/dem/contact_type.h
   ../../include/dem/data_containers.h
   ../../include/dem/dem.h
   ../../include/dem/dem_solver_parameters.h
