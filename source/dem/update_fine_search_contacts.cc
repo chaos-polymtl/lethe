@@ -34,28 +34,31 @@ update_particle_fine_search_candidates(
              adjacent_pairs_content->begin();
            particle_particle_map_iterator != adjacent_pairs_content->end();)
         {
-          // Get the current local adjacent particle id and the reference to
-          // all the local particle contact candidates of this particle
+          // Get the current adjacent particle id
           auto particle_two_id = particle_particle_map_iterator->first;
+
+          // Get the reference to all the particle contact candidates of
+          // the current particle
           auto particle_two_contact_candidates =
             &contact_pair_candidates[particle_two_id];
 
           // Check if the current local adjacent particle is a
-          // particle candidate of the current local particle
+          // particle candidate of the current local particle and get the
+          // iterator to that object if so
           auto search_iterator_one =
             std::find(particle_one_contact_candidates->begin(),
                       particle_one_contact_candidates->end(),
                       particle_two_id);
 
-          // Check if the current local particle is a local particle candidate
+          // Check if the current particle is a particle candidate
           // of the current local adjacent particle
           auto search_iterator_two =
             std::find(particle_two_contact_candidates->begin(),
                       particle_two_contact_candidates->end(),
                       particle_one_id);
 
-          // If the current local adjacent particle is a candidate to current
-          // local particle, it is removed from current local particle candidate
+          // If the current adjacent particle is a candidate to current
+          // local particle, it is removed from current particle candidate
           // list and vice versa.
           if (search_iterator_one != particle_one_contact_candidates->end())
             {
@@ -96,28 +99,48 @@ update_wall_fine_search_candidates(
        particle_wall_pairs_in_contact.end();
        ++particle_wall_pairs_in_contact_iterator)
     {
+      // Get the current particle id
       auto particle_id = particle_wall_pairs_in_contact_iterator->first;
 
+      // Get the reference to all the wall/face contact candidates for the
+      // current particle from the new board search
+      auto particle_wall_contact_candidate_element =
+        &particle_wall_contact_candidates[particle_id];
+
+      // Get adjacent wall/face content of the current particle
+      // (from the fine search history of the particle)
       auto adjacent_pairs_content =
         &particle_wall_pairs_in_contact_iterator->second;
 
+      // Loop over all the wall/face in the fine search contact history list
       for (auto particle_wall_map_iterator = adjacent_pairs_content->begin();
            particle_wall_map_iterator != adjacent_pairs_content->end();)
         {
+          // Get the current wall id in the list
           auto wall_id = particle_wall_map_iterator->first;
-          auto particle_wall_contact_candidate_element =
-            &particle_wall_contact_candidates[particle_id];
 
+          // Check if the current wall/face is a candidate of the
+          // current particle and get the iterator to that object if so
           auto search_iterator =
             particle_wall_contact_candidate_element->find(wall_id);
 
+          // Particle-wall/face pair is removed from the list of the new board
+          // search candidates or from the list of the history of the fine
+          // search candidate list depending of the last check
           if (search_iterator != particle_wall_contact_candidate_element->end())
             {
+              // Current wall/face (from new board search) is a candidate to the
+              // current particle. The wall/face is then removed from the new
+              // board search particle-wall/face contact candidates list but
+              // kept as history in the fine search list
               particle_wall_contact_candidate_element->erase(search_iterator);
               ++particle_wall_map_iterator;
             }
           else
             {
+              // Current wall/face (from new board search) is not a candidate to
+              // the current particle. The wall/face is then removed as a
+              // candidate for fine search contact candidates list.
               adjacent_pairs_content->erase(particle_wall_map_iterator++);
             }
         }
