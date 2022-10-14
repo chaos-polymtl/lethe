@@ -45,6 +45,8 @@ localize_contacts(
   update_wall_fine_search_candidates<
     dim,
     typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_in_contact,
+    typename dem_data_containers::dem_data_structures<
       dim>::particle_wall_candidates>(particle_wall_pairs_in_contact,
                                       particle_wall_contact_candidates);
 
@@ -52,6 +54,8 @@ localize_contacts(
   // of fine search step with particle_floating_wall_contact_candidates
   update_wall_fine_search_candidates<
     dim,
+    typename dem_data_containers::dem_data_structures<
+      dim>::particle_wall_in_contact,
     typename dem_data_containers::dem_data_structures<
       dim>::particle_floating_wall_candidates>(
     particle_floating_wall_in_contact,

@@ -38,12 +38,11 @@ update_particle_fine_search_candidates(
   const std::string                     check_type);
 
 
-template <int dim, typename structure>
+template <int dim, typename pairs_structure, typename candidates_structure>
 void
 update_wall_fine_search_candidates(
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
-  structure &                       particle_wall_contact_candidates);
+  pairs_structure &     particle_wall_pairs_in_contact,
+  candidates_structure &particle_wall_contact_candidates);
 
 
 template <int dim>

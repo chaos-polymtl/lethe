@@ -84,13 +84,11 @@ update_particle_fine_search_candidates(
 }
 
 
-
-template <int dim, typename structure>
+template <int dim, typename pairs_structure, typename candidates_structure>
 void
 update_wall_fine_search_candidates(
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
-  structure &                       particle_wall_contact_candidates)
+  pairs_structure &     particle_wall_pairs_in_contact,
+  candidates_structure &particle_wall_contact_candidates)
 {
   for (auto particle_wall_pairs_in_contact_iterator =
          particle_wall_pairs_in_contact.begin();
@@ -139,49 +137,18 @@ update_mesh_fine_search_candidates(
        solid_counter < particle_floating_mesh_in_contact.size();
        ++solid_counter)
     {
-      auto &particle_floating_mesh_contact_pair =
-        particle_floating_mesh_in_contact[solid_counter];
-
-      for (auto particle_floating_mesh_pairs_in_contact_iterator =
-             particle_floating_mesh_contact_pair.begin();
-           particle_floating_mesh_pairs_in_contact_iterator !=
-           particle_floating_mesh_contact_pair.end();
-           ++particle_floating_mesh_pairs_in_contact_iterator)
-        {
-          auto triangle =
-            particle_floating_mesh_pairs_in_contact_iterator->first;
-
-          auto adjacent_pairs_content =
-            &particle_floating_mesh_pairs_in_contact_iterator->second;
-
-          for (auto particle_floating_mesh_map_iterator =
-                 adjacent_pairs_content->begin();
-               particle_floating_mesh_map_iterator !=
-               adjacent_pairs_content->end();)
-            {
-              auto particle_id = particle_floating_mesh_map_iterator->first;
-
-              auto particle_floating_mesh_candidate_element =
-                &particle_floating_mesh_contact_candidates[solid_counter]
-                                                          [triangle];
-
-              auto search_iterator =
-                particle_floating_mesh_candidate_element->find(particle_id);
-
-              if (search_iterator !=
-                  particle_floating_mesh_candidate_element->end())
-                {
-                  particle_floating_mesh_candidate_element->erase(
-                    search_iterator);
-                  ++particle_floating_mesh_map_iterator;
-                }
-              else
-                {
-                  adjacent_pairs_content->erase(
-                    particle_floating_mesh_map_iterator++);
-                }
-            }
-        }
+      update_wall_fine_search_candidates<
+        dim,
+        std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                 std::unordered_map<types::particle_index,
+                                    particle_wall_contact_info_struct<dim>>,
+                 typename dem_data_containers::cut_cell_comparison<dim>>,
+        std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                 std::unordered_map<types::particle_index,
+                                    Particles::ParticleIterator<dim>>,
+                 typename dem_data_containers::cut_cell_comparison<dim>>>(
+        particle_floating_mesh_in_contact[solid_counter],
+        particle_floating_mesh_contact_candidates[solid_counter]);
     }
 }
 
@@ -199,8 +166,11 @@ template void update_particle_fine_search_candidates<3>(
     3>::particle_particle_candidates &contact_pair_candidates,
   const std::string                   check_type);
 
+// Particle-wall contacts
 template void update_wall_fine_search_candidates<
   2,
+  typename dem_data_containers::dem_data_structures<
+    2>::particle_wall_in_contact,
   typename dem_data_containers::dem_data_structures<
     2>::particle_wall_candidates>(
   typename dem_data_containers::dem_data_structures<2>::particle_wall_in_contact
@@ -211,14 +181,19 @@ template void update_wall_fine_search_candidates<
 template void update_wall_fine_search_candidates<
   3,
   typename dem_data_containers::dem_data_structures<
+    3>::particle_wall_in_contact,
+  typename dem_data_containers::dem_data_structures<
     3>::particle_wall_candidates>(
   typename dem_data_containers::dem_data_structures<3>::particle_wall_in_contact
     &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<3>::particle_wall_candidates
     &particle_wall_contact_candidates);
 
+// Particle-floating wall contacts
 template void update_wall_fine_search_candidates<
   2,
+  typename dem_data_containers::dem_data_structures<
+    2>::particle_wall_in_contact,
   typename dem_data_containers::dem_data_structures<
     2>::particle_floating_wall_candidates>(
   typename dem_data_containers::dem_data_structures<2>::particle_wall_in_contact
@@ -229,11 +204,58 @@ template void update_wall_fine_search_candidates<
 template void update_wall_fine_search_candidates<
   3,
   typename dem_data_containers::dem_data_structures<
+    3>::particle_wall_in_contact,
+  typename dem_data_containers::dem_data_structures<
     3>::particle_floating_wall_candidates>(
   typename dem_data_containers::dem_data_structures<3>::particle_wall_in_contact
     &particle_wall_pairs_in_contact,
   typename dem_data_containers::dem_data_structures<
     3>::particle_floating_wall_candidates &particle_wall_contact_candidates);
+
+// Particle-floating mesh
+template void update_wall_fine_search_candidates<
+  2,
+  std::map<typename Triangulation<1, 2>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<2>>,
+           typename dem_data_containers::cut_cell_comparison<2>>,
+  std::map<
+    typename Triangulation<1, 2>::active_cell_iterator,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>,
+    typename dem_data_containers::cut_cell_comparison<2>>>(
+  std::map<typename Triangulation<1, 2>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<2>>,
+           typename dem_data_containers::cut_cell_comparison<2>>
+    &particle_wall_pairs_in_contact,
+  std::map<
+    typename Triangulation<1, 2>::active_cell_iterator,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>,
+    typename dem_data_containers::cut_cell_comparison<2>>
+    &particle_wall_contact_candidates);
+
+template void update_wall_fine_search_candidates<
+  3,
+  std::map<typename Triangulation<2, 3>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<3>>,
+           typename dem_data_containers::cut_cell_comparison<3>>,
+  std::map<
+    typename Triangulation<2, 3>::active_cell_iterator,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>,
+    typename dem_data_containers::cut_cell_comparison<3>>>(
+  std::map<typename Triangulation<2, 3>::active_cell_iterator,
+           std::unordered_map<types::particle_index,
+                              particle_wall_contact_info_struct<3>>,
+           typename dem_data_containers::cut_cell_comparison<3>>
+    &particle_wall_pairs_in_contact,
+  std::map<
+    typename Triangulation<2, 3>::active_cell_iterator,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>,
+    typename dem_data_containers::cut_cell_comparison<3>>
+    &particle_wall_contact_candidates);
+
+
 
 template void update_mesh_fine_search_candidates<2>(
   typename dem_data_containers::dem_data_structures<
