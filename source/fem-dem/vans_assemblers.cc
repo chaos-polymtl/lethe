@@ -674,7 +674,6 @@ GLSVansAssemblerCoreModelA<dim>::assemble_rhs(
 }
 
 template class GLSVansAssemblerCoreModelA<2>;
-
 template class GLSVansAssemblerCoreModelA<3>;
 
 template <int dim>
@@ -833,7 +832,6 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
 }
 
 template class GLSVansAssemblerBDF<2>;
-
 template class GLSVansAssemblerBDF<3>;
 
 template <int dim>
@@ -910,7 +908,6 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerDiFelice<2>;
-
 template class GLSVansAssemblerDiFelice<3>;
 
 template <int dim>
@@ -980,7 +977,6 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerRong<2>;
-
 template class GLSVansAssemblerRong<3>;
 
 template <int dim>
@@ -1044,7 +1040,6 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerDallavalle<2>;
-
 template class GLSVansAssemblerDallavalle<3>;
 
 template <int dim>
@@ -1133,7 +1128,6 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerKochHill<2>;
-
 template class GLSVansAssemblerKochHill<3>;
 
 template <int dim>
@@ -1211,7 +1205,6 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerBeetstra<2>;
-
 template class GLSVansAssemblerBeetstra<3>;
 
 template <int dim>
@@ -1312,7 +1305,6 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerGidaspow<2>;
-
 template class GLSVansAssemblerGidaspow<3>;
 
 template <int dim>
