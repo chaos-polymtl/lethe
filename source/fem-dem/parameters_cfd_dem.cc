@@ -45,6 +45,16 @@ namespace Parameters
       "0",
       Patterns::Double(),
       "The refinement factor used to calculate the number of pseudo-particles in the satellite point method");
+    prm.declare_entry(
+      "qcm sphere diameter",
+      "0",
+      Patterns::Double(),
+      "The diameter of the reference sphere for QCM void fraction scheme");
+    prm.declare_entry(
+      "qcm sphere equal cell volume",
+      "false",
+      Patterns::Bool(),
+      "Specify whether the virtual sphere has the same volume as the mesh element");
     prm.leave_subsection();
   }
 
@@ -75,6 +85,9 @@ namespace Parameters
     l2_lower_bound             = prm.get_double("l2 lower bound");
     l2_upper_bound             = prm.get_double("l2 upper bound");
     particle_refinement_factor = prm.get_integer("particle refinement factor");
+    qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
+    qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
+
     prm.leave_subsection();
   }
 
