@@ -376,34 +376,29 @@ public:
 
 /**
  * @brief Class that assembles the drag force using Gidaspow model for the
- * VANS equations with c_d and the momentum_transfer_coefficient calculated
- according to the following:
- *  if (re < 1000)
+ * VANS equations where the momentum_transfer_coefficient is calculated
+   according to the following Marchelli et al. (2020):
+      if (cell_void_fraction > 0.8)
         {
-          c_d = 24 / re * (1 + 0.15 * pow(re, 0.687));
+          momentum_transfer_coefficient =
+            (18 * pow(cell_void_fraction, -3.65) *
+             (1 + 0.15 * pow(Re_p[particle_number], 0.687))) *
+            (particle_properties[DEM::PropertiesIndex::mass] * viscosity /
+             (pow(particle_properties[DEM::PropertiesIndex::dp], 2) *
+              particle_density));
         }
       else
         {
-          c_d = 0.44;
+          // Assuming the sphericity of particles = 1
+          momentum_transfer_coefficient =
+            (150 * (1 - cell_void_fraction) / pow(cell_void_fraction, 2) +
+             1.75 * Re_p[particle_number] / pow(cell_void_fraction, 2)) *
+            (particle_properties[DEM::PropertiesIndex::mass] * viscosity /
+             (pow(particle_properties[DEM::PropertiesIndex::dp], 2) *
+              particle_density));
         }
 
-      if (cell_void_fraction >= 0.8)
-        {
-          momentum_transfer_coefficient =
-            0.75 * c_d * cell_void_fraction * relative_velocity.norm() *
-            density * (1 - cell_void_fraction) /
-            particle_properties[DEM::PropertiesIndex::dp] *
-            pow(cell_void_fraction, -2.65);
-        }
-      else
-        {
-          momentum_transfer_coefficient =
-            150 * pow((1 - cell_void_fraction), 2) * viscosity * density /
-              (cell_void_fraction *
-               pow(particle_properties[DEM::PropertiesIndex::dp], 2)) +
-            1.75 * (1 - cell_void_fraction) * relative_velocity.norm() /
-              particle_properties[DEM::PropertiesIndex::dp];
-        }
+
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
  * @ingroup assemblers

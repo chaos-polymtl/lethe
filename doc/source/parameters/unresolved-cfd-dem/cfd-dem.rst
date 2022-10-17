@@ -43,11 +43,12 @@ This subsection includes parameters related to multiphase flow simulations using
 
     where :math:`\omega` is the angular velocity of the particle.
 
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time are
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time are:
 
 .. csv-table::
    :file: tables/drag_models_unresolved_cfd-dem.csv
    :header-rows: 1
+   :align: center
 
 * The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
 * The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
@@ -85,4 +86,4 @@ This subsection includes parameters related to multiphase flow simulations using
 
 `[10] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ Tim M.J. Nijssen, Hans A.M. Kuipers, Jan van der Stel, Allert T. Adema, Kay A. Buist, Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations, International Journal of Multiphase Flow, Volume 132, 2020.
 
-`[11] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ D. Gidaspow. Multiphase flow and fluidization: continuum and kinetic theory descriptions. Academic press, 1994.
+`[11] <https://doi.org/10.1016/j.powtec.2019.10.058>`_ F. Marchelli, Q. Hou, B.Bosio, E. Arato, & A. Yu, Comparison of different drag models in CFD-DEM simulations of spouted beds. Powder Technology, 360, 1253-1270, 2020.

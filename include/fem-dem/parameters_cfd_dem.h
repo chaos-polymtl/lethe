@@ -90,6 +90,8 @@ namespace Parameters
     double                         l2_lower_bound;
     double                         l2_upper_bound;
     unsigned int                   particle_refinement_factor;
+    double                         qcm_sphere_diameter;
+    bool                           qcm_sphere_equal_cell_volume;
   };
 
   struct CFDDEM
