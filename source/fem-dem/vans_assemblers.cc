@@ -334,7 +334,6 @@ GLSVansAssemblerCoreModelB<dim>::assemble_rhs(
 
 
 template class GLSVansAssemblerCoreModelB<2>;
-
 template class GLSVansAssemblerCoreModelB<3>;
 
 template <int dim>
@@ -844,10 +843,9 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
   // point to the element of the vectors relative_velocity and
   // fluid_velocity_at_particle_location corresponding to the particle being
   // looped over.
-  unsigned int particle_number;
-  double       cell_void_fraction = 0;
-  double       C_d                = 0;
-  const auto & relative_velocity =
+  double      cell_void_fraction = 0;
+  double      C_d                = 0;
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -867,9 +865,9 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  beta_drag       = 0;
-  particle_number = 0;
+  const auto pic               = scratch_data.pic;
+  beta_drag                    = 0;
+  unsigned int particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -915,10 +913,9 @@ void
 GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  unsigned int particle_number;
-  double       cell_void_fraction = 0;
-  double       C_d                = 0;
-  const auto & relative_velocity =
+  double      cell_void_fraction = 0;
+  double      C_d                = 0;
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -935,9 +932,9 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
            "GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  beta_drag       = 0;
-  particle_number = 0;
+  const auto pic               = scratch_data.pic;
+  beta_drag                    = 0;
+  unsigned int particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -984,9 +981,8 @@ void
 GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  unsigned int particle_number;
-  double       C_d = 0;
-  const auto & relative_velocity =
+  double      C_d = 0;
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -1005,9 +1001,9 @@ GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  beta_drag       = 0;
-  particle_number = 0;
+  const auto pic               = scratch_data.pic;
+  beta_drag                    = 0;
+  unsigned int particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1047,9 +1043,8 @@ void
 GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  unsigned int particle_number;
-  double       cell_void_fraction = 0;
-  const auto & relative_velocity =
+  double      cell_void_fraction = 0;
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -1069,9 +1064,9 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  beta_drag       = 0;
-  particle_number = 0;
+  const auto pic               = scratch_data.pic;
+  beta_drag                    = 0;
+  unsigned int particle_number = 0;
 
   double f0 = 0;
 
@@ -1135,10 +1130,9 @@ void
 GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  unsigned int particle_number;
-  double       cell_void_fraction = 0;
-  double       F0                 = 0;
-  const auto & relative_velocity =
+  double      cell_void_fraction = 0;
+  double      F0                 = 0;
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p      = scratch_data.Re_particle;
   auto &      beta_drag = scratch_data.beta_drag;
@@ -1160,9 +1154,9 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  beta_drag       = 0;
-  particle_number = 0;
+  const auto pic               = scratch_data.pic;
+  beta_drag                    = 0;
+  unsigned int particle_number = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1217,10 +1211,9 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   // point to the element of the vectors relative_velocity and
   // fluid_velocity_at_particle_location corresponding to the particle being
   // looped over.
-  unsigned int particle_number;
-  double       cell_void_fraction = 0;
-  double       C_d                = 0;
-  const auto & relative_velocity =
+  double      cell_void_fraction = 0;
+  double      C_d                = 0;
+  const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &average_relative_velocity =
     scratch_data.average_fluid_particle_relative_velocity;
@@ -1247,7 +1240,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
   const auto pic                           = scratch_data.pic;
   double     momentum_transfer_coefficient = 0;
   beta_drag                                = 0;
-  particle_number                          = 0;
+  unsigned int particle_number             = 0;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1322,9 +1315,8 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
   // with Droplets and Particles" by Crowe et al. (2011) and the brief
   // communication article "An approximate expression for the shear lift force
   // on a spherical particle at finite reynolds number" by Mei (1992)
-  unsigned int particle_number;
-  double       C_s   = 0;
-  double       alpha = 0;
+  double C_s   = 0;
+  double alpha = 0;
 
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
@@ -1351,8 +1343,8 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  particle_number = 0;
+  const auto   pic             = scratch_data.pic;
+  unsigned int particle_number = 0;
 
   if constexpr (dim == 2)
     {
@@ -1464,8 +1456,7 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
   // This implementation follows the formulation in the book "Multiphase Flows
   // with Droplets and Particles" by Crowe et al. (2011).
-  unsigned int particle_number;
-  double       C_m = 0;
+  double C_m = 0;
 
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
@@ -1482,8 +1473,8 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
       "GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.density_scale;
 
-  const auto pic  = scratch_data.pic;
-  particle_number = 0;
+  const auto   pic             = scratch_data.pic;
+  unsigned int particle_number = 0;
 
   if constexpr (dim == 2)
     {
@@ -1642,14 +1633,13 @@ void
 GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  unsigned int particle_number;
-  const auto   pic                    = scratch_data.pic;
-  auto &       undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto         pressure_gradients =
+  const auto pic                    = scratch_data.pic;
+  auto &     undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto       pressure_gradients =
     scratch_data.fluid_pressure_gradients_at_particle_location;
   Tensor<1, dim> pressure_force;
 
-  particle_number = 0;
+  unsigned int particle_number = 0;
 
   // Physical Properties
   Assert(
@@ -1699,14 +1689,13 @@ void
 GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
-  unsigned int particle_number;
-  const auto   pic                    = scratch_data.pic;
-  auto &       undisturbed_flow_force = scratch_data.undisturbed_flow_force;
-  auto &       velocity_laplacians =
+  const auto pic                    = scratch_data.pic;
+  auto &     undisturbed_flow_force = scratch_data.undisturbed_flow_force;
+  auto &     velocity_laplacians =
     scratch_data.fluid_velocity_laplacian_at_particle_location;
   Tensor<1, dim> shear_force;
 
-  particle_number = 0;
+  unsigned int particle_number = 0;
 
   // Viscosity and density are currently assumed constant from the particle
   // point of view.
