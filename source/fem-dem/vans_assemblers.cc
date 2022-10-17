@@ -1625,7 +1625,6 @@ GLSVansAssemblerBuoyancy<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerBuoyancy<2>;
-
 template class GLSVansAssemblerBuoyancy<3>;
 
 template <int dim>
@@ -1681,7 +1680,6 @@ GLSVansAssemblerPressureForce<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerPressureForce<2>;
-
 template class GLSVansAssemblerPressureForce<3>;
 
 template <int dim>
@@ -1744,7 +1742,6 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
 }
 
 template class GLSVansAssemblerShearForce<2>;
-
 template class GLSVansAssemblerShearForce<3>;
 
 
@@ -1882,5 +1879,4 @@ GLSVansAssemblerFPI<dim>::assemble_rhs(
 }
 
 template class GLSVansAssemblerFPI<2>;
-
 template class GLSVansAssemblerFPI<3>;

@@ -6,8 +6,8 @@ This subsection includes parameters related to multiphase flow simulations using
 .. code-block:: text
 
    subsection cfd-dem
-      set grad div = false
-      set void fraction time derivative = false
+      set grad div = true
+      set void fraction time derivative = true
       set interpolated void fraction = true
       set vans model = modelA
       set drag force = true
@@ -43,7 +43,12 @@ This subsection includes parameters related to multiphase flow simulations using
 
     where :math:`\omega` is the angular velocity of the particle.
 
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time of writing are: Di Felice `[6] <https://doi.org/10.1016/0301-9322(94)90011-6>`_, Rong `[7] <https://doi.org/10.1016/j.ces.2013.05.036>`_, Dallavalle `[8] <https://doi.org/10.1080/07373937.2010.482714>`_, Koch and Hill `[9] <https://doi.org/10.1016/j.ces.2013.05.014>`_, Beetstra `[10] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_, and Gidaspow `[11] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_.
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time are
+
+.. csv-table::
+   :file: tables/drag_models_unresolved_cfd-dem.csv
+   :header-rows: 1
+
 * The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
 * The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
 

@@ -1,0 +1,14 @@
+﻿Drag model,"Drag coefficient, :math:`C_d`",Parameter
+,,
+Di Felice `[6] <https://doi.org/10.1016/0301-9322(94)90011-6>`_,:math:`\left( 0.63 + \frac{4.8}{\sqrt{Re_p}} \right)^2 \varepsilon_f ^ {-\left[ 3.7 - 0.65 exp \left( - \frac{\left( 1.5 - log_{10} Re_{p} \right)^2}{2} \right) \right]}`,``difelice``
+,,
+Rong `[7] <https://doi.org/10.1016/j.ces.2013.05.036>`_,:math:`\left( 0.63 + \frac{4.8}{\sqrt{Re_p}} \right)^2 \varepsilon_f ^ {-\left[ 2.65 \left( \varepsilon_f + 1 \right) - \left( 5.3 - 3.5 \varepsilon_f \right) \varepsilon_f^2 exp \left( - \frac{\left( 1.5 - log_{10} Re_{p} \right)^2}{2} \right) \right]}`,``rong``
+,,
+Dallavalle `[8] <https://doi.org/10.1080/07373937.2010.482714>`_,:math:`\left( 0.63 + \frac{4.8}{\sqrt{Re_p}} \right)^2`,``dallavalle``
+,,
+Koch and Hill `[9] <https://doi.org/10.1016/j.ces.2013.05.014>`_,,``kochhill``
+,,
+Beetstra `[10] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_,:math:`\frac{24}{Re_{p}}\left [ 10 \frac{1-\varepsilon_f}{\varepsilon_f^{2}} + \varepsilon_f^2 \left ( 1 + 1.15\sqrt{1 - \varepsilon_f} \right ) \right ] + \allowbreak + \frac{0.413}{\varepsilon_f^2} \left [ \frac{\varepsilon_f^{-1} + 3 \varepsilon_f \left ( 1 - \varepsilon_f + 8.4 Re_p^{-0.343} \right )}{1 + 10^{3\left ( 1 - \varepsilon_f \right )} \cdot Re_p^{\frac{\left [ 1 + 4 \left ( 1 - \varepsilon_f \right ) \right ]}{2}}} \right ]`,``beetstra``
+,,
+Gidaspow `[11] <https://books.google.ca/books?id=fHecceQyaYkC&lpg=PP1&ots=uhExYvWrkv&lr&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_,,``gidaspow``
+,,
