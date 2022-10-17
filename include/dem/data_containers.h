@@ -96,32 +96,45 @@ namespace dem_data_containers
     }
   };
 
+  // DEM data structure containers
+  // To improve readability of containers, there's a simple description above
+  // all declarations which follow these representation :
+  // <> : map or unordered map
+  // () : tuple or pair
+  // [] : vector
   template <int dim>
   struct dem_data_structures
   {
+    // <particle id, particle iterator>
     typedef std::unordered_map<types::particle_index,
                                Particles::ParticleIterator<dim>>
       particle_index_iterator_map;
 
+    // <particle id, point-line info>
     typedef std::unordered_map<types::particle_index,
                                particle_point_line_contact_info_struct<dim>>
       particle_point_line_contact_info;
 
+    // <particle id, (particle iterator, point, point)>
     typedef std::unordered_map<
       types::particle_index,
       std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
       particle_line_candidates;
 
+    // <particle id, (particle iterator, point)>
     typedef std::unordered_map<
       types::particle_index,
       std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
       particle_point_candidates;
 
+    // <particle id, <boundary id, particle iterator>>
     typedef std::unordered_map<
       types::particle_index,
       std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
       particle_floating_wall_candidates;
 
+    // <particle id, <boundary id, (particle iterator, tensor, point, boundary
+    // id, cell id)>>
     typedef std::unordered_map<
       types::particle_index,
       std::unordered_map<types::boundary_id,
@@ -132,55 +145,72 @@ namespace dem_data_containers
                                     types::global_cell_index>>>
       particle_wall_candidates;
 
+    // <particle id, <boundary id, particle-wall info>>
     typedef std::unordered_map<
       types::particle_index,
       std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
       particle_wall_in_contact;
 
+    // <particle id, <particle id, particle-particle info>>
     typedef std::unordered_map<
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info_struct<dim>>>
       adjacent_particle_pairs;
 
-    typedef std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  Particles::ParticleIterator<dim>>,
-               cut_cell_comparison<dim>>>
+    // <cell iterator, <particle id, particle iterator>>
+    typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                     std::unordered_map<types::particle_index,
+                                        Particles::ParticleIterator<dim>>,
+                     /* mapped_type */ cut_cell_comparison<dim>>
+      particle_floating_wall_from_mesh_candidates;
+
+    // <cell iterator, <particle id, particle-wall info>>
+    typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
+                     std::unordered_map<types::particle_index,
+                                        particle_wall_contact_info_struct<dim>>,
+                     /* mapped_type */ cut_cell_comparison<dim>>
+      particle_floating_wall_from_mesh_in_contact;
+
+    // [<cell iterator, <particle id, particle iterator>>]
+    typedef std::vector<particle_floating_wall_from_mesh_candidates>
       particle_floating_mesh_candidates;
 
-    typedef std::vector<
-      std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
-               std::unordered_map<types::particle_index,
-                                  particle_wall_contact_info_struct<dim>>,
-               cut_cell_comparison<dim>>>
+    // [<cell iterator, <particle id, particle-wall info>>]
+    typedef std::vector<particle_floating_wall_from_mesh_in_contact>
       particle_floating_mesh_in_contact;
 
+    // <particle id, [particle id]>
     typedef std::unordered_map<types::particle_index,
                                std::vector<types::particle_index>>
       particle_particle_candidates;
 
+    // [[cell iterator]]
     typedef std::vector<
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       cells_neighbor_list;
 
+    // [[(cell iterator, cell iterator)]]
     typedef std::vector<std::vector<
       std::pair<typename Triangulation<dim>::active_cell_iterator,
                 typename Triangulation<dim - 1, dim>::active_cell_iterator>>>
       floating_mesh_information;
 
+    // <cell id, [cell iterator]>
     typedef std::unordered_map<
       types::global_cell_index,
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       cells_total_neighbor_list;
 
+    // <boundary id, (tensor, point)>
     typedef std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
       boundary_points_and_normal_vectors;
 
+    // <int, <boundary id, tensor>>
     typedef std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
       vector_on_boundary;
 
+    // <cell id, periodic cells info>
     typedef std::map<types::global_cell_index,
                      periodic_boundaries_cells_info_struct<dim>>
       periodic_boundaries_cells_info;
