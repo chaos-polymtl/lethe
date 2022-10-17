@@ -18,13 +18,18 @@
 #ifndef lethe_contact_type_h
 #define lethe_contact_type_h
 
+/**
+ * @brief Label for particle-object contact type.
+ *
+ */
+
 enum ContactType
 {
   local_particle_particle,
   ghost_particle_particle,
   particle_wall,
   particle_floating_wall,
-  particle_floating_mesh
+  particle_floating_mesh,
 };
 
 #endif // lethe_contact_type_h

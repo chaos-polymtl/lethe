@@ -40,7 +40,6 @@ add_library(lethe-dem
   set_particle_particle_contact_force_model.cc
   set_particle_wall_contact_force_model.cc
   uniform_insertion.cc
-  update_fine_search_contacts.cc
   update_ghost_particle_particle_contact_container.cc
   update_local_particle_particle_contact_container.cc
   update_particle_container.cc
@@ -96,7 +95,6 @@ add_library(lethe-dem
   ../../include/dem/set_particle_particle_contact_force_model.h
   ../../include/dem/set_particle_wall_contact_force_model.h
   ../../include/dem/uniform_insertion.h
-  ../../include/dem/update_fine_search_contacts.h
   ../../include/dem/update_ghost_particle_particle_contact_container.h
   ../../include/dem/update_local_particle_particle_contact_container.h
   ../../include/dem/update_particle_container.h
