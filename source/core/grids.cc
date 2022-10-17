@@ -9,6 +9,7 @@
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
+#include <deal.II/grid/tria_accessor.h>
 
 // Std
 #include <fstream>
@@ -107,6 +108,141 @@ attach_grid_to_triangulation(
             *triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
+        }
+    }
+  // Customizable cylinder mesh
+  else if (mesh_parameters.type == Parameters::Mesh::Type::cylinder)
+    {
+      if (mesh_parameters.simplex)
+        {
+          throw std::runtime_error(
+            "Unsupported mesh type - custom cylinder mesh with simplex is not supported, use dealii cylinder prior using simplex mesh.");
+        }
+      else if (dim != 3)
+        {
+          throw std::runtime_error(
+            "Unsupported mesh type - custom cylinder mesh is only supported in 3d.");
+        }
+
+      if constexpr (dim == 3)
+        {
+          // Separate arguments of the string
+          std::vector<std::string> arguments;
+          std::stringstream        s_stream(mesh_parameters.grid_arguments);
+          while (s_stream.good())
+            {
+              std::string substr;
+              getline(s_stream, substr, ':');
+              arguments.push_back(substr);
+            }
+
+          // Arguments declaration
+          unsigned int subdivisions;
+          double       radius, half_height;
+          if (arguments.size() != 3)
+            {
+              throw std::runtime_error(
+                "Mandatory customizable cylinder parameters are (x subdivisions: radius : half height)");
+            }
+          else
+            {
+              std::vector<double> arguments_double =
+                dealii::Utilities::string_to_double(arguments);
+              subdivisions = static_cast<int>(arguments_double[0]);
+              radius       = arguments_double[1];
+              half_height  = arguments_double[2];
+            }
+
+          if (mesh_parameters.grid_type == "classic")
+            {
+              // Create a subdivided cylinder from deal.ii
+              GridGenerator::subdivided_cylinder(*triangulation,
+                                                 subdivisions,
+                                                 radius,
+                                                 half_height);
+            }
+          else
+            {
+              // Create a temporary 2d mesh
+              Triangulation<dim - 1, spacedim - 1> temporary_triangulation;
+
+              // Creat a spherical manifold for 2d mesh
+              Point<2>                                       center(0.0, 0.0);
+              const SphericalManifold<dim - 1, spacedim - 1> m0(center);
+
+              if (mesh_parameters.grid_type == "regularized" ||
+                  mesh_parameters.grid_type == "squared")
+                {
+                  // Create a square mesh
+                  double real_radius = radius * std::sin(M_PI_4);
+                  GridGenerator::hyper_cube(temporary_triangulation,
+                                            -real_radius,
+                                            real_radius,
+                                            true);
+
+                  // Assign boundary 0 to perimeter as for cylinder
+                  for (const auto &cell :
+                       temporary_triangulation.active_cell_iterators())
+                    {
+                      if (cell->is_locally_owned())
+                        {
+                          // Looping through all the faces of the cell
+                          for (const auto &face : cell->face_iterators())
+                            {
+                              // Check to see if the face is located at boundary
+                              if (face->at_boundary())
+                                {
+                                  face->set_boundary_id(0);
+                                }
+                            }
+                        }
+                    }
+                }
+              else if (mesh_parameters.grid_type == "balanced")
+                {
+                  GridGenerator::hyper_ball_balanced(temporary_triangulation,
+                                                     center,
+                                                     radius);
+                }
+
+              temporary_triangulation.reset_all_manifolds();
+              temporary_triangulation.set_all_manifold_ids_on_boundary(0);
+              temporary_triangulation.set_manifold(0, m0);
+
+              if (mesh_parameters.grid_type == "regularized")
+                {
+                  // Pre-refinement to reduce mesh size at corners before
+                  // regularization
+                  temporary_triangulation.refine_global(2);
+                  GridTools::regularize_corner_cells(temporary_triangulation);
+
+                  // Flatten the triangulation
+                  Triangulation<dim - 1, spacedim - 1>
+                    flat_temporary_triangulation;
+                  flat_temporary_triangulation.copy_triangulation(
+                    temporary_triangulation);
+                  temporary_triangulation.clear();
+                  GridGenerator::flatten_triangulation(
+                    flat_temporary_triangulation, temporary_triangulation);
+                }
+
+              // Extrude the 2d temporary mesh to 3d cylinder
+              GridGenerator::extrude_triangulation(temporary_triangulation,
+                                                   subdivisions + 1,
+                                                   2.0 * half_height,
+                                                   *triangulation,
+                                                   true);
+
+              // Rotate mesh in x-axis and set the (0,0,0) at the barycenter
+              // to be comparable to dealii cylinder meshes
+              GridTools::rotate(M_PI_2, 1, *triangulation);
+              Tensor<1, spacedim> shift_vector({-half_height, 0.0, 0.0});
+              GridTools::shift(shift_vector, *triangulation);
+
+              // Add a cylindrical manifold on the final unrefined mesh
+              const CylindricalManifold<dim, spacedim> m1(0);
+              triangulation->set_manifold(0, m1);
+            }
         }
     }
   // Periodic Hills grid
