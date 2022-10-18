@@ -43,7 +43,7 @@ This subsection includes parameters related to multiphase flow simulations using
 
     where :math:`\omega` is the angular velocity of the particle.
 
-* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Available drag models at the time are:
+* The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
 .. csv-table::
    :file: tables/drag_models_unresolved_cfd-dem.csv
