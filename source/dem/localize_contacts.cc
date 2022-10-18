@@ -132,9 +132,9 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
               // candidates of the current particle from the new broad search
               auto object_contact_candidates = &contact_candidates[object_id];
 
-              // Check if the adjacent particle from history is a
-              // particle candidate of the current particle and get the
-              // iterator to that object if so
+              // Check if the adjacent particle from history is a particle
+              // candidate of the current particle and get the iterator to that
+              // object if so
               auto search_iterator =
                 std::find(contact_candidate_element->begin(),
                           contact_candidate_element->end(),
@@ -160,28 +160,31 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
                   ++adjacent_map_iterator;
                 }
               else if (search_object_to_particle_iterator !=
-                         object_contact_candidates->end() &&
-                       contact_type == ContactType::local_particle_particle)
+                       object_contact_candidates->end())
                 {
-                  // The current particle from history list is still a candidate
-                  // to the 2nd particle and the contact is local
-                  // The 2nd particle is then removed from the new broad search
-                  // particle-particle contact candidates list but kept as
-                  // history in the fine search list
-                  object_contact_candidates->erase(
-                    search_object_to_particle_iterator);
-                  ++adjacent_map_iterator;
-                }
-              else if (search_object_to_particle_iterator !=
-                         object_contact_candidates->end() &&
-                       contact_type == ContactType::ghost_particle_particle)
-                {
-                  // The current particle from history list is still a candidate
-                  // to the 2nd particle and the contact is not local
-                  // The 2nd particle is then removed from the history in the
-                  // fine search list particle-particle contact candidates list
-                  // but kept in new broad search list
-                  adjacent_pairs_content->erase(adjacent_map_iterator++);
+                  if constexpr (contact_type ==
+                                ContactType::local_particle_particle)
+                    {
+                      // The current particle from history list is still a
+                      // candidate to the 2nd particle and the contact is local
+                      // The 2nd particle is then removed from the new broad
+                      // search particle-particle contact candidates list but
+                      // kept as history in the fine search list
+                      object_contact_candidates->erase(
+                        search_object_to_particle_iterator);
+                      ++adjacent_map_iterator;
+                    }
+
+                  if constexpr (contact_type ==
+                                ContactType::ghost_particle_particle)
+                    {
+                      // The current particle from history list is still a
+                      // candidate to the 2nd particle and the contact is not
+                      // local The 2nd particle is then removed from the history
+                      // in the fine search list particle-particle contact
+                      // candidates list but kept in new broad search list
+                      adjacent_pairs_content->erase(adjacent_map_iterator++);
+                    }
                 }
               else
                 {
