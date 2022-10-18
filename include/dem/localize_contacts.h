@@ -93,10 +93,12 @@ localize_contacts(
  * @param contact_type label of contact type to apply proper manipulation of contact removal in containers
  */
 
-template <int dim, typename pairs_structure, typename candidates_structure>
+template <int dim,
+          typename pairs_structure,
+          typename candidates_structure,
+          ContactType contact_type>
 void
 update_fine_search_candidates(pairs_structure &     pairs_in_contact,
-                              candidates_structure &contact_candidates,
-                              const ContactType     contact_type);
+                              candidates_structure &contact_candidates);
 
 #endif /* localize_contacts_h */
