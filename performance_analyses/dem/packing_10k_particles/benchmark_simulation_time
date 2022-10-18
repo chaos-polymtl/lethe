@@ -1,8 +1,8 @@
 Processor: AMD Ryzen 9 5900X 12-Core Processor
 
 _____________________________________________________________________________________________________________________________________________________________________________________
-|Branch					      |	SHA					   |	date		|	time_1p (s)	|	time_8p (s)	|	time_12p (s) |
-|Introduce PhysicalPropertiesManager	      |	32b2a3aba365f1bf822068e7a4a8e05aa2be319e   |	Feb  3, 2022	|	566		|	307		|	253	     |
-|Refactor dem 2d			      |	f04ad3de89ebaf501a06d61dc4e00505f975abae   |	Feb 10, 2022	|	567		|	312		|	255	     |
-|dem_optimization			      | af5e8ca5f19eaef3d014a44c37c45bf3ff3c31da   | 	May  4, 2022	|	430		|	233		|	195	     |
-|dem_optimization			      | ebe0406d3281401f7ef5832f9706626e64368787   |	May  4, 2022	|	429		|	233		|	194	     |
+|Branch					                      |	SHA					                       |	date		    |	time_1p (s)	|	time_8p (s)	|	time_12p (s) |
+|Introduce PhysicalPropertiesManager	      |	32b2a3aba365f1bf822068e7a4a8e05aa2be319e   |	Feb  3, 2022	|	566		    |	307		    |	253	         |
+|Refactor dem 2d			                  |	f04ad3de89ebaf501a06d61dc4e00505f975abae   |	Feb 10, 2022	|	567		    |	312		    |	255	         |
+|dem_optimization			                  | af5e8ca5f19eaef3d014a44c37c45bf3ff3c31da   | 	May  4, 2022	|	430		    |	233		    |	195	         |
+|dem_optimization			                  | ebe0406d3281401f7ef5832f9706626e64368787   |	May  4, 2022	|	429		    |	233		    |	194	         |
