@@ -5,10 +5,10 @@ using namespace dealii;
 template <int dim>
 void
 update_ghost_particle_particle_contact_container_iterators(
-  typename dem_data_containers::dem_data_structures<
-    dim>::adjacent_particle_pairs &ghost_adjacent_particles,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &particle_container)
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    &ghost_adjacent_particles,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &particle_container)
 {
   for (auto adjacent_particles_iterator = ghost_adjacent_particles.begin();
        adjacent_particles_iterator != ghost_adjacent_particles.end();
@@ -30,13 +30,13 @@ update_ghost_particle_particle_contact_container_iterators(
     }
 }
 template void update_ghost_particle_particle_contact_container_iterators<2>(
-  typename dem_data_containers::dem_data_structures<2>::adjacent_particle_pairs
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &ghost_adjacent_particles,
-  typename dem_data_containers::dem_data_structures<
-    2>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+    &particle_container);
 
 template void update_ghost_particle_particle_contact_container_iterators<3>(
-  typename dem_data_containers::dem_data_structures<3>::adjacent_particle_pairs
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &ghost_adjacent_particles,
-  typename dem_data_containers::dem_data_structures<
-    3>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+    &particle_container);

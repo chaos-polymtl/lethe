@@ -13,9 +13,9 @@ template <int dim>
 void
 FindCellNeighbors<dim>::find_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
+  typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_local_neighbor_list,
-  typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
+  typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_neighbor_list)
 {
   // The output vectors of the function are cells_local_neighbor_list and
@@ -116,8 +116,8 @@ template <int dim>
 void
 FindCellNeighbors<dim>::find_full_cell_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  typename dem_data_containers::dem_data_structures<
-    dim>::cells_total_neighbor_list &cells_total_neighbor_list)
+  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+    &cells_total_neighbor_list)
 {
   auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
 

@@ -63,12 +63,11 @@ public:
    * particle-point contact force
    */
 
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
   particle_point_fine_search(
-    const typename dem_data_containers::dem_data_structures<
-      dim>::particle_point_candidates &particle_point_contact_candidates,
-    const double                       neighborhood_threshold);
+    const typename DEM::dem_data_structures<dim>::particle_point_candidates
+      &          particle_point_contact_candidates,
+    const double neighborhood_threshold);
 
   /**
    * Iterates over a map of tuples (particle_line_contact_candidates) to see if
@@ -84,12 +83,11 @@ public:
    * particle-line contact force
    */
 
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_point_line_contact_info
+  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
   particle_line_fine_search(
-    const typename dem_data_containers::dem_data_structures<
-      dim>::particle_line_candidates &particle_line_contact_candidates,
-    const double                      neighborhood_threshold);
+    const typename DEM::dem_data_structures<dim>::particle_line_candidates
+      &          particle_line_contact_candidates,
+    const double neighborhood_threshold);
 
 private:
   /** This private function is used to find the projection of point_p on

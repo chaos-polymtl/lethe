@@ -55,10 +55,10 @@
 #include <iostream>
 #include <unordered_set>
 
-#ifndef Lethe_DEM_h
-#  define Lethe_DEM_h
+#ifndef lethe_dem_h
+#  define lethe_dem_h
 
-using namespace dem_data_containers;
+using namespace DEM;
 
 /**
  * The DEM class which initializes all the required parameters and iterates over

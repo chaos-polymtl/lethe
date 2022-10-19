@@ -14,10 +14,10 @@ ParticleWallFineSearch<dim>::ParticleWallFineSearch()
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_wall_fine_search(
-  const typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_candidates &particle_wall_contact_pair_candidates,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact)
+  const typename DEM::dem_data_structures<dim>::particle_wall_candidates
+    &particle_wall_contact_pair_candidates,
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    &particle_wall_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
   // the particle_wall_pairs_in_contact
@@ -80,12 +80,12 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
-  const typename dem_data_containers::dem_data_structures<
+  const typename DEM::dem_data_structures<
     dim>::particle_floating_wall_candidates &particle_floating_wall_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double                                      simulation_time,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_floating_wall_pairs_in_contact)
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    &particle_floating_wall_pairs_in_contact)
 {
   // Reading floating wall properties
   std::vector<Point<dim>> point_on_wall =
@@ -189,11 +189,11 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
 template <int dim>
 void
 ParticleWallFineSearch<dim>::particle_floating_mesh_fine_search(
-  const typename dem_data_containers::dem_data_structures<
+  const typename DEM::dem_data_structures<
     dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact)
+  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
+    &particle_floating_mesh_in_contact)
 {
   for (unsigned int solid_counter = 0;
        solid_counter < particle_floating_mesh_contact_candidates.size();

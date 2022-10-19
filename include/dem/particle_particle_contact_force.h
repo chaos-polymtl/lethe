@@ -66,13 +66,13 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    typename dem_data_containers::dem_data_structures<
-      dim>::adjacent_particle_pairs &local_adjacent_particles,
-    typename dem_data_containers::dem_data_structures<
-      dim>::adjacent_particle_pairs &ghost_adjacent_particles,
-    const double                     dt,
-    std::vector<Tensor<1, 3>> &      torque,
-    std::vector<Tensor<1, 3>> &      force) = 0;
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &                        ghost_adjacent_particles,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) = 0;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This

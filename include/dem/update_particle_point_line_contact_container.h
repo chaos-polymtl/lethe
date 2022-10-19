@@ -36,11 +36,11 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_point_line_contact_container_iterators(
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_point_line_contact_info &particle_points_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_point_line_contact_info &particle_lines_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+    &particle_points_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
+    &particle_lines_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &particle_container);
 
 #endif /* update_particle_point_line_contact_container_h */

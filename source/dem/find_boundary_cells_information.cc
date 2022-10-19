@@ -1,5 +1,6 @@
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/data_containers.h>
 #include <dem/find_boundary_cells_information.h>
 
 #include <deal.II/distributed/tria.h>
@@ -223,8 +224,9 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
 // Updated points and normal vectors are then used to update the particle-wall
 // contact list.
 template <int dim>
-void BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
-  std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
+void
+BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
+  typename DEM::dem_data_structures<dim>::boundary_points_and_normal_vectors
     &updated_boundary_points_and_normal_vectors)
 {
   // Initialize a simple quadrature for on the system. This will be used to

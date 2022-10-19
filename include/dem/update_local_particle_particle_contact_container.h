@@ -35,9 +35,9 @@ using namespace dealii;
 template <int dim>
 void
 update_local_particle_particle_contact_container_iterators(
-  typename dem_data_containers::dem_data_structures<
-    dim>::adjacent_particle_pairs &local_adjacent_particles,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    &local_adjacent_particles,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &particle_container);
 
 #endif /* update_local_particle_particle_contact_container_h */

@@ -77,7 +77,8 @@ GridMotion<dim, spacedim>::
       types::particle_index,
       std::map<types::boundary_id, particle_wall_contact_info_struct<spacedim>>>
       &particle_wall_pairs_in_contact,
-    const std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
+    const typename DEM::dem_data_structures<
+      spacedim>::boundary_points_and_normal_vectors
       &updated_boundary_points_and_normal_vectors)
 {
   for (auto &[particle_id, pairs_in_contact_content] :

@@ -42,7 +42,7 @@
  * are here, but eventually all the data containers of the DEM solver will be
  * moved here
  */
-namespace dem_data_containers
+namespace DEM
 {
   /**
    * Operator overloading to enable using triangulation cells as map keys.
@@ -203,18 +203,20 @@ namespace dem_data_containers
       cells_total_neighbor_list;
 
     // <boundary id, (tensor, point)>
-    typedef std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
+    typedef std::unordered_map<types::boundary_id,
+                               std::pair<Tensor<1, 3>, Point<3>>>
       boundary_points_and_normal_vectors;
 
     // <int, <boundary id, tensor>>
-    typedef std::map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
+    typedef std::unordered_map<unsigned int,
+                               std::map<types::boundary_id, Tensor<1, 3>>>
       vector_on_boundary;
 
     // <cell id, periodic cells info>
-    typedef std::map<types::global_cell_index,
-                     periodic_boundaries_cells_info_struct<dim>>
+    typedef std::unordered_map<types::global_cell_index,
+                               periodic_boundaries_cells_info_struct<dim>>
       periodic_boundaries_cells_info;
   };
 
-} // namespace dem_data_containers
+} // namespace DEM
 #endif

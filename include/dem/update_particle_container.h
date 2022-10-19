@@ -39,8 +39,8 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_container(
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &  particle_container,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &                                    particle_container,
   const Particles::ParticleHandler<dim> *particle_handler);
 
 #endif /* update_particle_container_h */

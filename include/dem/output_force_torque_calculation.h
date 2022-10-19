@@ -17,6 +17,7 @@
  * Author: Lethe's community, 2021
  */
 
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/mpi.h>
@@ -43,14 +44,12 @@ write_forces_torques_output_locally(
 template <int dim>
 void
 write_forces_torques_output_results(
-  const std::string               filename,
-  const unsigned int              output_frequency,
-  const std::vector<unsigned int> boundary_index,
-  const double                    time_step,
-  std::map<unsigned int, std::map<unsigned int, dealii::Tensor<1, 3>>>
-    &forces_boundary_information,
-  std::map<unsigned int, std::map<unsigned int, dealii::Tensor<1, 3>>>
-    &torques_boundary_information)
+  const std::string                                filename,
+  const unsigned int                               output_frequency,
+  const std::vector<unsigned int>                  boundary_index,
+  const double                                     time_step,
+  DEM::dem_data_structures<3>::vector_on_boundary &forces_boundary_information,
+  DEM::dem_data_structures<3>::vector_on_boundary &torques_boundary_information)
 {
   unsigned int this_mpi_process =
     Utilities::MPI::this_mpi_process(MPI_COMM_WORLD);

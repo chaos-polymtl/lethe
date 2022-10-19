@@ -78,11 +78,11 @@ public:
    */
   virtual void
   calculate_particle_wall_contact_force(
-    typename dem_data_containers::dem_data_structures<
-      dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
-    const double                      dt,
-    std::vector<Tensor<1, 3>> &       torque,
-    std::vector<Tensor<1, 3>> &       force) override;
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+      &                        particle_wall_pairs_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) override;
 
   /**
    * Carries out the calculation of particle-floating mesh contact force using
@@ -97,11 +97,11 @@ public:
    */
   virtual void
   calculate_particle_floating_wall_contact_force(
-    typename dem_data_containers::dem_data_structures<dim>::
-      particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
-    const double                         dt,
-    std::vector<Tensor<1, 3>> &          torque,
-    std::vector<Tensor<1, 3>> &          force,
+    typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
+      &                        particle_floating_mesh_in_contact,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids)
     override;
 

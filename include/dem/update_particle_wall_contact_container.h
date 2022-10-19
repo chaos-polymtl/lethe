@@ -34,10 +34,10 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_wall_contact_container_iterators(
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    &particle_wall_pairs_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &particle_container);
 
 /**
  * Updates the iterators to particles in
@@ -50,10 +50,10 @@ update_particle_wall_contact_container_iterators(
 template <int dim>
 void
 update_particle_floating_mesh_contact_container_iterators(
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
+    &particle_floating_mesh_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &particle_container);
 
 
 #endif /* update_particle_wall_contact_container_h */

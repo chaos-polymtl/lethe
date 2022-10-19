@@ -18,6 +18,7 @@
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>

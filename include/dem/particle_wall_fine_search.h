@@ -67,10 +67,10 @@ public:
 
   void
   particle_wall_fine_search(
-    const typename dem_data_containers::dem_data_structures<
-      dim>::particle_wall_candidates &particle_wall_contact_pair_candidates,
-    typename dem_data_containers::dem_data_structures<
-      dim>::particle_wall_in_contact &particle_wall_pairs_in_contact);
+    const typename DEM::dem_data_structures<dim>::particle_wall_candidates
+      &particle_wall_contact_pair_candidates,
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+      &particle_wall_pairs_in_contact);
 
   /**
    * Iterates over the contact candidates from particle-floating wall broad
@@ -89,13 +89,13 @@ public:
    */
   void
   particle_floating_wall_fine_search(
-    const typename dem_data_containers::dem_data_structures<
+    const typename DEM::dem_data_structures<
       dim>::particle_floating_wall_candidates
       &particle_floating_wall_contact_candidates,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double                                      simulation_time,
-    typename dem_data_containers::dem_data_structures<
-      dim>::particle_wall_in_contact &particle_floating_wall_in_contact);
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+      &particle_floating_wall_in_contact);
 
 
   /**
@@ -111,11 +111,11 @@ public:
 
   void
   particle_floating_mesh_fine_search(
-    const typename dem_data_containers::dem_data_structures<
+    const typename DEM::dem_data_structures<
       dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
-    typename dem_data_containers::dem_data_structures<dim>::
-      particle_floating_mesh_in_contact &particle_floating_mesh_in_contact);
+    typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
+      &particle_floating_mesh_in_contact);
 };
 
 #endif /* particle_wall_fine_search_h */
