@@ -11,7 +11,7 @@ This subsection includes parameters related to multiphase flow simulations using
       set interpolated void fraction = true
       set vans model = modelA
       set drag force = true
-      set drag model = dallavalle
+      set drag model = difelice
       set saffman lift force = false
       set magnus lift force = false
       set buoyancy force = true

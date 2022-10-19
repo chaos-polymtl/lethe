@@ -133,7 +133,7 @@ namespace Parameters
                       Patterns::Bool(),
                       "Choose whether or not to apply Magnus lift force");
     prm.declare_entry("drag model",
-                      "dallavalle",
+                      "difelice",
                       Patterns::Selection(
                         "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
