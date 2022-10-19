@@ -235,7 +235,8 @@ attach_grid_to_triangulation(
 
               // Rotate mesh in x-axis and set the (0,0,0) at the barycenter
               // to be comparable to dealii cylinder meshes
-              GridTools::rotate(M_PI_2, 1, *triangulation);
+              Tensor<1, spacedim> axis_vector({0.0, 1.0, 0.0});
+              GridTools::rotate(axis_vector, M_PI_2, *triangulation);
               Tensor<1, spacedim> shift_vector({-half_height, 0.0, 0.0});
               GridTools::shift(shift_vector, *triangulation);
 
