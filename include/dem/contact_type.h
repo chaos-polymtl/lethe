@@ -30,6 +30,8 @@ enum ContactType
   particle_wall,
   particle_floating_wall,
   particle_floating_mesh,
+  particle_point,
+  particle_line
 };
 
 #endif // lethe_contact_type_h
