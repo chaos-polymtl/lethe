@@ -34,7 +34,7 @@ using namespace dealii;
  * exchange_ghost_particles() functions change the iterator to particles
  * everytime they are called.
  *
- * @tparam dim Dimensionality of the geometry
+ * @tparam dim Dimensionality of the geometry which contains the particles
  * @param particle_handler
  * @param particle_container A container that contains the updated iterators to
  * all local and ghost particles
@@ -80,7 +80,7 @@ locate_local_particles_in_cells(
  * Updates the iterators to local particles in a map of particles
  * (particle_container)
  *
- * @tparam dim Dimensionality of the geometry
+ * @tparam dim Dimensionality of the geometry which contains the particles
  * @param particle_container A map of particles which is used to update
  * the iterators to particles in particle-particle and particle-wall fine search
  * outputs after calling sort particles into cells function
@@ -99,7 +99,7 @@ update_particle_container(
  * Updates the iterators to particles in pairs_in_contact
  * (output of particle-object fine search)
  *
- * @tparam dim Dimensionality of the geometry
+ * @tparam dim Dimensionality of the geometry which contains the particles
  * @tparam pairs_structure DEM data structure which contains particle-object pairs relevant information
  * @tparam contact_type Contact type of the contact pairs
  * @param pairs_in_contact Output of particle-object fine search
