@@ -463,6 +463,40 @@ public:
 };
 
 
+/**
+ * @brief Class that assembles the Lift force using Magnus model
+ *
+ * This implementation follows the formulation in the book "Multiphase Flows
+ * with Droplets and Particles" by Crowe et al. (2011).
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerMagnus : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerMagnus(Parameters::Lagrangian::LagrangianPhysicalProperties
+                           lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the buoyancy force
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
+};
+
 
 /**
  * @brief Class that assembles the Buoyancy force  for the

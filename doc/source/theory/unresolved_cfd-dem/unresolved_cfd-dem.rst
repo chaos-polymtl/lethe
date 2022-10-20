@@ -58,7 +58,7 @@ In unresolved CFD-DEM, the drag force is calculated using correlations (frequent
 Volume Average Navier-Stokes
 -----------------------------
 
-Since we represent the fluid at a meso-scale, the quantities calculated for the cells are averages among its volume. Additionally, as the volume of fluid is a fraction of the cell, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I).
+Since we represent the fluid at a meso-scale, the quantities calculated for the cells are averages among its volume. Additionally, as the volume of fluid is a fraction of the cell, the porosity (or void fraction) is taken into account. To do this, we apply the Volume Average Navier-Stokes (VANS) equations to represent the fluid phase. Mainly, the VANS equations are presented in two different formulations, so called Model A (or Set II) and Model B (or Set I) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
 Considering an incompressible flow, the continuity equation for both models is:
 
@@ -70,7 +70,7 @@ where:
 * :math:`\mathbf{u}` is the the fluid velocity vector;
 * :math:`\varepsilon_f` is the void fraction.
 
-Models A and B differ from each other in the way the momentum equation is calculated. In Model A, we consider that pressure is in both phases, while for Model B the pressure is only in the fluid:
+Models A and B differ from each other in the way the momentum equation is calculated. In Model A, we consider that the pressure and the viscous shear stress are in both phases, while for Model B both are only in the fluid `[2] <https://doi.org/10.1017/S002211201000306X>`_:
 
 Model A:
 
@@ -89,12 +89,12 @@ where:
 * :math:`\tau` is the shear stress;
 * :math:`\mathbf{F}_{pf}^A` and :math:`\mathbf{F}_{pf}^B` are the source terms representing the forces applied back in the fluid due to the interaction with particles for Models A and B, respectively.
 
-For Model A, since the pressure term corresponds to a 'fluid fraction of the pressure', we can write the interaction term as:
+For Model A, since the pressure and shear stress terms are considered to be partially in the particle's phase, we can write the interaction term as:
 
 .. math:: 
     \mathbf{F}_{pf}^A = \frac{1}{V_{\Omega}}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} - \mathbf{f}_{\nabla p, i} - \mathbf{f}_{\nabla \cdot \tau, i} \right )
 
-while for Model B, since the pressure is totally in the fluid, we write:
+while for Model B, since the pressure and shear stress are totally in the fluid, we write:
 
 .. math:: 
     \mathbf{F}_{pf}^B = \frac{1}{V_{\Omega}}\sum_{i}^{n_p}\left ( \mathbf{f}_{pf, i} \right )
