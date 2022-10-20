@@ -116,7 +116,7 @@ attach_grid_to_triangulation(
       if (mesh_parameters.simplex)
         {
           throw std::runtime_error(
-            "Unsupported mesh type - custom cylinder mesh with simplex is not supported, use dealii cylinder prior using simplex mesh.");
+            "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh.");
         }
       else if (dim != 3)
         {
@@ -142,7 +142,7 @@ attach_grid_to_triangulation(
           if (arguments.size() != 3)
             {
               throw std::runtime_error(
-                "Mandatory customizable cylinder parameters are (x subdivisions: radius : half height)");
+                "Mandatory cylinder parameters are (x subdivisions: radius : half height)");
             }
           else
             {
@@ -164,11 +164,11 @@ attach_grid_to_triangulation(
           else
             {
               // Create a temporary 2d mesh
-              Triangulation<dim - 1, spacedim - 1> temporary_triangulation;
+              Triangulation<2, spacedim - 1> temporary_triangulation;
 
-              // Creat a spherical manifold for 2d mesh
-              Point<2>                                       center(0.0, 0.0);
-              const SphericalManifold<dim - 1, spacedim - 1> m0(center);
+              // Create a spherical manifold for 2d mesh
+              Point<2>                                 center(0.0, 0.0);
+              const SphericalManifold<2, spacedim - 1> m0(center);
 
               if (mesh_parameters.grid_type == "regularized" ||
                   mesh_parameters.grid_type == "squared")
@@ -204,6 +204,11 @@ attach_grid_to_triangulation(
                                                      center,
                                                      radius);
                 }
+              else
+                {
+                  throw std::runtime_error(
+                    "Unknown grid type. Choices are <classic|balanced|squared|regularized>.");
+                }
 
               temporary_triangulation.reset_all_manifolds();
               temporary_triangulation.set_all_manifold_ids_on_boundary(0);
@@ -217,8 +222,7 @@ attach_grid_to_triangulation(
                   GridTools::regularize_corner_cells(temporary_triangulation);
 
                   // Flatten the triangulation
-                  Triangulation<dim - 1, spacedim - 1>
-                    flat_temporary_triangulation;
+                  Triangulation<2, spacedim - 1> flat_temporary_triangulation;
                   flat_temporary_triangulation.copy_triangulation(
                     temporary_triangulation);
                   temporary_triangulation.clear();
@@ -241,7 +245,7 @@ attach_grid_to_triangulation(
               GridTools::shift(shift_vector, *triangulation);
 
               // Add a cylindrical manifold on the final unrefined mesh
-              const CylindricalManifold<dim, spacedim> m1(0);
+              const CylindricalManifold<3, spacedim> m1(0);
               triangulation->set_manifold(0, m1);
             }
         }
