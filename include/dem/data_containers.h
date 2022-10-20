@@ -216,7 +216,7 @@ namespace DEM
 
     // <unsigned int, <global_face_id, tensor>>
     typedef std::unordered_map<unsigned int,
-                               std::unordered_map<global_face_id, Tensor<1, 3>>>
+                               std::map<types::boundary_id, Tensor<1, 3>>>
       vector_on_boundary;
 
     // <cell id, periodic cells info>

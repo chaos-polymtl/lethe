@@ -89,13 +89,13 @@ public:
     std::vector<Tensor<1, 3>> &force,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids) = 0;
 
-  std::unordered_map<types::boundary_id, Tensor<1, 3>>
+  std::map<types::boundary_id, Tensor<1, 3>>
   get_force()
   {
     return force_on_walls;
   }
 
-  std::unordered_map<types::boundary_id, Tensor<1, 3>>
+  std::map<types::boundary_id, Tensor<1, 3>>
   get_torque()
   {
     return torque_on_walls;
@@ -246,7 +246,7 @@ protected:
   /** This function is used to initialize a map of vectors to zero
    * with the member class boundary index which has the keys as information
    */
-  std::unordered_map<unsigned int, Tensor<1, 3>>
+  std::map<unsigned int, Tensor<1, 3>>
   initialize();
 
   /** This function sums all the forces and torques from all the
@@ -269,8 +269,8 @@ protected:
   std::map<types::particle_index, double>
     effective_coefficient_of_rolling_friction;
 
-  std::unordered_map<unsigned int, Tensor<1, 3>> force_on_walls;
-  std::unordered_map<unsigned int, Tensor<1, 3>> torque_on_walls;
+  std::map<unsigned int, Tensor<1, 3>> force_on_walls;
+  std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
 
   bool                            calculate_force_torque_on_boundary;
   Point<3>                        center_mass_container;
