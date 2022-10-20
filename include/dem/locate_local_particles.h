@@ -17,13 +17,11 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/contact_type.h>
 #include <dem/data_containers.h>
 #include <dem/particle_point_line_contact_info_struct.h>
-#include <dem/update_ghost_particle_particle_contact_container.h>
-#include <dem/update_local_particle_particle_contact_container.h>
-#include <dem/update_particle_container.h>
-#include <dem/update_particle_point_line_contact_container.h>
-#include <dem/update_particle_wall_contact_container.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
@@ -36,6 +34,7 @@ using namespace dealii;
  * exchange_ghost_particles() functions change the iterator to particles
  * everytime they are called.
  *
+ * @tparam dim Dimensionality of the geometry
  * @param particle_handler
  * @param particle_container A container that contains the updated iterators to
  * all local and ghost particles
@@ -76,5 +75,43 @@ locate_local_particles_in_cells(
     dim>::particle_point_line_contact_info &particle_points_in_contact,
   typename dem_data_containers::dem_data_structures<
     dim>::particle_point_line_contact_info &particle_lines_in_contact);
+
+/**
+ * Updates the iterators to local particles in a map of particles
+ * (particle_container)
+ *
+ * @tparam dim Dimensionality of the geometry
+ * @param particle_container A map of particles which is used to update
+ * the iterators to particles in particle-particle and particle-wall fine search
+ * outputs after calling sort particles into cells function
+ * @param particle_handler Particle handler to access all the particles in the
+ * system
+ */
+
+template <int dim>
+void
+update_particle_container(
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &  particle_container,
+  const Particles::ParticleHandler<dim> *particle_handler);
+
+/**
+ * Updates the iterators to particles in pairs_in_contact
+ * (output of particle-object fine search)
+ *
+ * @tparam dim Dimensionality of the geometry
+ * @tparam pairs_structure DEM data structure which contains particle-object pairs relevant information
+ * @tparam contact_type Contact type of the contact pairs
+ * @param pairs_in_contact Output of particle-object fine search
+ * @param particle_container Output of update_particle_container function
+ */
+
+template <int dim, typename pairs_structure, ContactType contact_type>
+void
+update_contact_container_iterators(
+  pairs_structure &pairs_in_contact,
+  typename dem_data_containers::dem_data_structures<
+    dim>::particle_index_iterator_map &particle_container);
+
 
 #endif /* locate_local_particles_h */
