@@ -161,10 +161,10 @@ ParticleWallContactForce<dim>::calculate_force_and_torque_on_boundary(
 }
 
 template <int dim>
-std::map<unsigned int, Tensor<1, 3>>
+std::unordered_map<unsigned int, Tensor<1, 3>>
 ParticleWallContactForce<dim>::initialize()
 {
-  std::map<unsigned int, Tensor<1, 3>> map;
+  std::unordered_map<unsigned int, Tensor<1, 3>> map;
   for (const auto &it : boundary_index)
     {
       map[it] = 0;

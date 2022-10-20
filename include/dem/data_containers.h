@@ -45,6 +45,13 @@
 namespace DEM
 {
   /**
+   * Defined global face id as a type to ensure that we know what the
+   * structures use as index. This is more verbose than unsigned int
+   */
+  typedef unsigned int global_face_id;
+
+
+  /**
    * Operator overloading to enable using triangulation cells as map keys.
    */
   using namespace dealii;
@@ -127,28 +134,28 @@ namespace DEM
       std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
       particle_point_candidates;
 
-    // <particle id, <boundary id, particle iterator>>
+    // <particle id, <global face id, particle iterator>>
     typedef std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::boundary_id, Particles::ParticleIterator<dim>>>
+      std::unordered_map<global_face_id, Particles::ParticleIterator<dim>>>
       particle_floating_wall_candidates;
 
-    // <particle id, <boundary id, (particle iterator, tensor, point, boundary
-    // id, cell id)>>
+    // <particle id, <global_face_id, (particle iterator, tensor, point,
+    // boundary id, cell id)>>
     typedef std::unordered_map<
       types::particle_index,
-      std::unordered_map<types::boundary_id,
+      std::unordered_map<global_face_id,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
-                                    types::boundary_id,
+                                    global_face_id,
                                     types::global_cell_index>>>
       particle_wall_candidates;
 
-    // <particle id, <boundary id, particle-wall info>>
+    // <particle id, <global_face_id, particle-wall info>>
     typedef std::unordered_map<
       types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info_struct<dim>>>
+      std::map<global_face_id, particle_wall_contact_info_struct<dim>>>
       particle_wall_in_contact;
 
     // <particle id, <particle id, particle-particle info>>
@@ -202,14 +209,14 @@ namespace DEM
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       cells_total_neighbor_list;
 
-    // <boundary id, (tensor, point)>
-    typedef std::unordered_map<types::boundary_id,
+    // <global_face_id, (tensor, point)>
+    typedef std::unordered_map<global_face_id,
                                std::pair<Tensor<1, 3>, Point<3>>>
       boundary_points_and_normal_vectors;
 
-    // <int, <boundary id, tensor>>
+    // <unsigned int, <global_face_id, tensor>>
     typedef std::unordered_map<unsigned int,
-                               std::map<types::boundary_id, Tensor<1, 3>>>
+                               std::unordered_map<global_face_id, Tensor<1, 3>>>
       vector_on_boundary;
 
     // <cell id, periodic cells info>

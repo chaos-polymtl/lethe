@@ -33,8 +33,8 @@
  */
 void
 write_forces_torques_output_locally(
-  std::map<unsigned int, Tensor<1, 3>> force_on_walls,
-  std::map<unsigned int, Tensor<1, 3>> torque_on_walls);
+  std::unordered_map<unsigned int, Tensor<1, 3>> force_on_walls,
+  std::unordered_map<unsigned int, Tensor<1, 3>> torque_on_walls);
 
 /**
  * @brief write_forces_torques_output_results
