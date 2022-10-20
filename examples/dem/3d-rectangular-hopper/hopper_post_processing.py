@@ -23,13 +23,15 @@ import sys
 #Take case path as argument
 simulation_path = sys.argv[1]
 prm_file_name = sys.argv[2]
-pvd_name = sys.argv[3]
 
 # Name the save path
 save_path = simulation_path
 
 # Create the particle object
-particle = Lethe_pyvista_tools('.', f'{prm_file_name}.prm')
+particle = Lethe_pyvista_tools(simulation_path, f'{prm_file_name}.prm')
+
+# Get the pvd name
+pvd_name = particle.prm_dict["output name"]
 
 # Read data
 particle.read_lethe_to_pyvista(f'{pvd_name}.pvd')
@@ -57,7 +59,7 @@ volume = 4./3. * np.pi * (particle.prm_dict['diameter']/2.)**3
 
 # Correction regards data in paper (nb of particle)
 # Thickness of hopper domain was increased and number of particle was multiplied since the simulated case has no
-# periodic boundaries as the paper.
+# periodic boundaries unlike simulations in the paper.
 # The correction factor is corresponding to the multiplication of the width/the number of particle
 n_part_paper = 6790
 correction_factor = particle.prm_dict['number']/n_part_paper
@@ -75,7 +77,7 @@ for i in range(len(particle.list_vtu)):
     # Store results in 'df'
     exec(f'df = particle.df_{i}')
 
-    # Select the data (if particle is completly under hopper outlet)
+    # Select the data (if particle is completely under hopper outlet)
     vertical_position = df.points[:, normal_vect]
     vertical_position_below = vertical_position[vertical_position < (hopper_outlet - particle.prm_dict['diameter']/2.)]
 
@@ -99,11 +101,7 @@ data.to_csv(save_path + '/results_' + pvd_name + '.csv')
 # Read data from paper
 paper_data = pd.read_csv('paper_data.csv', ',')
 
-# Plot results
-plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor, label="Lethe DEM results")
-plt.plot(paper_data['time'], paper_data['discharge'], label="Anand et al. results")
-
-# Find range to calculate rate
+# Find range to calculate rate (this part is kind of headcoded)
 p0 = start + int(0.25/(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
 p1 = p0 +    int(0.5 /(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
 #plt.plot(particle.time_list[p0] - particle.time_list[start], mass_discharge[p0] * 1000 / correction_factor, '*')
@@ -112,7 +110,11 @@ p1 = p0 +    int(0.5 /(particle.prm_dict['output frequency'] * particle.prm_dict
 # Calculate mass flow rate
 p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p0:p1]],
                [value * 1000 / correction_factor  for value in mass_discharge[p0:p1]], 1)
-print(p)
+print(f'Mass flow rate is : {p[0]:.2f} g/s.')
+
+# Plot results
+plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor, label="Lethe DEM results")
+plt.plot(paper_data['time'], paper_data['discharge'], label="Anand et al. results")
 plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
