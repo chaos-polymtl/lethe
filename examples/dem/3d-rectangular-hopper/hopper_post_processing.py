@@ -28,7 +28,7 @@ prm_file_name = sys.argv[2]
 save_path = simulation_path
 
 # Create the particle object
-particle = Lethe_pyvista_tools(simulation_path, f'{prm_file_name}.prm')
+particle = Lethe_pyvista_tools(simulation_path, prm_file_name)
 
 # Get the pvd name
 pvd_name = particle.prm_dict["output name"]
