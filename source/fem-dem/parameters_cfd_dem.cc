@@ -117,17 +117,21 @@ namespace Parameters
                       Patterns::Bool(),
                       "Choose whether or not to apply buoyancy force");
     prm.declare_entry("shear force",
-                      "false",
+                      "true",
                       Patterns::Bool(),
                       "Choose whether or not to apply shear force");
     prm.declare_entry("pressure force",
-                      "false",
+                      "true",
                       Patterns::Bool(),
                       "Choose whether or not to apply pressure force");
     prm.declare_entry("saffman lift force",
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply Saffman-Mei lift force");
+    prm.declare_entry("magnus lift force",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply Magnus lift force");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection(
@@ -150,7 +154,7 @@ namespace Parameters
                       Patterns::Integer(),
                       "dem-cfd coupling frequency");
     prm.declare_entry("vans model",
-                      "modelB",
+                      "modelA",
                       Patterns::Selection("modelA|modelB"),
                       "The volume averaged Navier Stokes model to be solved.");
     prm.declare_entry(
