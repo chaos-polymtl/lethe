@@ -91,8 +91,8 @@ locate_local_particles_in_cells(
 template <int dim>
 void
 update_particle_container(
-  typename DEM::dem_data_structures<
-    dim>::particle_index_iterator_map &  particle_container,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &                                    particle_container,
   const Particles::ParticleHandler<dim> *particle_handler);
 
 /**
@@ -110,8 +110,8 @@ template <int dim, typename pairs_structure, ContactType contact_type>
 void
 update_contact_container_iterators(
   pairs_structure &pairs_in_contact,
-  typename DEM::dem_data_structures<
-    dim>::particle_index_iterator_map &particle_container);
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+    &particle_container);
 
 
 #endif /* locate_local_particles_h */
