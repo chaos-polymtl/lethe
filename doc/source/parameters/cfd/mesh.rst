@@ -29,7 +29,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
 
     .. warning::
         The squared cylinder may eventually leads to ill-posed jacobian transformation. As said in the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/namespaceGridTools.html#a3f129213c63c92a6ed84c6f2a906048b>`_ : "The four cells that were originally the corners of a square will give you some troubles during computations, as the jacobian of the transformation from the reference cell to those cells will go to zero, affecting the error constants of the finite element estimates".
-        This type of mesh is available, but is not recommended.
+        This type of mesh is available, but its usage is not recommended.
 
 
 .. image:: images/cylindrical_meshes.png
