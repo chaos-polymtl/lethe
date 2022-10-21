@@ -61,7 +61,7 @@ public:
    */
   void
   calculate_particle_point_contact_force(
-    const typename dem_data_containers::dem_data_structures<dim>::
+    const typename DEM::dem_data_structures<dim>::
       particle_point_line_contact_info *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
       &                        lagrangian_physical_properties,
@@ -79,7 +79,7 @@ public:
    */
   void
   calculate_particle_line_contact_force(
-    const typename dem_data_containers::dem_data_structures<
+    const typename DEM::dem_data_structures<
       dim>::particle_point_line_contact_info *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::LagrangianPhysicalProperties
       &                        lagrangian_physical_properties,

@@ -70,14 +70,14 @@ public:
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const typename dem_data_containers::dem_data_structures<
-      dim>::cells_neighbor_list &cells_local_neighbor_list,
-    const typename dem_data_containers::dem_data_structures<
-      dim>::cells_neighbor_list &cells_ghost_neighbor_list,
-    typename dem_data_containers::dem_data_structures<
-      dim>::particle_particle_candidates &local_contact_pair_candidates,
-    typename dem_data_containers::dem_data_structures<
-      dim>::particle_particle_candidates &ghost_contact_pair_candidates);
+    const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+      &cells_local_neighbor_list,
+    const typename DEM::dem_data_structures<dim>::cells_neighbor_list
+      &cells_ghost_neighbor_list,
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates
+      &local_contact_pair_candidates,
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates
+      &ghost_contact_pair_candidates);
 
   /**
    * Stores the candidate particle-particle collision pairs with a given

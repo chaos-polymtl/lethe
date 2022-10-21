@@ -9,8 +9,7 @@ ParticlePointLineBroadSearch<dim>::ParticlePointLineBroadSearch()
 
 // This function finds all the particle-point contact candidates
 template <int dim>
-typename dem_data_containers::dem_data_structures<
-  dim>::particle_point_candidates
+typename DEM::dem_data_structures<dim>::particle_point_candidates
 ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
@@ -67,7 +66,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
 
 // This function finds all the particle-line contact candidates
 template <int dim>
-typename dem_data_containers::dem_data_structures<dim>::particle_line_candidates
+typename DEM::dem_data_structures<dim>::particle_line_candidates
 ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<

@@ -126,8 +126,8 @@ private:
 
   // Mapping of periodic boundaries information, cell index at outlet is the
   // map key
-  typename dem_data_containers::dem_data_structures<
-    dim>::periodic_boundaries_cells_info periodic_boundaries_cells_information;
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    periodic_boundaries_cells_information;
 };
 
 #endif /* particle_wall_periodic_displacement_h */

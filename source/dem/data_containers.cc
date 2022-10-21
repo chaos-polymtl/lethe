@@ -18,5 +18,5 @@
 
 #include <dem/data_containers.h>
 
-template struct dem_data_containers::dem_data_structures<2>;
-template struct dem_data_containers::dem_data_structures<3>;
+template struct DEM::dem_data_structures<2>;
+template struct DEM::dem_data_structures<3>;

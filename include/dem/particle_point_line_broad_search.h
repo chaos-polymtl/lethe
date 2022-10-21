@@ -59,8 +59,7 @@ public:
    * (particle located near boundaries with vertices and the vertex location)
    */
 
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_point_candidates
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
   find_particle_point_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::unordered_map<
@@ -82,8 +81,7 @@ public:
    * and the locations of beginning and ending vertices of the boundary lines
    */
 
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_line_candidates
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
   find_particle_line_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::unordered_map<
