@@ -21,7 +21,8 @@ Files used in this example
 Description of the case
 -----------------------
 
-This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand et al. uses periodic boundaries in the z axis allowing to use a thin width for simulation. This case do not use periodic boundary in Lethe. Prior minimizing the impact of collision of particle with walls in z axis, the width and the number of particle were multiplied 6 times. This corresponds to a width of 15 times the particle diameter.
+This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand et al. uses periodic boundaries in the z axis allowing to use a thin width for simulation.
+Since those are not available at the time in Lethe, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
 
 Parameter file
 --------------
@@ -41,17 +42,29 @@ The mesh is a hopper with 90° angle generated with GMSH having a top part for t
         set check diamond cells                 = true
     end
 
-.. figure:: images/packed_hopper.png
-    :width: 300
-    :alt: Mesh
-    :align: center
 
-    Rectangular hopper packed with particle before the discharge.
+.. list-table::
+
+    * - .. figure:: images/packed_hopper_2d.png
+           :width: 300
+           :alt: Mesh
+           :align: center
+
+           Rectangular hopper packed with particle before the discharge with a 2d view.
+
+      - .. figure:: images/packed_hopper_3d.png
+           :width: 300
+           :alt: Mesh
+           :align: center
+
+           Rectangular hopper packed with particle before the discharge with a 3d view.
+
+
 
 Insertion info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion box is defined inside and the top part of the hopper. The inserted number is choose to be a factor of the total number of particle. In this case, 14 insertion step is require to fill up the hopper with particles.
+An insertion box is defined inside and the top part of the hopper. The inserted number of particles per time step is chosen to be a factor of the total number of particle. In this case, 14 insertion steps are required to fill up the hopper with particles.
 
 .. code-block:: text
 
@@ -74,7 +87,16 @@ An insertion box is defined inside and the top part of the hopper. The inserted 
 Lagrangian physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The total number of particles in this simulation is 40740 with a diameter of 2.24 mm.
+The total number of particles in this simulation is 40740. All particles have a diameter of 2.24 mm.
+
+The following properties are chosen according to the Anand et al. paper :
+
+* Uniform distribution of spherical particles
+* Diameter (2.24 mm)
+* Density of glass (2.5 g/cm³)
+* Restitution coefficient of particle-particle (0.94)
+* Restitution coefficient of particle-wall (0.90)
+* Friction coefficient of particle-particle (0.2)
 
 .. code-block:: text
 
@@ -88,13 +110,13 @@ The total number of particles in this simulation is 40740 with a diameter of 2.2
             set diameter                          = 0.00224
             set number                            = 40740
             set density particles                 = 2500
-            set young modulus particles           = 1000000
+            set young modulus particles           = 1e6
             set poisson ratio particles           = 0.3
             set restitution coefficient particles = 0.94
             set friction coefficient particles    = 0.2
             set rolling friction particles        = 0.09
         end
-        set young modulus wall           = 1000000
+        set young modulus wall           = 1e6
         set poisson ratio wall           = 0.3
         set friction coefficient wall    = 0.2
         set restitution coefficient wall = 0.9
@@ -104,6 +126,8 @@ The total number of particles in this simulation is 40740 with a diameter of 2.2
 
 Model parameters
 ~~~~~~~~~~~~~~~~~
+
+Model parameters based on the example `Silo example <../silo/silo.html>`_.
 
 .. code-block:: text
 
@@ -121,6 +145,8 @@ Model parameters
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~
+
+The time end of the simulation is 7.5 where most of the particles are discharged and the DEM time step is 1e-5 s which corresponds to 2.9% of Rayleigh time step.
 
 .. code-block:: text
 
