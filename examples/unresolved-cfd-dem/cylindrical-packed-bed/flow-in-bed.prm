@@ -8,11 +8,9 @@ subsection simulation control
   set number mesh adapt       = 0
   set output name              = result_
   set output frequency	  	= 1
-  set startup time scaling         = 0.6
   set time end                     = 0.5
-  set time step                    = 0.002
+  set time step                    = 0.01
   set subdivision             = 1 
-  set log precision     = 10 
   set output path                  	 = ./output/
 end
 
@@ -50,7 +48,7 @@ end
 # Void Fraction
 #---------------------------------------------------
 subsection void fraction
-   set mode = dem
+   set mode = pcm
    set read dem = true
    set dem file name = dem
    set l2 smoothing factor = 0.000005
@@ -144,5 +142,4 @@ subsection linear solver
   set ilu preconditioner absolute tolerance  = 1e-14
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               = verbose
-  set max krylov vectors = 200
 end
