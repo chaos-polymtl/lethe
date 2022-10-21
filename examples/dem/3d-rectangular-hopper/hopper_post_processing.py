@@ -12,9 +12,11 @@ Date: May 5th, 2022
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from Lethe_pyvista_tools import *
 
 import sys
+sys.path.append("../../../contrib/postprocessing/")
+from Lethe_pyvista_tools import *
+
 #############################################################################
 
 #############################################################################
@@ -104,8 +106,6 @@ paper_data = pd.read_csv('paper_data.csv', ',')
 # Find range to calculate rate (this part is kind of headcoded)
 p0 = start + int(0.25/(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
 p1 = p0 +    int(0.5 /(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
-#plt.plot(particle.time_list[p0] - particle.time_list[start], mass_discharge[p0] * 1000 / correction_factor, '*')
-#plt.plot(particle.time_list[p1] - particle.time_list[start], mass_discharge[p1] * 1000 / correction_factor, '*')
 
 # Calculate mass flow rate
 p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p0:p1]],
@@ -113,8 +113,8 @@ p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p
 print(f'Mass flow rate is : {p[0]:.2f} g/s.')
 
 # Plot results
-plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor, label="Lethe DEM results")
-plt.plot(paper_data['time'], paper_data['discharge'], label="Anand et al. results")
+plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor, label="Lethe DEM")
+plt.plot(paper_data['time'], paper_data['discharge'], '.k', label="Anand et al.")
 plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
