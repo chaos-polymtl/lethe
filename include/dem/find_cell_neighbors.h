@@ -64,9 +64,9 @@ public:
   void
   find_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
+    typename DEM::dem_data_structures<dim>::cells_neighbor_list
       &cells_local_neighbor_list,
-    typename dem_data_containers::dem_data_structures<dim>::cells_neighbor_list
+    typename DEM::dem_data_structures<dim>::cells_neighbor_list
       &cells_ghost_neighbor_list);
 
   /**
@@ -84,8 +84,8 @@ public:
   void
   find_full_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    typename dem_data_containers::dem_data_structures<
-      dim>::cells_total_neighbor_list &cells_total_neighbor_list);
+    typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
+      &cells_total_neighbor_list);
 };
 
 #endif /* find_cell_neighbors_h */

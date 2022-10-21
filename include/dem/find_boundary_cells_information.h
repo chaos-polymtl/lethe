@@ -18,6 +18,7 @@
  */
 
 #include <dem/boundary_cells_info_struct.h>
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/base/quadrature_lib.h>
@@ -126,8 +127,9 @@ public:
    * @param updated_boundary_points_and_normal_vectors Normal vector and a point
    * on the boundary faces which are updated after motion of the grid
    */
-  void update_boundary_info_after_grid_motion(
-    std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
+  void
+  update_boundary_info_after_grid_motion(
+    typename DEM::dem_data_structures<dim>::boundary_points_and_normal_vectors
       &updated_boundary_points_and_normal_vectors);
 
 private:

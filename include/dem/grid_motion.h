@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
@@ -88,7 +89,8 @@ public:
       types::particle_index,
       std::map<types::boundary_id, particle_wall_contact_info_struct<spacedim>>>
       &particle_wall_pairs_in_contact,
-    const std::map<types::boundary_id, std::pair<Tensor<1, 3>, Point<3>>>
+    const typename DEM::dem_data_structures<
+      spacedim>::boundary_points_and_normal_vectors
       &updated_boundary_points_and_normal_vectors);
 
 private:

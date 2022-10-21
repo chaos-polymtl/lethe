@@ -51,27 +51,25 @@ using namespace std;
 template <int dim>
 void
 localize_contacts(
-  typename dem_data_containers::dem_data_structures<
-    dim>::adjacent_particle_pairs &local_adjacent_particles,
-  typename dem_data_containers::dem_data_structures<
-    dim>::adjacent_particle_pairs &ghost_adjacent_particles,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_wall_pairs_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_in_contact &particle_floating_wall_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_mesh_in_contact &particle_floating_mesh_in_contact,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_particle_candidates &local_contact_pair_candidates,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_particle_candidates &ghost_contact_pair_candidates,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_wall_candidates &particle_wall_contact_candidates,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_wall_candidates
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    &local_adjacent_particles,
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    &ghost_adjacent_particles,
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    &particle_wall_pairs_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    &particle_floating_wall_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
+    &particle_floating_mesh_in_contact,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &local_contact_pair_candidates,
+  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+    &ghost_contact_pair_candidates,
+  typename DEM::dem_data_structures<dim>::particle_wall_candidates
+    &particle_wall_contact_candidates,
+  typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
     &particle_floating_wall_contact_candidates,
-  typename dem_data_containers::dem_data_structures<
-    dim>::particle_floating_mesh_candidates
+  typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates);
 
 /**
