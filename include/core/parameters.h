@@ -790,7 +790,8 @@ namespace Parameters
     {
       gmsh,
       dealii,
-      periodic_hills
+      periodic_hills,
+      cylinder
     };
     Type type;
 

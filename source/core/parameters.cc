@@ -1288,9 +1288,10 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "dealii",
-                        Patterns::Selection("gmsh|dealii|periodic_hills"),
+                        Patterns::Selection(
+                          "gmsh|dealii|periodic_hills|cylinder"),
                         "Type of mesh "
-                        "Choices are <gmsh|dealii|periodic_hills>.");
+                        "Choices are <gmsh|dealii|periodic_hills|cylinder>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -1406,6 +1407,8 @@ namespace Parameters
           type = Type::dealii;
         else if (op == "periodic_hills")
           type = Type::periodic_hills;
+        else if (op == "cylinder")
+          type = Type::cylinder;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");
