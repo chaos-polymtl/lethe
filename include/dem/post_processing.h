@@ -17,6 +17,7 @@
 #ifndef dem_post_processing_h
 #define dem_post_processing_h
 
+#include <core/utilities.h>
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
@@ -31,8 +32,8 @@ using namespace dealii;
 namespace DEM
 {
   template <int dim>
-  double
-  calculate_total_granular_kinetic_energy(
+  statistics
+  calculate_granular_kinetic_energy(
     const Particles::ParticleHandler<dim> &particle_handler,
     const MPI_Comm &                       mpi_communicator);
 }

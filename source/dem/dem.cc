@@ -14,9 +14,10 @@
  * ---------------------------------------------------------------------
  */
 
+#include <core/utilities.h>
 #include <core/manifolds.h>
 #include <core/solutions_output.h>
-#include <core/utilities.h>
+#include <dem/post_processing.h>
 
 #include <dem/data_containers.h>
 #include <dem/dem.h>
@@ -29,11 +30,7 @@
 #include <dem/localize_contacts.h>
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
-#include <dem/particle_particle_linear_force.h>
-#include <dem/particle_particle_nonlinear_force.h>
-#include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
-#include <dem/periodic_boundaries_manipulator.h>
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -47,7 +44,6 @@
 
 #include <deal.II/fe/mapping_q_generic.h>
 
-#include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 
 #include <sys/stat.h>
@@ -818,6 +814,32 @@ DEMSolver<dim>::post_process_results()
 
 template <int dim>
 void
+DEMSolver<dim>::report_statistics()
+{
+  statistics kinetic_energy = calculate_granular_kinetic_energy(particle_handler,mpi_communicator);
+
+  if (this_mpi_process==0)
+    {
+      TableHandler report;
+
+      report.declare_column("Variable");
+      report.declare_column("Min");
+      report.declare_column("Max");
+      report.declare_column("Average");
+      report.declare_column("Total");
+      add_statistics_to_table_handler("Kinetic Energy",kinetic_energy,report);
+
+      report.set_scientific("Min",true);
+      report.set_scientific("Max",true);
+      report.set_scientific("Average",true);
+      report.set_scientific("Total",true);
+
+      report.write_text(std::cout);
+    }
+}
+
+template <int dim>
+void
 DEMSolver<dim>::solve()
 {
   // Reading mesh
@@ -912,6 +934,7 @@ DEMSolver<dim>::solve()
   while (simulation_control->integrate())
     {
       simulation_control->print_progression(pcout);
+      if (simulation_control->is_verbose_iteration()) report_statistics();
 
       // Grid motion
       if (parameters.grid_motion.motion_type !=

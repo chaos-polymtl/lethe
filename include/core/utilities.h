@@ -27,7 +27,33 @@
 
 using namespace dealii;
 
+/**
+ * @brief Small structure used to house statistics (min,max,total,average) that are used in multiple simulations
+ */
 
+struct statistics
+{
+  double min;
+  double max;
+  double total;
+  double average;
+};
+
+
+/**
+ * @brief add_statistics_to_table_handler Add statistics to a TableHandler under the indicated variable name
+ */
+
+inline void
+  add_statistics_to_table_handler(const std::string variable, const statistics stats, TableHandler& table)
+{
+    table.add_value("Variable",variable);
+    table.add_value("Min", stats.min);
+    table.add_value("Max", stats.max);
+    table.add_value("Total", stats.total);
+    table.add_value("Average", stats.average);
+
+};
 
 /**
  * @brief Generate a table from a vector of scalar and a vector of tensor<1,dim>
@@ -188,3 +214,4 @@ create_output_folder(const std::string &dirname);
 
 
 #endif
+

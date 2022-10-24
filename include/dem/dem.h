@@ -254,10 +254,17 @@ private:
   write_output_results();
 
   /**
-   * @brief post_process_results
+   * @brief post_process_results Calculates average velocity and other post-processed quantities that need to be outputted to files
    */
   void
   post_process_results();
+
+
+  /**
+   * @brief reports_statistics Calculates statistics on the particles and report them to the terminal. This function is notably used to calculate min/max/avg/total values of the linear kinetic energy, angular kinetic energy, linear velocity, angular velocity
+   */
+  void
+  report_statistics();
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
