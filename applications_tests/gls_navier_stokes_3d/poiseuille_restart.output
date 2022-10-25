@@ -10,7 +10,7 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      6.24289
 
 *****************************************************************
-Transient iteration : 16       Time : 1.6      Time step : 0.1      CFL : 5.89822 
+Transient iteration : 16       Time : 1.6      Time step : 0.1      CFL : 5.91667 
 *****************************************************************
 +------------------------------------------+
 |  Flow control summary                    |
