@@ -12,11 +12,13 @@ In `Example 4 <./rotating-drum-with-post-processing/rotating-drum-with-post-proc
 
 In `Example 5 <./rotation-of-box/rotation-of-box.html>`_ (rotation of box), we simulate the dynamics of particles in a rotating box. The key difference between `Example 3 <./rotating-drum/rotating-drum.html>`_ and `Example 5 <./rotation-of-box/rotation-of-box.html>`_ is that `Example 3 <./rotating-drum/rotating-drum.html>`_ uses a ``rotational`` boundary condition to simulate the rotating drum, while `Example 5 <./rotation-of-box/rotation-of-box.html>`_ uses a rotation of triangulation (``grid motion``). 
 
-In `Example 6 <./silo/silo.html>`_ (silo), we simulate the filling (using a ``floating wall``) and discharge of particles in a wedge-shaped silo. 
+In `Example 6 <./3d-small-scale-rotating-drum/3d-small-scale-rotating-drum.html>`_ (small-scale rotating drum (3D)), we simulate the behavior of particles in a small scale rotating drum subjected to a rotational angular velocity over the cylinder.
 
-In `Example 7 <./3d-small-scale-rotating-drum/3d-small-scale-rotating-drum.html>`_ (small scale rotating drum (3D)), we simulate the behaviour of particles in a small scale rotating drum subjected to a rotational angular velocity over the cylinder. 
+In `Example 7 <./silo/silo.html>`_ (silo), we simulate the filling (using a ``floating wall``) and discharge of particles in a wedge-shaped silo.
 
-The `granular mixer example <./granular-mixer/granular-mixer.html>`_ simulates mixing of two particle types using a pitched-blade impeller.
+In `Example 8 <./rectangular-hopper/rectangular-hopper.html>`_ (rectangular hopper), we simulate the discharge of particles in a rectangular hopper and we post-processed results with PyVista <https://docs.pyvista.org/>`_ to get the mass discharge rate.
+
+In `Example 9 <./granular-mixer/granular-mixer.html>`_ (granular mixer) we simulate mixing of two particle types using a pitched-blade impeller.
 
 
 .. toctree::
@@ -30,5 +32,6 @@ The `granular mixer example <./granular-mixer/granular-mixer.html>`_ simulates m
     rotating-drum-with-post-processing/rotating-drum-with-post-processing
     rotation-of-box/rotation-of-box
     silo/silo
+    rectangular-hopper/rectangular-hopper
     3d-small-scale-rotating-drum/3d-small-scale-rotating-drum
     granular-mixer/granular-mixer
