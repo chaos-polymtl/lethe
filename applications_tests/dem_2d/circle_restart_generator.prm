@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 0.00001
-  set time end       					 = 0.9
+  set time end       					 = 0.5
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -14,8 +14,8 @@ end
 # Restart
 #---------------------------------------------------
 subsection restart
-	set restart       				 = true
-  	set checkpoint       		     = false
+	set restart       				 = false
+  	set checkpoint       		     = true
     set frequency = 1000
 
 	set filename      				 = circle_restart

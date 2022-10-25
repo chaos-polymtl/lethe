@@ -13,34 +13,34 @@ Running on 1 MPI rank(s)...
 Reading heat transfer checkpoint
 
 *****************************************************************
-Transient iteration : 6        Time : 0.6      Time step : 0.1      CFL : 0       
+Transient iteration : 7        Time : 0.6      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 2.4385e-07
+L2 error temperature : 6.5055e-09
 
 *****************************************************************
-Transient iteration : 7        Time : 0.7      Time step : 0.1      CFL : 0       
+Transient iteration : 8        Time : 0.7      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 3.05246e-08
+L2 error temperature : 5.83436e-09
 
 *****************************************************************
-Transient iteration : 8        Time : 0.8      Time step : 0.1      CFL : 0       
+Transient iteration : 9        Time : 0.8      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 5.64154e-10
+L2 error temperature : 5.13781e-09
 
 *****************************************************************
-Transient iteration : 9        Time : 0.9      Time step : 0.1      CFL : 0       
+Transient iteration : 10       Time : 0.9      Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 4.72197e-09
+L2 error temperature : 4.42884e-09
 
 *****************************************************************
-Transient iteration : 10       Time : 1        Time step : 0.1      CFL : 0       
+Transient iteration : 11       Time : 1        Time step : 0.1      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 5.05833e-09
+L2 error temperature : 3.71907e-09
  time  error_velocity 
 0.6000 0.000000e+00   
 0.7000 0.000000e+00   
@@ -48,8 +48,8 @@ L2 error temperature : 5.05833e-09
 0.9000 0.000000e+00   
 1.0000 0.000000e+00   
 cells error_temperature 
-256   2.438505e-07      
-256   3.052461e-08      
-256   5.641540e-10      
-256   4.721966e-09      
-256   5.058333e-09      
+256   6.505499e-09      
+256   5.834362e-09      
+256   5.137808e-09      
+256   4.428839e-09      
+256   3.719074e-09      

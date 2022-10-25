@@ -6,6 +6,7 @@ file(COPY two-bar-mixer-restart/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_
 file(COPY two-bar-mixer-restart/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
+file(COPY two-bar-mixer-restart/restart.triangulation_variable.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart_solid_particles_00.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart_solid_particles_01.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
