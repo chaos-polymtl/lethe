@@ -18,6 +18,7 @@
 #define dem_post_processing_h
 
 #include <core/utilities.h>
+
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
@@ -31,10 +32,20 @@ using namespace dealii;
 
 namespace DEM
 {
-  template <int dim>
+  enum class dem_statistic_variable
+  {
+    translational_kinetic_energy,
+    rotational_kinetic_energy,
+    velocity,
+    omega,
+  };
+
+  template <int dim, dem_statistic_variable var>
   statistics
-  calculate_granular_kinetic_energy(
+  calculate_granular_statistics(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const MPI_Comm &                       mpi_communicator);
-}
+    const MPI_Comm                        &mpi_communicator);
+
+
+} // namespace DEM
 #endif

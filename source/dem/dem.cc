@@ -816,7 +816,11 @@ template <int dim>
 void
 DEMSolver<dim>::report_statistics()
 {
-  statistics kinetic_energy = calculate_granular_kinetic_energy(particle_handler,mpi_communicator);
+  statistics translational_kinetic_energy = calculate_granular_statistics<dim,DEM::dem_statistic_variable::translational_kinetic_energy>(particle_handler, mpi_communicator);
+  statistics rotational_kinetic_energy = calculate_granular_statistics<dim,DEM::dem_statistic_variable::rotational_kinetic_energy>(particle_handler, mpi_communicator);
+  statistics velocity = calculate_granular_statistics<dim,DEM::dem_statistic_variable::velocity>(particle_handler, mpi_communicator);
+  statistics omega = calculate_granular_statistics<dim,DEM::dem_statistic_variable::omega>(particle_handler, mpi_communicator);
+
 
   if (this_mpi_process==0)
     {
@@ -827,7 +831,15 @@ DEMSolver<dim>::report_statistics()
       report.declare_column("Max");
       report.declare_column("Average");
       report.declare_column("Total");
-      add_statistics_to_table_handler("Kinetic Energy",kinetic_energy,report);
+      add_statistics_to_table_handler("Velocity magnitude",
+                                      velocity,report);
+      add_statistics_to_table_handler("Angular velocity magnitude",
+                                      omega,report);
+      add_statistics_to_table_handler("Translational kinetic energy",
+                                      translational_kinetic_energy,report);
+      add_statistics_to_table_handler("Rotational kinetic energy",
+                                      rotational_kinetic_energy,report);
+
 
       report.set_scientific("Min",true);
       report.set_scientific("Max",true);
