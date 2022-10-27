@@ -31,8 +31,12 @@ using namespace dealii;
  * @brief Small structure used to house statistics (min,max,total,average) that are used in multiple simulations
  */
 
-struct statistics
+class statistics
 {
+
+public:
+  statistics(): min(0),max(0),total(0),average(0){}
+
   double min;
   double max;
   double total;

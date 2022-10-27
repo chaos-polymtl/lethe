@@ -372,6 +372,10 @@ private:
   PVDHandler      grid_pvdhandler;
   bool            floating_mesh;
 
+  // Storage of statistics about time and contact lists
+  statistics contact_list;
+  statistics simulation_time;
+
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
 };

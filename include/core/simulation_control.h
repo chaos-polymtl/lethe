@@ -387,6 +387,12 @@ public:
     return subdivision;
   }
 
+  unsigned int
+  get_log_frequency() const
+  {
+    return log_frequency;
+  }
+
   Parameters::SimulationControl::TimeSteppingMethod
   get_assembly_method() const
   {

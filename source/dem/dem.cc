@@ -206,6 +206,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Resize particle_floating_mesh_in_contact
   if (floating_mesh)
     particle_floating_mesh_in_contact.resize(solids.size());
+
 }
 
 template <int dim>
@@ -626,8 +627,6 @@ DEMSolver<dim>::finish_simulation()
   if (parameters.timer.type == Parameters::Timer::Type::end)
     {
       this->computing_timer.print_summary();
-      pcout << "Total number of contact builds is: " << contact_build_number
-            << std::endl;
     }
 
   // Testing
@@ -816,11 +815,20 @@ template <int dim>
 void
 DEMSolver<dim>::report_statistics()
 {
+  // Update statistics on contact list
+  double number_of_list_built_since_last_log = double(contact_build_number) - contact_list.total;
+  contact_list.max = std::max(number_of_list_built_since_last_log,contact_list.max);
+  contact_list.min = std::min(number_of_list_built_since_last_log,contact_list.min);
+  contact_list.total += number_of_list_built_since_last_log;
+  contact_list.average = contact_list.total  / (simulation_control->get_step_number()) * simulation_control->get_log_frequency();
+
+  // Update statistics on time
+
+  // Calculate statistics on the particles
   statistics translational_kinetic_energy = calculate_granular_statistics<dim,DEM::dem_statistic_variable::translational_kinetic_energy>(particle_handler, mpi_communicator);
   statistics rotational_kinetic_energy = calculate_granular_statistics<dim,DEM::dem_statistic_variable::rotational_kinetic_energy>(particle_handler, mpi_communicator);
   statistics velocity = calculate_granular_statistics<dim,DEM::dem_statistic_variable::velocity>(particle_handler, mpi_communicator);
   statistics omega = calculate_granular_statistics<dim,DEM::dem_statistic_variable::omega>(particle_handler, mpi_communicator);
-
 
   if (this_mpi_process==0)
     {
@@ -831,6 +839,8 @@ DEMSolver<dim>::report_statistics()
       report.declare_column("Max");
       report.declare_column("Average");
       report.declare_column("Total");
+      add_statistics_to_table_handler("Contact list generation",
+                                      contact_list,report);
       add_statistics_to_table_handler("Velocity magnitude",
                                       velocity,report);
       add_statistics_to_table_handler("Angular velocity magnitude",
@@ -841,12 +851,19 @@ DEMSolver<dim>::report_statistics()
                                       rotational_kinetic_energy,report);
 
 
+
       report.set_scientific("Min",true);
       report.set_scientific("Max",true);
       report.set_scientific("Average",true);
       report.set_scientific("Total",true);
 
-      report.write_text(std::cout);
+      report.write_text(std::cout,dealii::TableHandler::org_mode_table);
+    }
+
+  // Timer output
+  if (parameters.timer.type == Parameters::Timer::Type::iteration)
+    {
+      this->computing_timer.print_summary();
     }
 }
 
