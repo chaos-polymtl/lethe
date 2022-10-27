@@ -722,28 +722,34 @@ ParticleParticleHertzMindlinLimitForce<dim>::
     {
       if (!adjacent_particles_list.empty())
         {
+          // Gather information about particle 1 and set it up.
+          auto first_contact_info = adjacent_particles_list.begin();
+          auto     particle_one = first_contact_info->second.particle_one;
+          auto     particle_one_properties = particle_one->get_properties();
+          Point<3> particle_one_location;
+          if constexpr (dim == 3)
+            particle_one_location = particle_one->get_location();
+          if constexpr (dim == 2)
+            particle_one_location =
+              point_nd_to_3d(particle_one->get_location());
+
+          // Pre-allocate memory for Particle 2 location
+          Point<3> particle_two_location;
+
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and properties) of particle one
-              // and two in contact
-              auto     particle_one = contact_info.particle_one;
+              // Getting information (location and properties) of particle two in contact
               auto     particle_two = contact_info.particle_two;
-              Point<3> particle_one_location;
-              Point<3> particle_two_location;
-              auto     particle_one_properties = particle_one->get_properties();
               auto     particle_two_properties = particle_two->get_properties();
 
               if constexpr (dim == 3)
                 {
-                  particle_one_location = particle_one->get_location();
                   particle_two_location = particle_two->get_location();
                 }
 
               if constexpr (dim == 2)
                 {
-                  particle_one_location =
-                    point_nd_to_3d(particle_one->get_location());
                   particle_two_location =
                     point_nd_to_3d(particle_two->get_location());
                 }
