@@ -726,15 +726,20 @@ ParticleParticleHertzMindlinLimitForce<dim>::
           auto first_contact_info = adjacent_particles_list.begin();
           auto     particle_one = first_contact_info->second.particle_one;
           auto     particle_one_properties = particle_one->get_properties();
-          Point<3> particle_one_location;
-          if constexpr (dim == 3)
-            particle_one_location = particle_one->get_location();
-          if constexpr (dim == 2)
-            particle_one_location =
-              point_nd_to_3d(particle_one->get_location());
 
-          // Pre-allocate memory for Particle 2 location
-          Point<3> particle_two_location;
+          types::particle_index particle_one_id =
+            particle_one->get_local_index();
+          Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+          Tensor<1, 3> &particle_one_force  = force[particle_one_id];
+
+          // Fix particle one location for 2d and 3d
+          Point<3> particle_one_location = [&]{
+            if constexpr (dim==3) {
+                return particle_one->get_location();
+              }
+            else {
+                return (point_nd_to_3d(particle_one->get_location()));
+              }}();
 
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
@@ -743,16 +748,14 @@ ParticleParticleHertzMindlinLimitForce<dim>::
               auto     particle_two = contact_info.particle_two;
               auto     particle_two_properties = particle_two->get_properties();
 
-              if constexpr (dim == 3)
-                {
-                  particle_two_location = particle_two->get_location();
-                }
-
-              if constexpr (dim == 2)
-                {
-                  particle_two_location =
-                    point_nd_to_3d(particle_two->get_location());
-                }
+              // Pre-allocate memory for Particle 2 location
+              Point<3> particle_two_location = [&]{
+                if constexpr (dim==3) {
+                    return particle_two->get_location();
+                  }
+                else {
+                    return (point_nd_to_3d(particle_two->get_location()));
+                  }}();
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -790,20 +793,10 @@ ParticleParticleHertzMindlinLimitForce<dim>::
                     rolling_resistance_torque);
 
                   // Getting particles' torque and force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-                  types::particle_index particle_one_id =
-                    particle_one->get_id();
-                  types::particle_index particle_two_id =
-                    particle_two->get_id();
-#else
-                  types::particle_index particle_one_id =
-                    particle_one->get_local_index();
                   types::particle_index particle_two_id =
                     particle_two->get_local_index();
-#endif
-                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
                   Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
 
