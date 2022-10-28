@@ -55,7 +55,7 @@ public:
 inline void
 add_statistics_to_table_handler(const std::string variable,
                                 const statistics  stats,
-                                TableHandler     &table)
+                                TableHandler &    table)
 {
   table.add_value("Variable", variable);
   table.add_value("Min", stats.min);
@@ -82,20 +82,20 @@ add_statistics_to_table_handler(const std::string variable,
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T>              &independent_values,
-  const std::string                 &independent_column_name,
+  const std::vector<T> &             independent_values,
+  const std::string &                independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
+  const std::vector<std::string> &   dependent_column_name,
   const unsigned int                 display_precision);
 
 
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T>                           &independent_values,
-  const std::string                              &independent_column_name,
+  const std::vector<T> &                          independent_values,
+  const std::string &                             independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vector,
-  const std::vector<std::string>                 &dependent_column_name,
+  const std::vector<std::string> &                dependent_column_name,
   const unsigned int                              display_precision);
 
 /**
@@ -119,9 +119,9 @@ template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
+  const std::vector<std::string> &   independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string>    &dependent_column_name,
+  const std::vector<std::string> &   dependent_column_name,
   const unsigned int                 display_precision);
 
 
@@ -144,9 +144,9 @@ template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string>    &independent_column_name,
-  const std::vector<double>         &dependent_values,
-  const std::string                 &dependent_column_name,
+  const std::vector<std::string> &   independent_column_name,
+  const std::vector<double> &        dependent_values,
+  const std::string &                dependent_column_name,
   const unsigned int                 display_precision);
 
 
@@ -194,7 +194,7 @@ calculate_point_property(const double phase,
  *   @param delimiter The delimiter used to read the table.
  */
 void
-fill_table_from_file(TableHandler     &table,
+fill_table_from_file(TableHandler &    table,
                      const std::string file_name,
                      const std::string delimiter = " ");
 
