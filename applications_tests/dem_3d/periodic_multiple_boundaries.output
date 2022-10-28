@@ -18,7 +18,7 @@ Transient iteration : 10000    Time : 0.15     Time step : 1.5e-05
 | Contact list generation      | 0.0000e+00 | 2.0800e+02  | 2.0800e+02 | 2.0800e+02 | 
 | Velocity magnitude           | 2.1211e+00 | 2.1211e+00  | 2.1211e+00 | 4.2422e+00 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
-| Translational kinetic energy | 2.4846e-03 | 2.4846e-03  | 2.4846e-03 | 4.9691e-03 | 
+| Translational kinetic energy | 1.2423e-03 | 1.2423e-03  | 1.2423e-03 | 2.4846e-03 | 
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 id, type, dp, x, y, z 
 0 0 0.00750 0.0400 0.0200 0.0400
