@@ -23,15 +23,14 @@
 
 using namespace dealii;
 
-/**
- * @brief Calculate total kinetic energy of particles
- *
- * @param particle_handler A reference to the particle handler being used for DEM
- * @param mpi_communicator
- */
 
 namespace DEM
 {
+
+/**
+* @brief enum that is used to identify which variables are calculated in the granular statistics
+*
+*/
   enum class dem_statistic_variable
   {
     translational_kinetic_energy,
@@ -40,6 +39,19 @@ namespace DEM
     omega,
   };
 
+/**
+* @brief Calculate statistics on a DEM ParticleHandler. At the moment, the following statistics are supported:
+ * - Translational kinetic energy
+ * - Rotational (angular) kinetic energy
+ * - Translational velocity
+ * - Rotational (angular) velocity
+*
+* @tparam dim Dimensionality of the problem (2D or 3D)
+* @tparam dem_statistics_variable Enum variable used to identify which granular statistics is being calculated
+*
+* @param particle_handler A reference to the particle handler being used for DEM
+* @param mpi_communicator The MPI communicator
+*/
   template <int dim, dem_statistic_variable var>
   statistics
   calculate_granular_statistics(

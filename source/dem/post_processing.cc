@@ -30,7 +30,8 @@ namespace DEM
             for (unsigned d = 0; d < dim; ++d)
               velocity[d] = particle_properties[DEM::PropertiesIndex::v_x + d];
 
-            variable = particle_properties[DEM::PropertiesIndex::mass] *
+            // Kinetic energy is 0.5*m*u^2
+            variable = 0.5*particle_properties[DEM::PropertiesIndex::mass] *
                        velocity.norm_square();
           }
         if constexpr (var == dem_statistic_variable::rotational_kinetic_energy)
@@ -48,6 +49,7 @@ namespace DEM
                     particle_properties[DEM::PropertiesIndex::omega_x + d];
               }
 
+            // Kinetic energy is 0.1*m*d^2 * w^2
             variable = 0.1 * particle_properties[DEM::PropertiesIndex::mass] *
                        Utilities::fixed_power<2>(
                          particle_properties[DEM::PropertiesIndex::dp]) *
