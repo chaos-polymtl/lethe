@@ -31,7 +31,7 @@ namespace DEM
               velocity[d] = particle_properties[DEM::PropertiesIndex::v_x + d];
 
             // Kinetic energy is 0.5*m*u^2
-            variable = 0.5*particle_properties[DEM::PropertiesIndex::mass] *
+            variable = 0.5 * particle_properties[DEM::PropertiesIndex::mass] *
                        velocity.norm_square();
           }
         if constexpr (var == dem_statistic_variable::rotational_kinetic_energy)

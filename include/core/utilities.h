@@ -29,8 +29,9 @@ using namespace dealii;
 
 /**
  * @brief Small class that is used to store statistics (min,max,total,average) of variables that are used in simulations.
- * This small class allows us to agglomerate the statistics instead of returning tuples.
- * For example, this class is used to store the kinetic energy of the particles in the DEM model.
+ * This small class allows us to agglomerate the statistics instead of returning
+ * tuples. For example, this class is used to store the kinetic energy of the
+ * particles in the DEM model.
  */
 
 class statistics
