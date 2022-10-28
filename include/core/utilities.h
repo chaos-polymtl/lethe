@@ -33,9 +33,13 @@ using namespace dealii;
 
 class statistics
 {
-
 public:
-  statistics(): min(0),max(0),total(0),average(0){}
+  statistics()
+    : min(0)
+    , max(0)
+    , total(0)
+    , average(0)
+  {}
 
   double min;
   double max;
@@ -49,14 +53,15 @@ public:
  */
 
 inline void
-  add_statistics_to_table_handler(const std::string variable, const statistics stats, TableHandler& table)
+add_statistics_to_table_handler(const std::string variable,
+                                const statistics  stats,
+                                TableHandler &    table)
 {
-    table.add_value("Variable",variable);
-    table.add_value("Min", stats.min);
-    table.add_value("Max", stats.max);
-    table.add_value("Total", stats.total);
-    table.add_value("Average", stats.average);
-
+  table.add_value("Variable", variable);
+  table.add_value("Min", stats.min);
+  table.add_value("Max", stats.max);
+  table.add_value("Total", stats.total);
+  table.add_value("Average", stats.average);
 };
 
 /**
@@ -218,4 +223,3 @@ create_output_folder(const std::string &dirname);
 
 
 #endif
-
