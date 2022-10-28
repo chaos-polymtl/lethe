@@ -826,8 +826,6 @@ DEMSolver<dim>::report_statistics()
                          (simulation_control->get_step_number()) *
                          simulation_control->get_log_frequency();
 
-  // Update statistics on time
-
   // Calculate statistics on the particles
   statistics translational_kinetic_energy = calculate_granular_statistics<
     dim,
