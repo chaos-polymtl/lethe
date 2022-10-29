@@ -87,7 +87,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
       set stop if particles lost = true
 
       # Number of Nitsche (quadrature) points to insert in a 1D cell
-      set number of quadrature points = 2
+      set number quadrature points = 2
     end
   end
 
@@ -182,7 +182,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
 	Particle loss can happen when particles move through multiple cells during a time step. This can be caused by a big ``time step`` (see :doc:`simulation_control`), a high fluid ``mesh refinement`` (see :doc:`mesh`), or a high CFL. To prevent particle loss, try increasing the number of ``particles sub iterations``.
 
-* ``number of quadrature points``: number of Nitsche (quadrature) points to insert in a 1D cell. The number of inserted points will be higher for higher dimensions. Increasing this number will lead to a higher points density inside the solid.
+* ``number quadrature points``: number of Nitsche (quadrature) points to insert in a 1D cell. The number of inserted points will be higher for higher dimensions. Increasing this number will lead to a higher points density inside the solid.
 
 .. seealso::
 	The Nitsche immersed boundary method is used in the examples:
