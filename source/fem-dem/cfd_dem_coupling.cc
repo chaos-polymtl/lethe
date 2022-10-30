@@ -1258,8 +1258,11 @@ CFDDEMSolver<dim>::post_processing()
     {
       this->GLSVANSSolver<dim>::post_processing();
       double particle_total_kinetic_energy =
-        DEM::calculate_total_granular_kinetic_energy(this->particle_handler,
-                                                     this->mpi_communicator);
+        calculate_granular_statistics<
+          dim,
+          DEM::dem_statistic_variable::translational_kinetic_energy>(
+          this->particle_handler, this->mpi_communicator)
+          .total;
 
       this->pcout << "Total particles kinetic energy: "
                   << particle_total_kinetic_energy << std::endl;

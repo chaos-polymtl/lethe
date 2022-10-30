@@ -37,7 +37,7 @@ Finished 100 DEM iterations
 Mass Source: 2.102603355e-14 s^-1
 Max Local Mass Source: 5.779583296e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439758491e-06
+Total particles kinetic energy: 5.684143823e-07
 
 *****************************************************************
 Transient iteration : 52       Time : 0.26     Time step : 0.005    CFL : 0.0001142797093
@@ -62,7 +62,7 @@ Finished 100 DEM iterations
 Mass Source: 2.113172288e-14 s^-1
 Max Local Mass Source: 5.935990369e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439798977e-06
+Total particles kinetic energy: 5.684332475e-07
 
 *****************************************************************
 Transient iteration : 53       Time : 0.265    Time step : 0.005    CFL : 0.0001145688307
@@ -87,7 +87,7 @@ Finished 100 DEM iterations
 Mass Source: 2.128002014e-14 s^-1
 Max Local Mass Source: 6.094668952e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439828515e-06
+Total particles kinetic energy: 5.684470113e-07
 
 *****************************************************************
 Transient iteration : 54       Time : 0.27     Time step : 0.005    CFL : 0.000114900963
@@ -112,7 +112,7 @@ Finished 100 DEM iterations
 Mass Source: 2.146300113e-14 s^-1
 Max Local Mass Source: 6.251812607e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439848783e-06
+Total particles kinetic energy: 5.684564558e-07
 
 *****************************************************************
 Transient iteration : 55       Time : 0.275    Time step : 0.005    CFL : 0.0001152684144
@@ -137,7 +137,7 @@ Finished 100 DEM iterations
 Mass Source: 2.167421561e-14 s^-1
 Max Local Mass Source: 6.405022803e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439861262e-06
+Total particles kinetic energy: 5.684622706e-07
 
 *****************************************************************
 Transient iteration : 56       Time : 0.28     Time step : 0.005    CFL : 0.0001156659753
@@ -162,7 +162,7 @@ Finished 100 DEM iterations
 Mass Source: 2.190851617e-14 s^-1
 Max Local Mass Source: 6.552751465e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439867211e-06
+Total particles kinetic energy: 5.684650425e-07
 
 *****************************************************************
 Transient iteration : 57       Time : 0.285    Time step : 0.005    CFL : 0.0001173368775
@@ -187,7 +187,7 @@ Finished 100 DEM iterations
 Mass Source: 2.216183438e-14 s^-1
 Max Local Mass Source: 6.693977077e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439867685e-06
+Total particles kinetic energy: 5.684652637e-07
 
 *****************************************************************
 Transient iteration : 58       Time : 0.29     Time step : 0.005    CFL : 0.0001201933821
@@ -212,7 +212,7 @@ Finished 100 DEM iterations
 Mass Source: 2.243095978e-14 s^-1
 Max Local Mass Source: 6.828008949e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439863569e-06
+Total particles kinetic energy: 5.684633455e-07
 
 *****************************************************************
 Transient iteration : 59       Time : 0.295    Time step : 0.005    CFL : 0.0001230294829
@@ -237,7 +237,7 @@ Finished 100 DEM iterations
 Mass Source: 2.271334267e-14 s^-1
 Max Local Mass Source: 6.954370889e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439855603e-06
+Total particles kinetic energy: 5.684596336e-07
 
 *****************************************************************
 Transient iteration : 60       Time : 0.3      Time step : 0.005    CFL : 0.0001258465801
@@ -262,7 +262,7 @@ Finished 100 DEM iterations
 Mass Source: 2.30069354e-14 s^-1
 Max Local Mass Source: 7.072735069e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 2.439844416e-06
+Total particles kinetic energy: 5.684544206e-07
 
 *****************************************************************
 Transient iteration : 61       Time : 0.305    Time step : 0.005    CFL : 0.0001286456381
@@ -287,7 +287,7 @@ Finished 100 DEM iterations
 Mass Source: 1.512963371e-14 s^-1
 Max Local Mass Source: 2.129122947e-08 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439856152e-06
+Total particles kinetic energy: 5.684598893e-07
 
 *****************************************************************
 Transient iteration : 62       Time : 0.31     Time step : 0.005    CFL : 0.0001325750778
@@ -312,7 +312,7 @@ Finished 100 DEM iterations
 Mass Source: 2.454700246e-14 s^-1
 Max Local Mass Source: 9.217689261e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439220849e-06
+Total particles kinetic energy: 5.681638905e-07
 
 *****************************************************************
 Transient iteration : 63       Time : 0.315    Time step : 0.005    CFL : 0.0001345749993
@@ -337,7 +337,7 @@ Finished 100 DEM iterations
 Mass Source: 2.551189516e-14 s^-1
 Max Local Mass Source: 6.211132091e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439185291e-06
+Total particles kinetic energy: 5.681473259e-07
 
 *****************************************************************
 Transient iteration : 64       Time : 0.32     Time step : 0.005    CFL : 0.0001308014388
@@ -362,7 +362,7 @@ Finished 100 DEM iterations
 Mass Source: 2.563841118e-14 s^-1
 Max Local Mass Source: 4.974498097e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439251527e-06
+Total particles kinetic energy: 5.681781824e-07
 
 *****************************************************************
 Transient iteration : 65       Time : 0.325    Time step : 0.005    CFL : 0.0001284148098
@@ -387,7 +387,7 @@ Finished 100 DEM iterations
 Mass Source: 2.5902149e-14 s^-1
 Max Local Mass Source: 4.331404122e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439317976e-06
+Total particles kinetic energy: 5.682091387e-07
 
 *****************************************************************
 Transient iteration : 66       Time : 0.33     Time step : 0.005    CFL : 0.000126952071
@@ -412,7 +412,7 @@ Finished 100 DEM iterations
 Mass Source: 2.638657922e-14 s^-1
 Max Local Mass Source: 4.187176877e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439359354e-06
+Total particles kinetic energy: 5.682284161e-07
 
 *****************************************************************
 Transient iteration : 67       Time : 0.335    Time step : 0.005    CFL : 0.0001259317182
@@ -437,7 +437,7 @@ Finished 100 DEM iterations
 Mass Source: 2.708303629e-14 s^-1
 Max Local Mass Source: 4.060287497e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.43936981e-06
+Total particles kinetic energy: 5.682332875e-07
 
 *****************************************************************
 Transient iteration : 68       Time : 0.34     Time step : 0.005    CFL : 0.0001251409995
@@ -462,7 +462,7 @@ Finished 100 DEM iterations
 Mass Source: 2.795528133e-14 s^-1
 Max Local Mass Source: 4.213503071e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439349137e-06
+Total particles kinetic energy: 5.682236559e-07
 
 *****************************************************************
 Transient iteration : 69       Time : 0.345    Time step : 0.005    CFL : 0.0001244812907
@@ -487,7 +487,7 @@ Finished 100 DEM iterations
 Mass Source: 2.89675675e-14 s^-1
 Max Local Mass Source: 4.433658412e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439298788e-06
+Total particles kinetic energy: 5.682001998e-07
 
 *****************************************************************
 Transient iteration : 70       Time : 0.35     Time step : 0.005    CFL : 0.0001239049719
@@ -512,7 +512,7 @@ Finished 100 DEM iterations
 Mass Source: 3.009108322e-14 s^-1
 Max Local Mass Source: 4.650710799e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439220577e-06
+Total particles kinetic energy: 5.681637638e-07
 
 *****************************************************************
 Transient iteration : 71       Time : 0.355    Time step : 0.005    CFL : 0.0001233875836
@@ -537,7 +537,7 @@ Finished 100 DEM iterations
 Mass Source: 3.130394788e-14 s^-1
 Max Local Mass Source: 4.864359105e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.439116224e-06
+Total particles kinetic energy: 5.681151514e-07
 
 *****************************************************************
 Transient iteration : 72       Time : 0.36     Time step : 0.005    CFL : 0.0001229159362
@@ -562,7 +562,7 @@ Finished 100 DEM iterations
 Mass Source: 3.258985657e-14 s^-1
 Max Local Mass Source: 5.074584275e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.438987235e-06
+Total particles kinetic energy: 5.680550653e-07
 
 *****************************************************************
 Transient iteration : 73       Time : 0.365    Time step : 0.005    CFL : 0.0001224825673
@@ -587,7 +587,7 @@ Finished 100 DEM iterations
 Mass Source: 3.39367227e-14 s^-1
 Max Local Mass Source: 5.281461782e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.438834882e-06
+Total particles kinetic energy: 5.679840996e-07
 
 *****************************************************************
 Transient iteration : 74       Time : 0.37     Time step : 0.005    CFL : 0.0001220829982
@@ -612,7 +612,7 @@ Finished 100 DEM iterations
 Mass Source: 3.533560754e-14 s^-1
 Max Local Mass Source: 5.485085351e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.438660227e-06
+Total particles kinetic energy: 5.679027511e-07
 
 *****************************************************************
 Transient iteration : 75       Time : 0.375    Time step : 0.005    CFL : 0.0001217143743
@@ -637,7 +637,7 @@ Finished 100 DEM iterations
 Mass Source: 3.677990789e-14 s^-1
 Max Local Mass Source: 5.685537169e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.438464157e-06
+Total particles kinetic energy: 5.678114354e-07
 
 *****************************************************************
 Transient iteration : 76       Time : 0.38     Time step : 0.005    CFL : 0.0001223268883
@@ -662,7 +662,7 @@ Finished 100 DEM iterations
 Mass Source: 3.826474263e-14 s^-1
 Max Local Mass Source: 5.882879307e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 4.801084946e-07
+Total particles kinetic energy: 2.201152651e-08
 
 *****************************************************************
 Transient iteration : 77       Time : 0.385    Time step : 0.005    CFL : 0.0001251118149
@@ -687,7 +687,7 @@ Finished 100 DEM iterations
 Mass Source: 3.959128846e-14 s^-1
 Max Local Mass Source: 5.77938708e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.501663628e-07
+Total particles kinetic energy: 2.153360317e-09
 
 *****************************************************************
 Transient iteration : 78       Time : 0.39     Time step : 0.005    CFL : 0.0001245088231
@@ -712,7 +712,7 @@ Finished 100 DEM iterations
 Mass Source: 4.078956487e-14 s^-1
 Max Local Mass Source: 5.706451552e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.624308553e-07
+Total particles kinetic energy: 2.519465664e-09
 
 *****************************************************************
 Transient iteration : 79       Time : 0.395    Time step : 0.005    CFL : 0.0001240707848
@@ -737,7 +737,7 @@ Finished 100 DEM iterations
 Mass Source: 4.1892934e-14 s^-1
 Max Local Mass Source: 5.648901675e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 4.670364051e-07
+Total particles kinetic energy: 2.082921254e-08
 
 *****************************************************************
 Transient iteration : 80       Time : 0.4      Time step : 0.005    CFL : 0.0001237276043
@@ -762,7 +762,7 @@ Finished 100 DEM iterations
 Mass Source: 4.293538763e-14 s^-1
 Max Local Mass Source: 5.61125142e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.794883047e-08
+Total particles kinetic energy: 3.206717729e-10
 
 *****************************************************************
 Transient iteration : 81       Time : 0.405    Time step : 0.005    CFL : 0.0001235647792
@@ -787,7 +787,7 @@ Finished 100 DEM iterations
 Mass Source: 4.392310527e-14 s^-1
 Max Local Mass Source: 5.561428555e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.538615542e-09
+Total particles kinetic energy: 2.260641065e-13
 
 *****************************************************************
 Transient iteration : 82       Time : 0.41     Time step : 0.005    CFL : 0.000123225432
@@ -812,7 +812,7 @@ Finished 100 DEM iterations
 Mass Source: 4.48499868e-14 s^-1
 Max Local Mass Source: 5.514808737e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.237085248e-09
+Total particles kinetic energy: 1.461405166e-13
 
 *****************************************************************
 Transient iteration : 83       Time : 0.415    Time step : 0.005    CFL : 0.0001228836608
@@ -837,7 +837,7 @@ Finished 100 DEM iterations
 Mass Source: 4.574545717e-14 s^-1
 Max Local Mass Source: 5.469960896e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.11473049e-09
+Total particles kinetic energy: 1.186618574e-13
 
 *****************************************************************
 Transient iteration : 84       Time : 0.42     Time step : 0.005    CFL : 0.0001225561526
@@ -862,7 +862,7 @@ Finished 100 DEM iterations
 Mass Source: 4.661417677e-14 s^-1
 Max Local Mass Source: 5.426759647e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.032158493e-09
+Total particles kinetic energy: 1.017335415e-13
 
 *****************************************************************
 Transient iteration : 85       Time : 0.425    Time step : 0.005    CFL : 0.0001222393872
@@ -887,7 +887,7 @@ Finished 100 DEM iterations
 Mass Source: 4.746273363e-14 s^-1
 Max Local Mass Source: 5.384808764e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.022074297e-09
+Total particles kinetic energy: 9.975537741e-14
 
 *****************************************************************
 Transient iteration : 86       Time : 0.43     Time step : 0.005    CFL : 0.0001220166316
@@ -912,7 +912,7 @@ Finished 100 DEM iterations
 Mass Source: 4.829503878e-14 s^-1
 Max Local Mass Source: 5.343849377e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.090511049e-09
+Total particles kinetic energy: 1.135616052e-13
 
 *****************************************************************
 Transient iteration : 87       Time : 0.435    Time step : 0.005    CFL : 0.0001220109499
@@ -937,7 +937,7 @@ Finished 100 DEM iterations
 Mass Source: 4.91137544e-14 s^-1
 Max Local Mass Source: 5.303919422e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.214628767e-09
+Total particles kinetic energy: 1.408829728e-13
 
 *****************************************************************
 Transient iteration : 88       Time : 0.44     Time step : 0.005    CFL : 0.0001220029997
@@ -962,7 +962,7 @@ Finished 100 DEM iterations
 Mass Source: 4.992059669e-14 s^-1
 Max Local Mass Source: 5.264743716e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.351100819e-09
+Total particles kinetic energy: 1.743198711e-13
 
 *****************************************************************
 Transient iteration : 89       Time : 0.445    Time step : 0.005    CFL : 0.0001219927743
@@ -987,7 +987,7 @@ Finished 100 DEM iterations
 Mass Source: 5.071672421e-14 s^-1
 Max Local Mass Source: 5.226090926e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.452007497e-09
+Total particles kinetic energy: 2.01330281e-13
 
 *****************************************************************
 Transient iteration : 90       Time : 0.45     Time step : 0.005    CFL : 0.0001219803605
@@ -1012,7 +1012,7 @@ Finished 100 DEM iterations
 Mass Source: 5.150292555e-14 s^-1
 Max Local Mass Source: 5.187887773e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.482406103e-09
+Total particles kinetic energy: 2.098484524e-13
 
 *****************************************************************
 Transient iteration : 91       Time : 0.455    Time step : 0.005    CFL : 0.0001219658585
@@ -1037,7 +1037,7 @@ Finished 100 DEM iterations
 Mass Source: 5.227975242e-14 s^-1
 Max Local Mass Source: 5.150087303e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.433143547e-09
+Total particles kinetic energy: 1.961330432e-13
 
 *****************************************************************
 Transient iteration : 92       Time : 0.46     Time step : 0.005    CFL : 0.0001219493501
@@ -1062,7 +1062,7 @@ Finished 100 DEM iterations
 Mass Source: 5.30476002e-14 s^-1
 Max Local Mass Source: 5.112661109e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.324222615e-09
+Total particles kinetic energy: 1.674531737e-13
 
 *****************************************************************
 Transient iteration : 93       Time : 0.465    Time step : 0.005    CFL : 0.0001219308885
@@ -1087,7 +1087,7 @@ Finished 100 DEM iterations
 Mass Source: 5.38067671e-14 s^-1
 Max Local Mass Source: 5.075592648e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.197480316e-09
+Total particles kinetic energy: 1.36933008e-13
 
 *****************************************************************
 Transient iteration : 94       Time : 0.47     Time step : 0.005    CFL : 0.000121910504
@@ -1112,7 +1112,7 @@ Finished 100 DEM iterations
 Mass Source: 5.455749542e-14 s^-1
 Max Local Mass Source: 5.038871814e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.101246388e-09
+Total particles kinetic energy: 1.158084838e-13
 
 *****************************************************************
 Transient iteration : 95       Time : 0.475    Time step : 0.005    CFL : 0.0001218882152
@@ -1137,7 +1137,7 @@ Finished 100 DEM iterations
 Mass Source: 5.529999816e-14 s^-1
 Max Local Mass Source: 5.002490955e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.072608338e-09
+Total particles kinetic energy: 1.09863573e-13
 
 *****************************************************************
 Transient iteration : 96       Time : 0.48     Time step : 0.005    CFL : 0.0001218640407
@@ -1162,7 +1162,7 @@ Finished 100 DEM iterations
 Mass Source: 5.60344725e-14 s^-1
 Max Local Mass Source: 4.966442461e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.123801855e-09
+Total particles kinetic energy: 1.206009896e-13
 
 *****************************************************************
 Transient iteration : 97       Time : 0.485    Time step : 0.005    CFL : 0.0001218380089
@@ -1187,7 +1187,7 @@ Finished 100 DEM iterations
 Mass Source: 5.676110333e-14 s^-1
 Max Local Mass Source: 4.930717739e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.237726549e-09
+Total particles kinetic energy: 1.462920733e-13
 
 *****************************************************************
 Transient iteration : 98       Time : 0.49     Time step : 0.005    CFL : 0.0001218101644
@@ -1212,7 +1212,7 @@ Finished 100 DEM iterations
 Mass Source: 5.748005999e-14 s^-1
 Max Local Mass Source: 4.899667809e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.374226846e-09
+Total particles kinetic energy: 1.80338411e-13
 
 *****************************************************************
 Transient iteration : 99       Time : 0.495    Time step : 0.005    CFL : 0.0001217805702
@@ -1237,7 +1237,7 @@ Finished 100 DEM iterations
 Mass Source: 5.819149168e-14 s^-1
 Max Local Mass Source: 4.877701141e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.484823613e-09
+Total particles kinetic energy: 2.105334527e-13
 
 *****************************************************************
 Transient iteration : 100      Time : 0.5      Time step : 0.005    CFL : 0.0001217493062
@@ -1262,4 +1262,4 @@ Finished 100 DEM iterations
 Mass Source: 5.889552371e-14 s^-1
 Max Local Mass Source: 4.856099419e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.530488716e-09
+Total particles kinetic energy: 2.236823134e-13
