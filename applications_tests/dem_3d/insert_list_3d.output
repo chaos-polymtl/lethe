@@ -17,6 +17,12 @@ This feature is useful in geometries with concave boundaries.
 *****************************************************************
 Transient iteration : 10000    Time : 0.1      Time step : 1e-05   
 *****************************************************************
+| Variable                     | Min        | Max         | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 7.5000e+01  | 7.5000e+01 | 7.5000e+01 | 
+| Velocity magnitude           | 4.9990e-01 | 9.9990e-01  | 7.4990e-01 | 4.4994e+00 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
+| Translational kinetic energy | 8.1780e-06 | 3.2718e-05  | 2.0448e-05 | 1.2269e-04 | 
+| Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 ***************************************************************** 
 3 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***************************************************************** 

@@ -29,11 +29,8 @@
 #include <dem/localize_contacts.h>
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
-#include <dem/particle_particle_linear_force.h>
-#include <dem/particle_particle_nonlinear_force.h>
-#include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
-#include <dem/periodic_boundaries_manipulator.h>
+#include <dem/post_processing.h>
 #include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -47,7 +44,6 @@
 
 #include <deal.II/fe/mapping_q_generic.h>
 
-#include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 
 #include <sys/stat.h>
@@ -630,8 +626,6 @@ DEMSolver<dim>::finish_simulation()
   if (parameters.timer.type == Parameters::Timer::Type::end)
     {
       this->computing_timer.print_summary();
-      pcout << "Total number of contact builds is: " << contact_build_number
-            << std::endl;
     }
 
   // Testing
@@ -818,6 +812,78 @@ DEMSolver<dim>::post_process_results()
 
 template <int dim>
 void
+DEMSolver<dim>::report_statistics()
+{
+  // Update statistics on contact list
+  double number_of_list_built_since_last_log =
+    double(contact_build_number) - contact_list.total;
+  contact_list.max =
+    std::max(number_of_list_built_since_last_log, contact_list.max);
+  contact_list.min =
+    std::min(number_of_list_built_since_last_log, contact_list.min);
+  contact_list.total += number_of_list_built_since_last_log;
+  contact_list.average = contact_list.total /
+                         (simulation_control->get_step_number()) *
+                         simulation_control->get_log_frequency();
+
+  // Calculate statistics on the particles
+  statistics translational_kinetic_energy = calculate_granular_statistics<
+    dim,
+    DEM::dem_statistic_variable::translational_kinetic_energy>(
+    particle_handler, mpi_communicator);
+  statistics rotational_kinetic_energy = calculate_granular_statistics<
+    dim,
+    DEM::dem_statistic_variable::rotational_kinetic_energy>(particle_handler,
+                                                            mpi_communicator);
+  statistics velocity =
+    calculate_granular_statistics<dim, DEM::dem_statistic_variable::velocity>(
+      particle_handler, mpi_communicator);
+  statistics omega =
+    calculate_granular_statistics<dim, DEM::dem_statistic_variable::omega>(
+      particle_handler, mpi_communicator);
+
+  if (this_mpi_process == 0)
+    {
+      TableHandler report;
+
+      report.declare_column("Variable");
+      report.declare_column("Min");
+      report.declare_column("Max");
+      report.declare_column("Average");
+      report.declare_column("Total");
+      add_statistics_to_table_handler("Contact list generation",
+                                      contact_list,
+                                      report);
+      add_statistics_to_table_handler("Velocity magnitude", velocity, report);
+      add_statistics_to_table_handler("Angular velocity magnitude",
+                                      omega,
+                                      report);
+      add_statistics_to_table_handler("Translational kinetic energy",
+                                      translational_kinetic_energy,
+                                      report);
+      add_statistics_to_table_handler("Rotational kinetic energy",
+                                      rotational_kinetic_energy,
+                                      report);
+
+
+
+      report.set_scientific("Min", true);
+      report.set_scientific("Max", true);
+      report.set_scientific("Average", true);
+      report.set_scientific("Total", true);
+
+      report.write_text(std::cout, dealii::TableHandler::org_mode_table);
+    }
+
+  // Timer output
+  if (parameters.timer.type == Parameters::Timer::Type::iteration)
+    {
+      this->computing_timer.print_summary();
+    }
+}
+
+template <int dim>
+void
 DEMSolver<dim>::solve()
 {
   // Reading mesh
@@ -912,6 +978,8 @@ DEMSolver<dim>::solve()
   while (simulation_control->integrate())
     {
       simulation_control->print_progression(pcout);
+      if (simulation_control->is_verbose_iteration())
+        report_statistics();
 
       // Grid motion
       if (parameters.grid_motion.motion_type !=

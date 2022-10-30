@@ -27,7 +27,45 @@
 
 using namespace dealii;
 
+/**
+ * @brief Small class that is used to store statistics (min,max,total,average) of variables that are used in simulations.
+ * This small class allows us to agglomerate the statistics instead of returning
+ * tuples. For example, this class is used to store the kinetic energy of the
+ * particles in the DEM model.
+ */
 
+class statistics
+{
+public:
+  statistics()
+    : min(0)
+    , max(0)
+    , total(0)
+    , average(0)
+  {}
+
+  double min;
+  double max;
+  double total;
+  double average;
+};
+
+
+/**
+ * @brief add_statistics_to_table_handler Add statistics to a TableHandler under the indicated variable name
+ */
+
+inline void
+add_statistics_to_table_handler(const std::string variable,
+                                const statistics  stats,
+                                TableHandler &    table)
+{
+  table.add_value("Variable", variable);
+  table.add_value("Min", stats.min);
+  table.add_value("Max", stats.max);
+  table.add_value("Total", stats.total);
+  table.add_value("Average", stats.average);
+}
 
 /**
  * @brief Generate a table from a vector of scalar and a vector of tensor<1,dim>
