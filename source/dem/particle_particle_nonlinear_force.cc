@@ -128,32 +128,48 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
     {
       if (!adjacent_particles_list.empty())
         {
+          // Gather information about particle 1 and set it up.
+          auto first_contact_info = adjacent_particles_list.begin();
+          auto particle_one       = first_contact_info->second.particle_one;
+          auto particle_one_properties = particle_one->get_properties();
+
+          types::particle_index particle_one_id =
+            particle_one->get_local_index();
+          Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+          Tensor<1, 3> &particle_one_force  = force[particle_one_id];
+
+          // Fix particle one location for 2d and 3d
+          Point<3> particle_one_location = [&] {
+            if constexpr (dim == 3)
+              {
+                return particle_one->get_location();
+              }
+            else
+              {
+                return (point_nd_to_3d(particle_one->get_location()));
+              }
+          }();
+
+
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto     particle_one = contact_info.particle_one;
-              auto     particle_two = contact_info.particle_two;
-              Point<3> particle_one_location;
-              Point<3> particle_two_location;
-              auto     particle_one_properties = particle_one->get_properties();
-              auto     particle_two_properties = particle_two->get_properties();
+              auto particle_two            = contact_info.particle_two;
+              auto particle_two_properties = particle_two->get_properties();
 
-
-              if constexpr (dim == 3)
-                {
-                  particle_one_location = particle_one->get_location();
-                  particle_two_location = particle_two->get_location();
-                }
-
-              if constexpr (dim == 2)
-                {
-                  particle_one_location =
-                    point_nd_to_3d(particle_one->get_location());
-                  particle_two_location =
-                    point_nd_to_3d(particle_two->get_location());
-                }
+              // Get particle 2 location in dimension independent way
+              Point<3> particle_two_location = [&] {
+                if constexpr (dim == 3)
+                  {
+                    return particle_two->get_location();
+                  }
+                else
+                  {
+                    return (point_nd_to_3d(particle_two->get_location()));
+                  }
+              }();
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -190,21 +206,9 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_two_tangential_torque,
                     rolling_resistance_torque);
 
-                  // Getting particles' torque and force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-                  types::particle_index particle_one_id =
-                    particle_one->get_id();
-                  types::particle_index particle_two_id =
-                    particle_two->get_id();
-#else
-                  types::particle_index particle_one_id =
-                    particle_one->get_local_index();
                   types::particle_index particle_two_id =
                     particle_two->get_local_index();
-#endif
-                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
                   Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
 
@@ -1315,31 +1319,47 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
     {
       if (!adjacent_particles_list.empty())
         {
+          // Gather information about particle 1 and set it up.
+          auto first_contact_info = adjacent_particles_list.begin();
+          auto particle_one       = first_contact_info->second.particle_one;
+          auto particle_one_properties = particle_one->get_properties();
+
+          types::particle_index particle_one_id =
+            particle_one->get_local_index();
+          Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
+          Tensor<1, 3> &particle_one_force  = force[particle_one_id];
+
+          // Fix particle one location for 2d and 3d
+          Point<3> particle_one_location = [&] {
+            if constexpr (dim == 3)
+              {
+                return particle_one->get_location();
+              }
+            else
+              {
+                return (point_nd_to_3d(particle_one->get_location()));
+              }
+          }();
+
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
               // Getting information (location and properties) of particle one
               // and two in contact
-              auto     particle_one = contact_info.particle_one;
-              auto     particle_two = contact_info.particle_two;
-              Point<3> particle_one_location;
-              Point<3> particle_two_location;
-              auto     particle_one_properties = particle_one->get_properties();
-              auto     particle_two_properties = particle_two->get_properties();
+              auto particle_two            = contact_info.particle_two;
+              auto particle_two_properties = particle_two->get_properties();
 
-              if constexpr (dim == 3)
-                {
-                  particle_one_location = particle_one->get_location();
-                  particle_two_location = particle_two->get_location();
-                }
-
-              if constexpr (dim == 2)
-                {
-                  particle_one_location =
-                    point_nd_to_3d(particle_one->get_location());
-                  particle_two_location =
-                    point_nd_to_3d(particle_two->get_location());
-                }
+              // Get particle 2 location in dimension independent way
+              Point<3> particle_two_location = [&] {
+                if constexpr (dim == 3)
+                  {
+                    return particle_two->get_location();
+                  }
+                else
+                  {
+                    return (point_nd_to_3d(particle_two->get_location()));
+                  }
+              }();
 
               // Calculation of normal overlap
               double normal_overlap =
@@ -1375,21 +1395,9 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
                                           particle_two_tangential_torque,
                                           rolling_resistance_torque);
 
-                  // Getting particles' torque and force
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-                  types::particle_index particle_one_id =
-                    particle_one->get_id();
-                  types::particle_index particle_two_id =
-                    particle_two->get_id();
-#else
-                  types::particle_index particle_one_id =
-                    particle_one->get_local_index();
                   types::particle_index particle_two_id =
                     particle_two->get_local_index();
-#endif
-                  Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
                   Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
-                  Tensor<1, 3> &particle_one_force  = force[particle_one_id];
                   Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
 
