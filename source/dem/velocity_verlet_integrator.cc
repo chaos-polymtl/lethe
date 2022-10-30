@@ -9,11 +9,11 @@ template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, 3>              &g,
+  const Tensor<1, 3> &             g,
   const double                     dt,
   const std::vector<Tensor<1, 3>> &torque,
   const std::vector<Tensor<1, 3>> &force,
-  const std::vector<double>       &MOI)
+  const std::vector<double> &      MOI)
 {
   Tensor<1, dim> particle_acceleration;
 
@@ -54,11 +54,11 @@ template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate(
   Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, 3>              &g,
+  const Tensor<1, 3> &             g,
   const double                     dt,
-  std::vector<Tensor<1, 3>>       &torque,
-  std::vector<Tensor<1, 3>>       &force,
-  const std::vector<double>       &MOI)
+  std::vector<Tensor<1, 3>> &      torque,
+  std::vector<Tensor<1, 3>> &      force,
+  const std::vector<double> &      MOI)
 {
   Point<3>     particle_position;
   Tensor<1, 3> dt_g = g * dt;
