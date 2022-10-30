@@ -60,7 +60,6 @@ VelocityVerletIntegrator<dim>::integrate(
   std::vector<Tensor<1, 3>>       &force,
   const std::vector<double>       &MOI)
 {
-  Tensor<1, 3> particle_acceleration;
   Point<3>     particle_position;
   Tensor<1, 3> dt_g = g * dt;
 
@@ -83,20 +82,31 @@ VelocityVerletIntegrator<dim>::integrate(
       if constexpr (dim == 2)
         particle_position = point_nd_to_3d(particle.get_location());
 
-      for (int d = 0; d < 3; ++d)
-        {
-          // Particle velocity integration
-          particle_properties[PropertiesIndex::v_x + d] +=
-            dt_g[d] + (particle_force[d]) * dt_mass_inverse;
+      // Loop is manually unrolled for performance reason.
+      // for (int d = 0; d < 3; ++d)
+      {
+        // Particle velocity integration
+        particle_properties[PropertiesIndex::v_x] +=
+          dt_g[0] + particle_force[0] * dt_mass_inverse;
+        particle_properties[PropertiesIndex::v_y] +=
+          dt_g[1] + particle_force[1] * dt_mass_inverse;
+        particle_properties[PropertiesIndex::v_z] +=
+          dt_g[2] + particle_force[2] * dt_mass_inverse;
 
-          // Particle location integration
-          particle_position[d] +=
-            particle_properties[PropertiesIndex::v_x + d] * dt;
 
-          // Updating angular velocity
-          particle_properties[PropertiesIndex::omega_x + d] +=
-            particle_torque[d] * dt_MOI_inverse;
-        }
+        // Particle location integration
+        particle_position[0] += particle_properties[PropertiesIndex::v_x] * dt;
+        particle_position[1] += particle_properties[PropertiesIndex::v_y] * dt;
+        particle_position[2] += particle_properties[PropertiesIndex::v_z] * dt;
+
+        // Updating angular velocity
+        particle_properties[PropertiesIndex::omega_x] +=
+          particle_torque[0] * dt_MOI_inverse;
+        particle_properties[PropertiesIndex::omega_y] +=
+          particle_torque[1] * dt_MOI_inverse;
+        particle_properties[PropertiesIndex::omega_z] +=
+          particle_torque[2] * dt_MOI_inverse;
+      }
 
       // Reinitialize force
       particle_force = 0;
