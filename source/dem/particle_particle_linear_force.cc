@@ -137,8 +137,8 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
           for (auto &&contact_info :
                adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Getting information (location and properties) of particle one
-              // and two in contact
+              // Getting information (location and properties) of particle 2 in 
+              // contact with particle 1
               auto particle_two            = contact_info.particle_two;
               auto particle_two_properties = particle_two->get_properties();
 

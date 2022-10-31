@@ -142,11 +142,10 @@ protected:
     const Point<3> &                            particle_two_location,
     const double                                dt)
   {
-    // Calculation of the contact vector (vector from particle one to particle
-    // two
+    // Calculation of the contact vector from particle one to particle two
     auto contact_vector = particle_two_location - particle_one_location;
 
-    // Using contact_vector, the contact normal vector is obtained
+    // Calculation of the normal unit contact vector
     normal_unit_vector = contact_vector / contact_vector.norm();
 
     // Defining velocities and angular velocities of particles one and
@@ -157,7 +156,7 @@ protected:
     // Defining relative contact velocity
     Tensor<1, 3> contact_relative_velocity;
 
-    // Finding velocities and angular velocities of particles
+    // Assigning velocities and angular velocities of particles
     particle_one_velocity[0] = particle_one_properties[PropertiesIndex::v_x];
     particle_one_velocity[1] = particle_one_properties[PropertiesIndex::v_y];
     particle_one_velocity[2] = particle_one_properties[PropertiesIndex::v_z];
@@ -176,6 +175,7 @@ protected:
 
 
     // Calculation of contact relative velocity
+    // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
     contact_relative_velocity =
       (particle_one_velocity - particle_two_velocity) +
       (cross_product_3d(0.5 * (particle_one_properties[PropertiesIndex::dp] *
@@ -193,6 +193,7 @@ protected:
       contact_relative_velocity * normal_unit_vector;
 
     // Calculation of tangential relative velocity
+    // v_rt = v_ij - (v_ij⋅n_ij)*n_ij
     contact_info.tangential_relative_velocity =
       contact_relative_velocity -
       (normal_relative_velocity_value * normal_unit_vector);
@@ -205,6 +206,7 @@ protected:
     // which were already in contact (pairs_in_contact) needs to
     // modified using its history, while the tangential_overlaps of
     // new particles are equal to zero
+    // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_overlap +=
       contact_info.tangential_relative_velocity * dt;
   }

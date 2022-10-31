@@ -61,7 +61,7 @@ VelocityVerletIntegrator<dim>::integrate(
   const std::vector<double> &      MOI)
 {
   Point<3>     particle_position;
-  Tensor<1, 3> dt_g = g * dt;
+  const Tensor<1, 3> dt_g = g * dt;
 
   for (auto &particle : particle_handler)
     {
