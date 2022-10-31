@@ -85,13 +85,11 @@ The particles (226080 particles) are monodispersed, their diameter and density a
                 set poisson ratio particles          	= 0.24
                 set restitution coefficient particles	= 0.97
                 set friction coefficient particles      = 0.3
-                set rolling friction particles         	= 0.01
         end
         set young modulus wall            				= 100000000
         set poisson ratio wall            				= 0.24
         set restitution coefficient wall           		= 0.85
         set friction coefficient wall         			= 0.35
-        set rolling friction wall         	      	  	= 0.01
     end
 
 

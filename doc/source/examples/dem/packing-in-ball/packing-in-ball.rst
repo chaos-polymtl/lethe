@@ -90,13 +90,11 @@ Gravitational acceleration has three components in three directions.
                 set poisson ratio particles          	= 0.3
                 set restitution coefficient particles	= 0.75
                 set friction coefficient particles      = 0.3
-                set rolling friction particles          = 0.1
         end
         set young modulus wall            				= 10000000
         set poisson ratio wall            				= 0.3
         set restitution coefficient wall           		= 0.75
         set friction coefficient wall         			= 0.3
-        set rolling friction wall         	     		= 0.1
     end
 
 
