@@ -296,6 +296,9 @@ GLSNavierStokesSolver<dim>::define_non_zero_constraints()
           }
       }
   }
+
+  this->establish_solid_domain(true);
+
   nonzero_constraints.close();
 }
 
@@ -372,6 +375,9 @@ GLSNavierStokesSolver<dim>::define_zero_constraints()
             this->fe->component_mask(velocities));
         }
     }
+
+  this->establish_solid_domain(false);
+
   this->zero_constraints.close();
 }
 
@@ -686,11 +692,13 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   copy_data.reset();
 
 
-  for (auto &assembler : this->assemblers)
+  if (cell->material_id() != 1)
     {
-      assembler->assemble_matrix(scratch_data, copy_data);
+      for (auto &assembler : this->assemblers)
+        {
+          assembler->assemble_matrix(scratch_data, copy_data);
+        }
     }
-
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
@@ -864,10 +872,12 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   copy_data.reset();
 
-
-  for (auto &assembler : this->assemblers)
+  if (cell->material_id() != 1)
     {
-      assembler->assemble_rhs(scratch_data, copy_data);
+      for (auto &assembler : this->assemblers)
+        {
+          assembler->assemble_rhs(scratch_data, copy_data);
+        }
     }
 
 

@@ -353,6 +353,12 @@ protected:
   check_existance_of_bc(BoundaryConditions::BoundaryType bc);
 
   /**
+   * @brief Turn material_id=1 to a solid block by injecting it into the constraints
+   */
+  void
+  establish_solid_domain(bool non_zero_constraints);
+
+  /**
    * @brief write_checkpoint
    */
   virtual void
@@ -417,14 +423,14 @@ protected:
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
+  AffineConstraints<double> nonzero_constraints;
 
   // Present solution and non-linear solution components
-  VectorType                evaluation_point;
-  VectorType                local_evaluation_point;
-  VectorType                newton_update;
-  VectorType                present_solution;
-  VectorType                system_rhs;
-  AffineConstraints<double> nonzero_constraints;
+  VectorType evaluation_point;
+  VectorType local_evaluation_point;
+  VectorType newton_update;
+  VectorType present_solution;
+  VectorType system_rhs;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;

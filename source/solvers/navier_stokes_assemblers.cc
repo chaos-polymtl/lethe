@@ -2527,3 +2527,58 @@ OutletBoundaryCondition<dim>::assemble_rhs(
 
 template class OutletBoundaryCondition<2>;
 template class OutletBoundaryCondition<3>;
+
+template <int dim>
+void
+SolidDomain<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto &       JxW_vec      = scratch_data.JxW;
+  const unsigned int n_q_points   = scratch_data.n_q_points;
+  const unsigned int n_dofs       = scratch_data.n_dofs;
+  const double       h            = scratch_data.cell_size;
+  auto &             local_matrix = copy_data.local_matrix;
+
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double JxW = JxW_vec[q];
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              local_matrix(i, j) +=
+                scratch_data.phi_p[q][i] * scratch_data.phi_p[q][j] * JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+SolidDomain<dim>::assemble_rhs(NavierStokesScratchData<dim> &scratch_data,
+                               StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
+
+  // Copy data elements
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+    }
+}
+
+
+
+template class SolidDomain<3>;
+template class SolidDomain<2>;
