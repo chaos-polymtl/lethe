@@ -19,6 +19,7 @@
 #include <core/serial_solid.h>
 
 #include <dem/data_containers.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
@@ -285,50 +286,7 @@ private:
   Tensor<1, 3>                         g;
   double                               triangulation_cell_diameter;
 
-  typename dem_data_structures<dim>::cells_total_neighbor_list
-    total_neighbor_list;
-  typename dem_data_structures<dim>::floating_mesh_information
-    floating_mesh_info;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_ghost_neighbor_list;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_local_neighbor_list;
-  typename dem_data_structures<dim>::particle_floating_mesh_candidates
-    particle_floating_mesh_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-    particle_floating_mesh_in_contact;
-  typename dem_data_structures<dim>::particle_floating_wall_candidates
-    particle_floating_wall_candidates;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_floating_wall_in_contact;
-  typename dem_data_structures<dim>::particle_wall_candidates
-    particle_wall_candidates;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_point_candidates
-    particle_point_candidates;
-  typename dem_data_structures<dim>::particle_line_candidates
-    particle_line_candidates;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_points_in_contact;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_lines_in_contact;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    ghost_contact_pair_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    local_contact_pair_candidates;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    local_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    ghost_adjacent_particles;
-  typename dem_data_structures<dim>::particle_index_iterator_map
-    particle_container;
-  typename dem_data_structures<dim>::boundary_points_and_normal_vectors
-    updated_boundary_points_and_normal_vectors;
-  typename dem_data_structures<dim>::vector_on_boundary
-    forces_boundary_information;
-  typename dem_data_structures<dim>::vector_on_boundary
-    torques_boundary_information;
+  DEMContainerManager<dim> container_manager;
 
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =

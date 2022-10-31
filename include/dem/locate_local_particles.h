@@ -19,6 +19,7 @@
 
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
+#include <dem/dem_container_manager.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -36,22 +37,11 @@ using namespace dealii;
  *
  * @tparam dim Dimensionality of the geometry which contains the particles
  * @param particle_handler
- * @param particle_container A container that contains the updated iterators to
- * all local and ghost particles
- * @param ghost_adjacent_particles Container that contains all the contact
- * information of adjacent local-ghost particles
- * @param local_adjacent_particles Container that contains all the contact
- * information of adjacent local-local particles
- * @param particle_wall_pairs_in_contact Container that contains all the contact
- * information of particle-wall contacts
- * @param particle_floating_wall_pairs_in_contact Container that contains all the contact
- * information of particle-floating wall contacts
- * @param particle_floating_mesh_pairs_in_contact Container that contains all the contact
- * information of particle-floating mesh contacts
- * @param particle_points_in_contact Container that contains all the contact
- * information of particle-point contacts
- * @param particle_lines_in_contact Container that contains all the contact
- * information of particle-line contacts
+ * @param container_manager The dem container manager that contains
+ * particle_container, ghost_adjacent_particles, local_adjacent_particles,
+ * particle_wall_pairs_in_contact, particle_floating_wall_pairs_in_contact,
+ * particle_floating_mesh_pairs_in_contact, particle_points_in_contact,
+ * particle_lines_in_contact
  *
  */
 
@@ -59,22 +49,7 @@ template <int dim>
 void
 locate_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    &particle_container,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_floating_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-    &particle_points_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-    &particle_lines_in_contact);
+  DEMContainerManager<dim> &             container_manager);
 
 /**
  * Updates the iterators to local particles in a map of particles

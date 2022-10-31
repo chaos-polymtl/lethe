@@ -22,6 +22,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
@@ -224,44 +225,7 @@ private:
   double                    smallest_contact_search_criterion;
   double                    triangulation_cell_diameter;
 
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_ghost_neighbor_list;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_local_neighbor_list;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    ghost_contact_pair_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    local_contact_pair_candidates;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    local_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    ghost_adjacent_particles;
-  typename dem_data_structures<dim>::particle_wall_candidates
-    particle_wall_candidates;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_floating_wall_in_contact;
-  typename dem_data_structures<dim>::particle_point_candidates
-    particle_point_candidates;
-  typename dem_data_structures<dim>::particle_line_candidates
-    particle_line_candidates;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_points_in_contact;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_lines_in_contact;
-  typename dem_data_structures<dim>::particle_floating_wall_candidates
-    particle_floating_wall_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_candidates
-    particle_floating_mesh_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-    particle_floating_mesh_in_contact;
-  typename dem_data_structures<dim>::particle_index_iterator_map
-    particle_container;
-  typename dem_data_structures<dim>::vector_on_boundary
-    forces_boundary_information;
-  typename dem_data_structures<dim>::vector_on_boundary
-    torques_boundary_information;
+  DEMContainerManager<dim> container_manager;
 
   ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
   ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;

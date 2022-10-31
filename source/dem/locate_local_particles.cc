@@ -7,58 +7,48 @@ template <int dim>
 void
 locate_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    &particle_container,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_floating_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-    &particle_points_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-    &particle_lines_in_contact)
+  DEMContainerManager<dim> &             container_manager)
 {
   // Update the iterators to local particles in a map of particles
-  update_particle_container<dim>(particle_container, &particle_handler);
+  update_particle_container<dim>(container_manager.particle_container,
+                                 &particle_handler);
 
   // Update contact containers for local particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-    ContactType::local_particle_particle>(local_adjacent_particles,
-                                          particle_container);
+    ContactType::local_particle_particle>(
+    container_manager.local_adjacent_particles,
+    container_manager.particle_container);
 
   // Update contact containers for local particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-    ContactType::ghost_particle_particle>(ghost_adjacent_particles,
-                                          particle_container);
+    ContactType::ghost_particle_particle>(
+    container_manager.ghost_adjacent_particles,
+    container_manager.particle_container);
 
   // Update contact containers for particle-wall pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
-    ContactType::particle_wall>(particle_wall_pairs_in_contact,
-                                particle_container);
+    ContactType::particle_wall>(container_manager.particle_wall_in_contact,
+                                container_manager.particle_container);
 
   // Update contact containers for particle-floating wall pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
     ContactType::particle_floating_wall>(
-    particle_floating_wall_pairs_in_contact, particle_container);
+    container_manager.particle_floating_wall_in_contact,
+    container_manager.particle_container);
 
   // Update contact containers for particle-floating mesh pairs in contact for
   // every solid objects of mesh
   for (unsigned int solid_counter = 0;
-       solid_counter < particle_floating_mesh_pairs_in_contact.size();
+       solid_counter <
+       container_manager.particle_floating_mesh_in_contact.size();
        ++solid_counter)
     {
       update_contact_container_iterators<
@@ -66,22 +56,23 @@ locate_local_particles_in_cells(
         typename DEM::dem_data_structures<
           dim>::particle_floating_wall_from_mesh_in_contact,
         ContactType::particle_floating_mesh>(
-        particle_floating_mesh_pairs_in_contact[solid_counter],
-        particle_container);
+        container_manager.particle_floating_mesh_in_contact[solid_counter],
+        container_manager.particle_container);
     }
 
   // Update contact containers for particle-line pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::particle_point_line_contact_info,
-    ContactType::particle_point>(particle_lines_in_contact, particle_container);
+    ContactType::particle_point>(container_manager.particle_lines_in_contact,
+                                 container_manager.particle_container);
 
   // Update contact containers for particle-point pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::particle_point_line_contact_info,
-    ContactType::particle_point>(particle_points_in_contact,
-                                 particle_container);
+    ContactType::particle_point>(container_manager.particle_points_in_contact,
+                                 container_manager.particle_container);
 }
 
 template <int dim>
@@ -198,42 +189,12 @@ update_contact_container_iterators(
 template void
 locate_local_particles_in_cells(
   const Particles::ParticleHandler<2> &particle_handler,
-  typename DEM::dem_data_structures<2>::particle_index_iterator_map
-    &particle_container,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_wall_in_contact
-    &particle_floating_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_pairs_in_contact,
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info
-    &particle_points_in_contact,
-  typename DEM::dem_data_structures<2>::particle_point_line_contact_info
-    &particle_lines_in_contact);
+  DEMContainerManager<2> &             container_manager);
 
 template void
 locate_local_particles_in_cells(
   const Particles::ParticleHandler<3> &particle_handler,
-  typename DEM::dem_data_structures<3>::particle_index_iterator_map
-    &particle_container,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_wall_in_contact
-    &particle_floating_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_pairs_in_contact,
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info
-    &particle_points_in_contact,
-  typename DEM::dem_data_structures<3>::particle_point_line_contact_info
-    &particle_lines_in_contact);
+  DEMContainerManager<3> &             container_manager);
 
 
 // Particle container
