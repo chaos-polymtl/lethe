@@ -19,7 +19,6 @@
 
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
 #include <dem/particle_particle_contact_info_struct.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
@@ -27,28 +26,6 @@ using namespace std;
 
 #ifndef localize_contacts_h
 #  define localize_contacts_h
-
-/**
- * Manages to call update_fine_search_candidates() with contact data containers
- * to remove contact repetitions and to add new contact pairs to the contact
- * containers when particles are exchanged between processors. Repeats the
- * update for local particle-particle contacts, ghost particle-particle,
- * particle-wall contacts, particle-floating wall contacts and particle-floating
- * mesh contacts.
- *
- * @param container_manager The dem container manager that contains
- * local_adjacent_particles, ghost_adjacent_particles,
- * particle_wall_pairs_in_contact, particle_floating_wall_in_contact
- * particle_floating_mesh_in_contact, local_contact_pair_candidates
- * ghost_contact_pair_candidates, particle_wall_contact_candidates,
- * particle_floating_wall_contact_candidates &
- * particle_floating_mesh_contact_candidates
- *
- */
-
-template <int dim>
-void
-localize_contacts(DEMContainerManager<dim> &container_manager);
 
 /**
  * Manages removing repetitions and adding new contact pairs to the contact

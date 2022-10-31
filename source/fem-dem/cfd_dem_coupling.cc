@@ -1004,18 +1004,15 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   if (load_balance_step || checkpoint_step || contact_detection_step ||
       (this->simulation_control->is_at_start() && (counter == 0)))
     {
-      particle_particle_broad_search_object
-        .find_particle_particle_contact_pairs(this->particle_handler,
-                                              container_manager);
-
+      container_manager.execute_particle_particle_board_search(
+        this->particle_handler);
 
       // Particle-wall broad contact search
       particle_wall_broad_search();
 
-      localize_contacts<dim>(container_manager);
+      container_manager.localize_contacts();
 
-      locate_local_particles_in_cells<dim>(this->particle_handler,
-                                           container_manager);
+      container_manager.locate_local_particles_in_cells(this->particle_handler);
 
       // Particle-particle fine search
       particle_particle_fine_search_object.particle_particle_fine_search(

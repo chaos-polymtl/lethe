@@ -16,7 +16,6 @@
 
 #include <core/manifolds.h>
 #include <core/solutions_output.h>
-#include <core/utilities.h>
 
 #include <dem/data_containers.h>
 #include <dem/dem.h>
@@ -26,8 +25,6 @@
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>
-#include <dem/localize_contacts.h>
-#include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/particle_wall_nonlinear_force.h>
 #include <dem/post_processing.h>
@@ -1042,9 +1039,11 @@ DEMSolver<dim>::solve()
           // Fill containers of particle-particle
           // (local_contact_pair_candidates) and particle-ghost contact pair
           // candidates (ghost_contact_pair_candidates) by using broad search
-          particle_particle_broad_search_object
-            .find_particle_particle_contact_pairs(particle_handler,
-                                                  container_manager);
+          // particle_particle_broad_search_object
+          //  .find_particle_particle_contact_pairs(particle_handler,
+          //                                        container_manager);
+          container_manager.execute_particle_particle_board_search(
+            particle_handler);
 
           // Updating number of contact builds
           contact_build_number++;
@@ -1052,10 +1051,12 @@ DEMSolver<dim>::solve()
           // Particle-wall broad contact search
           particle_wall_broad_search();
 
-          localize_contacts<dim>(container_manager);
+          // localize_contacts<dim>(container_manager);
+          container_manager.localize_contacts();
 
-          locate_local_particles_in_cells<dim>(particle_handler,
-                                               container_manager);
+          // locate_local_particles_in_cells<dim>(particle_handler,
+          //                                     container_manager);
+          container_manager.locate_local_particles_in_cells(particle_handler);
 
           // Particle-particle fine search
           particle_particle_fine_search_object.particle_particle_fine_search(

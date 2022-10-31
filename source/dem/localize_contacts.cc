@@ -3,68 +3,6 @@
 
 using namespace dealii;
 
-template <int dim>
-void
-localize_contacts(DEMContainerManager<dim> &container_manager)
-{
-  // Update particle-particle contacts in local_adjacent_particles of fine
-  // search step with local_contact_pair_candidates
-  update_fine_search_candidates<
-    dim,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-    typename DEM::dem_data_structures<dim>::particle_particle_candidates,
-    ContactType::local_particle_particle>(
-    container_manager.local_adjacent_particles,
-    container_manager.local_contact_pair_candidates);
-
-  // Update particle-particle contacts in global_adjacent_particles of fine
-  // search step with global_contact_pair_candidates
-  update_fine_search_candidates<
-    dim,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
-    typename DEM::dem_data_structures<dim>::particle_particle_candidates,
-    ContactType::ghost_particle_particle>(
-    container_manager.ghost_adjacent_particles,
-    container_manager.ghost_contact_pair_candidates);
-
-  // Update particle-wall contacts in particle_wall_pairs_in_contact of fine
-  // search step with particle_wall_contact_candidates
-  update_fine_search_candidates<
-    dim,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
-    typename DEM::dem_data_structures<dim>::particle_wall_candidates,
-    ContactType::particle_wall>(container_manager.particle_wall_in_contact,
-                                container_manager.particle_wall_candidates);
-
-  // Update particle-floating wall contacts in particle_floating_wall_in_contact
-  // of fine search step with particle_floating_wall_contact_candidates
-  update_fine_search_candidates<
-    dim,
-    typename DEM::dem_data_structures<dim>::particle_wall_in_contact,
-    typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates,
-    ContactType::particle_floating_wall>(
-    container_manager.particle_floating_wall_in_contact,
-    container_manager.particle_floating_wall_candidates);
-
-  // Update particle-floating mesh contacts in particle_floating_mesh_in_contact
-  // of fine search step with particle_floating_mesh_contact_candidates
-  for (unsigned int solid_counter = 0;
-       solid_counter <
-       container_manager.particle_floating_mesh_in_contact.size();
-       ++solid_counter)
-    {
-      update_fine_search_candidates<
-        dim,
-        typename DEM::dem_data_structures<
-          dim>::particle_floating_wall_from_mesh_in_contact,
-        typename DEM::dem_data_structures<
-          dim>::particle_floating_wall_from_mesh_candidates,
-        ContactType::particle_floating_mesh>(
-        container_manager.particle_floating_mesh_in_contact[solid_counter],
-        container_manager.particle_floating_mesh_candidates[solid_counter]);
-    }
-}
-
 template <int dim,
           typename pairs_structure,
           typename candidates_structure,
@@ -200,11 +138,6 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
         }
     }
 }
-
-template void localize_contacts<2>(DEMContainerManager<2> &container_manager);
-
-template void localize_contacts<3>(DEMContainerManager<3> &container_manager);
-
 
 // Local particle-particle contacts
 template void update_fine_search_candidates<

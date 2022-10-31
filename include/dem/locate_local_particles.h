@@ -19,7 +19,6 @@
 
 #include <dem/contact_type.h>
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -28,28 +27,6 @@ using namespace dealii;
 
 #ifndef locate_local_particles_h
 #  define locate_local_particles_h
-
-/**
- * Updates the iterators to particles in local-local contact containers. This is
- * essential since sort_particles_into_subdomains_and_cells() and
- * exchange_ghost_particles() functions change the iterator to particles
- * everytime they are called.
- *
- * @tparam dim Dimensionality of the geometry which contains the particles
- * @param particle_handler
- * @param container_manager The dem container manager that contains
- * particle_container, ghost_adjacent_particles, local_adjacent_particles,
- * particle_wall_pairs_in_contact, particle_floating_wall_pairs_in_contact,
- * particle_floating_mesh_pairs_in_contact, particle_points_in_contact,
- * particle_lines_in_contact
- *
- */
-
-template <int dim>
-void
-locate_local_particles_in_cells(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  DEMContainerManager<dim> &             container_manager);
 
 /**
  * Updates the iterators to local particles in a map of particles

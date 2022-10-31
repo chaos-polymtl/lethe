@@ -27,8 +27,6 @@
 #include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
-#include <dem/localize_contacts.h>
-#include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_broad_search.h>
