@@ -753,6 +753,11 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
+          const Tensor<1, dim> phase_gradient_q =
+            scratch_data.phase_gradient_values[q];
+
+         const double phase_value_q = scratch_data.phase_values[q];
+
           // Calculate the strong residual for GLS stabilization
           const double laser_heat_source =
             (concentration_factor * absorptivity * laser_power /
@@ -764,7 +769,9 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
                 (beam_radius * beam_radius)) *
             exp(-1.0 * laser_quadrature_point_distance_in_depth /
                 penetration_depth);
-          strong_residual[q] -= laser_heat_source;
+          strong_residual[q] -= phase_gradient_q.norm()*laser_heat_source;
+         // strong_residual[q] -= phase_value_q*phase_gradient_q.norm()*laser_heat_source;
+         strong_residual[q] -= phase_value_q*laser_heat_source;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -776,7 +783,11 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
               // radius, penetration depth, radial distance from the laser focal
               // point, and axial distance from the laser focal point,
               // respectively.
-              local_rhs(i) += laser_heat_source * phi_T_i * JxW;
+              // local_rhs(i) += phase_gradient_q.norm()*laser_heat_source * phi_T_i * JxW;
+
+             // local_rhs(i) += phase_value_q*phase_gradient_q.norm()*laser_heat_source * phi_T_i * JxW;
+             local_rhs(i) += phase_value_q*laser_heat_source * phi_T_i * JxW;
+
             }
 
         } // end loop on quadrature points
