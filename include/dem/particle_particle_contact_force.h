@@ -34,6 +34,8 @@ using namespace dealii;
 #ifndef particle_particle_contact_force_h
 #  define particle_particle_contact_force_h
 
+using namespace DEM;
+
 /**
  * Base interface for classes that carry out the calculation of
  * particle-particle contact force including non-linear and linear contact
@@ -121,24 +123,93 @@ protected:
    * @brief Carries out updating the contact pair information for both non-linear and
    * linear contact force calculations
    *
-   * @param adjacent_pair_information Contact information of a particle pair in
+   * @param contact_info Contact information of a particle pair in
    * neighborhood
+   * @param normal_unit_vector Normal vector of the contact. This vector is particle_two_location - particle_one_location.
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
    * @param particle_one_location Location of particle one in contact
    * @param particle_two_location Location of particle two in contact
    * @param dt DEM time step
    */
-  void
+  inline void
   update_contact_information(
-    particle_particle_contact_info_struct<dim> &adjacent_pair_information,
+    particle_particle_contact_info_struct<dim> &contact_info,
     double &                                    normal_relative_velocity_value,
     Tensor<1, 3> &                              normal_unit_vector,
     const ArrayView<const double> &             particle_one_properties,
     const ArrayView<const double> &             particle_two_properties,
     const Point<3> &                            particle_one_location,
     const Point<3> &                            particle_two_location,
-    const double                                dt);
+    const double                                dt)
+  {
+    // Calculation of the contact vector from particle one to particle two
+    auto contact_vector = particle_two_location - particle_one_location;
+
+    // Calculation of the normal unit contact vector
+    normal_unit_vector = contact_vector / contact_vector.norm();
+
+    // Defining velocities and angular velocities of particles one and
+    // two as vectors
+    Tensor<1, 3> particle_one_velocity, particle_two_velocity,
+      particle_one_omega, particle_two_omega;
+
+    // Defining relative contact velocity
+    Tensor<1, 3> contact_relative_velocity;
+
+    // Assigning velocities and angular velocities of particles
+    particle_one_velocity[0] = particle_one_properties[PropertiesIndex::v_x];
+    particle_one_velocity[1] = particle_one_properties[PropertiesIndex::v_y];
+    particle_one_velocity[2] = particle_one_properties[PropertiesIndex::v_z];
+
+    particle_two_velocity[0] = particle_two_properties[PropertiesIndex::v_x];
+    particle_two_velocity[1] = particle_two_properties[PropertiesIndex::v_y];
+    particle_two_velocity[2] = particle_two_properties[PropertiesIndex::v_z];
+
+    particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
+    particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
+    particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
+
+    particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
+    particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
+    particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
+
+
+    // Calculation of contact relative velocity
+    // v_ij = (v_i - v_j) + (R_i*omega_i + R_j*omega_j) × n_ij
+    contact_relative_velocity =
+      (particle_one_velocity - particle_two_velocity) +
+      (cross_product_3d(0.5 * (particle_one_properties[PropertiesIndex::dp] *
+                                 particle_one_omega +
+                               particle_two_properties[PropertiesIndex::dp] *
+                                 particle_two_omega),
+                        normal_unit_vector));
+
+
+    // Calculation of normal relative velocity. Note that in the
+    // following line the product acts as inner product since both
+    // sides are vectors, while in the second line the product is
+    // scalar and vector product
+    normal_relative_velocity_value =
+      contact_relative_velocity * normal_unit_vector;
+
+    // Calculation of tangential relative velocity
+    // v_rt = v_ij - (v_ij⋅n_ij)*n_ij
+    contact_info.tangential_relative_velocity =
+      contact_relative_velocity -
+      (normal_relative_velocity_value * normal_unit_vector);
+
+    // Calculation of new tangential_overlap, since this value is
+    // history-dependent it needs the value at previous time-step
+    // This variable is the main reason that we have iteration over
+    // two different vectors : tangential_overlap of the particles
+    // which were already in contact needs to
+    // modified using its history, while the tangential_overlaps of
+    // new particles are equal to zero
+    // delta_t_new = delta_t_old + v_rt*dt
+    contact_info.tangential_overlap +=
+      contact_info.tangential_relative_velocity * dt;
+  }
 
   /**
    * @brief Carries out applying the calculated force and torque on the local-local
