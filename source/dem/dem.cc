@@ -197,12 +197,12 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Generate solid objects
   container_manager.floating_mesh_info.resize(solids.size());
 
-  if (solids.size() > 0)
-    has_floating_mesh = true;
-
   // Resize particle_floating_mesh_in_contact
-  if (has_floating_mesh)
-    container_manager.particle_floating_mesh_in_contact.resize(solids.size());
+  if (solids.size() > 0)
+    {
+      has_floating_mesh = true;
+      container_manager.particle_floating_mesh_in_contact.resize(solids.size());
+    }
 }
 
 template <int dim>
@@ -283,35 +283,16 @@ DEMSolver<dim>::load_balance()
   pcout << "-->Repartitionning triangulation" << std::endl;
   triangulation.repartition();
 
-  // Unpack the particle handler avec the mesh has been repartitioned
+  // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
 
-  container_manager.clear_cells_neighbor_list();
+  // Update neighbors of cells after load balance
+  container_manager.update_cell_neighbors(triangulation, has_floating_mesh);
 
-  cell_neighbors_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
 
-  // Get total (with repetition) neighbors list for floating mesh. In
-  // find_cell_neighbors function, if cell i is a neighbor of cell j, in the
-  // neighbor list of cell j, cell i is not included (without repetition). In
-  // find_full_cell_neighbors function, however, these repetitions are allowed.
-  if (has_floating_mesh)
-    {
-      container_manager.clear_total_neighbor_list();
-      cell_neighbors_object.find_full_cell_neighbors(
-        triangulation, container_manager.total_neighbor_list);
-    }
-
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-    {
-      // Create a container that contains all the combinations of background and
-      // solid cells
-      container_manager.floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(
-          triangulation, solids[i_solid]->get_solid_triangulation());
-    }
+  // Update de container that contains all the combinations of background and
+  // solid cells
+  container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
@@ -811,14 +792,7 @@ DEMSolver<dim>::solve()
             parameters.boundary_conditions);
 
 
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-    {
-      // Create a container that contains all the combinations of background and
-      // solid cells
-      container_manager.floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(
-          triangulation, solids[i_solid]->get_solid_triangulation());
-    }
+  container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (parameters.restart.restart == true)
     {
@@ -851,15 +825,8 @@ DEMSolver<dim>::solve()
               maximum_particle_diameter * 0.5));
 
   // Find cell neighbors
-  cell_neighbors_object.find_cell_neighbors(
-    triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
-
-  // Find full cell neighbor list for floating mesh
-  if (has_floating_mesh)
-    cell_neighbors_object.find_full_cell_neighbors(
-      triangulation, container_manager.total_neighbor_list);
+  container_manager.execute_cell_neighbors_search(triangulation,
+                                                  has_floating_mesh);
 
   if (parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)

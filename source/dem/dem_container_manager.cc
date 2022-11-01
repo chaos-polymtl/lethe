@@ -249,5 +249,41 @@ DEMContainerManager<dim>::locate_local_particles_in_cells(
                                  particle_container);
 }
 
+template <int dim>
+void
+DEMContainerManager<dim>::execute_cell_neighbors_search(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const bool                                       has_floating_mesh)
+{
+  // Find cell neighbors
+  cell_neighbors_object.find_cell_neighbors(triangulation,
+                                            cells_local_neighbor_list,
+                                            cells_ghost_neighbor_list);
+
+  // Get total (with repetition) neighbors list for floating mesh. In
+  // find_cell_neighbors function, if cell i is a neighbor of cell j, in the
+  // neighbor list of cell j, cell i is not included (without repetition). In
+  // find_full_cell_neighbors function, however, these repetitions are allowed.
+  if (has_floating_mesh)
+    cell_neighbors_object.find_full_cell_neighbors(triangulation,
+                                                   total_neighbor_list);
+}
+
+template <int dim>
+void
+DEMContainerManager<dim>::store_floating_mesh_info(
+  const parallel::distributed::Triangulation<dim> &       triangulation,
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
+{
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      // Create/update a container that contains all the combinations of
+      // background and solid cells
+      floating_mesh_info[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(
+          triangulation, solids[i_solid]->get_solid_triangulation());
+    }
+}
+
 template class DEMContainerManager<2>;
 template class DEMContainerManager<3>;

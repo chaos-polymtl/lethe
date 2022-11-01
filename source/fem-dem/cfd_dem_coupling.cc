@@ -659,12 +659,8 @@ CFDDEMSolver<dim>::load_balance()
 
   parallel_triangulation->repartition();
 
-  container_manager.clear_cells_neighbor_list();
-
-  cell_neighbors_object.find_cell_neighbors(
-    *parallel_triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  // Update cell neighbors
+  container_manager.update_cell_neighbors(*parallel_triangulation);
 
   if (dem_parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
@@ -781,10 +777,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       &*this->triangulation);
 
   // Finding cell neighbors
-  cell_neighbors_object.find_cell_neighbors(
-    *parallel_triangulation,
-    container_manager.cells_local_neighbor_list,
-    container_manager.cells_ghost_neighbor_list);
+  container_manager.execute_cell_neighbors_search(*parallel_triangulation);
 
   if (dem_parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)

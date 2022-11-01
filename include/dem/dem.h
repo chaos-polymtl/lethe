@@ -22,7 +22,6 @@
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/find_cell_neighbors.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
@@ -264,8 +263,6 @@ private:
   Tensor<1, 3>                         g;
   double                               triangulation_cell_diameter;
 
-  DEMContainerManager<dim> container_manager;
-
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
@@ -275,12 +272,10 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
+  DEMContainerManager<dim>           container_manager;
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
-
-
-
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
@@ -291,7 +286,6 @@ private:
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   LagrangianPostProcessing<dim> post_processing_object;
-  FindCellNeighbors<dim>        cell_neighbors_object;
   PVDHandler                    particles_pvdhandler;
   const double                  standard_deviation_multiplier;
 

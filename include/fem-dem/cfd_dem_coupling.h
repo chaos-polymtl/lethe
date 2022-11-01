@@ -21,7 +21,6 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
@@ -217,8 +216,7 @@ private:
   double                    smallest_contact_search_criterion;
   double                    triangulation_cell_diameter;
 
-  DEMContainerManager<dim> container_manager;
-
+  DEMContainerManager<dim>           container_manager;
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
@@ -229,7 +227,6 @@ private:
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
-  FindCellNeighbors<dim>        cell_neighbors_object;
 
   DEM::DEMProperties<dim> properties_class;
 
