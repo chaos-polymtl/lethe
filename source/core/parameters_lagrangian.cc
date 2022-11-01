@@ -485,7 +485,7 @@ namespace Parameters
 
         prm.declare_entry(
           "rolling resistance torque method",
-          "no_resistance",
+          "constant_resistance",
           Patterns::Selection(
             "no_resistance|constant_resistance|viscous_resistance"),
           "Choosing rolling resistance torque model"
