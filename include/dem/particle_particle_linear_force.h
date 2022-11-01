@@ -153,7 +153,7 @@ private:
   Tensor<1, 3>                 particle_two_tangential_torque;
   Tensor<1, 3>                 rolling_resistance_torque;
   double                       normal_relative_velocity_value;
-  RollingResistanceTorqueModel rolling_reistance_model;
+  RollingResistanceTorqueModel rolling_resistance_model;
 };
 
 #endif
