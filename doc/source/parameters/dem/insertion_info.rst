@@ -29,6 +29,14 @@ Particle insertion information is defined in this section. This information incl
   set insertion box maximum y                   = 0.05
   set insertion box maximum z                   = 0.07
 
+  # Initial conditions at insertion
+  set velocity x = 0.0
+  set velocity y = 0.0
+  set velocity z = 0.0
+  set omega x = 0.0
+  set omega y = 0.0
+  set omega z = 0.0
+
   # insertion distance threshold controls the distance between the center of inserted particles (the distance is: [distance threshold] * [diameter of particles]). The distance is modified by a random number if non_uniform insertion is chosen
   set insertion distance threshold              = 2
 
@@ -57,6 +65,13 @@ Particle insertion information is defined in this section. This information incl
 
 .. note::
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
+
+* The ``velocity x``, ``velocity y``, and ``velocity z`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions, respectively.
+
+* The ``omega x``, ``omega y``, and ``omega z`` determine the initial rotational velocity (in :math:`\frac{rad}{s}`) at which particles are inserted in the x, y, and z directions, respectively. 
+
+.. note:: 
+    Since the ``insertion info`` subsection is valid for all particle types, by using ``velocity x``, ``velocity y``, ``velocity z``, ``omega x``, ``omega y``, or ``omega z``, the given condition is applied to all particles, indistinctively.
 
 * The ``insertion distance threshold`` parameter determines the initial distance between the particles in the insertion. As a result, it must be larger than 1 to avoid any initial collision between the inserted particles.
 
