@@ -123,8 +123,9 @@ protected:
    * @brief Carries out updating the contact pair information for both non-linear and
    * linear contact force calculations
    *
-   * @param adjacent_pair_information Contact information of a particle pair in
+   * @param contact_info Contact information of a particle pair in
    * neighborhood
+   * @param normal_unit_vector Normal vector of the contact. This vector is particle_two_location - particle_one_location.
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
    * @param particle_one_location Location of particle one in contact
@@ -201,9 +202,8 @@ protected:
     // Calculation of new tangential_overlap, since this value is
     // history-dependent it needs the value at previous time-step
     // This variable is the main reason that we have iteration over
-    // two different vectors (pairs_in_contact and
-    // contact_pair_candidates): tangential_overlap of the particles
-    // which were already in contact (pairs_in_contact) needs to
+    // two different vectors : tangential_overlap of the particles
+    // which were already in contact needs to
     // modified using its history, while the tangential_overlaps of
     // new particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt

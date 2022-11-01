@@ -76,11 +76,16 @@ VelocityVerletIntegrator<dim>::integrate(
       double dt_mass_inverse = dt / particle_properties[PropertiesIndex::mass];
       double dt_MOI_inverse  = dt / MOI[particle_id];
 
-      if constexpr (dim == 3)
-        particle_position = particle.get_location();
-
-      if constexpr (dim == 2)
-        particle_position = point_nd_to_3d(particle.get_location());
+      particle_position = [&] {
+        if constexpr (dim == 3)
+          {
+            return particle.get_location();
+          }
+        else
+          {
+            return (point_nd_to_3d(particle.get_location()));
+          }
+      }();
 
       // Loop is manually unrolled for performance reason.
       // for (int d = 0; d < 3; ++d)
@@ -108,10 +113,8 @@ VelocityVerletIntegrator<dim>::integrate(
           particle_torque[2] * dt_MOI_inverse;
       }
 
-      // Reinitialize force
-      particle_force = 0;
-
-      // Reinitialize torque
+      // Reinitialize force and torque of particle
+      particle_force  = 0;
       particle_torque = 0;
 
       if constexpr (dim == 3)
