@@ -17,7 +17,6 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_particle_contact_info_struct.h>
 
@@ -26,6 +25,9 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+
+template <int dim>
+class DEMContainerManager;
 
 using namespace dealii;
 

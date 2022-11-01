@@ -1,3 +1,4 @@
+#include <dem/dem_container_manager.h>
 #include <dem/particle_particle_broad_search.h>
 
 using namespace dealii;

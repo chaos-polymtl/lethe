@@ -1059,8 +1059,8 @@ DEMSolver<dim>::solve()
           container_manager.locate_local_particles_in_cells(particle_handler);
 
           // Particle-particle fine search
-          particle_particle_fine_search_object.particle_particle_fine_search(
-            container_manager, neighborhood_threshold_squared);
+          container_manager.execute_particle_particle_fine_search(
+            neighborhood_threshold_squared);
 
           // Particles-wall fine search
           particle_wall_fine_search();

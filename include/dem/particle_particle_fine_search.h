@@ -20,7 +20,6 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
 #include <dem/particle_particle_contact_info_struct.h>
 
 #include <deal.II/base/tensor.h>
@@ -29,6 +28,9 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <boost/range/adaptor/map.hpp>
+
+template <int dim>
+class DEMContainerManager;
 
 using namespace dealii;
 

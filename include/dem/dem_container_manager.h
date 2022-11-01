@@ -16,9 +16,13 @@
  *
  */
 
+#include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_local_particles.h>
+#include <dem/particle_particle_broad_search.h>
+#include <dem/particle_particle_fine_search.h>
+#include <dem/particle_wall_broad_search.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -147,6 +151,21 @@ public:
     dealii::Particles::ParticleHandler<dim> &particle_handler);
 
   /**
+   * Iterates over a vector of maps (pairs_in_contact) to see if the particles
+   * which were in contact in the last time step, are still in contact or not.
+   *
+   * @param neighborhood_threshold A value which defines the neighbor particles
+   */
+  void
+  execute_particle_particle_fine_search(const double neighborhood_threshold);
+
+  void
+  execute_particle_wall_broad_search(
+    const std::map<int, boundary_cells_info_struct<dim>>
+      &                                    boundary_cells_information,
+    const Particles::ParticleHandler<dim> &particle_handler);
+
+  /**
    * Manages to call update_fine_search_candidates() with contact data
    * containers to remove contact repetitions and to add new contact pairs to
    * the contact containers when particles are exchanged between processors.
@@ -172,43 +191,10 @@ public:
   locate_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler);
 
-  /**
-   * Stores the candidate particle-particle collision pairs with a given
-   * particle iterator. particle_begin iterator is useful to skip storage of the
-   * first particle in main cell (particle_begin will be the iterator after the
-   * particles_to_evaluate.begin() in that case). When particle_begin is
-   * particles_to_evaluate.begin(), it stores all the particle id in
-   * contact_pair_candidates_container.
-   *
-   * @param particle_begin The particle iterator to start storing particle id
-   * @param particles_to_evaluate The particle range to evaluate with the
-   * particle iterator prior storing ids
-   * @param contact_pair_candidates_container A vector which will contain all
-   * the particle pairs which are collision candidates
-   */
-  inline void
-  store_candidates(
-    const typename Particles::ParticleHandler<
-      dim>::particle_iterator_range::iterator &particle_begin,
-    const typename Particles::ParticleHandler<dim>::particle_iterator_range
-      &                                 particles_to_evaluate,
-    std::vector<types::particle_index> &contact_pair_candidates_container)
-  {
-    // Create a arbitrary temporary empty container
-    if (contact_pair_candidates_container.empty())
-      {
-        contact_pair_candidates_container.reserve(40);
-      }
-
-    // Store particle ids from the selected particle iterator
-    for (auto particle_iterator = particle_begin;
-         particle_iterator != particles_to_evaluate.end();
-         ++particle_iterator)
-      {
-        contact_pair_candidates_container.emplace_back(
-          particle_iterator->get_id());
-      }
-  }
+private:
+  ParticleParticleBroadSearch<dim> particle_particle_broad_search_object;
+  ParticleParticleFineSearch<dim>  particle_particle_fine_search_object;
+  ParticleWallBroadSearch<dim>     particle_wall_broad_search_object;
 };
 
 

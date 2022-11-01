@@ -29,9 +29,7 @@
 #include <dem/lagrangian_post_processing.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
-#include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_particle_fine_search.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_point_line_fine_search.h>
@@ -298,8 +296,8 @@ private:
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
-  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
+
+
   ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
   ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
   ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
