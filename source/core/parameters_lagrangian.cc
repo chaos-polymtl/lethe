@@ -320,6 +320,31 @@ namespace Parameters
                           "0",
                           Patterns::List(Patterns::Double()),
                           "List of particles z positions");
+
+        prm.declare_entry("velocity x",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial velocity x");
+        prm.declare_entry("velocity y",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial velocity y");
+        prm.declare_entry("velocity z",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial velocity z");
+        prm.declare_entry("omega x",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial omega x");
+        prm.declare_entry("omega y",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial omega y");
+        prm.declare_entry("omega z",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial omega z");
       }
       prm.leave_subsection();
     }
@@ -352,6 +377,13 @@ namespace Parameters
         distance_threshold  = prm.get_double("insertion distance threshold");
         random_number_range = prm.get_double("insertion random number range");
         random_number_seed  = prm.get_double("insertion random number seed");
+
+        vel_x   = prm.get_double("velocity x");
+        vel_y   = prm.get_double("velocity y");
+        vel_z   = prm.get_double("velocity z");
+        omega_x = prm.get_double("omega x");
+        omega_y = prm.get_double("omega y");
+        omega_z = prm.get_double("omega z");
 
         // Read x, y and z list as a single string
         std::string x_str = prm.get("list x");

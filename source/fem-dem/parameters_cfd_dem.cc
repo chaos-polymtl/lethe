@@ -184,6 +184,7 @@ namespace Parameters
     shear_force                = prm.get_bool("shear force");
     pressure_force             = prm.get_bool("pressure force");
     saffman_lift_force         = prm.get_bool("saffman lift force");
+    magnus_lift_force          = prm.get_bool("magnus lift force");
     post_processing            = prm.get_bool("post processing");
     inlet_boundary_id          = prm.get_integer("inlet boundary id");
     outlet_boundary_id         = prm.get_integer("outlet boundary id");

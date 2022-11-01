@@ -139,6 +139,9 @@ namespace Parameters
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
       double x_min, y_min, z_min, x_max, y_max, z_max;
 
+      // Insertion initial conditions
+      double vel_x, vel_y, vel_z, omega_x, omega_y, omega_z;
+
       // Insertion distance threshold
       double distance_threshold;
 
