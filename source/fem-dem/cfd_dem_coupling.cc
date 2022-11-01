@@ -906,12 +906,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Particle-particle contact force
   particle_particle_contact_force_object
-    ->calculate_particle_particle_contact_force(
-      container_manager.local_adjacent_particles,
-      container_manager.ghost_adjacent_particles,
-      dem_time_step,
-      torque,
-      force);
+    ->calculate_particle_particle_contact_force(container_manager,
+                                                dem_time_step,
+                                                torque,
+                                                force);
 
   // Particles-walls contact force:
   particle_wall_contact_force();

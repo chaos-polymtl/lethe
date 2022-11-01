@@ -110,10 +110,7 @@ template <int dim>
 void
 ParticleParticleHertzMindlinLimitOverlap<dim>::
   calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &                        ghost_adjacent_particles,
+    DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
@@ -124,7 +121,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       local_adjacent_particles | boost::adaptors::map_values)
+       container_manager.local_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {
@@ -225,7 +222,6 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
                     particle_one_force,
                     particle_two_force);
                 }
-
               else
                 {
                   // if the adjacent pair is not in contact anymore, only the
@@ -244,7 +240,7 @@ ParticleParticleHertzMindlinLimitOverlap<dim>::
   // Looping over ghost_adjacent_particles list with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       ghost_adjacent_particles | boost::adaptors::map_values)
+       container_manager.ghost_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {
@@ -719,10 +715,7 @@ template <int dim>
 void
 ParticleParticleHertzMindlinLimitForce<dim>::
   calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &                        ghost_adjacent_particles,
+    DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force)
@@ -733,7 +726,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       local_adjacent_particles | boost::adaptors::map_values)
+       container_manager.local_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {
@@ -854,7 +847,7 @@ ParticleParticleHertzMindlinLimitForce<dim>::
   // Looping over ghost_adjacent_particles list with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       ghost_adjacent_particles | boost::adaptors::map_values)
+       container_manager.ghost_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {
@@ -1312,10 +1305,7 @@ ParticleParticleHertz<dim>::ParticleParticleHertz(
 template <int dim>
 void
 ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &                        ghost_adjacent_particles,
+  DEMContainerManager<dim> & container_manager,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
@@ -1326,7 +1316,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       local_adjacent_particles | boost::adaptors::map_values)
+       container_manager.local_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {
@@ -1444,7 +1434,7 @@ ParticleParticleHertz<dim>::calculate_particle_particle_contact_force(
   // Looping over ghost_adjacent_particles list with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       ghost_adjacent_particles | boost::adaptors::map_values)
+       container_manager.ghost_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {

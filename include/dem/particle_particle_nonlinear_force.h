@@ -64,10 +64,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &                        ghost_adjacent_particles,
+    DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
@@ -197,10 +194,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &                        ghost_adjacent_particles,
+    DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;
@@ -331,10 +325,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &                        ghost_adjacent_particles,
+    DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) override;

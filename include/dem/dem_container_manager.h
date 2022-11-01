@@ -42,51 +42,21 @@ template <int dim>
 class DEMContainerManager
 {
 public:
-  /**
-   * Particle-particle broad search which finds the particle-particle contact
-   * pairs candidates, local or ghost, (contact_pair_candidates) which shows the
-   * collision pairs. These collision pairs will be used in the fine search
-   * to investigate if they are in contact or not.
-   *
-   * @param particle_handler The particle handler of particles in the broad
-   * search
-   */
   void
-  execute_particle_particle_broad_search(
-    dealii::Particles::ParticleHandler<dim> &particle_handler);
+  execute_cell_neighbors_search(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const bool                                       has_floating_mesh = false);
 
-  /**
-   * Iterates over a vector of maps (pairs_in_contact) to see if the particles
-   * which were in contact in the last time step, are still in contact or not.
-   *
-   * @param neighborhood_threshold A value which defines the neighbor particles
-   */
   void
-  execute_particle_particle_fine_search(const double neighborhood_threshold);
+  update_cell_neighbors(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const bool                                       has_floating_mesh = false)
+  {
+    cells_local_neighbor_list.clear();
+    cells_ghost_neighbor_list.clear();
 
-  /**
-   * @brief Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact
-   *
-   */
-  void
-  execute_particle_wall_broad_search(
-    const Particles::ParticleHandler<dim> &           particle_handler,
-    BoundaryCellsInformation<dim> &                   boundary_cell_object,
-    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-    const double                                      simulation_time,
-    const bool has_floating_mesh = false);
-
-  /**
-   * @brief Carries out the fine particle-wall contact detection
-   *
-   */
-  void
-  execute_particle_wall_fine_search(
-    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-    const double                                      simulation_time,
-    const double                                      neighborhood_threshold,
-    const bool has_floating_mesh = false);
+    execute_cell_neighbors_search(triangulation, has_floating_mesh);
+  }
 
   /**
    * Manages to call update_fine_search_candidates() with contact data
@@ -114,45 +84,63 @@ public:
   locate_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler);
 
+  /**
+   * Particle-particle broad search which finds the particle-particle contact
+   * pairs candidates, local or ghost, (contact_pair_candidates) which shows the
+   * collision pairs. These collision pairs will be used in the fine search
+   * to investigate if they are in contact or not.
+   *
+   * @param particle_handler The particle handler of particles in the broad
+   * search
+   */
   void
-  execute_cell_neighbors_search(
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_floating_mesh = false);
+  execute_particle_particle_broad_search(
+    dealii::Particles::ParticleHandler<dim> &particle_handler);
 
+  /**
+   * @brief Carries out the broad contact detection search using the
+   * background triangulation for particle-walls contact
+   *
+   */
   void
-  update_cell_neighbors(
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_floating_mesh = false)
-  {
-    cells_local_neighbor_list.clear();
-    cells_ghost_neighbor_list.clear();
+  execute_particle_wall_broad_search(
+    const Particles::ParticleHandler<dim> &           particle_handler,
+    BoundaryCellsInformation<dim> &                   boundary_cell_object,
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+    const double                                      simulation_time,
+    const bool has_floating_mesh = false);
 
-    execute_cell_neighbors_search(triangulation, has_floating_mesh);
-  }
+  /**
+   * Iterates over a vector of maps (pairs_in_contact) to see if the particles
+   * which were in contact in the last time step, are still in contact or not.
+   *
+   * @param neighborhood_threshold A value which defines the neighbor particles
+   */
+  void
+  execute_particle_particle_fine_search(const double neighborhood_threshold);
+
+  /**
+   * @brief Carries out the fine particle-wall contact detection
+   *
+   */
+  void
+  execute_particle_wall_fine_search(
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+    const double                                      simulation_time,
+    const double                                      neighborhood_threshold,
+    const bool has_floating_mesh = false);
 
   void
   store_floating_mesh_info(
     const parallel::distributed::Triangulation<dim> &       triangulation,
     std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);
 
-  inline void
-  clear_cells_neighbor_list()
-  {
-    cells_local_neighbor_list.clear();
-    cells_ghost_neighbor_list.clear();
-  }
 
   inline void
   clear_contact_pair_candidates()
   {
     local_contact_pair_candidates.clear();
     ghost_contact_pair_candidates.clear();
-  }
-
-  inline void
-  clear_total_neighbor_list()
-  {
-    total_neighbor_list.clear();
   }
 
 

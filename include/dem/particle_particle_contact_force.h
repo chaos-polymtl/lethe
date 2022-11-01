@@ -21,6 +21,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_contact_info_struct.h>
 #include <dem/rolling_resistance_torque_models.h>
@@ -68,10 +69,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &                        ghost_adjacent_particles,
+    DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
