@@ -13,9 +13,9 @@
 // Lethe
 #include <core/dem_properties.h>
 
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_fine_search.h>
 #include <dem/particle_particle_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
@@ -25,23 +25,14 @@
 
 using namespace dealii;
 
-void
-update_contact_containers(
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
+void update_contact_containers(
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &local_adjacent_particles,
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &ghost_adjacent_particles,
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &cleared_local_adjacent_particles,
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &cleared_ghost_adjacent_particles)
 {
   local_adjacent_particles.clear();
@@ -51,15 +42,10 @@ update_contact_containers(
   ghost_adjacent_particles = cleared_ghost_adjacent_particles;
 }
 
-template <int dim>
-void
-update_ghost_particle_particle_contact_container_iterators(
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int,
-                       particle_particle_contact_info_struct<dim>>>
+void update_ghost_particle_particle_contact_container_iterators(
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &cleared_ghost_adjacent_particles,
-  const std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
+  typename dem_data_structures<2>::particle_index_iterator_map
     &local_particle_container)
 {
   for (auto adjacent_particles_iterator =
@@ -83,15 +69,10 @@ update_ghost_particle_particle_contact_container_iterators(
     }
 }
 
-template <int dim>
-void
-update_local_particle_particle_contact_container_iterators(
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int,
-                       particle_particle_contact_info_struct<dim>>>
+void update_local_particle_particle_contact_container_iterators(
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &cleared_local_adjacent_particles,
-  const std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
+  typename dem_data_structures<2>::particle_index_iterator_map
     &local_particle_container)
 {
   for (auto adjacent_particles_iterator =
@@ -119,7 +100,7 @@ update_local_particle_particle_contact_container_iterators(
 template <int dim>
 void
 update_local_particle_container(
-  std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
+  typename dem_data_structures<dim>::particle_index_iterator_map
     &                              local_particle_container,
   Particles::ParticleHandler<dim> *particle_handler)
 {
@@ -149,21 +130,14 @@ template <int dim>
 void
 locate_local_particles_in_cells(
   Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
+  typename dem_data_structures<2>::particle_index_iterator_map
     &local_particle_container,
-  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
-    &ghost_particle_container,
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &cleared_local_adjacent_particles,
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
+  typename dem_data_structures<2>::adjacent_particle_pairs
     &cleared_ghost_adjacent_particles)
 {
   local_particle_container.clear();
-  ghost_particle_container.clear();
 
   update_local_particle_container(local_particle_container, &particle_handler);
 
@@ -238,41 +212,23 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties());
 
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
-    local_adjacent_particles;
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
-    ghost_adjacent_particles;
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
-    cleared_local_adjacent_particles;
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int, particle_particle_contact_info_struct<2>>>
-    cleared_ghost_adjacent_particles;
-  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
+  typename dem_data_structures<2>::particle_index_iterator_map
     local_particle_container;
-  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
-    ghost_particle_container;
+  typename dem_data_structures<2>::adjacent_particle_pairs
+    cleared_local_adjacent_particles;
+  typename dem_data_structures<2>::adjacent_particle_pairs
+    cleared_ghost_adjacent_particles;
+
+  DEMContainerManager<dim> container_manager;
 
   // Finding cell neighbors
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    local_neighbor_list;
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    ghost_neighbor_list;
-
   FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(triangulation,
-                                           local_neighbor_list,
-                                           ghost_neighbor_list);
+  cell_neighbor_object.find_cell_neighbors(
+    triangulation,
+    container_manager.cells_local_neighbor_list,
+    container_manager.cells_ghost_neighbor_list);
 
-  // Creating broad search, fine search and particle-particle force objects
-  ParticleParticleBroadSearch<dim>              broad_search_object;
-  ParticleParticleFineSearch<dim>               fine_search_object;
+  // Creating particle-particle force objects
   ParticleParticleHertzMindlinLimitOverlap<dim> nonlinear_force_object(
     dem_parameters);
   VelocityVerletIntegrator<dim> integrator_object;
@@ -324,10 +280,6 @@ test()
 
 
   // Defining variables
-  std::unordered_map<unsigned int, std::vector<unsigned int>>
-    local_contact_pair_candidates;
-  std::unordered_map<unsigned int, std::vector<unsigned int>>
-                            ghost_contact_pair_candidates;
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       MOI;
@@ -357,34 +309,21 @@ test()
 
       particle_handler.exchange_ghost_particles();
 
-      locate_local_particles_in_cells(particle_handler,
-                                      local_particle_container,
-                                      ghost_particle_container,
-                                      cleared_local_adjacent_particles,
-                                      cleared_ghost_adjacent_particles);
+      container_manager.locate_local_particles_in_cells(particle_handler);
 
       // Calling broad search
-      broad_search_object.find_particle_particle_contact_pairs(
-        particle_handler,
-        local_neighbor_list,
-        ghost_neighbor_list,
-        local_contact_pair_candidates,
-        ghost_contact_pair_candidates);
+      container_manager.execute_particle_particle_broad_search(
+        particle_handler);
 
       // Calling fine search
-      fine_search_object.particle_particle_fine_search(
-        local_contact_pair_candidates,
-        ghost_contact_pair_candidates,
-        cleared_local_adjacent_particles,
-        cleared_ghost_adjacent_particles,
-        local_particle_container,
+      container_manager.execute_particle_particle_fine_search(
         neighborhood_threshold);
 
       // Integration
       // Calling non-linear force
       nonlinear_force_object.calculate_particle_particle_contact_force(
-        cleared_local_adjacent_particles,
-        cleared_ghost_adjacent_particles,
+        container_manager.local_adjacent_particles,
+        container_manager.ghost_adjacent_particles,
         dt,
         torque,
         force);
@@ -397,10 +336,7 @@ test()
       // Integration
       integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
-      update_contact_containers(local_adjacent_particles,
-                                ghost_adjacent_particles,
-                                cleared_local_adjacent_particles,
-                                cleared_ghost_adjacent_particles);
+      container_manager.localize_contacts();
 
       if (iteration % output_frequency == 0)
         {

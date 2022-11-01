@@ -20,7 +20,7 @@
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_particle_board_search(
+DEMContainerManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler)
 {
   particle_particle_broad_search_object.find_particle_particle_contact_pairs(

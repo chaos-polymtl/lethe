@@ -38,10 +38,9 @@
 // Lethe
 #include <core/dem_properties.h>
 
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_broad_search.h>
-#include <dem/particle_particle_fine_search.h>
 #include <dem/particle_particle_linear_force.h>
 
 // Tests (with common definitions)
@@ -88,20 +87,16 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties());
 
+  // Creating containers manager for finding cell neighbor and also broad and
+  // fine particle-particle search objects
+  DEMContainerManager<dim> container_manager;
+
   // Finding cell neighbors
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    local_neighbor_list;
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    ghost_neighbor_list;
-
   FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(triangulation,
-                                           local_neighbor_list,
-                                           ghost_neighbor_list);
-
-  // Creating broad and fine particle-particle search objects
-  ParticleParticleBroadSearch<dim> broad_search_object;
-  ParticleParticleFineSearch<dim>  fine_search_object;
+  cell_neighbor_object.find_cell_neighbors(
+    triangulation,
+    container_manager.cells_local_neighbor_list,
+    container_manager.cells_ghost_neighbor_list);
 
   // Inserting two particles in contact
   Point<3> position1 = {0.4, 0, 0};
@@ -161,53 +156,29 @@ test()
   for (unsigned i = 0; i < MOI.size(); ++i)
     MOI[i] = 1;
 
-
   // Calling broad search
-  std::unordered_map<unsigned int, std::vector<unsigned int>>
-    local_contact_pair_candidates;
-  std::unordered_map<unsigned int, std::vector<unsigned int>>
-    ghost_contact_pair_candidates;
-  std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
-    particle_container;
-
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
-      particle_container[particle_iterator->get_id()] = particle_iterator;
+      container_manager.particle_container[particle_iterator->get_id()] =
+        particle_iterator;
     }
 
-  broad_search_object.find_particle_particle_contact_pairs(
-    particle_handler,
-    local_neighbor_list,
-    local_neighbor_list,
-    local_contact_pair_candidates,
-    ghost_contact_pair_candidates);
+  container_manager.execute_particle_particle_broad_search(particle_handler);
 
   // Calling fine search
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int,
-                       particle_particle_contact_info_struct<dim>>>
-    local_adjacent_particles;
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int,
-                       particle_particle_contact_info_struct<dim>>>
-    ghost_adjacent_particles;
-
-  fine_search_object.particle_particle_fine_search(
-    local_contact_pair_candidates,
-    ghost_contact_pair_candidates,
-    local_adjacent_particles,
-    ghost_adjacent_particles,
-    particle_container,
+  container_manager.execute_particle_particle_fine_search(
     neighborhood_threshold);
 
   // Calling linear force
   ParticleParticleLinearForce<dim> linear_force_object(dem_parameters);
   linear_force_object.calculate_particle_particle_contact_force(
-    local_adjacent_particles, ghost_adjacent_particles, dt, torque, force);
+    container_manager.local_adjacent_particles,
+    container_manager.ghost_adjacent_particles,
+    dt,
+    torque,
+    force);
 
   // Output
   auto particle = particle_handler.begin();

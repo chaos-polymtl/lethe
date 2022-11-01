@@ -1042,7 +1042,7 @@ DEMSolver<dim>::solve()
           // particle_particle_broad_search_object
           //  .find_particle_particle_contact_pairs(particle_handler,
           //                                        container_manager);
-          container_manager.execute_particle_particle_board_search(
+          container_manager.execute_particle_particle_broad_search(
             particle_handler);
 
           // Updating number of contact builds

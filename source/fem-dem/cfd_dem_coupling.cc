@@ -1004,7 +1004,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   if (load_balance_step || checkpoint_step || contact_detection_step ||
       (this->simulation_control->is_at_start() && (counter == 0)))
     {
-      container_manager.execute_particle_particle_board_search(
+      container_manager.execute_particle_particle_broad_search(
         this->particle_handler);
 
       // Particle-wall broad contact search

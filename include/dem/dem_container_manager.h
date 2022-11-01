@@ -38,8 +38,7 @@ public:
   // DEM containers
   typename dem_data_structures<dim>::cells_total_neighbor_list
     total_neighbor_list;
-  typename dem_data_structures<dim>::floating_mesh_information
-    floating_mesh_info;
+
 
   // Modified by find_cell_neighbors class and shows the local neighbor cells of
   // all local cells in the triangulation
@@ -82,6 +81,9 @@ public:
   // Container that contains all the contact information of particle-wall
   typename dem_data_structures<dim>::particle_wall_in_contact
     particle_wall_in_contact;
+
+  typename dem_data_structures<dim>::floating_mesh_information
+    floating_mesh_info;
 
   typename dem_data_structures<dim>::particle_point_candidates
     particle_point_candidates;
@@ -147,7 +149,7 @@ public:
    * search
    */
   void
-  execute_particle_particle_board_search(
+  execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler);
 
   /**
