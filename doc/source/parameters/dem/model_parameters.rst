@@ -36,7 +36,7 @@ In this subsection, DEM simulation parameters are defined. These parameters incl
 
   # Rolling resistance method
   # choices are no_resistance|constant_resistance|viscous_resistance
-  set rolling resistance torque method                  = no_resistance
+  set rolling resistance torque method                  = constant_resistance
  end
 
 
