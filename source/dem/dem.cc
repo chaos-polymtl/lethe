@@ -69,7 +69,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
-  , floating_mesh(false)
+  , has_floating_mesh(false)
 {
   // Print simulation starting information
   print_initial_information(pcout, n_mpi_processes);
@@ -198,10 +198,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   container_manager.floating_mesh_info.resize(solids.size());
 
   if (solids.size() > 0)
-    floating_mesh = true;
+    has_floating_mesh = true;
 
   // Resize particle_floating_mesh_in_contact
-  if (floating_mesh)
+  if (has_floating_mesh)
     container_manager.particle_floating_mesh_in_contact.resize(solids.size());
 }
 
@@ -297,7 +297,7 @@ DEMSolver<dim>::load_balance()
   // find_cell_neighbors function, if cell i is a neighbor of cell j, in the
   // neighbor list of cell j, cell i is not included (without repetition). In
   // find_full_cell_neighbors function, however, these repetitions are allowed.
-  if (floating_mesh)
+  if (has_floating_mesh)
     {
       container_manager.clear_total_neighbor_list();
       cell_neighbors_object.find_full_cell_neighbors(
@@ -477,93 +477,6 @@ DEMSolver<dim>::update_moment_of_inertia(
 
 template <int dim>
 void
-DEMSolver<dim>::particle_wall_broad_search()
-{
-  // Particle - wall contact candidates
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
-    boundary_cell_object.get_boundary_cells_information(),
-    particle_handler,
-    container_manager.particle_wall_candidates);
-
-  // Particle - floating wall contact pairs
-  if (parameters.floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_broad_search_object
-        .find_particle_floating_wall_contact_pairs(
-          boundary_cell_object.get_boundary_cells_with_floating_walls(),
-          particle_handler,
-          parameters.floating_walls,
-          simulation_control->get_current_time(),
-          container_manager.particle_floating_wall_candidates);
-    }
-
-  // Particle - floating mesh broad search
-  if (floating_mesh)
-    {
-      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
-        container_manager.floating_mesh_info,
-        particle_handler,
-        container_manager.particle_floating_mesh_candidates,
-        container_manager.total_neighbor_list);
-    }
-
-  container_manager.particle_point_candidates =
-    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
-      particle_handler, boundary_cell_object.get_boundary_cells_with_points());
-
-  if constexpr (dim == 3)
-    {
-      container_manager.particle_line_candidates =
-        particle_point_line_broad_search_object
-          .find_particle_line_contact_pairs(
-            particle_handler,
-            boundary_cell_object.get_boundary_cells_with_lines());
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::particle_wall_fine_search()
-{
-  // Particle - wall fine search
-  particle_wall_fine_search_object.particle_wall_fine_search(
-    container_manager.particle_wall_candidates,
-    container_manager.particle_wall_in_contact);
-
-  // Particle - floating wall fine search
-  if (parameters.floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_fine_search_object.particle_floating_wall_fine_search(
-        container_manager.particle_floating_wall_candidates,
-        parameters.floating_walls,
-        simulation_control->get_current_time(),
-        container_manager.particle_floating_wall_in_contact);
-    }
-
-  // Particle - floating mesh fine search
-  if (floating_mesh)
-    {
-      particle_wall_fine_search_object.particle_floating_mesh_fine_search(
-        container_manager.particle_floating_mesh_candidates,
-        container_manager.particle_floating_mesh_in_contact);
-    }
-
-  container_manager.particle_points_in_contact =
-    particle_point_line_fine_search_object.particle_point_fine_search(
-      container_manager.particle_point_candidates,
-      neighborhood_threshold_squared);
-
-  if constexpr (dim == 3)
-    {
-      container_manager.particle_lines_in_contact =
-        particle_point_line_fine_search_object.particle_line_fine_search(
-          container_manager.particle_line_candidates,
-          neighborhood_threshold_squared);
-    }
-}
-
-template <int dim>
-void
 DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
@@ -594,7 +507,7 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   // Particle - floating mesh contact force
-  if (floating_mesh)
+  if (has_floating_mesh)
     {
       particle_wall_contact_force_object
         ->calculate_particle_floating_wall_contact_force(
@@ -944,7 +857,7 @@ DEMSolver<dim>::solve()
     container_manager.cells_ghost_neighbor_list);
 
   // Find full cell neighbor list for floating mesh
-  if (floating_mesh)
+  if (has_floating_mesh)
     cell_neighbors_object.find_full_cell_neighbors(
       triangulation, container_manager.total_neighbor_list);
 
@@ -1029,41 +942,51 @@ DEMSolver<dim>::solve()
           particle_handler.update_ghost_particles();
         }
 
-      // Broad particle-particle contact search
+      // Modify particles contact containers by search sequence
       if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
         {
           // Reset checkpoint step
           checkpoint_step = false;
 
-          // Fill containers of particle-particle
-          // (local_contact_pair_candidates) and particle-ghost contact pair
-          // candidates (ghost_contact_pair_candidates) by using broad search
-          // particle_particle_broad_search_object
-          //  .find_particle_particle_contact_pairs(particle_handler,
-          //                                        container_manager);
+          // Execute board search by filling containers of particle-particle
+          // contact pair candidates
           container_manager.execute_particle_particle_broad_search(
             particle_handler);
 
           // Updating number of contact builds
           contact_build_number++;
 
-          // Particle-wall broad contact search
-          particle_wall_broad_search();
+          // Execute board search by filling containers of particle-wall
+          // contact pair candidates
+          container_manager.execute_particle_wall_broad_search(
+            particle_handler,
+            boundary_cell_object,
+            parameters.floating_walls,
+            simulation_control->get_current_time(),
+            has_floating_mesh);
 
-          // localize_contacts<dim>(container_manager);
+          // Localize contacts and remove repetitions and add new contact pairs
+          // to the contact containers when particles are exchanged between
+          // processors
           container_manager.localize_contacts();
 
-          // locate_local_particles_in_cells<dim>(particle_handler,
-          //                                     container_manager);
+          // Locate local particles in cells and updates the iterators to
+          // particles in local-local contact containers
           container_manager.locate_local_particles_in_cells(particle_handler);
 
-          // Particle-particle fine search
+          // Execute fine search by updating particle-particle contact
+          // containers regards the neighborhood threshold
           container_manager.execute_particle_particle_fine_search(
             neighborhood_threshold_squared);
 
-          // Particles-wall fine search
-          particle_wall_fine_search();
+          // Execute fine search by updating particle-wall contact containers
+          // regards the neighborhood threshold
+          container_manager.execute_particle_wall_fine_search(
+            parameters.floating_walls,
+            simulation_control->get_current_time(),
+            neighborhood_threshold_squared,
+            has_floating_mesh);
         }
 
       // Particle-particle contact force

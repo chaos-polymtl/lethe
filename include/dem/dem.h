@@ -30,12 +30,8 @@
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
-#include <dem/particle_point_line_fine_search.h>
-#include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
-#include <dem/particle_wall_fine_search.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <dem/visualization.h>
 
@@ -166,20 +162,6 @@ private:
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     std::vector<double> &                    MOI);
 
-  /**
-   * @brief Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact
-   *
-   */
-  void
-  particle_wall_broad_search();
-
-  /**
-   * @brief Carries out the fine particled-wall contact detection
-   *
-   */
-  void
-  particle_wall_fine_search();
 
   /**
    * @brief Calculates particles-wall contact forces
@@ -298,10 +280,7 @@ private:
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
 
 
-  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
+
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
@@ -324,7 +303,7 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
-  bool            floating_mesh;
+  bool            has_floating_mesh;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;

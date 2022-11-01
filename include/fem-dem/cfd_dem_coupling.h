@@ -119,14 +119,6 @@ private:
   write_DEM_output_results();
 
   /**
-   * @brief Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact
-   *
-   */
-  void
-  particle_wall_broad_search();
-
-  /**
    * @brief Carries out the fine particled-wall contact detection
    *
    */
@@ -227,12 +219,6 @@ private:
 
   DEMContainerManager<dim> container_manager;
 
-  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;

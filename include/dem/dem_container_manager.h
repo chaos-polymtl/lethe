@@ -18,11 +18,15 @@
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
+#include <dem/find_boundary_cells_information.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_local_particles.h>
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_fine_search.h>
+#include <dem/particle_point_line_broad_search.h>
+#include <dem/particle_point_line_fine_search.h>
 #include <dem/particle_wall_broad_search.h>
+#include <dem/particle_wall_fine_search.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -161,11 +165,29 @@ public:
   void
   execute_particle_particle_fine_search(const double neighborhood_threshold);
 
+  /**
+   * @brief Carries out the broad contact detection search using the
+   * background triangulation for particle-walls contact
+   *
+   */
   void
   execute_particle_wall_broad_search(
-    const std::map<int, boundary_cells_info_struct<dim>>
-      &                                    boundary_cells_information,
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> &           particle_handler,
+    BoundaryCellsInformation<dim> &                   boundary_cell_object,
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+    const double                                      simulation_time,
+    const bool has_floating_mesh = false);
+
+  /**
+   * @brief Carries out the fine particle-wall contact detection
+   *
+   */
+  void
+  execute_particle_wall_fine_search(
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+    const double                                      simulation_time,
+    const double                                      neighborhood_threshold,
+    const bool has_floating_mesh = false);
 
   /**
    * Manages to call update_fine_search_candidates() with contact data
@@ -194,9 +216,15 @@ public:
     const Particles::ParticleHandler<dim> &particle_handler);
 
 private:
-  ParticleParticleBroadSearch<dim> particle_particle_broad_search_object;
+  // Broad search objects
+  ParticleParticleBroadSearch<dim>  particle_particle_broad_search_object;
+  ParticleWallBroadSearch<dim>      particle_wall_broad_search_object;
+  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
+
+  // Fine search objects
   ParticleParticleFineSearch<dim>  particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>     particle_wall_broad_search_object;
+  ParticleWallFineSearch<dim>      particle_wall_fine_search_object;
+  ParticlePointLineFineSearch<dim> particle_point_line_fine_search_object;
 };
 
 

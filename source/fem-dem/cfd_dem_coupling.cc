@@ -1000,26 +1000,43 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       this->particle_handler.update_ghost_particles();
     }
 
-  // Broad particle-particle contact search
+  // Modify particles contact containers by search sequence
   if (load_balance_step || checkpoint_step || contact_detection_step ||
       (this->simulation_control->is_at_start() && (counter == 0)))
     {
+      // Execute board search by filling containers of particle-particle
+      // contact pair candidates
       container_manager.execute_particle_particle_broad_search(
         this->particle_handler);
 
-      // Particle-wall broad contact search
-      particle_wall_broad_search();
+      // Execute board search by filling containers of particle-wall
+      // contact pair candidates
+      container_manager.execute_particle_wall_broad_search(
+        this->particle_handler,
+        boundary_cell_object,
+        dem_parameters.floating_walls,
+        this->simulation_control->get_current_time());
 
+      // Localize contacts and remove repetitions and add new contact pairs
+      // to the contact containers when particles are exchanged between
+      // processors
       container_manager.localize_contacts();
 
+      // Locate local particles in cells and updates the iterators to
+      // particles in local-local contact containers
       container_manager.locate_local_particles_in_cells(this->particle_handler);
 
-      // Particle-particle fine search
+      // Execute fine search by updating particle-particle contact
+      // containers regards the neighborhood threshold
       container_manager.execute_particle_particle_fine_search(
         neighborhood_threshold_squared);
 
-      // Particles-wall fine search
-      particle_wall_fine_search();
+      // Execute fine search by updating particle-wall contact containers
+      // regards the neighborhood threshold
+      container_manager.execute_particle_wall_fine_search(
+        dem_parameters.floating_walls,
+        this->simulation_control->get_current_time(),
+        neighborhood_threshold_squared);
 
       // Reset different steps. The contact build should be performed everytime
       // we restart the simulation or everytime load balancing is performed. At
@@ -1060,76 +1077,6 @@ CFDDEMSolver<dim>::write_DEM_output_results()
                             iter,
                             group_files,
                             this->mpi_communicator);
-}
-
-template <int dim>
-void
-CFDDEMSolver<dim>::particle_wall_broad_search()
-{
-  // Particle - wall contact candidates
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
-    boundary_cell_object.get_boundary_cells_information(),
-    this->particle_handler,
-    container_manager.particle_wall_candidates);
-
-  // Particle - floating wall contact pairs
-  if (dem_parameters.floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_broad_search_object
-        .find_particle_floating_wall_contact_pairs(
-          boundary_cell_object.get_boundary_cells_with_floating_walls(),
-          this->particle_handler,
-          dem_parameters.floating_walls,
-          this->simulation_control->get_current_time(),
-          container_manager.particle_floating_wall_candidates);
-    }
-
-  container_manager.particle_point_candidates =
-    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
-      this->particle_handler,
-      boundary_cell_object.get_boundary_cells_with_points());
-
-  if constexpr (dim == 3)
-    {
-      container_manager.particle_line_candidates =
-        particle_point_line_broad_search_object
-          .find_particle_line_contact_pairs(
-            this->particle_handler,
-            boundary_cell_object.get_boundary_cells_with_lines());
-    }
-}
-
-template <int dim>
-void
-CFDDEMSolver<dim>::particle_wall_fine_search()
-{
-  // Particle - wall fine search
-  particle_wall_fine_search_object.particle_wall_fine_search(
-    container_manager.particle_wall_candidates,
-    container_manager.particle_wall_in_contact);
-
-  // Particle - floating wall fine search
-  if (dem_parameters.floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_fine_search_object.particle_floating_wall_fine_search(
-        container_manager.particle_floating_wall_candidates,
-        dem_parameters.floating_walls,
-        this->simulation_control->get_current_time(),
-        container_manager.particle_floating_wall_in_contact);
-    }
-
-  container_manager.particle_points_in_contact =
-    particle_point_line_fine_search_object.particle_point_fine_search(
-      container_manager.particle_point_candidates,
-      neighborhood_threshold_squared);
-
-  if constexpr (dim == 3)
-    {
-      container_manager.particle_lines_in_contact =
-        particle_point_line_fine_search_object.particle_line_fine_search(
-          container_manager.particle_line_candidates,
-          neighborhood_threshold_squared);
-    }
 }
 
 template <int dim>
