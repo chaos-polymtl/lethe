@@ -1,0 +1,2 @@
+add_executable(matrix_free_non_linear_poisson matrix_free_non_linear_poisson.cc)
+deal_ii_setup_target(matrix_free_non_linear_poisson)

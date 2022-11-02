@@ -1,0 +1,25 @@
+# Listing of Parameters
+# ---------------------
+# The problem dimension <2|3>
+set dim                = 2
+
+# Order of FE element <1|2|3>
+set element order      = 2
+
+# Global refinement 1st cycle
+set initial refinement = 6
+
+# Number of cycles <1 up to 9-dim >
+set number of cycles   = 1
+
+# Output vtu files <true|false>
+set output             = true
+
+# Name for vtu files
+set output name        = solution
+
+# Path for vtu output files
+set output path        = ./output/
+
+# Preconditioner <GMG>
+set preconditioner     = GMG
