@@ -29,14 +29,15 @@ Parameter file
 Mesh
 ~~~~~
 
-Contrary to previous examples, in this example, we use a mesh generated using Gmsh. The Gmsh (with an extension of .msh) file is located inside the example folder. ``check diamond cells`` enables searching for diamond-shaped boundary cells and adding them to particle-wall contact search cells.
+Contrary to previous examples, in this example, we use a mesh generated using Gmsh. The Gmsh (with an extension of .msh) file is located inside the example folder. We refine this mesh once by setting ``initial refinement=1`` to ensure that the cells are sufficiently small to enable an efficient contact detection. ``check diamond cells=true`` enables searching for diamond-shaped boundary cells. Diamond cells are cell which only share a line with the boundary and not a complete face. Such cells can occur in unstructured grids, but they are detrimental to the stability of DEM simualtions. Enabling this option adds these cells to the particle-wall contact search cells and is necessary to ensure stable collisions with the wall in the vicinity of diamond cells.
 
 .. code-block:: text
 
     subsection mesh
-        set type 		         = gmsh
+        set type 		          = gmsh
         set file name	          = ./silo-Golshan.msh
-        set check diamond cells	= true
+        set check diamond cells	  = true
+        set initial refinement    = 1
     end
 
 
@@ -103,7 +104,7 @@ Model parameters
       set contact detection method 		   		 	= dynamic
       set dynamic contact search size coefficient	= 0.8
       set load balance method				 		= frequent
-      set load balance frequency				 	= 200000
+      set load balance frequency				 	= 100000
       set neighborhood threshold				 	= 1.3
       set particle particle contact force method	= hertz_mindlin_limit_overlap
       set particle wall contact force method       	= nonlinear
@@ -177,7 +178,7 @@ This simulation can be launched by (in parallel mode on 32 processes):
   mpirun -np 32 dem_3d silo-Golshan.prm
 
 .. warning::
-	This example takes approximately 48 hours on 32 cores. This high computational cost is because of the long time of the simulation (40 s).
+	This example takes approximately 48 hours on 32 cores. This high computational cost is because of the long time of the simulation (40 s) and the high number of particles. To number of particles can be reduced to have a shorter simulation time. For example, the entire simulatio can be ran in less than an hour on an 8 cores processor if only 13 230 particles are inserted.
 
 Results
 ---------
