@@ -81,8 +81,15 @@ struct Settings
     hypercube
   };
 
+  enum SourceTermType
+  {
+    zero,
+    mms
+  };
+
   PreconditionerType preconditioner;
   GeometryType       geometry;
+  SourceTermType     source_term;
 
   int          dimension;
   unsigned int element_order;
@@ -135,6 +142,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "AMG",
                     Patterns::Selection("AMG|GMG"),
                     "Preconditioner <AMG|GMG>");
+  prm.declare_entry("source term",
+                    "zero",
+                    Patterns::Selection("zero|mms"),
+                    "Source term <zero|mms>");
 
   if (prm_filename.size() == 0)
     {
@@ -175,6 +186,13 @@ Settings::try_parse(const std::string &prm_filename)
   else
     AssertThrow(false, ExcNotImplemented());
 
+  if (prm.get("source term") == "zero")
+    this->source_term = zero;
+  else if (prm.get("source term") == "mms")
+    this->source_term = mms;
+  else
+    AssertThrow(false, ExcNotImplemented());
+
   this->dimension          = prm.get_integer("dim");
   this->element_order      = prm.get_integer("element order");
   this->number_of_cycles   = prm.get_integer("number of cycles");
@@ -186,6 +204,41 @@ Settings::try_parse(const std::string &prm_filename)
 
   return true;
 }
+
+template <int dim>
+class MMSSolution : public Function<dim>
+{
+public:
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
+  {
+    double val = 1.0;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        val *= std::sin(numbers::PI * p[d]);
+      }
+    return val;
+  }
+};
+
+template <int dim>
+class SourceTerm : public Function<dim>
+{
+public:
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
+  {
+    const double coeff  = dim * numbers::PI * numbers::PI;
+    double       factor = 1.0;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        factor *= std::sin(numbers::PI * p[d]);
+      }
+    return -std::exp(factor) + coeff * factor;
+  }
+};
 
 template <int dim, int fe_degree>
 class MatrixBasedPoissonProblem
@@ -226,6 +279,9 @@ private:
 
   double
   compute_solution_norm() const;
+
+  double
+  compute_l2_error() const;
 
   void
   output_results(const unsigned int cycle) const;
@@ -438,12 +494,15 @@ MatrixBasedPoissonProblem<dim, fe_degree>::assemble_rhs()
   system_rhs = 0;
   FEValues<dim> fe_values(fe,
                           quadrature_formula,
-                          update_values | update_gradients | update_JxW_values);
+                          update_values | update_gradients | update_JxW_values |
+                            update_quadrature_points);
 
   const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
   const unsigned int n_q_points    = fe_values.n_quadrature_points;
 
-  Vector<double> cell_rhs(dofs_per_cell);
+  Vector<double>      cell_rhs(dofs_per_cell);
+  SourceTerm<dim>     source_term;
+  std::vector<double> source_term_values(n_q_points);
 
   std::vector<double>         newton_step_values(n_q_points);
   std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
@@ -458,6 +517,10 @@ MatrixBasedPoissonProblem<dim, fe_degree>::assemble_rhs()
 
           fe_values.reinit(cell);
 
+          if (parameters.source_term == Settings::mms)
+            source_term.value_list(fe_values.get_quadrature_points(),
+                                   source_term_values);
+
           fe_values.get_function_values(solution, newton_step_values);
           fe_values.get_function_gradients(solution, newton_step_gradients);
 
@@ -471,10 +534,15 @@ MatrixBasedPoissonProblem<dim, fe_degree>::assemble_rhs()
                   const double         phi_i      = fe_values.shape_value(i, q);
                   const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
-
-                  cell_rhs(i) += (-grad_phi_i * newton_step_gradients[q] +
-                                  phi_i * nonlinearity) *
-                                 dx;
+                  if (parameters.source_term == Settings::mms)
+                    cell_rhs(i) +=
+                      (-grad_phi_i * newton_step_gradients[q] +
+                       phi_i * nonlinearity + phi_i * source_term_values[q]) *
+                      dx;
+                  else
+                    cell_rhs(i) += (-grad_phi_i * newton_step_gradients[q] +
+                                    phi_i * nonlinearity) *
+                                   dx;
                 }
             }
 
@@ -676,12 +744,15 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
 
   FEValues<dim> fe_values(fe,
                           quadrature_formula,
-                          update_values | update_gradients | update_JxW_values);
+                          update_values | update_gradients | update_JxW_values |
+                            update_quadrature_points);
 
   const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
   const unsigned int n_q_points    = fe_values.n_quadrature_points;
 
-  Vector<double> cell_residual(dofs_per_cell);
+  Vector<double>      cell_residual(dofs_per_cell);
+  SourceTerm<dim>     source_term;
+  std::vector<double> source_term_values(n_q_points);
 
   std::vector<double>         values(n_q_points);
   std::vector<Tensor<1, dim>> gradients(n_q_points);
@@ -696,6 +767,10 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
 
           fe_values.reinit(cell);
 
+          if (parameters.source_term == Settings::mms)
+            source_term.value_list(fe_values.get_quadrature_points(),
+                                   source_term_values);
+
           fe_values.get_function_values(local_evaluation_point, values);
           fe_values.get_function_gradients(local_evaluation_point, gradients);
 
@@ -709,9 +784,14 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
                   const double         phi_i      = fe_values.shape_value(i, q);
                   const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
-
-                  cell_residual(i) +=
-                    (grad_phi_i * gradients[q] - phi_i * nonlinearity) * dx;
+                  if (parameters.source_term == Settings::mms)
+                    cell_residual(i) +=
+                      (grad_phi_i * gradients[q] - phi_i * nonlinearity -
+                       phi_i * source_term_values[q]) *
+                      dx;
+                  else
+                    cell_residual(i) +=
+                      (grad_phi_i * gradients[q] - phi_i * nonlinearity) * dx;
                 }
             }
 
@@ -906,6 +986,27 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_solution_norm() const
 }
 
 template <int dim, int fe_degree>
+double
+MatrixBasedPoissonProblem<dim, fe_degree>::compute_l2_error() const
+{
+  solution.update_ghost_values();
+
+  Vector<float> error_per_cell(triangulation.n_active_cells());
+
+  VectorTools::integrate_difference(mapping,
+                                    dof_handler,
+                                    solution,
+                                    MMSSolution<dim>(),
+                                    error_per_cell,
+                                    QGauss<dim>(fe.degree + 2),
+                                    VectorTools::L2_norm);
+
+  return VectorTools::compute_global_error(triangulation,
+                                           error_per_cell,
+                                           VectorTools::L2_norm);
+}
+
+template <int dim, int fe_degree>
 void
 MatrixBasedPoissonProblem<dim, fe_degree>::output_results(
   const unsigned int cycle) const
@@ -950,7 +1051,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
     const unsigned int n_vect_bits    = 8 * sizeof(double) * n_vect_doubles;
 
     std::string DAT_header = "START DATE: " + Utilities::System::get_date() +
-                             ", TIME: " + Utilities::System::get_time();
+                             ", TIME: " + Utilities::System::get_time() +
+                             ", MATRIX-BASED SOLVER";
     std::string MPI_header = "Running with " + std::to_string(n_ranks) +
                              " MPI process" + (n_ranks > 1 ? "es" : "");
     std::string VEC_header =
@@ -965,10 +1067,16 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
       PRECOND_header = "Preconditioner: AMG";
     else if (parameters.preconditioner == Settings::gmg)
       PRECOND_header = "Preconditioner: GMG";
+    std::string GEOMETRY_header = "";
     if (parameters.geometry == Settings::hyperball)
-      PRECOND_header = "Geometry: hyperball";
+      GEOMETRY_header = "Geometry: hyperball";
     else if (parameters.geometry == Settings::hypercube)
-      PRECOND_header = "Geometry: hypercube";
+      GEOMETRY_header = "Geometry: hypercube";
+    std::string SOURCE_header = "";
+    if (parameters.source_term == Settings::zero)
+      SOURCE_header = "Source term: zero";
+    else if (parameters.source_term == Settings::mms)
+      SOURCE_header = "Source term: according to MMS";
     std::string REFINE_header =
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
     std::string CYCLES_header =
@@ -982,6 +1090,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
     pcout << VEC_header << std::endl;
     pcout << SOL_header << std::endl;
     pcout << PRECOND_header << std::endl;
+    pcout << GEOMETRY_header << std::endl;
+    pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
     pcout << CYCLES_header << std::endl;
 
@@ -1045,6 +1155,11 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
 
       pcout << "  H1 seminorm: " << norm << std::endl;
       pcout << std::endl;
+
+      if (parameters.source_term == Settings::mms)
+        {
+          pcout << "  L2 norm: " << compute_l2_error() << std::endl;
+        }
 
       computing_timer.print_summary();
       computing_timer.reset();

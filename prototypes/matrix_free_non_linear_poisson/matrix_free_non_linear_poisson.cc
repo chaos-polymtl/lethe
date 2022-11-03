@@ -11,10 +11,7 @@
  * The full text of the license can be found in the file LICENSE.md at
  * the top level directory of deal.II.
  *
- * ---------------------------------------------------------------------
- *
- * Authors: Fabian Castelli, Karlsruhe Institute of Technology (KIT)
- */
+ * ---------------------------------------------------------------------*/
 
 
 #include <deal.II/base/function.h>
@@ -81,8 +78,15 @@ struct Settings
     hypercube
   };
 
+  enum SourceTermType
+  {
+    zero,
+    mms
+  };
+
   PreconditionerType preconditioner;
   GeometryType       geometry;
+  SourceTermType     source_term;
 
   int          dimension;
   unsigned int element_order;
@@ -135,6 +139,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "GMG",
                     Patterns::Selection("GMG"),
                     "Preconditioner <GMG>");
+  prm.declare_entry("source term",
+                    "zero",
+                    Patterns::Selection("zero|mms"),
+                    "Source term <zero|mms>");
 
   if (prm_filename.size() == 0)
     {
@@ -173,6 +181,13 @@ Settings::try_parse(const std::string &prm_filename)
   else
     AssertThrow(false, ExcNotImplemented());
 
+  if (prm.get("source term") == "zero")
+    this->source_term = zero;
+  else if (prm.get("source term") == "mms")
+    this->source_term = mms;
+  else
+    AssertThrow(false, ExcNotImplemented());
+
   this->dimension          = prm.get_integer("dim");
   this->element_order      = prm.get_integer("element order");
   this->number_of_cycles   = prm.get_integer("number of cycles");
@@ -184,6 +199,41 @@ Settings::try_parse(const std::string &prm_filename)
 
   return true;
 }
+
+template <int dim>
+class MMSSolution : public Function<dim>
+{
+public:
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
+  {
+    double val = 1.0;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        val *= std::sin(numbers::PI * p[d]);
+      }
+    return val;
+  }
+};
+
+template <int dim>
+class SourceTerm : public Function<dim>
+{
+public:
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
+  {
+    const double coeff  = dim * numbers::PI * numbers::PI;
+    double       factor = 1.0;
+    for (unsigned int d = 0; d < dim; ++d)
+      {
+        factor *= std::sin(numbers::PI * p[d]);
+      }
+    return -std::exp(factor) + coeff * factor;
+  }
+};
 
 template <int dim, int fe_degree, typename number>
 class JacobianOperator
@@ -410,6 +460,9 @@ private:
   double
   compute_solution_norm() const;
 
+  double
+  compute_l2_error() const;
+
   void
   output_results(const unsigned int cycle) const;
 
@@ -613,6 +666,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
   const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
   FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
+  SourceTerm<dim>                                        source_term_function;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -623,7 +677,22 @@ MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          phi.submit_value(-std::exp(phi.get_value(q)), q);
+          VectorizedArray<double> source_value = VectorizedArray<double>(0.0);
+
+          if (parameters.source_term == Settings::mms)
+            {
+              Point<dim, VectorizedArray<double>> point_batch =
+                phi.quadrature_point(q);
+
+              for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+                {
+                  Point<dim> single_point;
+                  for (unsigned int d = 0; d < dim; ++d)
+                    single_point[d] = point_batch[d][v];
+                  source_value[v] = source_term_function.value(single_point);
+                }
+            }
+          phi.submit_value(-std::exp(phi.get_value(q)) - source_value, q);
           phi.submit_gradient(phi.get_gradient(q), q);
         }
 
@@ -830,6 +899,29 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_solution_norm() const
 }
 
 template <int dim, int fe_degree>
+double
+MatrixFreePoissonProblem<dim, fe_degree>::compute_l2_error() const
+{
+  solution.update_ghost_values();
+
+  Vector<float> error_per_cell(triangulation.n_active_cells());
+
+  VectorTools::integrate_difference(mapping,
+                                    dof_handler,
+                                    solution,
+                                    MMSSolution<dim>(),
+                                    error_per_cell,
+                                    QGauss<dim>(fe.degree + 2),
+                                    VectorTools::L2_norm);
+
+  solution.zero_out_ghost_values();
+
+  return VectorTools::compute_global_error(triangulation,
+                                           error_per_cell,
+                                           VectorTools::L2_norm);
+}
+
+template <int dim, int fe_degree>
 void
 MatrixFreePoissonProblem<dim, fe_degree>::output_results(
   const unsigned int cycle) const
@@ -876,7 +968,8 @@ MatrixFreePoissonProblem<dim, fe_degree>::run()
     const unsigned int n_vect_bits    = 8 * sizeof(double) * n_vect_doubles;
 
     std::string DAT_header = "START DATE: " + Utilities::System::get_date() +
-                             ", TIME: " + Utilities::System::get_time();
+                             ", TIME: " + Utilities::System::get_time() +
+                             ", MATRIX-FREE SOLVER";
     std::string MPI_header = "Running with " + std::to_string(n_ranks) +
                              " MPI process" + (n_ranks > 1 ? "es" : "");
     std::string VEC_header =
@@ -885,12 +978,18 @@ MatrixFreePoissonProblem<dim, fe_degree>::run()
       Utilities::System::get_current_vectorization_level() +
       "), VECTORIZATION_LEVEL=" +
       std::to_string(DEAL_II_COMPILER_VECTORIZATION_LEVEL);
-    std::string SOL_header     = "Finite element space: " + fe.get_name();
-    std::string PRECOND_header = "Preconditioner: GMG";
+    std::string SOL_header      = "Finite element space: " + fe.get_name();
+    std::string PRECOND_header  = "Preconditioner: GMG";
+    std::string GEOMETRY_header = "";
     if (parameters.geometry == Settings::hyperball)
-      PRECOND_header = "Geometry: hyperball";
+      GEOMETRY_header = "Geometry: hyperball";
     else if (parameters.geometry == Settings::hypercube)
-      PRECOND_header = "Geometry: hypercube";
+      GEOMETRY_header = "Geometry: hypercube";
+    std::string SOURCE_header = "";
+    if (parameters.source_term == Settings::zero)
+      SOURCE_header = "Source term: zero";
+    else if (parameters.source_term == Settings::mms)
+      SOURCE_header = "Source term: according to MMS";
     std::string REFINE_header =
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
     std::string CYCLES_header =
@@ -904,6 +1003,8 @@ MatrixFreePoissonProblem<dim, fe_degree>::run()
     pcout << VEC_header << std::endl;
     pcout << SOL_header << std::endl;
     pcout << PRECOND_header << std::endl;
+    pcout << GEOMETRY_header << std::endl;
+    pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
     pcout << CYCLES_header << std::endl;
 
@@ -963,6 +1064,11 @@ MatrixFreePoissonProblem<dim, fe_degree>::run()
 
       pcout << "  H1 seminorm: " << norm << std::endl;
       pcout << std::endl;
+
+      if (parameters.source_term == Settings::mms)
+        {
+          pcout << "  L2 norm: " << compute_l2_error() << std::endl;
+        }
 
       computing_timer.print_summary();
       computing_timer.reset();
