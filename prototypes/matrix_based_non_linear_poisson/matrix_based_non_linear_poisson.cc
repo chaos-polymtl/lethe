@@ -75,7 +75,14 @@ struct Settings
     gmg
   };
 
+  enum GeometryType
+  {
+    hyperball,
+    hypercube
+  };
+
   PreconditionerType preconditioner;
+  GeometryType       geometry;
 
   int          dimension;
   unsigned int element_order;
@@ -104,6 +111,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "1",
                     Patterns::Integer(),
                     "Number of cycles <1 up to 9-dim >");
+  prm.declare_entry("geometry",
+                    "hyperball",
+                    Patterns::Selection("hyperball|hypercube"),
+                    "Geometry <hyperball|hypercube>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -154,6 +165,13 @@ Settings::try_parse(const std::string &prm_filename)
     this->preconditioner = amg;
   else if (prm.get("preconditioner") == "GMG")
     this->preconditioner = gmg;
+  else
+    AssertThrow(false, ExcNotImplemented());
+
+  if (prm.get("geometry") == "hyperball")
+    this->geometry = hyperball;
+  else if (prm.get("geometry") == "hypercube")
+    this->geometry = hypercube;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -272,18 +290,29 @@ MatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
-  SphericalManifold<dim>                boundary_manifold;
-  TransfiniteInterpolationManifold<dim> inner_manifold;
+  switch (parameters.geometry)
+    {
+        case Settings::hyperball: {
+          SphericalManifold<dim>                boundary_manifold;
+          TransfiniteInterpolationManifold<dim> inner_manifold;
 
-  GridGenerator::hyper_ball(triangulation);
+          GridGenerator::hyper_ball(triangulation);
 
-  triangulation.set_all_manifold_ids(1);
-  triangulation.set_all_manifold_ids_on_boundary(0);
+          triangulation.set_all_manifold_ids(1);
+          triangulation.set_all_manifold_ids_on_boundary(0);
 
-  triangulation.set_manifold(0, boundary_manifold);
+          triangulation.set_manifold(0, boundary_manifold);
 
-  inner_manifold.initialize(triangulation);
-  triangulation.set_manifold(1, inner_manifold);
+          inner_manifold.initialize(triangulation);
+          triangulation.set_manifold(1, inner_manifold);
+
+          break;
+        }
+        case Settings::hypercube: {
+          GridGenerator::hyper_cube(triangulation);
+          break;
+        }
+    }
 
   triangulation.refine_global(parameters.initial_refinement);
 }
@@ -936,6 +965,10 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
       PRECOND_header = "Preconditioner: AMG";
     else if (parameters.preconditioner == Settings::gmg)
       PRECOND_header = "Preconditioner: GMG";
+    if (parameters.geometry == Settings::hyperball)
+      PRECOND_header = "Geometry: hyperball";
+    else if (parameters.geometry == Settings::hypercube)
+      PRECOND_header = "Geometry: hypercube";
     std::string REFINE_header =
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
     std::string CYCLES_header =
