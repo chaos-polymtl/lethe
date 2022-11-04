@@ -33,6 +33,14 @@ namespace Parameters
 {
   namespace Lagrangian
   {
+    enum ParticleParticleContactForceModel
+    {
+      linear,
+      hertz_mindlin_limit_force,
+      hertz_mindlin_limit_overlap,
+      hertz
+    };
+
     struct LagrangianPhysicalProperties
     {
     public:
@@ -203,13 +211,7 @@ namespace Parameters
       double neighborhood_threshold;
 
       // Particle-particle contact force model
-      enum class ParticleParticleContactForceModel
-      {
-        linear,
-        hertz_mindlin_limit_force,
-        hertz_mindlin_limit_overlap,
-        hertz
-      } particle_particle_contact_force_method;
+      ParticleParticleContactForceModel particle_particle_contact_force_method;
 
       // Particle-wall contact force model
       enum class ParticleWallContactForceModel
