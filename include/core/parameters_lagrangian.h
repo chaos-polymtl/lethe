@@ -108,7 +108,7 @@ namespace Parameters
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_particle_properties(const unsigned int &particle_type,
-                                ParameterHandler &  prm);
+                                ParameterHandler   &prm);
 
     private:
       unsigned int particle_type_maximum_number = 5;
@@ -117,7 +117,7 @@ namespace Parameters
       initialize_containers(
         std::unordered_map<unsigned int, double> &particle_average_diameter,
         std::unordered_map<unsigned int, double> &particle_size_std,
-        std::unordered_map<unsigned int, int> &   number,
+        std::unordered_map<unsigned int, int>    &number,
         std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
         std::unordered_map<unsigned int, double> &poisson_ratio_particle,
@@ -354,7 +354,7 @@ namespace Parameters
           &boundary_translational_velocity,
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
         std::unordered_map<unsigned int, Tensor<1, 3>>
-          &                        boundary_rotational_vector,
+                                  &boundary_rotational_vector,
         std::vector<unsigned int> &outlet_boundaries,
         std::vector<unsigned int> &periodic_boundaries,
         std::vector<unsigned int> &periodic_direction);
