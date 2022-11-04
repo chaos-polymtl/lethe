@@ -37,7 +37,7 @@ using namespace std;
  * Defines or reads the mesh based on the information provided by the user
  * Gmsh files can also be read in this function
  *
- * @param mesh_params Input DEM parameters in the parameter handler file
+ * @param mesh_parameters Input DEM parameters in the parameter handler file
  * @param pcout Printing in parallel
  * @param restart If in restart situation
  * @param triangulation Triangulation
@@ -45,7 +45,7 @@ using namespace std;
  */
 template <int dim, int spacedim = dim>
 void
-read_mesh(const Parameters::Mesh &             mesh_params,
+read_mesh(const Parameters::Mesh &             mesh_parameters,
           const bool                           restart,
           const ConditionalOStream &           pcout,
           Triangulation<dim, spacedim> &       triangulation,
