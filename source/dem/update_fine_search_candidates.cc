@@ -1,5 +1,5 @@
 #include <dem/contact_type.h>
-#include <dem/localize_contacts.h>
+#include <dem/update_fine_search_candidates.h>
 
 using namespace dealii;
 

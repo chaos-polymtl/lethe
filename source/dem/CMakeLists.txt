@@ -16,7 +16,7 @@ add_library(lethe-dem
   integrator.cc
   lagrangian_post_processing.cc
   list_insertion.cc
-  localize_contacts.cc
+  update_fine_search_candidates.cc
   locate_local_particles.cc
   non_uniform_insertion.cc
   output_force_torque_calculation.cc
@@ -62,7 +62,7 @@ add_library(lethe-dem
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
   ../../include/dem/list_insertion.h
-  ../../include/dem/localize_contacts.h
+  ../../include/dem/update_fine_search_candidates.h
   ../../include/dem/locate_local_particles.h
   ../../include/dem/non_uniform_insertion.h
   ../../include/dem/output_force_torque_calculation.h

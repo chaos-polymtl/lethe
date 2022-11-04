@@ -175,11 +175,7 @@ test()
   ParticleParticleHertzMindlinLimitOverlap<dim> nonlinear_force_object(
     dem_parameters);
   nonlinear_force_object.calculate_particle_particle_contact_force(
-    container_manager.local_adjacent_particles,
-    container_manager.ghost_adjacent_particles,
-    dt,
-    torque,
-    force);
+    container_manager, dt, torque, force);
 
   // Output
   auto particle = particle_handler.begin();

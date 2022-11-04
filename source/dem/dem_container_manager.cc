@@ -20,112 +20,19 @@
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_particle_broad_search(
-  dealii::Particles::ParticleHandler<dim> &particle_handler)
+DEMContainerManager<dim>::execute_cell_neighbors_search(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  const bool                                       has_floating_mesh)
 {
-  particle_particle_broad_search_object.find_particle_particle_contact_pairs(
-    particle_handler, *this);
-}
+  // Find cell neighbors
+  cell_neighbors_object.find_cell_neighbors(triangulation,
+                                            cells_local_neighbor_list,
+                                            cells_ghost_neighbor_list);
 
-template <int dim>
-void
-DEMContainerManager<dim>::execute_particle_particle_fine_search(
-  const double neighborhood_threshold)
-{
-  particle_particle_fine_search_object.particle_particle_fine_search(
-    *this, neighborhood_threshold);
-}
-
-template <int dim>
-void
-DEMContainerManager<dim>::execute_particle_wall_broad_search(
-  const Particles::ParticleHandler<dim> &           particle_handler,
-  BoundaryCellsInformation<dim> &                   boundary_cell_object,
-  const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-  const double                                      simulation_time,
-  const bool                                        has_floating_mesh)
-{
-  // Particle-wall contact candidates
-  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
-    boundary_cell_object.get_boundary_cells_information(),
-    particle_handler,
-    particle_wall_candidates);
-
-  // Particle-floating wall contact pairs
-  if (floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_broad_search_object
-        .find_particle_floating_wall_contact_pairs(
-          boundary_cell_object.get_boundary_cells_with_floating_walls(),
-          particle_handler,
-          floating_walls,
-          simulation_time,
-          particle_floating_wall_candidates);
-    }
-
-  // Particle-floating mesh broad search
+  // Get total (with repetition) neighbors list for floating mesh.
   if (has_floating_mesh)
-    {
-      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
-        floating_mesh_info,
-        particle_handler,
-        particle_floating_mesh_candidates,
-        total_neighbor_list);
-    }
-
-  particle_point_candidates =
-    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
-      particle_handler, boundary_cell_object.get_boundary_cells_with_points());
-
-  if constexpr (dim == 3)
-    {
-      particle_line_candidates =
-        particle_point_line_broad_search_object
-          .find_particle_line_contact_pairs(
-            particle_handler,
-            boundary_cell_object.get_boundary_cells_with_lines());
-    }
-}
-
-template <int dim>
-void
-DEMContainerManager<dim>::execute_particle_wall_fine_search(
-  const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
-  const double                                      simulation_time,
-  const double                                      neighborhood_threshold,
-  const bool                                        has_floating_mesh)
-{
-  // Particle - wall fine search
-  particle_wall_fine_search_object.particle_wall_fine_search(
-    particle_wall_candidates, particle_wall_in_contact);
-
-  // Particle - floating wall fine search
-  if (floating_walls.floating_walls_number > 0)
-    {
-      particle_wall_fine_search_object.particle_floating_wall_fine_search(
-        particle_floating_wall_candidates,
-        floating_walls,
-        simulation_time,
-        particle_floating_wall_in_contact);
-    }
-
-  // Particle - floating mesh fine search
-  if (has_floating_mesh)
-    {
-      particle_wall_fine_search_object.particle_floating_mesh_fine_search(
-        particle_floating_mesh_candidates, particle_floating_mesh_in_contact);
-    }
-
-  particle_points_in_contact =
-    particle_point_line_fine_search_object.particle_point_fine_search(
-      particle_point_candidates, neighborhood_threshold);
-
-  if constexpr (dim == 3)
-    {
-      particle_lines_in_contact =
-        particle_point_line_fine_search_object.particle_line_fine_search(
-          particle_line_candidates, neighborhood_threshold);
-    }
+    cell_neighbors_object.find_full_cell_neighbors(triangulation,
+                                                   total_neighbor_list);
 }
 
 template <int dim>
@@ -251,22 +158,112 @@ DEMContainerManager<dim>::locate_local_particles_in_cells(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_cell_neighbors_search(
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  const bool                                       has_floating_mesh)
+DEMContainerManager<dim>::execute_particle_particle_broad_search(
+  dealii::Particles::ParticleHandler<dim> &particle_handler)
 {
-  // Find cell neighbors
-  cell_neighbors_object.find_cell_neighbors(triangulation,
-                                            cells_local_neighbor_list,
-                                            cells_ghost_neighbor_list);
+  particle_particle_broad_search_object.find_particle_particle_contact_pairs(
+    particle_handler, *this);
+}
 
-  // Get total (with repetition) neighbors list for floating mesh. In
-  // find_cell_neighbors function, if cell i is a neighbor of cell j, in the
-  // neighbor list of cell j, cell i is not included (without repetition). In
-  // find_full_cell_neighbors function, however, these repetitions are allowed.
+template <int dim>
+void
+DEMContainerManager<dim>::execute_particle_wall_broad_search(
+  const Particles::ParticleHandler<dim> &           particle_handler,
+  BoundaryCellsInformation<dim> &                   boundary_cell_object,
+  const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+  const double                                      simulation_time,
+  const bool                                        has_floating_mesh)
+{
+  // Particle-wall contact candidates
+  particle_wall_broad_search_object.find_particle_wall_contact_pairs(
+    boundary_cell_object.get_boundary_cells_information(),
+    particle_handler,
+    particle_wall_candidates);
+
+  // Particle-floating wall contact pairs
+  if (floating_walls.floating_walls_number > 0)
+    {
+      particle_wall_broad_search_object
+        .find_particle_floating_wall_contact_pairs(
+          boundary_cell_object.get_boundary_cells_with_floating_walls(),
+          particle_handler,
+          floating_walls,
+          simulation_time,
+          particle_floating_wall_candidates);
+    }
+
+  // Particle-floating mesh broad search
   if (has_floating_mesh)
-    cell_neighbors_object.find_full_cell_neighbors(triangulation,
-                                                   total_neighbor_list);
+    {
+      particle_wall_broad_search_object.particle_floating_mesh_contact_search(
+        floating_mesh_info,
+        particle_handler,
+        particle_floating_mesh_candidates,
+        total_neighbor_list);
+    }
+
+  particle_point_candidates =
+    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
+      particle_handler, boundary_cell_object.get_boundary_cells_with_points());
+
+  if constexpr (dim == 3)
+    {
+      particle_line_candidates =
+        particle_point_line_broad_search_object
+          .find_particle_line_contact_pairs(
+            particle_handler,
+            boundary_cell_object.get_boundary_cells_with_lines());
+    }
+}
+
+template <int dim>
+void
+DEMContainerManager<dim>::execute_particle_particle_fine_search(
+  const double neighborhood_threshold)
+{
+  particle_particle_fine_search_object.particle_particle_fine_search(
+    *this, neighborhood_threshold);
+}
+
+template <int dim>
+void
+DEMContainerManager<dim>::execute_particle_wall_fine_search(
+  const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+  const double                                      simulation_time,
+  const double                                      neighborhood_threshold,
+  const bool                                        has_floating_mesh)
+{
+  // Particle - wall fine search
+  particle_wall_fine_search_object.particle_wall_fine_search(
+    particle_wall_candidates, particle_wall_in_contact);
+
+  // Particle - floating wall fine search
+  if (floating_walls.floating_walls_number > 0)
+    {
+      particle_wall_fine_search_object.particle_floating_wall_fine_search(
+        particle_floating_wall_candidates,
+        floating_walls,
+        simulation_time,
+        particle_floating_wall_in_contact);
+    }
+
+  // Particle - floating mesh fine search
+  if (has_floating_mesh)
+    {
+      particle_wall_fine_search_object.particle_floating_mesh_fine_search(
+        particle_floating_mesh_candidates, particle_floating_mesh_in_contact);
+    }
+
+  particle_points_in_contact =
+    particle_point_line_fine_search_object.particle_point_fine_search(
+      particle_point_candidates, neighborhood_threshold);
+
+  if constexpr (dim == 3)
+    {
+      particle_lines_in_contact =
+        particle_point_line_fine_search_object.particle_line_fine_search(
+          particle_line_candidates, neighborhood_threshold);
+    }
 }
 
 template <int dim>

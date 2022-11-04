@@ -199,11 +199,7 @@ test()
       // Integration
       // Calling non-linear force
       nonlinear_force_object.calculate_particle_particle_contact_force(
-        container_manager.local_adjacent_particles,
-        container_manager.ghost_adjacent_particles,
-        dt,
-        torque,
-        force);
+        container_manager, dt, torque, force);
 
       // Store force before integration for proc 1
       // TODO - Improve this in the future, this is not clean.
