@@ -977,7 +977,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_solution_norm() const
                                     solution,
                                     Functions::ZeroFunction<dim>(),
                                     norm_per_cell,
-                                    QGauss<dim>(fe.degree + 2),
+                                    QGauss<dim>(fe.degree + 1),
                                     VectorTools::H1_seminorm);
 
   return VectorTools::compute_global_error(triangulation,
@@ -998,7 +998,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_l2_error() const
                                     solution,
                                     MMSSolution<dim>(),
                                     error_per_cell,
-                                    QGauss<dim>(fe.degree + 2),
+                                    QGauss<dim>(fe.degree + 1),
                                     VectorTools::L2_norm);
 
   return VectorTools::compute_global_error(triangulation,

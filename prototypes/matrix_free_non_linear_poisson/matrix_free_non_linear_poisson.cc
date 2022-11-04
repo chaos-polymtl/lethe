@@ -888,7 +888,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_solution_norm() const
                                     solution,
                                     Functions::ZeroFunction<dim>(),
                                     norm_per_cell,
-                                    QGauss<dim>(fe.degree + 2),
+                                    QGauss<dim>(fe.degree + 1),
                                     VectorTools::H1_seminorm);
 
   solution.zero_out_ghost_values();
@@ -911,7 +911,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_l2_error() const
                                     solution,
                                     MMSSolution<dim>(),
                                     error_per_cell,
-                                    QGauss<dim>(fe.degree + 2),
+                                    QGauss<dim>(fe.degree + 1),
                                     VectorTools::L2_norm);
 
   solution.zero_out_ghost_values();
