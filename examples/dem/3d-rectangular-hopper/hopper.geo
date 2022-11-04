@@ -48,5 +48,5 @@ Curve Loop(1) = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 Plane Surface(1) = {1};
 //+
 Extrude {0, 0, 0.0336} {
-  Surface{1}; Layers{2}; Recombine;
+  Surface{1}; Layers{1}; Recombine;
 }
