@@ -82,8 +82,8 @@ end
 
 subsection mesh
   set type                                = gmsh
-  set file name                           = hopper.msh
-  set initial refinement                  = 0
+  set file name                           = hopper_structured.msh
+  set initial refinement                  = 1
   set expand particle-wall contact search = false
   set check diamond cells                 = true
 end
