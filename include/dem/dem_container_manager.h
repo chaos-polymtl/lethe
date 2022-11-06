@@ -184,7 +184,7 @@ public:
     ghost_contact_pair_candidates.clear();
   }
 
-  // Container that contains the iterators to all local and ghost particles
+  // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map
     particle_container;
 
@@ -197,8 +197,7 @@ public:
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
 
-  // DEM container which contains all the pairs in adjacent cells which are
-  // collision candidates
+  // Container with all collision candidate particles within adjacent cells
   typename dem_data_structures<dim>::particle_particle_candidates
     local_contact_pair_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
@@ -214,7 +213,7 @@ public:
   typename dem_data_structures<dim>::particle_wall_candidates
     particle_wall_candidates;
 
-  // Container that contains all the contact information of object in contact
+  // Container with all the contact information of the object in contact
   // with a particle
   typename dem_data_structures<dim>::particle_floating_mesh_in_contact
     particle_floating_mesh_in_contact;
@@ -227,15 +226,14 @@ public:
   typename dem_data_structures<dim>::particle_point_line_contact_info
     particle_lines_in_contact;
 
-  // Container that contains all the contact information of adjacent
-  // local/ghost-local for calculation of the contact force of local/ghost-local
-  // particle pairs
+  // Container with all the contact information of adjacent
+  // local/ghost-local for pairwise contact force calculation
   typename dem_data_structures<dim>::adjacent_particle_pairs
     local_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
 
-  // Other containers that carry information
+  // Containers with other information
   typename dem_data_structures<dim>::floating_mesh_information
     floating_mesh_info;
   typename dem_data_structures<dim>::boundary_points_and_normal_vectors
@@ -256,7 +254,7 @@ private:
   ParticleWallFineSearch<dim>      particle_wall_fine_search_object;
   ParticlePointLineFineSearch<dim> particle_point_line_fine_search_object;
 
-  // Other relevent objects
+  // Other relevant objects
   FindCellNeighbors<dim> cell_neighbors_object;
 };
 
