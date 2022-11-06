@@ -13,6 +13,11 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   DEMContainerManager<dim> &container_manager,
   const double              neighborhood_threshold)
 {
+  // Pre-fetch containers
+  auto &particle_container       = container_manager.particle_container;
+  auto &local_adjacent_particles = container_manager.local_adjacent_particles;
+  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+
   // First iterating over local adjacent_particles
   for (auto &&adjacent_particles_list :
        container_manager.local_adjacent_particles | boost::adaptors::map_values)
@@ -59,15 +64,13 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
     {
       if (!second_particle_container.empty())
         {
-          auto particle_one =
-            container_manager.particle_container[particle_one_id];
+          auto               particle_one = particle_container[particle_one_id];
           Point<dim, double> particle_one_location =
             particle_one->get_location();
 
           for (const unsigned int &particle_two_id : second_particle_container)
             {
-              auto particle_two =
-                container_manager.particle_container[particle_two_id];
+              auto particle_two = particle_container[particle_two_id];
               Point<dim, double> particle_two_location =
                 particle_two->get_location();
 
@@ -80,8 +83,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
                 {
                   // Getting the particle one contact list and particle two id
                   auto particle_one_contact_list =
-                    &container_manager
-                       .local_adjacent_particles[particle_one_id];
+                    &local_adjacent_particles[particle_one_id];
 
                   // Adding the elements to contact info
                   particle_particle_contact_info_struct<dim> contact_info;
@@ -141,15 +143,13 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
     {
       if (!second_particle_container.empty())
         {
-          auto particle_one =
-            container_manager.particle_container[particle_one_id];
+          auto               particle_one = particle_container[particle_one_id];
           Point<dim, double> particle_one_location =
             particle_one->get_location();
 
           for (const unsigned int &particle_two_id : second_particle_container)
             {
-              auto particle_two =
-                container_manager.particle_container[particle_two_id];
+              auto particle_two = particle_container[particle_two_id];
               Point<dim, double> particle_two_location =
                 particle_two->get_location();
 
@@ -162,8 +162,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
                 {
                   // Getting the particle one contact list and particle two id
                   auto particle_one_contact_list =
-                    &container_manager
-                       .ghost_adjacent_particles[particle_one_id];
+                    &ghost_adjacent_particles[particle_one_id];
 
                   // Adding elements to contact info
                   particle_particle_contact_info_struct<dim> contact_info;
