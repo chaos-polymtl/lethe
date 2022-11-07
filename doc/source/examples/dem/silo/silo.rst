@@ -85,13 +85,11 @@ The total number of particles in this simulation is equal to 132300. Considering
                 set poisson ratio particles          	= 0.5
                 set restitution coefficient particles	= 0.7
                 set friction coefficient particles      = 0.5
-                set rolling friction particles         	= 0.01
         end
         set young modulus wall            				= 5000000
         set poisson ratio wall            				= 0.5
         set restitution coefficient wall           		= 0.7
         set friction coefficient wall         			= 0.5
-        set rolling friction wall         	      	  	= 0.01
     end
 
 

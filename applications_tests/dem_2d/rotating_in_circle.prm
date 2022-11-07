@@ -53,13 +53,11 @@ subsection lagrangian physical properties
     		set poisson ratio particles          	= 0.3
     		set restitution coefficient particles	= 0.5
     		set friction coefficient particles      = 0.1
-    		set rolling friction particles         	= 0.01
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
     set restitution coefficient wall           		= 0.5
     set friction coefficient wall         		= 0.1
-    set rolling friction wall         	      	  	= 0.01
 end
 
 #---------------------------------------------------

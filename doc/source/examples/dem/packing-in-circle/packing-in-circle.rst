@@ -110,7 +110,7 @@ First, the ``insertion method`` is selected. There are two insertion methods (``
 Lagrangian physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``Lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient, friction and rolling friction coefficients.
+The gravitational acceleration as well as the physical properties of particles and walls are specified in the ``Lagrangian physical properties`` subsection. These properties include diameter and density of particles, Young's modulus, Poisson's ratio, restitution coefficient and friction coefficients.
 
 .. code-block:: text
 
@@ -127,16 +127,14 @@ The gravitational acceleration as well as the physical properties of particles a
                 set poisson ratio particles          	= 0.3
                 set restitution coefficient particles	= 0.9
                 set friction coefficient particles      = 0.3
-                set rolling friction particles       	= 0.1
         end
         set young modulus wall            			   	= 100000000
         set poisson ratio wall            			   	= 0.3
         set restitution coefficient wall           	  	= 0.9
         set friction coefficient wall         		   	= 0.3
-        set rolling friction wall         	      	 	= 0.1
     end
 
-First, gravitational acceleration is defined. Since the simulation is two-dimensional, we do not define the gravity in `z` direction. The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types. The ``size distribution type`` parameter specifies the size distribution for each particle type. The acceptable choices are ``uniform`` and ``normal`` distributions. Since this simulation is monodispersed, the ``size distribution type`` is ``uniform``. ``diameter`` and ``density`` of particles, ``number`` of particles of each type, ``young modulus``, ``poisson ratio``, ``restitution coefficient``, ``friction coefficient``, and ``rolling friction coefficient`` are defined.
+First, gravitational acceleration is defined. Since the simulation is two-dimensional, we do not define the gravity in `z` direction. The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types. The ``size distribution type`` parameter specifies the size distribution for each particle type. The acceptable choices are ``uniform`` and ``normal`` distributions. Since this simulation is monodispersed, the ``size distribution type`` is ``uniform``. ``diameter`` and ``density`` of particles, ``number`` of particles of each type, ``young modulus``, ``poisson ratio``, ``restitution coefficient`` and ``friction coefficient`` are defined.
 
 .. note::
     The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution. For a ``normal`` distribution, we need to define ``average diameter`` and ``standard deviation`` parameters.

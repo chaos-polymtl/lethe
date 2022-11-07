@@ -53,7 +53,6 @@ subsection lagrangian physical properties
     		set poisson ratio particles          	= 0.4
     		set restitution coefficient particles	= 0.3
     		set friction coefficient particles      = 0.2
-    		set rolling friction particles         	= 0.03
 	end
     	subsection particle type 1
 		set size distribution type		= uniform
@@ -64,7 +63,6 @@ subsection lagrangian physical properties
     		set poisson ratio particles          	= 0.3
     		set restitution coefficient particles	= 0.5
     		set friction coefficient particles      = 0.1
-    		set rolling friction particles         	= 0.05
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
