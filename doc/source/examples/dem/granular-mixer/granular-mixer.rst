@@ -61,7 +61,6 @@ As mentioned earlier, there are two types of particles with the same size and pr
                 set poisson ratio particles             = 0.5
                 set restitution coefficient particles   = 0.5
                 set friction coefficient particles      = 0.5
-                set rolling friction particles          = 0.2
         	end
         	subsection particle type 1
                 set size distribution type              = uniform
@@ -72,13 +71,11 @@ As mentioned earlier, there are two types of particles with the same size and pr
                 set poisson ratio particles             = 0.5
                 set restitution coefficient particles   = 0.5
                 set friction coefficient particles      = 0.5
-                set rolling friction particles          = 0.2
         	end
                 set young modulus wall                  = 1e6
                 set poisson ratio wall                  = 0.5
                 set restitution coefficient wall        = 0.5
                 set friction coefficient wall           = 0.5
-                set rolling friction wall               = 0.2
     end
 
 
