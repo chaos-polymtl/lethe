@@ -92,7 +92,7 @@ This subsection contains the general information of the simulation, including th
 
 * ``method``: time-stepping method used. The available options are: 
 	* ``steady``: steady-state simulation
-	* ``steady-bdf``: steady-state simulation using adjoint time stepping with a bdf1 scheme
+	* ``steady_bdf``: steady-state simulation using adjoint time stepping with a bdf1 scheme
 	* ``bdf1``: 1st order backward differentiation
 	* ``bdf2``: 2nd order backward differentiation
 	* ``bdf3``: 3rd order backward differentiation
