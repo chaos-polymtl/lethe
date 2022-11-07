@@ -211,7 +211,7 @@ test()
 
       particle_handler.exchange_ghost_particles();
 
-      container_manager.locate_local_particles_in_cells(particle_handler);
+      container_manager.update_local_particles_in_cells(particle_handler);
 
       // Calling broad search
       container_manager.execute_particle_particle_broad_search(
@@ -229,7 +229,7 @@ test()
       // Integration
       integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
-      container_manager.localize_contacts();
+      container_manager.update_contacts();
 
       if (iteration % output_frequency == 0)
         {
