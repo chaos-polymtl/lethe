@@ -1,4 +1,4 @@
-#include <dem/locate_local_particles.h>
+#include <dem/update_local_particle_containers.h>
 
 using namespace dealii;
 

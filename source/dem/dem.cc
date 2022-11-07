@@ -290,7 +290,7 @@ DEMSolver<dim>::load_balance()
   container_manager.update_cell_neighbors(triangulation, has_floating_mesh);
 
 
-  // Update de container that contains all the combinations of background and
+  // Update the container with all the combinations of background and
   // solid cells
   container_manager.store_floating_mesh_info(triangulation, solids);
 
@@ -933,22 +933,22 @@ DEMSolver<dim>::solve()
             simulation_control->get_current_time(),
             has_floating_mesh);
 
-          // Localize contacts and remove repetitions and add new contact pairs
+          // Localize contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
           // processors
           container_manager.localize_contacts();
 
-          // Locate local particles in cells and updates the iterators to
-          // particles in local-local contact containers
-          container_manager.locate_local_particles_in_cells(particle_handler);
+          // Updates the iterators to particles in local-local contact
+          // containers
+          container_manager.update_local_particles_in_cells(particle_handler);
 
           // Execute fine search by updating particle-particle contact
-          // containers regards the neighborhood threshold
+          // containers according to the neighborhood threshold
           container_manager.execute_particle_particle_fine_search(
             neighborhood_threshold_squared);
 
           // Execute fine search by updating particle-wall contact containers
-          // regards the neighborhood threshold
+          // according to the neighborhood threshold
           container_manager.execute_particle_wall_fine_search(
             parameters.floating_walls,
             simulation_control->get_current_time(),

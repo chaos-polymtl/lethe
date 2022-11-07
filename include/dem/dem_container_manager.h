@@ -22,7 +22,6 @@
 #include <dem/data_containers.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/locate_local_particles.h>
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_fine_search.h>
 #include <dem/particle_point_line_broad_search.h>
@@ -30,6 +29,7 @@
 #include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_fine_search.h>
 #include <dem/update_fine_search_candidates.h>
+#include <dem/update_local_particle_containers.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -101,7 +101,7 @@ public:
    */
 
   void
-  locate_local_particles_in_cells(
+  update_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler);
 
   /**

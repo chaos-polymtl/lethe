@@ -95,7 +95,7 @@ DEMContainerManager<dim>::localize_contacts()
 
 template <int dim>
 void
-DEMContainerManager<dim>::locate_local_particles_in_cells(
+DEMContainerManager<dim>::update_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler)
 {
   // Update the iterators to local particles in a map of particles

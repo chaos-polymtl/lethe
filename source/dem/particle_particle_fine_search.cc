@@ -17,10 +17,14 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   auto &particle_container       = container_manager.particle_container;
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
   auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+  auto &local_contact_pair_candidates =
+    container_manager.local_contact_pair_candidates;
+  auto &ghost_contact_pair_candidates =
+    container_manager.ghost_contact_pair_candidates;
 
   // First iterating over local adjacent_particles
   for (auto &&adjacent_particles_list :
-       container_manager.local_adjacent_particles | boost::adaptors::map_values)
+       local_adjacent_particles | boost::adaptors::map_values)
 
     {
       // Iterating over each map which contains the contact information
@@ -60,7 +64,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   // is the output of broad search. If a pair is in vicinity (distance <
   // threshold), it is added to the local_adjacent_particles
   for (auto const &[particle_one_id, second_particle_container] :
-       container_manager.local_contact_pair_candidates)
+       local_contact_pair_candidates)
     {
       if (!second_particle_container.empty())
         {
@@ -100,7 +104,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
 
   // Second iterating over local-ghost adjacent_particles
   for (auto &&adjacent_particles_list :
-       container_manager.ghost_adjacent_particles | boost::adaptors::map_values)
+       ghost_adjacent_particles | boost::adaptors::map_values)
     {
       // Iterating over each map which contains the contact information
       // including particles I and II
@@ -139,7 +143,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   // is the output of broad search. If a pair is in vicinity (distance <
   // threshold), it is added to the ghost_adjacent_particles
   for (auto const &[particle_one_id, second_particle_container] :
-       container_manager.ghost_contact_pair_candidates)
+       ghost_contact_pair_candidates)
     {
       if (!second_particle_container.empty())
         {
