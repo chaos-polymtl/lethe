@@ -37,7 +37,7 @@ DEMContainerManager<dim>::execute_cell_neighbors_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::localize_contacts()
+DEMContainerManager<dim>::update_contacts()
 {
   // Update particle-particle contacts in local_adjacent_particles of fine
   // search step with local_contact_pair_candidates

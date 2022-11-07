@@ -916,7 +916,7 @@ DEMSolver<dim>::solve()
           // Reset checkpoint step
           checkpoint_step = false;
 
-          // Execute board search by filling containers of particle-particle
+          // Execute broad search by filling containers of particle-particle
           // contact pair candidates
           container_manager.execute_particle_particle_broad_search(
             particle_handler);
@@ -924,7 +924,7 @@ DEMSolver<dim>::solve()
           // Updating number of contact builds
           contact_build_number++;
 
-          // Execute board search by filling containers of particle-wall
+          // Execute broad search by filling containers of particle-wall
           // contact pair candidates
           container_manager.execute_particle_wall_broad_search(
             particle_handler,
@@ -933,10 +933,10 @@ DEMSolver<dim>::solve()
             simulation_control->get_current_time(),
             has_floating_mesh);
 
-          // Localize contacts, remove replicates and add new contact pairs
+          // Update contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
           // processors
-          container_manager.localize_contacts();
+          container_manager.update_contacts();
 
           // Updates the iterators to particles in local-local contact
           // containers
@@ -965,10 +965,10 @@ DEMSolver<dim>::solve()
           force);
 
       // We have to update the positions of the points on boundary faces and
-      // their normal vectors here. The localize_contact class deletes the
+      // their normal vectors here. The update_contacts deletes the
       // particle-wall contact candidate if it exists in the contact list. As a
       // result, when we update the points on boundary faces and their normal
-      // vectors, localize_contact deletes it from the output of broad search
+      // vectors, update_contacts deletes it from the output of broad search
       // and they are not updated in the contact force calculations.
       if (parameters.grid_motion.motion_type !=
           Parameters::Lagrangian::GridMotion<dim>::MotionType::none)

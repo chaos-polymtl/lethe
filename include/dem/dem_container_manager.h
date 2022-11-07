@@ -87,7 +87,7 @@ public:
    */
 
   void
-  localize_contacts();
+  update_contacts();
 
   /**
    * Updates the iterators to particles in local-local contact containers. This

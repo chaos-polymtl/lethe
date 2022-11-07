@@ -1008,14 +1008,14 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
         dem_parameters.floating_walls,
         this->simulation_control->get_current_time());
 
-      // Localize contacts and remove repetitions and add new contact pairs
+      // Update contacts, remove replicates and add new contact pairs
       // to the contact containers when particles are exchanged between
       // processors
-      container_manager.localize_contacts();
+      container_manager.update_contacts();
 
-      // Locate local particles in cells and updates the iterators to
-      // particles in local-local contact containers
-      container_manager.locate_local_particles_in_cells(this->particle_handler);
+      // Updates the iterators to particles in local-local contact
+      // containers
+      container_manager.update_local_particles_in_cells(this->particle_handler);
 
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
