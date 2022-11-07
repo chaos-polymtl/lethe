@@ -92,7 +92,7 @@ This subsection contains the general information of the simulation, including th
 
 * ``method``: time-stepping method used. The available options are: 
 	* ``steady``: steady-state simulation
-	* ``steady-bdf``: steady-state simulation using adjoint time stepping with a bdf1 scheme
+	* ``steady_bdf``: steady-state simulation using adjoint time stepping with a bdf1 scheme
 	* ``bdf1``: 1st order backward differentiation
 	* ``bdf2``: 2nd order backward differentiation
 	* ``bdf3``: 3rd order backward differentiation
@@ -101,7 +101,7 @@ This subsection contains the general information of the simulation, including th
 
 * ``number mesh adapt``: number of mesh adaptations during the steady-sate simulation
 
-* ``stop tolerance``: tolerance at which the adjoint time stepping steady state simulation (``method = steady-bdf``) stops. 
+* ``stop tolerance``: tolerance at which the adjoint time stepping steady state simulation (``method = steady_bdf``) stops. 
 
 .. note::
 	The adjoint time stepping will stop when the :math:`\mathcal{L}_2` norm of the initial residual is lower than ``stop tolerance`` at the start of a non-linear solution step.
