@@ -31,12 +31,13 @@ Mesh
 ~~~~~
 
 The mesh is a hopper with 90° angle generated with GMSH having a top part for the filling and a bottom part which acts as a collector of the particle.
+The geometry follow the Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ base case and was handled in order to generate a structured mesh.
 
 .. code-block:: text
 
     subsection mesh
         set type                                = gmsh
-        set file name                           = hopper90.msh
+        set file name                           = hopper_structured.msh
         set initial refinement                  = 1
         set expand particle-wall contact search = false
         set check diamond cells                 = true
@@ -135,10 +136,11 @@ Model parameters are based on the `Silo example <../silo/silo.html>`_.
         set contact detection method                = dynamic
         set dynamic contact search size coefficient = 0.9
         set load balance method                     = frequent
-        set load balance frequency                  = 200000
+        set load balance frequency                  = 50000
         set neighborhood threshold                  = 1.3
         set particle particle contact force method  = hertz_mindlin_limit_overlap
         set particle wall contact force method      = nonlinear
+        set rolling resistance torque method        = constant_resistance
         set integration method                      = velocity_verlet
     end
 
@@ -223,7 +225,7 @@ Results
 -------
 As seen in the following figure, the simulation was not run until all the particles are discharged in the bottom part.
 Since the mass flow rate is constant during the discharge, simulating the very end is not necessary.
-The simulated mass discharging rate is 86.94 g/s.
+The simulated mass discharging rate is 84.94 g/s.
 
 .. figure:: images/simulation_end.png
     :width: 300
