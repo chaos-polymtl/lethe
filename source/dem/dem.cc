@@ -755,7 +755,8 @@ DEMSolver<dim>::write_output_results()
                          group_files,
                          mpi_communicator);
 
-  if (simulation_control->get_output_boundaries())
+  if (simulation_control->get_output_boundaries() &&
+      simulation_control->get_step_number() == 0)
     {
       DataOutFaces<dim> data_out_faces;
 
