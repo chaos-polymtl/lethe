@@ -37,31 +37,29 @@ using namespace dealii;
 
 using namespace DEM;
 
+
 /**
- * Base interface for classes that carry out the calculation of
- * particle-particle contact force including non-linear and linear contact
- * models
+ * Base class for the particle-particle contact force models
+ * This class does not implement any of the models, but ensures that
+ * an interface without template specialization is available. All of the
+ * actual implementation of the models are carried out in the
+ * ParticleParticleContactForce class which is templated by the contact model
+ * type.
  */
 template <int dim>
-class ParticleParticleContactForce
+class ParticleParticleContactForceBase
 {
 public:
-  ParticleParticleContactForce<dim>()
-  {}
-
-  virtual ~ParticleParticleContactForce()
-  {}
-
   /**
    * Carries out the calculation of the contact force using the contact pair
-   * information
-   * obtained in the fine search and physical properties of particles
+   * information obtained in the fine search and physical properties of
+   * particles
    *
    * @param local_adjacent_particles Required information for calculation of the
-   * loacl-local particle-particle contact force. These information were
+   * local-local particle-particle contact forces. The information was
    * obtained in the fine search
    * @param ghost_adjacent_particles Required information for calculation of the
-   * loacl-ghost particle-particle contact force. These information were
+   * local-ghost particle-particle contact forces. The information was
    * obtained in the fine search
    * @param dt DEM time step
    * @param torque An unordered_map of torque of particles
@@ -73,6 +71,7 @@ public:
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
+
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -115,6 +114,89 @@ public:
     const double                                particle_two_radius,
     const double                                particle_one_mass,
     const double                                particle_two_mass) = 0;
+};
+
+/**
+ * Class that carry out the calculation of
+ * particle-particle contact force including non-linear and linear contact
+ * models
+ */
+template <int                                                       dim,
+          Parameters::Lagrangian::ParticleParticleContactForceModel force_model>
+class ParticleParticleContactForce
+  : public ParticleParticleContactForceBase<dim>
+{
+public:
+  ParticleParticleContactForce<dim, force_model>(
+    const DEMSolverParameters<dim> &dem_parameters);
+
+
+  virtual ~ParticleParticleContactForce()
+  {}
+
+  /**
+   * Carries out the calculation of the contact force using the contact pair
+   * information
+   * obtained in the fine search and physical properties of particles
+   *
+   * @param local_adjacent_particles Required information for calculation of the
+   * loacl-local particle-particle contact force. These information were
+   * obtained in the fine search
+   * @param ghost_adjacent_particles Required information for calculation of the
+   * loacl-ghost particle-particle contact force. These information were
+   * obtained in the fine search
+   * @param dt DEM time step
+   * @param torque An unordered_map of torque of particles
+   * @param force Force acting on particles
+   */
+  virtual void
+  calculate_particle_particle_contact_force(
+    DEMContainerManager<dim> & container_manager,
+    const double               dt,
+    std::vector<Tensor<1, 3>> &torque,
+    std::vector<Tensor<1, 3>> &force) override;
+
+  /**
+   * Carries out the calculation of the contact force for IB particles. This
+   * function is used in fem-dem/ib_particles_dem.
+   *
+   * @param normal_overlap Contact normal overlap. This is already calculated and
+   * will be used here to calculate contact force.
+   * @param contact_info Contact history including tangential overlap and relative
+   * velocity.
+   * @param normal_force Contact normal force.
+   * @param tangential_force Contact tangential force.
+   * @param particle_one_tangential_torque
+   * @param particle_two_tangential_torque
+   * @param rolling_resistance_torque Contact rolling resistance torque.
+   * @param particle_one
+   * @param particle_two
+   * @param particle_one_location Location of particle one.
+   * @param particle_two_location Location of particle two.
+   * @param dt Time-step.
+   * @param particle_one_radius radius of particle one.
+   * @param particle_two_radius radius of particle two.
+   * @param particle_one_mass mass of particle two.
+   * @param particle_two_mass mass of particle two.
+   */
+  virtual void
+  calculate_IB_particle_particle_contact_force(
+    const double                                normal_overlap,
+    particle_particle_contact_info_struct<dim> &contact_info,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque,
+    IBParticle<dim> &                           particle_one,
+    IBParticle<dim> &                           particle_two,
+    const Point<dim> &                          particle_one_location,
+    const Point<dim> &                          particle_two_location,
+    const double                                dt,
+    const double                                particle_one_radius,
+    const double                                particle_two_radius,
+    const double                                particle_one_mass,
+    const double                                particle_two_mass) override;
 
 protected:
   /**
@@ -286,20 +368,629 @@ protected:
    * @param particle_two_properties Properties of particle two in
    * contact
    */
-  void
+  inline void
   find_effective_radius_and_mass(
     const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties);
+    const ArrayView<const double> &particle_two_properties)
+  {
+    effective_mass = (particle_one_properties[DEM::PropertiesIndex::mass] *
+                      particle_two_properties[DEM::PropertiesIndex::mass]) /
+                     (particle_one_properties[DEM::PropertiesIndex::mass] +
+                      particle_two_properties[DEM::PropertiesIndex::mass]);
+    effective_radius =
+      (particle_one_properties[DEM::PropertiesIndex::dp] *
+       particle_two_properties[DEM::PropertiesIndex::dp]) /
+      (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
+            particle_two_properties[DEM::PropertiesIndex::dp]));
+  }
 
 
-  std::map<int, std::map<int, double>> effective_youngs_modulus;
-  std::map<int, std::map<int, double>> effective_shear_modulus;
-  std::map<int, std::map<int, double>> effective_coefficient_of_restitution;
-  std::map<int, std::map<int, double>> effective_coefficient_of_friction;
-  std::map<int, std::map<int, double>>
+  /**
+   * Carries out the calculation of the particle-particle linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param normal_relative_velocity_value Normal relative contact velocity
+   * @param normal_unit_vector Contact normal unit vector
+   * @param normal_overlap Contact normal overlap
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param particle_one_tangential_torque Contact tangential torque on particle one
+   * @param particle_two_tangential_torque Contact tangential torque on particle two
+   * @param rolling_friction_torque Contact rolling resistance torque
+   */
+  inline void
+  calculate_linear_contact(
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double                                normal_relative_velocity_value,
+    const Tensor<1, 3> &                        normal_unit_vector,
+    const double                                normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque)
+  {
+    // Calculation of effective radius and mass
+    this->find_effective_radius_and_mass(particle_one_properties,
+                                         particle_two_properties);
+    const unsigned int particle_one_type =
+      particle_one_properties[PropertiesIndex::type];
+    const unsigned int particle_two_type =
+      particle_two_properties[PropertiesIndex::type];
+
+    // Calculation of normal and tangential spring and dashpot constants
+    // using particle properties
+    double normal_spring_constant =
+      1.0667 * sqrt(this->effective_radius) *
+      this->effective_youngs_modulus
+        [particle_one_type][particle_two_properties[PropertiesIndex::type]] *
+      pow((0.9375 * this->effective_mass * normal_relative_velocity_value *
+           normal_relative_velocity_value /
+           (sqrt(this->effective_radius) *
+            this->effective_youngs_modulus[particle_one_type]
+                                          [particle_two_type])),
+          0.2);
+    double tangential_spring_constant =
+      1.0667 * sqrt(this->effective_radius) *
+        this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+        pow((0.9375 * this->effective_mass *
+             contact_info.tangential_relative_velocity *
+             contact_info.tangential_relative_velocity /
+             (sqrt(this->effective_radius) *
+              this->effective_youngs_modulus[particle_one_type]
+                                            [particle_two_type])),
+            0.2) +
+      DBL_MIN;
+    double normal_damping_constant = sqrt(
+      (4.0 * this->effective_mass * normal_spring_constant) /
+      (1.0 +
+       (M_PI /
+        (log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                       [particle_two_type]) +
+         DBL_MIN)) *
+         (M_PI /
+          (log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                         [particle_two_type]) +
+           DBL_MIN))));
+    double tangential_damping_constant =
+      normal_damping_constant *
+      sqrt(tangential_spring_constant / normal_spring_constant);
+
+    // Calculation of normal force
+    normal_force =
+      ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+      ((normal_damping_constant * normal_relative_velocity_value) *
+       normal_unit_vector);
+
+    // Calculation of tangential force. Since we need damping tangential force
+    // in the gross sliding again, we define it as a separate variable
+    Tensor<1, 3> damping_tangential_force =
+      tangential_damping_constant * contact_info.tangential_relative_velocity;
+    tangential_force =
+      (tangential_spring_constant * contact_info.tangential_overlap) +
+      damping_tangential_force;
+
+    double coulomb_threshold =
+      this->effective_coefficient_of_friction[particle_one_type]
+                                             [particle_two_type] *
+      normal_force.norm();
+
+
+    // Check for gross sliding
+    if (tangential_force.norm() > coulomb_threshold)
+      {
+        // Gross sliding occurs and the tangential overlap and tangential
+        // force are limited to Coulomb's criterion
+        contact_info.tangential_overlap =
+          (coulomb_threshold *
+             (tangential_force / (tangential_force.norm() + DBL_MIN)) -
+           damping_tangential_force) /
+          (tangential_spring_constant + DBL_MIN);
+
+        tangential_force =
+          (tangential_spring_constant * contact_info.tangential_overlap) +
+          damping_tangential_force;
+      }
+
+    // Calculation of torque
+    // Torque caused by tangential force (tangential_torque)
+    particle_one_tangential_torque =
+      cross_product_3d(normal_unit_vector,
+                       tangential_force *
+                         particle_one_properties[PropertiesIndex::dp] * 0.5);
+    particle_two_tangential_torque =
+      particle_one_tangential_torque *
+      particle_two_properties[PropertiesIndex::dp] /
+      particle_one_properties[PropertiesIndex::dp];
+
+    // Rolling resistance torque
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::no_rolling_resistance)
+      rolling_resistance_torque = no_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::constant_rolling_resistance)
+      rolling_resistance_torque = constant_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::viscous_rolling_resistance)
+      rolling_resistance_torque = viscous_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+  }
+
+
+  /**
+   * @brief Carries out the calculation of the particle-particle non-linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param normal_relative_velocity_value Normal relative contact velocity
+   * @param normal_unit_vector Contact normal unit vector
+   * @param normal_overlap Contact normal overlap
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param particle_one_tangential_torque Contact tangential torque on particle one
+   * @param particle_two_tangential_torque Contact tangential torque on particle two
+   * @param rolling_friction_torque Contact rolling resistance torque
+   */
+  inline void
+  calculate_hertz_mindlin_limit_overlap_contact(
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double                                normal_relative_velocity_value,
+    const Tensor<1, 3> &                        normal_unit_vector,
+    const double                                normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque)
+  {
+    // Calculation of effective radius and mass
+    this->find_effective_radius_and_mass(particle_one_properties,
+                                         particle_two_properties);
+
+    const unsigned int particle_one_type =
+      particle_one_properties[PropertiesIndex::type];
+    const unsigned int particle_two_type =
+      particle_two_properties[PropertiesIndex::type];
+
+    const double radius_times_overlap_sqrt =
+      sqrt(this->effective_radius * normal_overlap);
+    const double model_parameter_sn =
+      2.0 *
+      this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      radius_times_overlap_sqrt;
+    double model_parameter_st =
+      8.0 *
+      this->effective_shear_modulus[particle_one_type][particle_two_type] *
+      radius_times_overlap_sqrt;
+
+    // Calculation of normal and tangential spring and dashpot constants
+    // using particle properties
+    double normal_spring_constant = 0.66665 * model_parameter_sn;
+    double normal_damping_constant =
+      -1.8257 *
+      this->model_parameter_beta[particle_one_type][particle_two_type] *
+      sqrt(model_parameter_sn * this->effective_mass);
+    double tangential_spring_constant =
+      8.0 *
+        this->effective_shear_modulus[particle_one_type][particle_two_type] *
+        radius_times_overlap_sqrt +
+      DBL_MIN;
+    double tangential_damping_constant =
+      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
+
+    // Calculation of normal force
+    normal_force =
+      ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+      ((normal_damping_constant * normal_relative_velocity_value) *
+       normal_unit_vector);
+
+    // Calculation of tangential force. Since we need damping tangential force
+    // in the gross sliding again, we define it as a separate variable
+    Tensor<1, 3> damping_tangential_force =
+      tangential_damping_constant * contact_info.tangential_relative_velocity;
+    tangential_force =
+      (tangential_spring_constant * contact_info.tangential_overlap) +
+      damping_tangential_force;
+
+    double coulomb_threshold =
+      this->effective_coefficient_of_friction[particle_one_type]
+                                             [particle_two_type] *
+      normal_force.norm();
+
+    // Check for gross sliding
+    if (tangential_force.norm() > coulomb_threshold)
+      {
+        // Gross sliding occurs and the tangential overlap and tangential
+        // force are limited to Coulomb's criterion
+        contact_info.tangential_overlap =
+          (coulomb_threshold *
+             (tangential_force / (tangential_force.norm() + DBL_MIN)) -
+           damping_tangential_force) /
+          (tangential_spring_constant + DBL_MIN);
+
+        tangential_force =
+          (tangential_spring_constant * contact_info.tangential_overlap) +
+          damping_tangential_force;
+      }
+
+    // Calculation of torque caused by tangential force (tangential_torque)
+    particle_one_tangential_torque =
+      cross_product_3d(normal_unit_vector,
+                       tangential_force *
+                         particle_one_properties[PropertiesIndex::dp] * 0.5);
+    particle_two_tangential_torque =
+      particle_one_tangential_torque *
+      particle_two_properties[PropertiesIndex::dp] /
+      particle_one_properties[PropertiesIndex::dp];
+
+
+    // Rolling resistance torque
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::no_rolling_resistance)
+      rolling_resistance_torque = no_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::constant_rolling_resistance)
+      rolling_resistance_torque = constant_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::viscous_rolling_resistance)
+      rolling_resistance_torque = viscous_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+  }
+
+
+  /**
+   * @brief Carries out the calculation of the particle-particle non-linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param normal_relative_velocity_value Normal relative contact velocity
+   * @param normal_unit_vector Contact normal unit vector
+   * @param normal_overlap Contact normal overlap
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param tangential_torque Contact tangential torque
+   * @param rolling_friction_torque Contact rolling resistance torque
+   */
+  inline void
+  calculate_hertz_mindlin_limit_force_contact(
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double                                normal_relative_velocity_value,
+    const Tensor<1, 3> &                        normal_unit_vector,
+    const double                                normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque)
+  {
+    // Calculation of effective radius and mass
+    this->find_effective_radius_and_mass(particle_one_properties,
+                                         particle_two_properties);
+
+    const unsigned int particle_one_type =
+      particle_one_properties[PropertiesIndex::type];
+    const unsigned int particle_two_type =
+      particle_two_properties[PropertiesIndex::type];
+
+    const double radius_times_overlap_sqrt =
+      sqrt(this->effective_radius * normal_overlap);
+    const double model_parameter_sn =
+      2.0 *
+      this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      radius_times_overlap_sqrt;
+    double model_parameter_st =
+      8.0 *
+      this->effective_shear_modulus[particle_one_type][particle_two_type] *
+      radius_times_overlap_sqrt;
+
+    // Calculation of normal and tangential spring and dashpot constants
+    // using particle properties
+    double normal_spring_constant = 0.66665 * model_parameter_sn;
+    double normal_damping_constant =
+      -1.8257 *
+      this->model_parameter_beta[particle_one_type][particle_two_type] *
+      sqrt(model_parameter_sn * this->effective_mass);
+    double tangential_spring_constant =
+      8.0 *
+        this->effective_shear_modulus[particle_one_type][particle_two_type] *
+        radius_times_overlap_sqrt +
+      DBL_MIN;
+    double tangential_damping_constant =
+      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
+
+    // Calculation of normal force using spring and dashpot normal forces
+    normal_force =
+      ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+      ((normal_damping_constant * normal_relative_velocity_value) *
+       normal_unit_vector);
+
+    // Calculation of tangential force using spring and dashpot tangential
+    // forces. Since we need dashpot tangential force in the gross sliding
+    // again, we define it as a separate variable
+    tangential_force =
+      tangential_spring_constant * contact_info.tangential_overlap +
+      tangential_damping_constant * contact_info.tangential_relative_velocity;
+
+    double coulomb_threshold =
+      this->effective_coefficient_of_friction[particle_one_type]
+                                             [particle_two_type] *
+      normal_force.norm();
+
+    // Check for gross sliding
+    if (tangential_force.norm() > coulomb_threshold)
+      {
+        // Gross sliding occurs and the tangential overlap and tangential
+        // force are limited to Coulomb's criterion
+        tangential_force =
+          coulomb_threshold *
+          (tangential_force / (tangential_force.norm() + DBL_MIN));
+      }
+
+    // Calculation of torque caused by tangential force (tangential_torque)
+    particle_one_tangential_torque =
+      cross_product_3d(normal_unit_vector,
+                       tangential_force *
+                         particle_one_properties[PropertiesIndex::dp] * 0.5);
+
+    particle_two_tangential_torque =
+      particle_one_tangential_torque *
+      particle_two_properties[PropertiesIndex::dp] /
+      particle_one_properties[PropertiesIndex::dp];
+
+
+    // Rolling resistance torque
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::no_rolling_resistance)
+      rolling_resistance_torque = no_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::constant_rolling_resistance)
+      rolling_resistance_torque = constant_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::viscous_rolling_resistance)
+      rolling_resistance_torque = viscous_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+  }
+
+  /**
+   * @brief Carries out the calculation of the particle-particle non-linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param normal_relative_velocity_value Normal relative contact velocity
+   * @param normal_unit_vector Contact normal unit vector
+   * @param normal_overlap Contact normal overlap
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param tangential_torque Contact tangential torque
+   * @param rolling_friction_torque Contact rolling resistance torque
+   */
+  inline void
+  calculate_hertz_contact(
+    particle_particle_contact_info_struct<dim> &contact_info,
+    const double                                normal_relative_velocity_value,
+    const Tensor<1, 3> &                        normal_unit_vector,
+    const double                                normal_overlap,
+    const ArrayView<const double> &             particle_one_properties,
+    const ArrayView<const double> &             particle_two_properties,
+    Tensor<1, 3> &                              normal_force,
+    Tensor<1, 3> &                              tangential_force,
+    Tensor<1, 3> &                              particle_one_tangential_torque,
+    Tensor<1, 3> &                              particle_two_tangential_torque,
+    Tensor<1, 3> &                              rolling_resistance_torque)
+  {
+    // Calculation of effective radius and mass
+    this->find_effective_radius_and_mass(particle_one_properties,
+                                         particle_two_properties);
+
+    const unsigned int particle_one_type =
+      particle_one_properties[PropertiesIndex::type];
+    const unsigned int particle_two_type =
+      particle_two_properties[PropertiesIndex::type];
+
+    const double radius_times_overlap_sqrt =
+      sqrt(this->effective_radius * normal_overlap);
+    const double model_parameter_sn =
+      2 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      radius_times_overlap_sqrt;
+
+    // Calculation of normal and tangential spring and dashpot constants
+    // using particle properties
+    double normal_spring_constant = 0.66665 * model_parameter_sn;
+    double normal_damping_constant =
+      -1.8257 *
+      this->model_parameter_beta[particle_one_type][particle_two_type] *
+      sqrt(model_parameter_sn * this->effective_mass);
+    double tangential_spring_constant =
+      8.0 *
+        this->effective_shear_modulus[particle_one_type][particle_two_type] *
+        radius_times_overlap_sqrt +
+      DBL_MIN;
+
+
+    // Calculation of normal force using spring and dashpot normal forces
+    normal_force =
+      ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+      ((normal_damping_constant * normal_relative_velocity_value) *
+       normal_unit_vector);
+
+    // Calculation of tangential force using spring and dashpot tangential
+    // forces. Since we need dashpot tangential force in the gross sliding
+    // again, we define it as a separate variable
+    tangential_force =
+      tangential_spring_constant * contact_info.tangential_overlap;
+
+    double coulomb_threshold =
+      this->effective_coefficient_of_friction[particle_one_type]
+                                             [particle_two_type] *
+      normal_force.norm();
+
+    // Check for gross sliding
+    if (tangential_force.norm() > coulomb_threshold)
+      {
+        // Gross sliding occurs and the tangential overlap and tangential
+        // force are limited to Coulumb's criterion
+        tangential_force =
+          coulomb_threshold *
+          (tangential_force / (tangential_force.norm() + DBL_MIN));
+      }
+
+    // Calculation of torque
+    // Torque caused by tangential force (tangential_torque)
+    particle_one_tangential_torque =
+      cross_product_3d(normal_unit_vector,
+                       tangential_force *
+                         particle_one_properties[PropertiesIndex::dp] * 0.5);
+
+    particle_two_tangential_torque =
+      particle_one_tangential_torque *
+      particle_two_properties[PropertiesIndex::dp] /
+      particle_one_properties[PropertiesIndex::dp];
+
+
+    // Rolling resistance torque
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::no_rolling_resistance)
+      rolling_resistance_torque = no_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::constant_rolling_resistance)
+      rolling_resistance_torque = constant_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+    if (this->rolling_resistance_model ==
+        RollingResistanceTorqueModel::viscous_rolling_resistance)
+      rolling_resistance_torque = viscous_rolling_resistance_torque(
+        this->effective_radius,
+        particle_one_properties,
+        particle_two_properties,
+        this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                       [particle_two_type],
+        normal_force.norm(),
+        normal_unit_vector);
+  }
+
+  // Members of the class
+
+
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_youngs_modulus;
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_shear_modulus;
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_coefficient_of_restitution;
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_coefficient_of_friction;
+  std::unordered_map<int, std::unordered_map<int, double>>
          effective_coefficient_of_rolling_friction;
   double effective_radius;
   double effective_mass;
+
+  // Contact model parameter. It is calculated in the constructor for different
+  // combinations of particle types. For different combinations, a map of map is
+  // used to store this variable
+  std::unordered_map<int, std::unordered_map<int, double>> model_parameter_beta;
+
+  // Normal and tangential contact forces, tangential and rolling torques,
+  // normal unit vector of the contact and contact relative velocity in the
+  // normal direction
+  Tensor<1, 3>                 normal_unit_vector;
+  Tensor<1, 3>                 normal_force;
+  Tensor<1, 3>                 tangential_force;
+  Tensor<1, 3>                 particle_one_tangential_torque;
+  Tensor<1, 3>                 particle_two_tangential_torque;
+  Tensor<1, 3>                 rolling_resistance_torque;
+  double                       normal_relative_velocity_value;
+  RollingResistanceTorqueModel rolling_resistance_model;
 };
 
 #endif /* particle_particle_contact_force_h */

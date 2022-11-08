@@ -18,8 +18,7 @@
  */
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_particle_linear_force.h>
-#include <dem/particle_particle_nonlinear_force.h>
+#include <dem/particle_particle_contact_force.h>
 
 using namespace std;
 
@@ -34,7 +33,7 @@ using namespace std;
  * @return A pointer to the particle-particle contact force object
  */
 template <int dim>
-std::shared_ptr<ParticleParticleContactForce<dim>>
+std::shared_ptr<ParticleParticleContactForceBase<dim>>
 set_particle_particle_contact_force_model(
   const DEMSolverParameters<dim> &dem_parameters);
 

@@ -264,7 +264,7 @@ private:
   DEMSolverParameters<dim> dem_parameters{};
   MPI_Comm                 mpi_communicator;
 
-  std::shared_ptr<ParticleParticleContactForce<dim>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
 
   std::vector<std::set<unsigned int>> particles_contact_candidates;
