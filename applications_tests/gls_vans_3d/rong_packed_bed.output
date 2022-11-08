@@ -1,0 +1,85 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       640
+   Number of degrees of freedom: 3300
+   Volume of triangulation:      5.656854249e-05
+Pressure drop: 0 Pa
+
+*****************************************************************
+Transient iteration : 1        Time : 0.002    Time step : 0.002    CFL : 0.06743077177
+*****************************************************************
+Pressure drop: 31.5942532 Pa
+Mass Source: -1.408159088e-11 s^-1
+Max Local Mass Source: 8.027467254e-08 s^-1
+Average Void Fraction in Bed: 0.7930753133
+
+*****************************************************************
+Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.2165621926
+*****************************************************************
+Pressure drop: 22.57009881 Pa
+Mass Source: -3.432835289e-07 s^-1
+Max Local Mass Source: 8.271625181e-08 s^-1
+Average Void Fraction in Bed: 0.7931023626
+
+*****************************************************************
+Transient iteration : 3        Time : 0.006    Time step : 0.002    CFL : 0.2214957629
+*****************************************************************
+Pressure drop: 22.90968878 Pa
+Mass Source: 3.43273989e-07 s^-1
+Max Local Mass Source: 8.23107266e-08 s^-1
+Average Void Fraction in Bed: 0.7930753133
+
+*****************************************************************
+Transient iteration : 4        Time : 0.008    Time step : 0.002    CFL : 0.2205178886
+*****************************************************************
+Pressure drop: 22.51906546 Pa
+Mass Source: -3.433148422e-07 s^-1
+Max Local Mass Source: 8.133983491e-08 s^-1
+Average Void Fraction in Bed: 0.7931023626
+
+*****************************************************************
+Transient iteration : 5        Time : 0.01     Time step : 0.002    CFL : 0.2187156648
+*****************************************************************
+Pressure drop: 22.90904137 Pa
+Mass Source: 3.432988122e-07 s^-1
+Max Local Mass Source: 8.220077274e-08 s^-1
+Average Void Fraction in Bed: 0.7930753133
+
+*****************************************************************
+Transient iteration : 6        Time : 0.012    Time step : 0.002    CFL : 0.2207881787
+*****************************************************************
+Pressure drop: 22.51915627 Pa
+Mass Source: -3.433082806e-07 s^-1
+Max Local Mass Source: 8.123294893e-08 s^-1
+Average Void Fraction in Bed: 0.7931023626
+
+*****************************************************************
+Transient iteration : 7        Time : 0.014    Time step : 0.002    CFL : 0.2187043906
+*****************************************************************
+Pressure drop: 22.90903681 Pa
+Mass Source: 3.432665021e-07 s^-1
+Max Local Mass Source: 8.215302121e-08 s^-1
+Average Void Fraction in Bed: 0.7930753133
+
+*****************************************************************
+Transient iteration : 8        Time : 0.016    Time step : 0.002    CFL : 0.2208069386
+*****************************************************************
+Pressure drop: 22.51916966 Pa
+Mass Source: -3.433492006e-07 s^-1
+Max Local Mass Source: 8.120202874e-08 s^-1
+Average Void Fraction in Bed: 0.7931023626
+
+*****************************************************************
+Transient iteration : 9        Time : 0.018    Time step : 0.002    CFL : 0.2187152089
+*****************************************************************
+Pressure drop: 22.90905345 Pa
+Mass Source: 3.433197502e-07 s^-1
+Max Local Mass Source: 8.213197807e-08 s^-1
+Average Void Fraction in Bed: 0.7930753133
+
+*****************************************************************
+Transient iteration : 10       Time : 0.02     Time step : 0.002    CFL : 0.2208160365
+*****************************************************************
+Pressure drop: 22.51917257 Pa
+Mass Source: -3.433635395e-07 s^-1
+Max Local Mass Source: 8.118639249e-08 s^-1
+Average Void Fraction in Bed: 0.7931023626
