@@ -14,8 +14,8 @@ Features
 
 Files used in this example
 ---------------------------
-``/examples/unresolved-cfd-dem/square-fluidized-bed``
-
+``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
+``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
 
 Description of the case
 -----------------------
@@ -27,7 +27,7 @@ This example simulates the fluidization of spherical particles in air. First, we
 DEM parameter file
 -------------------
 
-The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters.html>`_ of the documentation.
+All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
 
 To set-up the square fluidized bed case, we first fill the bed with particles. 
 
@@ -41,12 +41,12 @@ In this example, we are simulating a squared fluidized bed that has a half lengt
 .. code-block:: text
 
     subsection mesh
-        set type                 				= dealii
-        set grid type            				= subdivided_hyper_rectangle
-        set grid arguments       				= 1,5,1:-0.02,-0.1,-0.02:0.02,0.1,0.02:true
-        set initial refinement   				= 3
+        set type               = dealii
+  	set grid type          = subdivided_hyper_rectangle
+  	set grid arguments     = 1,5,1:-0.02,-0.1,-0.02:0.02,0.1,0.02:true
+  	set initial refinement = 3
     end
-
+    
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -56,11 +56,11 @@ Another subsection, which is generally the one we put at the top of the paramete
 .. code-block:: text
 
     subsection simulation control
-  	set time step                 			 	 = 0.000005
-  	set time end       					 = 0.5
-  	set log frequency				         = 1000
-  	set output frequency            			 = 1000
-  	set output path                                      	 = ./output_dem/
+  	set time step        = 0.000005
+  	set time end         = 0.5
+  	set log frequency    = 1000
+  	set output frequency = 1000
+  	set output path      = ./output_dem/
     end
 
 Restart
@@ -71,12 +71,11 @@ The ``cfd_dem_coupling_3d`` solver requires reading several DEM files to start t
 .. code-block:: text
 
     subsection restart
-    	set checkpoint					 = true
-    	set frequency 					 = 1000
-    	set restart       				 = false
-    	set filename      				 = dem
+    	set checkpoint = true
+  	set frequency  = 10000
+  	set restart    = false
+  	set filename   = dem
     end
-    
 
 Model parameters
 ~~~~~~~~~~~~~~~~~
@@ -86,14 +85,14 @@ The section on model parameters is explained in the DEM examples. We show the ch
 .. code-block:: text
 
     subsection model parameters
-  	set contact detection method 		   		 = dynamic
-  	set load balance method				 	 = dynamic
-  	set load balance threshold				 = 0.5
-  	set dynamic load balance check frequency		 = 10000
-  	set neighborhood threshold				 = 1.5
-  	set particle particle contact force method               = hertz_mindlin_limit_overlap
-  	set particle wall contact force method                   = nonlinear
-  	set integration method				         = velocity_verlet
+  	set contact detection method               = dynamic
+  	set load balance method                    = dynamic
+  	set load balance threshold                 = 0.5
+  	set dynamic load balance check frequency   = 10000
+  	set neighborhood threshold                 = 1.5
+  	set particle particle contact force method = hertz_mindlin_limit_overlap
+  	set particle wall contact force method     = nonlinear
+  	set integration method                     = velocity_verlet
     end
 
 We enable dynamic load balancing in order to fully take advantage of the parallelization of the code.
@@ -190,7 +189,7 @@ or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d packing_in_square_duct.prm
+  mpirun -np 8 dem_3d dem-packing-in-fluidized-bed.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -336,7 +335,7 @@ We also enable grad_div stabilization in order to improve local mass conservatio
         set vans model = modelB
     end
     
-We determine the drag model to be used for the calculation of particle-fluid forces. Currently, Difelice, Rong and Dallavalle models are supported. Other optional forces that can be enabled are the buoyancy force, the shear force and the pressure force. We only decide to enable drag and buoyancy as for air, the other forces are considered to be negligible. The VANS model we are solving is model B. Other possible option is model A.
+We determine the drag model to be used for the calculation of particle-fluid forces as the Di Felice model. Other optional forces that can be enabled are the buoyancy force, the shear force and the pressure force. We only decide to enable drag and buoyancy as for air, the other forces are considered to be negligible. The VANS model we are solving is model B. Other possible option is model A.
 
 Finally, the linear and non-linear solver controls are defined.
 
