@@ -94,10 +94,7 @@ ParticleParticleLinearForce<dim>::ParticleParticleLinearForce(
 template <int dim>
 void
 ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &                        ghost_adjacent_particles,
+  DEMContainerManager<dim> & container_manager,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
@@ -108,7 +105,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
   // Looping over local_adjacent_particles values with iterator
   // adjacent_particles_list
   for (auto &&adjacent_particles_list :
-       local_adjacent_particles | boost::adaptors::map_values)
+       container_manager.local_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {
@@ -228,7 +225,7 @@ ParticleParticleLinearForce<dim>::calculate_particle_particle_contact_force(
   // Looping over ghost_adjacent_particles with iterator
   // adjacent_particles_iterator
   for (auto &&adjacent_particles_list :
-       ghost_adjacent_particles | boost::adaptors::map_values)
+       container_manager.ghost_adjacent_particles | boost::adaptors::map_values)
     {
       if (!adjacent_particles_list.empty())
         {

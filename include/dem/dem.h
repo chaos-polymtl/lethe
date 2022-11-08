@@ -19,26 +19,18 @@
 #include <core/serial_solid.h>
 
 #include <dem/data_containers.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/find_cell_neighbors.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/lagrangian_post_processing.h>
-#include <dem/localize_contacts.h>
-#include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
-#include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_contact_force.h>
-#include <dem/particle_particle_fine_search.h>
-#include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
-#include <dem/particle_point_line_fine_search.h>
-#include <dem/particle_wall_broad_search.h>
 #include <dem/particle_wall_contact_force.h>
-#include <dem/particle_wall_fine_search.h>
 #include <dem/periodic_boundaries_manipulator.h>
 #include <dem/visualization.h>
 
@@ -169,20 +161,6 @@ private:
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     std::vector<double> &                    MOI);
 
-  /**
-   * @brief Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact
-   *
-   */
-  void
-  particle_wall_broad_search();
-
-  /**
-   * @brief Carries out the fine particled-wall contact detection
-   *
-   */
-  void
-  particle_wall_fine_search();
 
   /**
    * @brief Calculates particles-wall contact forces
@@ -285,51 +263,6 @@ private:
   Tensor<1, 3>                         g;
   double                               triangulation_cell_diameter;
 
-  typename dem_data_structures<dim>::cells_total_neighbor_list
-    total_neighbor_list;
-  typename dem_data_structures<dim>::floating_mesh_information
-    floating_mesh_info;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_ghost_neighbor_list;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_local_neighbor_list;
-  typename dem_data_structures<dim>::particle_floating_mesh_candidates
-    particle_floating_mesh_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-    particle_floating_mesh_in_contact;
-  typename dem_data_structures<dim>::particle_floating_wall_candidates
-    particle_floating_wall_candidates;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_floating_wall_in_contact;
-  typename dem_data_structures<dim>::particle_wall_candidates
-    particle_wall_candidates;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_point_candidates
-    particle_point_candidates;
-  typename dem_data_structures<dim>::particle_line_candidates
-    particle_line_candidates;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_points_in_contact;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_lines_in_contact;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    ghost_contact_pair_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    local_contact_pair_candidates;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    local_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    ghost_adjacent_particles;
-  typename dem_data_structures<dim>::particle_index_iterator_map
-    particle_container;
-  typename dem_data_structures<dim>::boundary_points_and_normal_vectors
-    updated_boundary_points_and_normal_vectors;
-  typename dem_data_structures<dim>::vector_on_boundary
-    forces_boundary_information;
-  typename dem_data_structures<dim>::vector_on_boundary
-    torques_boundary_information;
-
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
@@ -339,15 +272,10 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
+  DEMContainerManager<dim>           container_manager;
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
-  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
@@ -358,7 +286,6 @@ private:
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   LagrangianPostProcessing<dim> post_processing_object;
-  FindCellNeighbors<dim>        cell_neighbors_object;
   PVDHandler                    particles_pvdhandler;
   const double                  standard_deviation_multiplier;
 
@@ -370,7 +297,7 @@ private:
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;
-  bool            floating_mesh;
+  bool            has_floating_mesh;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;

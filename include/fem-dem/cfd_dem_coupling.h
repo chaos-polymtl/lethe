@@ -21,7 +21,7 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
@@ -116,14 +116,6 @@ private:
    */
   void
   write_DEM_output_results();
-
-  /**
-   * @brief Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact
-   *
-   */
-  void
-  particle_wall_broad_search();
 
   /**
    * @brief Carries out the fine particled-wall contact detection
@@ -224,51 +216,7 @@ private:
   double                    smallest_contact_search_criterion;
   double                    triangulation_cell_diameter;
 
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_ghost_neighbor_list;
-  typename dem_data_structures<dim>::cells_neighbor_list
-    cells_local_neighbor_list;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    ghost_contact_pair_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    local_contact_pair_candidates;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    local_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
-    ghost_adjacent_particles;
-  typename dem_data_structures<dim>::particle_wall_candidates
-    particle_wall_candidates;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_wall_in_contact;
-  typename dem_data_structures<dim>::particle_wall_in_contact
-    particle_floating_wall_in_contact;
-  typename dem_data_structures<dim>::particle_point_candidates
-    particle_point_candidates;
-  typename dem_data_structures<dim>::particle_line_candidates
-    particle_line_candidates;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_points_in_contact;
-  typename dem_data_structures<dim>::particle_point_line_contact_info
-    particle_lines_in_contact;
-  typename dem_data_structures<dim>::particle_floating_wall_candidates
-    particle_floating_wall_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_candidates
-    particle_floating_mesh_candidates;
-  typename dem_data_structures<dim>::particle_floating_mesh_in_contact
-    particle_floating_mesh_in_contact;
-  typename dem_data_structures<dim>::particle_index_iterator_map
-    particle_container;
-  typename dem_data_structures<dim>::vector_on_boundary
-    forces_boundary_information;
-  typename dem_data_structures<dim>::vector_on_boundary
-    torques_boundary_information;
-
-  ParticleParticleBroadSearch<dim>   particle_particle_broad_search_object;
-  ParticleParticleFineSearch<dim>    particle_particle_fine_search_object;
-  ParticleWallBroadSearch<dim>       particle_wall_broad_search_object;
-  ParticlePointLineBroadSearch<dim>  particle_point_line_broad_search_object;
-  ParticleWallFineSearch<dim>        particle_wall_fine_search_object;
-  ParticlePointLineFineSearch<dim>   particle_point_line_fine_search_object;
+  DEMContainerManager<dim>           container_manager;
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
@@ -279,7 +227,6 @@ private:
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
-  FindCellNeighbors<dim>        cell_neighbors_object;
 
   DEM::DEMProperties<dim> properties_class;
 

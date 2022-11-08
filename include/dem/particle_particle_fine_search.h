@@ -29,6 +29,9 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+template <int dim>
+class DEMContainerManager;
+
 using namespace dealii;
 
 #ifndef particle_particle_fine_search_h
@@ -64,34 +67,15 @@ public:
    * pairs_in_contact and its contact information will be stored in the
    * corresponding element of the pairs_in_contact_info
    *
-   * @param local_contact_pair_candidates The output of broad search which shows
-   * local-local contact pair candidates
-   * @param ghost_contact_pair_candidates The output of broad search which shows
-   * local-ghost contact pair candidates
-   * @param local_adjacent_particles A map of maps which stores all the required
-   * information for calculation of the contact force of local-local particle
-   * pairs
-   * @param ghost_adjacent_particles A map of maps which stores all the required
-   * information for calculation of the contact force of local-ghost particle
-   * pairs
-   * @param particle_container A container that is used to obtain iterators to
-   * particles using their ids
+   * @param container_manager The dem container manager that contains
+   * local_contact_pair_candidates, ghost_contact_pair_candidates,
+   * local_adjacent_particles, ghost_adjacent_particles & particle_container
    * @param neighborhood_threshold A value which defines the neighbor particles
    */
 
   void
-  particle_particle_fine_search(
-    const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-      &local_contact_pair_candidates,
-    const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-      &ghost_contact_pair_candidates,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &local_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-      &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-      &          particle_container,
-    const double neighborhood_threshold);
+  particle_particle_fine_search(DEMContainerManager<dim> &container_manager,
+                                const double neighborhood_threshold);
 };
 
 #endif /* particle_particle_fine_search_h */

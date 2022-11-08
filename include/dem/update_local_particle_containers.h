@@ -29,54 +29,6 @@ using namespace dealii;
 #  define locate_local_particles_h
 
 /**
- * Updates the iterators to particles in local-local contact containers. This is
- * essential since sort_particles_into_subdomains_and_cells() and
- * exchange_ghost_particles() functions change the iterator to particles
- * everytime they are called.
- *
- * @tparam dim Dimensionality of the geometry which contains the particles
- * @param particle_handler
- * @param particle_container A container that contains the updated iterators to
- * all local and ghost particles
- * @param ghost_adjacent_particles Container that contains all the contact
- * information of adjacent local-ghost particles
- * @param local_adjacent_particles Container that contains all the contact
- * information of adjacent local-local particles
- * @param particle_wall_pairs_in_contact Container that contains all the contact
- * information of particle-wall contacts
- * @param particle_floating_wall_pairs_in_contact Container that contains all the contact
- * information of particle-floating wall contacts
- * @param particle_floating_mesh_pairs_in_contact Container that contains all the contact
- * information of particle-floating mesh contacts
- * @param particle_points_in_contact Container that contains all the contact
- * information of particle-point contacts
- * @param particle_lines_in_contact Container that contains all the contact
- * information of particle-line contacts
- *
- */
-
-template <int dim>
-void
-locate_local_particles_in_cells(
-  const Particles::ParticleHandler<dim> &particle_handler,
-  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    &particle_container,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_floating_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-    &particle_points_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_point_line_contact_info
-    &particle_lines_in_contact);
-
-/**
  * Updates the iterators to local particles in a map of particles
  * (particle_container)
  *

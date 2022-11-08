@@ -1,3 +1,4 @@
+#include <dem/dem_container_manager.h>
 #include <dem/particle_particle_broad_search.h>
 
 using namespace dealii;
@@ -10,25 +11,21 @@ template <int dim>
 void
 ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_local_neighbor_list,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_neighbor_list,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &local_contact_pair_candidates,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_candidates)
+  DEMContainerManager<dim> &               container_manager)
 {
+  // Clearing local & ghost contact pair candidates
+  container_manager.clear_contact_pair_candidates();
+
   // First we handle the local-local candidate pairs
-  // Clearing local_contact_pair_candidates
-  local_contact_pair_candidates.clear();
 
   // Looping over the potential cells which may contain particles.
   // This includes the cell itself as well as the neighbouring cells that
   // were identified.
   // cell_neighbor_list_iterator is [cell_it, neighbor_0_it, neighbor_1_it, ...]
-  for (auto cell_neighbor_list_iterator = cells_local_neighbor_list.begin();
-       cell_neighbor_list_iterator != cells_local_neighbor_list.end();
+  for (auto cell_neighbor_list_iterator =
+         container_manager.cells_local_neighbor_list.begin();
+       cell_neighbor_list_iterator !=
+       container_manager.cells_local_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
       // The main cell
@@ -51,10 +48,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                particle_in_main_cell != particles_in_main_cell.end();
                ++particle_in_main_cell)
             {
-              store_candidates(
-                std::next(particle_in_main_cell, 1),
-                particles_in_main_cell,
-                local_contact_pair_candidates[particle_in_main_cell->get_id()]);
+              store_candidates(std::next(particle_in_main_cell, 1),
+                               particles_in_main_cell,
+                               container_manager.local_contact_pair_candidates
+                                 [particle_in_main_cell->get_id()]);
             }
 
           // Going through neighbor cells of the main cell
@@ -73,10 +70,11 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particles_in_neighbor_cell.begin(),
-                                   particles_in_neighbor_cell,
-                                   local_contact_pair_candidates
-                                     [particle_in_main_cell->get_id()]);
+                  store_candidates(
+                    particles_in_neighbor_cell.begin(),
+                    particles_in_neighbor_cell,
+                    container_manager.local_contact_pair_candidates
+                      [particle_in_main_cell->get_id()]);
                 }
             }
         }
@@ -85,12 +83,11 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
   // Now we go through the local-ghost pairs (the first iterator shows a local
   // particles, and the second a ghost particle)
 
-  // Clearing ghost_contact_pair_candidates
-  ghost_contact_pair_candidates.clear();
-
   // Looping over cells_ghost_neighbor_list
-  for (auto cell_neighbor_list_iterator = cells_ghost_neighbor_list.begin();
-       cell_neighbor_list_iterator != cells_ghost_neighbor_list.end();
+  for (auto cell_neighbor_list_iterator =
+         container_manager.cells_ghost_neighbor_list.begin();
+       cell_neighbor_list_iterator !=
+       container_manager.cells_ghost_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
       // The main cell
@@ -123,10 +120,11 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particles_in_neighbor_cell.begin(),
-                                   particles_in_neighbor_cell,
-                                   ghost_contact_pair_candidates
-                                     [particle_in_main_cell->get_id()]);
+                  store_candidates(
+                    particles_in_neighbor_cell.begin(),
+                    particles_in_neighbor_cell,
+                    container_manager.ghost_contact_pair_candidates
+                      [particle_in_main_cell->get_id()]);
                 }
             }
         }
