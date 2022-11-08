@@ -47,7 +47,7 @@ IBParticlesDEM<dim>::initialize(
   dem_particles             = particles;
   boundary_cells.resize(dem_particles.size());
 
-  dem_parameters.model_parameters.particle_particle_contact_force_method =
+  dem_parameters.model_parameters.particle_particle_contact_force_model =
     Parameters::Lagrangian::ParticleParticleContactForceModel::hertz;
   dem_parameters.model_parameters.particle_wall_contact_force_method =
     Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::

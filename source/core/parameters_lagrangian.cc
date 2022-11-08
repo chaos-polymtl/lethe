@@ -561,16 +561,16 @@ namespace Parameters
         const std::string ppcf =
           prm.get("particle particle contact force method");
         if (ppcf == "linear")
-          particle_particle_contact_force_method =
+          particle_particle_contact_force_model =
             ParticleParticleContactForceModel::linear;
         else if (ppcf == "hertz_mindlin_limit_force")
-          particle_particle_contact_force_method =
+          particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz_mindlin_limit_force;
         else if (ppcf == "hertz_mindlin_limit_overlap")
-          particle_particle_contact_force_method =
+          particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz_mindlin_limit_overlap;
         else if (ppcf == "hertz")
-          particle_particle_contact_force_method =
+          particle_particle_contact_force_model =
             ParticleParticleContactForceModel::hertz;
         else
           {

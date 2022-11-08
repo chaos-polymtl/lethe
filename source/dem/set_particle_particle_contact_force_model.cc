@@ -10,7 +10,7 @@ set_particle_particle_contact_force_model(
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
 
-  if (dem_parameters.model_parameters.particle_particle_contact_force_method ==
+  if (dem_parameters.model_parameters.particle_particle_contact_force_model ==
       Parameters::Lagrangian::ParticleParticleContactForceModel::linear)
     {
       particle_particle_contact_force_object =
@@ -20,7 +20,7 @@ set_particle_particle_contact_force_model(
           dem_parameters);
     }
   else if (dem_parameters.model_parameters
-             .particle_particle_contact_force_method ==
+             .particle_particle_contact_force_model ==
            Parameters::Lagrangian::ParticleParticleContactForceModel::
              hertz_mindlin_limit_overlap)
     {
@@ -31,7 +31,7 @@ set_particle_particle_contact_force_model(
             hertz_mindlin_limit_overlap>>(dem_parameters);
     }
   else if (dem_parameters.model_parameters
-             .particle_particle_contact_force_method ==
+             .particle_particle_contact_force_model ==
            Parameters::Lagrangian::ParticleParticleContactForceModel::
              hertz_mindlin_limit_force)
     {
@@ -42,7 +42,7 @@ set_particle_particle_contact_force_model(
             hertz_mindlin_limit_force>>(dem_parameters);
     }
   else if (dem_parameters.model_parameters
-             .particle_particle_contact_force_method ==
+             .particle_particle_contact_force_model ==
            Parameters::Lagrangian::ParticleParticleContactForceModel::hertz)
     {
       particle_particle_contact_force_object =
@@ -53,7 +53,8 @@ set_particle_particle_contact_force_model(
     }
   else
     {
-      throw "The chosen particle-particle contact force model is invalid";
+      throw std::runtime_error(
+        "The chosen particle-particle contact force model is invalid");
     }
   return particle_particle_contact_force_object;
 }

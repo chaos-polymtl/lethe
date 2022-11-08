@@ -962,11 +962,15 @@ protected:
   // Members of the class
 
 
-  std::map<int, std::map<int, double>> effective_youngs_modulus;
-  std::map<int, std::map<int, double>> effective_shear_modulus;
-  std::map<int, std::map<int, double>> effective_coefficient_of_restitution;
-  std::map<int, std::map<int, double>> effective_coefficient_of_friction;
-  std::map<int, std::map<int, double>>
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_youngs_modulus;
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_shear_modulus;
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_coefficient_of_restitution;
+  std::unordered_map<int, std::unordered_map<int, double>>
+    effective_coefficient_of_friction;
+  std::unordered_map<int, std::unordered_map<int, double>>
          effective_coefficient_of_rolling_friction;
   double effective_radius;
   double effective_mass;
@@ -974,7 +978,7 @@ protected:
   // Contact model parameter. It is calculated in the constructor for different
   // combinations of particle types. For different combinations, a map of map is
   // used to store this variable
-  std::map<int, std::map<int, double>> model_parameter_beta;
+  std::unordered_map<int, std::unordered_map<int, double>> model_parameter_beta;
 
   // Normal and tangential contact forces, tangential and rolling torques,
   // normal unit vector of the contact and contact relative velocity in the

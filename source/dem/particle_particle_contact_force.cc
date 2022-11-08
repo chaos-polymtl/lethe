@@ -31,46 +31,31 @@ template <
 ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
   const DEMSolverParameters<dim> &dem_parameters)
 {
-  for (unsigned int i = 0;
-       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
-       ++i)
-    {
-      const double youngs_modulus_i =
-        dem_parameters.lagrangian_physical_properties.youngs_modulus_particle
-          .at(i);
-      const double poisson_ratio_i =
-        dem_parameters.lagrangian_physical_properties.poisson_ratio_particle.at(
-          i);
-      const double restitution_coefficient_i =
-        dem_parameters.lagrangian_physical_properties
-          .restitution_coefficient_particle.at(i);
-      const double friction_coefficient_i =
-        dem_parameters.lagrangian_physical_properties
-          .friction_coefficient_particle.at(i);
-      const double rolling_friction_coefficient_i =
-        dem_parameters.lagrangian_physical_properties
-          .rolling_friction_coefficient_particle.at(i);
+  auto properties = dem_parameters.lagrangian_physical_properties;
 
-      for (unsigned int j = 0;
-           j <
-           dem_parameters.lagrangian_physical_properties.particle_type_number;
-           ++j)
+  for (unsigned int i = 0; i < properties.particle_type_number; ++i)
+    {
+      const double youngs_modulus_i = properties.youngs_modulus_particle.at(i);
+      const double poisson_ratio_i  = properties.poisson_ratio_particle.at(i);
+      const double restitution_coefficient_i =
+        properties.restitution_coefficient_particle.at(i);
+      const double friction_coefficient_i =
+        properties.friction_coefficient_particle.at(i);
+      const double rolling_friction_coefficient_i =
+        properties.rolling_friction_coefficient_particle.at(i);
+
+      for (unsigned int j = 0; j < properties.particle_type_number; ++j)
         {
           const double youngs_modulus_j =
-            dem_parameters.lagrangian_physical_properties
-              .youngs_modulus_particle.at(j);
+            properties.youngs_modulus_particle.at(j);
           const double poisson_ratio_j =
-            dem_parameters.lagrangian_physical_properties.poisson_ratio_particle
-              .at(j);
+            properties.poisson_ratio_particle.at(j);
           const double restitution_coefficient_j =
-            dem_parameters.lagrangian_physical_properties
-              .restitution_coefficient_particle.at(j);
+            properties.restitution_coefficient_particle.at(j);
           const double friction_coefficient_j =
-            dem_parameters.lagrangian_physical_properties
-              .friction_coefficient_particle.at(j);
+            properties.friction_coefficient_particle.at(j);
           const double rolling_friction_coefficient_j =
-            dem_parameters.lagrangian_physical_properties
-              .rolling_friction_coefficient_particle.at(j);
+            properties.rolling_friction_coefficient_particle.at(j);
 
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
@@ -162,7 +147,7 @@ ParticleParticleContactForce<dim, contact_model>::
               {
                 return particle_one->get_location();
               }
-            else
+            if constexpr (dim == 2)
               {
                 return (point_nd_to_3d(particle_one->get_location()));
               }
@@ -182,7 +167,7 @@ ParticleParticleContactForce<dim, contact_model>::
                   {
                     return particle_two->get_location();
                   }
-                else
+                if constexpr (dim == 2)
                   {
                     return (point_nd_to_3d(particle_two->get_location()));
                   }
@@ -310,10 +295,7 @@ ParticleParticleContactForce<dim, contact_model>::
                 {
                   // if the adjacent pair is not in contact anymore, only the
                   // tangential overlap is set to zero
-                  for (int d = 0; d < dim; ++d)
-                    {
-                      contact_info.tangential_overlap[d] = 0.0;
-                    }
+                  contact_info.tangential_overlap.clear();
                 }
             }
         }
@@ -344,7 +326,7 @@ ParticleParticleContactForce<dim, contact_model>::
               {
                 return particle_one->get_location();
               }
-            else
+            if constexpr (dim == 2)
               {
                 return (point_nd_to_3d(particle_one->get_location()));
               }
@@ -363,7 +345,7 @@ ParticleParticleContactForce<dim, contact_model>::
                   {
                     return particle_two->get_location();
                   }
-                else
+                if constexpr (dim == 2)
                   {
                     return (point_nd_to_3d(particle_two->get_location()));
                   }
@@ -482,10 +464,7 @@ ParticleParticleContactForce<dim, contact_model>::
                 {
                   // if the adjacent pair is not in contact anymore, only the
                   // tangential overlap is set to zero
-                  for (int d = 0; d < dim; ++d)
-                    {
-                      contact_info.tangential_overlap[d] = 0.0;
-                    }
+                  contact_info.tangential_overlap.clear();
                 }
             }
         }
@@ -520,7 +499,7 @@ ParticleParticleContactForce<dim, contact_model>::
       {
         return particle_one_location;
       }
-    else
+    if constexpr (dim == 2)
       {
         return (point_nd_to_3d(particle_one_location));
       }
@@ -531,7 +510,7 @@ ParticleParticleContactForce<dim, contact_model>::
       {
         return particle_two_location;
       }
-    else
+    if constexpr (dim == 2)
       {
         return (point_nd_to_3d(particle_two_location));
       }

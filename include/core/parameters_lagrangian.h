@@ -211,7 +211,7 @@ namespace Parameters
       double neighborhood_threshold;
 
       // Particle-particle contact force model
-      ParticleParticleContactForceModel particle_particle_contact_force_method;
+      ParticleParticleContactForceModel particle_particle_contact_force_model;
 
       // Particle-wall contact force model
       enum class ParticleWallContactForceModel
