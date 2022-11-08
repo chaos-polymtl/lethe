@@ -295,6 +295,8 @@ private:
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       displacement;
   std::vector<double>       MOI;
+  Tensor<1, dim>            tmp_periodic_offset;
+  bool                      has_periodic_boundaries;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

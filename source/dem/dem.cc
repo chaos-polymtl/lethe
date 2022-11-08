@@ -68,6 +68,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
+  , has_periodic_boundaries(false)
   , background_dh(triangulation)
   , has_floating_mesh(false)
 {
@@ -203,6 +204,13 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       has_floating_mesh = true;
       container_manager.particle_floating_mesh_in_contact.resize(solids.size());
     }
+
+  // Check if there's periodic boundaries
+  if (parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+    {
+      has_periodic_boundaries = true;
+    }
 }
 
 template <int dim>
@@ -294,10 +302,12 @@ DEMSolver<dim>::load_balance()
   // solid cells
   container_manager.store_floating_mesh_info(triangulation, solids);
 
-  if (parameters.boundary_conditions.BC_type ==
-      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+  if (has_periodic_boundaries)
     {
-      periodic_boundaries_object.map_periodic_cells(triangulation);
+      periodic_boundaries_object.map_periodic_cells(
+        triangulation,
+        container_manager.periodic_cells_container,
+        container_manager.periodic_boundaries_cells_information);
     }
 
   boundary_cell_object.build(
@@ -749,7 +759,6 @@ DEMSolver<dim>::solve()
             triangulation_cell_diameter,
             parameters.boundary_conditions);
 
-
   container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (parameters.restart.restart == true)
@@ -782,20 +791,29 @@ DEMSolver<dim>::solve()
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
-  // Find cell neighbors
-  container_manager.execute_cell_neighbors_search(triangulation,
-                                                  has_floating_mesh);
-
-  if (parameters.boundary_conditions.BC_type ==
-      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
+  if (has_periodic_boundaries)
     {
       periodic_boundaries_object.set_periodic_boundaries_information(
         parameters.boundary_conditions.outlet_boundaries,
         parameters.boundary_conditions.periodic_boundaries,
         parameters.boundary_conditions.periodic_direction);
 
-      periodic_boundaries_object.map_periodic_cells(triangulation);
+      periodic_boundaries_object.map_periodic_cells(
+        triangulation,
+        container_manager.periodic_cells_container,
+        container_manager.periodic_boundaries_cells_information);
+
+      // Temporary offset calculation : works only for one set of periodic
+      // boundary on an axis.
+      tmp_periodic_offset = periodic_boundaries_object.get_constant_offset(
+        container_manager.periodic_boundaries_cells_information.begin()
+          ->second);
     }
+
+  // Find cell neighbors
+  container_manager.execute_cell_neighbors_search(triangulation,
+                                                  has_floating_mesh,
+                                                  has_periodic_boundaries);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -877,7 +895,7 @@ DEMSolver<dim>::solve()
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates
           container_manager.execute_particle_particle_broad_search(
-            particle_handler);
+            particle_handler, has_periodic_boundaries);
 
           // Updating number of contact builds
           contact_build_number++;
@@ -894,16 +912,19 @@ DEMSolver<dim>::solve()
           // Update contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
           // processors
-          container_manager.update_contacts();
+          container_manager.update_contacts(has_periodic_boundaries);
 
           // Updates the iterators to particles in local-local contact
           // containers
-          container_manager.update_local_particles_in_cells(particle_handler);
+          container_manager.update_local_particles_in_cells(
+            particle_handler, has_periodic_boundaries);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
           container_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared);
+            neighborhood_threshold_squared,
+            has_periodic_boundaries,
+            tmp_periodic_offset);
 
           // Execute fine search by updating particle-wall contact containers
           // according to the neighborhood threshold
@@ -920,7 +941,8 @@ DEMSolver<dim>::solve()
           container_manager,
           simulation_control->get_time_step(),
           torque,
-          force);
+          force,
+          tmp_periodic_offset);
 
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the
@@ -971,7 +993,8 @@ DEMSolver<dim>::solve()
 
       // Particles displacement if passing through a periodic boundary
       periodic_boundaries_object.execute_particles_displacement(
-        particle_handler);
+        particle_handler,
+        container_manager.periodic_boundaries_cells_information);
 
       // Visualization
       if (simulation_control->is_output_iteration())

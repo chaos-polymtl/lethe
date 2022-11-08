@@ -70,6 +70,29 @@ public:
       &cells_ghost_neighbor_list);
 
   /**
+   * Finds the neighbor list (without repetition) of all the active cells in the
+   * triangulation
+   *
+   * @param triangulation Triangulation to access the information of the cells
+   * @param cells_local_periodic_neighbor_list A vector (with size of the local cell
+   * number) of vectors (local adjacent cells of each local cell). First element
+   * of each set shows the main cell itself
+   * @param cells_ghost_periodic_neighbor_list A vector (with size of the local cell
+   * number) of vectors (ghost adjacent cells of each local cell). First element
+   * of each set shows the main cell itself
+   */
+
+  void
+  find_cell_periodic_neighbors(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const typename DEM::dem_data_structures<dim>::cell_container
+      &periodic_cells_container,
+    typename DEM::dem_data_structures<dim>::cells_neighbor_list
+      &cells_local_periodic_neighbor_list,
+    typename DEM::dem_data_structures<dim>::cells_neighbor_list
+      &cells_ghost_periodic_neighbor_list);
+
+  /**
    * Finds the full neighbor list (with repetition) of all the active cells in
    * the triangulation. This function is used in particle-floating mesh
    * contacts, as in this situation, we need to define all the particles located

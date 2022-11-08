@@ -70,7 +70,8 @@ public:
     DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+    std::vector<Tensor<1, 3>> &force,
+    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) = 0;
 
 
   /**
@@ -154,7 +155,8 @@ public:
     DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    std::vector<Tensor<1, 3>> &force,
+    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This

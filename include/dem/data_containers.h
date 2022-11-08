@@ -219,6 +219,10 @@ namespace DEM
                                std::map<types::boundary_id, Tensor<1, 3>>>
       vector_on_boundary;
 
+    // [cell iterators]
+    typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
+      cell_container;
+
     // <cell id, periodic cells info>
     typedef std::unordered_map<types::global_cell_index,
                                periodic_boundaries_cells_info_struct<dim>>

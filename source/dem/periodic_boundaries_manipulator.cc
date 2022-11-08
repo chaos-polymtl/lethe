@@ -60,14 +60,24 @@ PeriodicBoundariesManipulator<dim>::get_periodic_boundaries_info(
   quad_point    = fe_face_values.quadrature_point(0);
   boundaries_information.periodic_normal_vector = normal_vector;
   boundaries_information.point_on_periodic_face = quad_point;
+
+  // Calculate the periodic_offset
+  boundaries_information.periodic_offset =
+    boundaries_information.point_on_periodic_face -
+    boundaries_information.point_on_face;
 }
 
 template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::map_periodic_cells(
-  const parallel::distributed::Triangulation<dim> &triangulation)
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  typename DEM::dem_data_structures<dim>::cell_container
+    &periodic_cells_container,
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    &periodic_boundaries_cells_information)
 {
   periodic_boundaries_cells_information.clear();
+  periodic_cells_container.clear();
 
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -79,11 +89,12 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
               // Iterating over cell faces
               for (const auto &face : cell->face_iterators())
                 {
-                  // Check if face is on the periodic boundary flaged as outlet.
+                  // Check if face is on the periodic boundary flagged as outlet
                   // Pairs of periodic cells are stored once.
                   for (unsigned int &outlet_boundary_id : outlet_boundary_ids)
                     {
-                      if (face->boundary_id() == outlet_boundary_id)
+                      unsigned int face_boundary_id = face->boundary_id();
+                      if (face_boundary_id == outlet_boundary_id)
                         {
                           // Save boundaries information related to the cell on
                           // the outlet boundary of periodic walls.
@@ -94,12 +105,9 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                           unsigned int face_id =
                             cell->face_iterator_to_index(face);
 
-                          // Make sure cell has a periodic neighbor
-                          if (cell->has_periodic_neighbor(face_id))
-                            {
-                              get_periodic_boundaries_info(
-                                cell, face_id, boundaries_information);
-                            }
+                          get_periodic_boundaries_info(cell,
+                                                       face_id,
+                                                       boundaries_information);
 
                           // Store boundaries information in map with cell id at
                           // outlet as key
@@ -107,6 +115,9 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                             {boundaries_information.cell
                                ->global_active_cell_index(),
                              boundaries_information});
+
+                          // Store iterator of periodic cells at outlet
+                          periodic_cells_container.push_back(cell);
                         }
                     }
                 }
@@ -171,7 +182,9 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
-  const Particles::ParticleHandler<dim> &particle_handler)
+  const Particles::ParticleHandler<dim> &particle_handler,
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    &periodic_boundaries_cells_information)
 {
   if (!periodic_boundaries_cells_information.empty())
     {

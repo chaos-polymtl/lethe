@@ -528,7 +528,10 @@ CFDDEMSolver<dim>::load_balance()
   if (dem_parameters.boundary_conditions.BC_type ==
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
-      periodic_boundaries_object.map_periodic_cells(*parallel_triangulation);
+      periodic_boundaries_object.map_periodic_cells(
+        *parallel_triangulation,
+        container_manager.periodic_cells_container,
+        container_manager.periodic_boundaries_cells_information);
     }
 
   boundary_cell_object.build(
@@ -650,7 +653,10 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
         dem_parameters.boundary_conditions.periodic_boundaries,
         dem_parameters.boundary_conditions.periodic_direction);
 
-      periodic_boundaries_object.map_periodic_cells(*parallel_triangulation);
+      periodic_boundaries_object.map_periodic_cells(
+        *parallel_triangulation,
+        container_manager.periodic_cells_container,
+        container_manager.periodic_boundaries_cells_information);
     }
 
   // Finding boundary cells with faces
@@ -807,7 +813,8 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Particles displacement if passing through a periodic boundary
   periodic_boundaries_object.execute_particles_displacement(
-    this->particle_handler);
+    this->particle_handler,
+    container_manager.periodic_boundaries_cells_information);
 }
 
 template <int dim>

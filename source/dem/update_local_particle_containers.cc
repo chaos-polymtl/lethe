@@ -46,6 +46,10 @@ update_contact_container_iterators(
 
       if constexpr (contact_type == ContactType::local_particle_particle ||
                     contact_type == ContactType::ghost_particle_particle ||
+                    contact_type ==
+                      ContactType::local_periodic_particle_particle ||
+                    contact_type ==
+                      ContactType::ghost_periodic_particle_particle ||
                     contact_type == ContactType::particle_wall ||
                     contact_type == ContactType::particle_floating_wall)
         {
@@ -60,7 +64,11 @@ update_contact_container_iterators(
               if constexpr (contact_type ==
                               ContactType::local_particle_particle ||
                             contact_type ==
-                              ContactType::ghost_particle_particle)
+                              ContactType::ghost_particle_particle ||
+                            contact_type ==
+                              ContactType::local_periodic_particle_particle ||
+                            contact_type ==
+                              ContactType::ghost_periodic_particle_particle)
                 {
                   // For particle-particle contacts, iterators of both particles
                   // must be updated
@@ -157,6 +165,44 @@ template void update_contact_container_iterators<
   3,
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   ContactType::ghost_particle_particle>(
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+    &particle_container);
+
+// Local particle-particle periodic contact container
+template void update_contact_container_iterators<
+  2,
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  ContactType::local_periodic_particle_particle>(
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+    &particle_container);
+
+template void update_contact_container_iterators<
+  3,
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  ContactType::local_periodic_particle_particle>(
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<3>::particle_index_iterator_map
+    &particle_container);
+
+// Ghost particle-particle periodic contact container
+template void update_contact_container_iterators<
+  2,
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  ContactType::ghost_periodic_particle_particle>(
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<2>::particle_index_iterator_map
+    &particle_container);
+
+template void update_contact_container_iterators<
+  3,
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  ContactType::ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
   typename DEM::dem_data_structures<3>::particle_index_iterator_map

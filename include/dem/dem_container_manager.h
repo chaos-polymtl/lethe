@@ -54,7 +54,8 @@ public:
   void
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_floating_mesh = false);
+    const bool                                       has_floating_mesh = false,
+    const bool has_periodic_boundaries                                 = false);
 
   /**
    * Update the neighbors lists of all the active cells in the input
@@ -87,7 +88,7 @@ public:
    */
 
   void
-  update_contacts();
+  update_contacts(const bool has_periodic_boundaries = false);
 
   /**
    * Updates the iterators to particles in local-local contact containers. This
@@ -102,7 +103,8 @@ public:
 
   void
   update_local_particles_in_cells(
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const bool                             has_periodic_boundaries = false);
 
   /**
    * Particle-particle broad search which finds the particle-particle contact
@@ -116,7 +118,8 @@ public:
 
   void
   execute_particle_particle_broad_search(
-    dealii::Particles::ParticleHandler<dim> &particle_handler);
+    dealii::Particles::ParticleHandler<dim> &particle_handler,
+    const bool                               has_periodic_boundaries = false);
 
   /**
    * Carries out the broad contact detection search using the
@@ -147,7 +150,10 @@ public:
    */
 
   void
-  execute_particle_particle_fine_search(const double neighborhood_threshold);
+  execute_particle_particle_fine_search(
+    const double         neighborhood_threshold,
+    const bool           has_periodic_boundaries = false,
+    const Tensor<1, dim> periodic_offset         = Tensor<1, dim>());
 
   /**
    * Carries out the fine particle-wall contact detection
@@ -177,12 +183,6 @@ public:
     const parallel::distributed::Triangulation<dim> &       triangulation,
     std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);
 
-  inline void
-  clear_contact_pair_candidates()
-  {
-    local_contact_pair_candidates.clear();
-    ghost_contact_pair_candidates.clear();
-  }
 
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map
@@ -196,12 +196,20 @@ public:
     cells_local_neighbor_list;
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_local_periodic_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_ghost_periodic_neighbor_list;
 
   // Container with all collision candidate particles within adjacent cells
   typename dem_data_structures<dim>::particle_particle_candidates
     local_contact_pair_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
     ghost_contact_pair_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    local_contact_pair_periodic_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_contact_pair_periodic_candidates;
   typename dem_data_structures<dim>::particle_floating_mesh_candidates
     particle_floating_mesh_candidates;
   typename dem_data_structures<dim>::particle_floating_wall_candidates
@@ -232,6 +240,10 @@ public:
     local_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    local_periodic_adjacent_particles;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    ghost_periodic_adjacent_particles;
 
   // Containers with other information
   typename dem_data_structures<dim>::floating_mesh_information
@@ -242,6 +254,10 @@ public:
     forces_boundary_information;
   typename dem_data_structures<dim>::vector_on_boundary
     torques_boundary_information;
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    periodic_boundaries_cells_information;
+  typename DEM::dem_data_structures<dim>::cell_container
+    periodic_cells_container;
 
 private:
   // Broad search objects

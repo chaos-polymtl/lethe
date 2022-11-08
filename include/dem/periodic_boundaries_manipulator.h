@@ -15,6 +15,7 @@
  */
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -72,7 +73,11 @@ public:
    */
   void
   map_periodic_cells(
-    const parallel::distributed::Triangulation<dim> &triangulation);
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    typename DEM::dem_data_structures<dim>::cell_container
+      &periodic_cells_container,
+    typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+      &periodic_boundaries_cells_information);
 
   /**
    * @brief Moves particles crossing periodic boundaries (any side)
@@ -84,7 +89,20 @@ public:
    */
   void
   execute_particles_displacement(
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+      &periodic_boundaries_cells_information);
+
+  inline Tensor<1, dim>
+  get_constant_offset(
+    const periodic_boundaries_cells_info_struct<dim> &periodic_info_struct)
+  {
+    Tensor<1, dim> constant_periodic_offset;
+    constant_periodic_offset[directions[0]] =
+      periodic_info_struct.periodic_offset[directions[0]];
+
+    return constant_periodic_offset;
+  }
 
 private:
   /**
@@ -123,11 +141,8 @@ private:
   std::vector<unsigned int> outlet_boundary_ids;
   std::vector<unsigned int> periodic_boundary_ids;
   std::vector<unsigned int> directions;
-
-  // Mapping of periodic boundaries information, cell index at outlet is the
-  // map key
-  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    periodic_boundaries_cells_information;
 };
+
+
 
 #endif /* particle_wall_periodic_displacement_h */
