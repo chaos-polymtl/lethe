@@ -162,7 +162,7 @@ private:
    *
    * @return A pointer to the particle-particle contact force object
    */
-  std::shared_ptr<ParticleParticleContactForce<dim>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim>>
   set_particle_particle_contact_force();
 
   /**
@@ -221,7 +221,7 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
-  std::shared_ptr<ParticleParticleContactForce<dim>>
+  std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
                                 particle_wall_contact_force_object;

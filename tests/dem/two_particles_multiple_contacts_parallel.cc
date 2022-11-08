@@ -16,8 +16,9 @@
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
+#include <dem/particle_particle_broad_search.h>
+#include <dem/particle_particle_contact_force.h>
 #include <dem/particle_particle_fine_search.h>
-#include <dem/particle_particle_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
 
 // Tests (with common definitions)
@@ -105,9 +106,14 @@ test()
     container_manager.cells_local_neighbor_list,
     container_manager.cells_ghost_neighbor_list);
 
-  // Creating particle-particle force objects
-  ParticleParticleHertzMindlinLimitOverlap<dim> nonlinear_force_object(
-    dem_parameters);
+  // Creating broad search, fine search and particle-particle force objects
+  ParticleParticleBroadSearch<dim> broad_search_object;
+  ParticleParticleFineSearch<dim>  fine_search_object;
+  ParticleParticleContactForce<
+    dim,
+    Parameters::Lagrangian::ParticleParticleContactForceModel::
+      hertz_mindlin_limit_overlap>
+                                nonlinear_force_object(dem_parameters);
   VelocityVerletIntegrator<dim> integrator_object;
 
   MPI_Comm communicator     = triangulation.get_communicator();

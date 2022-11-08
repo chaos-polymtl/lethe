@@ -23,8 +23,6 @@ add_library(lethe-dem
   particle_particle_broad_search.cc
   particle_particle_contact_force.cc
   particle_particle_fine_search.cc
-  particle_particle_linear_force.cc
-  particle_particle_nonlinear_force.cc
   particle_point_line_broad_search.cc
   particle_point_line_contact_force.cc
   particle_point_line_fine_search.cc
@@ -70,8 +68,6 @@ add_library(lethe-dem
   ../../include/dem/particle_particle_contact_force.h
   ../../include/dem/particle_particle_contact_info_struct.h
   ../../include/dem/particle_particle_fine_search.h
-  ../../include/dem/particle_particle_linear_force.h
-  ../../include/dem/particle_particle_nonlinear_force.h
   ../../include/dem/particle_point_line_broad_search.h
   ../../include/dem/particle_point_line_contact_force.h
   ../../include/dem/particle_point_line_contact_info_struct.h

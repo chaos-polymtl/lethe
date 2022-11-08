@@ -18,11 +18,10 @@
 2021
 */
 
+#include <core/parameters_lagrangian.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_particle_linear_force.h>
-#include <dem/particle_particle_nonlinear_force.h>
 #include <dem/particle_wall_linear_force.h>
 #include <dem/particle_wall_nonlinear_force.h>
 #include <fem-dem/ib_particles_dem.h>
@@ -48,14 +47,16 @@ IBParticlesDEM<dim>::initialize(
   dem_particles             = particles;
   boundary_cells.resize(dem_particles.size());
 
-  dem_parameters.model_parameters.particle_particle_contact_force_method =
-    Parameters::Lagrangian::ModelParameters::ParticleParticleContactForceModel::
-      hertz;
+  dem_parameters.model_parameters.particle_particle_contact_force_model =
+    Parameters::Lagrangian::ParticleParticleContactForceModel::hertz;
   dem_parameters.model_parameters.particle_wall_contact_force_method =
     Parameters::Lagrangian::ModelParameters::ParticleWallContactForceModel::
       nonlinear;
   particle_particle_contact_force_object =
-    std::make_shared<ParticleParticleHertz<dim>>(dem_parameters);
+    std::make_shared<ParticleParticleContactForce<
+      dim,
+      Parameters::Lagrangian::ParticleParticleContactForceModel::hertz>>(
+      dem_parameters);
   std::vector<types::boundary_id> boundary_index(0);
   particle_wall_contact_force_object =
     std::make_shared<ParticleWallNonLinearForce<dim>>(

@@ -41,7 +41,9 @@
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_nonlinear_force.h>
+#include <dem/particle_particle_broad_search.h>
+#include <dem/particle_particle_contact_force.h>
+#include <dem/particle_particle_fine_search.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -141,16 +143,7 @@ test()
   std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  {
-    unsigned int max_particle_id = 0;
-    for (const auto &particle : particle_handler)
-      max_particle_id = std::max(max_particle_id, particle.get_id());
-    force.resize(max_particle_id + 1);
-  }
-#else
   force.resize(particle_handler.get_max_local_particle_index());
-#endif
   torque.resize(force.size());
   MOI.resize(force.size());
   for (unsigned i = 0; i < MOI.size(); ++i)
@@ -172,8 +165,11 @@ test()
     neighborhood_threshold);
 
   // Calling linear force
-  ParticleParticleHertzMindlinLimitOverlap<dim> nonlinear_force_object(
-    dem_parameters);
+  ParticleParticleContactForce<
+    dim,
+    Parameters::Lagrangian::ParticleParticleContactForceModel::
+      hertz_mindlin_limit_overlap>
+    nonlinear_force_object(dem_parameters);
   nonlinear_force_object.calculate_particle_particle_contact_force(
     container_manager, dt, torque, force);
 
