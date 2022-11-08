@@ -29,6 +29,8 @@
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
 
+#include <deal.II/distributed/solution_transfer.h>
+
 // Rheological models
 #include <core/rheological_model.h>
 
@@ -86,7 +88,7 @@ protected:
   SimulationParameters<dim>                       simulation_parameters;
   unsigned int                                    number_quadrature_points;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
-  TrilinosWrappers::MPI::Vector                   system_rhs;
+  VectorType                                      system_rhs;
   MPI_Comm                                        mpi_communicator;
   AffineConstraints<double>                       constraints;
   IndexSet                                        locally_relevant_dofs;

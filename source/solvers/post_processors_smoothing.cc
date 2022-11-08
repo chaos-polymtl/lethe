@@ -95,7 +95,7 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
 }
 
 template <int dim, typename VectorType>
-TrilinosWrappers::MPI::Vector
+VectorType
 PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 {
   // Solve the L2 projection system

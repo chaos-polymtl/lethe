@@ -1679,9 +1679,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     number_quadrature_points,
     this->mpi_communicator);
 
-  qcriterion_smoothing.generate_mass_matrix();
-  qcriterion_smoothing.generate_rhs(solution);
-  TrilinosWrappers::MPI::Vector q = qcriterion_smoothing.solve_L2_projection();
+  //qcriterion_smoothing.generate_mass_matrix();
+  //qcriterion_smoothing.generate_rhs(solution);
+  //TrilinosWrappers::MPI::Vector q = qcriterion_smoothing.solve_L2_projection();
 
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,
