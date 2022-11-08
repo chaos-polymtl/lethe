@@ -72,178 +72,39 @@ ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
             dem_parameters.lagrangian_physical_properties
               .rolling_friction_coefficient_particle.at(j);
 
-          if constexpr (contact_model ==
-                        Parameters::Lagrangian::
-                          ParticleParticleContactForceModel::linear)
-            {
-              this->effective_youngs_modulus[i][j] =
-                (youngs_modulus_i * youngs_modulus_j) /
-                ((youngs_modulus_j *
-                  (1.0 - poisson_ratio_i * poisson_ratio_i)) +
-                 (youngs_modulus_i *
-                  (1.0 - poisson_ratio_j * poisson_ratio_j)) +
-                 DBL_MIN);
+          this->effective_youngs_modulus[i][j] =
+            (youngs_modulus_i * youngs_modulus_j) /
+            ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
+             (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
+             DBL_MIN);
 
-              this->effective_shear_modulus[i][j] =
-                (youngs_modulus_i * youngs_modulus_j) /
-                (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
-                         (1.0 + poisson_ratio_i)) +
-                        (youngs_modulus_i * (2.0 - poisson_ratio_j) *
-                         (1.0 + poisson_ratio_j))) +
-                 DBL_MIN);
+          this->effective_shear_modulus[i][j] =
+            (youngs_modulus_i * youngs_modulus_j) /
+            (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
+                     (1.0 + poisson_ratio_i)) +
+                    (youngs_modulus_i * (2.0 - poisson_ratio_j) *
+                     (1.0 + poisson_ratio_j))) +
+             DBL_MIN);
 
-              this->effective_coefficient_of_restitution[i][j] =
-                harmonic_mean(restitution_coefficient_i,
-                              restitution_coefficient_j);
+          this->effective_coefficient_of_restitution[i][j] =
+            harmonic_mean(restitution_coefficient_i, restitution_coefficient_j);
 
-              this->effective_coefficient_of_friction[i][j] =
-                harmonic_mean(friction_coefficient_i, friction_coefficient_j);
+          this->effective_coefficient_of_friction[i][j] =
+            harmonic_mean(friction_coefficient_i, friction_coefficient_j);
 
-              this->effective_coefficient_of_rolling_friction[i][j] =
-                harmonic_mean(rolling_friction_coefficient_i,
-                              rolling_friction_coefficient_j);
-            }
+          this->effective_coefficient_of_rolling_friction[i][j] =
+            harmonic_mean(rolling_friction_coefficient_i,
+                          rolling_friction_coefficient_j);
 
-          if constexpr (contact_model == Parameters::Lagrangian::
-                                           ParticleParticleContactForceModel::
-                                             hertz_mindlin_limit_force)
-            {
-              this->effective_youngs_modulus[i][j] =
-                (youngs_modulus_i * youngs_modulus_j) /
-                ((youngs_modulus_j *
-                  (1.0 - poisson_ratio_i * poisson_ratio_i)) +
-                 (youngs_modulus_i *
-                  (1.0 - poisson_ratio_j * poisson_ratio_j)) +
-                 DBL_MIN);
+          double restitution_coefficient_particle_log =
+            std::log(this->effective_coefficient_of_restitution[i][j]);
 
-              this->effective_shear_modulus[i].insert(
-                {j,
-                 (youngs_modulus_i * youngs_modulus_j) /
-                   (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
-                            (1.0 + poisson_ratio_i)) +
-                           (youngs_modulus_i * (2.0 - poisson_ratio_j) *
-                            (1.0 + poisson_ratio_j))) +
-                    DBL_MIN)});
-
-              this->effective_coefficient_of_restitution[i].insert(
-                {j,
-                 harmonic_mean(restitution_coefficient_i,
-                               restitution_coefficient_j)});
-
-              this->effective_coefficient_of_friction[i].insert(
-                {j,
-                 harmonic_mean(friction_coefficient_i,
-                               friction_coefficient_j)});
-
-              this->effective_coefficient_of_rolling_friction[i].insert(
-                {j,
-                 harmonic_mean(rolling_friction_coefficient_i,
-                               rolling_friction_coefficient_j)});
-
-              double restitution_coefficient_particle_log =
-                std::log(this->effective_coefficient_of_restitution[i][j]);
-
-              this->model_parameter_beta[i].insert(
-                {j,
-                 restitution_coefficient_particle_log /
-                   sqrt(restitution_coefficient_particle_log *
-                          restitution_coefficient_particle_log +
-                        9.8696)});
-            }
-
-          if constexpr (contact_model == Parameters::Lagrangian::
-                                           ParticleParticleContactForceModel::
-                                             hertz_mindlin_limit_overlap)
-            {
-              this->effective_youngs_modulus[i][j] =
-                (youngs_modulus_i * youngs_modulus_j) /
-                ((youngs_modulus_j *
-                  (1.0 - poisson_ratio_i * poisson_ratio_i)) +
-                 (youngs_modulus_i *
-                  (1.0 - poisson_ratio_j * poisson_ratio_j)) +
-                 DBL_MIN);
-
-              this->effective_shear_modulus[i].insert(
-                {j,
-                 (youngs_modulus_i * youngs_modulus_j) /
-                   (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
-                            (1.0 + poisson_ratio_i)) +
-                           (youngs_modulus_i * (2.0 - poisson_ratio_j) *
-                            (1.0 + poisson_ratio_j))) +
-                    DBL_MIN)});
-
-              this->effective_coefficient_of_restitution[i].insert(
-                {j,
-                 harmonic_mean(restitution_coefficient_i,
-                               restitution_coefficient_j)});
-
-              this->effective_coefficient_of_friction[i].insert(
-                {j,
-                 harmonic_mean(friction_coefficient_i,
-                               friction_coefficient_j)});
-
-              this->effective_coefficient_of_rolling_friction[i].insert(
-                {j,
-                 harmonic_mean(rolling_friction_coefficient_i,
-                               rolling_friction_coefficient_j)});
-
-              double restitution_coefficient_particle_log =
-                std::log(this->effective_coefficient_of_restitution[i][j]);
-
-              this->model_parameter_beta[i].insert(
-                {j,
-                 restitution_coefficient_particle_log /
-                   sqrt(restitution_coefficient_particle_log *
-                          restitution_coefficient_particle_log +
-                        9.8696)});
-            }
-
-          if constexpr (contact_model ==
-                        Parameters::Lagrangian::
-                          ParticleParticleContactForceModel::hertz)
-            {
-              this->effective_youngs_modulus[i][j] =
-                (youngs_modulus_i * youngs_modulus_j) /
-                ((youngs_modulus_j *
-                  (1.0 - poisson_ratio_i * poisson_ratio_i)) +
-                 (youngs_modulus_i *
-                  (1.0 - poisson_ratio_j * poisson_ratio_j)) +
-                 DBL_MIN);
-
-              this->effective_shear_modulus[i].insert(
-                {j,
-                 (youngs_modulus_i * youngs_modulus_j) /
-                   (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
-                            (1.0 + poisson_ratio_i)) +
-                           (youngs_modulus_i * (2.0 - poisson_ratio_j) *
-                            (1.0 + poisson_ratio_j))) +
-                    DBL_MIN)});
-
-              this->effective_coefficient_of_restitution[i].insert(
-                {j,
-                 harmonic_mean(restitution_coefficient_i,
-                               restitution_coefficient_j)});
-
-              this->effective_coefficient_of_friction[i].insert(
-                {j,
-                 harmonic_mean(friction_coefficient_i,
-                               friction_coefficient_j)});
-
-              this->effective_coefficient_of_rolling_friction[i].insert(
-                {j,
-                 harmonic_mean(rolling_friction_coefficient_i,
-                               rolling_friction_coefficient_j)});
-
-              double restitution_coefficient_particle_log =
-                std::log(this->effective_coefficient_of_restitution[i][j]);
-
-              this->model_parameter_beta[i].insert(
-                {j,
-                 restitution_coefficient_particle_log /
-                   sqrt(restitution_coefficient_particle_log *
-                          restitution_coefficient_particle_log +
-                        9.8696)});
-            }
+          this->model_parameter_beta[i].insert(
+            {j,
+             restitution_coefficient_particle_log /
+               sqrt(restitution_coefficient_particle_log *
+                      restitution_coefficient_particle_log +
+                    9.8696)});
         }
     }
 
