@@ -26,6 +26,9 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+template <int dim>
+class DEMContainerManager;
+
 using namespace dealii;
 
 #ifndef particle_particle_broad_search_h
@@ -47,37 +50,22 @@ public:
   ParticleParticleBroadSearch<dim>();
 
   /**
-   * Finds a vector of pairs (particle pairs) which shows the candidate
-   * particle-particle collision pairs. These collision pairs will be used in
-   * the fine search to investigate if they are in contact or not.
+   * Finds a vector of pairs (particle_particle_candidates) which shows the
+   * candidate particle-particle collision pairs. These collision pairs will be
+   * used in the fine search to investigate if they are in contact or not.
    *
    * @param particle_handler The particle handler of particles in the broad
    * search
-   * @param cells_local_neighbor_list This vector is the output of
-   * find_cell_neighbors class and shows the local neighbor cells of all local
-   * cells in the triangulation
-   * @param cells_ghost_neighbor_list This vector is the output of
-   * find_cell_neighbors class and shows the ghost neighbor cells of all local
-   * cells in the triangulation
-   * @param local_contact_pair_candidates A map of vectors which contains all
-   * the local-local particle pairs in adjacent cells which are collision
-   * candidates
-   * @param ghost_contact_pair_candidates A map of vectors which contains all
-   * the local-ghost particle pairs in adjacent cells which are collision
-   * candidates
+   * @param container_manager The container manager object that contains
+   * containers to modify (local_contact_pair_candidates,
+   * ghost_contact_pair_candidates) with other containers with neighbors info
+   * (cells_local_neighbor_list, cells_ghost_neighbor_list)
    */
 
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-      &cells_local_neighbor_list,
-    const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-      &cells_ghost_neighbor_list,
-    typename DEM::dem_data_structures<dim>::particle_particle_candidates
-      &local_contact_pair_candidates,
-    typename DEM::dem_data_structures<dim>::particle_particle_candidates
-      &ghost_contact_pair_candidates);
+    DEMContainerManager<dim> &               container_manager);
 
   /**
    * Stores the candidate particle-particle collision pairs with a given

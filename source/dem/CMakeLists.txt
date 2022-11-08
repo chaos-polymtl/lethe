@@ -2,6 +2,7 @@ add_library(lethe-dem
   # Sources
   data_containers.cc
   dem.cc
+  dem_container_manager.cc
   dem_solver_parameters.cc
   explicit_euler_integrator.cc
   find_boundary_cells_information.cc
@@ -15,8 +16,8 @@ add_library(lethe-dem
   integrator.cc
   lagrangian_post_processing.cc
   list_insertion.cc
-  localize_contacts.cc
-  locate_local_particles.cc
+  update_fine_search_candidates.cc
+  update_local_particle_containers.cc
   non_uniform_insertion.cc
   output_force_torque_calculation.cc
   particle_particle_broad_search.cc
@@ -61,8 +62,8 @@ add_library(lethe-dem
   ../../include/dem/integrator.h
   ../../include/dem/lagrangian_post_processing.h
   ../../include/dem/list_insertion.h
-  ../../include/dem/localize_contacts.h
-  ../../include/dem/locate_local_particles.h
+  ../../include/dem/update_fine_search_candidates.h
+  ../../include/dem/update_local_particle_containers.h
   ../../include/dem/non_uniform_insertion.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h

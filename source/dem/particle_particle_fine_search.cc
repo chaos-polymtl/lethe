@@ -1,3 +1,4 @@
+#include <dem/dem_container_manager.h>
 #include <dem/particle_particle_fine_search.h>
 
 using namespace dealii;
@@ -9,18 +10,18 @@ ParticleParticleFineSearch<dim>::ParticleParticleFineSearch()
 template <int dim>
 void
 ParticleParticleFineSearch<dim>::particle_particle_fine_search(
-  const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &local_contact_pair_candidates,
-  const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_candidates,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    &          particle_container,
-  const double neighborhood_threshold)
+  DEMContainerManager<dim> &container_manager,
+  const double              neighborhood_threshold)
 {
+  // Pre-fetch containers
+  auto &particle_container       = container_manager.particle_container;
+  auto &local_adjacent_particles = container_manager.local_adjacent_particles;
+  auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
+  auto &local_contact_pair_candidates =
+    container_manager.local_contact_pair_candidates;
+  auto &ghost_contact_pair_candidates =
+    container_manager.ghost_contact_pair_candidates;
+
   // First iterating over local adjacent_particles
   for (auto &&adjacent_particles_list :
        local_adjacent_particles | boost::adaptors::map_values)

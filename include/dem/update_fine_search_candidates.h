@@ -28,51 +28,6 @@ using namespace std;
 #  define localize_contacts_h
 
 /**
- * Manages to call update_fine_search_candidates() with contact data containers
- * to remove contact repetitions and to add new contact pairs to the contact
- * containers when particles are exchanged between processors. Repeats the
- * update for local particle-particle contacts, ghost particle-particle,
- * particle-wall contacts, particle-floating wall contacts and particle-floating
- * mesh contacts.
- *
- * @param local_adjacent_particles Local-local adjacent particle pairs
- * @param ghost_adjacent_particles Local-ghost adjacent particle pairs
- * @param particle_wall_pairs_in_contact Particle-wall contact pairs
- * @param particle_floating_wall_in_contact Particle-floating wall contact pairs
- * @param particle_floating_mesh_in_contact Particle-floating mesh contact pairs
- * @param local_contact_pair_candidates Local-local particle-particle contact candidates
- * @param ghost_contact_pair_candidates Local-ghost particle-particle contact candidates
- * @param particle_wall_contact_candidates Particle-wall contact candidates
- * @param particle_floating_wall_contact_candidates Particle-floating wall contact candidates
- * @param particle_floating_mesh_contact_candidates Particle-floating mesh contact candidates
- *
- */
-
-template <int dim>
-void
-localize_contacts(
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &local_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-    &ghost_adjacent_particles,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_floating_wall_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &particle_floating_mesh_in_contact,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &local_contact_pair_candidates,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_candidates,
-  typename DEM::dem_data_structures<dim>::particle_wall_candidates
-    &particle_wall_contact_candidates,
-  typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
-    &particle_floating_wall_contact_candidates,
-  typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
-    &particle_floating_mesh_contact_candidates);
-
-/**
  * Manages removing repetitions and adding new contact pairs to the contact
  * containers when particles are exchanged between processors. If the contact
  * pair (in adjacent particles containers) does not exist in the output of the

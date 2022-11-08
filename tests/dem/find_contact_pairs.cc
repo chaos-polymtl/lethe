@@ -37,8 +37,8 @@
 
 
 // Lethe
+#include <dem/dem_container_manager.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/particle_particle_broad_search.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -59,23 +59,18 @@ test()
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
 
+  MappingQ1<dim> mapping;
 
-  MappingQ1<dim>                   mapping;
-  ParticleParticleBroadSearch<dim> broad_search_object;
-
+  DEMContainerManager<dim>        container_manager;
   Particles::ParticleHandler<dim> particle_handler(triangulation, mapping);
 
   // Finding cell neighbors list, it is required for finding the broad search
-  // pairs
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    local_neighbor_list;
-  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    ghost_neighbor_list;
-
+  // pairs in the container_manager
   FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(triangulation,
-                                           local_neighbor_list,
-                                           ghost_neighbor_list);
+  cell_neighbor_object.find_cell_neighbors(
+    triangulation,
+    container_manager.cells_local_neighbor_list,
+    container_manager.cells_ghost_neighbor_list);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -112,21 +107,12 @@ test()
     particle_handler.insert_particle(particle3, pt3_info.first);
 
   // Calling broad search function
-  std::unordered_map<unsigned int, std::vector<unsigned int>>
-    local_contact_pair_candidates;
-  std::unordered_map<unsigned int, std::vector<unsigned int>>
-    ghost_contact_pair_candidates;
-
-  broad_search_object.find_particle_particle_contact_pairs(
-    particle_handler,
-    local_neighbor_list,
-    local_neighbor_list,
-    local_contact_pair_candidates,
-    ghost_contact_pair_candidates);
+  container_manager.execute_particle_particle_broad_search(particle_handler);
 
   // Output
-  for (auto pairs_iterator = local_contact_pair_candidates.begin();
-       pairs_iterator != local_contact_pair_candidates.end();
+  for (auto pairs_iterator =
+         container_manager.local_contact_pair_candidates.begin();
+       pairs_iterator != container_manager.local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
       unsigned int first_particle_id = pairs_iterator->first;
@@ -139,8 +125,9 @@ test()
                   << " and particle " << *candidate_iterator << std::endl;
     }
 
-  for (auto pairs_iterator = local_contact_pair_candidates.begin();
-       pairs_iterator != local_contact_pair_candidates.end();
+  for (auto pairs_iterator =
+         container_manager.local_contact_pair_candidates.begin();
+       pairs_iterator != container_manager.local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
       unsigned int first_particle_id = pairs_iterator->first;
