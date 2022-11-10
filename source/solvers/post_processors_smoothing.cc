@@ -99,6 +99,8 @@ template <int dim, typename VectorType>
 TrilinosWrappers::MPI::Vector
 PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 {
+  const MappingQ<dim> mapping(
+    1, simulation_parameters.fem_parameters.qmapping_all);
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
@@ -140,6 +142,13 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
   constraints.distribute(completely_distributed_solution);
 
   return completely_distributed_solution;
+}
+
+template <int dim, typename VectorType>
+const DoFHandler<dim> &
+PostProcessorSmoothing<dim, VectorType>::get_dof_handler()
+{
+  return dof_handler;
 }
 
 template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::Vector>;

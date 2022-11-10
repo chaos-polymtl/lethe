@@ -1669,10 +1669,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   VorticityPostprocessor<dim> vorticity;
   data_out.add_data_vector(solution, vorticity);
 
-  QCriterionPostprocessor<dim> qcriterion;
-  if (!this->simulation_parameters.post_processing.smoothing)
-    data_out.add_data_vector(solution, qcriterion);
-
   QcriterionSmoothing<dim, VectorType> qcriterion_smoothing(
     this->triangulation,
     this->simulation_parameters,
@@ -1682,8 +1678,23 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   qcriterion_smoothing.generate_mass_matrix();
   qcriterion_smoothing.generate_rhs(solution, this->dof_handler, mapping);
   TrilinosWrappers::MPI::Vector q = qcriterion_smoothing.solve_L2_projection();
-  for (const auto &e : q)
-    std::cout << e << std::endl;
+
+  QCriterionPostprocessor<dim> qcriterion;
+  if (!this->simulation_parameters.post_processing.smoothing)
+    data_out.add_data_vector(solution, qcriterion);
+  else
+    {
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        data_component_interpretation(
+          1, DataComponentInterpretation::component_is_scalar);
+      std::vector<std::string> s(1, "qcriterion");
+      const DoFHandler<dim> &  dof_handler_qcriterion =
+        qcriterion_smoothing.get_dof_handler();
+      data_out.add_data_vector(dof_handler_qcriterion,
+                               q,
+                               s,
+                               data_component_interpretation);
+    }
 
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,

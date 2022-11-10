@@ -83,6 +83,9 @@ public:
   calculate_smoothed_field()
   {}
 
+  const DoFHandler<dim> &
+  get_dof_handler();
+
 protected:
   FE_Q<dim>                                       fe_q;
   DoFHandler<dim>                                 dof_handler;
