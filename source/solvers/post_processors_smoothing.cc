@@ -173,11 +173,6 @@ void
 VorticitySmoothing<dim, VectorType>::generate_rhs(const VectorType &)
 {}
 
-template <int dim, typename VectorType>
-void
-VorticitySmoothing<dim, VectorType>::calculate_smoothed_field()
-{}
-
 template class VorticitySmoothing<2, TrilinosWrappers::MPI::Vector>;
 template class VorticitySmoothing<3, TrilinosWrappers::MPI::Vector>;
 template class VorticitySmoothing<2, TrilinosWrappers::MPI::BlockVector>;
@@ -295,11 +290,6 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(
     }
   this->system_rhs.compress(VectorOperation::add);
 }
-
-template <int dim, typename VectorType>
-void
-QcriterionSmoothing<dim, VectorType>::calculate_smoothed_field()
-{}
 
 template class QcriterionSmoothing<2, TrilinosWrappers::MPI::Vector>;
 template class QcriterionSmoothing<3, TrilinosWrappers::MPI::Vector>;

@@ -79,10 +79,6 @@ public:
   TrilinosWrappers::MPI::Vector
   solve_L2_projection();
 
-  virtual void
-  calculate_smoothed_field()
-  {}
-
   const DoFHandler<dim> &
   get_dof_handler();
 
@@ -123,9 +119,6 @@ public:
   void
   generate_rhs(const VectorType &);
 
-  void
-  calculate_smoothed_field();
-
 private:
 };
 
@@ -151,9 +144,6 @@ public:
   generate_rhs(const VectorType &            solution,
                const DoFHandler<dim> &       dof_handler_fluid,
                std::shared_ptr<Mapping<dim>> mapping_fluid);
-
-  void
-  calculate_smoothed_field();
 
 private:
 };
