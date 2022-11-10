@@ -17,6 +17,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
@@ -88,7 +89,7 @@ protected:
   SimulationParameters<dim>                       simulation_parameters;
   unsigned int                                    number_quadrature_points;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
-  VectorType                                      system_rhs;
+  TrilinosWrappers::MPI::Vector                   system_rhs;
   MPI_Comm                                        mpi_communicator;
   AffineConstraints<double>                       constraints;
   IndexSet                                        locally_relevant_dofs;
