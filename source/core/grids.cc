@@ -19,10 +19,8 @@
 template <int dim, int spacedim>
 void
 attach_grid_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
-                                                          triangulation,
-  const Parameters::Mesh &                                mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions)
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Mesh &                               mesh_parameters)
 
 {
   // GMSH input
@@ -30,7 +28,7 @@ attach_grid_to_triangulation(
     {
       if (mesh_parameters.simplex)
         {
-          auto        comm      = triangulation->get_communicator();
+          auto        comm      = triangulation.get_communicator();
           std::string file_name = mesh_parameters.file_name;
 
           auto construction_data = TriangulationDescription::Utilities::
@@ -52,12 +50,12 @@ attach_grid_to_triangulation(
               Utilities::MPI::n_mpi_processes(comm) /* group size */,
               dealii::Triangulation<dim, spacedim>::none);
 
-          triangulation->create_triangulation(construction_data);
+          triangulation.create_triangulation(construction_data);
         }
       else
         {
           GridIn<dim, spacedim> grid_in;
-          grid_in.attach_triangulation(*triangulation);
+          grid_in.attach_triangulation(triangulation);
           std::ifstream input_file(mesh_parameters.file_name);
           grid_in.read_msh(input_file);
         }
@@ -89,7 +87,7 @@ attach_grid_to_triangulation(
             flat_temp_quad_triangulation, temporary_tri_triangulation);
 
           GridTools::partition_triangulation_zorder(
-            Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
+            Utilities::MPI::n_mpi_processes(triangulation.get_communicator()),
             temporary_tri_triangulation);
           GridTools::partition_multigrid_levels(temporary_tri_triangulation);
 
@@ -97,15 +95,15 @@ attach_grid_to_triangulation(
           auto construction_data = TriangulationDescription::Utilities::
             create_description_from_triangulation(
               temporary_tri_triangulation,
-              triangulation->get_communicator(),
+              triangulation.get_communicator(),
               TriangulationDescription::Settings::
                 construct_multigrid_hierarchy);
-          triangulation->create_triangulation(construction_data);
+          triangulation.create_triangulation(construction_data);
         }
       else
         {
           GridGenerator::generate_from_name_and_arguments(
-            *triangulation,
+            triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
         }
@@ -156,7 +154,7 @@ attach_grid_to_triangulation(
           if (mesh_parameters.grid_type == "classic")
             {
               // Create a subdivided cylinder from deal.ii
-              GridGenerator::subdivided_cylinder(*triangulation,
+              GridGenerator::subdivided_cylinder(triangulation,
                                                  subdivisions,
                                                  radius,
                                                  half_height);
@@ -234,19 +232,19 @@ attach_grid_to_triangulation(
               GridGenerator::extrude_triangulation(temporary_triangulation,
                                                    subdivisions + 1,
                                                    2.0 * half_height,
-                                                   *triangulation,
+                                                   triangulation,
                                                    true);
 
               // Rotate mesh in x-axis and set the (0,0,0) at the barycenter
               // to be comparable to dealii cylinder meshes
               Tensor<1, spacedim> axis_vector({0.0, 1.0, 0.0});
-              GridTools::rotate(axis_vector, M_PI_2, *triangulation);
+              GridTools::rotate(axis_vector, M_PI_2, triangulation);
               Tensor<1, spacedim> shift_vector({-half_height, 0.0, 0.0});
-              GridTools::shift(shift_vector, *triangulation);
+              GridTools::shift(shift_vector, triangulation);
 
               // Add a cylindrical manifold on the final unrefined mesh
               const CylindricalManifold<3, spacedim> m1(0);
-              triangulation->set_manifold(0, m1);
+              triangulation.set_manifold(0, m1);
             }
         }
     }
@@ -262,7 +260,7 @@ attach_grid_to_triangulation(
       else
         {
           PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
-          grid.make_grid(*triangulation);
+          grid.make_grid(triangulation);
         }
     }
   else
@@ -277,8 +275,17 @@ attach_grid_to_triangulation(
   if (mesh_parameters.rotate)
     throw std::runtime_error(
       "Main grid can't be rotated: the solid mesh must be rotated instead. Grid will not be rotated.");
+}
 
 
+template <int dim, int spacedim>
+void
+setup_periodic_boundary_conditions(
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+                                                          triangulation,
+  const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions)
+
+{
   // Setup periodic boundary conditions
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
@@ -309,9 +316,10 @@ read_mesh_and_manifolds(
   const bool &                                            restart,
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions)
 {
-  attach_grid_to_triangulation(triangulation,
-                               mesh_parameters,
-                               boundary_conditions);
+  attach_grid_to_triangulation(*triangulation, mesh_parameters);
+
+  setup_periodic_boundary_conditions(triangulation, boundary_conditions);
+
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
   if (mesh_parameters.simplex)
@@ -338,17 +346,14 @@ read_mesh_and_manifolds(
 }
 
 template void attach_grid_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
-  const Parameters::Mesh &                                   mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
+  parallel::DistributedTriangulationBase<2> &triangulation,
+  const Parameters::Mesh &                   mesh_parameters);
 template void attach_grid_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
-  const Parameters::Mesh &                                   mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
+  parallel::DistributedTriangulationBase<3> &triangulation,
+  const Parameters::Mesh &                   mesh_parameters);
 template void attach_grid_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
-  const Parameters::Mesh &                                      mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
+  parallel::DistributedTriangulationBase<2, 3> &triangulation,
+  const Parameters::Mesh &                      mesh_parameters);
 
 template void read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,

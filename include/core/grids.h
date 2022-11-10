@@ -41,9 +41,22 @@ using namespace dealii;
 template <int dim, int spacedim = dim>
 void
 attach_grid_to_triangulation(
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Mesh &                               mesh_parameters);
+
+
+/**
+ * @brief Modifies the triangulation to setup periodic boundary conditions in the case of CFD simulations
+ *
+ * @param triangulation The triangulation to which a grid is attached
+ *
+ * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
+ */
+template <int dim, int spacedim = dim>
+void
+setup_periodic_boundary_conditions(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
                                                           triangulation,
-  const Parameters::Mesh &                                mesh_parameters,
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 /**
