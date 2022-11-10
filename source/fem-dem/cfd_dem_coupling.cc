@@ -1,3 +1,4 @@
+#include <core/grids.h>
 #include <core/solutions_output.h>
 
 #include <dem/dem_solver_parameters.h>
@@ -169,23 +170,9 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
                maximum_particle_diameter,
              2);
 
-  if (dem_parameters.mesh.type == Parameters::Mesh::Type::dealii)
-    {
-      GridGenerator::generate_from_name_and_arguments(
-        tria,
-        this->cfd_dem_simulation_parameters.dem_parameters.mesh.grid_type,
-        this->cfd_dem_simulation_parameters.dem_parameters.mesh.grid_arguments);
-    }
-  else if (dem_parameters.mesh.type == Parameters::Mesh::Type::gmsh)
-    {
-      GridIn<dim> grid_in;
-      grid_in.attach_triangulation(tria);
-      std::ifstream input_file(dem_parameters.mesh.file_name);
-      grid_in.read_msh(input_file);
-    }
-  else
-    throw std::runtime_error(
-      "Unsupported mesh type - mesh will not be created");
+  attach_grid_to_triangulation(
+    *this->triangulation,
+    this->cfd_dem_simulation_parameters.dem_parameters.mesh);
 
   triangulation_cell_diameter = 0.5 * GridTools::diameter(tria);
 
