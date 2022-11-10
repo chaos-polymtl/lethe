@@ -1680,8 +1680,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     this->mpi_communicator);
 
   qcriterion_smoothing.generate_mass_matrix();
-  qcriterion_smoothing.generate_rhs(solution);
+  qcriterion_smoothing.generate_rhs(solution, this->dof_handler, mapping);
   TrilinosWrappers::MPI::Vector q = qcriterion_smoothing.solve_L2_projection();
+  for (const auto &e : q)
+    std::cout << e << std::endl;
 
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,

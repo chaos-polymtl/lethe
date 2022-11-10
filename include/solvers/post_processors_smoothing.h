@@ -86,6 +86,7 @@ public:
 protected:
   FE_Q<dim>                                       fe_q;
   DoFHandler<dim>                                 dof_handler;
+  DoFHandler<dim>                                 dof_handler_L2;
   SimulationParameters<dim>                       simulation_parameters;
   unsigned int                                    number_quadrature_points;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
@@ -144,7 +145,9 @@ public:
    * @brief Outputs a solution for the field on the nodes.
    */
   void
-  generate_rhs(const VectorType &solution);
+  generate_rhs(const VectorType &            solution,
+               const DoFHandler<dim> &       dof_handler_fluid,
+               std::shared_ptr<Mapping<dim>> mapping_fluid);
 
   void
   calculate_smoothed_field();

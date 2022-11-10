@@ -92,6 +92,7 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
         }
     }
   system_matrix->compress(VectorOperation::add);
+  // system_matrix->print(std::cout);
 }
 
 template <int dim, typename VectorType>
@@ -187,9 +188,13 @@ QcriterionSmoothing<dim, VectorType>::QcriterionSmoothing(
 
 template <int dim, typename VectorType>
 void
-QcriterionSmoothing<dim, VectorType>::generate_rhs(const VectorType &solution)
+QcriterionSmoothing<dim, VectorType>::generate_rhs(
+  const VectorType &            solution,
+  const DoFHandler<dim> &       dof_handler_fluid,
+  std::shared_ptr<Mapping<dim>> mapping_fluid)
 {
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  QGauss<dim> quadrature_formula(this->number_quadrature_points);
+  // QCriterion dof_handler
   const MappingQ<dim> mapping(
     1, this->simulation_parameters.fem_parameters.qmapping_all);
 
@@ -215,21 +220,29 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(const VectorType &solution)
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<2, dim>>      present_velocity_gradients(n_q_points);
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  // Fluid dof_handler
+  const FESystem<dim, dim> fe_fluid = dof_handler_fluid.get_fe();
+  FEValues<dim>            fe_values_fluid(*mapping_fluid,
+                                fe_fluid,
+                                quadrature_formula,
+                                update_values | update_quadrature_points |
+                                  update_JxW_values | update_gradients);
+
+  for (const auto &cell : dof_handler_fluid.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          fe_values.reinit(cell);
+          fe_values_fluid.reinit(cell);
 
-          // fe_values[velocities].get_function_gradients(
-          // solution, present_velocity_gradients);
+          fe_values_fluid[velocities].get_function_gradients(
+            solution, present_velocity_gradients);
 
           local_rhs = 0;
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  phi_vf[i] = fe_values.shape_value(i, q);
+                  phi_vf[i] = fe_values_fluid.shape_value(i, q);
 
                   double         p1 = 0.0, r1 = 0.0;
                   Tensor<2, dim> vorticity_vector;
@@ -259,10 +272,13 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(const VectorType &solution)
                   vorticity_on_q_point = 0.5 * (p1 - r1);
 
                   local_rhs(i) +=
-                    phi_vf[i] * vorticity_on_q_point * fe_values.JxW(q);
+                    phi_vf[i] * vorticity_on_q_point * fe_values_fluid.JxW(q);
                 }
             }
-          cell->get_dof_indices(local_dof_indices);
+          // cell->get_dof_indices(local_dof_indices);
+          const auto &dh_cell =
+            typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
+          dh_cell->get_dof_indices(local_dof_indices);
           this->constraints.distribute_local_to_global(local_rhs,
                                                        local_dof_indices,
                                                        this->system_rhs);
