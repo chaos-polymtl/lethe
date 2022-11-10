@@ -170,9 +170,12 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
                maximum_particle_diameter,
              2);
 
-  attach_grid_to_triangulation(
+  read_mesh_and_manifolds(
     *this->triangulation,
-    this->cfd_dem_simulation_parameters.dem_parameters.mesh);
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+    true,
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
   triangulation_cell_diameter = 0.5 * GridTools::diameter(tria);
 
@@ -1222,12 +1225,7 @@ CFDDEMSolver<dim>::solve()
   // better speed-up than using MPI. This could be eventually changed...
   MultithreadInfo::set_thread_limit(1);
 
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
-    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-    true,
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
 
   // Reading DEM start file information
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
