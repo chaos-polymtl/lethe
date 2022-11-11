@@ -152,6 +152,7 @@ subsection particles
 	end
     set type       = sphere
     set shape arguments = 0.5
+    end
 end
 # --------------------------------------------------
 # Mesh Adaptation Control
