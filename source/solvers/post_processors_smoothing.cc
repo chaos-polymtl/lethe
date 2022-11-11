@@ -142,6 +142,18 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 }
 
 template <int dim, typename VectorType>
+TrilinosWrappers::MPI::Vector
+PostProcessorSmoothing<dim, VectorType>::calculate_smoothed_field(
+  const VectorType &            solution,
+  const DoFHandler<dim> &       dof_handler_fluid,
+  std::shared_ptr<Mapping<dim>> mapping_fluid)
+{
+  generate_mass_matrix();
+  generate_rhs(solution, dof_handler_fluid, mapping_fluid);
+  return solve_L2_projection();
+}
+
+template <int dim, typename VectorType>
 const DoFHandler<dim> &
 PostProcessorSmoothing<dim, VectorType>::get_dof_handler() const
 {
@@ -154,11 +166,12 @@ template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::BlockVector>;
 template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
 
 template <int dim, typename VectorType>
-VorticitySmoothing<dim, VectorType>::VorticitySmoothing(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  const SimulationParameters<dim> &simulation_parameters,
-  const unsigned int &             number_quadrature_points,
-  const MPI_Comm &                 mpi_communicator)
+VorticityPostProcessorSmoothing<dim, VectorType>::
+  VorticityPostProcessorSmoothing(
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+    const SimulationParameters<dim> &simulation_parameters,
+    const unsigned int &             number_quadrature_points,
+    const MPI_Comm &                 mpi_communicator)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points,
@@ -167,22 +180,30 @@ VorticitySmoothing<dim, VectorType>::VorticitySmoothing(
 
 template <int dim, typename VectorType>
 void
-VorticitySmoothing<dim, VectorType>::generate_rhs(const VectorType &,
-                                                  const DoFHandler<dim> &,
-                                                  std::shared_ptr<Mapping<dim>>)
+VorticityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
+  const VectorType &,
+  const DoFHandler<dim> &,
+  std::shared_ptr<Mapping<dim>>)
 {}
 
-template class VorticitySmoothing<2, TrilinosWrappers::MPI::Vector>;
-template class VorticitySmoothing<3, TrilinosWrappers::MPI::Vector>;
-template class VorticitySmoothing<2, TrilinosWrappers::MPI::BlockVector>;
-template class VorticitySmoothing<3, TrilinosWrappers::MPI::BlockVector>;
+template class VorticityPostProcessorSmoothing<2,
+                                               TrilinosWrappers::MPI::Vector>;
+template class VorticityPostProcessorSmoothing<3,
+                                               TrilinosWrappers::MPI::Vector>;
+template class VorticityPostProcessorSmoothing<
+  2,
+  TrilinosWrappers::MPI::BlockVector>;
+template class VorticityPostProcessorSmoothing<
+  3,
+  TrilinosWrappers::MPI::BlockVector>;
 
 template <int dim, typename VectorType>
-QcriterionSmoothing<dim, VectorType>::QcriterionSmoothing(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  const SimulationParameters<dim> &simulation_parameters,
-  const unsigned int &             number_quadrature_points,
-  const MPI_Comm &                 mpi_communicator)
+QcriterionPostProcessorSmoothing<dim, VectorType>::
+  QcriterionPostProcessorSmoothing(
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+    const SimulationParameters<dim> &simulation_parameters,
+    const unsigned int &             number_quadrature_points,
+    const MPI_Comm &                 mpi_communicator)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points,
@@ -191,7 +212,7 @@ QcriterionSmoothing<dim, VectorType>::QcriterionSmoothing(
 
 template <int dim, typename VectorType>
 void
-QcriterionSmoothing<dim, VectorType>::generate_rhs(
+QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   const VectorType &            solution,
   const DoFHandler<dim> &       dof_handler_fluid,
   std::shared_ptr<Mapping<dim>> mapping_fluid)
@@ -289,7 +310,13 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(
   this->system_rhs.compress(VectorOperation::add);
 }
 
-template class QcriterionSmoothing<2, TrilinosWrappers::MPI::Vector>;
-template class QcriterionSmoothing<3, TrilinosWrappers::MPI::Vector>;
-template class QcriterionSmoothing<2, TrilinosWrappers::MPI::BlockVector>;
-template class QcriterionSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
+template class QcriterionPostProcessorSmoothing<2,
+                                                TrilinosWrappers::MPI::Vector>;
+template class QcriterionPostProcessorSmoothing<3,
+                                                TrilinosWrappers::MPI::Vector>;
+template class QcriterionPostProcessorSmoothing<
+  2,
+  TrilinosWrappers::MPI::BlockVector>;
+template class QcriterionPostProcessorSmoothing<
+  3,
+  TrilinosWrappers::MPI::BlockVector>;

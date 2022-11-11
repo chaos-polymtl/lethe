@@ -90,6 +90,14 @@ public:
   solve_L2_projection();
 
   /**
+   * @brief Returns the smoothed field solution.
+   */
+  TrilinosWrappers::MPI::Vector
+  calculate_smoothed_field(const VectorType &            solution,
+                           const DoFHandler<dim> &       dof_handler_fluid,
+                           std::shared_ptr<Mapping<dim>> mapping_fluid);
+
+  /**
    * @brief Returns a constant reference to the dof_handler
    */
   const DoFHandler<dim> &
@@ -116,11 +124,12 @@ private:
  * on nodes
  */
 template <int dim, typename VectorType>
-class VorticitySmoothing : public PostProcessorSmoothing<dim, VectorType>
+class VorticityPostProcessorSmoothing
+  : public PostProcessorSmoothing<dim, VectorType>
 {
 public:
   // Member functions
-  VorticitySmoothing(
+  VorticityPostProcessorSmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
     const SimulationParameters<dim> &simulation_parameters,
     const unsigned int &             number_quadrature_points,
@@ -142,11 +151,12 @@ private:
  * on nodes
  */
 template <int dim, typename VectorType>
-class QcriterionSmoothing : public PostProcessorSmoothing<dim, VectorType>
+class QcriterionPostProcessorSmoothing
+  : public PostProcessorSmoothing<dim, VectorType>
 {
 public:
   // Member functions
-  QcriterionSmoothing(
+  QcriterionPostProcessorSmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
     const SimulationParameters<dim> &simulation_parameters,
     const unsigned int &             number_quadrature_points,
