@@ -1048,10 +1048,12 @@ DEMSolver<dim>::solve()
             [simulation_control->get_step_number()]);
 
       // Grid visualization
-      if (parameters.grid_motion.motion_type !=
-            Parameters::Lagrangian::GridMotion<dim>::MotionType::none ||
-          simulation_control->get_time_step() == 0)
-        write_output_grid();
+      if (simulation_control->get_step_number() == 1 ||
+          parameters.grid_motion.motion_type !=
+            Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
+        {
+          write_output_grid();
+        }
 
       // Post-processing
       if (parameters.post_processing.Lagrangian_post_processing)
