@@ -69,12 +69,17 @@ public:
   void
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_floating_mesh = false)
+    const bool                                       has_floating_mesh = false,
+    const bool has_periodic_boundaries                                 = false)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
+    cells_local_periodic_neighbor_list.clear();
+    cells_ghost_periodic_neighbor_list.clear();
 
-    execute_cell_neighbors_search(triangulation, has_floating_mesh);
+    execute_cell_neighbors_search(triangulation,
+                                  has_floating_mesh,
+                                  has_periodic_boundaries);
   }
 
   /**

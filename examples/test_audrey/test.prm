@@ -6,7 +6,7 @@
 #---------------------------------------------------
 subsection simulation control
     set time step                = 1e-6
-    set time end       		     = 0.071
+    set time end       		     = 0.15
     set log frequency			 = 1000
     set output frequency         = 1000
     set output path              = ./output_collision/

@@ -147,8 +147,8 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       Tensor<1, dim> normal_vector, distance_between_faces;
       if (particles_in_outlet_cell)
         {
-          point_on_face = boundaries_cells_content.point_on_face;
-          normal_vector = boundaries_cells_content.normal_vector;
+          point_on_face          = boundaries_cells_content.point_on_face;
+          normal_vector          = boundaries_cells_content.normal_vector;
           distance_between_faces = boundaries_cells_content.periodic_offset;
         }
       else
