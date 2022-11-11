@@ -274,7 +274,7 @@ attach_grid_to_triangulation(
   // Rotate the mesh
   if (mesh_parameters.rotate)
     throw std::runtime_error(
-      "Main grid can't be rotated: the solid mesh must be rotated instead. Grid will not be rotated.");
+      "Main grid cannot be rotated: the solid mesh must be rotated instead. The grid will not be rotated.");
 }
 
 
