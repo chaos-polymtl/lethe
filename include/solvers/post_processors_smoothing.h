@@ -28,9 +28,9 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 // Numerics
-#include <deal.II/numerics/data_postprocessor.h>
-
 #include <deal.II/distributed/solution_transfer.h>
+
+#include <deal.II/numerics/data_postprocessor.h>
 
 // Rheological models
 #include <core/rheological_model.h>
@@ -54,6 +54,7 @@ using namespace dealii;
  * @tparam triangulation Flow triangulation
  * @tparam simulation_parameters The simulation parameters
  * @tparam number_quadrature_points The number of quadrature points
+ * @tparam mpi_communicator Allowing communication between cores
  */
 
 template <int dim, typename VectorType>
@@ -63,31 +64,43 @@ public:
   // Member functions
   PostProcessorSmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-    SimulationParameters<dim> simulation_parameters,
-    unsigned int              number_quadrature_points,
-    const MPI_Comm &          mpi_communicator);
+    const SimulationParameters<dim> &simulation_parameters,
+    const unsigned int &             number_quadrature_points,
+    const MPI_Comm &                 mpi_communicator);
 
+  /**
+   * @brief Generates the mass matrix, that is independant of the physics.
+   */
   void
   generate_mass_matrix();
+
   /**
-   * @brief Outputs a solution for the field on the nodes.
+   * @brief Generates the right hand side based on the fluid's solution.
    */
   virtual void
-  generate_rhs(const VectorType &)
+  generate_rhs(const VectorType &,
+               const DoFHandler<dim> &,
+               std::shared_ptr<Mapping<dim>>)
   {}
 
+  /**
+   * @brief Solves the matrix system and outputs the smoothed field solution
+   */
   TrilinosWrappers::MPI::Vector
   solve_L2_projection();
 
+  /**
+   * @brief Returns a constant reference to the dof_handler
+   */
   const DoFHandler<dim> &
-  get_dof_handler();
+  get_dof_handler() const;
 
 protected:
   FE_Q<dim>                                       fe_q;
   DoFHandler<dim>                                 dof_handler;
-  DoFHandler<dim>                                 dof_handler_L2;
   SimulationParameters<dim>                       simulation_parameters;
   unsigned int                                    number_quadrature_points;
+  std::shared_ptr<Mapping<dim>>                   mapping;
   std::shared_ptr<TrilinosWrappers::SparseMatrix> system_matrix;
   TrilinosWrappers::MPI::Vector                   system_rhs;
   MPI_Comm                                        mpi_communicator;
@@ -109,15 +122,17 @@ public:
   // Member functions
   VorticitySmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-    SimulationParameters<dim> simulation_parameters,
-    unsigned int              number_quadrature_points,
-    const MPI_Comm &          mpi_communicator);
+    const SimulationParameters<dim> &simulation_parameters,
+    const unsigned int &             number_quadrature_points,
+    const MPI_Comm &                 mpi_communicator);
 
   /**
-   * @brief Outputs a solution for the field on the nodes.
+   * @brief Generates the right hand side based on the fluid's solution.
    */
   void
-  generate_rhs(const VectorType &);
+  generate_rhs(const VectorType &,
+               const DoFHandler<dim> &,
+               std::shared_ptr<Mapping<dim>>);
 
 private:
 };
@@ -133,12 +148,16 @@ public:
   // Member functions
   QcriterionSmoothing(
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-    SimulationParameters<dim> simulation_parameters,
-    unsigned int              number_quadrature_points,
-    const MPI_Comm &          mpi_communicator);
+    const SimulationParameters<dim> &simulation_parameters,
+    const unsigned int &             number_quadrature_points,
+    const MPI_Comm &                 mpi_communicator);
 
   /**
-   * @brief Outputs a solution for the field on the nodes.
+   * @brief Generates the right hand side based on the fluid's solution.
+   *
+   * @tparam solution The fluid's solution
+   * @tparam dof_hanfler_fluid The dof_hanfler of the fluid solution
+   * @tparam mapping_fluid The mapping of the fluid
    */
   void
   generate_rhs(const VectorType &            solution,

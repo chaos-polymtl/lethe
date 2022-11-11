@@ -3,15 +3,17 @@
 template <int dim, typename VectorType>
 PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  SimulationParameters<dim> simulation_parameters,
-  unsigned int              number_quadrature_points,
-  const MPI_Comm &          mpi_communicator)
+  const SimulationParameters<dim> &simulation_parameters,
+  const unsigned int &             number_quadrature_points,
+  const MPI_Comm &                 mpi_communicator)
   : fe_q(1)
   , dof_handler(*triangulation)
   , simulation_parameters(simulation_parameters)
   , number_quadrature_points(number_quadrature_points)
   , mpi_communicator(mpi_communicator)
 {
+  mapping = std::make_shared<MappingQ<dim>>(
+    1, this->simulation_parameters.fem_parameters.qmapping_all);
   system_matrix = std::make_shared<TrilinosWrappers::SparseMatrix>();
 }
 
@@ -20,7 +22,7 @@ void
 PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
 {
   dof_handler.distribute_dofs(fe_q);
-  locally_owned_dofs = dof_handler.locally_owned_dofs();
+  this->locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
   constraints.clear();
@@ -32,20 +34,18 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
   DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
 
   SparsityTools::distribute_sparsity_pattern(dsp,
-                                             locally_owned_dofs,
-                                             mpi_communicator,
-                                             locally_relevant_dofs);
+                                             this->locally_owned_dofs,
+                                             this->mpi_communicator,
+                                             this->locally_relevant_dofs);
 
-  system_matrix->reinit(locally_owned_dofs,
-                        locally_owned_dofs,
+  system_matrix->reinit(this->locally_owned_dofs,
+                        this->locally_owned_dofs,
                         dsp,
-                        mpi_communicator);
+                        this->mpi_communicator);
 
-  QGauss<dim>         quadrature_formula(number_quadrature_points);
-  const MappingQ<dim> mapping(
-    1, simulation_parameters.fem_parameters.qmapping_all);
+  QGauss<dim> quadrature_formula(number_quadrature_points);
 
-  FEValues<dim> fe_values(mapping,
+  FEValues<dim> fe_values(*this->mapping,
                           fe_q,
                           quadrature_formula,
                           update_values | update_quadrature_points |
@@ -92,20 +92,17 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
         }
     }
   system_matrix->compress(VectorOperation::add);
-  // system_matrix->print(std::cout);
 }
 
 template <int dim, typename VectorType>
 TrilinosWrappers::MPI::Vector
 PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 {
-  const MappingQ<dim> mapping(
-    1, simulation_parameters.fem_parameters.qmapping_all);
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,
@@ -146,7 +143,7 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 
 template <int dim, typename VectorType>
 const DoFHandler<dim> &
-PostProcessorSmoothing<dim, VectorType>::get_dof_handler()
+PostProcessorSmoothing<dim, VectorType>::get_dof_handler() const
 {
   return dof_handler;
 }
@@ -159,9 +156,9 @@ template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
 template <int dim, typename VectorType>
 VorticitySmoothing<dim, VectorType>::VorticitySmoothing(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  SimulationParameters<dim> simulation_parameters,
-  unsigned int              number_quadrature_points,
-  const MPI_Comm &          mpi_communicator)
+  const SimulationParameters<dim> &simulation_parameters,
+  const unsigned int &             number_quadrature_points,
+  const MPI_Comm &                 mpi_communicator)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points,
@@ -170,7 +167,9 @@ VorticitySmoothing<dim, VectorType>::VorticitySmoothing(
 
 template <int dim, typename VectorType>
 void
-VorticitySmoothing<dim, VectorType>::generate_rhs(const VectorType &)
+VorticitySmoothing<dim, VectorType>::generate_rhs(const VectorType &,
+                                                  const DoFHandler<dim> &,
+                                                  std::shared_ptr<Mapping<dim>>)
 {}
 
 template class VorticitySmoothing<2, TrilinosWrappers::MPI::Vector>;
@@ -181,9 +180,9 @@ template class VorticitySmoothing<3, TrilinosWrappers::MPI::BlockVector>;
 template <int dim, typename VectorType>
 QcriterionSmoothing<dim, VectorType>::QcriterionSmoothing(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  SimulationParameters<dim> simulation_parameters,
-  unsigned int              number_quadrature_points,
-  const MPI_Comm &          mpi_communicator)
+  const SimulationParameters<dim> &simulation_parameters,
+  const unsigned int &             number_quadrature_points,
+  const MPI_Comm &                 mpi_communicator)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points,
@@ -198,12 +197,10 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(
   std::shared_ptr<Mapping<dim>> mapping_fluid)
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
-  // QCriterion dof_handler
-  const MappingQ<dim> mapping(
-    1, this->simulation_parameters.fem_parameters.qmapping_all);
+
 
   const FESystem<dim, dim> fe = this->dof_handler.get_fe();
-  FEValues<dim>            fe_values(mapping,
+  FEValues<dim>            fe_values(*this->mapping,
                           fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
@@ -224,7 +221,7 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<2, dim>>      present_velocity_gradients(n_q_points);
 
-  // Fluid dof_handler
+  // Fluid information
   const FESystem<dim, dim> fe_fluid = dof_handler_fluid.get_fe();
   FEValues<dim>            fe_values_fluid(*mapping_fluid,
                                 fe_fluid,
@@ -279,7 +276,8 @@ QcriterionSmoothing<dim, VectorType>::generate_rhs(
                     phi_vf[i] * vorticity_on_q_point * fe_values_fluid.JxW(q);
                 }
             }
-          // cell->get_dof_indices(local_dof_indices);
+          // Associate cell of fluid dof_handler to current (qcriterion)
+          // dof_handler
           const auto &dh_cell =
             typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
           dh_cell->get_dof_indices(local_dof_indices);
