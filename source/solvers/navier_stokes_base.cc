@@ -1682,7 +1682,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     }
   else
     {
-      TrilinosWrappers::MPI::Vector qcriterion_field =
+      const TrilinosWrappers::MPI::Vector qcriterion_field =
         qcriterion_smoothing.calculate_smoothed_field(solution,
                                                       this->dof_handler,
                                                       this->mapping);

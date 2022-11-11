@@ -95,14 +95,15 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
 }
 
 template <int dim, typename VectorType>
-TrilinosWrappers::MPI::Vector
+const TrilinosWrappers::MPI::Vector &
 PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
+  completely_distributed_solution =
+    TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
+                                  this->mpi_communicator);
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,
@@ -142,7 +143,7 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 }
 
 template <int dim, typename VectorType>
-TrilinosWrappers::MPI::Vector
+const TrilinosWrappers::MPI::Vector &
 PostProcessorSmoothing<dim, VectorType>::calculate_smoothed_field(
   const VectorType &            solution,
   const DoFHandler<dim> &       dof_handler_fluid,

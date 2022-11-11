@@ -86,13 +86,13 @@ public:
   /**
    * @brief Solves the matrix system and outputs the smoothed field solution
    */
-  TrilinosWrappers::MPI::Vector
+  const TrilinosWrappers::MPI::Vector &
   solve_L2_projection();
 
   /**
    * @brief Returns the smoothed field solution.
    */
-  TrilinosWrappers::MPI::Vector
+  const TrilinosWrappers::MPI::Vector &
   calculate_smoothed_field(const VectorType &            solution,
                            const DoFHandler<dim> &       dof_handler_fluid,
                            std::shared_ptr<Mapping<dim>> mapping_fluid);
@@ -115,6 +115,7 @@ protected:
   AffineConstraints<double>                       constraints;
   IndexSet                                        locally_relevant_dofs;
   IndexSet                                        locally_owned_dofs;
+  TrilinosWrappers::MPI::Vector completely_distributed_solution;
 
 private:
 };
