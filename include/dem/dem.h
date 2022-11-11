@@ -226,13 +226,15 @@ private:
 
   /**
    * @brief write_output_results
-   * Post-processing as parallel VTU files
+   * Generates VTU file with particles information for visualization and
+   * post-processing Post-processing as parallel VTU files
    */
   void
   write_output_results();
 
   /**
    * @brief write_output_grid
+   * Generates VTU files for mesh visualization and post-processing
    * Post-processing as parallel VTU files
    */
   void
