@@ -54,7 +54,7 @@ which result in Reynolds and Atwood numbers equal to
         At = \frac{\rho_r - 1}{\rho_r + 1} = 0.5
 
 
-A perturbed interface defined as :math:`2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a no-slip boundary condition is applied, while on the left and right walls, a periodic boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman (2022) `<[2]_>`_ at dimensionless times (:math:`t^* = t \sqrt{\bf{g} / H}`) of 1.5, 2.5, 3.5, 4.0 and 4.5. The temporal evolution of the spike and the bubble positions are then compared to the results of He et al (1999) `<[1]_>`_.
+A perturbed interface defined as :math:`2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a no-slip boundary condition is applied, while on the left and right walls, a periodic boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman (2022) `<[2]_>`_ at dimensionless times (:math:`t^* = t \sqrt{\bf{g} / H}`) of 1.5, 2.5, 3.5, 4.0 and 4.5. The temporal evolution of the spike and the bubble positions are then compared to the results of He et al (1999) `<[1]_>`_. The term "spike" refers to the lowest point of fluid 1 and the term "bubble" refers to the highest point of fluid 0. 
 
 
 --------------
@@ -312,7 +312,8 @@ In the following figure, we compare the simulation results with that of Garoosi 
     :align: center
     :width: 400
 
-In the figure below, we compare the position of the spike and the bubble with the results of He et al (1999) `<[1]_>`_.
+
+In the figure below, we compare the position of the spike and the bubble with the results of He et al (1999) `<[1]_>`_. It can be seen that as :math:`t^*` increases, there is a growing difference between the spike position of the current simulation and that of He et al (1999) `<[1]_>`_. Nevertheless, the bubble position follows the same evolution as the reference.
 
 .. image:: images/He_et_al_comparison.png
     :alt: Schematic
