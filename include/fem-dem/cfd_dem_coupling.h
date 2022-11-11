@@ -105,6 +105,18 @@ private:
   dem_contact_build(unsigned int counter);
 
   /**
+   * @brief Sets up the various parameters related to the DEM contacts
+   */
+  void
+  dem_setup_contact_parameters();
+
+  /**
+   * @brief Connect triangulation for load balancing and particles
+   */
+  void
+  manage_triangulation_connections();
+
+  /**
    * @brief Carries out the initialization of DEM parameters
    */
   void
@@ -240,7 +252,5 @@ private:
   const unsigned int            this_mpi_process;
   const unsigned int            n_mpi_processes;
   LagrangianPostProcessing<dim> dem_post_processing_object;
-
-  Triangulation<dim> tria;
 };
 #endif
