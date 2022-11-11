@@ -232,6 +232,13 @@ private:
   write_output_results();
 
   /**
+   * @brief write_output_grid
+   * Post-processing as parallel VTU files
+   */
+  void
+  write_output_grid();
+
+  /**
    * @brief post_process_results Calculates average velocity and other post-processed quantities that need to be outputted to files
    */
   void

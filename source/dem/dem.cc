@@ -627,6 +627,40 @@ DEMSolver<dim>::write_output_results()
                             group_files,
                             mpi_communicator);
 
+  if (simulation_control->get_output_boundaries())
+    {
+      DataOutFaces<dim> data_out_faces;
+
+      // Setup background dofs to initiate right sized boundary_id vector
+      setup_background_dofs();
+      Vector<float> boundary_id(background_dh.n_dofs());
+
+      // Attach the boundary_id to data_out_faces object
+      BoundaryPostprocessor<dim> boundary;
+      data_out_faces.attach_dof_handler(background_dh);
+      data_out_faces.add_data_vector(boundary_id, boundary);
+      data_out_faces.build_patches();
+
+      write_boundaries_vtu<dim>(
+        data_out_faces, folder, time, iter, this->mpi_communicator);
+    }
+
+  // Write all solid objects
+  for (const auto &solid_object : solids)
+    solid_object->write_output_results(simulation_control);
+}
+
+template <int dim>
+void
+DEMSolver<dim>::write_output_grid()
+{
+  const std::string folder = parameters.simulation_control.output_folder;
+  const std::string particles_solution_name =
+    parameters.simulation_control.output_name;
+  const unsigned int iter        = simulation_control->get_step_number();
+  const double       time        = simulation_control->get_current_time();
+  const unsigned int group_files = parameters.simulation_control.group_files;
+
   // Write background grid
   DataOut<dim> background_data_out;
 
@@ -651,28 +685,6 @@ DEMSolver<dim>::write_output_results()
                          iter,
                          group_files,
                          mpi_communicator);
-
-  if (simulation_control->get_output_boundaries())
-    {
-      DataOutFaces<dim> data_out_faces;
-
-      // Setup background dofs to initiate right sized boundary_id vector
-      setup_background_dofs();
-      Vector<float> boundary_id(background_dh.n_dofs());
-
-      // Attach the boundary_id to data_out_faces object
-      BoundaryPostprocessor<dim> boundary;
-      data_out_faces.attach_dof_handler(background_dh);
-      data_out_faces.add_data_vector(boundary_id, boundary);
-      data_out_faces.build_patches();
-
-      write_boundaries_vtu<dim>(
-        data_out_faces, folder, time, iter, this->mpi_communicator);
-    }
-
-  // Write all solid objects
-  for (const auto &solid_object : solids)
-    solid_object->write_output_results(simulation_control);
 }
 
 template <int dim>
@@ -810,6 +822,8 @@ DEMSolver<dim>::solve()
       update_moment_of_inertia(particle_handler, MOI);
 
       checkpoint_step = true;
+
+      write_output_grid();
     }
 
   // Find the smallest contact search frequency criterion between (smallest
@@ -1032,6 +1046,12 @@ DEMSolver<dim>::solve()
             .forces_boundary_information[simulation_control->get_step_number()],
           container_manager.torques_boundary_information
             [simulation_control->get_step_number()]);
+
+      // Grid visualization
+      if (parameters.grid_motion.motion_type !=
+            Parameters::Lagrangian::GridMotion<dim>::MotionType::none ||
+          simulation_control->get_time_step() == 0)
+        write_output_grid();
 
       // Post-processing
       if (parameters.post_processing.Lagrangian_post_processing)
