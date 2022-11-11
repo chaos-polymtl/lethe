@@ -144,19 +144,18 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       // Initialize points and normal vector related of the cell that contains
       // the particle
       Point<dim>     point_on_face, point_on_periodic_face;
-      Tensor<1, dim> normal_vector;
+      Tensor<1, dim> normal_vector, distance_between_faces;
       if (particles_in_outlet_cell)
         {
           point_on_face = boundaries_cells_content.point_on_face;
-          point_on_periodic_face =
-            boundaries_cells_content.point_on_periodic_face;
           normal_vector = boundaries_cells_content.normal_vector;
+          distance_between_faces = boundaries_cells_content.periodic_offset;
         }
       else
         {
           point_on_face = boundaries_cells_content.point_on_periodic_face;
-          point_on_periodic_face = boundaries_cells_content.point_on_face;
           normal_vector = boundaries_cells_content.periodic_normal_vector;
+          distance_between_faces = -boundaries_cells_content.periodic_offset;
         }
 
       // Calculate distance between particle position and the face of
@@ -169,9 +168,6 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       // cell.
       if (distance_with_face >= 0.0)
         {
-          Point<dim, double> distance_between_faces;
-          distance_between_faces = point_on_periodic_face - point_on_face;
-
           // Move particle outside the current cell to the periodic cell.
           particle_position += distance_between_faces;
           particle->set_location(particle_position);

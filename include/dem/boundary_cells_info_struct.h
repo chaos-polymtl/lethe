@@ -83,6 +83,7 @@ struct periodic_boundaries_cells_info_struct
   // A point on the peridic boundary face
   Point<dim> point_on_periodic_face;
 
+  // The offset between the faces on periodic boundaries
   Tensor<1, dim> periodic_offset;
 };
 
