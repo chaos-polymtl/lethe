@@ -257,9 +257,8 @@ namespace Parameters
 template <int dim, int spacedim>
 void
 attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
-                        triangulation,
-  Parameters::Manifolds manifolds)
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  Parameters::Manifolds                                  manifolds)
 {
   for (unsigned int i = 0; i < manifolds.types.size(); ++i)
     {
@@ -275,9 +274,9 @@ attach_manifolds_to_triangulation(
                                            manifolds.arg3[i]);
           static const SphericalManifold<dim, spacedim> manifold_description(
             circleCenter);
-          triangulation->set_manifold(manifolds.id[i], manifold_description);
-          triangulation->set_all_manifold_ids_on_boundary(manifolds.id[i],
-                                                          manifolds.id[i]);
+          triangulation.set_manifold(manifolds.id[i], manifold_description);
+          triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
+                                                         manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
         {
@@ -292,32 +291,30 @@ attach_manifolds_to_triangulation(
     }
 }
 
-void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2>>,
-  std::string,
-  unsigned int)
+void attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &,
+                            std::string,
+                            unsigned int)
 {
   throw std::runtime_error("IGES manifolds are not supported in 2D");
 }
 
-void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>>,
-  std::string,
-  unsigned int)
+void attach_cad_to_manifold(parallel::DistributedTriangulationBase<2, 3> &,
+                            std::string,
+                            unsigned int)
 {
   throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
 }
 
 #ifdef DEAL_II_WITH_OPENCASCADE
 void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
-  std::string                                                cad_name,
-  unsigned int                                               manifold_id)
+  parallel::DistributedTriangulationBase<3> &triangulation,
+  std::string                                cad_name,
+  unsigned int                               manifold_id)
 {
   TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
 
   // Enforce manifold over boundary ID
-  for (const auto &cell : triangulation->active_cell_iterators())
+  for (const auto &cell : triangulation.active_cell_iterators())
     {
       for (const auto &face : cell->face_iterators())
         {
@@ -336,13 +333,12 @@ void attach_cad_to_manifold(
   OpenCASCADE::NormalToMeshProjectionManifold<3, 3> normal_projector(
     cad_surface, tolerance);
 
-  triangulation->set_manifold(manifold_id, normal_projector);
+  triangulation.set_manifold(manifold_id, normal_projector);
 }
 #else
-void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<3>>,
-  std::string,
-  unsigned int)
+void attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &,
+                            std::string,
+                            unsigned int)
 {
   throw std::runtime_error(
     "IGES manifolds require DEAL_II to be compiled with OPENCASCADE");
@@ -351,13 +347,13 @@ void attach_cad_to_manifold(
 
 
 template void attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
-  Parameters::Manifolds                                      manifolds);
+  parallel::DistributedTriangulationBase<2> &triangulation,
+  Parameters::Manifolds                      manifolds);
 
 template void attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
-  Parameters::Manifolds                                      manifolds);
+  parallel::DistributedTriangulationBase<3> &triangulation,
+  Parameters::Manifolds                      manifolds);
 
 template void attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
-  Parameters::Manifolds                                         manifolds);
+  parallel::DistributedTriangulationBase<2, 3> &triangulation,
+  Parameters::Manifolds                         manifolds);

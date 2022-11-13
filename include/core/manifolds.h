@@ -173,9 +173,8 @@ public:
 template <int dim, int spacedim = dim>
 void
 attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
-                              triangulation,
-  const Parameters::Manifolds manifolds);
+  parallel::DistributedTriangulationBase<dim, spacedim> &triangulation,
+  const Parameters::Manifolds                            manifolds);
 
 /**
  * @brief Attaches CAD manifolds using IGES files to boundaries of the triangulation
@@ -189,19 +188,19 @@ attach_manifolds_to_triangulation(
  * @param manifold_id Identifier of the manifold
  */
 void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
-  std::string                                                cad_name,
-  unsigned int                                               manifold_id);
+  parallel::DistributedTriangulationBase<2> &triangulation,
+  std::string                                cad_name,
+  unsigned int                               manifold_id);
 
 void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
-  std::string                                                   cad_name,
-  unsigned int                                                  manifold_id);
+  parallel::DistributedTriangulationBase<2, 3> &triangulation,
+  std::string                                   cad_name,
+  unsigned int                                  manifold_id);
 
 void attach_cad_to_manifold(
-  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
-  std::string                                                cad_name,
-  unsigned int                                               manifold_id);
+  parallel::DistributedTriangulationBase<3> &triangulation,
+  std::string                                cad_name,
+  unsigned int                               manifold_id);
 
 
 
