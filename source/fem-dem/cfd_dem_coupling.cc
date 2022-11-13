@@ -523,18 +523,13 @@ CFDDEMSolver<dim>::load_balance()
   parallel_triangulation->repartition();
 
   // Update cell neighbors
-  if (has_periodic_boundaries)
+  container_manager.update_cell_neighbors(*parallel_triangulation);
+
+  if (dem_parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
-      periodic_boundaries_object.map_periodic_cells(
-        *parallel_triangulation,
-        container_manager.periodic_boundaries_cells_information);
-
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_boundaries_object.map_periodic_cells(*parallel_triangulation);
     }
-
-  container_manager.update_cell_neighbors(*parallel_triangulation,
-                                          has_periodic_boundaries);
-
 
   boundary_cell_object.build(
     *parallel_triangulation,
@@ -644,25 +639,19 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
-  if (has_periodic_boundaries)
+  // Finding cell neighbors
+  container_manager.execute_cell_neighbors_search(*parallel_triangulation);
+
+  if (dem_parameters.boundary_conditions.BC_type ==
+      Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
       periodic_boundaries_object.set_periodic_boundaries_information(
-        dem_parameters.boundary_conditions.periodic_boundary_0,
-        dem_parameters.boundary_conditions.periodic_boundary_1,
+        dem_parameters.boundary_conditions.outlet_boundaries,
+        dem_parameters.boundary_conditions.periodic_boundaries,
         dem_parameters.boundary_conditions.periodic_direction);
 
-      periodic_boundaries_object.map_periodic_cells(
-        *parallel_triangulation,
-        container_manager.periodic_boundaries_cells_information);
-
-      // Temporary offset calculation : works only for one set of periodic
-      // boundary on an axis.
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_boundaries_object.map_periodic_cells(*parallel_triangulation);
     }
-
-  // Finding cell neighbors
-  container_manager.execute_cell_neighbors_search(*parallel_triangulation,
-                                                  has_periodic_boundaries);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -780,8 +769,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Particle-particle contact force
   particle_particle_contact_force_object
-    ->calculate_particle_particle_contact_force(
-      container_manager, dem_time_step, torque, force, periodic_offset);
+    ->calculate_particle_particle_contact_force(container_manager,
+                                                dem_time_step,
+                                                torque,
+                                                force);
 
   // Particles-walls contact force:
   particle_wall_contact_force();
@@ -816,8 +807,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Particles displacement if passing through a periodic boundary
   periodic_boundaries_object.execute_particles_displacement(
-    this->particle_handler,
-    container_manager.periodic_boundaries_cells_information);
+    this->particle_handler);
 }
 
 template <int dim>
@@ -871,7 +861,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Execute board search by filling containers of particle-particle
       // contact pair candidates
       container_manager.execute_particle_particle_broad_search(
-        this->particle_handler, has_periodic_boundaries);
+        this->particle_handler);
 
       // Execute board search by filling containers of particle-wall
       // contact pair candidates
@@ -884,19 +874,16 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Update contacts, remove replicates and add new contact pairs
       // to the contact containers when particles are exchanged between
       // processors
-      container_manager.update_contacts(has_periodic_boundaries);
+      container_manager.update_contacts();
 
       // Updates the iterators to particles in local-local contact
       // containers
-      container_manager.update_local_particles_in_cells(
-        this->particle_handler, has_periodic_boundaries);
+      container_manager.update_local_particles_in_cells(this->particle_handler);
 
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
       container_manager.execute_particle_particle_fine_search(
-        neighborhood_threshold_squared,
-        has_periodic_boundaries,
-        periodic_offset);
+        neighborhood_threshold_squared);
 
       // Execute fine search by updating particle-wall contact containers
       // regards the neighborhood threshold
