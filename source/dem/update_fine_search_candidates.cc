@@ -41,7 +41,7 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
                         contact_type ==
                           ContactType::local_periodic_particle_particle ||
                         contact_type ==
-                          ContactType::local_periodic_particle_particle)
+                          ContactType::ghost_periodic_particle_particle)
             {
               // Get the reference to all the 2nd particle contact
               // candidates of the current particle from the new broad search

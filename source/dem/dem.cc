@@ -294,10 +294,6 @@ DEMSolver<dim>::load_balance()
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
 
-  // Update neighbors of cells after load balance
-  container_manager.update_cell_neighbors(triangulation, has_floating_mesh);
-
-
   // Update the container with all the combinations of background and
   // solid cells
   container_manager.store_floating_mesh_info(triangulation, solids);
@@ -309,6 +305,11 @@ DEMSolver<dim>::load_balance()
         container_manager.periodic_cells_container,
         container_manager.periodic_boundaries_cells_information);
     }
+
+  // Update neighbors of cells after load balance
+  container_manager.update_cell_neighbors(triangulation,
+                                          has_floating_mesh,
+                                          has_periodic_boundaries);
 
   boundary_cell_object.build(
     triangulation,
@@ -405,7 +406,6 @@ DEMSolver<dim>::check_load_balance_dynamic()
           load_balance_step = true;
         }
     }
-
 
   return load_balance_step;
 }

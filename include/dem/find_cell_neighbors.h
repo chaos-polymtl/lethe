@@ -85,8 +85,8 @@ public:
   void
   find_cell_periodic_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-      &periodic_boundaries_cells_information,
+    const typename DEM::dem_data_structures<dim>::cell_container
+      &periodic_cells_container,
     typename DEM::dem_data_structures<dim>::cells_neighbor_list
       &cells_local_periodic_neighbor_list,
     typename DEM::dem_data_structures<dim>::cells_neighbor_list

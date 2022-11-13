@@ -6,7 +6,7 @@
 #---------------------------------------------------
 subsection simulation control
     set time step                = 1e-6
-    set time end       		     = 0.071
+    set time end       		     = 0.15
     set log frequency			 = 1000
     set output frequency         = 1000
     set output path              = ./output_collision/
@@ -42,7 +42,7 @@ subsection model parameters
   set load balance method				     = dynamic
   set load balance threshold				 = 0.5
   set dynamic load balance check frequency	 = 10000
-  set neighborhood threshold				 = 1.5
+  set neighborhood threshold				 = 2
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method				     = velocity_verlet
@@ -60,7 +60,7 @@ subsection lagrangian physical properties
     subsection particle type 0
         set size distribution type		        = uniform
         set diameter            	 	        = 0.004
-        set number				                = 5
+        set number				                = 50
         set density particles         	        = 1020
         set young modulus particles         	= 1000000
         set poisson ratio particles          	= 0.3
@@ -79,11 +79,18 @@ end
 # Insertion Info
 #---------------------------------------------------
 subsection insertion info
-    set insertion method			        	= list
-    set insertion frequency            		 	= 10
-    set list x = -0.001, 0.001, -0.001, 0.001, -0.001
-    set list y = -0.015, -0.01, -0.005, 0.001, 0.005
-    set list z = 0.001, 0.001, 0.001, 0.001, 0.001
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 50
+  set insertion frequency                            = 1000000
+  set insertion box minimum x                        = -0.01
+  set insertion box minimum y                        = -0.01
+  set insertion box minimum z            	         = -0.01
+  set insertion box maximum x                        = 0.01
+  set insertion box maximum y                        = 0.01
+  set insertion box maximum z            	         = 0.01
+  set insertion distance threshold                   = 1.2
+  set insertion random number range                  = 0.05
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
