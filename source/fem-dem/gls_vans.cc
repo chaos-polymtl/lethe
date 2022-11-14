@@ -1685,7 +1685,7 @@ GLSVANSSolver<dim>::solve()
   MultithreadInfo::set_thread_limit(1);
 
   read_mesh_and_manifolds(
-    this->triangulation,
+    *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
     this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters

@@ -1,3 +1,4 @@
+#include <core/grids.h>
 #include <core/solutions_output.h>
 
 #include <dem/dem_solver_parameters.h>
@@ -136,143 +137,7 @@ CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
-{
-  coupling_frequency =
-    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
-
-  standard_deviation_multiplier = 2.5;
-
-  // Initialize DEM Parameters
-  dem_parameters.lagrangian_physical_properties =
-    this->cfd_dem_simulation_parameters.dem_parameters
-      .lagrangian_physical_properties;
-  dem_parameters.boundary_conditions =
-    this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
-  dem_parameters.floating_walls =
-    this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
-  dem_parameters.model_parameters =
-    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
-  dem_parameters.simulation_control =
-    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
-  dem_parameters.post_processing =
-    this->cfd_dem_simulation_parameters.dem_parameters.post_processing;
-  dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
-  dem_parameters.restart =
-    this->cfd_dem_simulation_parameters.dem_parameters.restart;
-
-
-  maximum_particle_diameter =
-    find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
-                               standard_deviation_multiplier);
-  neighborhood_threshold_squared =
-    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
-               maximum_particle_diameter,
-             2);
-
-  if (dem_parameters.mesh.type == Parameters::Mesh::Type::dealii)
-    {
-      GridGenerator::generate_from_name_and_arguments(
-        tria,
-        this->cfd_dem_simulation_parameters.dem_parameters.mesh.grid_type,
-        this->cfd_dem_simulation_parameters.dem_parameters.mesh.grid_arguments);
-    }
-  else if (dem_parameters.mesh.type == Parameters::Mesh::Type::gmsh)
-    {
-      GridIn<dim> grid_in;
-      grid_in.attach_triangulation(tria);
-      std::ifstream input_file(dem_parameters.mesh.file_name);
-      grid_in.read_msh(input_file);
-    }
-  else
-    throw std::runtime_error(
-      "Unsupported mesh type - mesh will not be created");
-
-  triangulation_cell_diameter = 0.5 * GridTools::diameter(tria);
-
-  //   Finding the smallest contact search frequency criterion between (smallest
-  //   cell size - largest particle radius) and (security factor * (blab
-  //   diamater - 1) *  largest particle radius). This value is used in
-  //   find_contact_detection_frequency function
-  smallest_contact_search_criterion =
-    std::min((GridTools::minimal_cell_diameter(tria) -
-              maximum_particle_diameter * 0.5),
-             (dem_parameters.model_parameters.dynamic_contact_search_factor *
-              (dem_parameters.model_parameters.neighborhood_threshold - 1) *
-              maximum_particle_diameter * 0.5));
-
-  dem_time_step =
-    this->simulation_control->get_time_step() / coupling_frequency;
-
-  double rayleigh_time_step = 0;
-
-  for (unsigned int i = 0;
-       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
-       ++i)
-    rayleigh_time_step = std::max(
-      M_PI_2 *
-        dem_parameters.lagrangian_physical_properties
-          .particle_average_diameter[i] *
-        sqrt(2 *
-             dem_parameters.lagrangian_physical_properties.density_particle[i] *
-             (2 + dem_parameters.lagrangian_physical_properties
-                    .poisson_ratio_particle[i]) *
-             (1 - dem_parameters.lagrangian_physical_properties
-                    .poisson_ratio_particle[i]) /
-             dem_parameters.lagrangian_physical_properties
-               .youngs_modulus_particle[i]) /
-        (0.1631 * dem_parameters.lagrangian_physical_properties
-                    .poisson_ratio_particle[i] +
-         0.8766),
-      rayleigh_time_step);
-
-  const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
-  this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
-              << "% of Rayleigh time step" << std::endl;
-
-  // Necessary signals for load balancing. This signals are only connected if
-  // load balancing is enabled. This helps prevent errors in read_dem function
-  // for Deal.II version 9.3
-  //  const auto parallel_triangulation =
-  //    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-  //      &*this->triangulation);
-
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
-
-  if (dem_parameters.model_parameters.load_balance_method !=
-      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
-    {
-      parallel_triangulation->signals.weight.connect(
-        [](const typename Triangulation<dim>::cell_iterator &,
-           const typename Triangulation<dim>::CellStatus) -> unsigned int {
-          return 1000;
-        });
-
-      parallel_triangulation->signals.weight.connect(
-        [&](const typename parallel::distributed::Triangulation<
-              dim>::cell_iterator &cell,
-            const typename parallel::distributed::Triangulation<dim>::CellStatus
-              status) -> unsigned int {
-          return this->cell_weight(cell, status);
-        });
-    }
-
-  // Initilize contact detection step
-  contact_detection_step = false;
-  load_balance_step      = false;
-
-  // In the case the simulation is being restarted from a checkpoint file, the
-  // checkpoint_step parameter is set to true. This allows to perform all
-  // operations related to restarting a simulation. Once all operations have
-  // been performed, this checkpoint_step is reset to false. It is only set once
-  // and reset once since restarting only occurs once.
-  if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart == true)
-    checkpoint_step = true;
-  else
-    checkpoint_step = false;
-}
+{}
 
 template <int dim>
 CFDDEMSolver<dim>::~CFDDEMSolver()
@@ -1229,6 +1094,124 @@ CFDDEMSolver<dim>::print_particles_summary()
 
 template <int dim>
 void
+CFDDEMSolver<dim>::dem_setup_contact_parameters()
+{
+  coupling_frequency =
+    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
+
+  standard_deviation_multiplier = 2.5;
+
+  // Initialize DEM Parameters
+  dem_parameters.lagrangian_physical_properties =
+    this->cfd_dem_simulation_parameters.dem_parameters
+      .lagrangian_physical_properties;
+  dem_parameters.boundary_conditions =
+    this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
+  dem_parameters.floating_walls =
+    this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
+  dem_parameters.model_parameters =
+    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
+  dem_parameters.simulation_control =
+    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
+  dem_parameters.post_processing =
+    this->cfd_dem_simulation_parameters.dem_parameters.post_processing;
+  dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
+  dem_parameters.restart =
+    this->cfd_dem_simulation_parameters.dem_parameters.restart;
+
+
+  maximum_particle_diameter =
+    find_maximum_particle_size(dem_parameters.lagrangian_physical_properties,
+                               standard_deviation_multiplier);
+  neighborhood_threshold_squared =
+    std::pow(dem_parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
+
+
+  triangulation_cell_diameter = 0.5 * GridTools::diameter(*this->triangulation);
+
+  //   Finding the smallest contact search frequency criterion between (smallest
+  //   cell size - largest particle radius) and (security factor * (blab
+  //   diamater - 1) *  largest particle radius). This value is used in
+  //   find_contact_detection_frequency function
+  smallest_contact_search_criterion =
+    std::min((GridTools::minimal_cell_diameter(*this->triangulation) -
+              maximum_particle_diameter * 0.5),
+             (dem_parameters.model_parameters.dynamic_contact_search_factor *
+              (dem_parameters.model_parameters.neighborhood_threshold - 1) *
+              maximum_particle_diameter * 0.5));
+
+  dem_time_step =
+    this->simulation_control->get_time_step() / coupling_frequency;
+
+  double rayleigh_time_step = 0;
+
+  for (unsigned int i = 0;
+       i < dem_parameters.lagrangian_physical_properties.particle_type_number;
+       ++i)
+    rayleigh_time_step = std::max(
+      M_PI_2 *
+        dem_parameters.lagrangian_physical_properties
+          .particle_average_diameter[i] *
+        sqrt(2 *
+             dem_parameters.lagrangian_physical_properties.density_particle[i] *
+             (2 + dem_parameters.lagrangian_physical_properties
+                    .poisson_ratio_particle[i]) *
+             (1 - dem_parameters.lagrangian_physical_properties
+                    .poisson_ratio_particle[i]) /
+             dem_parameters.lagrangian_physical_properties
+               .youngs_modulus_particle[i]) /
+        (0.1631 * dem_parameters.lagrangian_physical_properties
+                    .poisson_ratio_particle[i] +
+         0.8766),
+      rayleigh_time_step);
+
+  const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
+  this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
+              << "% of Rayleigh time step" << std::endl;
+
+  // Initilize contact detection step
+  contact_detection_step = false;
+  load_balance_step      = false;
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::manage_triangulation_connections()
+{
+  // Necessary signals for load balancing. This signals are only connected if
+  // load balancing is enabled. This helps prevent errors in read_dem function
+  // for Deal.II version 9.3
+  //  const auto parallel_triangulation =
+  //    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+  //      &*this->triangulation);
+
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+
+  if (dem_parameters.model_parameters.load_balance_method !=
+      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      parallel_triangulation->signals.weight.connect(
+        [](const typename Triangulation<dim>::cell_iterator &,
+           const typename Triangulation<dim>::CellStatus) -> unsigned int {
+          return 1000;
+        });
+
+      parallel_triangulation->signals.weight.connect(
+        [&](const typename parallel::distributed::Triangulation<
+              dim>::cell_iterator &cell,
+            const typename parallel::distributed::Triangulation<dim>::CellStatus
+              status) -> unsigned int {
+          return this->cell_weight(cell, status);
+        });
+    }
+}
+
+template <int dim>
+void
 CFDDEMSolver<dim>::solve()
 {
   // This is enforced to 1 right now because it does not provide
@@ -1236,11 +1219,16 @@ CFDDEMSolver<dim>::solve()
   MultithreadInfo::set_thread_limit(1);
 
   read_mesh_and_manifolds(
-    this->triangulation,
+    *this->triangulation,
     this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
     this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
     true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+
+  manage_triangulation_connections();
+
+  dem_setup_contact_parameters();
 
   // Reading DEM start file information
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
@@ -1254,6 +1242,18 @@ CFDDEMSolver<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
+
+
+  // In the case the simulation is being restarted from a checkpoint file, the
+  // checkpoint_step parameter is set to true. This allows to perform all
+  // operations related to restarting a simulation. Once all operations have
+  // been performed, this checkpoint_step is reset to false. It is only set once
+  // and reset once since restarting only occurs once.
+  if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+        .restart == true)
+    checkpoint_step = true;
+  else
+    checkpoint_step = false;
 
   // Initilize DEM parameters
   initialize_dem_parameters();
