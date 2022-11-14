@@ -398,6 +398,9 @@ namespace Parameters
       // A bool variable which sets-up the Lagrangian post-processing
       bool Lagrangian_post_processing;
 
+      // Enable grid outputting
+      bool write_grid;
+
       // Enable particles velocity post-processing
       bool calculate_particles_average_velocity;
 

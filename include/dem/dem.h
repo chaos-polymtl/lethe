@@ -234,14 +234,6 @@ private:
   write_output_results();
 
   /**
-   * @brief write_output_grid
-   * Generates VTU files with the grid of the domain
-   * Post-processing as parallel VTU files
-   */
-  void
-  write_output_grid();
-
-  /**
    * @brief post_process_results Calculates average velocity and other post-processed quantities that need to be outputted to files
    */
   void

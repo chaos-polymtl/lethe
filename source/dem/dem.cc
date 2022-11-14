@@ -627,6 +627,35 @@ DEMSolver<dim>::write_output_results()
                             group_files,
                             mpi_communicator);
 
+  if (parameters.post_processing.write_grid == true)
+    {
+      // Write background grid
+      DataOut<dim> background_data_out;
+
+      background_data_out.attach_dof_handler(background_dh);
+
+      // Attach the solution data to data_out object
+      Vector<float> subdomain(triangulation.n_active_cells());
+      for (unsigned int i = 0; i < subdomain.size(); ++i)
+        subdomain(i) = triangulation.locally_owned_subdomain();
+      background_data_out.add_data_vector(subdomain, "subdomain");
+
+      const std::string grid_solution_name =
+        parameters.simulation_control.output_name + "-grid";
+
+      background_data_out.build_patches();
+
+      write_vtu_and_pvd<dim>(grid_pvdhandler,
+                             background_data_out,
+                             folder,
+                             grid_solution_name,
+                             time,
+                             iter,
+                             group_files,
+                             mpi_communicator);
+    }
+
+
   if (simulation_control->get_output_boundaries())
     {
       DataOutFaces<dim> data_out_faces;
@@ -650,42 +679,6 @@ DEMSolver<dim>::write_output_results()
     solid_object->write_output_results(simulation_control);
 }
 
-template <int dim>
-void
-DEMSolver<dim>::write_output_grid()
-{
-  const std::string folder = parameters.simulation_control.output_folder;
-  const std::string particles_solution_name =
-    parameters.simulation_control.output_name;
-  const unsigned int iter        = simulation_control->get_step_number();
-  const double       time        = simulation_control->get_current_time();
-  const unsigned int group_files = parameters.simulation_control.group_files;
-
-  // Write background grid
-  DataOut<dim> background_data_out;
-
-  background_data_out.attach_dof_handler(background_dh);
-
-  // Attach the solution data to data_out object
-  Vector<float> subdomain(triangulation.n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = triangulation.locally_owned_subdomain();
-  background_data_out.add_data_vector(subdomain, "subdomain");
-
-  const std::string grid_solution_name =
-    parameters.simulation_control.output_name + "-grid";
-
-  background_data_out.build_patches();
-
-  write_vtu_and_pvd<dim>(grid_pvdhandler,
-                         background_data_out,
-                         folder,
-                         grid_solution_name,
-                         time,
-                         iter,
-                         group_files,
-                         mpi_communicator);
-}
 
 template <int dim>
 void
@@ -822,8 +815,6 @@ DEMSolver<dim>::solve()
       update_moment_of_inertia(particle_handler, MOI);
 
       checkpoint_step = true;
-
-      write_output_grid();
     }
 
   // Find the smallest contact search frequency criterion between (smallest
@@ -1046,14 +1037,6 @@ DEMSolver<dim>::solve()
             .forces_boundary_information[simulation_control->get_step_number()],
           container_manager.torques_boundary_information
             [simulation_control->get_step_number()]);
-
-      // Grid visualization
-      if (simulation_control->get_step_number() == 1 ||
-          parameters.grid_motion.motion_type !=
-            Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
-        {
-          write_output_grid();
-        }
 
       // Post-processing
       if (parameters.post_processing.Lagrangian_post_processing)
