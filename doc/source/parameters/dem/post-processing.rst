@@ -3,6 +3,7 @@ Post-processing
 Lethe has built in post-processing capabilities. The post-processing subsection is according to the following example:
 
 .. code-block:: text
+
  subsection post-processing
   # Enable the use of calculate granular temperature and calculate particles' average velocity
   set Lagrangian post processing = false
