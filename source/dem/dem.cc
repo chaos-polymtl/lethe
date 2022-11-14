@@ -627,34 +627,6 @@ DEMSolver<dim>::write_output_results()
                             group_files,
                             mpi_communicator);
 
-  if (parameters.post_processing.write_grid == true)
-    {
-      // Write background grid
-      DataOut<dim> background_data_out;
-
-      background_data_out.attach_dof_handler(background_dh);
-
-      // Attach the solution data to data_out object
-      Vector<float> subdomain(triangulation.n_active_cells());
-      for (unsigned int i = 0; i < subdomain.size(); ++i)
-        subdomain(i) = triangulation.locally_owned_subdomain();
-      background_data_out.add_data_vector(subdomain, "subdomain");
-
-      const std::string grid_solution_name =
-        parameters.simulation_control.output_name + "-grid";
-
-      background_data_out.build_patches();
-
-      write_vtu_and_pvd<dim>(grid_pvdhandler,
-                             background_data_out,
-                             folder,
-                             grid_solution_name,
-                             time,
-                             iter,
-                             group_files,
-                             mpi_communicator);
-    }
-
 
   if (simulation_control->get_output_boundaries())
     {
@@ -708,6 +680,17 @@ DEMSolver<dim>::post_process_results()
         simulation_control->get_current_time(),
         simulation_control->get_step_number(),
         mpi_communicator);
+    }
+
+  if (parameters.post_processing.write_grid)
+    {
+      post_processing_object.write_grid(triangulation,
+                                        grid_pvdhandler,
+                                        parameters,
+                                        background_dh,
+                                        simulation_control->get_current_time(),
+                                        simulation_control->get_step_number(),
+                                        mpi_communicator);
     }
 }
 

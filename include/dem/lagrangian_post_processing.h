@@ -117,6 +117,25 @@ public:
     const MPI_Comm &                                 mpi_communicator);
 
 
+  /**
+   * Carries out writing the grid of the domain
+   *
+   * @param triangulation Triangulation
+   * @param grid_pvdhandler
+   * @param dem_parameters
+   * @param background_dh
+   * @param time Simulation time
+   * @param step_number DEM step number
+   * @param mpi_communicator
+   */
+  void
+  write_grid(const parallel::distributed::Triangulation<dim> &triangulation,
+             PVDHandler &                                     grid_pvdhandler,
+             const DEMSolverParameters<dim> &                 dem_parameters,
+             DoFHandler<dim> &                                background_dh,
+             const double                                     time,
+             const unsigned int                               step_number,
+             const MPI_Comm &                                 mpi_communicator);
 
 private:
   /**

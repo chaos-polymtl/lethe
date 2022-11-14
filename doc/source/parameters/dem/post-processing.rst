@@ -36,10 +36,7 @@ Lethe has built in post-processing capabilities. The post-processing subsection 
 .. note::
  The parameters default values are the ones presented above.
 
-* The ``Lagrangian post processing`` enables the use of ``calculate particles average velocity`` and ``calculate granular temperature``.
-
-.. warning::
- ``calculate particles average velocity`` and ``calculate granular temperature`` will not work without setting ``Lagrangian post processing`` to ``true``. Alternatively, ``write grid`` can be used without setting ``Lagrangian post processing`` to ``true``.
+* The ``Lagrangian post processing`` enables the use of ``calculate particles average velocity``, ``calculate granular temperature``, and ``write grid``.
 
 * The ``calculate particles average velocity`` chooses whether the average velocity of the particles will be output or not. It generates a file with the average velocity of the particles.
 
@@ -60,5 +57,5 @@ Lethe has built in post-processing capabilities. The post-processing subsection 
 
 * The ``write grid`` parameter enables one to output the grid as VTU files. The output files can be used for post-processing. By default, it is ``true``.
 
-.. important::
- The ``write grid`` parameter does not need to be enabled using the ``Lagrangian post processing``.
+.. warning::
+ ``calculate particles average velocity``, ``calculate granular temperature``, and ``write grid`` will not work without setting ``Lagrangian post processing`` to ``true``.

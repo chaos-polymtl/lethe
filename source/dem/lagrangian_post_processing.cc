@@ -259,5 +259,49 @@ LagrangianPostProcessing<dim>::write_granular_temperature(
     mpi_communicator);
 }
 
+template <int dim>
+void
+LagrangianPostProcessing<dim>::write_grid(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  PVDHandler &                                     grid_pvdhandler,
+  const DEMSolverParameters<dim> &                 dem_parameters,
+  DoFHandler<dim> &                                background_dh,
+  const double                                     time,
+  const unsigned int                               step_number,
+  const MPI_Comm &                                 mpi_communicator)
+{
+  const std::string folder = dem_parameters.simulation_control.output_folder;
+  const std::string particles_solution_name =
+    dem_parameters.simulation_control.output_name;
+  const unsigned int iter = step_number;
+  const unsigned int group_files =
+    dem_parameters.simulation_control.group_files;
+
+  // Write background grid
+  DataOut<dim> background_data_out;
+
+  background_data_out.attach_dof_handler(background_dh);
+
+  // Attach the solution data to data_out object
+  Vector<float> subdomain(triangulation.n_active_cells());
+  for (unsigned int i = 0; i < subdomain.size(); ++i)
+    subdomain(i) = triangulation.locally_owned_subdomain();
+  background_data_out.add_data_vector(subdomain, "subdomain");
+
+  const std::string grid_solution_name =
+    dem_parameters.simulation_control.output_name + "-grid";
+
+  background_data_out.build_patches();
+
+  write_vtu_and_pvd<dim>(grid_pvdhandler,
+                         background_data_out,
+                         folder,
+                         grid_solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         mpi_communicator);
+}
+
 template class LagrangianPostProcessing<2>;
 template class LagrangianPostProcessing<3>;

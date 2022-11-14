@@ -1013,6 +1013,18 @@ CFDDEMSolver<dim>::dem_post_process_results()
         this->simulation_control->get_step_number(),
         this->mpi_communicator);
     }
+
+  if (dem_parameters.post_processing.write_grid)
+    {
+      dem_post_processing_object.write_grid(
+        *parallel_triangulation,
+        grid_pvdhandler,
+        dem_parameters,
+        background_dh,
+        this->simulation_control->get_current_time(),
+        this->simulation_control->get_step_number(),
+        this->mpi_communicator);
+    }
 }
 
 template <int dim>
