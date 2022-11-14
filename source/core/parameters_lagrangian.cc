@@ -1124,11 +1124,6 @@ namespace Parameters
           Patterns::Bool(),
           "State whether Lagrangian post-processing should be performed.");
 
-        prm.declare_entry("write grid",
-                          "true",
-                          Patterns::Bool(),
-                          "Enable writing grids as VTU files.");
-
         prm.declare_entry("calculate particles average velocity",
                           "false",
                           Patterns::Bool(),
@@ -1138,6 +1133,11 @@ namespace Parameters
                           "false",
                           Patterns::Bool(),
                           "Enable calculation of granular temperature.");
+
+        prm.declare_entry("write grid",
+                          "true",
+                          Patterns::Bool(),
+                          "Enable writing grids as VTU files.");
 
         prm.declare_entry("initial step",
                           "0",
@@ -1173,11 +1173,11 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         Lagrangian_post_processing = prm.get_bool("Lagrangian post processing");
-        write_grid                 = prm.get_bool("write grid");
         calculate_particles_average_velocity =
           prm.get_bool("calculate particles average velocity");
         calculate_granular_temperature =
           prm.get_bool("calculate granular temperature");
+        write_grid                = prm.get_bool("write grid");
         initial_step              = prm.get_integer("initial step");
         end_step                  = prm.get_integer("end step");
         output_frequency          = prm.get_integer("output frequency");
