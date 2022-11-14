@@ -6,7 +6,7 @@ Lethe has built in post-processing capabilities. The post-processing subsection 
 
  subsection post-processing
   # Enable the use of calculate granular temperature and calculate particles' average velocity
-  set Lagrangian post processing = false
+  set Lagrangian post-processing = false
 
   # Enable writing grid VTU files
   set write grid = true

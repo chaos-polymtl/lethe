@@ -1119,7 +1119,7 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         prm.declare_entry(
-          "Lagrangian post processing",
+          "Lagrangian post-processing",
           "false",
           Patterns::Bool(),
           "State whether Lagrangian post-processing should be performed.");
@@ -1172,7 +1172,7 @@ namespace Parameters
     {
       prm.enter_subsection("post-processing");
       {
-        Lagrangian_post_processing = prm.get_bool("Lagrangian post processing");
+        Lagrangian_post_processing = prm.get_bool("Lagrangian post-processing");
         calculate_particles_average_velocity =
           prm.get_bool("calculate particles average velocity");
         calculate_granular_temperature =
