@@ -679,7 +679,6 @@ DEMSolver<dim>::write_output_results()
     solid_object->write_output_results(simulation_control);
 }
 
-
 template <int dim>
 void
 DEMSolver<dim>::post_process_results()
