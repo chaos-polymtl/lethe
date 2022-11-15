@@ -49,7 +49,7 @@ using namespace dealii;
  * to calculate post-processed parameters
  *
  * @tparam dim An integer that denotes the dimension of the space in which
- * the flow is solved
+ * the variable being smoothed is solved
  *
  * @tparam triangulation Flow triangulation
  * @tparam simulation_parameters The simulation parameters
