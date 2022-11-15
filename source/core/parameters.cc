@@ -1133,15 +1133,14 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop = prm.get_bool("calculate pressure drop");
-      calculate_min_max_temperature =
-        prm.get_bool("calculate temperature range");
-      inlet_boundary_id              = prm.get_integer("inlet boundary id");
-      outlet_boundary_id             = prm.get_integer("outlet boundary id");
-      initial_time                   = prm.get_double("initial time");
-      kinetic_energy_output_name     = prm.get("kinetic energy name");
-      pressure_drop_output_name      = prm.get("pressure drop name");
-      enstrophy_output_name          = prm.get("enstrophy name");
+      calculate_pressure_drop     = prm.get_bool("calculate pressure drop");
+      calculate_temperature_range = prm.get_bool("calculate temperature range");
+      inlet_boundary_id           = prm.get_integer("inlet boundary id");
+      outlet_boundary_id          = prm.get_integer("outlet boundary id");
+      initial_time                = prm.get_double("initial time");
+      kinetic_energy_output_name  = prm.get("kinetic energy name");
+      pressure_drop_output_name   = prm.get("pressure drop name");
+      enstrophy_output_name       = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       calculation_frequency          = prm.get_integer("calculation frequency");
       output_frequency               = prm.get_integer("output frequency");

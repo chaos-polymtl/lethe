@@ -355,6 +355,24 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
+  /**
+   * @brief Post-processing. Calculates the minimum and maximum temperature in the simulation domain
+   */
+
+  std::pair<double, double>
+  calculate_temperature_range();
+
+  /**
+   * Post-processing
+   * generalized to multiphase simulations
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
+   * the phase of interest.
+   */
+
+  void
+  calculate_heat_transfer(const Parameters::FluidIndicator monitored_fluid);
+
+
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 

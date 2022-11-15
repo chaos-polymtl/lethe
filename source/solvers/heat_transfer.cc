@@ -649,13 +649,14 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
     }
 
   // Minimum and maximum temperature
-  if (simulation_parameters.post_processing.calculate_min_max_temperature)
+  if (simulation_parameters.post_processing.calculate_temperature_range)
     {
       std::pair<double, double> min_max_temperature =
-        calculate_min_max_temperature(dof_handler,
-                                      present_solution,
-                                      *cell_quadrature,
-                                      *temperature_mapping);
+        calculate_temperature_range();
+      //                                    dof_handler,
+      //                                    present_solution,
+      //                                    *cell_quadrature,
+      //                                    *temperature_mapping);
 
       if (simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
@@ -969,7 +970,49 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
   newton_update = completely_distributed_solution;
 }
 
+template <int dim>
+std::pair<double, double>
+HeatTransfer<dim>::calculate_temperature_range()
+{
+  const unsigned int  n_q_points = this->cell_quadrature->size();
+  std::vector<double> local_temperature_values(n_q_points);
 
+  FEValues<dim> fe_values_ht(*this->temperature_mapping,
+                             *this->fe,
+                             *this->cell_quadrature,
+                             update_values);
+
+  double minimum_temperature = DBL_MAX;
+  double maximum_temperature = -DBL_MAX;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_ht.reinit(cell);
+          fe_values_ht.get_function_values(this->present_solution,
+                                           local_temperature_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              double temperature = local_temperature_values[q];
+
+              if (temperature > maximum_temperature)
+                maximum_temperature = temperature;
+              if (temperature < minimum_temperature)
+                minimum_temperature = temperature;
+            }
+        }
+    }
+
+  const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
+  minimum_temperature =
+    Utilities::MPI::min(minimum_temperature, mpi_communicator);
+  maximum_temperature =
+    Utilities::MPI::max(maximum_temperature, mpi_communicator);
+
+  return std::make_pair(minimum_temperature, maximum_temperature);
+}
 
 template class HeatTransfer<2>;
 template class HeatTransfer<3>;

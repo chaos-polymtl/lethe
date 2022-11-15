@@ -561,7 +561,7 @@ namespace Parameters
     bool calculate_pressure_drop;
 
     // Print minimum and maximum temperature
-    bool calculate_min_max_temperature;
+    bool calculate_temperature_range;
 
     // The outlet boundary ID for pressure drop calculation
     unsigned int inlet_boundary_id;
