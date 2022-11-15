@@ -20,7 +20,7 @@ subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_rectangle
     set grid arguments       				= -0.01, -0.02, -0.01 : 0.01, 0.02, 0.01 : true
-    set initial refinement   				= 2
+    set initial refinement   				= 1
     set expand particle-wall contact search = false
 end
 
@@ -102,8 +102,8 @@ subsection DEM boundary conditions
 
    subsection boundary condition 0
        set type                                        = periodic
-       set boundary id                                 = 0
-       set periodic id                                 = 1
+       set periodic id 0                               = 0
+       set periodic id 1                               = 1
        set periodic direction                          = 0
    end
 end

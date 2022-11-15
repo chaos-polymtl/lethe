@@ -301,9 +301,9 @@ DEMSolver<dim>::load_balance()
   if (has_periodic_boundaries)
     {
       periodic_boundaries_object.map_periodic_cells(
-        triangulation,
-        container_manager.periodic_cells_container,
-        container_manager.periodic_boundaries_cells_information);
+        triangulation, container_manager.periodic_boundaries_cells_information);
+
+      periodic_offset = periodic_boundaries_object.get_constant_offset();
     }
 
   // Update neighbors of cells after load balance
@@ -794,20 +794,16 @@ DEMSolver<dim>::solve()
   if (has_periodic_boundaries)
     {
       periodic_boundaries_object.set_periodic_boundaries_information(
-        parameters.boundary_conditions.outlet_boundaries,
-        parameters.boundary_conditions.periodic_boundaries,
+        parameters.boundary_conditions.periodic_boundary_0,
+        parameters.boundary_conditions.periodic_boundary_1,
         parameters.boundary_conditions.periodic_direction);
 
       periodic_boundaries_object.map_periodic_cells(
-        triangulation,
-        container_manager.periodic_cells_container,
-        container_manager.periodic_boundaries_cells_information);
+        triangulation, container_manager.periodic_boundaries_cells_information);
 
       // Temporary offset calculation : works only for one set of periodic
       // boundary on an axis.
-      tmp_periodic_offset = periodic_boundaries_object.get_constant_offset(
-        container_manager.periodic_boundaries_cells_information.begin()
-          ->second);
+      periodic_offset = periodic_boundaries_object.get_constant_offset();
     }
 
   // Find cell neighbors
@@ -924,7 +920,7 @@ DEMSolver<dim>::solve()
           container_manager.execute_particle_particle_fine_search(
             neighborhood_threshold_squared,
             has_periodic_boundaries,
-            tmp_periodic_offset);
+            periodic_offset);
 
           // Execute fine search by updating particle-wall contact containers
           // according to the neighborhood threshold
@@ -942,7 +938,7 @@ DEMSolver<dim>::solve()
           simulation_control->get_time_step(),
           torque,
           force,
-          tmp_periodic_offset);
+          periodic_offset);
 
       // We have to update the positions of the points on boundary faces and
       // their normal vectors here. The update_contacts deletes the

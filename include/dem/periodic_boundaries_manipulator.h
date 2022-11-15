@@ -57,13 +57,13 @@ public:
    */
   void
   set_periodic_boundaries_information(
-    std::vector<unsigned int> outlet_boundaries,
-    std::vector<unsigned int> periodic_boundaries,
-    std::vector<unsigned int> periodic_directions)
+    const types::boundary_id periodic_boundary_id_0,
+    const types::boundary_id periodic_boundary_id_1,
+    const unsigned int       periodic_directions)
   {
-    outlet_boundary_ids   = outlet_boundaries;
-    periodic_boundary_ids = periodic_boundaries;
-    directions            = periodic_directions;
+    periodic_boundary_0 = periodic_boundary_id_0;
+    periodic_boundary_1 = periodic_boundary_id_1;
+    direction           = periodic_directions;
   }
 
   /**
@@ -74,8 +74,6 @@ public:
   void
   map_periodic_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    typename DEM::dem_data_structures<dim>::cell_container
-      &periodic_cells_container,
     typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
       &periodic_boundaries_cells_information);
 
@@ -94,13 +92,8 @@ public:
       &periodic_boundaries_cells_information);
 
   inline Tensor<1, dim>
-  get_constant_offset(
-    const periodic_boundaries_cells_info_struct<dim> &periodic_info_struct)
+  get_constant_offset()
   {
-    Tensor<1, dim> constant_periodic_offset;
-    constant_periodic_offset[directions[0]] =
-      periodic_info_struct.periodic_offset[directions[0]];
-
     return constant_periodic_offset;
   }
 
@@ -138,9 +131,10 @@ private:
       &        particles_in_cell,
     const bool particles_in_outlet_cell);
 
-  std::vector<unsigned int> outlet_boundary_ids;
-  std::vector<unsigned int> periodic_boundary_ids;
-  std::vector<unsigned int> directions;
+  types::boundary_id periodic_boundary_0;
+  types::boundary_id periodic_boundary_1;
+  unsigned int       direction;
+  Tensor<1, dim>     constant_periodic_offset;
 };
 
 
