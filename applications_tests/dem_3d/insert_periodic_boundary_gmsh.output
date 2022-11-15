@@ -2,6 +2,9 @@ Running on 1 rank(s)
 ***************************************************************** 
 
 DEM time-step is 7.71088% of Rayleigh time step
+
+Warning: Periodic boundary conditions in DEM is currently not working with multiprocessors.
+
 Reading triangulation 
 
 Finished reading triangulation 

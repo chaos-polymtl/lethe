@@ -1,0 +1,31 @@
+Running on 1 rank(s)
+*****************************************************************
+
+DEM time-step is 2.57029% of Rayleigh time step
+
+Warning: Periodic boundary conditions in DEM is currently not working with multiprocessors.
+
+Reading triangulation
+
+Finished reading triangulation
+Warning: expansion of particle-wall contact list is disabled.
+This feature is useful in geometries with concave boundaries.
+*****************************************************************
+5 particles of type 0 were inserted, 0 particles of type 0 remaining
+*****************************************************************
+
+*****************************************************************
+Transient iteration : 10000    Time : 0.1      Time step : 1e-05
+*****************************************************************
+| Variable                     | Min        | Max        | Average    | Total      |
+| Contact list generation      | 0.0000e+00 | 1.0990e+03 | 1.0990e+03 | 1.0990e+03 |
+| Velocity magnitude           | 1.9080e-02 | 6.2549e-02 | 3.6055e-02 | 1.8028e-01 |
+| Angular velocity magnitude   | 2.2225e-02 | 1.8859e+01 | 4.6605e+00 | 2.3302e+01 |
+| Translational kinetic energy | 6.2216e-09 | 6.6863e-08 | 2.5821e-08 | 1.2910e-07 |
+| Rotational kinetic energy    | 2.7014e-14 | 1.9450e-08 | 3.9947e-09 | 1.9973e-08 |
+id, type, dp, x, y, z
+0 0 0.00400 -0.0075 -0.0179 0.0010
+1 0 0.00400 0.0065 -0.0180 0.0010
+2 0 0.00400 0.0006 -0.0180 0.0010
+3 0 0.00400 0.0096 -0.0142 0.0010
+4 0 0.00400 -0.0053 -0.0143 0.0010

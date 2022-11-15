@@ -213,7 +213,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
       pcout
         << std::endl
-        << "Warning: Periodic boundary conditions in DEM is currently not working with multiprocessors."
+        << "Warning: Periodic boundary conditions in DEM is currently not working with multiprocessors.\n"
         << std::endl;
     }
 }
