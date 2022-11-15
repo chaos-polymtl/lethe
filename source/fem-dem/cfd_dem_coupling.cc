@@ -987,43 +987,23 @@ CFDDEMSolver<dim>::dem_post_process_results()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
-  if (dem_parameters.post_processing.calculate_particles_average_velocity)
+  if (this->simulation_control->get_step_number() >=
+        dem_parameters.post_processing.initial_step &&
+      this->simulation_control->get_step_number() <=
+        dem_parameters.post_processing.end_step)
     {
-      dem_post_processing_object.calculate_average_particles_velocity(
-        *parallel_triangulation, this->particle_handler);
-
-      dem_post_processing_object.write_average_particles_velocity(
-        *parallel_triangulation,
-        grid_pvdhandler,
-        dem_parameters,
-        this->simulation_control->get_current_time(),
-        this->simulation_control->get_step_number(),
-        this->mpi_communicator);
-    }
-  if (dem_parameters.post_processing.calculate_granular_temperature)
-    {
-      dem_post_processing_object.calculate_average_granular_temperature(
-        *parallel_triangulation, this->particle_handler);
-
-      dem_post_processing_object.write_granular_temperature(
-        *parallel_triangulation,
-        grid_pvdhandler,
-        dem_parameters,
-        this->simulation_control->get_current_time(),
-        this->simulation_control->get_step_number(),
-        this->mpi_communicator);
-    }
-
-  if (dem_parameters.post_processing.write_grid)
-    {
-      dem_post_processing_object.write_grid(
-        *parallel_triangulation,
-        grid_pvdhandler,
-        dem_parameters,
-        background_dh,
-        this->simulation_control->get_current_time(),
-        this->simulation_control->get_step_number(),
-        this->mpi_communicator);
+      if (this->simulation_control->get_step_number() %
+            dem_parameters.post_processing.output_frequency ==
+          0)
+        dem_post_processing_object.write_post_processing_results(
+          *parallel_triangulation,
+          grid_pvdhandler,
+          this->particle_handler,
+          dem_parameters,
+          background_dh,
+          this->simulation_control->get_current_time(),
+          this->simulation_control->get_step_number(),
+          this->mpi_communicator);
     }
 }
 
@@ -1064,16 +1044,7 @@ CFDDEMSolver<dim>::post_processing()
 
   if (dem_parameters.post_processing.Lagrangian_post_processing)
     {
-      if (this->simulation_control->get_step_number() >=
-            dem_parameters.post_processing.initial_step &&
-          this->simulation_control->get_step_number() <=
-            dem_parameters.post_processing.end_step)
-        {
-          if (this->simulation_control->get_step_number() %
-                dem_parameters.post_processing.output_frequency ==
-              0)
-            dem_post_process_results();
-        }
+      dem_post_process_results();
     }
 }
 

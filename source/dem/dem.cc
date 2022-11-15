@@ -655,42 +655,23 @@ template <int dim>
 void
 DEMSolver<dim>::post_process_results()
 {
-  if (parameters.post_processing.calculate_particles_average_velocity)
+  if (simulation_control->get_step_number() >=
+        parameters.post_processing.initial_step &&
+      simulation_control->get_step_number() <=
+        parameters.post_processing.end_step)
     {
-      post_processing_object.calculate_average_particles_velocity(
-        triangulation, particle_handler);
-
-      post_processing_object.write_average_particles_velocity(
-        triangulation,
-        grid_pvdhandler,
-        parameters,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number(),
-        mpi_communicator);
-    }
-  if (parameters.post_processing.calculate_granular_temperature)
-    {
-      post_processing_object.calculate_average_granular_temperature(
-        triangulation, particle_handler);
-
-      post_processing_object.write_granular_temperature(
-        triangulation,
-        grid_pvdhandler,
-        parameters,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number(),
-        mpi_communicator);
-    }
-
-  if (parameters.post_processing.write_grid)
-    {
-      post_processing_object.write_grid(triangulation,
-                                        grid_pvdhandler,
-                                        parameters,
-                                        background_dh,
-                                        simulation_control->get_current_time(),
-                                        simulation_control->get_step_number(),
-                                        mpi_communicator);
+      if (simulation_control->get_step_number() %
+            parameters.post_processing.output_frequency ==
+          0)
+        post_processing_object.write_post_processing_results(
+          triangulation,
+          grid_pvdhandler,
+          particle_handler,
+          parameters,
+          background_dh,
+          simulation_control->get_current_time(),
+          simulation_control->get_step_number(),
+          mpi_communicator);
     }
 }
 
@@ -1023,16 +1004,7 @@ DEMSolver<dim>::solve()
       // Post-processing
       if (parameters.post_processing.Lagrangian_post_processing)
         {
-          if (simulation_control->get_step_number() >=
-                parameters.post_processing.initial_step &&
-              simulation_control->get_step_number() <=
-                parameters.post_processing.end_step)
-            {
-              if (simulation_control->get_step_number() %
-                    parameters.post_processing.output_frequency ==
-                  0)
-                post_process_results();
-            }
+          post_process_results();
         }
 
       if (parameters.restart.checkpoint &&

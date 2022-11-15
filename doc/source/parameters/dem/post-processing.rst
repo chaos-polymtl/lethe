@@ -1,6 +1,6 @@
 Post-processing
 -------------------
-Lethe has built in post-processing capabilities. The post-processing subsection is according to the following example:
+Lethe has built in post-processing capabilities. All post-processing results are written in a VTU file with the same name as the one chosen for the particles results plus the suffix ``-postprocess_data``. The post-processing subsection is according to the following example:
 
 .. code-block:: text
 
@@ -26,12 +26,6 @@ Lethe has built in post-processing capabilities. The post-processing subsection 
   # Choose output frequency of particles average velocity and/or granular temperature calculation
   set output frequency = 100000
 
-  # Name of output file with particle's velocity
-  set particles velocity output name = particles_velocity
-
-  # Name of output file with granular temperature
-  set granular temperature output name = granular_temperature
-
  end
 
 .. note::
@@ -56,8 +50,4 @@ Lethe has built in post-processing capabilities. The post-processing subsection 
  Since the default value for the ``end step`` is 0, the ``end step`` must be set according to the duration of the simulation or at least is higher than the ``initial step``, otherwise the particles' average velocity, granular temperature, and/or grid will not be output.
 
 * The ``output frequency`` is used to choose the frequency of creation of output files with the particles' average velocity, granular temperature, and/or grid outputting.
-
-* The ``particles velocity output name`` is used to set a name for the output file with the particle's average velocity. By default, the file is named ``particles_velocity``.
-
-* The ``granular temperature output name`` is used to set a name for the output file with the particle's granular temperature. By default, the file is named ``granular_temperature``.
 
