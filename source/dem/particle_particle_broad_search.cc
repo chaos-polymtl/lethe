@@ -150,14 +150,14 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
   local_contact_pair_periodic_candidates.clear();
   ghost_contact_pair_periodic_candidates.clear();
 
-  // Looping over the potential cells which may contain particles.
+  // Looping over the potential periodic cells which may contain particles.
   for (auto cell_periodic_neighbor_list_iterator =
          cells_local_periodic_neighbor_list.begin();
        cell_periodic_neighbor_list_iterator !=
        cells_local_periodic_neighbor_list.end();
        ++cell_periodic_neighbor_list_iterator)
     {
-      // The main cell
+      // The main cell on periodic boundary 0
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
 
@@ -171,13 +171,15 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
       // Check to see if the main cell has any particles
       if (particles_exist_in_main_cell)
         {
-          // Going through periodic neighbor cells of the main cell
+          // Going through periodic neighbor cells on the periodic boundary 1
+          // of the main cell
           ++cell_periodic_neighbor_iterator;
           for (; cell_periodic_neighbor_iterator !=
                  cell_periodic_neighbor_list_iterator->end();
                ++cell_periodic_neighbor_iterator)
             {
-              // Defining iterator on local particles in the neighbor cell
+              // Defining iterator on local particles in the periodic neighbor
+              // cell
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_periodic_neighbor_cell =
                   particle_handler.particles_in_cell(
@@ -212,10 +214,6 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
 
-      std::cout << "main cell: "
-                << (*cell_periodic_neighbor_iterator)->active_cell_index()
-                << std::endl;
-
       // Particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_main_cell =
@@ -232,10 +230,6 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                  cell_periodic_neighbor_list_iterator->end();
                ++cell_periodic_neighbor_iterator)
             {
-              std::cout
-                << "  neighbor cell: "
-                << (*cell_periodic_neighbor_iterator)->active_cell_index()
-                << std::endl;
               // Defining iterator on ghost particles in the neighbor cells
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_periodic_neighbor_cell =
@@ -249,34 +243,10 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  std::cout
-                    << "    particle: " << particle_in_main_cell->get_id()
-                    << std::endl;
-
-                  // Create a arbitrary temporary empty container
-                  if (ghost_contact_pair_periodic_candidates
-                        [particle_in_main_cell->get_id()]
-                          .empty())
-                    {
-                      ghost_contact_pair_periodic_candidates
-                        [particle_in_main_cell->get_id()]
-                          .reserve(40);
-                    }
-
-                  // Store particle ids from the selected particle iterator
-                  for (auto particle_iterator =
-                         particles_in_periodic_neighbor_cell.begin();
-                       particle_iterator !=
-                       particles_in_periodic_neighbor_cell.end();
-                       ++particle_iterator)
-                    {
-                      std::cout
-                        << "      candidate: " << particle_iterator->get_id()
-                        << std::endl;
-                      ghost_contact_pair_periodic_candidates
-                        [particle_in_main_cell->get_id()]
-                          .emplace_back(particle_iterator->get_id());
-                    }
+                  store_candidates(particles_in_periodic_neighbor_cell.begin(),
+                                   particles_in_periodic_neighbor_cell,
+                                   ghost_contact_pair_periodic_candidates
+                                     [particle_in_main_cell->get_id()]);
                 }
             }
         }

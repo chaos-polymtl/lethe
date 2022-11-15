@@ -23,17 +23,14 @@ FindCellNeighbors<dim>::find_cell_neighbors(
   // of all local cells; while the second contains all the ghost cells of all
   // local cells. They are two vectors with size of the number of active cells.
   // The first elements of all vectors are the main cells
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    local_neighbor_vector;
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    ghost_neighbor_vector;
+  typename DEM::dem_data_structures<dim>::cell_container local_neighbor_vector;
+  typename DEM::dem_data_structures<dim>::cell_container ghost_neighbor_vector;
 
   // This vector is used to avoid repetition of adjacent cells. For instance if
   // cell B is recognized as the neighbor of cell A, cell A will not be added to
   // the neighbor list of cell B again. This is done using the total_cell_list
   // vector
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    total_cell_list;
+  typename DEM::dem_data_structures<dim>::cell_container total_cell_list;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -141,8 +138,8 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
                                          coinciding_vertex_groups,
                                          vertex_to_coinciding_vertex_group);
 
-  // Looping over cells at outlet (one side of the periodic boundaries)
-  for (auto &pb_cell_struct : periodic_boundaries_cells_information)
+  // Looping over cells struct at periodic boundaries 0
+  for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
     {
       auto &cell = pb_cell_struct.second.cell;
 
@@ -202,11 +199,10 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
                               local_periodic_neighbor_vector.end(),
                               periodic_neighbor);
 
-                  // If the cell (neighbor) is a local cell and not present
+                  // If the cell neighbor is a local cell and not present
                   // in the total_cell_list vector, it will be added as the
-                  // neighbor of the main cell
-                  // ("cell") and also to the total_cell_list to avoid
-                  // repetition for next cells.
+                  // neighbor of the main cell and also to the
+                  // total_cell_list to avoid repetition for next cells.
                   if (search_iterator == total_cell_list.end() &&
                       local_search_iterator ==
                         local_periodic_neighbor_vector.end())
@@ -214,12 +210,11 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
                       local_periodic_neighbor_vector.push_back(
                         periodic_neighbor);
                     }
-
-                  // If the neighbor cell is a ghost, it should be added in
-                  // the ghost_neighbor_vector container
                 }
               else if (periodic_neighbor->is_ghost())
                 {
+                  // If the neighbor cell is a ghost, it should be added in
+                  // the ghost_periodic_neighbor_vector container
                   auto ghost_search_iterator =
                     std::find(ghost_periodic_neighbor_vector.begin(),
                               ghost_periodic_neighbor_vector.end(),

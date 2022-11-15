@@ -210,6 +210,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
       has_periodic_boundaries = true;
+
+      pcout
+        << std::endl
+        << "Warning: Periodic boundary conditions in DEM is currently not working with multiprocessors."
+        << std::endl;
     }
 }
 

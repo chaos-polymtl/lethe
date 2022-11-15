@@ -56,9 +56,9 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
         }
     }
 
-  // Now iterating over local_contact_pair_candidates (maps of pairs), which
+  // Now iterating over contact_pair_candidates (maps of pairs), which
   // is the output of broad search. If a pair is in vicinity (distance <
-  // threshold), it is added to the local_adjacent_particles
+  // threshold), it is added to the adjacent_particles
   for (auto const &[particle_one_id, second_particle_container] :
        contact_pair_candidates)
     {
