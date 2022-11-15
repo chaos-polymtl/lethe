@@ -987,24 +987,15 @@ CFDDEMSolver<dim>::dem_post_process_results()
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
 
-  if (this->simulation_control->get_step_number() >=
-        dem_parameters.post_processing.initial_step &&
-      this->simulation_control->get_step_number() <=
-        dem_parameters.post_processing.end_step)
-    {
-      if (this->simulation_control->get_step_number() %
-            dem_parameters.post_processing.output_frequency ==
-          0)
-        dem_post_processing_object.write_post_processing_results(
-          *parallel_triangulation,
-          grid_pvdhandler,
-          this->particle_handler,
-          dem_parameters,
-          background_dh,
-          this->simulation_control->get_current_time(),
-          this->simulation_control->get_step_number(),
-          this->mpi_communicator);
-    }
+  dem_post_processing_object.write_post_processing_results(
+    *parallel_triangulation,
+    grid_pvdhandler,
+    this->particle_handler,
+    dem_parameters,
+    background_dh,
+    this->simulation_control->get_current_time(),
+    this->simulation_control->get_step_number(),
+    this->mpi_communicator);
 }
 
 template <int dim>

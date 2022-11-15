@@ -655,24 +655,15 @@ template <int dim>
 void
 DEMSolver<dim>::post_process_results()
 {
-  if (simulation_control->get_step_number() >=
-        parameters.post_processing.initial_step &&
-      simulation_control->get_step_number() <=
-        parameters.post_processing.end_step)
-    {
-      if (simulation_control->get_step_number() %
-            parameters.post_processing.output_frequency ==
-          0)
-        post_processing_object.write_post_processing_results(
-          triangulation,
-          grid_pvdhandler,
-          particle_handler,
-          parameters,
-          background_dh,
-          simulation_control->get_current_time(),
-          simulation_control->get_step_number(),
-          mpi_communicator);
-    }
+  post_processing_object.write_post_processing_results(
+    triangulation,
+    grid_pvdhandler,
+    particle_handler,
+    parameters,
+    background_dh,
+    simulation_control->get_current_time(),
+    simulation_control->get_step_number(),
+    mpi_communicator);
 }
 
 template <int dim>

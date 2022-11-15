@@ -195,75 +195,81 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
 
   std::vector<std::string> average_solution_names;
 
-  // Write particles' average velocity
-  if (dem_parameters.post_processing.calculate_particles_average_velocity)
+  if (step_number >= dem_parameters.post_processing.initial_step &&
+      step_number <= dem_parameters.post_processing.end_step &&
+      step_number % dem_parameters.post_processing.output_frequency == 0)
     {
-      calculate_average_particles_velocity(triangulation, particle_handler);
+      // Write particles' average velocity
+      if (dem_parameters.post_processing.calculate_particles_average_velocity)
+        {
+          calculate_average_particles_velocity(triangulation, particle_handler);
 
-      average_solution_names.push_back("average_velocity_x");
-      average_solution_names.push_back("average_velocity_y");
-      if constexpr (dim == 3)
-        average_solution_names.push_back("average_velocity_z");
-      average_solution_names.push_back("average_velocity_magnitude");
+          average_solution_names.push_back("average_velocity_x");
+          average_solution_names.push_back("average_velocity_y");
+          if constexpr (dim == 3)
+            average_solution_names.push_back("average_velocity_z");
+          average_solution_names.push_back("average_velocity_magnitude");
 
-      average_solution_names.push_back("average_velocity_magnitude");
+          average_solution_names.push_back("average_velocity_magnitude");
 
-      data_out.add_data_vector(velocity_average_x,
-                               average_solution_names[0],
-                               DataOut<dim>::type_cell_data);
-      data_out.add_data_vector(velocity_average_y,
-                               average_solution_names[1],
-                               DataOut<dim>::type_cell_data);
-      if constexpr (dim == 3)
-        data_out.add_data_vector(velocity_average_z,
-                                 average_solution_names[2],
-                                 DataOut<dim>::type_cell_data);
-      if constexpr (dim == 2)
-        data_out.add_data_vector(velocity_average_magnitude,
-                                 average_solution_names[2],
-                                 DataOut<dim>::type_cell_data);
-      if constexpr (dim == 3)
-        data_out.add_data_vector(velocity_average_magnitude,
-                                 average_solution_names[3],
-                                 DataOut<dim>::type_cell_data);
+          data_out.add_data_vector(velocity_average_x,
+                                   average_solution_names[0],
+                                   DataOut<dim>::type_cell_data);
+          data_out.add_data_vector(velocity_average_y,
+                                   average_solution_names[1],
+                                   DataOut<dim>::type_cell_data);
+          if constexpr (dim == 3)
+            data_out.add_data_vector(velocity_average_z,
+                                     average_solution_names[2],
+                                     DataOut<dim>::type_cell_data);
+          if constexpr (dim == 2)
+            data_out.add_data_vector(velocity_average_magnitude,
+                                     average_solution_names[2],
+                                     DataOut<dim>::type_cell_data);
+          if constexpr (dim == 3)
+            data_out.add_data_vector(velocity_average_magnitude,
+                                     average_solution_names[3],
+                                     DataOut<dim>::type_cell_data);
+        }
+
+      // Write particles' granular temperature
+      if (dem_parameters.post_processing.calculate_granular_temperature)
+        {
+          calculate_average_granular_temperature(triangulation,
+                                                 particle_handler);
+          average_solution_names.push_back("granular_temperature");
+
+          data_out.add_data_vector(granular_temperature_average,
+                                   average_solution_names.back(),
+                                   DataOut<dim>::type_cell_data);
+        }
+
+      // Write grid
+      if (dem_parameters.post_processing.write_grid)
+        {
+          data_out.attach_dof_handler(background_dh);
+
+          // Attach the solution data to data_out object
+          Vector<float> subdomain(triangulation.n_active_cells());
+          for (unsigned int i = 0; i < subdomain.size(); ++i)
+            subdomain(i) = triangulation.locally_owned_subdomain();
+          data_out.add_data_vector(subdomain, "subdomain");
+        }
+
+      const std::string postprocess_file_name =
+        dem_parameters.simulation_control.output_name + "-postprocess_data";
+
+      data_out.build_patches();
+
+      write_vtu_and_pvd<dim>(grid_pvdhandler,
+                             data_out,
+                             folder,
+                             postprocess_file_name,
+                             time,
+                             iter,
+                             group_files,
+                             mpi_communicator);
     }
-
-  // Write particles' granular temperature
-  if (dem_parameters.post_processing.calculate_granular_temperature)
-    {
-      calculate_average_granular_temperature(triangulation, particle_handler);
-      average_solution_names.push_back("granular_temperature");
-
-      data_out.add_data_vector(granular_temperature_average,
-                               average_solution_names.back(),
-                               DataOut<dim>::type_cell_data);
-    }
-
-  // Write grid
-  if (dem_parameters.post_processing.write_grid)
-    {
-      data_out.attach_dof_handler(background_dh);
-
-      // Attach the solution data to data_out object
-      Vector<float> subdomain(triangulation.n_active_cells());
-      for (unsigned int i = 0; i < subdomain.size(); ++i)
-        subdomain(i) = triangulation.locally_owned_subdomain();
-      data_out.add_data_vector(subdomain, "subdomain");
-    }
-
-  const std::string postprocess_file_name =
-    dem_parameters.simulation_control.output_name + "-postprocess_data";
-
-  data_out.build_patches();
-
-  write_vtu_and_pvd<dim>(grid_pvdhandler,
-                         data_out,
-                         folder,
-                         postprocess_file_name,
-                         time,
-                         iter,
-                         group_files,
-                         mpi_communicator);
 }
 
 template class LagrangianPostProcessing<2>;
