@@ -3,8 +3,6 @@
 #define lethe_post_processors_smoothing_h
 
 // DEALII INCLUDES
-// Base
-#include <deal.II/base/tensor.h>
 
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -17,9 +15,6 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/la_parallel_vector.h>
-#include <deal.II/lac/solver_cg.h>
-#include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_precondition.h>
@@ -27,13 +22,7 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-// Numerics
-#include <deal.II/distributed/solution_transfer.h>
-
 #include <deal.II/numerics/data_postprocessor.h>
-
-// Rheological models
-#include <core/rheological_model.h>
 
 #include <solvers/simulation_parameters.h>
 
