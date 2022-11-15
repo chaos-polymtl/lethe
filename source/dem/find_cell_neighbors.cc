@@ -111,8 +111,8 @@ template <int dim>
 void
 FindCellNeighbors<dim>::find_cell_periodic_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const typename DEM::dem_data_structures<dim>::cell_container
-    &periodic_cells_container,
+  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    &periodic_boundaries_cells_information,
   typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
   typename DEM::dem_data_structures<dim>::cells_neighbor_list
@@ -142,8 +142,10 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
                                          vertex_to_coinciding_vertex_group);
 
   // Looping over cells at outlet (one side of the periodic boundaries)
-  for (const auto &cell : periodic_cells_container)
+  for (auto &pb_cell_struct : periodic_boundaries_cells_information)
     {
+      auto &cell = pb_cell_struct.second.cell;
+
       // If the cell is owned by the processor
       if (cell->is_locally_owned())
         {
@@ -178,7 +180,8 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
                       if (coinciding_vertex != vertex_id)
                         {
                           // Loop over all periodic neighbor
-                          for (auto neighbor_id : v_to_c[coinciding_vertex])
+                          for (const auto &neighbor_id :
+                               v_to_c[coinciding_vertex])
                             {
                               periodic_neighbor_list.push_back(neighbor_id);
                             }

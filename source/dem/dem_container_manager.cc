@@ -35,7 +35,7 @@ DEMContainerManager<dim>::execute_cell_neighbors_search(
     {
       cell_neighbors_object.find_cell_periodic_neighbors(
         triangulation,
-        periodic_cells_container,
+        periodic_boundaries_cells_information,
         cells_local_periodic_neighbor_list,
         cells_ghost_periodic_neighbor_list);
     }

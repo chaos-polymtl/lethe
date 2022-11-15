@@ -6,7 +6,7 @@
 #---------------------------------------------------
 subsection simulation control
     set time step                = 1e-6
-    set time end       		     = 0.15
+    set time end       		     = 0.125
     set log frequency			 = 1000
     set output frequency         = 1000
     set output path              = ./output_collision/
@@ -38,15 +38,16 @@ end
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
-  set contact detection method 		   		 = dynamic
+  set contact detection method 		   		 = constant
+  set contact detection frequency            = 1000
   set load balance method				     = dynamic
   set load balance threshold				 = 0.5
   set dynamic load balance check frequency	 = 10000
-  set neighborhood threshold				 = 2
+  set neighborhood threshold				 = 1.5
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method				     = velocity_verlet
-  set rolling resistance torque method        = no_resistance
+  set rolling resistance torque method        = constant_resistance
 end
 
 #---------------------------------------------------

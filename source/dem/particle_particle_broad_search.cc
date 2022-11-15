@@ -150,11 +150,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
   local_contact_pair_periodic_candidates.clear();
   ghost_contact_pair_periodic_candidates.clear();
 
-
   // Looping over the potential cells which may contain particles.
-  // This includes the cell itself as well as the neighbouring cells that
-  // were identified.
-  // cell_neighbor_list_iterator is [cell_it, neighbor_0_it, neighbor_1_it, ...]
   for (auto cell_periodic_neighbor_list_iterator =
          cells_local_periodic_neighbor_list.begin();
        cell_periodic_neighbor_list_iterator !=
@@ -245,10 +241,33 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
                 {
-                  store_candidates(particles_in_periodic_neighbor_cell.begin(),
-                                   particles_in_periodic_neighbor_cell,
-                                   ghost_contact_pair_periodic_candidates
-                                     [particle_in_main_cell->get_id()]);
+                  std::cout << "particle: " << particle_in_main_cell->get_id()
+                            << std::endl;
+
+                  // Create a arbitrary temporary empty container
+                  if (ghost_contact_pair_periodic_candidates
+                        [particle_in_main_cell->get_id()]
+                          .empty())
+                    {
+                      ghost_contact_pair_periodic_candidates
+                        [particle_in_main_cell->get_id()]
+                          .reserve(40);
+                    }
+
+                  // Store particle ids from the selected particle iterator
+                  for (auto particle_iterator =
+                         particles_in_periodic_neighbor_cell.begin();
+                       particle_iterator !=
+                       particles_in_periodic_neighbor_cell.end();
+                       ++particle_iterator)
+                    {
+                      std::cout
+                        << "  candidate: " << particle_iterator->get_id()
+                        << std::endl;
+                      ghost_contact_pair_periodic_candidates
+                        [particle_in_main_cell->get_id()]
+                          .emplace_back(particle_iterator->get_id());
+                    }
                 }
             }
         }
