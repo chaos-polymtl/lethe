@@ -52,7 +52,7 @@ class PostProcessorSmoothing
 public:
   // Member functions
   PostProcessorSmoothing(
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+    const parallel::DistributedTriangulationBase<dim>& triangulation,
     const SimulationParameters<dim> &simulation_parameters,
     const unsigned int &             number_quadrature_points,
     const MPI_Comm &                 mpi_communicator);
@@ -120,7 +120,7 @@ class VorticityPostProcessorSmoothing
 public:
   // Member functions
   VorticityPostProcessorSmoothing(
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+    const parallel::DistributedTriangulationBase<dim>& triangulation,
     const SimulationParameters<dim> &simulation_parameters,
     const unsigned int &             number_quadrature_points,
     const MPI_Comm &                 mpi_communicator);
@@ -147,7 +147,7 @@ class QcriterionPostProcessorSmoothing
 public:
   // Member functions
   QcriterionPostProcessorSmoothing(
-    std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+    const parallel::DistributedTriangulationBase<dim>& triangulation,
     const SimulationParameters<dim> &simulation_parameters,
     const unsigned int &             number_quadrature_points,
     const MPI_Comm &                 mpi_communicator);
