@@ -1677,7 +1677,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     this->mpi_communicator);
 
   if (this->simulation_parameters.post_processing.smoothing)
-   {
+    {
       const TrilinosWrappers::MPI::Vector qcriterion_field =
         qcriterion_smoothing.calculate_smoothed_field(solution,
                                                       this->dof_handler,
@@ -1699,7 +1699,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     {
       data_out.add_data_vector(solution, qcriterion);
     }
-   
+
 
   SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
                             simulation_parameters.velocity_sources.omega_y,

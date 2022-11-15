@@ -4,6 +4,8 @@
 
 // DEALII INCLUDES
 
+#include <solvers/simulation_parameters.h>
+
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
@@ -23,8 +25,6 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/data_postprocessor.h>
-
-#include <solvers/simulation_parameters.h>
 
 
 // standard library includes includes
@@ -52,10 +52,10 @@ class PostProcessorSmoothing
 public:
   // Member functions
   PostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim>& triangulation,
-    const SimulationParameters<dim> &simulation_parameters,
-    const unsigned int &             number_quadrature_points,
-    const MPI_Comm &                 mpi_communicator);
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim> &                  simulation_parameters,
+    const unsigned int &                               number_quadrature_points,
+    const MPI_Comm &                                   mpi_communicator);
 
   /**
    * @brief Generates the mass matrix, that is independant of the physics.
@@ -120,10 +120,10 @@ class VorticityPostProcessorSmoothing
 public:
   // Member functions
   VorticityPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim>& triangulation,
-    const SimulationParameters<dim> &simulation_parameters,
-    const unsigned int &             number_quadrature_points,
-    const MPI_Comm &                 mpi_communicator);
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim> &                  simulation_parameters,
+    const unsigned int &                               number_quadrature_points,
+    const MPI_Comm &                                   mpi_communicator);
 
   /**
    * @brief Generates the right hand side based on the fluid's solution.
@@ -147,10 +147,10 @@ class QcriterionPostProcessorSmoothing
 public:
   // Member functions
   QcriterionPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim>& triangulation,
-    const SimulationParameters<dim> &simulation_parameters,
-    const unsigned int &             number_quadrature_points,
-    const MPI_Comm &                 mpi_communicator);
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim> &                  simulation_parameters,
+    const unsigned int &                               number_quadrature_points,
+    const MPI_Comm &                                   mpi_communicator);
 
   /**
    * @brief Generates the right hand side based on the fluid's solution.

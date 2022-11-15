@@ -2,10 +2,10 @@
 
 template <int dim, typename VectorType>
 PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
-  const parallel::DistributedTriangulationBase<dim> & triangulation,
-  const SimulationParameters<dim> &simulation_parameters,
-  const unsigned int &             number_quadrature_points,
-  const MPI_Comm &                 mpi_communicator)
+  const parallel::DistributedTriangulationBase<dim> &triangulation,
+  const SimulationParameters<dim> &                  simulation_parameters,
+  const unsigned int &                               number_quadrature_points,
+  const MPI_Comm &                                   mpi_communicator)
   : fe_q(1)
   , dof_handler(triangulation)
   , simulation_parameters(simulation_parameters)
@@ -116,12 +116,9 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
-  const double ilu_atol =
-    this->simulation_parameters.linear_solver.ilu_precond_atol;
-  const double ilu_rtol =
-    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+  const double ilu_fill = 1.;
+  const double ilu_atol = 1e-15;
+  const double ilu_rtol = 0;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -169,10 +166,10 @@ template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
 template <int dim, typename VectorType>
 VorticityPostProcessorSmoothing<dim, VectorType>::
   VorticityPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim>& triangulation,
-    const SimulationParameters<dim> &simulation_parameters,
-    const unsigned int &             number_quadrature_points,
-    const MPI_Comm &                 mpi_communicator)
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim> &                  simulation_parameters,
+    const unsigned int &                               number_quadrature_points,
+    const MPI_Comm &                                   mpi_communicator)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points,
@@ -201,10 +198,10 @@ template class VorticityPostProcessorSmoothing<
 template <int dim, typename VectorType>
 QcriterionPostProcessorSmoothing<dim, VectorType>::
   QcriterionPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim>& triangulation,
-    const SimulationParameters<dim> &simulation_parameters,
-    const unsigned int &             number_quadrature_points,
-    const MPI_Comm &                 mpi_communicator)
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim> &                  simulation_parameters,
+    const unsigned int &                               number_quadrature_points,
+    const MPI_Comm &                                   mpi_communicator)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points,
