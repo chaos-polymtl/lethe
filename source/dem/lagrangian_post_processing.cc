@@ -193,7 +193,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   DataOut<dim> data_out;
   data_out.attach_triangulation(triangulation);
 
-  std::vector<std::string> average_solution_names(1);
+  std::vector<std::string> average_solution_names;
 
   // Write particles' average velocity
   if (dem_parameters.post_processing.calculate_particles_average_velocity)
@@ -235,7 +235,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
       average_solution_names.push_back("granular_temperature");
 
       data_out.add_data_vector(granular_temperature_average,
-                               average_solution_names,
+                               average_solution_names.back(),
                                DataOut<dim>::type_cell_data);
     }
 
