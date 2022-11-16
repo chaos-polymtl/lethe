@@ -116,9 +116,9 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = 1.;
+  const double ilu_fill = 0.;
   const double ilu_atol = 1e-15;
-  const double ilu_rtol = 0;
+  const double ilu_rtol = 1.;
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);

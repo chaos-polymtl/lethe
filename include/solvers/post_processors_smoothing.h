@@ -111,7 +111,9 @@ private:
 
 /**
  * A class that assembles the rhs and solves the L2projection of the Vorticity
- * on nodes
+ * on nodes.
+ * ** This part of the code is not yet implemented. There can not be a
+ * VorticityPostProcessorSmoothing object as its methods are not implemented.
  */
 template <int dim, typename VectorType>
 class VorticityPostProcessorSmoothing
