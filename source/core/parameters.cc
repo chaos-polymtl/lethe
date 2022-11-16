@@ -1050,12 +1050,6 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of between two boundaries.");
 
-      prm.declare_entry(
-        "calculate temperature range",
-        "false",
-        Patterns::Bool(),
-        "Enable calculation of minimum and maximum temperature.");
-
       prm.declare_entry("inlet boundary id",
                         "0",
                         Patterns::Integer(),
@@ -1102,7 +1096,6 @@ namespace Parameters
                         Patterns::Integer(),
                         "Output frequency");
 
-
       prm.declare_entry("calculate tracer statistics",
                         "false",
                         Patterns::Bool(),
@@ -1112,6 +1105,16 @@ namespace Parameters
                         "tracer_statistics",
                         Patterns::FileName(),
                         "File name output tracer statistics");
+
+      prm.declare_entry("calculate heat transfer statistics",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of heat transfer statistics.");
+
+      prm.declare_entry("heat transfer statistics name",
+                        "heat_transfer_statistics",
+                        Patterns::FileName(),
+                        "File name output heat transfer statistics");
     }
     prm.leave_subsection();
   }
@@ -1133,19 +1136,21 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop     = prm.get_bool("calculate pressure drop");
-      calculate_temperature_range = prm.get_bool("calculate temperature range");
-      inlet_boundary_id           = prm.get_integer("inlet boundary id");
-      outlet_boundary_id          = prm.get_integer("outlet boundary id");
-      initial_time                = prm.get_double("initial time");
-      kinetic_energy_output_name  = prm.get("kinetic energy name");
-      pressure_drop_output_name   = prm.get("pressure drop name");
-      enstrophy_output_name       = prm.get("enstrophy name");
+      calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
+      inlet_boundary_id              = prm.get_integer("inlet boundary id");
+      outlet_boundary_id             = prm.get_integer("outlet boundary id");
+      initial_time                   = prm.get_double("initial time");
+      kinetic_energy_output_name     = prm.get("kinetic energy name");
+      pressure_drop_output_name      = prm.get("pressure drop name");
+      enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       calculation_frequency          = prm.get_integer("calculation frequency");
       output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
+      calculate_heat_transfer_statistics =
+        prm.get_bool("calculate heat transfer statistics");
+      heat_transfer_output_name = prm.get("heat transfer statistics name");
     }
     prm.leave_subsection();
   }

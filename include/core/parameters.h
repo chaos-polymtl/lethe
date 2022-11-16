@@ -560,9 +560,6 @@ namespace Parameters
     // Enable pressure drop post-processing
     bool calculate_pressure_drop;
 
-    // Print minimum and maximum temperature
-    bool calculate_temperature_range;
-
     // The outlet boundary ID for pressure drop calculation
     unsigned int inlet_boundary_id;
 
@@ -595,6 +592,13 @@ namespace Parameters
 
     // Prefix for the tracer output
     std::string tracer_output_name;
+
+    // Enable temperature statistics
+    bool calculate_heat_transfer_statistics;
+
+    // Prefix for the tracer output
+    std::string heat_transfer_output_name;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -649,7 +649,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
     }
 
   // Minimum and maximum temperature
-  if (simulation_parameters.post_processing.calculate_temperature_range)
+  if (simulation_parameters.post_processing.calculate_heat_transfer_statistics)
     {
       Parameters::FluidIndicator monitored_fluid =
         this->simulation_parameters.multiphysics.vof_parameters
@@ -658,12 +658,13 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
 
       if (monitored_fluid == Parameters::FluidIndicator::both)
         {
-          min_max_temperature = calculate_temperature_range_on_all_domain();
+          min_max_temperature =
+            calculate_heat_transfer_statistics_on_all_domain();
         }
       else
         {
           min_max_temperature =
-            calculate_temperature_range_on_one_fluid(monitored_fluid);
+            calculate_heat_transfer_statistics_on_one_fluid(monitored_fluid);
         }
 
       if (simulation_parameters.post_processing.verbosity ==
@@ -980,7 +981,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 std::pair<double, double>
-HeatTransfer<dim>::calculate_temperature_range_on_all_domain()
+HeatTransfer<dim>::calculate_heat_transfer_statistics_on_all_domain()
 {
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> local_temperature_values(n_q_points);
@@ -1024,7 +1025,7 @@ HeatTransfer<dim>::calculate_temperature_range_on_all_domain()
 
 template <int dim>
 std::pair<double, double>
-HeatTransfer<dim>::calculate_temperature_range_on_one_fluid(
+HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
   const Parameters::FluidIndicator monitored_fluid)
 {
   const unsigned int  n_q_points = this->cell_quadrature->size();
@@ -1058,8 +1059,16 @@ HeatTransfer<dim>::calculate_temperature_range_on_one_fluid(
           fe_values_ht.reinit(cell);
           fe_values_ht.get_function_values(this->present_solution,
                                            local_temperature_values);
+
+          // Get VOF active cell iterator
+          typename DoFHandler<dim>::active_cell_iterator cell_vof(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_vof);
+
           // Gather VOF information
-          fe_values_vof.reinit(cell);
+          fe_values_vof.reinit(cell_vof);
           fe_values_vof.get_function_values(
             *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
 
@@ -1078,7 +1087,6 @@ HeatTransfer<dim>::calculate_temperature_range_on_one_fluid(
               //                  temperature_coefficient = 1. -
               //                  phase_values[q];
               //                }
-
               //              double temperature =
               //                local_temperature_values[q] *
               //                temperature_coefficient;

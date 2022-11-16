@@ -365,10 +365,10 @@ private:
    */
 
   std::pair<double, double>
-  calculate_temperature_range_on_all_domain();
+  calculate_heat_transfer_statistics_on_all_domain();
 
   std::pair<double, double>
-  calculate_temperature_range_on_one_fluid(
+  calculate_heat_transfer_statistics_on_one_fluid(
     const Parameters::FluidIndicator monitored_fluid);
 
   /**

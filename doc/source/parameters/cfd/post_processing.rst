@@ -5,56 +5,80 @@ This subsection controls the post-processing other than the forces and torque on
 .. code-block:: text
 
   subsection post-processing
-  set calculate enstrophy           = false
-  set calculate kinetic energy      = false
-  set calculate apparent viscosity  = false
-  set calculate pressure drop       = false
-  set calculate average velocities  = false
-  set calculate tracer statistics   = false
-  set initial time                  = 0.0
-  set inlet boundary id           = 0
-  set outlet boundary id          = 1
-  set enstrophy name              = enstrophy
-  set kinetic energy name         = kinetic_energy
-  set apparent viscosity name     = apparent_viscosity
-  set pressure drop name          = pressure_drop
-  set tracer statistics name      = tracer_statistics
-  set verbosity                   = quiet
-  set calculation frequency       = 1
-  set output frequency            = 1
+	
+	set calculation frequency       = 1
+	set output frequency            = 1
+	set verbosity                   = quiet
+
+	#---------------------------------------------------
+  	# Fluid dynamic post-processing
+  	#---------------------------------------------------
+	# Kinetic energy calculation
+	set calculate kinetic energy    = false
+	set kinetic energy name         = kinetic_energy
+
+	# Average velocities calculation	
+	set calculate average velocities  = false
+	set initial time                  = 0.0
+
+	# Pressure drop calculation
+	set calculate pressure drop     = false
+	set pressure drop name          = pressure_drop
+	set inlet boundary id           = 0
+	set outlet boundary id          = 1
+
+	# Enstrophy calculation
+	set calculate enstrophy         = false
+	set enstrophy name              = enstrophy
+
+	#---------------------------------------------------
+  	# Physical properties post-processing
+  	#---------------------------------------------------
+	set calculate apparent viscosity  = false
+	set apparent viscosity name       = apparent_viscosity
+
+	#---------------------------------------------------
+  	# Multiphysics post-processing
+  	#---------------------------------------------------
+	set calculate tracer statistics   = false
+	set tracer statistics name        = tracer_statistics
+	set calculate temperature range   = false
+
   end
  
 
-* The ``calculate enstrophy`` parameter enables calculation of total enstrophy.
+* ``calculation frequency``: frequency at which the enabled post-processing is calculated.
 
-* The ``calculate kinetic energy`` parameter enables calculation of total kinetic energy.
+* ``output frequency``: frequency at which the enabled post-processing is outputted in the respective file and in the terminal (if ``set verbosity = true``). For ``output frequency = 1`` (default value), results are outputted at each iteration.
 
-* The ``calculate apparent viscosity`` parameter enables calculation of an apparent viscosity when using a non Newtonian flow. This is mainly used to define  Reynolds number a posteriori. 
+* ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose``. Results are outputted at every ``output frequency``.
 
-* The ``calculate pressure drop`` parameter enables calculation of the pressure drop from the inlet boundary to the outlet boundary.
+* ``calculate kinetic energy``: controls if calculation of total kinetic energy is enabled. 
+	* ``kinetic energy name``: output filename for kinetic energy calculations.
 
-* The ``calculate average velocities`` parameter enables calculation of time-averaged velocities.
+* ``calculate average velocities``: controls if calculation of time-averaged velocities is enabled.
+	* ``initial time``: initial time used for the average velocities calculations.
 
-* The ``calculate tracer statistics`` parameter enables calculation of tracer statistics.
+* ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled. 
+	* ``inlet boundary id`` and ``outlet boundary id``: defines the id for inlet and outlet boundaries, respectively. 
+	* ``pressure drop name``: output filename for pressure drop calculations.
 
-* The ``initial time`` parameter sets the initial time to start calculations of time-averaged velocities.
+* ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
+	* ``enstrophy name``: output filename for enstrophy calculations.
 
-* The ``inlet boundary id`` parameter sets the inlet boundary id for pressure drop calculations. 
+* ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section `Rheological models <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#rheological-models>`_). This is mainly used to define the Reynolds number `a posteriori`. 
+	* ``apparent viscosity name``: output filename for apparent viscosity calculations.
 
-* The ``outlet boundary id`` parameter sets the outlet boundary id for pressure drop calculations. 
+* ``calculate tracer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
+	* ``tracer statistics name``: output filename for tracer statistics calculations.
 
-* The ``enstrophy name`` parameter sets output file name for enstrophy calculations.
+.. warning::
 
-* The ``kinetic energy name`` parameter sets output file name for kinetic energy calculations.
+	Do not forget to ``set tracer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
-* The ``apparent viscosity name`` parameter sets output file name for apparent viscosity calculations.
+* ``calculate heat transfer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation on the temperature.
+	* ``heat transfer statistics name``: output filename for tracer statistics calculations.
 
-* The ``pressure drop name`` parameter sets output file name for pressure drop calculations.
+.. warning::
 
-* The ``tracer statistics name`` parameter sets output file name for tracer statistics calculations.
-
-* The ``verbosity`` parameter specifies if the post-processing values are printed to the terminal at the end of every <output frequency> iteration. This does not affect the printing of output files.
-
-* The ``calculation frequency`` parameter sets the frequency at which the enstrophy, kinetic energy, apparent viscosity, pressure drop, average velocities and tracer statistics are calculated (for the ones that are set to ``true``). 
-
-* The ``output frequency`` parameter sets the frequency at which the enstrophy, kinetic energy, apparent viscosity, pressure drop and tracer statistics are output to their respective files (for the ones that are set to ``true``). 
+	Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
