@@ -993,7 +993,8 @@ DEMSolver<dim>::solve()
             [simulation_control->get_step_number()]);
 
       // Post-processing
-      if (parameters.post_processing.Lagrangian_post_processing)
+      if (parameters.post_processing.Lagrangian_post_processing &&
+          simulation_control->is_output_iteration())
         {
           post_process_results();
         }

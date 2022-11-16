@@ -1033,7 +1033,8 @@ CFDDEMSolver<dim>::post_processing()
                   << particle_total_kinetic_energy << std::endl;
     }
 
-  if (dem_parameters.post_processing.Lagrangian_post_processing)
+  if (dem_parameters.post_processing.Lagrangian_post_processing &&
+      this->simulation_control->is_output_iteration())
     {
       dem_post_process_results();
     }

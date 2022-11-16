@@ -1123,46 +1123,6 @@ namespace Parameters
           "false",
           Patterns::Bool(),
           "State whether Lagrangian post-processing should be performed.");
-
-        prm.declare_entry("calculate particles average velocity",
-                          "false",
-                          Patterns::Bool(),
-                          "Enable calculation of particles average velocity.");
-
-        prm.declare_entry("calculate granular temperature",
-                          "false",
-                          Patterns::Bool(),
-                          "Enable calculation of granular temperature.");
-
-        prm.declare_entry("write grid",
-                          "true",
-                          Patterns::Bool(),
-                          "Enable writing grids as VTU files.");
-
-        prm.declare_entry("initial step",
-                          "0",
-                          Patterns::Integer(),
-                          "Initial step to start Lagrangian post-processing.");
-
-        prm.declare_entry("end step",
-                          "0",
-                          Patterns::Integer(),
-                          "End step to finish Lagrangian post-processing.");
-
-        prm.declare_entry("output frequency",
-                          "100000",
-                          Patterns::Integer(),
-                          "Post-processing output frequency.");
-
-        prm.declare_entry("particles velocity output name",
-                          "particles_velocity",
-                          Patterns::FileName(),
-                          "File output particles velocity.");
-
-        prm.declare_entry("granular temperature output name",
-                          "granular_temperature",
-                          Patterns::FileName(),
-                          "File output granular temperature.");
       }
       prm.leave_subsection();
     }
@@ -1173,16 +1133,6 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         Lagrangian_post_processing = prm.get_bool("Lagrangian post-processing");
-        calculate_particles_average_velocity =
-          prm.get_bool("calculate particles average velocity");
-        calculate_granular_temperature =
-          prm.get_bool("calculate granular temperature");
-        write_grid                = prm.get_bool("write grid");
-        initial_step              = prm.get_integer("initial step");
-        end_step                  = prm.get_integer("end step");
-        output_frequency          = prm.get_integer("output frequency");
-        particles_velocity_name   = prm.get("particles velocity output name");
-        granular_temperature_name = prm.get("granular temperature output name");
       }
       prm.leave_subsection();
     }

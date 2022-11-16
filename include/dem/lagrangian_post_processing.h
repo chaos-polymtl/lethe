@@ -58,7 +58,7 @@ public:
    * @param particle_handler
    * @param dem_parameters
    * @param background_dh
-   * @param time Simulation time
+   * @param current_time Simulation time
    * @param step_number DEM step number
    * @param mpi_communicator
    */
@@ -69,7 +69,7 @@ public:
     const Particles::ParticleHandler<dim> &          particle_handler,
     const DEMSolverParameters<dim> &                 dem_parameters,
     DoFHandler<dim> &                                background_dh,
-    const double                                     time,
+    const double                                     current_time,
     const unsigned int                               step_number,
     const MPI_Comm &                                 mpi_communicator);
 
