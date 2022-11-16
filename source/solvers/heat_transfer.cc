@@ -651,12 +651,20 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Minimum and maximum temperature
   if (simulation_parameters.post_processing.calculate_temperature_range)
     {
-      std::pair<double, double> min_max_temperature =
-        calculate_temperature_range();
-      //                                    dof_handler,
-      //                                    present_solution,
-      //                                    *cell_quadrature,
-      //                                    *temperature_mapping);
+      Parameters::FluidIndicator monitored_fluid =
+        this->simulation_parameters.multiphysics.vof_parameters
+          .viscous_dissipative_fluid;
+      std::pair<double, double> min_max_temperature;
+
+      if (monitored_fluid == Parameters::FluidIndicator::both)
+        {
+          min_max_temperature = calculate_temperature_range_on_all_domain();
+        }
+      else
+        {
+          min_max_temperature =
+            calculate_temperature_range_on_one_fluid(monitored_fluid);
+        }
 
       if (simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
@@ -972,7 +980,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 std::pair<double, double>
-HeatTransfer<dim>::calculate_temperature_range()
+HeatTransfer<dim>::calculate_temperature_range_on_all_domain()
 {
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> local_temperature_values(n_q_points);
@@ -1001,6 +1009,91 @@ HeatTransfer<dim>::calculate_temperature_range()
                 maximum_temperature = temperature;
               if (temperature < minimum_temperature)
                 minimum_temperature = temperature;
+            }
+        }
+    }
+
+  const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
+  minimum_temperature =
+    Utilities::MPI::min(minimum_temperature, mpi_communicator);
+  maximum_temperature =
+    Utilities::MPI::max(maximum_temperature, mpi_communicator);
+
+  return std::make_pair(minimum_temperature, maximum_temperature);
+}
+
+template <int dim>
+std::pair<double, double>
+HeatTransfer<dim>::calculate_temperature_range_on_one_fluid(
+  const Parameters::FluidIndicator monitored_fluid)
+{
+  const unsigned int  n_q_points = this->cell_quadrature->size();
+  std::vector<double> local_temperature_values(n_q_points);
+
+  FEValues<dim> fe_values_ht(*this->temperature_mapping,
+                             *this->fe,
+                             *this->cell_quadrature,
+                             update_values);
+
+  // Gather VOF information
+  // TODO add verification that (this->simulation_parameters.multiphysics.VOF)
+  // is true
+  const DoFHandler<dim> *dof_handler_vof =
+    this->multiphysics->get_dof_handler(PhysicsID::VOF);
+
+  FEValues<dim>       fe_values_vof(*this->temperature_mapping,
+                              dof_handler_vof->get_fe(),
+                              *this->cell_quadrature,
+                              update_values);
+  std::vector<double> phase_values;
+  //  double              temperature_coefficient(0.);
+
+  double minimum_temperature = DBL_MAX;
+  double maximum_temperature = -DBL_MAX;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_ht.reinit(cell);
+          fe_values_ht.get_function_values(this->present_solution,
+                                           local_temperature_values);
+          // Gather VOF information
+          fe_values_vof.reinit(cell);
+          fe_values_vof.get_function_values(
+            *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              //              if (monitored_fluid ==
+              //              Parameters::FluidIndicator::fluid1)
+              //                {
+              //                  // if phase = 1, temperature considered
+              //                  temperature_coefficient = phase_values[q];
+              //                }
+              //              else if (monitored_fluid ==
+              //              Parameters::FluidIndicator::fluid0)
+              //                {
+              //                  // if phase = 0, temperature considered
+              //                  temperature_coefficient = 1. -
+              //                  phase_values[q];
+              //                }
+
+              //              double temperature =
+              //                local_temperature_values[q] *
+              //                temperature_coefficient;
+
+              if ((monitored_fluid == Parameters::FluidIndicator::fluid0 &&
+                   phase_values[q] < 0.5) ||
+                  (monitored_fluid == Parameters::FluidIndicator::fluid1 &&
+                   phase_values[q] > 0.5))
+                {
+                  double temperature = local_temperature_values[q];
+                  if (temperature > maximum_temperature)
+                    maximum_temperature = temperature;
+                  if (temperature < minimum_temperature)
+                    minimum_temperature = temperature;
+                }
             }
         }
     }

@@ -356,11 +356,20 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Post-processing. Calculates the minimum and maximum temperature in the simulation domain
+   * @brief Post-processing. Calculates the minimum and maximum temperature in the
+   * simulation domain
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest. //TODO now is viscous dissipative fluid, change
+   * for specialized parameter (in VOF subsection heat transfer?)
    */
 
   std::pair<double, double>
-  calculate_temperature_range();
+  calculate_temperature_range_on_all_domain();
+
+  std::pair<double, double>
+  calculate_temperature_range_on_one_fluid(
+    const Parameters::FluidIndicator monitored_fluid);
 
   /**
    * Post-processing
