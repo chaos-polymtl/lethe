@@ -22,8 +22,8 @@ template <int dim>
 void
 DEMContainerManager<dim>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const bool                                       has_floating_mesh,
-  const bool                                       has_periodic_boundaries)
+  const bool                                       has_periodic_boundaries,
+  const bool                                       has_floating_mesh)
 {
   // Find cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,

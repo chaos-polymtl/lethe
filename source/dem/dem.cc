@@ -313,8 +313,8 @@ DEMSolver<dim>::load_balance()
 
   // Update neighbors of cells after load balance
   container_manager.update_cell_neighbors(triangulation,
-                                          has_floating_mesh,
-                                          has_periodic_boundaries);
+                                          has_periodic_boundaries,
+                                          has_floating_mesh);
 
   boundary_cell_object.build(
     triangulation,
@@ -813,8 +813,8 @@ DEMSolver<dim>::solve()
 
   // Find cell neighbors
   container_manager.execute_cell_neighbors_search(triangulation,
-                                                  has_floating_mesh,
-                                                  has_periodic_boundaries);
+                                                  has_periodic_boundaries,
+                                                  has_floating_mesh);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
