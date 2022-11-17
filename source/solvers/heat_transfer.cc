@@ -1028,7 +1028,9 @@ std::pair<double, double>
 HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
   const Parameters::FluidIndicator monitored_fluid)
 {
-  const unsigned int  n_q_points = this->cell_quadrature->size();
+  const unsigned int n_q_points       = this->cell_quadrature->size();
+  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+
   std::vector<double> local_temperature_values(n_q_points);
   //  std::vector<types::global_dof_index> local_dof_indices(
   //    dofs_per_cell); //  Local connectivity // unused??
@@ -1129,8 +1131,6 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
         }
     } // end loop on cell
 
-  const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
-
   minimum_temperature =
     Utilities::MPI::min(minimum_temperature, mpi_communicator);
   maximum_temperature =
@@ -1142,13 +1142,73 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
   double temperature_average = temperature_integral / volume_integral;
 
   // Calculate standard deviation
+  double temperature_variance_integral = 0;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_ht.reinit(cell);
+          fe_values_ht.get_function_values(this->present_solution,
+                                           local_temperature_values);
+
+          //          // Retrieve the effective "connectivity matrix" for this
+          //          element cell->get_dof_indices(local_dof_indices);
+          //          //unsused??
+
+          // Get VOF active cell iterator
+          typename DoFHandler<dim>::active_cell_iterator cell_vof(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_vof);
+
+          // Gather VOF information
+          fe_values_vof.reinit(cell_vof);
+          fe_values_vof.get_function_values(
+            *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              switch (monitored_fluid)
+                {
+                  case Parameters::FluidIndicator::fluid0:
+                    {
+                      temperature_variance_integral +=
+                        (local_temperature_values[q] - temperature_average) *
+                        (local_temperature_values[q] - temperature_average) *
+                        (1 - phase_values[q]) * fe_values_ht.JxW(q);
+
+                      break;
+                    }
+                  case Parameters::FluidIndicator::fluid1:
+                    {
+                      temperature_variance_integral +=
+                        (local_temperature_values[q] - temperature_average) *
+                        (local_temperature_values[q] - temperature_average) *
+                        phase_values[q] * fe_values_ht.JxW(q);
+
+                      break;
+                    }
+                  default:
+                    throw std::runtime_error(
+                      "Unsupported number of fluids (>2)");
+                }
+            } // end loop on quadrature points
+        }
+    } // end loop on cell
+
+  temperature_variance_integral =
+    Utilities::MPI::sum(temperature_variance_integral, mpi_communicator);
+  double temperature_variance = temperature_variance_integral / volume_integral;
+  double temperature_std_deviation = std::sqrt(temperature_variance);
 
   // Console output
   this->pcout << "Temperature statistics : " << std::endl;
   this->pcout << "\t     Min : " << minimum_temperature << std::endl;
   this->pcout << "\t     Max : " << maximum_temperature << std::endl;
   this->pcout << "\t Average : " << temperature_average << std::endl;
-  // this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+  this->pcout << "\t Std-Dev : " << temperature_std_deviation << std::endl;
 
   return std::make_pair(minimum_temperature, maximum_temperature);
 }
