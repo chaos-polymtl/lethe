@@ -55,8 +55,8 @@ public:
   void
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_periodic_boundaries,
-    const bool                                       has_floating_mesh = false);
+    const bool has_periodic_boundaries = false,
+    const bool has_floating_mesh       = false);
 
   /**
    * Update the neighbors lists of all the active cells in the input
@@ -71,8 +71,8 @@ public:
   void
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_periodic_boundaries,
-    const bool                                       has_floating_mesh = false)
+    const bool has_periodic_boundaries = false,
+    const bool has_floating_mesh       = false)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
@@ -113,7 +113,7 @@ public:
   void
   update_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const bool                             has_periodic_boundaries);
+    const bool                             has_periodic_boundaries = false);
 
   /**
    * Particle-particle broad search which finds the particle-particle contact
@@ -129,7 +129,7 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const bool                               has_periodic_boundaries);
+    const bool                               has_periodic_boundaries = false);
 
   /**
    * Carries out the broad contact detection search using the
@@ -162,9 +162,10 @@ public:
    */
 
   void
-  execute_particle_particle_fine_search(const double neighborhood_threshold,
-                                        const bool   has_periodic_boundaries,
-                                        const Tensor<1, dim> periodic_offset);
+  execute_particle_particle_fine_search(
+    const double         neighborhood_threshold,
+    const bool           has_periodic_boundaries = false,
+    const Tensor<1, dim> periodic_offset         = Tensor<1, dim>());
 
   /**
    * Carries out the fine particle-wall contact detection
