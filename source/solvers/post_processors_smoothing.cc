@@ -70,6 +70,7 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
+              const double JxW = fe_values.JxW(q);
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
                   phi_vf[k] = fe_values.shape_value(k, q);
@@ -80,8 +81,7 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
                   // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
-                      local_matrix(i, j) +=
-                        (phi_vf[j] * phi_vf[i]) * fe_values.JxW(q);
+                      local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) * JxW;
                     }
                 }
             }
@@ -260,6 +260,7 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
           local_rhs = 0;
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
+              const double JxW = fe_values_fluid.JxW(q);
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   phi_vf[i] = fe_values_fluid.shape_value(i, q);
@@ -291,8 +292,7 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
                     }
                   vorticity_on_q_point = 0.5 * (p1 - r1);
 
-                  local_rhs(i) +=
-                    phi_vf[i] * vorticity_on_q_point * fe_values_fluid.JxW(q);
+                  local_rhs(i) += phi_vf[i] * vorticity_on_q_point * JxW;
                 }
             }
           // Associate cell of fluid dof_handler to current (qcriterion)
