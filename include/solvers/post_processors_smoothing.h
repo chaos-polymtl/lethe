@@ -39,7 +39,6 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the variable being smoothed is solved
- *
  * @tparam triangulation Flow triangulation
  * @tparam simulation_parameters The simulation parameters
  * @tparam number_quadrature_points The number of quadrature points
