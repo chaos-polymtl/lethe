@@ -1675,7 +1675,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     this->simulation_parameters,
     number_quadrature_points);
 
-  if (this->simulation_parameters.post_processing.smoothing)
+  if (this->simulation_parameters.post_processing.smoothed_output_fields)
     {
       const TrilinosWrappers::MPI::Vector qcriterion_field =
         qcriterion_smoothing.calculate_smoothed_field(solution,
