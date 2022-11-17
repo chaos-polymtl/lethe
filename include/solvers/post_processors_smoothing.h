@@ -57,7 +57,7 @@ public:
     const MPI_Comm &                                   mpi_communicator);
 
   /**
-   * @brief Generates the mass matrix, that is independant of the physics.
+   * @brief Generates the mass matrix, that is independent of the physics.
    */
   void
   generate_mass_matrix();
