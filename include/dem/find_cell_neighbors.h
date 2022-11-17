@@ -74,6 +74,9 @@ public:
    * triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
+   * @param periodic_boundaries_cells_information A container of information
+   * related to the pairs of cell at periodic boundaries, used to get the cells
+   * on periodic boundary 0
    * @param cells_local_periodic_neighbor_list A vector (with size of the local cell
    * number) of vectors (local adjacent cells of each local cell). First element
    * of each set shows the main cell itself

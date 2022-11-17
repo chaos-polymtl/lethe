@@ -64,6 +64,8 @@ public:
    * @param dt DEM time step
    * @param torque An unordered_map of torque of particles
    * @param force Force acting on particles
+   * @param periodic_offset A tensor of the periodic offset to change the
+   * particle location of the particles on the periodic boundary 1 side
    */
   virtual void
   calculate_particle_particle_contact_force(
@@ -149,6 +151,8 @@ public:
    * @param dt DEM time step
    * @param torque An unordered_map of torque of particles
    * @param force Force acting on particles
+   * @param periodic_offset A tensor of the periodic offset to change the
+   * particle location of the particles on the periodic boundary 1 side
    */
   virtual void
   calculate_particle_particle_contact_force(

@@ -33,12 +33,8 @@ using namespace dealii;
 #  define particle_wall_periodic_displacement_h
 
 /**
- * This class is used to manipulate the particles location when they cross a
- * periodic boundary
- *
- * @note Particle collisions across periodic boundaries are currently not
- * implemented.
-
+ * This class is used to manipulate the particles location when they cross
+ * periodic boundaries
  */
 
 template <int dim>
@@ -50,26 +46,28 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters
    *
-   * @param outlet_boundaries Vector of periodic boundaries identified as outlet
-   * @param periodic_boundaries Vector of periodic boundaries identified as
-   *                            periodic
-   * @param periodic_directions Vector of directions, perpendicular axis of PB
+   * @param periodic_boundary_id_0 Id of the first periodic boundary
+   * @param periodic_boundary_id_1 Id of the second periodic boundary
+   * @param periodic_direction Perpendicular axis of PB
    */
   void
   set_periodic_boundaries_information(
     const types::boundary_id periodic_boundary_id_0,
     const types::boundary_id periodic_boundary_id_1,
-    const unsigned int       periodic_directions)
+    const unsigned int       periodic_direction)
   {
     periodic_boundary_0 = periodic_boundary_id_0;
     periodic_boundary_1 = periodic_boundary_id_1;
-    direction           = periodic_directions;
+    direction           = periodic_direction;
   }
 
   /**
-   * @brief Sets the periodic boundaries parameters
+   * @brief Execute the mapping of the cells on periodic boundaries and store
+   * information in periodic_boundaries_cells_information
    *
    * @param triangulation Triangulation of mesh
+   * @param periodic_boundaries_cells_information Map of information of the
+   * pair of cells on periodic boundaries
    */
   void
   map_periodic_cells(
@@ -84,6 +82,8 @@ public:
    *
    * @param particle_handler Particle handler of particles located in boundary
    * cells
+   * @param periodic_boundaries_cells_information Map of information of the
+   * pair of cells on periodic boundaries
    */
   void
   execute_particles_displacement(
@@ -91,6 +91,10 @@ public:
     typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
       &periodic_boundaries_cells_information);
 
+  /**
+   * @brief Return the periodic offset, it is get from the first pair of cells
+   * on periodic boundaries, all pair of cells have the same offset
+   */
   inline Tensor<1, dim>
   get_constant_offset()
   {
