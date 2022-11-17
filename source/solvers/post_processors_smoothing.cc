@@ -4,13 +4,12 @@ template <int dim, typename VectorType>
 PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
   const parallel::DistributedTriangulationBase<dim> &triangulation,
   const SimulationParameters<dim> &                  simulation_parameters,
-  const unsigned int &                               number_quadrature_points,
-  const MPI_Comm &                                   mpi_communicator)
+  const unsigned int &                               number_quadrature_points)
   : fe_q(1)
   , dof_handler(triangulation)
   , simulation_parameters(simulation_parameters)
   , number_quadrature_points(number_quadrature_points)
-  , mpi_communicator(mpi_communicator)
+  , mpi_communicator(triangulation.get_communicator())
 {
   mapping = std::make_shared<MappingQ<dim>>(
     1, this->simulation_parameters.fem_parameters.qmapping_all);
@@ -168,12 +167,10 @@ VorticityPostProcessorSmoothing<dim, VectorType>::
   VorticityPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
     const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points,
-    const MPI_Comm &                                   mpi_communicator)
+    const unsigned int &                               number_quadrature_points)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
-                                            number_quadrature_points,
-                                            mpi_communicator)
+                                            number_quadrature_points)
 {}
 
 template <int dim, typename VectorType>
@@ -200,12 +197,10 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::
   QcriterionPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
     const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points,
-    const MPI_Comm &                                   mpi_communicator)
+    const unsigned int &                               number_quadrature_points)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
-                                            number_quadrature_points,
-                                            mpi_communicator)
+                                            number_quadrature_points)
 {}
 
 template <int dim, typename VectorType>

@@ -53,8 +53,7 @@ public:
   PostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
     const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points,
-    const MPI_Comm &                                   mpi_communicator);
+    const unsigned int &                               number_quadrature_points);
 
   /**
    * @brief Generates the mass matrix, that is independent of the physics.
@@ -123,8 +122,7 @@ public:
   VorticityPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
     const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points,
-    const MPI_Comm &                                   mpi_communicator);
+    const unsigned int &                               number_quadrature_points);
 
   /**
    * @brief Generates the right hand side based on the fluid's solution.
@@ -150,8 +148,7 @@ public:
   QcriterionPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
     const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points,
-    const MPI_Comm &                                   mpi_communicator);
+    const unsigned int &                               number_quadrature_points);
 
   /**
    * @brief Generates the right hand side based on the fluid's solution.

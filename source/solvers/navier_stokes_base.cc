@@ -1673,8 +1673,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
     *this->triangulation,
     this->simulation_parameters,
-    number_quadrature_points,
-    this->mpi_communicator);
+    number_quadrature_points);
 
   if (this->simulation_parameters.post_processing.smoothing)
     {
