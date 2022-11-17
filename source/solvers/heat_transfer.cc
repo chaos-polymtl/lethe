@@ -1046,7 +1046,7 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
                               dof_handler_vof->get_fe(),
                               *this->cell_quadrature,
                               update_values);
-  std::vector<double> phase_values;
+  std::vector<double> phase_values(n_q_points);
   //  double              temperature_coefficient(0.);
 
   double minimum_temperature = DBL_MAX;
