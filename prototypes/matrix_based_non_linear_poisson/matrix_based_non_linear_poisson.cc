@@ -1262,8 +1262,9 @@ main(int argc, char *argv[])
         const auto min_max_avg =
           dealii::Utilities::MPI::min_max_avg(value, MPI_COMM_WORLD);
 
-        pcout << "MIN: " << min_max_avg.min << " MAX: " << min_max_avg.max << " AVG: "
-              << min_max_avg.avg << " SUM: " << min_max_avg.sum << std::endl;
+        pcout << "MIN: " << min_max_avg.min << " MAX: " << min_max_avg.max
+              << " AVG: " << min_max_avg.avg << " SUM: " << min_max_avg.sum
+              << std::endl;
       };
 
       pcout << "VmPeak: ";
