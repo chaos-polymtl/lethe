@@ -1070,6 +1070,15 @@ MatrixFreePoissonProblem<dim, fe_degree>::run()
           pcout << "  L2 norm: " << compute_l2_error() << std::endl;
         }
 
+      std::cout << "  Matrix free memory consumption for processor "
+                << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+                << " (bytes): " << system_matrix.memory_consumption()
+                << std::endl;
+
+      std::cout << "  Right hand side memory consumption for processor "
+                << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+                << " (bytes): " << system_rhs.memory_consumption() << std::endl;
+
       computing_timer.print_summary();
       computing_timer.reset();
     }
@@ -1078,7 +1087,14 @@ MatrixFreePoissonProblem<dim, fe_degree>::run()
 int
 main(int argc, char *argv[])
 {
-  Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
+  Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
+  dealii::Utilities::System::MemoryStats stats;
+  dealii::Utilities::System::get_memory_stats(stats);
+
+  ConditionalOStream pcout(std::cout,
+                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                             0);
+
 
   Settings parameters;
   if (!parameters.try_parse((argc > 1) ? (argv[1]) : ""))
@@ -1150,6 +1166,30 @@ main(int argc, char *argv[])
               ExcMessage(
                 "This program only works in 2d and 3d and for element orders equal to 1, 2 or 3."));
         }
+
+
+      pcout << "MEMORY STATS: " << std::endl;
+      const auto print = [&pcout](const double value) {
+        const auto min_max_avg =
+          dealii::Utilities::MPI::min_max_avg(value, MPI_COMM_WORLD);
+
+        pcout << "MIN: " << min_max_avg.min << " MAX: " << min_max_avg.max << " AVG: "
+              << min_max_avg.avg << " SUM: " << min_max_avg.sum << std::endl;
+      };
+
+      pcout << "VmPeak: ";
+      print(stats.VmPeak);
+
+      pcout << "VmSize: ";
+      print(stats.VmSize);
+
+      pcout << "VmHWM: ";
+      print(stats.VmHWM);
+
+      pcout << "VmRSS: ";
+      print(stats.VmRSS);
+
+      pcout << std::endl;
     }
   catch (std::exception &exc)
     {
