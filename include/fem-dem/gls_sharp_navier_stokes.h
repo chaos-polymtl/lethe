@@ -543,7 +543,8 @@ private:
     vertices_to_cell;
   /*
    * This map uses the cell as the key, and store the following information:
-   * if that cell is cut (bool) and what particle cut this cell (unsigned int).
+   * if that cell is cut (bool), what particle cut this cell (unsigned int), and
+   * the number of particles that cut this cell.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int, unsigned int>>
