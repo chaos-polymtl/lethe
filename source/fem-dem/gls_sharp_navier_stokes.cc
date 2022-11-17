@@ -3153,7 +3153,6 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
         ".ib_particles";
       std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
-      ib_particles_pvdhandler.save(prefix + ".ib_particles");
 
       this->pvdhandler.save(prefix);
       for (unsigned int i_particle = 0; i_particle < particles.size();
@@ -3280,7 +3279,6 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder +
     this->simulation_parameters.restart_parameters.filename;
 
-  ib_particles_pvdhandler.read(prefix + ".ib_particles");
   std::string filename =
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
