@@ -367,9 +367,12 @@ private:
   std::pair<double, double>
   calculate_heat_transfer_statistics_on_all_domain();
 
-  std::pair<double, double>
+  void
   calculate_heat_transfer_statistics_on_one_fluid(
     const Parameters::FluidIndicator monitored_fluid);
+
+  void
+  write_heat_transfer_statistics();
 
   /**
    * Post-processing
@@ -437,6 +440,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<HeatTransferAssemblerBase<dim>>> assemblers;
+
+  // Heat transfer statistics table (post-process)
+  TableHandler statistics_table;
 };
 
 

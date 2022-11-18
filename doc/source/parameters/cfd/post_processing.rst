@@ -6,9 +6,8 @@ This subsection controls the post-processing other than the forces and torque on
 
   subsection post-processing
 	
-	set calculation frequency       = 1
-	set output frequency            = 1
 	set verbosity                   = quiet
+	set output frequency            = 1
 
 	#---------------------------------------------------
   	# Fluid dynamic post-processing
@@ -47,11 +46,9 @@ This subsection controls the post-processing other than the forces and torque on
   end
  
 
-* ``calculation frequency``: frequency at which the enabled post-processing is calculated.
+* ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
 
-* ``output frequency``: frequency at which the enabled post-processing is outputted in the respective file and in the terminal (if ``set verbosity = true``). For ``output frequency = 1`` (default value), results are outputted at each iteration.
-
-* ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose``. Results are outputted at every ``output frequency``.
+* ``output frequency``: frequency at which the enabled post-processing is outputted in the respective file. For ``output frequency = 1`` (default value), results are outputted at each iteration.
 
 * ``calculate kinetic energy``: controls if calculation of total kinetic energy is enabled. 
 	* ``kinetic energy name``: output filename for kinetic energy calculations.
@@ -66,7 +63,7 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
 	* ``enstrophy name``: output filename for enstrophy calculations.
 
-* ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section `Rheological models <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#rheological-models>`_). This is mainly used to define the Reynolds number `a posteriori`. 
+* ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section `Rheological models <physical_properties.html#rheological-models>`_). This is mainly used to define the Reynolds number `a posteriori`. 
 	* ``apparent viscosity name``: output filename for apparent viscosity calculations.
 
 * ``calculate tracer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.

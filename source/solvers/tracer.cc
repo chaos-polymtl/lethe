@@ -431,11 +431,16 @@ Tracer<dim>::calculate_tracer_statistics()
   double tracer_variance      = variance_integral / global_volume;
   double tracer_std_deviation = std::sqrt(tracer_variance);
 
-  this->pcout << "Tracer statistics : " << std::endl;
-  this->pcout << "\t     Min : " << min_tracer_value << std::endl;
-  this->pcout << "\t     Max : " << max_tracer_value << std::endl;
-  this->pcout << "\t Average : " << tracer_average << std::endl;
-  this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Tracer statistics : " << std::endl;
+      this->pcout << "\t     Min : " << min_tracer_value << std::endl;
+      this->pcout << "\t     Max : " << max_tracer_value << std::endl;
+      this->pcout << "\t Average : " << tracer_average << std::endl;
+      this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+    }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
   statistics_table.add_value("min", min_tracer_value);
