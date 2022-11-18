@@ -1112,6 +1112,11 @@ namespace Parameters
                         "tracer_statistics",
                         Patterns::FileName(),
                         "File name output tracer statistics");
+
+      prm.declare_entry("smoothed output fields",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable smoothing postprocessed vectors and scalars.");
     }
     prm.leave_subsection();
   }
@@ -1147,6 +1152,7 @@ namespace Parameters
       output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
+      smoothed_output_fields      = prm.get_bool("smoothed output fields");
     }
     prm.leave_subsection();
   }
