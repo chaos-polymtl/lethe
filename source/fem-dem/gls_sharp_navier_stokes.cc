@@ -1661,14 +1661,21 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           double d_residual_dv =
             -bdf_coefs[0] -
             0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
+
+          // Evaluate the relaxation parameter with a generalization of the
+          // secante method.
           if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
             {
-              d_residual_dv =
-                -bdf_coefs[0] -
-                (particles[p].impulsion - particles[p].impulsion_iter).norm() /
-                  (particles[p].velocity - particles[p].velocity_iter).norm() /
-                  particles[p].mass / dt +
-                DBL_MIN;
+              auto dv = (particles[p].velocity - particles[p].velocity_iter);
+              auto dr =
+                (bdf_coefs[0] *
+                   (-particles[p].velocity + particles[p].velocity_iter) +
+                 (particles[p].impulsion - particles[p].impulsion_iter) /
+                   particles[p].mass / dt);
+              double scalar_prod = scalar_product(dv, dr);
+              d_residual_dv      = 1 / (dv.norm() / dr.norm() * scalar_prod /
+                                     (dv.norm() * dr.norm()) +
+                                   DBL_MIN);
             }
           // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
@@ -1762,17 +1769,20 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
                               particles[p].radius * particles[p].radius *
                               inv_inertia.norm() / dt;
-
+          // Evaluate the relaxation parameter with a generalization of the
+          // secante method.
           if ((particles[p].omega - particles[p].omega_iter).norm() != 0)
             {
-              d_residual_domega =
-                -bdf_coefs[0] -
-                (particles[p].omega_impulsion -
-                 particles[p].omega_impulsion_iter)
-                    .norm() /
-                  (particles[p].omega - particles[p].omega_iter).norm() *
-                  inv_inertia.norm() / dt;
-              ;
+              auto   dv = (particles[p].omega - particles[p].omega_iter);
+              auto   dr = (bdf_coefs[0] *
+                           (-particles[p].omega + particles[p].omega_iter) +
+                         (particles[p].omega_impulsion -
+                          particles[p].omega_impulsion_iter) *
+                           inv_inertia.norm() / dt);
+              double scalar_prod = scalar_product(dv, dr);
+              d_residual_domega  = 1 / (dv.norm() / dr.norm() * scalar_prod /
+                                         (dv.norm() * dr.norm()) +
+                                       DBL_MIN);
             }
           // Define the correction vector.
           Tensor<1, 3> d_omega = residual_omega * 1 / d_residual_domega;
