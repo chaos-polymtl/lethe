@@ -22,37 +22,20 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const Particles::ParticleHandler<dim> &          particle_handler)
 {
-  velocity_average_x.reinit(triangulation.n_active_cells());
-  velocity_average_y.reinit(triangulation.n_active_cells());
-  velocity_average_z.reinit(triangulation.n_active_cells());
-  velocity_average_magnitude.reinit(triangulation.n_active_cells());
+  velocity_average.reinit(triangulation.n_active_cells() * dim);
 
-  // Iterating through the active cells in the trangulation
+  // Iterating through the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          Tensor<1, dim> cell_velocity_average =
+          Tensor<1, dim> velocity_in_cell_average =
             calculate_cell_average_particles_velocity(cell, particle_handler);
-
-          velocity_average_x[cell->active_cell_index()] =
-            cell_velocity_average[0];
-          velocity_average_y[cell->active_cell_index()] =
-            cell_velocity_average[1];
-
-          if constexpr (dim == 3)
-            velocity_average_z[cell->active_cell_index()] =
-              cell_velocity_average[2];
-
-          if constexpr (dim == 2)
-            velocity_average_magnitude[cell->active_cell_index()] =
-              sqrt(pow(cell_velocity_average[0], 2) +
-                   pow(cell_velocity_average[1], 2));
-          if constexpr (dim == 3)
-            velocity_average_magnitude[cell->active_cell_index()] =
-              sqrt(pow(cell_velocity_average[0], 2) +
-                   pow(cell_velocity_average[1], 2) +
-                   pow(cell_velocity_average[2], 2));
+          for (unsigned d = 0; d < dim; d++)
+            {
+              velocity_average[cell->active_cell_index() + d] =
+                velocity_in_cell_average[d];
+            }
         }
     }
 }
@@ -65,7 +48,7 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
 {
   granular_temperature_average.reinit(triangulation.n_active_cells());
 
-  // Iterating through the active cells in the trangulation
+  // Iterating through the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -134,8 +117,8 @@ LagrangianPostProcessing<dim>::calculate_cell_average_particles_velocity(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const Particles::ParticleHandler<dim> &particle_handler)
 {
-  Tensor<1, dim> velocity_cell_sum     = Tensor<1, dim>();
-  Tensor<1, dim> velocity_cell_average = Tensor<1, dim>();
+  Tensor<1, dim> velocity_cell_sum;
+  Tensor<1, dim> velocity_cell_average;
   unsigned int   particles_cell_number(0);
 
   // Looping through all the particles in the cell
@@ -192,37 +175,19 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   DataOut<dim> data_out;
   data_out.attach_triangulation(triangulation);
 
-  std::vector<std::string> average_solution_names;
+  std::vector<std::string> average_solution_names(dim, "average_velocity");
 
   // Write particles' average velocity
   calculate_average_particles_velocity(triangulation, particle_handler);
 
-  average_solution_names.push_back("average_velocity_x");
-  average_solution_names.push_back("average_velocity_y");
-  if constexpr (dim == 3)
-    average_solution_names.push_back("average_velocity_z");
-  average_solution_names.push_back("average_velocity_magnitude");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    data_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
 
-  average_solution_names.push_back("average_velocity_magnitude");
-
-  data_out.add_data_vector(velocity_average_x,
-                           average_solution_names[0],
-                           DataOut<dim>::type_cell_data);
-  data_out.add_data_vector(velocity_average_y,
-                           average_solution_names[1],
-                           DataOut<dim>::type_cell_data);
-  if constexpr (dim == 3)
-    data_out.add_data_vector(velocity_average_z,
-                             average_solution_names[2],
-                             DataOut<dim>::type_cell_data);
-  if constexpr (dim == 2)
-    data_out.add_data_vector(velocity_average_magnitude,
-                             average_solution_names[2],
-                             DataOut<dim>::type_cell_data);
-  if constexpr (dim == 3)
-    data_out.add_data_vector(velocity_average_magnitude,
-                             average_solution_names[3],
-                             DataOut<dim>::type_cell_data);
+  data_out.add_data_vector(velocity_average,
+                           average_solution_names,
+                           DataOut<dim>::type_cell_data,
+                           data_component_interpretation);
 
 
   // Write particles' granular temperature

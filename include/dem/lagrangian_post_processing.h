@@ -118,10 +118,7 @@ private:
       &                                    cell,
     const Particles::ParticleHandler<dim> &particle_handler);
 
-  Vector<double> velocity_average_x;
-  Vector<double> velocity_average_y;
-  Vector<double> velocity_average_z;
-  Vector<double> velocity_average_magnitude;
+  Vector<double> velocity_average;
 
   Vector<double> granular_temperature_average;
 };
