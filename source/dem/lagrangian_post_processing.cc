@@ -31,7 +31,7 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
         {
           Tensor<1, dim> velocity_in_cell_average =
             calculate_cell_average_particles_velocity(cell, particle_handler);
-          for (unsigned d = 0; d < dim; d++)
+          for (unsigned int d = 0; d < dim; d++)
             {
               velocity_average[cell->active_cell_index() + d] =
                 velocity_in_cell_average[d];
