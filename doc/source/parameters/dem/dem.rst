@@ -16,3 +16,4 @@ There are two discrete element method (DEM) solvers in Lethe: ``dem_2d`` and ``d
    floating_mesh
    mesh
    boundary_conditions
+   post-processing

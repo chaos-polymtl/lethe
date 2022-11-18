@@ -627,30 +627,6 @@ DEMSolver<dim>::write_output_results()
                             group_files,
                             mpi_communicator);
 
-  // Write background grid
-  DataOut<dim> background_data_out;
-
-  background_data_out.attach_dof_handler(background_dh);
-
-  // Attach the solution data to data_out object
-  Vector<float> subdomain(triangulation.n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = triangulation.locally_owned_subdomain();
-  background_data_out.add_data_vector(subdomain, "subdomain");
-
-  const std::string grid_solution_name =
-    parameters.simulation_control.output_name + "-grid";
-
-  background_data_out.build_patches();
-
-  write_vtu_and_pvd<dim>(grid_pvdhandler,
-                         background_data_out,
-                         folder,
-                         grid_solution_name,
-                         time,
-                         iter,
-                         group_files,
-                         mpi_communicator);
 
   if (simulation_control->get_output_boundaries())
     {
@@ -679,32 +655,15 @@ template <int dim>
 void
 DEMSolver<dim>::post_process_results()
 {
-  if (parameters.post_processing.calculate_particles_average_velocity)
-    {
-      post_processing_object.calculate_average_particles_velocity(
-        triangulation, particle_handler);
-
-      post_processing_object.write_average_particles_velocity(
-        triangulation,
-        grid_pvdhandler,
-        parameters,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number(),
-        mpi_communicator);
-    }
-  if (parameters.post_processing.calculate_granular_temperature)
-    {
-      post_processing_object.calculate_average_granular_temperature(
-        triangulation, particle_handler);
-
-      post_processing_object.write_granular_temperature(
-        triangulation,
-        grid_pvdhandler,
-        parameters,
-        simulation_control->get_current_time(),
-        simulation_control->get_step_number(),
-        mpi_communicator);
-    }
+  post_processing_object.write_post_processing_results(
+    triangulation,
+    grid_pvdhandler,
+    particle_handler,
+    parameters,
+    background_dh,
+    simulation_control->get_current_time(),
+    simulation_control->get_step_number(),
+    mpi_communicator);
 }
 
 template <int dim>
@@ -1034,18 +993,10 @@ DEMSolver<dim>::solve()
             [simulation_control->get_step_number()]);
 
       // Post-processing
-      if (parameters.post_processing.Lagrangian_post_processing)
+      if (parameters.post_processing.Lagrangian_post_processing &&
+          simulation_control->is_output_iteration())
         {
-          if (simulation_control->get_step_number() >=
-                parameters.post_processing.initial_step &&
-              simulation_control->get_step_number() <=
-                parameters.post_processing.end_step)
-            {
-              if (simulation_control->get_step_number() %
-                    parameters.post_processing.output_frequency ==
-                  0)
-                post_process_results();
-            }
+          post_process_results();
         }
 
       if (parameters.restart.checkpoint &&
