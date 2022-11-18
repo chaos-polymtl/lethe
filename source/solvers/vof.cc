@@ -295,11 +295,6 @@ VolumeOfFluid<dim>::calculate_L2_error()
                               update_values | update_quadrature_points |
                                 update_JxW_values);
 
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-
-  //  Local connectivity
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> phase_exact_solution(n_q_points);
   std::vector<double> phase_values(n_q_points);
@@ -316,9 +311,6 @@ VolumeOfFluid<dim>::calculate_L2_error()
           fe_values_vof.reinit(cell);
           fe_values_vof.get_function_values(this->present_solution,
                                             phase_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values_vof.get_quadrature_points(),

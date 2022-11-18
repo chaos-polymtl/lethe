@@ -364,7 +364,7 @@ private:
    * for specialized parameter (in VOF subsection heat transfer?)
    */
 
-  std::pair<double, double>
+  void
   calculate_heat_transfer_statistics_on_all_domain();
 
   void

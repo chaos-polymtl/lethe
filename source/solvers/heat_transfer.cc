@@ -544,14 +544,6 @@ HeatTransfer<dim>::calculate_L2_error()
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
-
-
-  const unsigned int dofs_per_cell =
-    fe->dofs_per_cell; // This gives you dofs per cell
-
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell); //  Local connectivity
-
   const unsigned int n_q_points = this->cell_quadrature->size();
 
   std::vector<double> q_exact_solution(n_q_points);
@@ -568,9 +560,6 @@ HeatTransfer<dim>::calculate_L2_error()
         {
           fe_values.reinit(cell);
           fe_values.get_function_values(present_solution, q_scalar_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values.get_quadrature_points(),
@@ -658,7 +647,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
 
       if (monitored_fluid == Parameters::FluidIndicator::both)
         {
-          calculate_heat_transfer_statistics_on_one_fluid(monitored_fluid);
+          calculate_heat_transfer_statistics_on_all_domain();
         }
       else
         {
@@ -975,7 +964,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 }
 
 template <int dim>
-std::pair<double, double>
+void
 HeatTransfer<dim>::calculate_heat_transfer_statistics_on_all_domain()
 {
   const unsigned int  n_q_points = this->cell_quadrature->size();
@@ -1014,8 +1003,6 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_all_domain()
     Utilities::MPI::min(minimum_temperature, mpi_communicator);
   maximum_temperature =
     Utilities::MPI::max(maximum_temperature, mpi_communicator);
-
-  return std::make_pair(minimum_temperature, maximum_temperature);
 }
 
 template <int dim>

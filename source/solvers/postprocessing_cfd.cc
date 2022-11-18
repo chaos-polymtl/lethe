@@ -853,13 +853,7 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
-
-  const unsigned int dofs_per_cell =
-    fe.dofs_per_cell; // This gives you dofs per cell
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell); //  Local connectivity
-
-  const unsigned int n_q_points = quadrature_formula.size();
+  const unsigned int               n_q_points = quadrature_formula.size();
 
   std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(dim + 1));
 
@@ -881,10 +875,6 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
           // Get the exact solution at all gauss points
           exact_solution->vector_value_list(fe_values.get_quadrature_points(),
                                             q_exactSol);
-
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -918,9 +908,6 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
                                                     local_velocity_values);
           fe_values[pressure].get_function_values(evaluation_point,
                                                   local_pressure_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution->vector_value_list(fe_values.get_quadrature_points(),
