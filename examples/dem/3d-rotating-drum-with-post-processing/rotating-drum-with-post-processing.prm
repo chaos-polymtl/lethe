@@ -97,5 +97,5 @@ end
 # Lagrangian post-processing
 #---------------------------------------------------
 subsection post-processing
-    set Lagrangian post processing			= true
+    set Lagrangian post-processing			= true
 end

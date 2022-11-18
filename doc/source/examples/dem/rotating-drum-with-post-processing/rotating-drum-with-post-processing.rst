@@ -29,11 +29,11 @@ Parameter file
 Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, we set the variable ``Lagrangian post processing`` equal to ``true``. This enables Lagrangian post-processing calculations. Lethe-DEM built-in post-processing capabilities are detailed in the :doc:`../../../parameters/dem/post-processing` section of the parameters guide.
+First, we set the variable ``Lagrangian post-processing`` equal to ``true``. This enables Lagrangian post-processing calculations. Lethe-DEM built-in post-processing capabilities are detailed in the :doc:`../../../parameters/dem/post-processing` section of the parameters guide.
 
 .. code-block:: text
 
     subsection post-processing
-        set Lagrangian post processing = true
+        set Lagrangian post-processing = true
     end
 
