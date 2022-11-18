@@ -31,6 +31,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/post_processors.h>
+#include <solvers/post_processors_smoothing.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/simulation_parameters.h>
 
