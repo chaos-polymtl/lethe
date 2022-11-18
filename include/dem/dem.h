@@ -226,6 +226,8 @@ private:
 
   /**
    * @brief write_output_results
+   * Generates VTU file with particles information for visualization and
+   * post-processing
    * Post-processing as parallel VTU files
    */
   void
