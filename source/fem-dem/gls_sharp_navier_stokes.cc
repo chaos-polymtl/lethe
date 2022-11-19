@@ -3505,7 +3505,16 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
 
-  // Finish the time step of the particle.
+  // Finish the time step of the particles.
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].velocity_iter        = particles[p_i].velocity;
+      particles[p_i].impulsion_iter       = particles[p_i].impulsion;
+      particles[p_i].omega_iter           = particles[p_i].omega;
+      particles[p_i].omega_impulsion_iter = particles[p_i].omega_impulsion;
+      particles[p_i].residual_velocity    = DBL_MAX;
+      particles[p_i].residual_omega       = DBL_MAX;
+    }
 }
 
 template <int dim>
