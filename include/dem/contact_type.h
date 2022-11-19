@@ -29,6 +29,7 @@ enum ContactType
   ghost_particle_particle,
   local_periodic_particle_particle,
   ghost_periodic_particle_particle,
+  ghost_local_periodic_particle_particle,
   particle_wall,
   particle_floating_wall,
   particle_floating_mesh,

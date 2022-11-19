@@ -93,7 +93,9 @@ public:
     typename DEM::dem_data_structures<dim>::cells_neighbor_list
       &cells_local_periodic_neighbor_list,
     typename DEM::dem_data_structures<dim>::cells_neighbor_list
-      &cells_ghost_periodic_neighbor_list);
+      &cells_ghost_periodic_neighbor_list,
+    typename DEM::dem_data_structures<dim>::cells_neighbor_list
+      &cells_ghost_local_periodic_neighbor_list);
 
   /**
    * Finds the full neighbor list (with repetition) of all the active cells in
@@ -112,6 +114,19 @@ public:
     const parallel::distributed::Triangulation<dim> &triangulation,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
       &cells_total_neighbor_list);
+
+private:
+  void
+  get_periodic_neighbor_list(
+    const typename Triangulation<dim>::active_cell_iterator &cell,
+    const std::map<unsigned int, std::vector<unsigned int>>
+      &coinciding_vertex_groups,
+    const std::map<unsigned int, unsigned int>
+      &vertex_to_coinciding_vertex_group,
+    const std::vector<
+      std::set<typename Triangulation<dim>::active_cell_iterator>> &v_to_c,
+    typename DEM::dem_data_structures<dim>::cell_container
+      &periodic_neighbor_list);
 };
 
 #endif /* find_cell_neighbors_h */

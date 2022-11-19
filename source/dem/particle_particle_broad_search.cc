@@ -143,12 +143,17 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
     container_manager.local_contact_pair_periodic_candidates;
   auto &ghost_contact_pair_periodic_candidates =
     container_manager.ghost_contact_pair_periodic_candidates;
+  auto &ghost_local_contact_pair_periodic_candidates =
+    container_manager.ghost_local_contact_pair_periodic_candidates;
   auto &cells_local_periodic_neighbor_list =
     container_manager.cells_local_periodic_neighbor_list;
   auto &cells_ghost_periodic_neighbor_list =
     container_manager.cells_ghost_periodic_neighbor_list;
+  auto &cells_ghost_local_periodic_neighbor_list =
+    container_manager.cells_ghost_local_periodic_neighbor_list;
   local_contact_pair_periodic_candidates.clear();
   ghost_contact_pair_periodic_candidates.clear();
+  ghost_local_contact_pair_periodic_candidates.clear();
 
   // Looping over the potential periodic cells which may contain particles.
   for (auto cell_periodic_neighbor_list_iterator =
@@ -246,6 +251,55 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                   store_candidates(particles_in_periodic_neighbor_cell.begin(),
                                    particles_in_periodic_neighbor_cell,
                                    ghost_contact_pair_periodic_candidates
+                                     [particle_in_main_cell->get_id()]);
+                }
+            }
+        }
+    }
+
+  // Looping over cells_ghost_local_neighbor_list
+  for (auto cell_periodic_neighbor_list_iterator =
+         cells_ghost_local_periodic_neighbor_list.begin();
+       cell_periodic_neighbor_list_iterator !=
+       cells_ghost_local_periodic_neighbor_list.end();
+       ++cell_periodic_neighbor_list_iterator)
+    {
+      // The main cell
+      auto cell_periodic_neighbor_iterator =
+        cell_periodic_neighbor_list_iterator->begin();
+
+      // Particles in the main cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_main_cell =
+          particle_handler.particles_in_cell(*cell_periodic_neighbor_iterator);
+
+      const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
+
+      if (particles_exist_in_main_cell)
+        {
+          // Going through ghost neighbor cells of the main cell
+          ++cell_periodic_neighbor_iterator;
+
+          for (; cell_periodic_neighbor_iterator !=
+                 cell_periodic_neighbor_list_iterator->end();
+               ++cell_periodic_neighbor_iterator)
+            {
+              // Defining iterator on ghost particles in the neighbor cells
+              typename Particles::ParticleHandler<dim>::particle_iterator_range
+                particles_in_periodic_neighbor_cell =
+                  particle_handler.particles_in_cell(
+                    *cell_periodic_neighbor_iterator);
+
+              // Capturing particle pairs, the first particle (local) in
+              // the main cell and the second particle (ghost) in the
+              // neighbor cells
+              for (auto particle_in_main_cell = particles_in_main_cell.begin();
+                   particle_in_main_cell != particles_in_main_cell.end();
+                   ++particle_in_main_cell)
+                {
+                  store_candidates(particles_in_periodic_neighbor_cell.begin(),
+                                   particles_in_periodic_neighbor_cell,
+                                   ghost_local_contact_pair_periodic_candidates
                                      [particle_in_main_cell->get_id()]);
                 }
             }

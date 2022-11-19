@@ -78,6 +78,7 @@ public:
     cells_ghost_neighbor_list.clear();
     cells_local_periodic_neighbor_list.clear();
     cells_ghost_periodic_neighbor_list.clear();
+    cells_ghost_local_periodic_neighbor_list.clear();
 
     execute_cell_neighbors_search(triangulation,
                                   has_periodic_boundaries,
@@ -213,6 +214,8 @@ public:
     cells_local_periodic_neighbor_list;
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_periodic_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_ghost_local_periodic_neighbor_list;
 
   // Container with all collision candidate particles within adjacent cells
   typename dem_data_structures<dim>::particle_particle_candidates
@@ -220,9 +223,13 @@ public:
   typename dem_data_structures<dim>::particle_particle_candidates
     ghost_contact_pair_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_local_contact_pair_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
     local_contact_pair_periodic_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
     ghost_contact_pair_periodic_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_local_contact_pair_periodic_candidates;
   typename dem_data_structures<dim>::particle_floating_mesh_candidates
     particle_floating_mesh_candidates;
   typename dem_data_structures<dim>::particle_floating_wall_candidates
@@ -257,6 +264,8 @@ public:
     local_periodic_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_periodic_adjacent_particles;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    ghost_local_periodic_adjacent_particles;
 
   // Containers with other information
   typename dem_data_structures<dim>::floating_mesh_information

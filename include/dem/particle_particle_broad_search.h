@@ -87,6 +87,7 @@ public:
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     DEMContainerManager<dim> &               container_manager);
 
+private:
   /**
    * Stores the candidate particle-particle collision pairs with a given
    * particle iterator. particle_begin iterator is useful to skip storage of the

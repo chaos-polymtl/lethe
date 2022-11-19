@@ -37,7 +37,8 @@ DEMContainerManager<dim>::execute_cell_neighbors_search(
         triangulation,
         periodic_boundaries_cells_information,
         cells_local_periodic_neighbor_list,
-        cells_ghost_periodic_neighbor_list);
+        cells_ghost_periodic_neighbor_list,
+        cells_ghost_local_periodic_neighbor_list);
     }
 
   // Get total (with repetition) neighbors list for floating mesh.
@@ -156,21 +157,29 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
 
   if (has_periodic_boundaries)
     {
-      // Update contact containers for local periodic particle-particle pairs in
-      // contact
+      // Update contact containers for local-local periodic particle-particle
+      // pairs in contact
       update_contact_container_iterators<
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
         local_periodic_adjacent_particles, particle_container);
 
-      // Update contact containers for ghost periodic particle-particle pairs in
-      // contact
+      // Update contact containers for local-ghost periodic particle-particle
+      // pairs in contact
       update_contact_container_iterators<
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
         ghost_periodic_adjacent_particles, particle_container);
+
+      // Update contact containers for ghost-local periodic particle-particle
+      // pairs in contact
+      update_contact_container_iterators<
+        dim,
+        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+        ContactType::ghost_local_periodic_particle_particle>(
+        ghost_local_periodic_adjacent_particles, particle_container);
     }
 
   // Update contact containers for particle-wall pairs in contact
@@ -304,7 +313,7 @@ DEMContainerManager<dim>::execute_particle_particle_fine_search(
 
   if (has_periodic_boundaries)
     {
-      // Fine search for local periodic particle-particle
+      // Fine search for local-local periodic particle-particle
       particle_particle_fine_search_object.particle_particle_fine_search(
         particle_container,
         local_periodic_adjacent_particles,
@@ -312,13 +321,21 @@ DEMContainerManager<dim>::execute_particle_particle_fine_search(
         neighborhood_threshold,
         periodic_offset);
 
-      // Fine search for ghost periodic particle-particle
+      // Fine search for local-ghost periodic particle-particle
       particle_particle_fine_search_object.particle_particle_fine_search(
         particle_container,
         ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates,
         neighborhood_threshold,
         periodic_offset);
+
+      // Fine search for ghost-local periodic particle-particle
+      particle_particle_fine_search_object.particle_particle_fine_search(
+        particle_container,
+        ghost_local_periodic_adjacent_particles,
+        ghost_local_contact_pair_periodic_candidates,
+        neighborhood_threshold,
+        -periodic_offset);
     }
 }
 

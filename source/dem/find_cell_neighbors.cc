@@ -113,14 +113,19 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
   typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_local_periodic_neighbor_list,
   typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_periodic_neighbor_list)
+    &cells_ghost_periodic_neighbor_list,
+  typename DEM::dem_data_structures<dim>::cells_neighbor_list
+    &cells_ghost_local_periodic_neighbor_list)
 {
   typename DEM::dem_data_structures<dim>::cell_container
     local_periodic_neighbor_vector;
   typename DEM::dem_data_structures<dim>::cell_container
     ghost_periodic_neighbor_vector;
+  typename DEM::dem_data_structures<dim>::cell_container
+    ghost_local_periodic_neighbor_vector;
 
   typename DEM::dem_data_structures<dim>::cell_container total_cell_list;
+  typename DEM::dem_data_structures<dim>::cell_container total_ghost_cell_list;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -154,38 +159,11 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           typename DEM::dem_data_structures<dim>::cell_container
             periodic_neighbor_list;
 
-          // Loop over vertices of the cell
-          for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
-            {
-              // Get global id of vertex
-              unsigned int vertex_id = cell->vertex_index(vertex);
-
-              // Check if vertex is at periodic boundary, should be a key if so
-              if (vertex_to_coinciding_vertex_group.find(vertex_id) !=
-                  vertex_to_coinciding_vertex_group.end())
-                {
-                  // Get the coinciding vertex key to the current vertex
-                  unsigned int coinciding_vertex_key =
-                    vertex_to_coinciding_vertex_group[vertex_id];
-
-                  // Store the neighbor cells in list
-                  for (auto coinciding_vertex :
-                       coinciding_vertex_groups[coinciding_vertex_key])
-                    {
-                      // Skip the current vertex since we want only cells linked
-                      // to the periodic vertices
-                      if (coinciding_vertex != vertex_id)
-                        {
-                          // Loop over all periodic neighbor
-                          for (const auto &neighbor_id :
-                               v_to_c[coinciding_vertex])
-                            {
-                              periodic_neighbor_list.push_back(neighbor_id);
-                            }
-                        }
-                    }
-                }
-            }
+          get_periodic_neighbor_list(cell,
+                                     coinciding_vertex_groups,
+                                     vertex_to_coinciding_vertex_group,
+                                     v_to_c,
+                                     periodic_neighbor_list);
 
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
@@ -241,6 +219,53 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           local_periodic_neighbor_vector.clear();
           ghost_periodic_neighbor_vector.clear();
         }
+      else if (cell->is_ghost())
+        {
+          // The first element of each vector is the cell itself.
+          ghost_local_periodic_neighbor_vector.push_back(cell);
+          total_ghost_cell_list.push_back(cell);
+
+          // Empty list of periodic cell neighbor
+          typename DEM::dem_data_structures<dim>::cell_container
+            periodic_neighbor_list;
+
+          get_periodic_neighbor_list(cell,
+                                     coinciding_vertex_groups,
+                                     vertex_to_coinciding_vertex_group,
+                                     v_to_c,
+                                     periodic_neighbor_list);
+
+          for (const auto &periodic_neighbor : periodic_neighbor_list)
+            {
+              if (periodic_neighbor->is_locally_owned())
+                {
+                  auto search_iterator =
+                    std::find(total_ghost_cell_list.begin(),
+                              total_ghost_cell_list.end(),
+                              periodic_neighbor);
+                  auto local_search_iterator =
+                    std::find(ghost_local_periodic_neighbor_vector.begin(),
+                              ghost_local_periodic_neighbor_vector.end(),
+                              periodic_neighbor);
+
+                  // If the cell neighbor is a local cell and not present
+                  // in the total_cell_list vector, it will be added as the
+                  // neighbor of the main cell and also to the
+                  // total_cell_list to avoid repetition for next cells.
+                  if (search_iterator == total_ghost_cell_list.end() &&
+                      local_search_iterator ==
+                        ghost_local_periodic_neighbor_vector.end())
+                    {
+                      ghost_local_periodic_neighbor_vector.push_back(
+                        periodic_neighbor);
+                    }
+                }
+            }
+          if (!ghost_local_periodic_neighbor_vector.empty())
+            cells_ghost_local_periodic_neighbor_list.push_back(
+              ghost_local_periodic_neighbor_vector);
+          ghost_local_periodic_neighbor_vector.clear();
+        }
     }
 }
 
@@ -290,6 +315,50 @@ FindCellNeighbors<dim>::find_full_cell_neighbors(
 
           cells_total_neighbor_list.insert(
             {cell->global_active_cell_index(), full_neighbor_vector});
+        }
+    }
+}
+template <int dim>
+void
+FindCellNeighbors<dim>::get_periodic_neighbor_list(
+  const typename Triangulation<dim>::active_cell_iterator &cell,
+  const std::map<unsigned int, std::vector<unsigned int>>
+    &                                         coinciding_vertex_groups,
+  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
+  const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+    &v_to_c,
+  typename DEM::dem_data_structures<dim>::cell_container
+    &periodic_neighbor_list)
+{
+  // Loop over vertices of the cell
+  for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
+    {
+      // Get global id of vertex
+      unsigned int vertex_id = cell->vertex_index(vertex);
+
+      // Check if vertex is at periodic boundary, should be a key if so
+      if (vertex_to_coinciding_vertex_group.find(vertex_id) !=
+          vertex_to_coinciding_vertex_group.end())
+        {
+          // Get the coinciding vertex key to the current vertex
+          unsigned int coinciding_vertex_key =
+            vertex_to_coinciding_vertex_group.at(vertex_id);
+
+          // Store the neighbor cells in list
+          for (auto coinciding_vertex :
+               coinciding_vertex_groups.at(coinciding_vertex_key))
+            {
+              // Skip the current vertex since we want only cells linked
+              // to the periodic vertices
+              if (coinciding_vertex != vertex_id)
+                {
+                  // Loop over all periodic neighbor
+                  for (const auto &neighbor_id : v_to_c[coinciding_vertex])
+                    {
+                      periodic_neighbor_list.push_back(neighbor_id);
+                    }
+                }
+            }
         }
     }
 }
