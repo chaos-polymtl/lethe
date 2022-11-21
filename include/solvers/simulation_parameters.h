@@ -26,6 +26,7 @@
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
 #include <core/solid_objects_parameters.h>
+
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/physical_properties_manager.h>

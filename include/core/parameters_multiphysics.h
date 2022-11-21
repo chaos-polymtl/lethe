@@ -26,9 +26,9 @@
 #ifndef lethe_parameters_multiphysics_h
 #define lethe_parameters_multiphysics_h
 
-#include <deal.II/base/parameter_handler.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/base/parameter_handler.h>
 
 using namespace dealii;
 

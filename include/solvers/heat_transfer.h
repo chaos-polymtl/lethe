@@ -25,6 +25,14 @@
 #ifndef lethe_heat_transfer_h
 #define lethe_heat_transfer_h
 
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+
+#include <solvers/auxiliary_physics.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/multiphysics_interface.h>
+
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 
@@ -38,13 +46,6 @@
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-#include <solvers/auxiliary_physics.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/multiphysics_interface.h>
 
 
 template <int dim>
