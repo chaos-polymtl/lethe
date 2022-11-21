@@ -221,7 +221,12 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
         }
       else if (cell->is_ghost())
         {
-          // The first element of each vector is the cell itself.
+          // Since periodic cells are mapped on one side (cells on pb 0 with
+          // cells on pb 1) only, we need a 3rd container for ghost-local
+          // contacts for force calculation. Here we store local neighbors of
+          // ghost cells.
+
+          // The first element of each vector is the cell itself
           ghost_local_periodic_neighbor_vector.push_back(cell);
           total_ghost_cell_list.push_back(cell);
 
@@ -248,10 +253,6 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
                               ghost_local_periodic_neighbor_vector.end(),
                               periodic_neighbor);
 
-                  // If the cell neighbor is a local cell and not present
-                  // in the total_cell_list vector, it will be added as the
-                  // neighbor of the main cell and also to the
-                  // total_cell_list to avoid repetition for next cells.
                   if (search_iterator == total_ghost_cell_list.end() &&
                       local_search_iterator ==
                         ghost_local_periodic_neighbor_vector.end())

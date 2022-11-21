@@ -103,8 +103,8 @@ public:
 
 private:
   /**
-   * @brief Gets boundaries information related to the face at outlet and
-   * periodic boundaries and stores in  periodic_boundaries_cells_info_struct
+   * @brief Gets boundaries information related to the face at periodic
+   * boundaries 0 and 1 and stores in periodic_boundaries_cells_info_struct
    * object
    *
    * @param cell Current cell on boundary
@@ -125,15 +125,15 @@ private:
    * @param boundaries_cells_content Reference to the object with periodic
    * boundaries information
    * @param particles_in_cell Iterator to the particles in cell
-   * @param particles_in_outlet_cell If the particles are linked to the outlet
-   * cell or the periodic cell
+   * @param particles_in_pb0_cell If the particles are linked to a cell on the
+   * periodic boundary 0 (true) or the periodic boundary 1 (false)
    */
   void
   check_and_move_particles(
     const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
       &        particles_in_cell,
-    const bool particles_in_outlet_cell);
+    const bool particles_in_pb0_cell);
 
   types::boundary_id periodic_boundary_0;
   types::boundary_id periodic_boundary_1;

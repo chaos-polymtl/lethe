@@ -86,13 +86,13 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
               // Iterating over cell faces
               for (const auto &face : cell->face_iterators())
                 {
-                  // Check if face is on the periodic boundary flagged as outlet
+                  // Check if face is on the periodic boundary 0
                   // Pairs of periodic cells are stored once.
                   unsigned int face_boundary_id = face->boundary_id();
                   if (face_boundary_id == periodic_boundary_0)
                     {
                       // Save boundaries information related to the cell on
-                      // the outlet boundary of periodic walls.
+                      // the periodic boundary 0
                       // Information about both boundaries are stored in
                       // periodic_boundary_cells_info_struct
                       periodic_boundaries_cells_info_struct<dim>
@@ -104,7 +104,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                                                    boundaries_information);
 
                       // Store boundaries information in map with cell id at
-                      // outlet as key
+                      // periodic boundary 0 as key
                       periodic_boundaries_cells_information.insert(
                         {boundaries_information.cell
                            ->global_active_cell_index(),
@@ -129,7 +129,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
   const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
   typename Particles::ParticleHandler<dim>::particle_iterator_range
     &        particles_in_cell,
-  const bool particles_in_outlet_cell)
+  const bool particles_in_pb0_cell)
 {
   for (auto particle = particles_in_cell.begin();
        particle != particles_in_cell.end();
@@ -142,7 +142,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
       // the particle
       Point<dim>     point_on_face, point_on_periodic_face;
       Tensor<1, dim> normal_vector, distance_between_faces;
-      if (particles_in_outlet_cell)
+      if (particles_in_pb0_cell)
         {
           point_on_face          = boundaries_cells_content.point_on_face;
           normal_vector          = boundaries_cells_content.normal_vector;
@@ -204,10 +204,10 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
 
               if (particles_exist_in_main_cell)
                 {
-                  bool particles_in_outlet_cell = true;
+                  bool particles_in_pb0_cell = true;
                   check_and_move_particles(boundaries_cells_content,
                                            particles_in_cell,
-                                           particles_in_outlet_cell);
+                                           particles_in_pb0_cell);
                 }
             }
 
@@ -221,10 +221,10 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
 
               if (particles_exist_in_periodic_cell)
                 {
-                  bool particles_in_outlet_cell = false;
+                  bool particles_in_pb0_cell = false;
                   check_and_move_particles(boundaries_cells_content,
                                            particles_in_periodic_cell,
-                                           particles_in_outlet_cell);
+                                           particles_in_pb0_cell);
                 }
             }
         }
