@@ -1,15 +1,12 @@
-#############################################################################
 """
-Postprocessing code for dam-break_Martin_and_Moyce example
-
+Postprocessing code for rayleigh-taylor-instability example
+This code extracts the y position of the bubble and the spike and compares it
+to the results of He et al (1999)
 """
-#############################################################################
 
-'''Parameters'''
-
-#############################################################################
-'''Importing Libraries'''
-from math import pi
+#-------------------------------------------
+# Modules
+#-------------------------------------------
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -18,12 +15,9 @@ import pyvista as pv
 import os
 import sys
 
-#############################################################################
-
-#############################################################################
-'''Functions'''
-
-#############################################################################
+#--------------------------------------------
+# Main
+#--------------------------------------------
 
 #Load reference data from He et al (1999)
 ref_data_file = "ref_He_et_al_data.txt"
@@ -70,7 +64,7 @@ y_spike_list = []
 a_spike = [0.125, 0, 0]
 b_spike = [0.125, 1, 0]
 
-#Create beginning and end points for spike line
+#Create beginning and end points for bubble line
 a_bubble = [0, 0, 0]
 b_bubble = [0, 1, 0]
 
