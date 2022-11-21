@@ -1168,11 +1168,6 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
       Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
     {
       has_periodic_boundaries = true;
-
-      this->pcout
-        << std::endl
-        << "Warning: Periodic boundary conditions in DEM is currently not working with multiprocessors.\n"
-        << std::endl;
     }
 }
 
