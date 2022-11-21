@@ -29,18 +29,11 @@ Parameter file
 Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, we set the variable ``Lagrangian post processing`` equal to true. This enables Lagrangian post-processing calculations. Then we specify the post-processing features that should be obtained. At the moment, Lethe-DEM supports the calculation of ``particle average velocity``, and ``granular temperature``. We set the ``initial step`` and ``end step`` of the post-processing calculations. In the period between initial and end steps, Lethe-DEM calculates and writes the granular temperature and average velocity of particles in cells at a frequency of ``output frequency``. ``particles velocity output name`` and ``granular temperature output name`` define the names of the written post-processing files for average velocity and granular temperature, respectively.
+First, we set the variable ``Lagrangian post-processing`` equal to ``true``. This enables Lagrangian post-processing calculations. Lethe-DEM built-in post-processing capabilities are detailed in the :doc:`../../../parameters/dem/post-processing` section of the parameters guide.
 
 .. code-block:: text
 
     subsection post-processing
-        set Lagrangian post processing				= true
-        set calculate particles average velocity	= true
-        set calculate granular temperature			= true
-        set initial step            				= 8500000
-        set end step       							= 9500000
-        set output frequency						= 1000
-        set particles velocity output name   		= average_velocity
-        set granular temperature output name		= granular_temperature
+        set Lagrangian post-processing = true
     end
 

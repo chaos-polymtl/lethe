@@ -1966,18 +1966,35 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
   const unsigned int group_files =
     this->simulation_parameters.simulation_control.group_files;
 
-  Visualization_IB ib_particles_data;
-  ib_particles_data.build_patches(particles);
-
-
-  write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
-                            ib_particles_data,
-                            folder,
-                            particles_solution_name,
-                            time,
-                            iter,
-                            group_files,
-                            this->mpi_communicator);
+  // If the processor id is id=0 we write the particles pvd.
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      Visualization_IB ib_particles_data;
+      ib_particles_data.build_patches(particles);
+      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                ib_particles_data,
+                                folder,
+                                particles_solution_name,
+                                time,
+                                iter,
+                                group_files,
+                                this->mpi_communicator);
+    }
+  else
+    {
+      // If the processor id is not id=0 we add an empty particle vector.
+      Visualization_IB             ib_particles_data;
+      std::vector<IBParticle<dim>> empty_particle_vector(0);
+      ib_particles_data.build_patches(empty_particle_vector);
+      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                ib_particles_data,
+                                folder,
+                                particles_solution_name,
+                                time,
+                                iter,
+                                group_files,
+                                this->mpi_communicator);
+    }
 
   table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
@@ -3135,6 +3152,7 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
         ".ib_particles";
       std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
+      ib_particles_pvdhandler.save(prefix + ".ib_particles");
 
       this->pvdhandler.save(prefix);
       for (unsigned int i_particle = 0; i_particle < particles.size();
@@ -3265,6 +3283,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
 
+  ib_particles_pvdhandler.read(prefix + ".ib_particles");
   // refill the table from checkpoint
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -3648,7 +3667,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 {
   MultithreadInfo::set_thread_limit(1);
   read_mesh_and_manifolds(
-    this->triangulation,
+    *this->triangulation,
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
     this->simulation_parameters.restart_parameters.restart,

@@ -22,6 +22,7 @@ This subsection controls the post-processing other than the forces and torque on
   set verbosity                   = quiet
   set calculation frequency       = 1
   set output frequency            = 1
+  set smoothing                   = false
   end
  
 
@@ -58,3 +59,5 @@ This subsection controls the post-processing other than the forces and torque on
 * The ``calculation frequency`` parameter sets the frequency at which the enstrophy, kinetic energy, apparent viscosity, pressure drop, average velocities and tracer statistics are calculated (for the ones that are set to ``true``). 
 
 * The ``output frequency`` parameter sets the frequency at which the enstrophy, kinetic energy, apparent viscosity, pressure drop and tracer statistics are output to their respective files (for the ones that are set to ``true``). 
+
+* The ``smoothing`` parameter sets if the Qcriterion field will be smoothed using an L2-projection over the nodes. The same will shortly be applied to the Vorticity. 
