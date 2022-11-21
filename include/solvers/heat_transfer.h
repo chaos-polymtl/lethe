@@ -215,6 +215,12 @@ public:
   setup_dofs() override;
 
   /**
+   * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
+   */
+  std::vector<double>
+  calculate_heat_flux();
+
+  /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
    * only support imposing nodal values, but some physics additionnaly support
    * the use of L2 projection or steady-state solutions.
