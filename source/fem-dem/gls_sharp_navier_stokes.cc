@@ -113,9 +113,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         {
           bool         cell_is_cut;
           bool         cell_is_inside;
-          unsigned int p_id_cut                              = 0;
-          unsigned int p_id_inside                           = 0;
-          unsigned int number_of_particles_cutting_this_cell = 0;
+          unsigned int particle_id_which_cuts_this_cell           = 0;
+          unsigned int particle_id_in_which_this_cell_is_embedded = 0;
+          unsigned int number_of_particles_cutting_this_cell      = 0;
           // is the particle index that cuts the cell if it's cut. If the cell
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
@@ -155,10 +155,10 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       // embedded in multiple particles.
                       if (number_of_particles_cutting_this_cell == 0)
                         {
-                          cell_is_cut    = false;
-                          p_id_cut       = 0;
-                          cell_is_inside = true;
-                          p_id_inside    = p;
+                          cell_is_cut                                = false;
+                          particle_id_which_cuts_this_cell           = 0;
+                          cell_is_inside                             = true;
+                          particle_id_in_which_this_cell_is_embedded = p;
                         }
                     }
                   else
@@ -168,10 +168,10 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       // multiple particles.
                       if (number_of_particles_cutting_this_cell == 0)
                         {
-                          cell_is_cut    = true;
-                          p_id_cut       = p;
-                          cell_is_inside = false;
-                          p_id_inside    = 0;
+                          cell_is_cut                                = true;
+                          particle_id_which_cuts_this_cell           = p;
+                          cell_is_inside                             = false;
+                          particle_id_in_which_this_cell_is_embedded = 0;
                         }
                       number_of_particles_cutting_this_cell += 1;
                     }
@@ -180,18 +180,19 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 {
                   if (number_of_particles_cutting_this_cell == 0)
                     {
-                      cell_is_cut    = false;
-                      p_id_cut       = 0;
-                      cell_is_inside = false;
-                      p_id_inside    = 0;
+                      cell_is_cut                                = false;
+                      particle_id_which_cuts_this_cell           = 0;
+                      cell_is_inside                             = false;
+                      particle_id_in_which_this_cell_is_embedded = 0;
                     }
                 }
             }
 
           cut_cells_map[cell]    = {cell_is_cut,
-                                 p_id_cut,
+                                 particle_id_which_cuts_this_cell,
                                  number_of_particles_cutting_this_cell};
-          cells_inside_map[cell] = {cell_is_inside, p_id_inside};
+          cells_inside_map[cell] = {cell_is_inside,
+                                    particle_id_in_which_this_cell_is_embedded};
         }
     }
 }
