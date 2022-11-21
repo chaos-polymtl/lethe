@@ -1161,15 +1161,6 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
           pcout << "  L2 norm: " << compute_l2_error() << std::endl;
         }
 
-      std::cout << "  Sparse matrix memory consumption for processor "
-                << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-                << " (bytes): " << system_matrix.memory_consumption()
-                << std::endl;
-
-      std::cout << "  Right hand side memory consumption for processor "
-                << Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-                << " (bytes): " << system_rhs.memory_consumption() << std::endl;
-
       computing_timer.print_summary();
       computing_timer.reset();
     }
