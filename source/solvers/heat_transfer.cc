@@ -1,13 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -25,6 +15,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 void
@@ -638,26 +637,45 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
     }
 
   // Temperature statistics
-  if (simulation_parameters.post_processing.calculate_heat_transfer_statistics)
+  if (simulation_parameters.post_processing.calculate_temperature_statistics)
     {
       Parameters::FluidIndicator monitored_fluid =
-        this->simulation_parameters.multiphysics.vof_parameters
-          .viscous_dissipative_fluid;
-      std::pair<double, double> min_max_temperature;
+        this->simulation_parameters.post_processing.postprocessed_fluid;
+      std::string domain_name("");
 
-      if (monitored_fluid == Parameters::FluidIndicator::both)
+      if (monitored_fluid == Parameters::FluidIndicator::both ||
+          (not(this->simulation_parameters.multiphysics.VOF) &&
+           monitored_fluid == Parameters::FluidIndicator::fluid0))
         {
-          calculate_heat_transfer_statistics_on_all_domain();
+          domain_name = "all_domain";
+          calculate_temperature_statistics_on_all_domain();
         }
       else
         {
-          calculate_heat_transfer_statistics_on_one_fluid(monitored_fluid);
+          switch (monitored_fluid)
+            {
+              case Parameters::FluidIndicator::fluid0:
+                {
+                  domain_name = "fluid_0";
+                  break;
+                }
+              case Parameters::FluidIndicator::fluid1:
+                {
+                  domain_name = "fluid_1";
+                  break;
+                }
+              default:
+                throw std::runtime_error("Unsupported number of fluids (>2)");
+            }
+
+          calculate_temperature_statistics_on_one_fluid(monitored_fluid,
+                                                        domain_name);
         }
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        this->write_heat_transfer_statistics();
+        this->write_heat_transfer_statistics(domain_name);
     }
 }
 
@@ -965,19 +983,24 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-HeatTransfer<dim>::calculate_heat_transfer_statistics_on_all_domain()
+HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
 {
-  const unsigned int  n_q_points = this->cell_quadrature->size();
+  const unsigned int n_q_points       = this->cell_quadrature->size();
+  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
+
   std::vector<double> local_temperature_values(n_q_points);
 
   FEValues<dim> fe_values_ht(*this->temperature_mapping,
                              *this->fe,
                              *this->cell_quadrature,
-                             update_values);
+                             update_values | update_JxW_values);
 
-  double minimum_temperature = DBL_MAX;
-  double maximum_temperature = -DBL_MAX;
+  double volume_integral      = 0;
+  double temperature_integral = 0;
+  double minimum_temperature  = DBL_MAX;
+  double maximum_temperature  = -DBL_MAX;
 
+  // Calculate min, max and average
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -988,34 +1011,83 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_all_domain()
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              double temperature = local_temperature_values[q];
+              maximum_temperature =
+                std::max(local_temperature_values[q], maximum_temperature);
+              minimum_temperature =
+                std::min(local_temperature_values[q], minimum_temperature);
 
-              if (temperature > maximum_temperature)
-                maximum_temperature = temperature;
-              if (temperature < minimum_temperature)
-                minimum_temperature = temperature;
+              volume_integral += fe_values_ht.JxW(q);
+              temperature_integral +=
+                local_temperature_values[q] * fe_values_ht.JxW(q);
             }
         }
     }
 
-  const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
   minimum_temperature =
     Utilities::MPI::min(minimum_temperature, mpi_communicator);
   maximum_temperature =
     Utilities::MPI::max(maximum_temperature, mpi_communicator);
+
+  volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
+  temperature_integral =
+    Utilities::MPI::sum(temperature_integral, mpi_communicator);
+  double temperature_average = temperature_integral / volume_integral;
+
+  // Calculate standard deviation
+  double temperature_variance_integral = 0;
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_ht.reinit(cell);
+          fe_values_ht.get_function_values(this->present_solution,
+                                           local_temperature_values);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              temperature_variance_integral +=
+                (local_temperature_values[q] - temperature_average) *
+                (local_temperature_values[q] - temperature_average) *
+                fe_values_ht.JxW(q);
+            }
+        }
+    }
+
+  temperature_variance_integral =
+    Utilities::MPI::sum(temperature_variance_integral, mpi_communicator);
+  double temperature_variance = temperature_variance_integral / volume_integral;
+  double temperature_std_deviation = std::sqrt(temperature_variance);
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Temperature statistics on all domain : " << std::endl;
+      this->pcout << "\t     Min : " << minimum_temperature << std::endl;
+      this->pcout << "\t     Max : " << maximum_temperature << std::endl;
+      this->pcout << "\t Average : " << temperature_average << std::endl;
+      this->pcout << "\t Std-Dev : " << temperature_std_deviation << std::endl;
+    }
+
+  // Filling table
+  this->statistics_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  this->statistics_table.add_value("min", minimum_temperature);
+  this->statistics_table.add_value("max", maximum_temperature);
+  this->statistics_table.add_value("average", temperature_average);
+  this->statistics_table.add_value("std-dev", temperature_std_deviation);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
-  const Parameters::FluidIndicator monitored_fluid)
+HeatTransfer<dim>::calculate_temperature_statistics_on_one_fluid(
+  const Parameters::FluidIndicator monitored_fluid,
+  const std::string                domain_name)
 {
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
 
   std::vector<double> local_temperature_values(n_q_points);
-  //  std::vector<types::global_dof_index> local_dof_indices(
-  //    dofs_per_cell); //  Local connectivity // unused??
 
   FEValues<dim> fe_values_ht(*this->temperature_mapping,
                              *this->fe,
@@ -1034,7 +1106,6 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
   std::vector<double> phase_values(n_q_points);
 
   double phase_coefficient(0.);
-
   double volume_integral      = 0;
   double temperature_integral = 0;
   double minimum_temperature  = DBL_MAX;
@@ -1050,36 +1121,21 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
                                            local_temperature_values);
 
           // Get VOF active cell iterator
-          if (this->simulation_parameters.multiphysics.VOF)
-            {
-              typename DoFHandler<dim>::active_cell_iterator cell_vof(
-                &(*(this->triangulation)),
-                cell->level(),
-                cell->index(),
-                dof_handler_vof);
+          typename DoFHandler<dim>::active_cell_iterator cell_vof(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_vof);
 
-              // Gather VOF information
-              fe_values_vof.reinit(cell_vof);
-              fe_values_vof.get_function_values(
-                *this->multiphysics->get_solution(PhysicsID::VOF),
-                phase_values);
-            }
+          // Gather VOF information
+          fe_values_vof.reinit(cell_vof);
+          fe_values_vof.get_function_values(
+            *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::both:
-                    {
-                      phase_coefficient = 1.;
-                      maximum_temperature =
-                        std::max(local_temperature_values[q],
-                                 maximum_temperature);
-                      minimum_temperature =
-                        std::min(local_temperature_values[q],
-                                 minimum_temperature);
-                      break;
-                    }
                   case Parameters::FluidIndicator::fluid0:
                     {
                       phase_coefficient = 1. - phase_values[q];
@@ -1132,7 +1188,6 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
 
   // Calculate standard deviation
   double temperature_variance_integral = 0;
-
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -1142,30 +1197,21 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
                                            local_temperature_values);
 
           // Get VOF active cell iterator
-          if (this->simulation_parameters.multiphysics.VOF)
-            {
-              typename DoFHandler<dim>::active_cell_iterator cell_vof(
-                &(*(this->triangulation)),
-                cell->level(),
-                cell->index(),
-                dof_handler_vof);
+          typename DoFHandler<dim>::active_cell_iterator cell_vof(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_vof);
 
-              // Gather VOF information
-              fe_values_vof.reinit(cell_vof);
-              fe_values_vof.get_function_values(
-                *this->multiphysics->get_solution(PhysicsID::VOF),
-                phase_values);
-            }
+          // Gather VOF information
+          fe_values_vof.reinit(cell_vof);
+          fe_values_vof.get_function_values(
+            *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::both:
-                    {
-                      phase_coefficient = 1.;
-                      break;
-                    }
                   case Parameters::FluidIndicator::fluid0:
                     {
                       phase_coefficient = 1 - phase_values[q];
@@ -1197,7 +1243,8 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Temperature statistics : " << std::endl;
+      this->pcout << "Temperature statistics on " << domain_name << " : "
+                  << std::endl;
       this->pcout << "\t     Min : " << minimum_temperature << std::endl;
       this->pcout << "\t     Max : " << maximum_temperature << std::endl;
       this->pcout << "\t Average : " << temperature_average << std::endl;
@@ -1215,15 +1262,15 @@ HeatTransfer<dim>::calculate_heat_transfer_statistics_on_one_fluid(
 
 template <int dim>
 void
-HeatTransfer<dim>::write_heat_transfer_statistics()
+HeatTransfer<dim>::write_heat_transfer_statistics(const std::string domain_name)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
       std::string filename =
-        simulation_parameters.post_processing.heat_transfer_output_name +
-        ".dat";
+        simulation_parameters.post_processing.temperature_output_name + "_" +
+        domain_name + ".dat";
       std::ofstream output(filename.c_str());
 
       this->statistics_table.write_text(output);

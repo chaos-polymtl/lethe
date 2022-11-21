@@ -39,10 +39,15 @@ This subsection controls the post-processing other than the forces and torque on
 	#---------------------------------------------------
   	# Multiphysics post-processing
   	#---------------------------------------------------
+	# Tracer statistics	
 	set calculate tracer statistics   = false
 	set tracer statistics name        = tracer_statistics
-	set calculate temperature range   = false
 
+	# Temperature statistics	
+	set calculate temperature statistics   	= false
+	set temperature statistics name 	= temperature_statistics
+	set postprocessed fluid 		= both
+	
   end
  
 
@@ -63,19 +68,25 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
 	* ``enstrophy name``: output filename for enstrophy calculations.
 
-* ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section `Rheological models <physical_properties.html#rheological-models>`_). This is mainly used to define the Reynolds number `a posteriori`. 
+* ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
 	* ``apparent viscosity name``: output filename for apparent viscosity calculations.
 
 * ``calculate tracer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
+	.. warning::
+
+		Do not forget to ``set tracer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+
 	* ``tracer statistics name``: output filename for tracer statistics calculations.
 
-.. warning::
+* ``calculate temperature statistics``: controls if calculation of temperature statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
+	.. warning::
 
-	Do not forget to ``set tracer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+		Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
-* ``calculate heat transfer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation on the temperature.
-	* ``heat transfer statistics name``: output filename for tracer statistics calculations.
+	* ``temperature statistics name``: output filename for temperature statistics calculations.
+	* ``postprocessed fluid``: fluid domain over which temperature is computed. 
 
-.. warning::
+	Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
+		* For monophasic simulations (``set VOF = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
+		* For multiphasic simulations (``set VOF = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
-	Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.

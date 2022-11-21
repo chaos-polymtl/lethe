@@ -31,14 +31,14 @@
 #ifndef lethe_parameters_h
 #define lethe_parameters_h
 
+#include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
+
 #include <core/dimensionality.h>
 #include <core/ib_particle.h>
 #include <core/multiphysics.h>
 #include <core/utilities.h>
-
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
 
 
 using namespace dealii;
@@ -52,7 +52,19 @@ namespace Parameters
     extra_verbose
   };
 
-
+  /** @brief Class to account for different fluid indicator:
+   *  - fluid0: fluid 0 only,
+   *  - fluid1: fluid 1 only,
+   *  - both: both fluids
+   * This is used for multiphase simulations, in PostProcessing and in
+   * VOF (see parameter_multiphysics.h)
+   */
+  enum class FluidIndicator
+  {
+    fluid0,
+    fluid1,
+    both
+  };
 
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
@@ -594,10 +606,13 @@ namespace Parameters
     std::string tracer_output_name;
 
     // Enable temperature statistics
-    bool calculate_heat_transfer_statistics;
+    bool calculate_temperature_statistics;
 
-    // Prefix for the tracer output
-    std::string heat_transfer_output_name;
+    // Prefix for the temperature output
+    std::string temperature_output_name;
+
+    // Fluid domain, used when post-processing a multiphase simulation
+    Parameters::FluidIndicator postprocessed_fluid;
 
 
     static void

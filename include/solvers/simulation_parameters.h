@@ -26,7 +26,6 @@
 #include <core/parameters.h>
 #include <core/parameters_multiphysics.h>
 #include <core/solid_objects_parameters.h>
-
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/physical_properties_manager.h>
@@ -158,6 +157,15 @@ public:
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
+      }
+
+    if (not(multiphysics.VOF) && post_processing.postprocessed_fluid ==
+                                   Parameters::FluidIndicator::fluid1)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n when VOF = false"
+          "\n use (default value): set postprocessed fluid = both"
+          "\n or: set postprocessed fluid = fluid 0");
       }
 
     if (multiphysics.vof_parameters.sharpening.type ==

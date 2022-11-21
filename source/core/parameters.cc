@@ -1,6 +1,6 @@
-#include <core/parameters.h>
-
 #include <deal.II/base/exceptions.h>
+
+#include <core/parameters.h>
 
 DeclException2(
   PhaseChangeIntervalError,
@@ -1101,15 +1101,21 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output tracer statistics");
 
-      prm.declare_entry("calculate heat transfer statistics",
+      prm.declare_entry("calculate temperature statistics",
                         "false",
                         Patterns::Bool(),
-                        "Enable calculation of heat transfer statistics.");
+                        "Enable calculation of temperature statistics.");
 
-      prm.declare_entry("heat transfer statistics name",
-                        "heat_transfer_statistics",
+      prm.declare_entry("temperature statistics name",
+                        "temperature_statistics",
                         Patterns::FileName(),
-                        "File name output heat transfer statistics");
+                        "File name output temperature statistics");
+
+      prm.declare_entry("postprocessed fluid",
+                        "both",
+                        Patterns::Selection("fluid 0|fluid 1|both"),
+                        "Fluid to which the viscous dissipation is applied "
+                        "in the heat equation <fluid 0|fluid 1|both>");
     }
     prm.leave_subsection();
   }
@@ -1142,9 +1148,22 @@ namespace Parameters
       output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
-      calculate_heat_transfer_statistics =
-        prm.get_bool("calculate heat transfer statistics");
-      heat_transfer_output_name = prm.get("heat transfer statistics name");
+      calculate_temperature_statistics =
+        prm.get_bool("calculate temperature statistics");
+      temperature_output_name = prm.get("temperature statistics name");
+
+      // Viscous dissipative fluid
+      const std::string op_fluid = prm.get("postprocessed fluid");
+      if (op_fluid == "fluid 1")
+        postprocessed_fluid = Parameters::FluidIndicator::fluid1;
+      else if (op_fluid == "fluid 0")
+        postprocessed_fluid = Parameters::FluidIndicator::fluid0;
+      else if (op_fluid == "both")
+        postprocessed_fluid = Parameters::FluidIndicator::both;
+      else
+        throw(
+          std::runtime_error("Invalid postprocessed fluid. "
+                             "Options are 'fluid 0', 'fluid 1' or 'both'."));
     }
     prm.leave_subsection();
   }
