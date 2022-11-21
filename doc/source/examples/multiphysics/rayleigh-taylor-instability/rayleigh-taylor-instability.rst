@@ -315,8 +315,15 @@ In the following figure, we compare the simulation results with that of Garoosi 
 
 In the figure below, we compare the position of the spike and the bubble with the results of He et al (1999) `<[1]_>`_. It can be seen that as :math:`t^*` increases, there is a growing difference between the spike position of the current simulation and that of He et al (1999) `<[1]_>`_. Nevertheless, the bubble position follows the same evolution as the reference.
 
-.. image:: images/He_et_al_comparison.png
-    :alt: Schematic
+.. image:: images/spike_and_bubble_evolution_He_et_al_comparison.png
+    :alt: Comparison of the spike and bubble positions with He et al (1999) values.
+    :align: center
+    :width: 800
+
+With higher levels of refinement, we can see better correspondence between the values. However, there is still a gap between the spike positions for larger values of :math:`t^*`.
+
+.. image:: images/spike_and_bubble_evolution_ref_max_10_ref_min_8.png
+    :alt: He et al comparison for a max refinement of 10 and a min refinement of 8. We see a better correspondence in the positions of the spike and the bubble. However, for large values of t*, there is still gap between the positions.
     :align: center
     :width: 800
 
