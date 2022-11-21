@@ -356,21 +356,33 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Post-processing. Calculates the minimum and maximum temperature in the
-   * simulation domain
-   *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
-   * to the phase of interest. //TODO now is viscous dissipative fluid, change
-   * for specialized parameter (in VOF subsection heat transfer?)
+   * @brief Post-processing.
+   * Calculate temperature statistics on the domain : Max, min, average and
+   * standard-deviation.
    */
 
   void
   calculate_temperature_statistics_on_all_domain();
 
+  /**
+   * @brief Post-processing. Specialized for multiphase flow.
+   * Calculate temperature statistics on a given fluid : Max, min, average and
+   * standard-deviation.
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param domain_name string indicating the monitored_fluid in the output file name
+   */
+
   void
   calculate_temperature_statistics_on_one_fluid(
     const Parameters::FluidIndicator monitored_fluid,
     const std::string                domain_name);
+
+  /**
+   * @brief Post-processing. Write the temperature statistics to an output file.
+   */
 
   void
   write_heat_transfer_statistics(const std::string domain_name);
