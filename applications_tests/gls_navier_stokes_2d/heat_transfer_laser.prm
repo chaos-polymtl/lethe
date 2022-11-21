@@ -43,7 +43,7 @@ end
 #---------------------------------------------------
 subsection post-processing
     set verbosity = verbose
-    set calculate temperature range = true
+    set calculate temperature statistics = true
 end
 
 #---------------------------------------------------
