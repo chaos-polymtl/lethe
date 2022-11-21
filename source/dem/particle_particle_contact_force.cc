@@ -129,7 +129,7 @@ ParticleParticleContactForce<dim, contact_model>::
   auto &ghost_periodic_adjacent_particles =
     container_manager.ghost_periodic_adjacent_particles;
   auto &ghost_local_periodic_adjacent_particles =
-    container_manager.ghost_periodic_adjacent_particles;
+    container_manager.ghost_local_periodic_adjacent_particles;
 
   // Contact forces calculations of local-local and local-ghost particle
   // pairs are performed in separate loops
@@ -834,26 +834,18 @@ ParticleParticleContactForce<dim, contact_model>::
         {
           // Gather information about particle 1 and set it up.
           auto first_contact_info = periodic_adjacent_particles_list.begin();
-          auto particle_one       = first_contact_info->second.particle_two;
+          auto particle_one       = first_contact_info->second.particle_one;
           auto particle_one_properties = particle_one->get_properties();
-
-          types::particle_index particle_one_id =
-            particle_one->get_local_index();
-          std::cout << particle_one_id << std::endl;
-          std::cout << "yes" << std::endl;
-          Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
-          Tensor<1, 3> &particle_one_force  = force[particle_one_id];
 
           // Fix particle one location for 2d and 3d
           Point<3> particle_one_location = [&] {
             if constexpr (dim == 3)
               {
-                return particle_one->get_location() - periodic_offset;
+                return particle_one->get_location();
               }
             if constexpr (dim == 2)
               {
-                return (point_nd_to_3d(particle_one->get_location() -
-                                       periodic_offset));
+                return (point_nd_to_3d(particle_one->get_location()));
               }
           }();
 
@@ -862,18 +854,24 @@ ParticleParticleContactForce<dim, contact_model>::
             {
               // Getting information (location and properties) of particle 2 in
               // contact with particle 1
-              auto particle_two            = contact_info.particle_one;
+              auto particle_two            = contact_info.particle_two;
               auto particle_two_properties = particle_two->get_properties();
+
+              types::particle_index particle_two_id =
+                particle_two->get_local_index();
+              Tensor<1, 3> &particle_two_torque = torque[particle_two_id];
+              Tensor<1, 3> &particle_two_force  = force[particle_two_id];
 
               // Get particle 2 location in dimension independent way
               Point<3> particle_two_location = [&] {
                 if constexpr (dim == 3)
                   {
-                    return particle_two->get_location();
+                    return particle_two->get_location() - periodic_offset;
                   }
                 if constexpr (dim == 2)
                   {
-                    return (point_nd_to_3d(particle_two->get_location()));
+                    return (point_nd_to_3d(particle_two->get_location() -
+                                           periodic_offset));
                   }
               }();
 
@@ -894,10 +892,10 @@ ParticleParticleContactForce<dim, contact_model>::
                     contact_info,
                     this->normal_relative_velocity_value,
                     this->normal_unit_vector,
-                    particle_one_properties,
                     particle_two_properties,
-                    particle_one_location,
+                    particle_one_properties,
                     particle_two_location,
+                    particle_one_location,
                     dt);
 
                   if constexpr (contact_model ==
@@ -909,8 +907,8 @@ ParticleParticleContactForce<dim, contact_model>::
                         this->normal_relative_velocity_value,
                         this->normal_unit_vector,
                         normal_overlap,
-                        particle_one_properties,
                         particle_two_properties,
+                        particle_one_properties,
                         this->normal_force,
                         this->tangential_force,
                         this->particle_one_tangential_torque,
@@ -927,12 +925,12 @@ ParticleParticleContactForce<dim, contact_model>::
                         this->normal_relative_velocity_value,
                         this->normal_unit_vector,
                         normal_overlap,
-                        particle_one_properties,
                         particle_two_properties,
+                        particle_one_properties,
                         this->normal_force,
                         this->tangential_force,
-                        this->particle_one_tangential_torque,
                         this->particle_two_tangential_torque,
+                        this->particle_one_tangential_torque,
                         this->rolling_resistance_torque);
                     }
 
@@ -946,12 +944,12 @@ ParticleParticleContactForce<dim, contact_model>::
                         this->normal_relative_velocity_value,
                         this->normal_unit_vector,
                         normal_overlap,
-                        particle_one_properties,
                         particle_two_properties,
+                        particle_one_properties,
                         this->normal_force,
                         this->tangential_force,
-                        this->particle_one_tangential_torque,
                         this->particle_two_tangential_torque,
+                        this->particle_one_tangential_torque,
                         this->rolling_resistance_torque);
                     }
 
@@ -965,27 +963,25 @@ ParticleParticleContactForce<dim, contact_model>::
                         this->normal_relative_velocity_value,
                         this->normal_unit_vector,
                         normal_overlap,
-                        particle_one_properties,
                         particle_two_properties,
+                        particle_one_properties,
                         this->normal_force,
                         this->tangential_force,
-                        this->particle_one_tangential_torque,
                         this->particle_two_tangential_torque,
+                        this->particle_one_tangential_torque,
                         this->rolling_resistance_torque);
                     }
-
 
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_on_ghost_particles(
                     this->normal_force,
                     this->tangential_force,
-                    this->particle_one_tangential_torque,
+                    this->particle_two_tangential_torque,
                     this->rolling_resistance_torque,
-                    particle_one_torque,
-                    particle_one_force);
+                    particle_two_torque,
+                    particle_two_force);
                 }
-
               else
                 {
                   // if the adjacent pair is not in contact anymore, only the

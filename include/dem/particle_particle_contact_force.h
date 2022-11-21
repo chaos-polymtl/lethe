@@ -965,9 +965,8 @@ protected:
         normal_unit_vector);
   }
 
+private:
   // Members of the class
-
-
   std::unordered_map<int, std::unordered_map<int, double>>
     effective_youngs_modulus;
   std::unordered_map<int, std::unordered_map<int, double>>

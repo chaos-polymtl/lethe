@@ -19,7 +19,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   const double         neighborhood_threshold,
   const Tensor<1, dim> periodic_offset)
 {
-  // First iterating over local adjacent_particles
+  // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
        adjacent_particles | boost::adaptors::map_values)
     {

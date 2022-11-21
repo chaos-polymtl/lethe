@@ -94,6 +94,17 @@ DEMContainerManager<dim>::update_contacts(const bool has_periodic_boundaries)
         ContactType::ghost_periodic_particle_particle>(
         ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates);
+
+      // Update periodic particle-particle contacts in
+      // ghost_local_periodic_adjacent_particles of fine search step with
+      // ghost_local_contact_pair_periodic_candidates
+      update_fine_search_candidates<
+        dim,
+        typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
+        typename DEM::dem_data_structures<dim>::particle_particle_candidates,
+        ContactType::ghost_local_periodic_particle_particle>(
+        ghost_local_periodic_adjacent_particles,
+        ghost_local_contact_pair_periodic_candidates);
     }
 
   // Update particle-wall contacts in particle_wall_pairs_in_contact of fine
@@ -335,7 +346,7 @@ DEMContainerManager<dim>::execute_particle_particle_fine_search(
         ghost_local_periodic_adjacent_particles,
         ghost_local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        -periodic_offset);
+        periodic_offset);
     }
 }
 
