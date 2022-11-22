@@ -113,17 +113,21 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         {
           bool         cell_is_cut;
           bool         cell_is_inside;
-          unsigned int p_id_cut    = 0;
-          unsigned int p_id_inside = 0;
-          // is the particle index that cut the cell if it's cut.  If the cell
+          unsigned int particle_id_which_cuts_this_cell           = 0;
+          unsigned int particle_id_in_which_this_cell_is_embedded = 0;
+          unsigned int number_of_particles_cutting_this_cell      = 0;
+          // is the particle index that cuts the cell if it's cut. If the cell
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
-
+          // number_of_particles_cutting_this_cell count the number of particles
+          // that cut a cell if multiple particles cut this cell. This is used
+          // to treat cells that are cut by multiple particles differently.
           cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
               unsigned int nb_dof_inside = 0;
+
 
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
@@ -140,36 +144,55 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
               // If some of the DOFs are inside the boundary, some are outside,
               // the cell is cut.
-
               if (nb_dof_inside != 0)
                 {
+                  // If all the DOFs are inside the boundary this cell is inside
+                  // the particle. Otherwise the particle is cut.
                   if (nb_dof_inside == dofs_per_cell_local_v_x)
                     {
-                      cell_is_cut    = false;
-                      p_id_cut       = 0;
-                      cell_is_inside = true;
-                      p_id_inside    = p;
-                      break;
+                      // We only register the particle the lowest id as the
+                      // particle in which this cell is embedded if the cell is
+                      // embedded in multiple particles.
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = false;
+                          particle_id_which_cuts_this_cell           = 0;
+                          cell_is_inside                             = true;
+                          particle_id_in_which_this_cell_is_embedded = p;
+                        }
                     }
                   else
                     {
-                      cell_is_cut    = true;
-                      p_id_cut       = p;
-                      cell_is_inside = false;
-                      p_id_inside    = 0;
-                      break;
+                      // We only register the particle with the lowest id as the
+                      // particle by this cell is cut if the cell is cut in
+                      // multiple particles.
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = true;
+                          particle_id_which_cuts_this_cell           = p;
+                          cell_is_inside                             = false;
+                          particle_id_in_which_this_cell_is_embedded = 0;
+                        }
+                      number_of_particles_cutting_this_cell += 1;
                     }
                 }
               else
                 {
-                  cell_is_cut    = false;
-                  p_id_cut       = 0;
-                  cell_is_inside = false;
-                  p_id_inside    = 0;
+                  if (number_of_particles_cutting_this_cell == 0)
+                    {
+                      cell_is_cut                                = false;
+                      particle_id_which_cuts_this_cell           = 0;
+                      cell_is_inside                             = false;
+                      particle_id_in_which_this_cell_is_embedded = 0;
+                    }
                 }
             }
-          cut_cells_map[cell]    = {cell_is_cut, p_id_cut};
-          cells_inside_map[cell] = {cell_is_inside, p_id_inside};
+
+          cut_cells_map[cell]    = {cell_is_cut,
+                                 particle_id_which_cuts_this_cell,
+                                 number_of_particles_cutting_this_cell};
+          cells_inside_map[cell] = {cell_is_inside,
+                                    particle_id_in_which_this_cell_is_embedded};
         }
     }
 }
@@ -193,7 +216,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          cut_cells_map[cell]    = {false, 0};
+          cut_cells_map[cell]    = {false, 0, 0};
           cells_inside_map[cell] = {false, 0};
         }
     }
@@ -288,7 +311,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                       // If it is an active cell, add it to cells_cut_map
                       if (cell->is_active())
                         {
-                          cut_cells_map[cell] = {true, p};
+                          cut_cells_map[cell] = {true, p, 0};
                         }
                       else
                         {
@@ -656,8 +679,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         {
           // Particle id that cut the cell.
           unsigned int p;
+          unsigned int p_count;
           bool         cell_is_cut;
-          std::tie(cell_is_cut, p) = cut_cells_map[cell];
+          std::tie(cell_is_cut, p, p_count) = cut_cells_map[cell];
           // If the cell is cut
           if (cell_is_cut)
             {
@@ -1308,8 +1332,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
         {
           bool cell_is_cut;
           // std::ignore is used because we don't care about what particle cut
-          // the cell.
-          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+          // the cell or the number of particles that cut the cell.
+          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
@@ -1359,8 +1383,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
           bool cell_is_cut;
           // std::ignore is used because we don't care about what particle cut
-          // the cell.
-          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+          // the cell or the number of particles that cut the cell.
+          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -1870,7 +1894,8 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
   /**
    * A list of field names for all data components stored in patches.
    */
-
+  vector_datasets.clear();
+  dataset_names.clear();
   // Defining property field position
   int field_position = 0;
   // Iterating over properties
@@ -1995,6 +2020,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
                                 group_files,
                                 this->mpi_communicator);
     }
+
 
   table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
@@ -2418,9 +2444,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // cut the cell. If the particle is cut
           bool cell_is_cut;
           // The id of the particle that cut the cell. Returns 0 if the cell is
-          // not cut.
+          // not cut.We also check the number of particles that cut the cell. If
+          // multiple particles cut the cell, the dummy dofs of pressure will be
+          // treated differently to avoid self-reference.
           unsigned int ib_particle_id;
-          std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+          unsigned int count_particles;
+          std::tie(cell_is_cut, ib_particle_id, count_particles) =
+            cut_cells_map[cell];
 
           if (cell_is_cut)
             {
@@ -2435,10 +2465,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   bool         dof_is_inside =
                     particles[ib_particle_id].get_levelset(
                       support_points[local_dof_indices[i]]) < 0;
+
+                  // If multiple particles cut the cell, we treat the dof of
+                  // pressure as a dummy dof. We don't use them to set the
+                  // boundary condition for the Poisson problem inside the
+                  // particle.
                   bool use_ib_for_pressure =
                     (dof_is_inside) && (component_i == dim) &&
                     (this->simulation_parameters.particlesParameters
-                       ->assemble_navier_stokes_inside == false);
+                       ->assemble_navier_stokes_inside == false) &&
+                    count_particles < 2;
 
                   // Check if the DOfs is owned and if it's not a hanging node.
                   if (((component_i < dim) || use_ib_for_pressure) &&
@@ -2803,7 +2839,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // it's not cut this dof must not
                                       // be overwritten
                                       bool cell_is_cut;
-                                      std::tie(cell_is_cut, std::ignore) =
+                                      std::tie(cell_is_cut,
+                                               std::ignore,
+                                               std::ignore) =
                                         cut_cells_map[cell_3];
 
 
@@ -2970,8 +3008,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-  copy_data.cell_is_cut                 = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  copy_data.cell_is_cut                              = cell_is_cut;
 
   if (cell_is_cut)
     return;
@@ -3060,8 +3098,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-  copy_data.cell_is_cut                 = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  copy_data.cell_is_cut                              = cell_is_cut;
 
   if (cell_is_cut)
     return;
