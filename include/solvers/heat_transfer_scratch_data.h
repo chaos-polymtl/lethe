@@ -368,8 +368,8 @@ public:
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
                                              this->phase_values);
-    this->fe_values_vof->get_function_gradients(current_solution,
-                                                this->phase_gradient_values);
+    // this->fe_values_vof->get_function_gradients(current_solution,
+    //                                             this->phase_gradient_values);
   }
 
 
