@@ -542,11 +542,14 @@ private:
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
   /*
-   * This map uses the cell as the key, and store the following information:
-   * if that cell is cut (bool) and what particle cut this cell (unsigned int).
+   * This map uses the cell as the key, and stores the following information:
+   * if that cell is cut (bool), what particle cut this cell (unsigned int), and
+   * the number of particles that cut this cell(unsigned int). The id of the
+   * particle that cut the cell is the id of the particle with the lowest
+   * particle index.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int>>
+           std::tuple<bool, unsigned int, unsigned int>>
     cut_cells_map;
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
