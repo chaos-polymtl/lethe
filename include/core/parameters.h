@@ -538,6 +538,9 @@ namespace Parameters
     double start_time;
     double end_time;
 
+    double Stefan_Boltzmann_constant;
+    double emissivity;
+
     void
     declare_parameters(ParameterHandler &prm);
     void

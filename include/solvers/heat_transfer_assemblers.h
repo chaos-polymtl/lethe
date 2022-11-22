@@ -315,5 +315,92 @@ protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
 };
 
+/**
+ * @brief Class that assembles the laser heat source for the heat
+ * transfer solver when VOF is active. Exponentially decaying model is
+ * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
+ * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
+ * laser melting AlSi10Mg using finite element analysis. Materials &
+ * Design, 142, pp.319-328."
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerLaserVOF : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerLaserVOF(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the radiation sink for the heat
+ * transfer solver when VOF is active.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerRadiationVOF : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerRadiationVOF(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
 
 #endif
