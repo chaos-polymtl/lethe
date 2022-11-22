@@ -215,12 +215,6 @@ public:
   setup_dofs() override;
 
   /**
-   * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
-   */
-  std::vector<double>
-  calculate_heat_flux();
-
-  /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
    * only support imposing nodal values, but some physics additionnaly support
    * the use of L2 projection or steady-state solutions.
@@ -391,7 +385,7 @@ private:
    */
 
   void
-  write_heat_transfer_statistics(const std::string domain_name);
+  write_temperature_statistics(const std::string domain_name);
 
   /**
    * Post-processing
@@ -401,7 +395,14 @@ private:
    */
 
   void
-  calculate_heat_transfer(const Parameters::FluidIndicator monitored_fluid);
+  calculate_heat_flux_on_bc();
+
+  /**
+   * @brief Post-processing. Write the heat transfer values to an output file.
+   */
+
+  void
+  write_heat_flux();
 
 
   MultiphysicsInterface<dim> *     multiphysics;
@@ -460,8 +461,11 @@ private:
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<HeatTransferAssemblerBase<dim>>> assemblers;
 
-  // Heat transfer statistics table (post-process)
+  // Temperature statistics table (post-process)
   TableHandler statistics_table;
+
+  // Heat flux table (post-process)
+  TableHandler heat_flux_table;
 };
 
 

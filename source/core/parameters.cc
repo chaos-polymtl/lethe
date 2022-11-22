@@ -1111,6 +1111,16 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output temperature statistics");
 
+      prm.declare_entry("calculate heat flux",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of heat flux.");
+
+      prm.declare_entry("heat flux output name",
+                        "heat_flux",
+                        Patterns::FileName(),
+                        "File name output temperature statistics");
+
       prm.declare_entry("postprocessed fluid",
                         "both",
                         Patterns::Selection("fluid 0|fluid 1|both"),
@@ -1151,6 +1161,8 @@ namespace Parameters
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
       temperature_output_name = prm.get("temperature statistics name");
+      calculate_heat_flux     = prm.get_bool("calculate heat flux");
+      heat_flux_output_name   = prm.get("heat flux output name");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");

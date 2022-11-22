@@ -87,6 +87,9 @@ This subsection controls the post-processing other than the forces and torque on
 	* ``postprocessed fluid``: fluid domain over which temperature is computed. 
 
 	Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
+	.. note::
+		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all domain``.
+
 		* For monophasic simulations (``set VOF = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
 		* For multiphasic simulations (``set VOF = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 

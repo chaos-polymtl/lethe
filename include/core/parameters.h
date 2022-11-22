@@ -611,6 +611,12 @@ namespace Parameters
     // Prefix for the temperature output
     std::string temperature_output_name;
 
+    // Enable heat flux calculation
+    bool calculate_heat_flux;
+
+    // Prefix for the heat flux output
+    std::string heat_flux_output_name;
+
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
