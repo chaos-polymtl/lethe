@@ -159,6 +159,7 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           typename DEM::dem_data_structures<dim>::cell_container
             periodic_neighbor_list;
 
+          // Get the periodic neighbor of the cell
           get_periodic_neighbor_list(cell,
                                      coinciding_vertex_groups,
                                      vertex_to_coinciding_vertex_group,
@@ -221,8 +222,8 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
         }
       else if (cell->is_ghost())
         {
-          // Since periodic cells are mapped on one side (cells on pb 0 with
-          // cells on pb 1) only, we need a 3rd container for ghost-local
+          // Since periodic cells are mapped on one side only (cells on pb 0
+          // with cells on pb 1), we need a 3rd container for ghost-local
           // contacts for force calculation. Here we store local neighbors of
           // ghost cells.
 
@@ -234,6 +235,7 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           typename DEM::dem_data_structures<dim>::cell_container
             periodic_neighbor_list;
 
+          // Get the periodic neighbor of the cell
           get_periodic_neighbor_list(cell,
                                      coinciding_vertex_groups,
                                      vertex_to_coinciding_vertex_group,

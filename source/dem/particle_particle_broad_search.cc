@@ -151,6 +151,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
     container_manager.cells_ghost_periodic_neighbor_list;
   auto &cells_ghost_local_periodic_neighbor_list =
     container_manager.cells_ghost_local_periodic_neighbor_list;
+
   local_contact_pair_periodic_candidates.clear();
   ghost_contact_pair_periodic_candidates.clear();
   ghost_local_contact_pair_periodic_candidates.clear();
@@ -284,14 +285,14 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                  cell_periodic_neighbor_list_iterator->end();
                ++cell_periodic_neighbor_iterator)
             {
-              // Defining iterator on ghost particles in the neighbor cells
+              // Defining iterator on local particles in the neighbor cells
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_periodic_neighbor_cell =
                   particle_handler.particles_in_cell(
                     *cell_periodic_neighbor_iterator);
 
-              // Capturing particle pairs, the first particle (local) in
-              // the main cell and the second particle (ghost) in the
+              // Capturing particle pairs, the first particle (ghost) in
+              // the main cell and the second particles (local) in the
               // neighbor cells
               for (auto particle_in_main_cell = particles_in_main_cell.begin();
                    particle_in_main_cell != particles_in_main_cell.end();

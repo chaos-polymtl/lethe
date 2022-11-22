@@ -57,9 +57,8 @@ public:
    * @param particle_handler The particle handler of particles in the broad
    * search
    * @param container_manager The container manager object that contains
-   * containers to modify (local_contact_pair_candidates,
-   * ghost_contact_pair_candidates) with other containers with neighbors info
-   * (cells_local_neighbor_list, cells_ghost_neighbor_list)
+   * containers to modify of contact pair candidates with other
+   * containers with neighbors lists
    */
 
   void
@@ -76,10 +75,8 @@ public:
    * @param particle_handler The particle handler of particles in the broad
    * search
    * @param container_manager The container manager object that contains
-   * containers to modify (local_contact_pair_periodic_candidates,
-   * ghost_contact_pair_periodic_candidates) with other containers with
-   * neighbors info (cells_local_periodic_neighbor_list,
-   * cells_ghost_periodic_neighbor_list)
+   * containers to modify of contact pair periodic candidates with other
+   * containers with periodic neighbors lists
    */
 
   void

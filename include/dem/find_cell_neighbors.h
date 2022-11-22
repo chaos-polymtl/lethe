@@ -77,12 +77,15 @@ public:
    * @param periodic_boundaries_cells_information A container of information
    * related to the pairs of cell at periodic boundaries, used to get the cells
    * on periodic boundary 0
-   * @param cells_local_periodic_neighbor_list A vector (with size of the local cell
-   * number) of vectors (local adjacent cells of each local cell). First element
-   * of each set shows the main cell itself
-   * @param cells_ghost_periodic_neighbor_list A vector (with size of the local cell
-   * number) of vectors (ghost adjacent cells of each local cell). First element
-   * of each set shows the main cell itself
+   * @param cells_local_periodic_neighbor_list A vector (with size of the local
+   * cell number) of vectors (local adjacent cells of each local cell). First
+   * element of each set shows the main cell itself
+   * @param cells_ghost_periodic_neighbor_list A vector (with size of the local
+   * cell number) of vectors (ghost adjacent cells of each local cell). First
+   * element of each set shows the main cell itself
+   * @param cells_ghost_local_periodic_neighbor_list A vector (with size of the
+   * ghost cell number) of vectors (local adjacent cells of each ghost cell).
+   * First element of each set shows the main ghost cell itself
    */
 
   void
@@ -105,8 +108,8 @@ public:
    * contact candidates
    *
    * @param triangulation Triangulation to access the information of the cells
-   * @param cells_total_neighbor_list An unordered_map (with size of the local cell
-   * number) of vectors (all adjacent cells of each local cell)
+   * @param cells_total_neighbor_list An unordered_map (with size of the local
+   * cell number) of vectors (all adjacent cells of each local cell)
    */
 
   void
@@ -116,6 +119,19 @@ public:
       &cells_total_neighbor_list);
 
 private:
+  /**
+   * Generate a periodic neighbor cells list of the cell.
+   *
+   * @param cell The cell that needs the periodic neighbor list
+   * @param coinciding_vertex_groups A map of coinciding vertices labeled by an
+   * arbitrary element from them
+   * @param vertex_to_coinciding_vertex_group Map of a vertex to the label of a
+   * group of coinciding vertices
+   * @param v_to_c A vector of set with adjacent cells of all the vertices
+   * @param periodic_neighbor_list A vector which is the list of periodic cell
+   * neighbors
+   */
+
   void
   get_periodic_neighbor_list(
     const typename Triangulation<dim>::active_cell_iterator &cell,

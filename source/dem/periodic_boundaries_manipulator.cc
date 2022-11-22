@@ -36,16 +36,11 @@ PeriodicBoundariesManipulator<dim>::get_periodic_boundaries_info(
   Point<dim>        quad_point;
 
   // Store information of the cell
-  boundaries_information.cell           = cell;
-  boundaries_information.boundary_id    = cell->face(face_id)->boundary_id();
-  boundaries_information.global_face_id = cell->face_index(face_id);
+  boundaries_information.cell        = cell;
+  boundaries_information.boundary_id = cell->face(face_id)->boundary_id();
 
   // Store information of the periodic cell
   boundaries_information.periodic_cell = cell->periodic_neighbor(face_id);
-  boundaries_information.periodic_boundary_id =
-    boundaries_information.periodic_cell->face(face_id)->boundary_id();
-  boundaries_information.global_periodic_face_id =
-    boundaries_information.periodic_cell->face_index(face_id);
 
   // Find the normal vector of the boundary face and point
   fe_face_values.reinit(cell, face_id);
@@ -60,11 +55,6 @@ PeriodicBoundariesManipulator<dim>::get_periodic_boundaries_info(
   quad_point    = fe_face_values.quadrature_point(0);
   boundaries_information.periodic_normal_vector = normal_vector;
   boundaries_information.point_on_periodic_face = quad_point;
-
-  // Calculate the periodic_offset
-  boundaries_information.periodic_offset =
-    boundaries_information.point_on_periodic_face -
-    boundaries_information.point_on_face;
 }
 
 template <int dim>
@@ -115,11 +105,16 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
         }
     }
 
+  // Store constant periodic offset on each processor (if container not empty)
+  // Information of faces on periodic boundaries is from the first pair of
+  // periodic cells since all pairs of faces have the same offset.
   if (!periodic_boundaries_cells_information.empty())
     {
+      periodic_boundaries_cells_info_struct<dim> first_cells_content =
+        periodic_boundaries_cells_information.begin()->second;
       constant_periodic_offset[direction] =
-        periodic_boundaries_cells_information.begin()
-          ->second.periodic_offset[direction];
+        first_cells_content.point_on_periodic_face[direction] -
+        first_cells_content.point_on_face[direction];
     }
 }
 
@@ -146,13 +141,13 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
         {
           point_on_face          = boundaries_cells_content.point_on_face;
           normal_vector          = boundaries_cells_content.normal_vector;
-          distance_between_faces = boundaries_cells_content.periodic_offset;
+          distance_between_faces = constant_periodic_offset;
         }
       else
         {
           point_on_face = boundaries_cells_content.point_on_periodic_face;
           normal_vector = boundaries_cells_content.periodic_normal_vector;
-          distance_between_faces = -boundaries_cells_content.periodic_offset;
+          distance_between_faces = -constant_periodic_offset;
         }
 
       // Calculate distance between particle position and the face of
@@ -187,14 +182,15 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
            periodic_boundaries_cells_information.end();
            ++boundaries_cells_information_iterator)
         {
-          // Gets the cell and periodic cell from map
+          // Get the cell and periodic cell from map
           auto boundaries_cells_content =
             boundaries_cells_information_iterator->second;
           auto cell          = boundaries_cells_content.cell;
           auto periodic_cell = boundaries_cells_content.periodic_cell;
 
-          // Checks and executes displacement of particles crossing a periodic
+          // Check and execute displacement of particles crossing a periodic
           // wall.
+          // Case when particle goes from periodic boundary 0 to 1
           if (cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -211,6 +207,7 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                 }
             }
 
+          // Case when particle goes from periodic boundary 1 to 0
           if (periodic_cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range

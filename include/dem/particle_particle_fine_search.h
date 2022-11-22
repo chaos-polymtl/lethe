@@ -75,7 +75,8 @@ public:
    * contact pair candidates
    * @param neighborhood_threshold A value which defines the neighbor particles
    * @param periodic_offset A tensor of the periodic offset to change the
-   * particle location of the particles on the periodic boundary 1 side
+   * particle location of the particles on the periodic boundary 1 side,
+   * the tensor as 0.0 values by default
    */
 
   void
