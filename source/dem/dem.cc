@@ -660,7 +660,6 @@ DEMSolver<dim>::post_process_results()
     grid_pvdhandler,
     particle_handler,
     parameters,
-    background_dh,
     simulation_control->get_current_time(),
     simulation_control->get_step_number(),
     mpi_communicator);

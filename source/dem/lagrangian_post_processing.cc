@@ -178,7 +178,6 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   PVDHandler &                                     grid_pvdhandler,
   const Particles::ParticleHandler<dim> &          particle_handler,
   const DEMSolverParameters<dim> &                 dem_parameters,
-  DoFHandler<dim> &                                background_dh,
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm &                                 mpi_communicator)
