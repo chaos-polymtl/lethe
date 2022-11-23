@@ -23,4 +23,4 @@ The post-processing subsection of the ``.prm`` file is according to the followin
 .. note::
  By default, the post-processing is set to ``false``.
 
-* The ``Lagrangian post processing`` enables the built-in post-processing. The current outputs include the grid of the domain, the granular temperature, and the average velocity of particles (in x, y, z and its norm).
+* The ``Lagrangian post-processing`` enables the built-in post-processing. The current outputs include the grid of the domain, the granular temperature, and the average velocity of particles (in x, y, z and its norm).
