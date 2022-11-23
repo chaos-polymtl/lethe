@@ -992,7 +992,6 @@ CFDDEMSolver<dim>::dem_post_process_results()
     grid_pvdhandler,
     this->particle_handler,
     dem_parameters,
-    background_dh,
     this->simulation_control->get_current_time(),
     this->simulation_control->get_step_number(),
     this->mpi_communicator);

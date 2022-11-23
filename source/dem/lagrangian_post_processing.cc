@@ -178,7 +178,6 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   PVDHandler &                                     grid_pvdhandler,
   const Particles::ParticleHandler<dim> &          particle_handler,
   const DEMSolverParameters<dim> &                 dem_parameters,
-  DoFHandler<dim> &                                background_dh,
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm &                                 mpi_communicator)
@@ -190,6 +189,8 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
     dem_parameters.simulation_control.group_files;
 
   DataOut<dim> data_out;
+  // Write grid
+  // data_out.attach_dof_handler(background_dh);
   data_out.attach_triangulation(triangulation);
 
   std::vector<std::string> average_solution_names;
@@ -233,8 +234,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);
 
-  // Write grid
-  data_out.attach_dof_handler(background_dh);
+
 
   // Attach the solution data to data_out object
   Vector<float> subdomain(triangulation.n_active_cells());
