@@ -1658,17 +1658,31 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             (particles[p].impulsion) / particles[p].mass / dt;
           // Approximate a diagonal Jacobian with a secant methods.
 
-          double d_residual_dv =
+          double inverse_of_relaxation_coefficient_velocity =
             -bdf_coefs[0] -
             0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
+
+          // Evaluate the relaxation parameter using a generalization of the
+          // secant method.
           if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
             {
-              d_residual_dv =
-                -bdf_coefs[0] -
-                (particles[p].impulsion - particles[p].impulsion_iter).norm() /
-                  (particles[p].velocity - particles[p].velocity_iter).norm() /
-                  particles[p].mass / dt +
-                DBL_MIN;
+              auto vector_of_velocity_variation =
+                (particles[p].velocity - particles[p].velocity_iter);
+              auto vector_of_residual_variation =
+                (bdf_coefs[0] *
+                   (-particles[p].velocity + particles[p].velocity_iter) +
+                 (particles[p].impulsion - particles[p].impulsion_iter) /
+                   particles[p].mass / dt);
+              double dot_product_of_the_variation_vectors =
+                scalar_product(vector_of_velocity_variation,
+                               vector_of_residual_variation);
+              inverse_of_relaxation_coefficient_velocity =
+                1 / (vector_of_velocity_variation.norm() /
+                       vector_of_residual_variation.norm() *
+                       dot_product_of_the_variation_vectors /
+                       (vector_of_velocity_variation.norm() *
+                        vector_of_residual_variation.norm()) +
+                     DBL_MIN);
             }
           // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
@@ -1678,16 +1692,18 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           IBParticle<dim> save_particle_state         = particles[p];
           bool            save_particle_state_is_used = false;
           // Define the correction vector.
-          Tensor<1, 3> dv = residual_velocity * 1 / d_residual_dv;
+          Tensor<1, 3> velocity_correction_vector =
+            residual_velocity * 1 / inverse_of_relaxation_coefficient_velocity;
 
           // Update the particle state and keep in memory the last iteration
           // information.
 
           particles[p].velocity_iter = particles[p].velocity;
           particles[p].velocity =
-            particles[p].velocity_iter - dv * alpha * local_alpha;
-          particles[p].impulsion_iter                = particles[p].impulsion;
-          particles[p].previous_d_velocity           = dv;
+            particles[p].velocity_iter -
+            velocity_correction_vector * alpha * local_alpha;
+          particles[p].impulsion_iter      = particles[p].impulsion;
+          particles[p].previous_d_velocity = velocity_correction_vector;
           particles[p].previous_local_alpha_velocity = local_alpha;
 
 
@@ -1758,32 +1774,45 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           residual_omega += inv_inertia * (particles[p].omega_impulsion) / dt;
 
-          double d_residual_domega =
+          double inverse_of_relaxation_coefficient_omega =
             -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
                               particles[p].radius * particles[p].radius *
                               inv_inertia.norm() / dt;
-
+          // Evaluate the relaxation parameter using a generalization of the
+          // secant method.
           if ((particles[p].omega - particles[p].omega_iter).norm() != 0)
             {
-              d_residual_domega =
-                -bdf_coefs[0] -
-                (particles[p].omega_impulsion -
-                 particles[p].omega_impulsion_iter)
-                    .norm() /
-                  (particles[p].omega - particles[p].omega_iter).norm() *
-                  inv_inertia.norm() / dt;
-              ;
+              auto vector_of_omega_variation =
+                (particles[p].omega - particles[p].omega_iter);
+              auto vector_of_residual_variation =
+                (bdf_coefs[0] *
+                   (-particles[p].omega + particles[p].omega_iter) +
+                 (particles[p].omega_impulsion -
+                  particles[p].omega_impulsion_iter) *
+                   inv_inertia.norm() / dt);
+              double dot_product_of_the_variation_vectors =
+                scalar_product(vector_of_omega_variation,
+                               vector_of_residual_variation);
+              inverse_of_relaxation_coefficient_omega =
+                1 / (vector_of_omega_variation.norm() /
+                       vector_of_residual_variation.norm() *
+                       dot_product_of_the_variation_vectors /
+                       (vector_of_omega_variation.norm() *
+                        vector_of_residual_variation.norm()) +
+                     DBL_MIN);
             }
           // Define the correction vector.
-          Tensor<1, 3> d_omega = residual_omega * 1 / d_residual_domega;
+          Tensor<1, 3> omega_correction_vector =
+            residual_omega * 1 / inverse_of_relaxation_coefficient_omega;
 
           double local_alpha_omega = 1;
 
           particles[p].omega_iter = particles[p].omega;
           particles[p].omega =
-            particles[p].omega_iter - d_omega * alpha * local_alpha_omega;
+            particles[p].omega_iter -
+            omega_correction_vector * alpha * local_alpha_omega;
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
-          particles[p].previous_d_omega     = d_omega;
+          particles[p].previous_d_omega     = omega_correction_vector;
           particles[p].previous_local_alpha_omega = local_alpha_omega;
 
 
@@ -3495,7 +3524,16 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
 
-  // Finish the time step of the particle.
+  // Finish the time step of the particles.
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].velocity_iter        = particles[p_i].velocity;
+      particles[p_i].impulsion_iter       = particles[p_i].impulsion;
+      particles[p_i].omega_iter           = particles[p_i].omega;
+      particles[p_i].omega_impulsion_iter = particles[p_i].omega_impulsion;
+      particles[p_i].residual_velocity    = DBL_MAX;
+      particles[p_i].residual_omega       = DBL_MAX;
+    }
 }
 
 template <int dim>
