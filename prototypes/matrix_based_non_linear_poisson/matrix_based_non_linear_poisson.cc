@@ -44,6 +44,8 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <deal.II/meshworker/mesh_loop.h>
+
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
 #include <deal.II/multigrid/mg_matrix.h>
@@ -240,6 +242,47 @@ public:
   }
 };
 
+template <int dim>
+struct ScratchData
+{
+  ScratchData(const Mapping<dim> &      mapping,
+              const FiniteElement<dim> &fe,
+              const unsigned int        quadrature_degree,
+              const UpdateFlags         update_flags)
+    : fe_values(mapping, fe, QGauss<dim>(quadrature_degree), update_flags)
+  {}
+
+  ScratchData(const ScratchData<dim> &scratch_data)
+    : fe_values(scratch_data.fe_values.get_mapping(),
+                scratch_data.fe_values.get_fe(),
+                scratch_data.fe_values.get_quadrature(),
+                scratch_data.fe_values.get_update_flags())
+  {}
+
+  FEValues<dim>       fe_values;
+  std::vector<double> old_solution_values;
+};
+
+struct CopyData
+{
+  unsigned int                         level;
+  FullMatrix<double>                   cell_matrix;
+  Vector<double>                       cell_rhs;
+  std::vector<types::global_dof_index> local_dof_indices;
+
+  template <class Iterator>
+  void
+  reinit(const Iterator &cell, unsigned int dofs_per_cell)
+  {
+    cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
+    cell_rhs.reinit(dofs_per_cell);
+
+    local_dof_indices.resize(dofs_per_cell);
+    cell->get_active_or_mg_dof_indices(local_dof_indices);
+    level = cell->level();
+  }
+};
+
 template <int dim, int fe_degree>
 class MatrixBasedPoissonProblem
 {
@@ -267,6 +310,15 @@ private:
 
   void
   assemble_gmg();
+
+  template <class Iterator>
+  void
+  cell_worker(const Iterator &  cell,
+              ScratchData<dim> &scratch_data,
+              CopyData &        copy_data);
+
+  void
+  assemble_gmg_meshworker();
 
   double
   compute_residual(const double alpha);
@@ -712,6 +764,111 @@ MatrixBasedPoissonProblem<dim, fe_degree>::assemble_gmg()
 }
 
 template <int dim, int fe_degree>
+template <class Iterator>
+void
+MatrixBasedPoissonProblem<dim, fe_degree>::cell_worker(
+  const Iterator &  cell,
+  ScratchData<dim> &scratch_data,
+  CopyData &        copy_data)
+{
+  FEValues<dim> &fe_values = scratch_data.fe_values;
+  fe_values.reinit(cell);
+
+  const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
+  const unsigned int n_q_points    = fe_values.n_quadrature_points;
+
+  copy_data.reinit(cell, dofs_per_cell);
+
+  std::vector<double> newton_step_values(n_q_points);
+  VectorType          old_solution = solution;
+  fe_values.get_function_values(old_solution, newton_step_values);
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double nonlinearity = std::exp(newton_step_values[q]);
+      const double dx           = fe_values.JxW(q);
+
+      for (unsigned int i = 0; i < dofs_per_cell; i++)
+        {
+          const double         phi_i      = fe_values.shape_value(i, q);
+          const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
+
+          for (unsigned int j = 0; j < dofs_per_cell; ++j)
+            {
+              const double         phi_j      = fe_values.shape_value(j, q);
+              const Tensor<1, dim> grad_phi_j = fe_values.shape_grad(j, q);
+
+              copy_data.cell_matrix(i, j) +=
+                (grad_phi_i * grad_phi_j - phi_i * nonlinearity * phi_j) * dx;
+            }
+        }
+    }
+}
+
+template <int dim, int fe_degree>
+void
+MatrixBasedPoissonProblem<dim, fe_degree>::assemble_gmg_meshworker()
+{
+  std::vector<AffineConstraints<double>> boundary_constraints(
+    triangulation.n_global_levels());
+
+  for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
+    {
+      const IndexSet dof_set =
+        DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
+      boundary_constraints[level].reinit(dof_set);
+      boundary_constraints[level].add_lines(
+        mg_constrained_dofs.get_refinement_edge_indices(level));
+      boundary_constraints[level].add_lines(
+        mg_constrained_dofs.get_boundary_indices(level));
+
+      boundary_constraints[level].close();
+    }
+  auto cell_worker =
+    [&](const typename DoFHandler<dim>::level_cell_iterator &cell,
+        ScratchData<dim> &                                   scratch_data,
+        CopyData &                                           copy_data) {
+      this->cell_worker(cell, scratch_data, copy_data);
+    };
+
+  auto copier = [&](const CopyData &cd) {
+    boundary_constraints[cd.level].distribute_local_to_global(
+      cd.cell_matrix, cd.local_dof_indices, mg_matrix[cd.level]);
+
+    const unsigned int dofs_per_cell = cd.local_dof_indices.size();
+    for (unsigned int i = 0; i < dofs_per_cell; ++i)
+      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+        if (mg_constrained_dofs.is_interface_matrix_entry(
+              cd.level, cd.local_dof_indices[i], cd.local_dof_indices[j]))
+          {
+            mg_interface_in[cd.level].add(cd.local_dof_indices[i],
+                                          cd.local_dof_indices[j],
+                                          cd.cell_matrix(i, j));
+          }
+  };
+
+  using CellFilter =
+    FilteredIterator<typename DoFHandler<dim>::level_cell_iterator>;
+  const unsigned int n_gauss_points = fe_degree + 1;
+
+  ScratchData<dim> scratch_data(mapping,
+                                fe,
+                                n_gauss_points,
+                                update_values | update_gradients |
+                                  update_JxW_values | update_quadrature_points);
+
+  MeshWorker::mesh_loop(CellFilter(IteratorFilters::LocallyOwnedLevelCell(),
+                                   dof_handler.begin_mg()),
+                        CellFilter(IteratorFilters::LocallyOwnedLevelCell(),
+                                   dof_handler.end_mg()),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        CopyData(),
+                        MeshWorker::assemble_own_cells);
+}
+
+template <int dim, int fe_degree>
 double
 MatrixBasedPoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
 {
@@ -841,7 +998,11 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
           mg_transfer.copy_to_mg(dof_handler, mg_solution, solution);
 
           if (parameters.preconditioner == Settings::gmg)
-            assemble_gmg();
+            {
+              assemble_gmg();
+              // Second option: uncomment to use the meshworker
+              // assemble_gmg_meshworker();
+            }
 
           SolverControl        coarse_solver_control(1000, 1e-12, false, false);
           SolverCG<VectorType> coarse_solver(coarse_solver_control);
