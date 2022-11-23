@@ -982,6 +982,10 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
         case Settings::amg: {
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
+          
+          if (fe_degree > 1)
+            data.higher_order_elements = true;
+
           preconditioner.initialize(system_matrix, data);
 
 
