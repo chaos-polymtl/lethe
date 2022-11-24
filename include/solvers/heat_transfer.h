@@ -389,13 +389,13 @@ private:
 
   /**
    * Post-processing
-   * generalized to multiphase simulations
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
-   * the phase of interest.
+   *
+   * @param current_solution_fd current solution for the fluid dynamics, parsed by postprocess
    */
 
+  template <typename VectorType>
   void
-  calculate_heat_flux_on_bc();
+  calculate_heat_flux_on_bc(const VectorType &current_solution_fd);
 
   /**
    * @brief Post-processing. Write the heat transfer values to an output file.

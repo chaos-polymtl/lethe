@@ -692,7 +692,17 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Heat flux calculation
   if (simulation_parameters.post_processing.calculate_heat_flux)
     {
-      calculate_heat_flux_on_bc();
+      // Parse fluid present solution
+      if (multiphysics->fluid_dynamics_is_block())
+        {
+          calculate_heat_flux_on_bc(
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          calculate_heat_flux_on_bc(
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        }
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1300,16 +1310,17 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 }
 
 template <int dim>
+template <typename VectorType>
 void
-HeatTransfer<dim>::calculate_heat_flux_on_bc()
+HeatTransfer<dim>::calculate_heat_flux_on_bc(
+  const VectorType &current_solution_fd)
 {
   const FESystem<dim, dim> fe_ht = this->dof_handler.get_fe();
-
-  const DoFHandler<dim> *dof_handler_fluid =
+  const DoFHandler<dim> *  dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-  const FESystem<dim, dim> fe_fd = dof_handler_fluid->get_fe();
 
   // Evaluate fluid properties
+  // To be evaluated for each cell with VOF blend?
   auto density_model =
     this->simulation_parameters.physical_properties_manager.get_density();
   auto specific_heat_model =
@@ -1317,104 +1328,118 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc()
   auto conductivity_model =
     this->simulation_parameters.physical_properties_manager
       .get_thermal_conductivity();
-  std::map<field, double> dummy_field_map;
+  std::map<field, double> field_values;
 
-  double rho_cp = density_model->value(dummy_field_map) *
-                  specific_heat_model->value(dummy_field_map);
+  //  std::map<field, std::vector<double>> fields;
 
-  double conductivity = conductivity_model->value(dummy_field_map);
+  double rho_cp = density_model->value(field_values) *
+                  specific_heat_model->value(field_values);
 
-  const unsigned int               n_q_points = this->face_quadrature->size();
+  double conductivity = conductivity_model->value(field_values);
+
+  const unsigned int n_q_points_face = this->face_quadrature->size();
   const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
 
-  std::vector<Tensor<1, dim>> velocity_values =
-    std::vector<Tensor<1, dim>>(n_q_points);
-  std::vector<Tensor<1, dim>> temperature_gradient =
-    std::vector<Tensor<1, dim>>(n_q_points);
-  std::vector<double> temperatures = std::vector<double>(n_q_points);
+  std::vector<Tensor<1, dim>> local_velocity_values(n_q_points_face);
+  std::vector<double>         local_temperature_values(n_q_points_face);
+  std::vector<Tensor<1, dim>> temperature_gradient(n_q_points_face);
 
-  Tensor<1, dim> normal_vector;
+  Tensor<1, dim> normal_vector_fd;
   double         heat_flux_bc;
 
   std::vector<double> heat_flux_vector(
-    this->simulation_parameters.boundary_conditions.size);
+    this->simulation_parameters.boundary_conditions_ht.size);
 
   FEFaceValues<dim> fe_face_values_ht(*this->temperature_mapping,
                                       fe_ht,
                                       *this->face_quadrature,
                                       update_values | update_quadrature_points |
-                                        update_gradients | update_JxW_values |
-                                        update_normal_vectors);
+                                        update_gradients | update_JxW_values);
 
   FEFaceValues<dim> fe_face_values_fd(*this->temperature_mapping,
-                                      fe_fd,
+                                      dof_handler_fd->get_fe(),
                                       *this->face_quadrature,
-                                      update_values | update_quadrature_points);
+                                      update_values | update_quadrature_points |
+                                        update_normal_vectors);
 
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-
-  TrilinosWrappers::MPI::Vector fluid_solution =
-    *multiphysics->get_solution(PhysicsID::fluid_dynamics);
+  const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
 
   for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
     {
       unsigned int boundary_id =
-        this->simulation_parameters.boundary_conditions.id[i_bc];
+        this->simulation_parameters.boundary_conditions_ht.id[i_bc];
       heat_flux_bc = 0;
 
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
-          if (cell->is_locally_owned())
+          if (cell->is_locally_owned() && cell->at_boundary())
             {
-              if (cell->at_boundary())
+              for (const auto face : cell->face_indices())
                 {
-                  for (const auto face : cell->face_indices())
+                  if (cell->face(face)->at_boundary() &&
+                      cell->face(face)->boundary_id() == boundary_id)
                     {
-                      if (cell->face(face)->at_boundary())
+                      // Get fluid dynamics active cell iterator
+                      typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                        &(*(this->triangulation)),
+                        cell->level(),
+                        cell->index(),
+                        dof_handler_fd);
+
+                      // Reinit fe_face_values for Fluid Dynamics and Heat
+                      // Transfer
+                      fe_face_values_ht.reinit(cell, face);
+                      fe_face_values_fd.reinit(cell_fd, face);
+
+                      fe_face_values_fd[velocities].get_function_values(
+                        current_solution_fd, local_velocity_values);
+
+                      fe_face_values_ht.get_function_values(
+                        this->present_solution, local_temperature_values);
+
+                      fe_face_values_ht.get_function_gradients(
+                        this->present_solution, temperature_gradient);
+
+                      // Calculate physical properties for the cell
+                      // Get blend from scratch data?
+                      //                      thermal_conductivity_models[0]->vector_value(
+                      //                        fields, thermal_conductivity_1);
+                      //                      thermal_conductivity_models[1]->vector_value(
+                      //                        fields, thermal_conductivity_1);
+                      //                      density_models[0]->vector_value(fields,
+                      //                      density_0);
+                      //                      density_models[1]->vector_value(fields,
+                      //                      density_1);
+                      //                      specific_heat_models[0]->vector_value(fields,
+                      //                                                            specific_heat_0);
+                      //                      specific_heat_models[1]->vector_value(fields,
+                      //                                                            specific_heat_1);
+
+                      //                      double rho_cp =
+                      //                      density_model->value(field_values)
+                      //                      *
+                      //                                      specific_heat_model->value(field_values);
+
+                      // Loop on the quadrature points
+                      for (unsigned int q = 0; q < n_q_points_face; q++)
                         {
-                          typename DoFHandler<dim>::active_cell_iterator
-                            velocity_cell(&(*triangulation),
-                                          cell->level(),
-                                          cell->index(),
-                                          dof_handler_fluid);
-                          fe_face_values_ht.reinit(cell, face);
-                          fe_face_values_fd.reinit(velocity_cell, face);
+                          normal_vector_fd =
+                            -fe_face_values_fd.normal_vector(q);
 
-                          if (cell->face(face)->boundary_id() == boundary_id)
-                            {
-                              std::vector<Point<dim>> q_points =
-                                fe_face_values_ht.get_quadrature_points();
+                          heat_flux_bc +=
+                            (-conductivity * temperature_gradient[q] *
+                               normal_vector_fd +
+                             local_temperature_values[q] * rho_cp *
+                               local_velocity_values[q] * normal_vector_fd) *
+                            fe_face_values_ht.JxW(q);
+                        } // end loop on quadrature points
+                    }     // end condition face at heat transfer boundary
+                }         // end loop on faces
+            }             // end condition cell at boundary
+        }                 // end loop on cells
 
-                              fe_face_values_ht.get_function_gradients(
-                                evaluation_point, temperature_gradient);
-
-                              fe_face_values_ht.get_function_values(
-                                evaluation_point, temperatures);
-
-                              fe_face_values_fd[velocities].get_function_values(
-                                fluid_solution, velocity_values);
-
-                              for (unsigned int q = 0; q < n_q_points; q++)
-                                {
-                                  normal_vector =
-                                    -fe_face_values_ht.normal_vector(q);
-
-                                  heat_flux_bc +=
-                                    (-conductivity * temperature_gradient[q] *
-                                       normal_vector +
-                                     temperatures[q] * rho_cp *
-                                       velocity_values[q] * normal_vector) *
-                                    fe_face_values_ht.JxW(q);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
       heat_flux_vector[i_bc] =
         Utilities::MPI::sum(heat_flux_bc, mpi_communicator);
     }
@@ -1426,7 +1451,7 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc()
       this->pcout << "Heat flux on heat transfer boundary conditions : "
                   << std::endl;
       for (unsigned int i_bc = 0;
-           i_bc < this->simulation_parameters.boundary_conditions.size;
+           i_bc < this->simulation_parameters.boundary_conditions_ht.size;
            ++i_bc)
         this->pcout << "\t boundary " << i_bc << " : " << heat_flux_vector[i_bc]
                     << std::endl;
@@ -1436,10 +1461,27 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc()
   this->heat_flux_table.add_value("time",
                                   this->simulation_control->get_current_time());
   for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions.size;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
-    this->statistics_table.add_value("bc " + i_bc, heat_flux_vector[i_bc]);
+    this->heat_flux_table.add_value("bc_" + Utilities::int_to_string(i_bc, 1),
+                                    heat_flux_vector[i_bc]);
 }
+
+template void
+HeatTransfer<2>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+
+template void
+HeatTransfer<3>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+
+template void
+HeatTransfer<2>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::BlockVector>(
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+
+template void
+HeatTransfer<3>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::BlockVector>(
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template <int dim>
 void
