@@ -982,12 +982,11 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
         case Settings::amg: {
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
-          
+
           if (fe_degree > 1)
             data.higher_order_elements = true;
 
           preconditioner.initialize(system_matrix, data);
-
 
           cg.solve(system_matrix,
                    completely_distributed_solution,
@@ -1001,12 +1000,9 @@ MatrixBasedPoissonProblem<dim, fe_degree>::compute_update()
 
           mg_transfer.copy_to_mg(dof_handler, mg_solution, solution);
 
-          if (parameters.preconditioner == Settings::gmg)
-            {
-              assemble_gmg();
-              // Second option: uncomment to use the meshworker
-              // assemble_gmg_meshworker();
-            }
+          assemble_gmg();
+          // Second option: uncomment to use the meshworker
+          // assemble_gmg_meshworker();
 
           SolverControl        coarse_solver_control(1000, 1e-12, false, false);
           SolverCG<VectorType> coarse_solver(coarse_solver_control);
