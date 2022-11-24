@@ -9,6 +9,7 @@ subsection simulation control
   set time end                = 0.0125  # End time of simulation
   set output name             = out # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
+  set log precision     = 4
 end
 
 #---------------------------------------------------
