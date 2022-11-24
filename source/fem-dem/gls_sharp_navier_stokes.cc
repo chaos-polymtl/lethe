@@ -2486,7 +2486,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           std::tie(cell_is_cut, ib_particle_id, count_particles) =
             cut_cells_map[cell];
 
-          std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
           if (cell_is_cut)
             {
               // If we are here, the cell is cut by the IB.
@@ -2885,7 +2884,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // it's not cut this dof must not
                                       // be overwritten
                                       bool cell_is_cut;
-                                      std::tie(cell_is_cut, std::ignore) =
+                                      std::tie(cell_is_cut,
+                                               std::ignore,
+                                               std::ignore) =
                                         cut_cells_map[cell_3];
 
 
@@ -3052,8 +3053,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-  copy_data.cell_is_cut                 = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  copy_data.cell_is_cut                              = cell_is_cut;
 
   if (cell_is_cut)
     return;
@@ -3142,8 +3143,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-  copy_data.cell_is_cut                 = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  copy_data.cell_is_cut                              = cell_is_cut;
 
   if (cell_is_cut)
     return;
