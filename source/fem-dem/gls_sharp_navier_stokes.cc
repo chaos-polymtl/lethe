@@ -160,6 +160,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                           cell_is_inside                             = true;
                           particle_id_in_which_this_cell_is_embedded = p;
                         }
+                      break;
                     }
                   else
                     {
@@ -2590,8 +2591,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       bool point_in_cell = cell->point_inside(
                         interpolation_points[stencil.nb_points(order) - 1]);
 
-                      if (cell_2 == cell || point_in_cell ||
-                          use_ib_for_pressure || particle_close_to_wall)
+                      bool         dof_is_dummy = false;
+                      bool         cell2_is_cut;
+                      unsigned int ib_particle_id_2;
+                      std::tie(cell2_is_cut, ib_particle_id_2, std::ignore) =
+                        cut_cells_map[cell_2];
+                      if (cell2_is_cut || point_in_cell)
+                        {
+                          dof_is_dummy = true;
+                        }
+
+                      if (dof_is_dummy || use_ib_for_pressure ||
+                          particle_close_to_wall)
                         {
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passes from part
