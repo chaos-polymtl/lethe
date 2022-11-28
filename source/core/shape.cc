@@ -564,8 +564,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , iterable_nodes(weights.size())
   , likely_nodes_map()
   , max_number_of_nodes(1)
-  , dof_handler_ref(nullptr)
-  , cell_guess_given(false)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -598,9 +596,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_id.resize(number_of_nodes);
   iterable_nodes.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  iterable_nodes = nodes_id;
-  dof_handler_ref     = nullptr;
-  cell_guess_given    = false;
+  iterable_nodes      = nodes_id;
   max_number_of_nodes = 1;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
@@ -655,7 +651,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double bounding_box_distance = bounding_box->value(centered_point);
   double value                 = std::max(bounding_box_distance, 0.0);
 
-  double              normalized_distance, basis;
+  double normalized_distance, basis;
 
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (const size_t &node_id : iterable_nodes)
@@ -784,26 +780,28 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   if (likely_nodes_map.find(cell) != likely_nodes_map.end())
     return;
 
+  bool                parent_found = false;
+  std::vector<size_t> temporary_iterable_nodes;
   try
     {
       const auto cell_parent     = cell->parent();
       const auto parent_iterator = likely_nodes_map.find(cell_parent);
       if (parent_iterator != likely_nodes_map.end())
-        iterable_nodes = parent_iterator->second;
-      else
-        iterable_nodes = nodes_id;
+        {
+          parent_found = true;
+          temporary_iterable_nodes.swap(iterable_nodes);
+          iterable_nodes.swap(parent_iterator->second);
+        }
     }
   catch (...)
-    {
-      iterable_nodes = nodes_id;
-    }
+    {}
 
   double     distance, max_distance;
   double     cell_diameter = cell->diameter();
   Point<dim> centered_support_point;
 
   likely_nodes_map[cell].reserve(max_number_of_nodes);
-  for (auto &node_id : nodes_id)
+  for (auto &node_id : iterable_nodes)
     {
       // We only check for one support point, but we use a high security
       // factor. This allows not to loop over all support points.
@@ -818,6 +816,14 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     }
   max_number_of_nodes =
     std::max(max_number_of_nodes, likely_nodes_map[cell].size());
+
+  if (parent_found)
+    {
+      const auto cell_parent     = cell->parent();
+      const auto parent_iterator = likely_nodes_map.find(cell_parent);
+      iterable_nodes.swap(parent_iterator->second);
+      temporary_iterable_nodes.swap(iterable_nodes);
+    }
 }
 
 template <int dim>
@@ -825,7 +831,6 @@ void
 RBFShape<dim>::update_precalculations(DoFHandler<dim> &             dof_handler,
                                       std::shared_ptr<Mapping<dim>> mapping)
 {
-  dof_handler_ref           = &dof_handler;
   const auto &cell_iterator = dof_handler.active_cell_iterators();
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*mapping, dof_handler, support_points);
@@ -932,7 +937,6 @@ RBFShape<dim>::prepare_iterable_nodes(
 {
   if (!cell->is_locally_owned())
     return;
-  cell_guess_given = true;
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
@@ -943,7 +947,8 @@ RBFShape<dim>::prepare_iterable_nodes(
 
 template <int dim>
 void
-RBFShape<dim>::reset_iterable_nodes(const typename DoFHandler<dim>::active_cell_iterator cell)
+RBFShape<dim>::reset_iterable_nodes(
+  const typename DoFHandler<dim>::active_cell_iterator cell)
 {
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);

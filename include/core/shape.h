@@ -1201,7 +1201,7 @@ public:
 
   /**
    * @brief Checks if possible nodes affecting the current cell have been identified, and returns the proper vector to use for iteration
-   * @return vector of node identifiers to use for iteration
+   * @param cell A likely one where the evaluation point is located
    */
   void
   prepare_iterable_nodes(
@@ -1209,9 +1209,11 @@ public:
 
   /**
    * @brief Resets the iterable nodes to all nodes
+   * @param cell A likely one where the evaluation point is located
    */
   void
-  reset_iterable_nodes(const typename DoFHandler<dim>::active_cell_iterator cell);
+  reset_iterable_nodes(
+    const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
   size_t                          number_of_nodes;
@@ -1220,10 +1222,8 @@ private:
 
   std::map<const typename DoFHandler<dim>::active_cell_iterator,
            std::vector<size_t>>
-                   likely_nodes_map;
-  DoFHandler<dim> *dof_handler_ref;
-  size_t           max_number_of_nodes;
-  bool             cell_guess_given;
+         likely_nodes_map;
+  size_t max_number_of_nodes;
 
 public:
   std::vector<size_t>           nodes_id;
