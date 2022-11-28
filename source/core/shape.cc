@@ -656,8 +656,6 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value                 = std::max(bounding_box_distance, 0.0);
 
   double              normalized_distance, basis;
-  std::vector<size_t> current_iterable_nodes =
-    get_iterable_nodes(centered_point);
 
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (const size_t &node_id : iterable_nodes)
@@ -953,34 +951,6 @@ RBFShape<dim>::reset_iterable_nodes(const typename DoFHandler<dim>::active_cell_
     iterable_nodes.swap(likely_nodes_map[cell]);
   else
     iterable_nodes.swap(nodes_id);
-}
-
-template <int dim>
-std::vector<size_t>
-RBFShape<dim>::get_iterable_nodes(const Point<dim> centered_point) const
-{
-  std::vector<size_t> current_iterable_nodes;
-  if (!cell_guess_given && dof_handler_ref)
-    {
-      try
-        {
-          const typename DoFHandler<dim>::active_cell_iterator cell =
-            LetheGridTools::find_cell_around_point_with_tree(*dof_handler_ref,
-                                                             centered_point);
-          auto iterator = likely_nodes_map.find(cell);
-          if (iterator != likely_nodes_map.end())
-            current_iterable_nodes = iterator->second;
-          else
-            current_iterable_nodes = nodes_id;
-        }
-      catch (...)
-        {
-          current_iterable_nodes = nodes_id;
-        }
-    }
-  else
-    current_iterable_nodes = iterable_nodes;
-  return current_iterable_nodes;
 }
 
 template class Sphere<2>;

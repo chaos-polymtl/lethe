@@ -791,20 +791,6 @@ public:
     const unsigned int component = 0) override;
 
   /**
-   * @brief Set the current cell pointer, to use in the calculation function
-   * @param cell The cell in which the next evaluation point is likely to be
-   */
-  void
-  set_current_cell(const typename DoFHandler<dim>::active_cell_iterator *cell);
-
-  /**
-   * @brief Reset the current cell pointer
-   */
-  void
-  reset_current_cell();
-
-
-  /**
    * @brief Return the analytical gradient of the distance for the current RBF
    * @param evaluation_point The point at which the function will be evaluated
    * @param component Not applicable
@@ -1212,13 +1198,6 @@ public:
   {
     return distance > 1.0 ? 0.0 : -M_PI_2 * std::sin(M_PI * distance);
   }
-
-  /**
-   * Returns the proper iterable nodes for value or gradient evaluation
-   * @return current_iterable_nodes the node that contribute to the evaluation
-   */
-  inline std::vector<size_t>
-  get_iterable_nodes(const Point<dim> centered_point) const;
 
   /**
    * @brief Checks if possible nodes affecting the current cell have been identified, and returns the proper vector to use for iteration
