@@ -1315,8 +1315,7 @@ void
 HeatTransfer<dim>::calculate_heat_flux_on_bc(
   const VectorType &current_solution_fd)
 {
-  const FESystem<dim, dim> fe_ht = this->dof_handler.get_fe();
-  const DoFHandler<dim> *  dof_handler_fd =
+  const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
   // Evaluate fluid properties
@@ -1344,23 +1343,22 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
   std::vector<double>         local_temperature_values(n_q_points_face);
   std::vector<Tensor<1, dim>> temperature_gradient(n_q_points_face);
 
-  Tensor<1, dim> normal_vector_fd;
-  double         heat_flux_bc;
-
+  Tensor<1, dim>      normal_vector_ht;
+  double              heat_flux_bc;
   std::vector<double> heat_flux_vector(
     this->simulation_parameters.boundary_conditions_ht.size);
 
   FEFaceValues<dim> fe_face_values_ht(*this->temperature_mapping,
-                                      fe_ht,
+                                      this->dof_handler.get_fe(),
                                       *this->face_quadrature,
                                       update_values | update_quadrature_points |
-                                        update_gradients | update_JxW_values);
+                                        update_gradients | update_JxW_values |
+                                        update_normal_vectors);
 
   FEFaceValues<dim> fe_face_values_fd(*this->temperature_mapping,
                                       dof_handler_fd->get_fe(),
                                       *this->face_quadrature,
-                                      update_values | update_quadrature_points |
-                                        update_normal_vectors);
+                                      update_values | update_quadrature_points);
 
   const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
 
@@ -1372,7 +1370,7 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
         this->simulation_parameters.boundary_conditions_ht.id[i_bc];
       heat_flux_bc = 0;
 
-      for (const auto &cell : dof_handler.active_cell_iterators())
+      for (const auto &cell : this->dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned() && cell->at_boundary())
             {
@@ -1425,15 +1423,28 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
                       // Loop on the quadrature points
                       for (unsigned int q = 0; q < n_q_points_face; q++)
                         {
-                          normal_vector_fd =
-                            -fe_face_values_fd.normal_vector(q);
+                          //                          normal_vector_ht =
+                          //                            -fe_face_values_ht.normal_vector(q);
+
+                          //                          heat_flux_bc +=
+                          //                            (-conductivity *
+                          //                            temperature_gradient[q]
+                          //                            *
+                          //                               normal_vector_ht +
+                          //                             local_temperature_values[q]
+                          //                             * rho_cp *
+                          //                               local_velocity_values[q]
+                          //                               * normal_vector_ht) *
+                          //                            fe_face_values_ht.JxW(q);
+
+                          double temperature_gradient_q =
+                            temperature_gradient[q] *
+                            (-fe_face_values_ht.normal_vector(q));
 
                           heat_flux_bc +=
-                            (-conductivity * temperature_gradient[q] *
-                               normal_vector_fd +
-                             local_temperature_values[q] * rho_cp *
-                               local_velocity_values[q] * normal_vector_fd) *
+                            (-conductivity * temperature_gradient_q) *
                             fe_face_values_ht.JxW(q);
+
                         } // end loop on quadrature points
                     }     // end condition face at heat transfer boundary
                 }         // end loop on faces
