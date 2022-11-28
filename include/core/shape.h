@@ -1232,7 +1232,7 @@ public:
    * @brief Resets the iterable nodes to all nodes
    */
   void
-  reset_iterable_nodes();
+  reset_iterable_nodes(const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
   size_t                          number_of_nodes;
@@ -1243,6 +1243,7 @@ private:
            std::vector<size_t>>
                    likely_nodes_map;
   DoFHandler<dim> *dof_handler_ref;
+  size_t           max_number_of_nodes;
   bool             cell_guess_given;
 
 public:

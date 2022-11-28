@@ -563,6 +563,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
   , likely_nodes_map()
+  , max_number_of_nodes(1)
   , dof_handler_ref(nullptr)
   , cell_guess_given(false)
   , nodes_id(weights.size())
@@ -575,6 +576,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
     this->effective_radius =
       std::max(this->effective_radius, support_radii[n_i]);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
+  iterable_nodes = nodes_id;
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
 }
@@ -596,8 +598,10 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_id.resize(number_of_nodes);
   iterable_nodes.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  dof_handler_ref  = nullptr;
-  cell_guess_given = false;
+  iterable_nodes = nodes_id;
+  dof_handler_ref     = nullptr;
+  cell_guess_given    = false;
+  max_number_of_nodes = 1;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -624,7 +628,7 @@ RBFShape<dim>::value_with_cell_guess(
 {
   prepare_iterable_nodes(cell);
   double value = this->value(evaluation_point);
-  reset_iterable_nodes();
+  reset_iterable_nodes(cell);
   return value;
 }
 
@@ -637,7 +641,7 @@ RBFShape<dim>::gradient_with_cell_guess(
 {
   prepare_iterable_nodes(cell);
   Tensor<1, dim> gradient = this->gradient(evaluation_point);
-  reset_iterable_nodes();
+  reset_iterable_nodes(cell);
   return gradient;
 }
 
@@ -656,7 +660,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
     get_iterable_nodes(centered_point);
 
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  for (const size_t &node_id : current_iterable_nodes)
+  for (const size_t &node_id : iterable_nodes)
     {
       normalized_distance = (centered_point - nodes_positions[node_id]).norm() /
                             support_radii[node_id];
@@ -691,12 +695,9 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
   Tensor<1, dim> dr_dx_derivative{};
   Tensor<1, dim> gradient{};
 
-  std::vector<size_t> current_iterable_nodes =
-    get_iterable_nodes(centered_point);
-
-  if (current_iterable_nodes.size() > 0)
+  if (iterable_nodes.size() > 0)
     {
-      for (const size_t &node_id : current_iterable_nodes)
+      for (const size_t &node_id : iterable_nodes)
         {
           // Calculation of the dr/dx
           relative_position   = centered_point - nodes_positions[node_id];
@@ -803,8 +804,8 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     cell_diameter = cell->diameter();
   Point<dim> centered_support_point;
 
-  std::vector<size_t> temporary_node_vector = std::vector<size_t>();
-  for (auto &node_id : iterable_nodes)
+  likely_nodes_map[cell].reserve(max_number_of_nodes);
+  for (auto &node_id : nodes_id)
     {
       // We only check for one support point, but we use a high security
       // factor. This allows not to loop over all support points.
@@ -815,9 +816,10 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // radius
       max_distance = cell_diameter + support_radii[node_id];
       if (distance < max_distance)
-        temporary_node_vector.push_back(node_id);
+        likely_nodes_map[cell].push_back(node_id);
     }
-  likely_nodes_map[cell] = temporary_node_vector;
+  max_number_of_nodes =
+    std::max(max_number_of_nodes, likely_nodes_map[cell].size());
 }
 
 template <int dim>
@@ -936,17 +938,21 @@ RBFShape<dim>::prepare_iterable_nodes(
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
-    iterable_nodes = iterator->second;
+    iterable_nodes.swap(likely_nodes_map[cell]);
   else
-    iterable_nodes = nodes_id;
+    iterable_nodes.swap(nodes_id);
 }
 
 template <int dim>
 void
-RBFShape<dim>::reset_iterable_nodes()
+RBFShape<dim>::reset_iterable_nodes(const typename DoFHandler<dim>::active_cell_iterator cell)
 {
-  cell_guess_given = false;
-  iterable_nodes   = nodes_id;
+  // Here we check if the likely nodes have been identified
+  auto iterator = likely_nodes_map.find(cell);
+  if (iterator != likely_nodes_map.end())
+    iterable_nodes.swap(likely_nodes_map[cell]);
+  else
+    iterable_nodes.swap(nodes_id);
 }
 
 template <int dim>
