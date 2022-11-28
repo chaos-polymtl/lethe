@@ -1,0 +1,21 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      0.2
+   Number of thermal degrees of freedom: 1089
+Heat flux on heat transfer boundary conditions : 
+	 boundary 0 : 64
+	 boundary 1 : 12.8
+
+*****************************************************************
+Steady iteration :        1/1
+*****************************************************************
+L2 error velocity : 0
+L2 error temperature : 3.72661e-18
+Heat flux on heat transfer boundary conditions : 
+	 boundary 0 : 1.6
+	 boundary 1 : -1.6
+cells error_velocity error_pressure 
+ 1024 0.000000e+00 - 0.000000e+00 - 
+cells error_temperature 
+ 1024 3.726605e-18    - 

@@ -1426,23 +1426,14 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
                           //                          normal_vector_ht =
                           //                            -fe_face_values_ht.normal_vector(q);
 
-                          //                          heat_flux_bc +=
-                          //                            (-conductivity *
-                          //                            temperature_gradient[q]
-                          //                            *
-                          //                               normal_vector_ht +
-                          //                             local_temperature_values[q]
-                          //                             * rho_cp *
-                          //                               local_velocity_values[q]
-                          //                               * normal_vector_ht) *
-                          //                            fe_face_values_ht.JxW(q);
-
                           double temperature_gradient_q =
                             temperature_gradient[q] *
                             (-fe_face_values_ht.normal_vector(q));
 
                           heat_flux_bc +=
-                            (-conductivity * temperature_gradient_q) *
+                            (-conductivity * temperature_gradient_q +
+                             local_temperature_values[q] * rho_cp *
+                               local_velocity_values[q] * normal_vector_ht) *
                             fe_face_values_ht.JxW(q);
 
                         } // end loop on quadrature points
