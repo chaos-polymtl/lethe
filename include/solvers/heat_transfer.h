@@ -359,11 +359,18 @@ private:
    * @brief Post-processing.
    * Calculate temperature statistics on the domain : Max, min, average and
    * standard-deviation.
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param domain_name string indicating the monitored_fluid in the output file name
    */
 
-  template <bool gather_vof>
   void
-  calculate_temperature_statistics_on_all_domain();
+  calculate_temperature_statistics(
+    const bool                       gather_vof,
+    const Parameters::FluidIndicator monitored_fluid,
+    const std::string                domain_name);
 
   /**
    * @brief Post-processing. Specialized for multiphase flow.

@@ -640,16 +640,15 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Set-up domain name for output files
   Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.post_processing.postprocessed_fluid;
-
   std::string domain_name("");
-  bool        postprocess_all_domain(false);
+  bool        gather_vof(false);
 
   if (monitored_fluid == Parameters::FluidIndicator::both ||
       (not(this->simulation_parameters.multiphysics.VOF) &&
        monitored_fluid == Parameters::FluidIndicator::fluid0))
     {
-      domain_name            = "all_domain";
-      postprocess_all_domain = true;
+      domain_name = "all_domain";
+      gather_vof  = true;
     }
   else
     {
@@ -673,15 +672,9 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Temperature statistics
   if (simulation_parameters.post_processing.calculate_temperature_statistics)
     {
-      if (postprocess_all_domain)
-        {
-          calculate_temperature_statistics_on_all_domain<false>();
-        }
-      else
-        {
-          calculate_temperature_statistics_on_one_fluid(monitored_fluid,
-                                                        domain_name);
-        }
+      calculate_temperature_statistics(gather_vof,
+                                       monitored_fluid,
+                                       domain_name);
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1014,9 +1007,11 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 }
 
 template <int dim>
-template <bool gather_vof>
 void
-HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
+HeatTransfer<dim>::calculate_temperature_statistics(
+  const bool                       gather_vof,
+  const Parameters::FluidIndicator monitored_fluid,
+  const std::string                domain_name)
 {
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
@@ -1029,15 +1024,18 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
                              update_values | update_JxW_values);
 
   // Gather VOF information
+  const DoFHandler<dim> *        dof_handler_vof;
+  std::shared_ptr<FEValues<dim>> fe_values_vof;
+
   if (gather_vof)
     {
-      const DoFHandler<dim> *dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
 
-      FEValues<dim> fe_values_vof(*this->temperature_mapping,
-                                  dof_handler_vof->get_fe(),
-                                  *this->cell_quadrature,
-                                  update_values | update_JxW_values);
+      fe_values_vof =
+        std::make_shared<FEValues<dim>>(*this->temperature_mapping,
+                                        dof_handler_vof->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values | update_JxW_values);
     }
 
   std::vector<double> phase_values(n_q_points);
@@ -1048,9 +1046,6 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
   double temperature_integral = 0.;
   double minimum_temperature  = DBL_MAX;
   double maximum_temperature  = -DBL_MAX;
-
-  Parameters::FluidIndicator monitored_fluid =
-    this->simulation_parameters.post_processing.postprocessed_fluid;
 
   // Calculate min, max and average
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -1071,8 +1066,8 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
                 dof_handler_vof);
 
               // Gather VOF information
-              fe_values_vof.reinit(cell_vof);
-              fe_values_vof.get_function_values(
+              fe_values_vof->reinit(cell_vof);
+              fe_values_vof->get_function_values(
                 *this->multiphysics->get_solution(PhysicsID::VOF),
                 phase_values);
             }
@@ -1182,7 +1177,8 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Temperature statistics on all domain : " << std::endl;
+      this->pcout << "Temperature statistics on " << domain_name << " : "
+                  << std::endl;
       this->pcout << "\t     Min : " << minimum_temperature << std::endl;
       this->pcout << "\t     Max : " << maximum_temperature << std::endl;
       this->pcout << "\t Average : " << temperature_average << std::endl;
@@ -1197,18 +1193,6 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
   this->statistics_table.add_value("average", temperature_average);
   this->statistics_table.add_value("std-dev", temperature_std_deviation);
 }
-
-// template void
-// HeatTransfer<2>::calculate_temperature_statistics_on_all_domain<false>();
-
-// template void
-// HeatTransfer<3>::calculate_temperature_statistics_on_all_domain<false>();
-
-// template void
-// HeatTransfer<2>::calculate_temperature_statistics_on_all_domain<true>();
-
-// template void
-// HeatTransfer<3>::calculate_temperature_statistics_on_all_domain<true>();
 
 template <int dim>
 void
