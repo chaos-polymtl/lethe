@@ -388,7 +388,8 @@ private:
   write_temperature_statistics(const std::string domain_name);
 
   /**
-   * Post-processing
+   * Post-processing. Calculate the heat flux at heat transfer boundary
+   * conditions. Method used for monophase flow.
    *
    * @param current_solution_fd current solution for the fluid dynamics, parsed by postprocess
    */

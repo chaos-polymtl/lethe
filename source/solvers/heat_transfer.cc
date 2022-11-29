@@ -1318,24 +1318,6 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
 
-  // Evaluate fluid properties
-  // To be evaluated for each cell with VOF blend?
-  auto density_model =
-    this->simulation_parameters.physical_properties_manager.get_density();
-  auto specific_heat_model =
-    this->simulation_parameters.physical_properties_manager.get_specific_heat();
-  auto conductivity_model =
-    this->simulation_parameters.physical_properties_manager
-      .get_thermal_conductivity();
-  std::map<field, double> field_values;
-
-  //  std::map<field, std::vector<double>> fields;
-
-  double rho_cp = density_model->value(field_values) *
-                  specific_heat_model->value(field_values);
-
-  double conductivity = conductivity_model->value(field_values);
-
   const unsigned int n_q_points_face = this->face_quadrature->size();
   const FEValuesExtractors::Vector velocities(0);
 
@@ -1362,6 +1344,21 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
 
   const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
 
+  // Evaluate fluid properties
+  auto density_model =
+    this->simulation_parameters.physical_properties_manager.get_density();
+  auto specific_heat_model =
+    this->simulation_parameters.physical_properties_manager.get_specific_heat();
+  auto conductivity_model =
+    this->simulation_parameters.physical_properties_manager
+      .get_thermal_conductivity();
+  std::map<field, double> field_values;
+
+  double rho_cp = density_model->value(field_values) *
+                  specific_heat_model->value(field_values);
+  double conductivity = conductivity_model->value(field_values);
+
+  // Integrate on BC
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
@@ -1400,32 +1397,9 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
                       fe_face_values_ht.get_function_gradients(
                         this->present_solution, temperature_gradient);
 
-                      // Calculate physical properties for the cell
-                      // Get blend from scratch data?
-                      //                      thermal_conductivity_models[0]->vector_value(
-                      //                        fields, thermal_conductivity_1);
-                      //                      thermal_conductivity_models[1]->vector_value(
-                      //                        fields, thermal_conductivity_1);
-                      //                      density_models[0]->vector_value(fields,
-                      //                      density_0);
-                      //                      density_models[1]->vector_value(fields,
-                      //                      density_1);
-                      //                      specific_heat_models[0]->vector_value(fields,
-                      //                                                            specific_heat_0);
-                      //                      specific_heat_models[1]->vector_value(fields,
-                      //                                                            specific_heat_1);
-
-                      //                      double rho_cp =
-                      //                      density_model->value(field_values)
-                      //                      *
-                      //                                      specific_heat_model->value(field_values);
-
                       // Loop on the quadrature points
                       for (unsigned int q = 0; q < n_q_points_face; q++)
                         {
-                          //                          normal_vector_ht =
-                          //                            -fe_face_values_ht.normal_vector(q);
-
                           double temperature_gradient_q =
                             temperature_gradient[q] *
                             (-fe_face_values_ht.normal_vector(q));
