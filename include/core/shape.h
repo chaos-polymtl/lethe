@@ -22,8 +22,6 @@
 #else
 #  include <deal.II/base/function_signed_distance.h>
 #endif
-#include <deal.II/distributed/tria_base.h>
-
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
@@ -31,7 +29,6 @@
 
 #include <cfloat>
 #include <memory>
-#include <unordered_set>
 
 using namespace dealii;
 

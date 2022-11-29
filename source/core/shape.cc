@@ -13,10 +13,7 @@
  *
  * ---------------------------------------------------------------------
  */
-#include <core/lethe_grid_tools.h>
 #include <core/shape.h>
-
-#include <cfloat>
 
 template <int dim>
 double
@@ -591,7 +588,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   basis_functions.resize(number_of_nodes);
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(number_of_nodes);
-  iterable_nodes.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes      = nodes_id;
   max_number_of_nodes = 1;
@@ -749,10 +745,10 @@ RBFShape<dim>::initialize_bounding_box()
       low_bounding_point[d]  = std::numeric_limits<double>::max();
       for (size_t i = 0; i < number_of_nodes; i++)
         {
-          if (low_bounding_point[d] > nodes_positions[i][d])
-            low_bounding_point[d] = nodes_positions[i][d];
-          if (high_bounding_point[d] < nodes_positions[i][d])
-            high_bounding_point[d] = nodes_positions[i][d];
+          low_bounding_point[d] =
+            std::min(low_bounding_point[d], nodes_positions[i][d]);
+          high_bounding_point[d] =
+            std::max(high_bounding_point[d], nodes_positions[i][d]);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
@@ -831,13 +827,13 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &             dof_handler,
   DoFTools::map_dofs_to_support_points(*mapping, dof_handler, support_points);
   const size_t dofs_per_cell = dof_handler.get_fe().dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
+  Point<dim>                           support_point;
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned())
         {
           cell->get_dof_indices(local_dof_indices);
-          Point<dim> support_point = support_points[local_dof_indices[0]];
+          support_point = support_points[local_dof_indices[0]];
           determine_likely_nodes_for_one_cell(cell, support_point);
         }
     }
@@ -930,8 +926,6 @@ void
 RBFShape<dim>::prepare_iterable_nodes(
   const typename DoFHandler<dim>::active_cell_iterator cell)
 {
-  if (!cell->is_locally_owned())
-    return;
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
