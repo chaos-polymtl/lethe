@@ -675,7 +675,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
     {
       if (postprocess_all_domain)
         {
-          calculate_temperature_statistics_on_all_domain();
+          calculate_temperature_statistics_on_all_domain<false>();
         }
       else
         {
@@ -1014,6 +1014,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 }
 
 template <int dim>
+template <bool gather_vof>
 void
 HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
 {
@@ -1027,10 +1028,29 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
                              *this->cell_quadrature,
                              update_values | update_JxW_values);
 
-  double volume_integral      = 0;
-  double temperature_integral = 0;
+  // Gather VOF information
+  if (gather_vof)
+    {
+      const DoFHandler<dim> *dof_handler_vof =
+        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+
+      FEValues<dim> fe_values_vof(*this->temperature_mapping,
+                                  dof_handler_vof->get_fe(),
+                                  *this->cell_quadrature,
+                                  update_values | update_JxW_values);
+    }
+
+  std::vector<double> phase_values(n_q_points);
+
+  double phase_coefficient(0.);
+  bool   calculate_min_max_on_cell(false);
+  double volume_integral      = 0.;
+  double temperature_integral = 0.;
   double minimum_temperature  = DBL_MAX;
   double maximum_temperature  = -DBL_MAX;
+
+  Parameters::FluidIndicator monitored_fluid =
+    this->simulation_parameters.post_processing.postprocessed_fluid;
 
   // Calculate min, max and average
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -1041,16 +1061,84 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
           fe_values_ht.get_function_values(this->present_solution,
                                            local_temperature_values);
 
+          if (gather_vof)
+            {
+              // Get VOF active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                dof_handler_vof);
+
+              // Gather VOF information
+              fe_values_vof.reinit(cell_vof);
+              fe_values_vof.get_function_values(
+                *this->multiphysics->get_solution(PhysicsID::VOF),
+                phase_values);
+            }
+
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              maximum_temperature =
-                std::max(local_temperature_values[q], maximum_temperature);
-              minimum_temperature =
-                std::min(local_temperature_values[q], minimum_temperature);
+              switch (monitored_fluid)
+                {
+                  case Parameters::FluidIndicator::both:
+                    {
+                      phase_coefficient         = 1.;
+                      calculate_min_max_on_cell = true;
+                      break;
+                    }
+                  case Parameters::FluidIndicator::fluid0:
+                    {
+                      if (gather_vof)
+                        {
+                          phase_coefficient = 1. - phase_values[q];
+                          if (phase_values[q] < 0.5)
+                            calculate_min_max_on_cell = true;
+                        }
+                      else
+                        {
+                          // In the case of monophase simulations, "fluid0" is
+                          // equivalent to "both" (all domain) calculation
+                          phase_coefficient         = 1.;
+                          calculate_min_max_on_cell = true;
+                        }
+                      break;
+                    }
+                  case Parameters::FluidIndicator::fluid1:
+                    {
+                      if (gather_vof)
+                        {
+                          phase_coefficient = phase_values[q];
+                          if (phase_values[q] > 0.5)
+                            calculate_min_max_on_cell = true;
+                        }
+                      else
+                        {
+                          // Defensive only here, this has been checked already
+                          // in simulation_parameters.h
+                          throw std::logic_error(
+                            "Inconsistency in .prm!\n when VOF = false"
+                            "\n use (default value): set postprocessed fluid = both"
+                            "\n or: set postprocessed fluid = fluid 0");
+                        }
+                      break;
+                    }
+                  default:
+                    throw std::runtime_error(
+                      "Unsupported number of fluids (>2)");
+                } // end switch on monitored fluid
 
-              volume_integral += fe_values_ht.JxW(q);
-              temperature_integral +=
-                local_temperature_values[q] * fe_values_ht.JxW(q);
+              if (calculate_min_max_on_cell)
+                {
+                  maximum_temperature =
+                    std::max(local_temperature_values[q], maximum_temperature);
+                  minimum_temperature =
+                    std::min(local_temperature_values[q], minimum_temperature);
+                }
+
+              volume_integral += fe_values_ht.JxW(q) * phase_coefficient;
+              temperature_integral += local_temperature_values[q] *
+                                      phase_coefficient * fe_values_ht.JxW(q);
             }
         }
     }
@@ -1109,6 +1197,18 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_all_domain()
   this->statistics_table.add_value("average", temperature_average);
   this->statistics_table.add_value("std-dev", temperature_std_deviation);
 }
+
+// template void
+// HeatTransfer<2>::calculate_temperature_statistics_on_all_domain<false>();
+
+// template void
+// HeatTransfer<3>::calculate_temperature_statistics_on_all_domain<false>();
+
+// template void
+// HeatTransfer<2>::calculate_temperature_statistics_on_all_domain<true>();
+
+// template void
+// HeatTransfer<3>::calculate_temperature_statistics_on_all_domain<true>();
 
 template <int dim>
 void

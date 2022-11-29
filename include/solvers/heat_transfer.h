@@ -361,6 +361,7 @@ private:
    * standard-deviation.
    */
 
+  template <bool gather_vof>
   void
   calculate_temperature_statistics_on_all_domain();
 
