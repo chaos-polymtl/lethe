@@ -13,7 +13,6 @@
  *
  * ---------------------------------------------------------------------
  */
-#include <core/lethe_grid_tools.h>
 #include <core/shape.h>
 
 #include <deal.II/grid/manifold_lib.h>
