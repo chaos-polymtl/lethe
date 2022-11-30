@@ -17,6 +17,8 @@
 #define lethe_shape_h
 
 #include <deal.II/base/auto_derivative_function.h>
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
 #include <deal.II/base/function.h>
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
 #else
@@ -67,6 +69,7 @@ public:
     death_star,
     composite_shape,
     rbf_shape,
+    step_sharp,
   } type;
 
   /**
@@ -772,6 +775,80 @@ private:
   std::map<unsigned int,
            std::tuple<BooleanOperation, unsigned int, unsigned int>>
     operations;
+};
+
+template <int dim>
+class StepShape : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructor for a sphere
+   * @param radius The sphere radius
+   * @param position The sphere center
+   * @param orientation The sphere orientation
+   */
+  StepShape <dim>(std::string file_name,
+              const Point<dim> &  position,
+              const Tensor<1, 3> &orientation)
+    : Shape<dim>(1.0, position, orientation),
+    normal_projector(
+      shape, 1e-7)
+
+  {
+    shape=OpenCASCADE::read_STEP(file_name);
+    OpenCASCADE::extract_compound_shapes(
+      shape, compounds, compsolids, solids, shells, wires);
+    const double tolerance = OpenCASCADE::get_shape_tolerance(shape) * 5;
+  }
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+  void
+  set_position(const Point<dim> &position) override;
+
+
+private:
+  TopoDS_Shape shape;
+  OpenCASCADE::NormalProjectionManifold<dim-1, dim> normal_projector;
+  std::vector<TopoDS_Compound>  compounds;
+  std::vector<TopoDS_CompSolid> compsolids;
+  std::vector<TopoDS_Solid>     solids;
+  std::vector<TopoDS_Shell>     shells;
+  std::vector<TopoDS_Wire>      wires;
+
 };
 
 

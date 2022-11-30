@@ -164,6 +164,18 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                                        position,
                                                        orientation);
 }
+template <int dim>
+void
+IBParticle<dim>::initialize_shape(const std::string         type,
+                                  const std::string shape_arguments)
+{
+  if (type == "step")
+  {
+    particle_type = type;
+    shape =
+      std::make_shared<StepShape<dim>>(shape_arguments, position, orientation);
+  }
+}
 
 template <int dim>
 void
@@ -213,12 +225,18 @@ void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
                                        Point<dim> &      closest_point)
 {
+  if(particle_type=="step")
+    {
+      closest_point=shape->gradient(p);
+    }
+  else{
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
   actual_gradient       = shape->gradient(p);
   distance_from_surface = shape->value(p);
   closest_point =
     p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+    }
 }
 
 template <int dim>

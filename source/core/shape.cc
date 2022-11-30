@@ -15,9 +15,14 @@
  */
 #include <core/shape.h>
 
-#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
 
-#include <deal.II/grid/manifold_lib.h>
+#include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+
+#include <cfloat>
+
 
 template <int dim>
 double
@@ -225,6 +230,82 @@ Sphere<dim>::set_position(const Point<dim> &position)
     position, this->effective_radius);
 #endif
 }
+
+template <int dim>
+double
+StepShape<dim>::value(const Point<dim> &evaluation_point,
+                   const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  Point<dim> projected_point;
+  auto pt=OpenCASCADE::point (centered_point);
+  TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
+  BRepExtrema_DistShapeShape distancetool(shape,vertex);
+  distancetool.Perform();
+  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
+  if(dim==2){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+    }
+  if(dim==3){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+      projected_point[2]=pt_on_surface.Z();
+    }
+  return (evaluation_point-projected_point).norm();
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+StepShape<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<Sphere<dim>>(this->effective_radius,
+                                  this->position,
+                                  this->orientation);
+  return copy;
+}
+
+template <int dim>
+Tensor<1, dim>
+StepShape<dim>::gradient(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  Point<dim> projected_point;
+  auto pt=OpenCASCADE::point (centered_point);
+  TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
+  BRepExtrema_DistShapeShape distancetool(shape,vertex);
+  distancetool.Perform();
+  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
+  if(dim==2){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+    }
+  if(dim==3){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+      projected_point[2]=pt_on_surface.Z();
+    }
+
+
+  return projected_point;
+}
+
+template <int dim>
+double
+StepShape<dim>::displaced_volume(const double fluid_density)
+{
+  return 1;
+}
+
+template <int dim>
+void
+StepShape<dim>::set_position(const Point<dim> &position)
+{
+  this->Shape<dim>::set_position(position);
+}
+
 
 template <int dim>
 double
@@ -1753,3 +1834,5 @@ template class CompositeShape<2>;
 template class CompositeShape<3>;
 template class RBFShape<2>;
 template class RBFShape<3>;
+template class StepShape<2>;
+template class StepShape<3>;

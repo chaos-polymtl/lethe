@@ -363,7 +363,7 @@ private:
            std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
   bool
-  cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
+  cell_cut_by_p(const typename DoFHandler<dim>::active_cell_iterator &         cell,
                 std::map<types::global_dof_index, Point<dim>> &support_points,
                 unsigned int                                   p);
   /**
