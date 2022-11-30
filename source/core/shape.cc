@@ -560,8 +560,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
   , likely_nodes_map()
-  , precalculations_count(0)
   , max_number_of_nodes(1)
+  , minimal_mesh_level(std::numeric_limits<int>::max())
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -590,9 +590,9 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  iterable_nodes        = nodes_id;
-  precalculations_count = 0;
-  max_number_of_nodes   = 1;
+  iterable_nodes      = nodes_id;
+  max_number_of_nodes = 1;
+  minimal_mesh_level  = std::numeric_limits<int>::max();
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -773,9 +773,10 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   if (likely_nodes_map.find(cell) != likely_nodes_map.end())
     return;
 
-  bool                parent_found = false;
+  bool parent_found  = false;
+  minimal_mesh_level = std::min(minimal_mesh_level, cell->level());
   std::vector<size_t> temporary_iterable_nodes;
-  if (precalculations_count > 0)
+  if (cell->level() > minimal_mesh_level)
     try
       {
         const auto cell_parent     = cell->parent();
@@ -810,7 +811,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     }
   max_number_of_nodes =
     std::max(max_number_of_nodes, likely_nodes_map[cell].size());
-  if (precalculations_count > 0)
+  if (cell->level() > 0)
     if (parent_found)
       {
         const auto cell_parent     = cell->parent();
@@ -818,7 +819,6 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
         iterable_nodes.swap(parent_iterator->second);
         temporary_iterable_nodes.swap(iterable_nodes);
       }
-  precalculations_count++;
 }
 
 template <int dim>

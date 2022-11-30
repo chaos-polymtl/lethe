@@ -1220,8 +1220,8 @@ private:
   std::map<const typename DoFHandler<dim>::active_cell_iterator,
            std::vector<size_t>>
          likely_nodes_map;
-  size_t precalculations_count;
   size_t max_number_of_nodes;
+  int    minimal_mesh_level;
 
 public:
   std::vector<size_t>           nodes_id;
