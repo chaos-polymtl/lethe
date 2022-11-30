@@ -360,31 +360,18 @@ private:
    * Calculate temperature statistics on the domain : Max, min, average and
    * standard-deviation.
    *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
    *
-   * @param domain_name string indicating the monitored_fluid in the output file name
+   * @param domain_name string indicating the monitored_fluid in the output filename
    */
 
   void
   calculate_temperature_statistics(
     const bool                       gather_vof,
-    const Parameters::FluidIndicator monitored_fluid,
-    const std::string                domain_name);
-
-  /**
-   * @brief Post-processing. Specialized for multiphase flow.
-   * Calculate temperature statistics on a given fluid : Max, min, average and
-   * standard-deviation.
-   *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
-   * to the phase of interest.
-   *
-   * @param domain_name string indicating the monitored_fluid in the output file name
-   */
-
-  void
-  calculate_temperature_statistics_on_one_fluid(
     const Parameters::FluidIndicator monitored_fluid,
     const std::string                domain_name);
 
@@ -399,7 +386,8 @@ private:
    * Post-processing. Calculate the heat flux at heat transfer boundary
    * conditions. Method used for monophase flow.
    *
-   * @param current_solution_fd current solution for the fluid dynamics, parsed by postprocess
+   * @param current_solution_fd current solution for the fluid dynamics, parsed
+   * by postprocess
    */
 
   template <typename VectorType>

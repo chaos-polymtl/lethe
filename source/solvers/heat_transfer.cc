@@ -647,11 +647,13 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       (not(this->simulation_parameters.multiphysics.VOF) &&
        monitored_fluid == Parameters::FluidIndicator::fluid0))
     {
+      // Monophase flow
       domain_name = "all_domain";
-      gather_vof  = true;
     }
   else
     {
+      // Multiphase flow
+      gather_vof = true;
       switch (monitored_fluid)
         {
           case Parameters::FluidIndicator::fluid0:
@@ -1016,12 +1018,13 @@ HeatTransfer<dim>::calculate_temperature_statistics(
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
 
-  std::vector<double> local_temperature_values(n_q_points);
-
+  // Gather heat transfer information
   FEValues<dim> fe_values_ht(*this->temperature_mapping,
                              *this->fe,
                              *this->cell_quadrature,
                              update_values | update_JxW_values);
+
+  std::vector<double> local_temperature_values(n_q_points);
 
   // Gather VOF information
   const DoFHandler<dim> *        dof_handler_vof;
@@ -1040,8 +1043,9 @@ HeatTransfer<dim>::calculate_temperature_statistics(
 
   std::vector<double> phase_values(n_q_points);
 
+  // Other initializations
   double phase_coefficient(0.);
-  bool   calculate_min_max_on_cell(false);
+  bool   take_min_max(false);
   double volume_integral      = 0.;
   double temperature_integral = 0.;
   double minimum_temperature  = DBL_MAX;
@@ -1078,8 +1082,8 @@ HeatTransfer<dim>::calculate_temperature_statistics(
                 {
                   case Parameters::FluidIndicator::both:
                     {
-                      phase_coefficient         = 1.;
-                      calculate_min_max_on_cell = true;
+                      phase_coefficient = 1.;
+                      take_min_max      = true;
                       break;
                     }
                   case Parameters::FluidIndicator::fluid0:
@@ -1088,14 +1092,16 @@ HeatTransfer<dim>::calculate_temperature_statistics(
                         {
                           phase_coefficient = 1. - phase_values[q];
                           if (phase_values[q] < 0.5)
-                            calculate_min_max_on_cell = true;
+                            take_min_max = true;
+                          else
+                            take_min_max = false;
                         }
                       else
                         {
                           // In the case of monophase simulations, "fluid0" is
                           // equivalent to "both" (all domain) calculation
-                          phase_coefficient         = 1.;
-                          calculate_min_max_on_cell = true;
+                          phase_coefficient = 1.;
+                          take_min_max      = true;
                         }
                       break;
                     }
@@ -1105,7 +1111,9 @@ HeatTransfer<dim>::calculate_temperature_statistics(
                         {
                           phase_coefficient = phase_values[q];
                           if (phase_values[q] > 0.5)
-                            calculate_min_max_on_cell = true;
+                            take_min_max = true;
+                          else
+                            take_min_max = false;
                         }
                       else
                         {
@@ -1123,7 +1131,7 @@ HeatTransfer<dim>::calculate_temperature_statistics(
                       "Unsupported number of fluids (>2)");
                 } // end switch on monitored fluid
 
-              if (calculate_min_max_on_cell)
+              if (take_min_max)
                 {
                   maximum_temperature =
                     std::max(local_temperature_values[q], maximum_temperature);
@@ -1132,160 +1140,6 @@ HeatTransfer<dim>::calculate_temperature_statistics(
                 }
 
               volume_integral += fe_values_ht.JxW(q) * phase_coefficient;
-              temperature_integral += local_temperature_values[q] *
-                                      phase_coefficient * fe_values_ht.JxW(q);
-            }
-        }
-    }
-
-  minimum_temperature =
-    Utilities::MPI::min(minimum_temperature, mpi_communicator);
-  maximum_temperature =
-    Utilities::MPI::max(maximum_temperature, mpi_communicator);
-
-  volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
-  temperature_integral =
-    Utilities::MPI::sum(temperature_integral, mpi_communicator);
-  double temperature_average = temperature_integral / volume_integral;
-
-  // Calculate standard deviation
-  double temperature_variance_integral = 0;
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
-                                           local_temperature_values);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              temperature_variance_integral +=
-                (local_temperature_values[q] - temperature_average) *
-                (local_temperature_values[q] - temperature_average) *
-                fe_values_ht.JxW(q);
-            }
-        }
-    }
-
-  temperature_variance_integral =
-    Utilities::MPI::sum(temperature_variance_integral, mpi_communicator);
-  double temperature_variance = temperature_variance_integral / volume_integral;
-  double temperature_std_deviation = std::sqrt(temperature_variance);
-
-  // Console output
-  if (simulation_parameters.post_processing.verbosity ==
-      Parameters::Verbosity::verbose)
-    {
-      this->pcout << "Temperature statistics on " << domain_name << " : "
-                  << std::endl;
-      this->pcout << "\t     Min : " << minimum_temperature << std::endl;
-      this->pcout << "\t     Max : " << maximum_temperature << std::endl;
-      this->pcout << "\t Average : " << temperature_average << std::endl;
-      this->pcout << "\t Std-Dev : " << temperature_std_deviation << std::endl;
-    }
-
-  // Filling table
-  this->statistics_table.add_value(
-    "time", this->simulation_control->get_current_time());
-  this->statistics_table.add_value("min", minimum_temperature);
-  this->statistics_table.add_value("max", maximum_temperature);
-  this->statistics_table.add_value("average", temperature_average);
-  this->statistics_table.add_value("std-dev", temperature_std_deviation);
-}
-
-template <int dim>
-void
-HeatTransfer<dim>::calculate_temperature_statistics_on_one_fluid(
-  const Parameters::FluidIndicator monitored_fluid,
-  const std::string                domain_name)
-{
-  const unsigned int n_q_points       = this->cell_quadrature->size();
-  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
-
-  std::vector<double> local_temperature_values(n_q_points);
-
-  FEValues<dim> fe_values_ht(*this->temperature_mapping,
-                             *this->fe,
-                             *this->cell_quadrature,
-                             update_values | update_JxW_values);
-
-  // Gather VOF information
-  const DoFHandler<dim> *dof_handler_vof =
-    this->multiphysics->get_dof_handler(PhysicsID::VOF);
-
-  FEValues<dim> fe_values_vof(*this->temperature_mapping,
-                              dof_handler_vof->get_fe(),
-                              *this->cell_quadrature,
-                              update_values | update_JxW_values);
-
-  std::vector<double> phase_values(n_q_points);
-
-  double phase_coefficient(0.);
-  double volume_integral      = 0;
-  double temperature_integral = 0;
-  double minimum_temperature  = DBL_MAX;
-  double maximum_temperature  = -DBL_MAX;
-
-  // Calculate min, max and average
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values_ht.reinit(cell);
-          fe_values_ht.get_function_values(this->present_solution,
-                                           local_temperature_values);
-
-          // Get VOF active cell iterator
-          typename DoFHandler<dim>::active_cell_iterator cell_vof(
-            &(*(this->triangulation)),
-            cell->level(),
-            cell->index(),
-            dof_handler_vof);
-
-          // Gather VOF information
-          fe_values_vof.reinit(cell_vof);
-          fe_values_vof.get_function_values(
-            *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              switch (monitored_fluid)
-                {
-                  case Parameters::FluidIndicator::fluid0:
-                    {
-                      phase_coefficient = 1. - phase_values[q];
-                      if (phase_values[q] < 0.5)
-                        {
-                          maximum_temperature =
-                            std::max(local_temperature_values[q],
-                                     maximum_temperature);
-                          minimum_temperature =
-                            std::min(local_temperature_values[q],
-                                     minimum_temperature);
-                        }
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid1:
-                    {
-                      phase_coefficient = phase_values[q];
-                      if (phase_values[q] > 0.5)
-                        {
-                          maximum_temperature =
-                            std::max(local_temperature_values[q],
-                                     maximum_temperature);
-                          minimum_temperature =
-                            std::min(local_temperature_values[q],
-                                     minimum_temperature);
-                        }
-                      break;
-                    }
-                  default:
-                    throw std::runtime_error(
-                      "Unsupported number of fluids (>2)");
-                } // end switch on monitored fluid
-
-              volume_integral += fe_values_vof.JxW(q) * phase_coefficient;
               temperature_integral += local_temperature_values[q] *
                                       phase_coefficient * fe_values_ht.JxW(q);
             } // end loop on quadrature points
@@ -1312,36 +1166,63 @@ HeatTransfer<dim>::calculate_temperature_statistics_on_one_fluid(
           fe_values_ht.get_function_values(this->present_solution,
                                            local_temperature_values);
 
-          // Get VOF active cell iterator
-          typename DoFHandler<dim>::active_cell_iterator cell_vof(
-            &(*(this->triangulation)),
-            cell->level(),
-            cell->index(),
-            dof_handler_vof);
+          if (gather_vof)
+            {
+              // Get VOF active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                dof_handler_vof);
 
-          // Gather VOF information
-          fe_values_vof.reinit(cell_vof);
-          fe_values_vof.get_function_values(
-            *this->multiphysics->get_solution(PhysicsID::VOF), phase_values);
+              // Gather VOF information
+              fe_values_vof->reinit(cell_vof);
+              fe_values_vof->get_function_values(
+                *this->multiphysics->get_solution(PhysicsID::VOF),
+                phase_values);
+            }
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               switch (monitored_fluid)
                 {
+                  case Parameters::FluidIndicator::both:
+                    {
+                      phase_coefficient = 1.;
+                      break;
+                    }
                   case Parameters::FluidIndicator::fluid0:
                     {
-                      phase_coefficient = 1 - phase_values[q];
+                      if (gather_vof)
+                        phase_coefficient = 1. - phase_values[q];
+                      else
+                        {
+                          // In the case of monophase simulations, "fluid0" is
+                          // equivalent to "both" (all domain) calculation
+                          phase_coefficient = 1.;
+                        }
                       break;
                     }
                   case Parameters::FluidIndicator::fluid1:
                     {
-                      phase_coefficient = phase_values[q];
+                      if (gather_vof)
+                        phase_coefficient = phase_values[q];
+                      else
+                        {
+                          // Defensive only here, this has been checked already
+                          // in simulation_parameters.h
+                          throw std::logic_error(
+                            "Inconsistency in .prm!\n when VOF = false"
+                            "\n use (default value): set postprocessed fluid = both"
+                            "\n or: set postprocessed fluid = fluid 0");
+                        }
                       break;
                     }
                   default:
                     throw std::runtime_error(
                       "Unsupported number of fluids (>2)");
                 } // end switch on monitored fluid
+
               temperature_variance_integral +=
                 (local_temperature_values[q] - temperature_average) *
                 (local_temperature_values[q] - temperature_average) *
