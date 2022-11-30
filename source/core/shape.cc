@@ -635,7 +635,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
   , likely_nodes_map()
-  , precalculations_count(0)
   , max_number_of_nodes(1)
   , position_precalculated(position)
   , orientation_precalculated(orientation)
