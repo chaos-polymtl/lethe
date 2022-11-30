@@ -192,8 +192,12 @@ namespace Parameters
       startup_timestep_scaling = prm.get_double("startup time scaling");
       number_mesh_adaptation   = prm.get_integer("number mesh adapt");
 
-      output_folder     = prm.get("output path");
-      output_name       = prm.get("output name");
+      output_folder = prm.get("output path");
+      output_name   = prm.get("output name");
+      output_name.erase(std::remove(output_name.begin(),
+                                    output_name.end(),
+                                    '/'),
+                        output_name.end());
       output_frequency  = prm.get_integer("output frequency");
       output_time       = prm.get_double("output time");
       output_boundaries = prm.get_bool("output boundaries");
