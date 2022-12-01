@@ -29,12 +29,19 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_periodic_displacement_h
-#  define particle_wall_periodic_displacement_h
+#ifndef periodic_boundaries_manipulator_h
+#  define periodic_boundaries_manipulator_h
 
 /**
- * This class is used to manipulate the particles location when they cross
- * periodic boundaries
+ * This class corresponds to a manipulator of the particles crossing periodic
+ * cells in DEM. It maps cell information of the pairs of periodic cells
+ * and manipulate the particles location when they cross periodic boundaries,
+ * i.e. when a particle cross a periodic boundary (0 or 1) its location is
+ * modified with the offset between faces of periodic cells on periodic
+ * boundaries.
+ *
+ * @note Currently the code only supports one pair of periodic boundaries and
+ * those boundaries must be parallel.
  */
 
 template <int dim>
@@ -121,7 +128,8 @@ private:
 
   /**
    * @brief Checks if particle is outside of the cell, if so, modifies the
-   * location of the particle with the distance between the periodic faces.
+   * location of the particle with the distance (offset) between the periodic
+   * faces
    *
    * @param boundaries_cells_content Reference to the object with periodic
    * boundaries information
@@ -144,4 +152,4 @@ private:
 
 
 
-#endif /* particle_wall_periodic_displacement_h */
+#endif /* periodic_boundaries_manipulator_h */
