@@ -52,6 +52,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 * The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied, periodic boundaries are an exception.
 
 * The ``periodic id 0`` and ``periodic id 1`` parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied.
+
 .. note::
     Only parallel periodic walls are currently working.
 
