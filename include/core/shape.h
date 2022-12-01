@@ -33,6 +33,8 @@
 #include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/physics/transformations.h>
+#include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 
 #include <cfloat>
 #include <memory>
@@ -791,14 +793,15 @@ public:
               const Point<dim> &  position,
               const Tensor<1, 3> &orientation)
     : Shape<dim>(1.0, position, orientation),
+    shape(OpenCASCADE::read_STEP(file_name)),
     normal_projector(
-      shape, 1e-7)
-
+      shape, 1e-7),
+    vertex_position(OpenCASCADE::point (Point<dim>())),
+    vertex(BRepBuilderAPI_MakeVertex(vertex_position)),
+      distancetool(shape,vertex)
   {
-    shape=OpenCASCADE::read_STEP(file_name);
     OpenCASCADE::extract_compound_shapes(
       shape, compounds, compsolids, solids, shells, wires);
-    const double tolerance = OpenCASCADE::get_shape_tolerance(shape) * 5;
   }
 
   /**
@@ -811,6 +814,12 @@ public:
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
+
+  double
+  value_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -826,6 +835,11 @@ public:
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
 
   /**
    * @brief
@@ -848,6 +862,9 @@ private:
   std::vector<TopoDS_Solid>     solids;
   std::vector<TopoDS_Shell>     shells;
   std::vector<TopoDS_Wire>      wires;
+  gp_Pnt vertex_position;
+  TopoDS_Vertex vertex;
+  BRepExtrema_DistShapeShape distancetool;
 
 };
 

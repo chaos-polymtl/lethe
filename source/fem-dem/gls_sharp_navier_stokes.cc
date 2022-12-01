@@ -2546,7 +2546,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   unsigned int global_index_overwrite = local_dof_indices[i];
                   bool         dof_is_inside =
                     particles[ib_particle_id].get_levelset(
-                      support_points[local_dof_indices[i]]) <= 0;
+                      support_points[local_dof_indices[i]],cell) <= 0;
 
                   // If multiple particles cut the cell, we treat the dof of
                   // pressure as a dummy dof. We don't use them to set the
@@ -2786,7 +2786,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               // particle.
                               bool dof_is_inside_p =
                                 particles[ib_particle_id].get_levelset(
-                                  support_points[local_dof_indices[k]]) <= 0;
+                                  support_points[local_dof_indices[k]],cell) <= 0;
                               const unsigned int component_k =
                                 this->fe->system_to_component_index(k).first;
                               if (component_k == dim &&

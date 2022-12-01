@@ -254,6 +254,31 @@ StepShape<dim>::value(const Point<dim> &evaluation_point,
     }
   return (evaluation_point-projected_point).norm();
 }
+template <int dim>
+double
+StepShape<dim>::value_with_cell_guess(
+const Point<dim> &                                   evaluation_point,
+const typename DoFHandler<dim>::active_cell_iterator cell,
+const unsigned int /*component*/)
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  Point<dim> projected_point;
+  vertex_position=OpenCASCADE::point (centered_point);
+  vertex=BRepBuilderAPI_MakeVertex(vertex_position);
+  distancetool.LoadS2(vertex);
+  distancetool.Perform();
+  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
+  if(dim==2){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+    }
+  if(dim==3){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+      projected_point[2]=pt_on_surface.Z();
+    }
+  return (evaluation_point-projected_point).norm();
+}
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
@@ -288,7 +313,31 @@ StepShape<dim>::gradient(const Point<dim> &evaluation_point,
       projected_point[2]=pt_on_surface.Z();
     }
 
-
+  return projected_point;
+}
+template <int dim>
+Tensor<1, dim>
+StepShape<dim>::gradient_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  Point<dim> projected_point;
+  vertex_position=OpenCASCADE::point (centered_point);
+  vertex=BRepBuilderAPI_MakeVertex(vertex_position);
+  distancetool.LoadS2(vertex);
+  distancetool.Perform();
+  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
+  if(dim==2){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+    }
+  if(dim==3){
+      projected_point[0]=pt_on_surface.X();
+      projected_point[1]=pt_on_surface.Y();
+      projected_point[2]=pt_on_surface.Z();
+    }
   return projected_point;
 }
 
