@@ -640,22 +640,22 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Set-up domain name for output files
   Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.post_processing.postprocessed_fluid;
-  std::string domain_name("");
+  // default: monophase simulations
+  std::string domain_name("all_domain");
   bool        gather_vof(false);
 
-  if (monitored_fluid == Parameters::FluidIndicator::both ||
-      (not(this->simulation_parameters.multiphysics.VOF) &&
-       monitored_fluid == Parameters::FluidIndicator::fluid0))
-    {
-      // Monophase flow
-      domain_name = "all_domain";
-    }
-  else
+  if (this->simulation_parameters.physical_properties_manager
+        .get_number_of_fluids() == 2)
     {
       // Multiphase flow
       gather_vof = true;
       switch (monitored_fluid)
         {
+          default:
+            {
+              domain_name = "all_domain";
+              break;
+            }
           case Parameters::FluidIndicator::fluid0:
             {
               domain_name = "fluid_0";
@@ -666,8 +666,6 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
               domain_name = "fluid_1";
               break;
             }
-          default:
-            throw std::runtime_error("Unsupported number of fluids (>2)");
         }
     }
 
@@ -690,13 +688,14 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       // Parse fluid present solution
       if (multiphysics->fluid_dynamics_is_block())
         {
-          calculate_heat_flux_on_bc(
-            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+          calculate_heat_flux_on_bc(gather_vof,
+                                    *multiphysics->get_block_solution(
+                                      PhysicsID::fluid_dynamics));
         }
       else
         {
           calculate_heat_flux_on_bc(
-            *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+            gather_vof, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
         }
 
       if (simulation_control->get_step_number() %
@@ -1018,30 +1017,27 @@ HeatTransfer<dim>::calculate_temperature_statistics(
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
 
-  // Gather heat transfer information
-  FEValues<dim> fe_values_ht(*this->temperature_mapping,
+  // Initialize heat transfer information
+  std::vector<double> local_temperature_values(n_q_points);
+  FEValues<dim>       fe_values_ht(*this->temperature_mapping,
                              *this->fe,
                              *this->cell_quadrature,
                              update_values | update_JxW_values);
 
-  std::vector<double> local_temperature_values(n_q_points);
-
-  // Gather VOF information
+  // Initialize VOF information
   const DoFHandler<dim> *        dof_handler_vof;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
+  std::vector<double>            phase_values(n_q_points);
 
   if (gather_vof)
     {
       dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
-
       fe_values_vof =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
                                         dof_handler_vof->get_fe(),
                                         *this->cell_quadrature,
                                         update_values | update_JxW_values);
     }
-
-  std::vector<double> phase_values(n_q_points);
 
   // Other initializations
   double phase_coefficient(0.);
@@ -1056,6 +1052,7 @@ HeatTransfer<dim>::calculate_temperature_statistics(
     {
       if (cell->is_locally_owned())
         {
+          // Gather heat transfer information
           fe_values_ht.reinit(cell);
           fe_values_ht.get_function_values(this->present_solution,
                                            local_temperature_values);
@@ -1278,50 +1275,112 @@ template <int dim>
 template <typename VectorType>
 void
 HeatTransfer<dim>::calculate_heat_flux_on_bc(
+  const bool        gather_vof,
   const VectorType &current_solution_fd)
 {
-  const DoFHandler<dim> *dof_handler_fd =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  const unsigned int n_q_points_face  = this->face_quadrature->size();
+  const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
 
-  const unsigned int n_q_points_face = this->face_quadrature->size();
-  const FEValuesExtractors::Vector velocities(0);
-
-  std::vector<Tensor<1, dim>> local_velocity_values(n_q_points_face);
+  // Initialize heat transfer information
   std::vector<double>         local_temperature_values(n_q_points_face);
   std::vector<Tensor<1, dim>> temperature_gradient(n_q_points_face);
-
-  Tensor<1, dim>      normal_vector_ht;
-  double              heat_flux_bc;
-  std::vector<double> heat_flux_vector(
-    this->simulation_parameters.boundary_conditions_ht.size);
-
-  FEFaceValues<dim> fe_face_values_ht(*this->temperature_mapping,
+  FEFaceValues<dim>           fe_face_values_ht(*this->temperature_mapping,
                                       this->dof_handler.get_fe(),
                                       *this->face_quadrature,
                                       update_values | update_quadrature_points |
                                         update_gradients | update_JxW_values |
                                         update_normal_vectors);
 
-  FEFaceValues<dim> fe_face_values_fd(*this->temperature_mapping,
+  // Initialize fluid dynamics information
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  const FEValuesExtractors::Vector velocities(0);
+  std::vector<Tensor<1, dim>>      local_velocity_values(n_q_points_face);
+  FEFaceValues<dim>                fe_face_values_fd(*this->temperature_mapping,
                                       dof_handler_fd->get_fe(),
                                       *this->face_quadrature,
                                       update_values | update_quadrature_points);
 
-  const MPI_Comm mpi_communicator = this->dof_handler.get_communicator();
+  // Initialize VOF information
+  const DoFHandler<dim> *        dof_handler_vof;
+  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  std::vector<double>            phase_values(n_q_points_face);
 
-  // Evaluate fluid properties
-  auto density_model =
-    this->simulation_parameters.physical_properties_manager.get_density();
-  auto specific_heat_model =
-    this->simulation_parameters.physical_properties_manager.get_specific_heat();
-  auto conductivity_model =
-    this->simulation_parameters.physical_properties_manager
-      .get_thermal_conductivity();
-  std::map<field, double> field_values;
+  if (gather_vof)
+    {
+      dof_handler_vof = this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      fe_values_vof =
+        std::make_shared<FEValues<dim>>(*this->temperature_mapping,
+                                        dof_handler_vof->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values | update_JxW_values);
+    }
 
-  double rho_cp = density_model->value(field_values) *
-                  specific_heat_model->value(field_values);
-  double conductivity = conductivity_model->value(field_values);
+  // Initialize fluid properties
+  auto properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+  std::map<field, double>              field_values;
+  std::map<field, std::vector<double>> fields;
+
+  // monophase flow
+  double density(0.);
+  double specific_heat(0.);
+  double thermal_conductivity(0.);
+
+  // multiphase flow
+  std::vector<double> density_0(n_q_points_face);
+  std::vector<double> specific_heat_0(n_q_points_face);
+  std::vector<double> thermal_conductivity_0(n_q_points_face);
+  std::vector<double> density_1(n_q_points_face);
+  std::vector<double> specific_heat_1(n_q_points_face);
+  std::vector<double> thermal_conductivity_1(n_q_points_face);
+
+  switch (properties_manager.get_number_of_fluids())
+    {
+      case 1:
+        {
+          // Get values for monophase flow
+          const auto density_model = properties_manager.get_density();
+          const auto specific_heat_model =
+            properties_manager.get_specific_heat();
+          const auto conductivity_model =
+            properties_manager.get_thermal_conductivity();
+
+          density              = density_model->value(field_values);
+          specific_heat        = specific_heat_model->value(field_values);
+          thermal_conductivity = conductivity_model->value(field_values);
+
+          break;
+        }
+      case 2:
+        {
+          // Get prm values for multiphase flow - will be blended in the
+          // integration loop
+          const auto density_models = properties_manager.get_density_vector();
+          const auto specific_heat_models =
+            properties_manager.get_specific_heat_vector();
+          const auto thermal_conductivity_models =
+            properties_manager.get_thermal_conductivity_vector();
+
+          density_models[0]->vector_value(fields, density_0);
+          specific_heat_models[0]->vector_value(fields, specific_heat_0);
+          thermal_conductivity_models[0]->vector_value(fields,
+                                                       thermal_conductivity_0);
+
+          density_models[1]->vector_value(fields, density_1);
+          specific_heat_models[1]->vector_value(fields, specific_heat_1);
+          thermal_conductivity_models[1]->vector_value(fields,
+                                                       thermal_conductivity_1);
+
+          break;
+        }
+    } // end switch on number of fluids
+
+  // Other initializations
+  Tensor<1, dim>      normal_vector_ht;
+  double              heat_flux_bc;
+  std::vector<double> heat_flux_vector(
+    this->simulation_parameters.boundary_conditions_ht.size);
 
   // Integrate on BC
   for (unsigned int i_bc = 0;
@@ -1341,6 +1400,13 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
                   if (cell->face(face)->at_boundary() &&
                       cell->face(face)->boundary_id() == boundary_id)
                     {
+                      // Gather heat transfer information
+                      fe_face_values_ht.reinit(cell, face);
+                      fe_face_values_ht.get_function_values(
+                        this->present_solution, local_temperature_values);
+                      fe_face_values_ht.get_function_gradients(
+                        this->present_solution, temperature_gradient);
+
                       // Get fluid dynamics active cell iterator
                       typename DoFHandler<dim>::active_cell_iterator cell_fd(
                         &(*(this->triangulation)),
@@ -1348,31 +1414,59 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
                         cell->index(),
                         dof_handler_fd);
 
-                      // Reinit fe_face_values for Fluid Dynamics and Heat
-                      // Transfer
-                      fe_face_values_ht.reinit(cell, face);
+                      // Gather fluid dynamics information
                       fe_face_values_fd.reinit(cell_fd, face);
-
                       fe_face_values_fd[velocities].get_function_values(
                         current_solution_fd, local_velocity_values);
 
-                      fe_face_values_ht.get_function_values(
-                        this->present_solution, local_temperature_values);
+                      if (gather_vof)
+                        {
+                          // Get VOF active cell iterator
+                          typename DoFHandler<dim>::active_cell_iterator
+                            cell_vof(&(*(this->triangulation)),
+                                     cell->level(),
+                                     cell->index(),
+                                     dof_handler_vof);
 
-                      fe_face_values_ht.get_function_gradients(
-                        this->present_solution, temperature_gradient);
+                          // Gather VOF information
+                          fe_values_vof->reinit(cell_vof);
+                          fe_values_vof->get_function_values(
+                            *this->multiphysics->get_solution(PhysicsID::VOF),
+                            phase_values);
+                        }
 
                       // Loop on the quadrature points
                       for (unsigned int q = 0; q < n_q_points_face; q++)
                         {
+                          if (properties_manager.get_number_of_fluids() == 2)
+                            {
+                              // Blend the physical properties using the VOF
+                              // field
+                              thermal_conductivity = calculate_point_property(
+                                phase_values[q],
+                                thermal_conductivity_0[q],
+                                thermal_conductivity_1[q]);
+
+                              density =
+                                calculate_point_property(phase_values[q],
+                                                         density_0[q],
+                                                         density_1[q]);
+
+                              specific_heat =
+                                calculate_point_property(phase_values[q],
+                                                         specific_heat_0[q],
+                                                         specific_heat_1[q]);
+                            }
+
                           double temperature_gradient_q =
                             temperature_gradient[q] *
                             (-fe_face_values_ht.normal_vector(q));
 
                           heat_flux_bc +=
-                            (-conductivity * temperature_gradient_q +
-                             local_temperature_values[q] * rho_cp *
-                               local_velocity_values[q] * normal_vector_ht) *
+                            (-thermal_conductivity * temperature_gradient_q +
+                             local_temperature_values[q] * density *
+                               specific_heat * local_velocity_values[q] *
+                               normal_vector_ht) *
                             fe_face_values_ht.JxW(q);
 
                         } // end loop on quadrature points
@@ -1410,18 +1504,22 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
 
 template void
 HeatTransfer<2>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
+  const bool                           gather_vof,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
 HeatTransfer<3>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
+  const bool                           gather_vof,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
 HeatTransfer<2>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::BlockVector>(
+  const bool                                gather_vof,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template void
 HeatTransfer<3>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::BlockVector>(
+  const bool                                gather_vof,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template <int dim>

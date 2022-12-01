@@ -386,13 +386,17 @@ private:
    * Post-processing. Calculate the heat flux at heat transfer boundary
    * conditions. Method used for monophase flow.
    *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   *
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
    */
 
   template <typename VectorType>
   void
-  calculate_heat_flux_on_bc(const VectorType &current_solution_fd);
+  calculate_heat_flux_on_bc(const bool        gather_vof,
+                            const VectorType &current_solution_fd);
 
   /**
    * @brief Post-processing. Write the heat transfer values to an output file.

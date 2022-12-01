@@ -8,7 +8,7 @@ subsection simulation control
   set number mesh adapt       = 0
   set time end                = 1
   set time step               = 0.2
-  set output name             = vof_ht_heated-walls_multivar_adapt
+  set output name             = vof_ht_heated-walls
   set output frequency        = 0
 end
 
@@ -41,6 +41,15 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+subsection post-processing
+      set output frequency      = 1
+      set verbosity             = verbose
+      set calculate heat flux   = true
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
@@ -66,7 +75,7 @@ subsection mesh
   set type = dealii
   set grid type = hyper_rectangle
   set grid arguments = -0.5, -0.1 : 0.5, 0.1 : true
-  set initial refinement = 4
+  set initial refinement = 5
 end
 
 # --------------------------------------------------
@@ -77,10 +86,11 @@ subsection analytical solution
   set verbosity  = verbose
   subsection temperature
     set Function constants = k1=2, k0=0.1, T1=5, T0=1, L=0.5
-    #temperature for fluid 1 (x<=0) : T = k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
-    #temperature for fluid 0 (x>0) : T = k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
+    #temperature for fluid 1 (x<=0) : T1 = k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
+    #temperature for fluid 0 (x>0) : T0 = k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
     set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
   end  
+  # heat flux BC0 (-k1*(dT1/dx)*Ly) = heat flux BC1 (-k0*(dT0/dx)*Ly) ~ -0.15
   subsection VOF
     set Function expression = if(x<=0,1,0)
   end
@@ -120,20 +130,6 @@ subsection boundary conditions heat transfer
       set type		    = temperature
       set value		    = 1
     end
-end
-
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-subsection mesh adaptation
-   set type = kelly
-   set initial refinement steps = 1
-   set variable = temperature,phase
-   set fraction type = fraction
-   set fraction coarsening = 0.2,0.02
-   set fraction refinement = 0.3,0.95
-   set max refinement level = 6
-   set min refinement level = 4
 end
 
 # --------------------------------------------------
