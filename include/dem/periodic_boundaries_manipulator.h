@@ -41,7 +41,8 @@ using namespace dealii;
  * boundaries.
  *
  * @note Currently the code only supports one pair of periodic boundaries and
- * those boundaries must be parallel.
+ * those boundaries must be parallel and aligned with an axis of the domain
+ * (e.g., x axis).
  */
 
 template <int dim>

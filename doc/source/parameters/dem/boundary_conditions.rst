@@ -54,7 +54,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 * The ``periodic id 0`` and ``periodic id 1`` parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied.
 
 .. note::
-    Only parallel periodic walls are currently working.
+        Only periodic boundaries which have co-linear normal vectors which align along one axis of the problem (e.g., x axis) are currently supported.
 
 * The ``type`` parameter specifies the type of the boundary condition. Acceptable types are: ``fixed_wall``, ``outlet``, ``rotational``, ``translational`` and ``periodic``. The default boundary condition type is ``fixed_wall``.
 
