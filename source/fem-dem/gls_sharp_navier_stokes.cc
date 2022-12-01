@@ -97,24 +97,24 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   // with the key being the cell.
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   std::map<types::global_dof_index, Point<dim>> support_points;
+  std::map<types::global_dof_index, bool> inside_outside_support_point_vector;
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-
           bool         cell_is_cut;
           bool         cell_is_inside;
           unsigned int particle_id_which_cuts_this_cell           = 0;
@@ -130,110 +130,92 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-
-
               unsigned int nb_dof_inside = 0;
-              if(particles[p].particle_type=="step"){
-                  cell_is_cut=cell_cut_by_p(cell,support_points,p);
-                  particle_id_which_cuts_this_cell=p;
-                  if (cell_is_cut){
-                      number_of_particles_cutting_this_cell+=1;
-                    }
-                }
-              else
+              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                  // Count the number of DOFs that are inside
+                  // of the particles. If all the DOfs are on one side
+                  // the cell is not cut by the boundary.
+                  if (0 == this->fe->system_to_component_index(j).first)
                     {
+                      auto iterator = inside_outside_support_point_vector.find(
+                        local_dof_indices[j]);
+                      if (iterator == inside_outside_support_point_vector.end())
+                        {
                       if (particles[p].get_levelset(
                             support_points[local_dof_indices[j]], cell) <= 0)
-                        ++nb_dof_inside;
+                            {
+                              ++nb_dof_inside;
+                              inside_outside_support_point_vector
+                                [local_dof_indices[j]] = true;
+                            }
+                          else
+                            inside_outside_support_point_vector
+                              [local_dof_indices[j]] = false;
+                        }
+                      else{
+                          if (inside_outside_support_point_vector[local_dof_indices[j]]==true)
+                            {
+                              ++nb_dof_inside;
+                            }
+                        }
                     }
+                }
 
-                  // If some of the DOFs are inside the boundary, some are outside, the cell is cut.
-                  if (nb_dof_inside != 0)
+              // If some of the DOFs are inside the boundary, some are outside,
+              // the cell is cut.
+              if (nb_dof_inside != 0)
+                {
+                  // If all the DOFs are inside the boundary this cell is inside
+                  // the particle. Otherwise the particle is cut.
+                  if (nb_dof_inside == dofs_per_cell_local_v_x)
                     {
-                      // If all the DOFs are inside the boundary this cell is inside the particle. Otherwise the particle is cut.
-                      if (nb_dof_inside == dofs_per_cell_local_v_x)
-                        {
-                          // We only register the particle the lowest id as the
-                          // particle in which this cell is embedded if the cell is embedded in multiple particles.
-                          if (number_of_particles_cutting_this_cell == 0)
-                            {
-                              cell_is_cut                      = false;
-                              particle_id_which_cuts_this_cell = 0;
-                              cell_is_inside                   = true;
-                              particle_id_in_which_this_cell_is_embedded = p;
-                            }
-                          break;
-                        }
-                      else
-                        {
-                          // We only register the particle with the lowest id as the particle by this cell is cut if the cell is cut in multiple particles.
-                          if (number_of_particles_cutting_this_cell == 0)
-                            {
-                              cell_is_cut                      = true;
-                              particle_id_which_cuts_this_cell = p;
-                              cell_is_inside                   = false;
-                              particle_id_in_which_this_cell_is_embedded = 0;
-                            }
-                          number_of_particles_cutting_this_cell += 1;
-                        }
-                    }
-                  else
-                    {
+                      // We only register the particle the lowest id as the
+                      // particle in which this cell is embedded if the cell is
+                      // embedded in multiple particles.
                       if (number_of_particles_cutting_this_cell == 0)
                         {
                           cell_is_cut                                = false;
                           particle_id_which_cuts_this_cell           = 0;
+                          cell_is_inside                             = true;
+                          particle_id_in_which_this_cell_is_embedded = p;
+                        }
+                      break;
+                    }
+                  else
+                    {
+                      // We only register the particle with the lowest id as the
+                      // particle by this cell is cut if the cell is cut in
+                      // multiple particles.
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = true;
+                          particle_id_which_cuts_this_cell           = p;
                           cell_is_inside                             = false;
                           particle_id_in_which_this_cell_is_embedded = 0;
                         }
+                      number_of_particles_cutting_this_cell += 1;
                     }
                 }
-              }
-
-
+              else
+                {
+                  if (number_of_particles_cutting_this_cell == 0)
+                    {
+                      cell_is_cut                                = false;
+                      particle_id_which_cuts_this_cell           = 0;
+                      cell_is_inside                             = false;
+                      particle_id_in_which_this_cell_is_embedded = 0;
+                    }
+                }
+            }
 
           cut_cells_map[cell]    = {cell_is_cut,
-                                 particle_id_which_cuts_this_cell,
-                                 number_of_particles_cutting_this_cell};
+                                    particle_id_which_cuts_this_cell,
+                                    number_of_particles_cutting_this_cell};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
-
         }
     }
-}
-
-template <int dim>
-bool
-GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(const typename DoFHandler<dim>::active_cell_iterator &         cell,
-              std::map<types::global_dof_index, Point<dim>> &support_points,
-              unsigned int                                   p){
-//this function aims at defining if a cell is cu by a step loaded from open cascade.
-
-const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-
-std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-cell->get_dof_indices(local_dof_indices);
-bool cell_is_cut=false;
-for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-  {
-    // Count the number of DOFs that are inside
-    // of the particles. If all the DOfs are on one side
-    // the cell is not cut by the boundary.
-    if (0 == this->fe->system_to_component_index(j).first)
-      {
-        Point<dim>projected_point;
-          particles[p].closest_surface_point(support_points[ local_dof_indices[j]],projected_point);
-
-        if (cell->point_inside(projected_point))
-          {
-            cell_is_cut = true;
-            break;
-          }
-      }
-  }
-return cell_is_cut;
 }
 
 
@@ -804,7 +786,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // IB stencil to extrapolate the fluid stress tensor.
 
                       std::vector<Tensor<2, dim>>
-                                                  local_face_viscous_stress_tensor(dofs_per_face);
+                        local_face_viscous_stress_tensor(dofs_per_face);
                       std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;
@@ -2564,7 +2546,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   unsigned int global_index_overwrite = local_dof_indices[i];
                   bool         dof_is_inside =
                     particles[ib_particle_id].get_levelset(
-                      support_points[local_dof_indices[i]], cell) < 0;
+                      support_points[local_dof_indices[i]]) <= 0;
 
                   // If multiple particles cut the cell, we treat the dof of
                   // pressure as a dummy dof. We don't use them to set the
@@ -2804,8 +2786,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               // particle.
                               bool dof_is_inside_p =
                                 particles[ib_particle_id].get_levelset(
-                                  support_points[local_dof_indices[k]], cell) <
-                                0;
+                                  support_points[local_dof_indices[k]]) <= 0;
                               const unsigned int component_k =
                                 this->fe->system_to_component_index(k).first;
                               if (component_k == dim &&
@@ -3108,8 +3089,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3199,8 +3180,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
