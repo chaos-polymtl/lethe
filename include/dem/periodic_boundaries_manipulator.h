@@ -92,8 +92,9 @@ public:
       &periodic_boundaries_cells_information);
 
   /**
-   * @brief Return the periodic offset, it is get from the first pair of cells
-   * on periodic boundaries, all pair of cells have the same offset
+   * @brief Return the periodic offset, it is calculated from the first pair of
+   * cells on periodic boundaries, all pair of cells are assumed to have the
+   * same offset
    */
   inline Tensor<1, dim>
   get_constant_offset()

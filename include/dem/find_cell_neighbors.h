@@ -49,8 +49,8 @@ public:
   FindCellNeighbors<dim>();
 
   /**
-   * Finds the neighbor list (without repetition) of all the active cells in the
-   * triangulation
+   * @brief Finds the neighbor list (without repetition) of all the active
+   * cells in the triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param cells_local_neighbor_list A vector (with size of the local cell
@@ -70,8 +70,8 @@ public:
       &cells_ghost_neighbor_list);
 
   /**
-   * Finds the neighbor list (without repetition) of all the active cells in the
-   * triangulation
+   * @brief Finds the neighbor list (without repetition) of all the active cells
+   * in the triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
    * @param periodic_boundaries_cells_information A container of information
@@ -120,7 +120,22 @@ public:
 
 private:
   /**
-   * Generate a periodic neighbor cells list of the cell.
+   * @brief Generate a periodic neighbor cells list of the cell. With the
+   * coinciding_vertex_groups and the vertex_to_coinciding_vertex_group, we can
+   * get the coinciding vertices on a periodic boundary and with v_to_c we can
+   * get the list of the periodic neighbor cells to the main cell.
+   *
+   * Here is an example to understand how the search works :
+   * Cell 8 have vertices 0, 1, 2, 3 on the periodic boundary. First,
+   * it checks in the coinciding_vertex_groups if the vertex 0 is a key in the
+   * map, and if it is, it gets a label, let's say label is 10. In the
+   * vertex_to_coinciding_vertex_group, it can finds the the coinciding vertices
+   * with the label. Using the label 10, it gets the vertices 0 and 34, which
+   * means that vertices 0 and 34 are periodic. We do not want the cells
+   * attached to the vertex 0 since they are already found with the regular
+   * find_cell_neighbor function, so it skips vertex 0, but gets the cells 21,
+   * 22, 23, 24 attached to the vertex 34. The same checks are done for vertices
+   * 1, 2 and 3 and all periodic cells are return as a vector.
    *
    * @param cell The cell that needs the periodic neighbor list
    * @param coinciding_vertex_groups A map of coinciding vertices labeled by an

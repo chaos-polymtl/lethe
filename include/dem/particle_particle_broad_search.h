@@ -50,7 +50,7 @@ public:
   ParticleParticleBroadSearch<dim>();
 
   /**
-   * Finds a vector of pairs (particle_particle_candidates) which shows the
+   * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
    * candidate particle-particle collision pairs. These collision pairs will be
    * used in the fine search to investigate if they are in contact or not.
    *
@@ -68,7 +68,7 @@ public:
 
 
   /**
-   * Finds a vector of pairs (particle_particle_candidates) which shows the
+   * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
    * candidate particle-particle collision pairs. These collision pairs will be
    * used in the fine search to investigate if they are in contact or not.
    *
@@ -86,7 +86,7 @@ public:
 
 private:
   /**
-   * Stores the candidate particle-particle collision pairs with a given
+   * @brief Stores the candidate particle-particle collision pairs with a given
    * particle iterator. particle_begin iterator is useful to skip storage of the
    * first particle in main cell (particle_begin will be the iterator after the
    * particles_to_evaluate.begin() in that case). When particle_begin is
