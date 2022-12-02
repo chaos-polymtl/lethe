@@ -795,7 +795,7 @@ public:
     : Shape<dim>(1.0, position, orientation),
     shape(OpenCASCADE::read_STEP(file_name)),
     normal_projector(
-      shape, 1e-7),
+      shape,  OpenCASCADE::get_shape_tolerance(shape) * 5),
     vertex_position(OpenCASCADE::point (Point<dim>())),
     vertex(BRepBuilderAPI_MakeVertex(vertex_position)),
       distancetool(shape,vertex)
