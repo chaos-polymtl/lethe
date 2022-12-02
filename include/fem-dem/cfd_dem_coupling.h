@@ -227,6 +227,8 @@ private:
   double                    standard_deviation_multiplier;
   double                    smallest_contact_search_criterion;
   double                    triangulation_cell_diameter;
+  Tensor<1, dim>            periodic_offset;
+  bool                      has_periodic_boundaries;
 
   DEMContainerManager<dim>           container_manager;
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
