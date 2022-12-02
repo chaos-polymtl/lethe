@@ -384,7 +384,7 @@ private:
 
   /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
-   * conditions. Method used for monophase flow.
+   * conditions.
    *
    * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
    * VOF information
@@ -397,6 +397,28 @@ private:
   void
   calculate_heat_flux_on_bc(const bool        gather_vof,
                             const VectorType &current_solution_fd);
+
+  /**
+   * Post-processing. Calculate the heat (rho*Cp*T) in a fluid domain.
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param domain_name string indicating the monitored_fluid in the output filename
+   *
+   * @param current_solution_fd current solution for the fluid dynamics, parsed
+   * by postprocess
+   */
+
+  template <typename VectorType>
+  void
+  calculate_heat(const bool                       gather_vof,
+                 const Parameters::FluidIndicator monitored_fluid,
+                 const std::string                domain_name,
+                 const VectorType &               current_solution_fd);
 
   /**
    * @brief Post-processing. Write the heat transfer values to an output file.

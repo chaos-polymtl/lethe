@@ -437,6 +437,7 @@ Tracer<dim>::write_tracer_statistics()
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
       std::string filename =
+        simulation_parameters.simulation_control.output_folder +
         simulation_parameters.post_processing.tracer_output_name + ".dat";
       std::ofstream output(filename.c_str());
 

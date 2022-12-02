@@ -339,8 +339,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
                               *this->cell_quadrature,
-                              update_values | update_quadrature_points |
-                                update_JxW_values);
+                              update_values | update_JxW_values);
 
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> phase_values(n_q_points);
@@ -919,17 +918,13 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
                                          *this->cell_quadrature,
-                                         update_values |
-                                           update_quadrature_points |
-                                           update_JxW_values |
-                                           update_gradients);
+                                         update_values | update_gradients);
 
   FEValues<dim> fe_values_filtered_phase_fraction_gradient(
     *this->mapping,
     *this->fe_filtered_phase_fraction_gradient,
     *this->cell_quadrature,
-    update_values | update_quadrature_points | update_JxW_values |
-      update_gradients);
+    update_values | update_JxW_values | update_gradients);
 
 
   // const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
@@ -1112,15 +1107,14 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
                                     *this->fe_curvature,
                                     *this->cell_quadrature,
-                                    update_values | update_quadrature_points |
-                                      update_JxW_values | update_gradients);
+                                    update_values | update_JxW_values |
+                                      update_gradients);
 
   FEValues<dim> fe_values_filtered_phase_fraction_gradient(
     *this->mapping,
     *this->fe_filtered_phase_fraction_gradient,
     *this->cell_quadrature,
-    update_values | update_quadrature_points | update_JxW_values |
-      update_gradients);
+    update_values);
 
   const unsigned int dofs_per_cell = this->fe_curvature->dofs_per_cell;
 
@@ -1802,10 +1796,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
                               *this->cell_quadrature,
-                              update_values | update_quadrature_points |
-                                update_JxW_values | update_gradients);
-
-
+                              update_values | update_JxW_values);
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int n_q_points    = this->cell_quadrature->size();
@@ -2050,14 +2041,12 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
   FEFaceValues<dim> fe_face_values_vof(*this->mapping,
                                        *this->fe,
                                        *this->face_quadrature,
-                                       update_values |
-                                         update_quadrature_points);
+                                       update_values);
 
   FEFaceValues<dim> fe_face_values_fd(*this->mapping,
                                       dof_handler_fd->get_fe(),
                                       *this->face_quadrature,
-                                      update_values | update_quadrature_points |
-                                        update_gradients |
+                                      update_values | update_gradients |
                                         update_normal_vectors);
 
   const unsigned int n_q_points_face = this->face_quadrature->size();
