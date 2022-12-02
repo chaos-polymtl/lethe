@@ -144,7 +144,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                         {
 
                       if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]], cell) <= 0)
+                            support_points[local_dof_indices[j]], cell,local_dof_indices[j]) <= 0)
                             {
                               ++nb_dof_inside;
                               inside_outside_support_point_vector[p]
@@ -557,7 +557,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                           ->outside_radius,
                         this->simulation_parameters.particlesParameters
                           ->inside_radius,
-                        cell))
+                        cell,local_dof_indices[j]))
                     {
                       ++count_small;
                     }
@@ -723,7 +723,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // of the particles. If all the DOfs are on one side
                       // the cell is not cut by the boundary.
                       if (particles[p].get_levelset(
-                            support_points[local_face_dof_indices[j]], cell) <=
+                            support_points[local_face_dof_indices[j]], cell,local_face_dof_indices[j]) <=
                           0)
                         ++nb_dof_inside;
                     }
@@ -741,16 +741,22 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // solution. Define the triangulation of the surface cell.
                       for (unsigned int i = 0; i < vertices_per_face; ++i)
                         {
+                          for (unsigned int j = 0; j < local_face_dof_indices.size();
+                               ++j)
+                            {
+                              if ((support_points[local_face_dof_indices[j]]-local_face->vertex(i)).norm()<1e-12)
+                                {
+                                  Point<dim> vertex_projection;
+                                  particles[p].closest_surface_point(
+                                    local_face->vertex(i), vertex_projection, cell);
+                                  approximate_surface_cell_normal +=
+                                    (local_face->vertex(i) - vertex_projection) /
+                                    ((local_face->vertex(i) - vertex_projection)
+                                       .norm() +
+                                     DBL_MIN);
+                                }
+                            }
                           // Define the vertices of the surface cell.
-                          Point<dim> vertex_projection;
-                          particles[p].closest_surface_point(
-                            local_face->vertex(i), vertex_projection, cell);
-                          approximate_surface_cell_normal +=
-                            (local_face->vertex(i) - vertex_projection) /
-                            ((local_face->vertex(i) - vertex_projection)
-                               .norm() +
-                             DBL_MIN);
-
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)
                             {
@@ -815,7 +821,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       length_ratio,
                                       particles[p],
                                       support_points[local_face_dof_indices[i]],
-                                      cell);
+                                      cell,local_face_dof_indices[i]);
 
                                   auto cell_2 =
                                     ib_done[local_face_dof_indices[i]].second;
@@ -832,7 +838,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                           particles[p],
                                           support_points
                                             [local_face_dof_indices[i]],
-                                          cell);
+                                          cell,local_face_dof_indices[i]);
 
                                       try
                                         {
@@ -997,7 +1003,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         support_points
                                           [local_face_dof_indices[i]],
                                         point_projection,
-                                        cell);
+                                        cell,local_face_dof_indices[i]);
 
                                       auto projected_point_unit =
                                         local_face_map
@@ -2549,7 +2555,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         this->fe->system_to_component_index(i).first;
                       bool dof_is_inside =
                         particles[ib_particle_id].get_levelset(
-                          support_points[local_dof_indices[i]], cell) <= 0;
+                          support_points[local_dof_indices[i]], cell,local_dof_indices[i]) <= 0;
 
                       // If multiple particles cut the cell, we treat the dof of
                       // pressure as a dummy dof. We don't use them to set the
@@ -2678,7 +2684,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               // the DOF and IB
                               if (abs(particles[ib_particle_id].get_levelset(
                                     support_points[local_dof_indices[i]],
-                                    cell)) <= 1e-12 * dr)
+                                    cell,local_dof_indices[i])) <= 1e-12 * dr)
                                 {
                                   dof_on_ib = true;
                                 }
@@ -2786,7 +2792,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                             particles[ib_particle_id],
                             support_points[local_dof_indices[i]],
                             component_i,
-                            cell);
+                            cell,local_dof_indices[i]);
 
                           //  If the pressure is imposed trough IB inside the
                           //  particle we use an approximation of the pressure
@@ -2802,7 +2808,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   bool dof_is_inside_p =
                                     particles[ib_particle_id].get_levelset(
                                       support_points[local_dof_indices[k]],
-                                      cell) <= 0;
+                                      cell,local_dof_indices[k]) <= 0;
                                   const unsigned int component_k =
                                     this->fe->system_to_component_index(k)
                                       .first;

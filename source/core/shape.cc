@@ -18,8 +18,8 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 
 #include <cfloat>
 
@@ -117,6 +117,7 @@ double
 Shape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  unsigned int /*dof_index*/,
   const unsigned int /*component*/)
 {
   return this->value(evaluation_point);
@@ -127,9 +128,40 @@ Tensor<1, dim>
 Shape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  unsigned int /*dof_index*/,
   const unsigned int /*component*/)
 {
   return this->gradient(evaluation_point);
+}
+
+template <int dim>
+void
+Shape<dim>::closest_surface_point(
+  const Point<dim>                                     &p,
+  Point<dim>                                           &closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess,
+  unsigned int dof_index)
+{
+  Tensor<1, dim> actual_gradient;
+  double         distance_from_surface;
+  actual_gradient       = this->gradient_with_cell_guess(p, cell_guess, dof_index);
+  distance_from_surface = this->value_with_cell_guess(p, cell_guess,dof_index);
+
+  closest_point =
+    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+}
+
+template <int dim>
+void
+Shape<dim>::closest_surface_point(const Point<dim> &p,
+                                  Point<dim>       &closest_point)
+{
+  Tensor<1, dim> actual_gradient;
+  double         distance_from_surface;
+  actual_gradient       = this->gradient(p);
+  distance_from_surface = this->value(p);
+  closest_point =
+    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
 }
 
 template <int dim>
@@ -233,56 +265,79 @@ Sphere<dim>::set_position(const Point<dim> &position)
 
 template <int dim>
 double
-StepShape<dim>::value(const Point<dim> &evaluation_point,
-                   const unsigned int /*component*/) const
+OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
 {
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-  Point<dim> projected_point;
-  auto pt=OpenCASCADE::point (centered_point);
+  Point<dim>    centered_point = this->align_and_center(evaluation_point);
+  Point<dim>    projected_point;
+  auto          pt     = OpenCASCADE::point(centered_point);
   TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
-  BRepExtrema_DistShapeShape distancetool(shape,vertex);
+  BRepExtrema_DistShapeShape distancetool(shape, vertex);
   distancetool.Perform();
-  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
-  if(dim==2){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
+  gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+  if (dim == 2)
+    {
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
     }
-  if(dim==3){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
-      projected_point[2]=pt_on_surface.Z();
+  if (dim == 3)
+    {
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
+      projected_point[2] = pt_on_surface.Z();
     }
-  return (evaluation_point-projected_point).norm();
+  return (evaluation_point - projected_point).norm();
 }
 template <int dim>
 double
-StepShape<dim>::value_with_cell_guess(
-const Point<dim> &                                   evaluation_point,
-const typename DoFHandler<dim>::active_cell_iterator cell,
-const unsigned int /*component*/)
+OpenCascadeShape<dim>::value_with_cell_guess(
+  const Point<dim>                                    &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  unsigned int dof_index,
+  const unsigned int /*component*/)
 {
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-  Point<dim> projected_point;
-  vertex_position=OpenCASCADE::point (centered_point);
-  vertex=BRepBuilderAPI_MakeVertex(vertex_position);
-  distancetool.LoadS2(vertex);
-  distancetool.Perform();
-  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
-  if(dim==2){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
-    }
-  if(dim==3){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
-      projected_point[2]=pt_on_surface.Z();
-    }
-  return (evaluation_point-projected_point).norm();
+  auto iterator=this->value_cache.find(dof_index);
+if (iterator == this->value_cache.end() )
+  {
+    Point<dim> centered_point = this->align_and_center(evaluation_point);
+    Point<dim> projected_point;
+    vertex_position = OpenCASCADE::point(centered_point);
+    vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
+    distancetool.LoadS2(vertex);
+    distancetool.Perform();
+    gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+    if (dim == 2)
+      {
+        projected_point[0] = pt_on_surface.X();
+        projected_point[1] = pt_on_surface.Y();
+      }
+    if (dim == 3)
+      {
+        projected_point[0] = pt_on_surface.X();
+        projected_point[1] = pt_on_surface.Y();
+        projected_point[2] = pt_on_surface.Z();
+      }
+    if (distancetool.InnerSolution())
+      {
+        this->value_cache[dof_index]= -(evaluation_point - projected_point).norm();
+        return -(evaluation_point - projected_point).norm();
+
+      }
+    else
+      {
+        this->value_cache[dof_index]= (evaluation_point - projected_point).norm();
+        return (evaluation_point - projected_point).norm();
+      }
+  }
+else{
+    return this->value_cache[dof_index];
+  }
+
 }
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
-StepShape<dim>::static_copy() const
+OpenCascadeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<Sphere<dim>>(this->effective_radius,
@@ -293,64 +348,146 @@ StepShape<dim>::static_copy() const
 
 template <int dim>
 Tensor<1, dim>
-StepShape<dim>::gradient(const Point<dim> &evaluation_point,
-                      const unsigned int /*component*/) const
+OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
+                         const unsigned int /*component*/) const
 {
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-  Point<dim> projected_point;
-  auto pt=OpenCASCADE::point (centered_point);
+  Point<dim>    centered_point = this->align_and_center(evaluation_point);
+  Point<dim>    projected_point;
+  auto          pt     = OpenCASCADE::point(centered_point);
   TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
-  BRepExtrema_DistShapeShape distancetool(shape,vertex);
+  BRepExtrema_DistShapeShape distancetool(shape, vertex);
   distancetool.Perform();
-  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
-  if(dim==2){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
+  gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+  if (dim == 2)
+    {
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
     }
-  if(dim==3){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
-      projected_point[2]=pt_on_surface.Z();
+  if (dim == 3)
+    {
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
+      projected_point[2] = pt_on_surface.Z();
     }
 
   return projected_point;
 }
+
+
 template <int dim>
 Tensor<1, dim>
-StepShape<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+OpenCascadeShape<dim>::gradient_with_cell_guess(
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
+  unsigned int dof_index,
   const unsigned int /*component*/)
 {
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-  Point<dim> projected_point;
-  vertex_position=OpenCASCADE::point (centered_point);
-  vertex=BRepBuilderAPI_MakeVertex(vertex_position);
-  distancetool.LoadS2(vertex);
+  auto iterator=this->gradient_cache.find(dof_index);
+  if (iterator == this->gradient_cache.end() )
+    {
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      Point<dim> projected_point;
+      vertex_position = OpenCASCADE::point(centered_point);
+      vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
+      distancetool.LoadS2(vertex);
+      distancetool.Perform();
+      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+      if (dim == 2)
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+        }
+      if (dim == 3)
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+          projected_point[2] = pt_on_surface.Z();
+        }
+      this->gradient_cache[dof_index]=projected_point;
+      return projected_point;
+    }
+  else{
+      return this->gradient_cache[dof_index];
+    }
+}
+
+
+
+template <int dim>
+void
+OpenCascadeShape<dim>::closest_surface_point(const Point<dim>                                    &p,
+Point<dim>                                          &closest_point)
+{
+  Point<dim>    centered_point = this->align_and_center(p);
+  Point<dim>    projected_point;
+  auto          pt     = OpenCASCADE::point(centered_point);
+  TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
+  BRepExtrema_DistShapeShape distancetool(shape, vertex);
   distancetool.Perform();
-  gp_Pnt pt_on_surface=distancetool.PointOnShape1(1);
-  if(dim==2){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
+  gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+  if (dim == 2)
+    {
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
     }
-  if(dim==3){
-      projected_point[0]=pt_on_surface.X();
-      projected_point[1]=pt_on_surface.Y();
-      projected_point[2]=pt_on_surface.Z();
+  if (dim == 3)
+    {
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
+      projected_point[2] = pt_on_surface.Z();
     }
-  return projected_point;
+
+  closest_point= projected_point;
+}
+
+
+template <int dim>
+void
+OpenCascadeShape<dim>::closest_surface_point(
+  const Point<dim>                                    &p,
+  Point<dim>                                          &closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess,
+  unsigned int dof_index)
+{
+  auto iterator=this->gradient_cache.find(dof_index);
+  if (iterator == this->gradient_cache.end() )
+    {
+      Point<dim> centered_point = this->align_and_center(p);
+      Point<dim> projected_point;
+      vertex_position = OpenCASCADE::point(centered_point);
+      vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
+      distancetool.LoadS2(vertex);
+      distancetool.Perform();
+      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+      if (dim == 2)
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+        }
+      if (dim == 3)
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+          projected_point[2] = pt_on_surface.Z();
+        }
+      this->gradient_cache[dof_index]=projected_point;
+      closest_point=projected_point;
+    }
+  else{
+      closest_point=this->gradient_cache[dof_index];
+    }
 }
 
 template <int dim>
 double
-StepShape<dim>::displaced_volume(const double fluid_density)
+OpenCascadeShape<dim>::displaced_volume(const double fluid_density)
 {
   return 1;
 }
 
 template <int dim>
 void
-StepShape<dim>::set_position(const Point<dim> &position)
+OpenCascadeShape<dim>::set_position(const Point<dim> &position)
 {
   this->Shape<dim>::set_position(position);
 }
@@ -675,8 +812,9 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
+  unsigned int dof_index,
   const unsigned int /*component*/)
 {
   // We align and center the evaluation point according to the shape referential
@@ -755,12 +893,12 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
+RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double> &          weights,
-                        const std::vector<Point<dim>> &      nodes,
-                        const Point<dim> &                   position,
-                        const Tensor<1, 3> &                 orientation)
+                        const std::vector<double>           &weights,
+                        const std::vector<Point<dim>>       &nodes,
+                        const Point<dim>                    &position,
+                        const Tensor<1, 3>                  &orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -785,8 +923,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim> &         position,
-                        const Tensor<1, 3> &       orientation)
+                        const Point<dim>          &position,
+                        const Tensor<1, 3>        &orientation)
   : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
                position,
                orientation)
@@ -828,8 +966,9 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
+  unsigned int dof_index,
   const unsigned int /*component*/)
 {
   if (has_shape_moved())
@@ -843,8 +982,9 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
+  unsigned int dof_index,
   const unsigned int /*component*/)
 {
   if (has_shape_moved())
@@ -1883,5 +2023,5 @@ template class CompositeShape<2>;
 template class CompositeShape<3>;
 template class RBFShape<2>;
 template class RBFShape<3>;
-template class StepShape<2>;
-template class StepShape<3>;
+template class OpenCascadeShape<2>;
+template class OpenCascadeShape<3>;
