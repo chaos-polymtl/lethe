@@ -1054,10 +1054,10 @@ HeatTransfer<dim>::calculate_temperature_statistics(
   // Other initializations
   double phase_coefficient(0.);
   bool   take_min_max(false);
-  double volume_integral      = 0.;
-  double temperature_integral = 0.;
-  double minimum_temperature  = DBL_MAX;
-  double maximum_temperature  = -DBL_MAX;
+  double volume_integral(0.);
+  double temperature_integral(0.);
+  double minimum_temperature(DBL_MAX);
+  double maximum_temperature(-DBL_MAX);
 
   // Calculate min, max and average
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -1544,12 +1544,12 @@ HeatTransfer<dim>::calculate_heat(
   const std::string                domain_name,
   const VectorType &               current_solution_fd)
 {
-  const unsigned int n_q_points_face  = this->face_quadrature->size();
+  const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
 
   // Initialize heat transfer information
-  std::vector<double>         local_temperature_values(n_q_points_face);
-  std::vector<Tensor<1, dim>> temperature_gradient(n_q_points_face);
+  std::vector<double>         local_temperature_values(n_q_points);
+  std::vector<Tensor<1, dim>> temperature_gradient(n_q_points);
   FEValues<dim>               fe_values_ht(*this->temperature_mapping,
                              this->dof_handler.get_fe(),
                              *this->cell_quadrature,
@@ -1559,7 +1559,7 @@ HeatTransfer<dim>::calculate_heat(
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   const FEValuesExtractors::Vector velocities(0);
-  std::vector<Tensor<1, dim>>      local_velocity_values(n_q_points_face);
+  std::vector<Tensor<1, dim>>      local_velocity_values(n_q_points);
   FEValues<dim>                    fe_values_fd(*this->temperature_mapping,
                              dof_handler_fd->get_fe(),
                              *this->cell_quadrature,
@@ -1568,7 +1568,7 @@ HeatTransfer<dim>::calculate_heat(
   // Initialize VOF information
   const DoFHandler<dim> *        dof_handler_vof;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            phase_values(n_q_points_face);
+  std::vector<double>            phase_values(n_q_points);
 
   if (gather_vof)
     {
@@ -1591,10 +1591,10 @@ HeatTransfer<dim>::calculate_heat(
   double specific_heat(0.);
 
   // multiphase flow
-  std::vector<double> density_0(n_q_points_face);
-  std::vector<double> specific_heat_0(n_q_points_face);
-  std::vector<double> density_1(n_q_points_face);
-  std::vector<double> specific_heat_1(n_q_points_face);
+  std::vector<double> density_0(n_q_points);
+  std::vector<double> specific_heat_0(n_q_points);
+  std::vector<double> density_1(n_q_points);
+  std::vector<double> specific_heat_1(n_q_points);
 
   switch (properties_manager.get_number_of_fluids())
     {
@@ -1630,7 +1630,7 @@ HeatTransfer<dim>::calculate_heat(
 
   // Other initializations
   double phase_coefficient(0.);
-  double heat_in_domain;
+  double heat_in_domain(0.);
 
   // Integrate on all domain
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -1641,8 +1641,6 @@ HeatTransfer<dim>::calculate_heat(
           fe_values_ht.reinit(cell);
           fe_values_ht.get_function_values(this->present_solution,
                                            local_temperature_values);
-          fe_values_ht.get_function_gradients(this->present_solution,
-                                              temperature_gradient);
 
           // Get fluid dynamics active cell iterator
           typename DoFHandler<dim>::active_cell_iterator cell_fd(
@@ -1673,7 +1671,7 @@ HeatTransfer<dim>::calculate_heat(
             }
 
           // Loop on the quadrature points
-          for (unsigned int q = 0; q < n_q_points_face; q++)
+          for (unsigned int q = 0; q < n_q_points; q++)
             {
               switch (monitored_fluid)
                 {

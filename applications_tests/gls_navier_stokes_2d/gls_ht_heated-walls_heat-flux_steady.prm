@@ -22,6 +22,7 @@ end
 subsection post-processing
       set output frequency    = 1
       set verbosity           = verbose
+      set calculate temperature statistics = true
       set calculate heat flux = true
 end
 
@@ -96,6 +97,8 @@ subsection boundary conditions heat transfer
       set type		    = temperature
       set value		    = 1
     end
+  # T average at the end of the simualtion = 3
+  # heat in all_domain = V*rho*cp*T = 0.2*1*1*1*3 = 0.6
 end
 
 # --------------------------------------------------
