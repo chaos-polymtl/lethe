@@ -37,7 +37,13 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
           // different when the contact is particle-particle compared to
           // particle-wall
           if constexpr (contact_type == ContactType::local_particle_particle ||
-                        contact_type == ContactType::ghost_particle_particle)
+                        contact_type == ContactType::ghost_particle_particle ||
+                        contact_type ==
+                          ContactType::local_periodic_particle_particle ||
+                        contact_type ==
+                          ContactType::ghost_periodic_particle_particle ||
+                        contact_type ==
+                          ContactType::ghost_local_periodic_particle_particle)
             {
               // Get the reference to all the 2nd particle contact
               // candidates of the current particle from the new broad search
@@ -74,7 +80,9 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
                        object_contact_candidates->end())
                 {
                   if constexpr (contact_type ==
-                                ContactType::local_particle_particle)
+                                  ContactType::local_particle_particle ||
+                                contact_type ==
+                                  ContactType::local_periodic_particle_particle)
                     {
                       // The current particle from history list is still a
                       // candidate to the 2nd particle and the contact is local
@@ -86,8 +94,12 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
                       ++adjacent_map_iterator;
                     }
 
-                  if constexpr (contact_type ==
-                                ContactType::ghost_particle_particle)
+                  if constexpr (
+                    contact_type == ContactType::ghost_particle_particle ||
+                    contact_type ==
+                      ContactType::ghost_periodic_particle_particle ||
+                    contact_type ==
+                      ContactType::ghost_local_periodic_particle_particle)
                     {
                       // The current particle from history list is still a
                       // candidate to the 2nd particle and the contact is not
@@ -176,6 +188,69 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::ghost_particle_particle>(
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<3>::particle_particle_candidates
+    &contact_candidates);
+
+// Local periodic particle-particle contacts
+template void update_fine_search_candidates<
+  2,
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  ContactType::local_periodic_particle_particle>(
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
+    &adjacent_particles,
+  typename DEM::dem_data_structures<2>::particle_particle_candidates
+    &contact_pair_candidates);
+
+template void update_fine_search_candidates<
+  3,
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  ContactType::local_periodic_particle_particle>(
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<3>::particle_particle_candidates
+    &contact_candidates);
+
+// Local-ghost particle-particle contacts
+template void update_fine_search_candidates<
+  2,
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  ContactType::ghost_periodic_particle_particle>(
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
+    &adjacent_particles,
+  typename DEM::dem_data_structures<2>::particle_particle_candidates
+    &contact_pair_candidates);
+
+template void update_fine_search_candidates<
+  3,
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  ContactType::ghost_periodic_particle_particle>(
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs
+    &pairs_in_contact,
+  typename DEM::dem_data_structures<3>::particle_particle_candidates
+    &contact_candidates);
+
+// Ghost-local particle-particle contacts
+template void update_fine_search_candidates<
+  2,
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  typename DEM::dem_data_structures<2>::particle_particle_candidates,
+  ContactType::ghost_local_periodic_particle_particle>(
+  typename DEM::dem_data_structures<2>::adjacent_particle_pairs
+    &adjacent_particles,
+  typename DEM::dem_data_structures<2>::particle_particle_candidates
+    &contact_pair_candidates);
+
+template void update_fine_search_candidates<
+  3,
+  typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  typename DEM::dem_data_structures<3>::particle_particle_candidates,
+  ContactType::ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &pairs_in_contact,
   typename DEM::dem_data_structures<3>::particle_particle_candidates

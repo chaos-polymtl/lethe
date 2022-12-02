@@ -15,6 +15,7 @@
  */
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
+#include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -28,16 +29,20 @@
 
 using namespace dealii;
 
-#ifndef particle_wall_periodic_displacement_h
-#  define particle_wall_periodic_displacement_h
+#ifndef periodic_boundaries_manipulator_h
+#  define periodic_boundaries_manipulator_h
 
 /**
- * This class is used to manipulate the particles location when they cross a
- * periodic boundary
+ * This class corresponds to a manipulator of the particles crossing periodic
+ * cells in DEM. It maps cell information of the pairs of periodic cells
+ * and manipulate the particles location when they cross periodic boundaries,
+ * i.e. when a particle cross a periodic boundary (0 or 1) its location is
+ * modified with the offset between faces of periodic cells on periodic
+ * boundaries.
  *
- * @note Particle collisions across periodic boundaries are currently not
- * implemented.
-
+ * @note Currently the code only supports one pair of periodic boundaries and
+ * those boundaries must be parallel and aligned with an axis of the domain
+ * (e.g., x axis).
  */
 
 template <int dim>
@@ -49,30 +54,34 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters
    *
-   * @param outlet_boundaries Vector of periodic boundaries identified as outlet
-   * @param periodic_boundaries Vector of periodic boundaries identified as
-   *                            periodic
-   * @param periodic_directions Vector of directions, perpendicular axis of PB
+   * @param periodic_boundary_id_0 Id of the first periodic boundary
+   * @param periodic_boundary_id_1 Id of the second periodic boundary
+   * @param periodic_direction Perpendicular axis of PB
    */
   void
   set_periodic_boundaries_information(
-    std::vector<unsigned int> outlet_boundaries,
-    std::vector<unsigned int> periodic_boundaries,
-    std::vector<unsigned int> periodic_directions)
+    const types::boundary_id periodic_boundary_id_0,
+    const types::boundary_id periodic_boundary_id_1,
+    const unsigned int       periodic_direction)
   {
-    outlet_boundary_ids   = outlet_boundaries;
-    periodic_boundary_ids = periodic_boundaries;
-    directions            = periodic_directions;
+    periodic_boundary_0 = periodic_boundary_id_0;
+    periodic_boundary_1 = periodic_boundary_id_1;
+    direction           = periodic_direction;
   }
 
   /**
-   * @brief Sets the periodic boundaries parameters
+   * @brief Execute the mapping of the cells on periodic boundaries and store
+   * information in periodic_boundaries_cells_information
    *
    * @param triangulation Triangulation of mesh
+   * @param periodic_boundaries_cells_information Map of information of the
+   * pair of cells on periodic boundaries
    */
   void
   map_periodic_cells(
-    const parallel::distributed::Triangulation<dim> &triangulation);
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+      &periodic_boundaries_cells_information);
 
   /**
    * @brief Moves particles crossing periodic boundaries (any side)
@@ -81,15 +90,30 @@ public:
    *
    * @param particle_handler Particle handler of particles located in boundary
    * cells
+   * @param periodic_boundaries_cells_information Map of information of the
+   * pair of cells on periodic boundaries
    */
   void
   execute_particles_displacement(
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+      &periodic_boundaries_cells_information);
+
+  /**
+   * @brief Return the periodic offset, it is calculated from the first pair of
+   * cells on periodic boundaries, all pair of cells are assumed to have the
+   * same offset
+   */
+  inline Tensor<1, dim>
+  get_constant_offset()
+  {
+    return constant_periodic_offset;
+  }
 
 private:
   /**
-   * @brief Gets boundaries information related to the face at outlet and
-   * periodic boundaries and stores in  periodic_boundaries_cells_info_struct
+   * @brief Gets boundaries information related to the face at periodic
+   * boundaries 0 and 1 and stores in periodic_boundaries_cells_info_struct
    * object
    *
    * @param cell Current cell on boundary
@@ -105,29 +129,28 @@ private:
 
   /**
    * @brief Checks if particle is outside of the cell, if so, modifies the
-   * location of the particle with the distance between the periodic faces.
+   * location of the particle with the distance (offset) between the periodic
+   * faces
    *
    * @param boundaries_cells_content Reference to the object with periodic
    * boundaries information
    * @param particles_in_cell Iterator to the particles in cell
-   * @param particles_in_outlet_cell If the particles are linked to the outlet
-   * cell or the periodic cell
+   * @param particles_in_pb0_cell If the particles are linked to a cell on the
+   * periodic boundary 0 (true) or the periodic boundary 1 (false)
    */
   void
   check_and_move_particles(
     const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
       &        particles_in_cell,
-    const bool particles_in_outlet_cell);
+    const bool particles_in_pb0_cell);
 
-  std::vector<unsigned int> outlet_boundary_ids;
-  std::vector<unsigned int> periodic_boundary_ids;
-  std::vector<unsigned int> directions;
-
-  // Mapping of periodic boundaries information, cell index at outlet is the
-  // map key
-  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    periodic_boundaries_cells_information;
+  types::boundary_id periodic_boundary_0;
+  types::boundary_id periodic_boundary_1;
+  unsigned int       direction;
+  Tensor<1, dim>     constant_periodic_offset;
 };
 
-#endif /* particle_wall_periodic_displacement_h */
+
+
+#endif /* periodic_boundaries_manipulator_h */

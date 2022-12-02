@@ -93,8 +93,8 @@ subsection DEM boundary conditions
    subsection boundary condition 0
        # Choices are fixed_wall|outlet|rotational|translational|periodic
        set type                                        = periodic
-       set boundary id                                 = 2
-       set periodic id                                 = 3
+       set periodic id 0                               = 2
+       set periodic id 1                               = 3
        set periodic direction                          = 1
    end
 

@@ -67,15 +67,28 @@ public:
    * pairs_in_contact and its contact information will be stored in the
    * corresponding element of the pairs_in_contact_info
    *
-   * @param container_manager The dem container manager that contains
-   * local_contact_pair_candidates, ghost_contact_pair_candidates,
-   * local_adjacent_particles, ghost_adjacent_particles & particle_container
+   * @param particle_container A container that is used to obtain iterators to
+   * particles using their ids
+   * @param adjacent_particles A map of maps which stores all the required
+   * information for calculation of the contact force of particle pairs
+   * @param contact_pair_candidates The output of broad search which shows
+   * contact pair candidates
    * @param neighborhood_threshold A value which defines the neighbor particles
+   * @param periodic_offset A tensor of the periodic offset to change the
+   * particle location of the particles on the periodic boundary 1 side,
+   * the tensor as 0.0 values by default
    */
 
   void
-  particle_particle_fine_search(DEMContainerManager<dim> &container_manager,
-                                const double neighborhood_threshold);
+  particle_particle_fine_search(
+    typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+      &particle_container,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &adjacent_particles,
+    const typename DEM::dem_data_structures<dim>::particle_particle_candidates
+      &                  contact_pair_candidates,
+    const double         neighborhood_threshold,
+    const Tensor<1, dim> periodic_offset = Tensor<1, dim>());
 };
 
 #endif /* particle_particle_fine_search_h */

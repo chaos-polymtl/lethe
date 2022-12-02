@@ -47,6 +47,7 @@ public:
    * triangulation.
    *
    * @param triangulation The triangulation to access the information of the cells
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
    *
    */
@@ -54,13 +55,15 @@ public:
   void
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_floating_mesh = false);
+    const bool has_periodic_boundaries = false,
+    const bool has_floating_mesh       = false);
 
   /**
    * Update the neighbors lists of all the active cells in the input
    * triangulation while clearing containers before the update.
    *
    * @param triangulation The triangulation to access the information of the cells
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
    *
    */
@@ -68,12 +71,18 @@ public:
   void
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const bool                                       has_floating_mesh = false)
+    const bool has_periodic_boundaries = false,
+    const bool has_floating_mesh       = false)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
+    cells_local_periodic_neighbor_list.clear();
+    cells_ghost_periodic_neighbor_list.clear();
+    cells_ghost_local_periodic_neighbor_list.clear();
 
-    execute_cell_neighbors_search(triangulation, has_floating_mesh);
+    execute_cell_neighbors_search(triangulation,
+                                  has_periodic_boundaries,
+                                  has_floating_mesh);
   }
 
   /**
@@ -84,10 +93,11 @@ public:
    * particle-particle, particle-wall contacts, particle-floating wall contacts
    * and particle-floating mesh contacts.
    *
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    */
 
   void
-  update_contacts();
+  update_contacts(const bool has_periodic_boundaries = false);
 
   /**
    * Updates the iterators to particles in local-local contact containers. This
@@ -97,12 +107,14 @@ public:
    *
    * @tparam dim Dimensionality of the geometry which contains the particles
    * @param particle_handler The particle handler of particles
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    *
    */
 
   void
   update_local_particles_in_cells(
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const bool                             has_periodic_boundaries = false);
 
   /**
    * Particle-particle broad search which finds the particle-particle contact
@@ -112,11 +124,13 @@ public:
    *
    * @param particle_handler The particle handler of particles in the broad
    * search
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    */
 
   void
   execute_particle_particle_broad_search(
-    dealii::Particles::ParticleHandler<dim> &particle_handler);
+    dealii::Particles::ParticleHandler<dim> &particle_handler,
+    const bool                               has_periodic_boundaries = false);
 
   /**
    * Carries out the broad contact detection search using the
@@ -144,10 +158,15 @@ public:
    * which were in contact in the last time step, are still in contact or not.
    *
    * @param neighborhood_threshold A value which defines the neighbor particles
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
+   * @param periodic_offset An offset used for tuning particle locations in periodic boundaries
    */
 
   void
-  execute_particle_particle_fine_search(const double neighborhood_threshold);
+  execute_particle_particle_fine_search(
+    const double         neighborhood_threshold,
+    const bool           has_periodic_boundaries = false,
+    const Tensor<1, dim> periodic_offset         = Tensor<1, dim>());
 
   /**
    * Carries out the fine particle-wall contact detection
@@ -155,6 +174,7 @@ public:
    * @param floating_wall Properties of the floating walls specified in the parameter handler file
    * @param simulation_time Simulation time
    * @param neighborhood_threshold A value which defines the neighbor particles
+   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
    */
 
   void
@@ -177,12 +197,6 @@ public:
     const parallel::distributed::Triangulation<dim> &       triangulation,
     std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);
 
-  inline void
-  clear_contact_pair_candidates()
-  {
-    local_contact_pair_candidates.clear();
-    ghost_contact_pair_candidates.clear();
-  }
 
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map
@@ -196,12 +210,26 @@ public:
     cells_local_neighbor_list;
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_local_periodic_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_ghost_periodic_neighbor_list;
+  typename dem_data_structures<dim>::cells_neighbor_list
+    cells_ghost_local_periodic_neighbor_list;
 
   // Container with all collision candidate particles within adjacent cells
   typename dem_data_structures<dim>::particle_particle_candidates
     local_contact_pair_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
     ghost_contact_pair_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_local_contact_pair_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    local_contact_pair_periodic_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_contact_pair_periodic_candidates;
+  typename dem_data_structures<dim>::particle_particle_candidates
+    ghost_local_contact_pair_periodic_candidates;
   typename dem_data_structures<dim>::particle_floating_mesh_candidates
     particle_floating_mesh_candidates;
   typename dem_data_structures<dim>::particle_floating_wall_candidates
@@ -232,6 +260,12 @@ public:
     local_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    local_periodic_adjacent_particles;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    ghost_periodic_adjacent_particles;
+  typename dem_data_structures<dim>::adjacent_particle_pairs
+    ghost_local_periodic_adjacent_particles;
 
   // Containers with other information
   typename dem_data_structures<dim>::floating_mesh_information
@@ -242,6 +276,10 @@ public:
     forces_boundary_information;
   typename dem_data_structures<dim>::vector_on_boundary
     torques_boundary_information;
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    periodic_boundaries_cells_information;
+  typename DEM::dem_data_structures<dim>::cell_container
+    periodic_cells_container;
 
 private:
   // Broad search objects
