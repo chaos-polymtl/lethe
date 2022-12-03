@@ -339,8 +339,7 @@ public:
 
         const Point<dim> evaluation_point = input_data.evaluation_points[q];
         const auto       cell             = input_data.template get_cell<dim>();
-        computed_quantities[q] =1;
-          //shape->value_with_cell_guess(evaluation_point, cell);
+        computed_quantities[q] =shape->value_with_cell_guess(evaluation_point, cell);
       }
   }
 

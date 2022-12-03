@@ -153,6 +153,12 @@ IBParticle<dim>::get_properties()
 
   return properties;
 }
+template <int dim>
+void
+IBParticle<dim>::clear_shape_cache(){
+  this->shape->clear_cache();
+}
+
 
 template <int dim>
 void
@@ -189,10 +195,9 @@ template <int dim>
 double
 IBParticle<dim>::get_levelset(
   const Point<dim>                                    &p,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess,
-  unsigned int dof_index)
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
 {
-  return shape->value_with_cell_guess(p, cell_guess, dof_index);
+  return shape->value_with_cell_guess(p, cell_guess);
 }
 template <int dim>
 double
@@ -217,10 +222,9 @@ void
 IBParticle<dim>::closest_surface_point(
   const Point<dim>                                    &p,
   Point<dim>                                          &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess,
-  unsigned int dof_index)
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  shape->closest_surface_point(p,closest_point,cell_guess, dof_index);
+  shape->closest_surface_point(p,closest_point,cell_guess);
 }
 
 template <int dim>
@@ -253,12 +257,11 @@ IBParticle<dim>::is_inside_crown(
   const Point<dim>                                    &evaluation_point,
   const double                                         outer_radius,
   const double                                         inside_radius,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess,
-  unsigned int dof_index)
+  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
 {
   const double radius = shape->effective_radius;
 
-  double distance = shape->value_with_cell_guess(evaluation_point, cell_guess,dof_index);
+  double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
   bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
   bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
 

@@ -103,6 +103,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
+
+
   const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -130,82 +132,93 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              unsigned int nb_dof_inside = 0;
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+              if (particles[p].shape->additional_info_on_shape == "stl" ||
+                  particles[p].shape->additional_info_on_shape == "iges")
                 {
-                  // Count the number of DOFs that are inside
-                  // of the particles. If all the DOfs are on one side
-                  // the cell is not cut by the boundary.
-                  if (0 == this->fe->system_to_component_index(j).first)
-                    {
-                      auto iterator = inside_outside_support_point_vector[p].find(
-                        local_dof_indices[j]);
-                      if (iterator == inside_outside_support_point_vector[p].end() )
-                        {
-
-                      if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]], cell,local_dof_indices[j]) <= 0)
-                            {
-                              ++nb_dof_inside;
-                              inside_outside_support_point_vector[p]
-                                [local_dof_indices[j]] = true;
-                            }
-                          else
-                            inside_outside_support_point_vector[p]
-                              [local_dof_indices[j]] = false;
-                        }
-                      else{
-                          if (inside_outside_support_point_vector[p][local_dof_indices[j]]==true)
-                            {
-                              ++nb_dof_inside;
-                            }
-                        }
-                    }
-                }
-
-              // If some of the DOFs are inside the boundary, some are outside,
-              // the cell is cut.
-              if (nb_dof_inside != 0)
-                {
-                  // If all the DOFs are inside the boundary this cell is inside
-                  // the particle. Otherwise the particle is cut.
-                  if (nb_dof_inside == dofs_per_cell_local_v_x)
-                    {
-                      // We only register the particle the lowest id as the
-                      // particle in which this cell is embedded if the cell is
-                      // embedded in multiple particles.
-                      if (number_of_particles_cutting_this_cell == 0)
-                        {
-                          cell_is_cut                                = false;
-                          particle_id_which_cuts_this_cell           = 0;
-                          cell_is_inside                             = true;
-                          particle_id_in_which_this_cell_is_embedded = p;
-                        }
-                      break;
-                    }
-                  else
-                    {
-                      // We only register the particle with the lowest id as the
-                      // particle by this cell is cut if the cell is cut in
-                      // multiple particles.
-                      if (number_of_particles_cutting_this_cell == 0)
-                        {
-                          cell_is_cut                                = true;
-                          particle_id_which_cuts_this_cell           = p;
-                          cell_is_inside                             = false;
-                          particle_id_in_which_this_cell_is_embedded = 0;
-                        }
-                      number_of_particles_cutting_this_cell += 1;
+                  cell_is_cut=cell_cut_by_p_exception(cell,support_points,p);
+                  particle_id_which_cuts_this_cell=p;
+                  if (cell_is_cut){
+                      number_of_particles_cutting_this_cell+=1;
                     }
                 }
               else
                 {
-                  if (number_of_particles_cutting_this_cell == 0)
+                  unsigned int nb_dof_inside = 0;
+                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                     {
-                      cell_is_cut                                = false;
-                      particle_id_which_cuts_this_cell           = 0;
-                      cell_is_inside                             = false;
-                      particle_id_in_which_this_cell_is_embedded = 0;
+                      // Count the number of DOFs that are inside
+                      // of the particles. If all the DOfs are on one side
+                      // the cell is not cut by the boundary.
+                      if (0 == this->fe->system_to_component_index(j).first)
+                        {
+                          auto iterator =
+                            inside_outside_support_point_vector[p].find(
+                              local_dof_indices[j]);
+                          if (iterator ==
+                              inside_outside_support_point_vector[p].end())
+                            {
+                              if (particles[p].get_levelset(
+                                    support_points[local_dof_indices[j]],
+                                    cell) <= 0)
+                                {
+                                  ++nb_dof_inside;
+                                  inside_outside_support_point_vector
+                                    [p][local_dof_indices[j]] = true;
+                                }
+                              else
+                                inside_outside_support_point_vector
+                                  [p][local_dof_indices[j]] = false;
+                            }
+                          else
+                            {
+                              if (inside_outside_support_point_vector
+                                    [p][local_dof_indices[j]] == true)
+                                {
+                                  ++nb_dof_inside;
+                                }
+                            }
+                        }
+                    }
+
+                  // If some of the DOFs are inside the boundary, some are outside, the cell is cut.
+                  if (nb_dof_inside != 0)
+                    {
+                      // If all the DOFs are inside the boundary this cell is inside the particle. Otherwise the particle is cut.
+                      if (nb_dof_inside == dofs_per_cell_local_v_x)
+                        {
+                          // We only register the particle the lowest id as the
+                          // particle in which this cell is embedded if the cell is embedded in multiple particles.
+                          if (number_of_particles_cutting_this_cell == 0)
+                            {
+                              cell_is_cut                      = false;
+                              particle_id_which_cuts_this_cell = 0;
+                              cell_is_inside                   = true;
+                              particle_id_in_which_this_cell_is_embedded = p;
+                            }
+                          break;
+                        }
+                      else
+                        {
+                          // We only register the particle with the lowest id as the particle by this cell is cut if the cell is cut in multiple particles.
+                          if (number_of_particles_cutting_this_cell == 0)
+                            {
+                              cell_is_cut                      = true;
+                              particle_id_which_cuts_this_cell = p;
+                              cell_is_inside                   = false;
+                              particle_id_in_which_this_cell_is_embedded = 0;
+                            }
+                          number_of_particles_cutting_this_cell += 1;
+                        }
+                    }
+                  else
+                    {
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = false;
+                          particle_id_which_cuts_this_cell           = 0;
+                          cell_is_inside                             = false;
+                          particle_id_in_which_this_cell_is_embedded = 0;
+                        }
                     }
                 }
             }
@@ -219,6 +232,37 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     }
 }
 
+template <int dim>
+bool
+GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandler<dim>::active_cell_iterator &         cell,
+                                               std::map<types::global_dof_index, Point<dim>> &support_points,
+                                               unsigned int                                   p)
+{
+  //this function aims at defining if a cell is cu by a step loaded from open cascade.
+
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  cell->get_dof_indices(local_dof_indices);
+  bool cell_is_cut=false;
+  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+    {
+      // Count the number of DOFs that are inside
+      // of the particles. If all the DOfs are on one side
+      // the cell is not cut by the boundary.
+      if (0 == this->fe->system_to_component_index(j).first)
+        {
+          Point<dim>projected_point;
+          particles[p].closest_surface_point(support_points[ local_dof_indices[j]],projected_point,cell);
+
+          if (cell->point_inside(projected_point))
+            {
+              cell_is_cut = true;
+              break;
+            }
+        }
+    }
+  return cell_is_cut;
+}
 
 template <int dim>
 void
@@ -557,7 +601,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                           ->outside_radius,
                         this->simulation_parameters.particlesParameters
                           ->inside_radius,
-                        cell,local_dof_indices[j]))
+                        cell))
                     {
                       ++count_small;
                     }
@@ -723,7 +767,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // of the particles. If all the DOfs are on one side
                       // the cell is not cut by the boundary.
                       if (particles[p].get_levelset(
-                            support_points[local_face_dof_indices[j]], cell,local_face_dof_indices[j]) <=
+                            support_points[local_face_dof_indices[j]], cell) <=
                           0)
                         ++nb_dof_inside;
                     }
@@ -821,7 +865,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                       length_ratio,
                                       particles[p],
                                       support_points[local_face_dof_indices[i]],
-                                      cell,local_face_dof_indices[i]);
+                                      cell);
 
                                   auto cell_2 =
                                     ib_done[local_face_dof_indices[i]].second;
@@ -838,7 +882,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                           particles[p],
                                           support_points
                                             [local_face_dof_indices[i]],
-                                          cell,local_face_dof_indices[i]);
+                                          cell);
 
                                       try
                                         {
@@ -1003,7 +1047,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                         support_points
                                           [local_face_dof_indices[i]],
                                         point_projection,
-                                        cell,local_face_dof_indices[i]);
+                                        cell);
 
                                       auto projected_point_unit =
                                         local_face_map
@@ -1965,6 +2009,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   particles[p].position[2] += particles[p].velocity[2] * dt;
                 }
             }
+          if(particles[p].position!=particles[p].previous_positions[0]||particles[p].orientation!=particles[p].previous_orientation[0])
+            particles[p].clear_shape_cache();
+
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
         }
@@ -2555,7 +2602,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         this->fe->system_to_component_index(i).first;
                       bool dof_is_inside =
                         particles[ib_particle_id].get_levelset(
-                          support_points[local_dof_indices[i]], cell,local_dof_indices[i]) <= 0;
+                          support_points[local_dof_indices[i]], cell) <= 0;
 
                       // If multiple particles cut the cell, we treat the dof of
                       // pressure as a dummy dof. We don't use them to set the
@@ -2684,7 +2731,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               // the DOF and IB
                               if (abs(particles[ib_particle_id].get_levelset(
                                     support_points[local_dof_indices[i]],
-                                    cell,local_dof_indices[i])) <= 1e-12 * dr)
+                                    cell)) <= 1e-12 * dr)
                                 {
                                   dof_on_ib = true;
                                 }
@@ -2792,7 +2839,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                             particles[ib_particle_id],
                             support_points[local_dof_indices[i]],
                             component_i,
-                            cell,local_dof_indices[i]);
+                            cell);
 
                           //  If the pressure is imposed trough IB inside the
                           //  particle we use an approximation of the pressure
@@ -2808,7 +2855,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   bool dof_is_inside_p =
                                     particles[ib_particle_id].get_levelset(
                                       support_points[local_dof_indices[k]],
-                                      cell,local_dof_indices[k]) <= 0;
+                                      cell) <= 0;
                                   const unsigned int component_k =
                                     this->fe->system_to_component_index(k)
                                       .first;

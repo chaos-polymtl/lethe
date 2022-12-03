@@ -362,10 +362,24 @@ private:
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
            std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
+
+  /**
+   * @brief
+   * Return a bool to define if a cell is cut by an IB particle and the local
+   * DOFs of the cell for later use. This function is build to handle special case where the level set is always positives.
+   *
+   * @param cell , the cell that we verify whether it is cut or not.
+   *
+   * @param local_dof_indices, a container for the local dof indices used during the function call.
+   *
+   * @param support_points, a mapping of support points for the DOFs.
+   *
+   */
   bool
-  cell_cut_by_p(const typename DoFHandler<dim>::active_cell_iterator &         cell,
+  cell_cut_by_p_exception(const typename DoFHandler<dim>::active_cell_iterator &         cell,
                 std::map<types::global_dof_index, Point<dim>> &support_points,
                 unsigned int                                   p);
+
   /**
    * @brief
    * Return a bool to define if a cell is contains inside an IB particle and the

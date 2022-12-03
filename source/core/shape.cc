@@ -31,6 +31,14 @@ Shape<dim>::displaced_volume(const double /*fluid_density*/)
   StandardExceptions::ExcNotImplemented();
   return 1.0;
 }
+template <int dim>
+void
+Shape<dim>::clear_cache()
+{
+  value_cache.clear();
+  gradient_cache.clear();
+}
+
 
 template <int dim>
 Point<dim>
@@ -117,10 +125,19 @@ double
 Shape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
-  unsigned int /*dof_index*/,
   const unsigned int /*component*/)
 {
-  return this->value(evaluation_point);
+  auto point_in_string=this->point_to_string(evaluation_point);
+  auto iterator=this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end() )
+    {
+      double value=this->value(evaluation_point);
+      this->value_cache[point_in_string]=value;
+      return value;
+    }
+  else{
+      return this->value_cache[point_in_string];
+    }
 }
 
 template <int dim>
@@ -128,7 +145,6 @@ Tensor<1, dim>
 Shape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
-  unsigned int /*dof_index*/,
   const unsigned int /*component*/)
 {
   return this->gradient(evaluation_point);
@@ -139,13 +155,12 @@ void
 Shape<dim>::closest_surface_point(
   const Point<dim>                                     &p,
   Point<dim>                                           &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess,
-  unsigned int dof_index)
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
-  actual_gradient       = this->gradient_with_cell_guess(p, cell_guess, dof_index);
-  distance_from_surface = this->value_with_cell_guess(p, cell_guess,dof_index);
+  actual_gradient       = this->gradient_with_cell_guess(p, cell_guess);
+  distance_from_surface = this->value_with_cell_guess(p, cell_guess);
 
   closest_point =
     p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
@@ -190,9 +205,9 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
                    const unsigned int /*component*/) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  return evaluation_point.distance(this->position) - this->effective_radius;
+      return evaluation_point.distance(this->position) - this->effective_radius;
 #else
-  return sphere_function->value(evaluation_point);
+      return sphere_function->value(evaluation_point);
 #endif
 }
 
@@ -219,13 +234,18 @@ Tensor<1, dim>
 Sphere<dim>::gradient(const Point<dim> &evaluation_point,
                       const unsigned int /*component*/) const
 {
+  auto point_in_string=this->point_to_string(evaluation_point);
+  auto iterator=this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end() )
+    {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  const Tensor<1, dim> center_to_point = evaluation_point - this->position;
-  const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
-  return grad;
+      const Tensor<1, dim> center_to_point = evaluation_point - this->position;
+      const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
+      return grad;
 #else
-  return sphere_function->gradient(evaluation_point);
+      return sphere_function->gradient(evaluation_point);
 #endif
+    }
 }
 
 template <int dim>
@@ -293,10 +313,10 @@ double
 OpenCascadeShape<dim>::value_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
-  unsigned int dof_index,
   const unsigned int /*component*/)
 {
-  auto iterator=this->value_cache.find(dof_index);
+  auto point_in_string=this->point_to_string(evaluation_point);
+  auto iterator=this->value_cache.find(point_in_string);
 if (iterator == this->value_cache.end() )
   {
     Point<dim> centered_point = this->align_and_center(evaluation_point);
@@ -319,18 +339,18 @@ if (iterator == this->value_cache.end() )
       }
     if (distancetool.InnerSolution())
       {
-        this->value_cache[dof_index]= -(evaluation_point - projected_point).norm();
+        this->value_cache[point_in_string]= -(evaluation_point - projected_point).norm();
         return -(evaluation_point - projected_point).norm();
 
       }
     else
       {
-        this->value_cache[dof_index]= (evaluation_point - projected_point).norm();
+        this->value_cache[point_in_string]= (evaluation_point - projected_point).norm();
         return (evaluation_point - projected_point).norm();
       }
   }
 else{
-    return this->value_cache[dof_index];
+    return this->value_cache[point_in_string];
   }
 
 }
@@ -379,10 +399,10 @@ Tensor<1, dim>
 OpenCascadeShape<dim>::gradient_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
-  unsigned int dof_index,
   const unsigned int /*component*/)
 {
-  auto iterator=this->gradient_cache.find(dof_index);
+  auto point_in_string=this->point_to_string(evaluation_point);
+  auto iterator=this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end() )
     {
       Point<dim> centered_point = this->align_and_center(evaluation_point);
@@ -403,11 +423,11 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
-      this->gradient_cache[dof_index]=projected_point;
+      this->gradient_cache[point_in_string]=projected_point;
       return projected_point;
     }
   else{
-      return this->gradient_cache[dof_index];
+      return this->gradient_cache[point_in_string];
     }
 }
 
@@ -446,12 +466,13 @@ void
 OpenCascadeShape<dim>::closest_surface_point(
   const Point<dim>                                    &p,
   Point<dim>                                          &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess,
-  unsigned int dof_index)
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  auto iterator=this->gradient_cache.find(dof_index);
+  auto point_in_string=this->point_to_string(p);
+  auto iterator=this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end() )
     {
+      //std::cout<<"hi"<<std::endl;
       Point<dim> centered_point = this->align_and_center(p);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
@@ -470,11 +491,11 @@ OpenCascadeShape<dim>::closest_surface_point(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
-      this->gradient_cache[dof_index]=projected_point;
+      this->gradient_cache[point_in_string]=projected_point;
       closest_point=projected_point;
     }
   else{
-      closest_point=this->gradient_cache[dof_index];
+      closest_point=this->gradient_cache[point_in_string];
     }
 }
 
@@ -814,7 +835,6 @@ double
 CompositeShape<dim>::value_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
-  unsigned int dof_index,
   const unsigned int /*component*/)
 {
   // We align and center the evaluation point according to the shape referential
@@ -968,7 +988,6 @@ double
 RBFShape<dim>::value_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
-  unsigned int dof_index,
   const unsigned int /*component*/)
 {
   if (has_shape_moved())
@@ -984,7 +1003,6 @@ Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
-  unsigned int dof_index,
   const unsigned int /*component*/)
 {
   if (has_shape_moved())

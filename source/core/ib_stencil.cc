@@ -105,7 +105,7 @@ IBStencil<dim>::support_points_for_interpolation(
   p_base(order);
   Point<dim> point;
   Point<dim> surface_point;
-  p.closest_surface_point(dof_point, surface_point, cell_guess, dof_index);
+  p.closest_surface_point(dof_point, surface_point, cell_guess);
   std::vector<Point<dim>> interpolation_points;
 
   if (order > 4)
@@ -194,7 +194,7 @@ IBStencil<dim>::point_for_cell_detection(
   // IB depending if the cell is used directly
 
   Point<dim> surface_point;
-  p.closest_surface_point(dof_point, surface_point, cell_guess, dof_index);
+  p.closest_surface_point(dof_point, surface_point, cell_guess);
   Tensor<1, dim, double> vect_ib = dof_point - surface_point;
   Point<dim>             point   = dof_point + vect_ib / 16.;
 
@@ -231,7 +231,7 @@ IBStencil<dim>::ib_velocity(
   // Return the value of the IB condition for that specific stencil.
   Tensor<1, 3, double> radial_vector;
   Point<dim>           closest_point;
-  p.closest_surface_point(dof_point, closest_point, cell_guess, dof_index);
+  p.closest_surface_point(dof_point, closest_point, cell_guess);
   Point<dim> position_to_surface;
   position_to_surface = closest_point - p.position;
   radial_vector[0]    = position_to_surface[0];

@@ -186,6 +186,14 @@ public:
     this->shape->set_position(this->position);
   }
 
+
+  /**
+   * @brief
+   * Clear the cache of the shape
+   */
+  void
+  clear_shape_cache();
+
   /**
    * @brief
    * Sets up a shape in accordance with the given type and arguments
