@@ -64,13 +64,16 @@ public:
    * @param dt DEM time step
    * @param torque An unordered_map of torque of particles
    * @param force Force acting on particles
+   * @param periodic_offset A tensor of the periodic offset to change the
+   * particle location of the particles on the periodic boundary 1 side
    */
   virtual void
   calculate_particle_particle_contact_force(
     DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) = 0;
+    std::vector<Tensor<1, 3>> &force,
+    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) = 0;
 
 
   /**
@@ -148,13 +151,16 @@ public:
    * @param dt DEM time step
    * @param torque An unordered_map of torque of particles
    * @param force Force acting on particles
+   * @param periodic_offset A tensor of the periodic offset to change the
+   * particle location of the particles on the periodic boundary 1 side
    */
   virtual void
   calculate_particle_particle_contact_force(
     DEMContainerManager<dim> & container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
-    std::vector<Tensor<1, 3>> &force) override;
+    std::vector<Tensor<1, 3>> &force,
+    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This
@@ -959,9 +965,8 @@ protected:
         normal_unit_vector);
   }
 
+private:
   // Members of the class
-
-
   std::unordered_map<int, std::unordered_map<int, double>>
     effective_youngs_modulus;
   std::unordered_map<int, std::unordered_map<int, double>>

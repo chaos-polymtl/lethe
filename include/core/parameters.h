@@ -620,6 +620,8 @@ namespace Parameters
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
+    // Enable smoothing postprocessed vectors and scalars
+    bool smoothed_output_fields;
 
     static void
     declare_parameters(ParameterHandler &prm);

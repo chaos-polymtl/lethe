@@ -29,6 +29,9 @@ This subsection controls the post-processing other than the forces and torque on
 	# Enstrophy calculation
 	set calculate enstrophy         = false
 	set enstrophy name              = enstrophy
+  
+  # Others
+  set smoothing                   = false
 
 	#---------------------------------------------------
   	# Physical properties post-processing
@@ -69,6 +72,8 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
 	* ``enstrophy name``: output filename for enstrophy calculations.
+
+* ``smoothing``: controls if the Qcriterion field will be smoothed using an L2-projection over the nodes. The same will shortly be applied to the Vorticity. 
 
 * ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
 	* ``apparent viscosity name``: output filename for apparent viscosity calculations.
@@ -123,4 +128,3 @@ This subsection controls the post-processing other than the forces and torque on
 			 time   bc_0    bc_1   heat_fluid_1 
 			0.0000 64.0000  0.6400       0.0313 
 			0.2000  3.6963  0.0976       0.6965 
-

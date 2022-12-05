@@ -899,10 +899,14 @@ namespace Parameters
                         "0.",
                         Patterns::Double(),
                         "Rotational vector element in z direction");
-      prm.declare_entry("periodic id",
+      prm.declare_entry("periodic id 0",
                         "0",
                         Patterns::Integer(),
-                        "Periodic boundary ID");
+                        "Periodic boundary ID 0");
+      prm.declare_entry("periodic id 1",
+                        "0",
+                        Patterns::Integer(),
+                        "Periodic boundary ID 1");
       prm.declare_entry(
         "periodic direction",
         "0",
@@ -951,11 +955,10 @@ namespace Parameters
         }
       else if (boundary_type == "periodic")
         {
-          BC_type = BoundaryType::periodic;
-          this->outlet_boundaries.push_back(boundary_id);
-          this->periodic_boundaries.push_back(prm.get_integer("periodic id"));
-          this->periodic_direction.push_back(
-            prm.get_integer("periodic direction"));
+          BC_type                   = BoundaryType::periodic;
+          this->periodic_boundary_0 = prm.get_integer("periodic id 0");
+          this->periodic_boundary_1 = prm.get_integer("periodic id 1");
+          this->periodic_direction  = prm.get_integer("periodic direction");
         }
       else
         {
@@ -996,9 +999,7 @@ namespace Parameters
       initialize_containers(boundary_translational_velocity,
                             boundary_rotational_speed,
                             boundary_rotational_vector,
-                            outlet_boundaries,
-                            periodic_boundaries,
-                            periodic_direction);
+                            outlet_boundaries);
 
       for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
         {
@@ -1019,9 +1020,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
       std::unordered_map<unsigned int, Tensor<1, 3>>
         &                        boundary_rotational_vector,
-      std::vector<unsigned int> &outlet_boundaries,
-      std::vector<unsigned int> &periodic_boundaries,
-      std::vector<unsigned int> &periodic_direction)
+      std::vector<unsigned int> &outlet_boundaries)
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
@@ -1033,8 +1032,6 @@ namespace Parameters
         }
 
       outlet_boundaries.reserve(DEM_BC_number);
-      periodic_boundaries.reserve(DEM_BC_number);
-      periodic_direction.reserve(DEM_BC_number);
     }
 
     template <int dim>
@@ -1119,45 +1116,10 @@ namespace Parameters
       prm.enter_subsection("post-processing");
       {
         prm.declare_entry(
-          "Lagrangian post processing",
+          "Lagrangian post-processing",
           "false",
           Patterns::Bool(),
           "State whether Lagrangian post-processing should be performed.");
-
-        prm.declare_entry("calculate particles average velocity",
-                          "false",
-                          Patterns::Bool(),
-                          "Enable calculation of particles average velocity.");
-
-        prm.declare_entry("calculate granular temperature",
-                          "false",
-                          Patterns::Bool(),
-                          "Enable calculation of granular temperature.");
-
-        prm.declare_entry("initial step",
-                          "0",
-                          Patterns::Integer(),
-                          "Initial step to start Lagrangian post-processing.");
-
-        prm.declare_entry("end step",
-                          "0",
-                          Patterns::Integer(),
-                          "End step to finish Lagrangian post-processing.");
-
-        prm.declare_entry("output frequency",
-                          "100000",
-                          Patterns::Integer(),
-                          "Post-processing output frequency.");
-
-        prm.declare_entry("particles velocity output name",
-                          "particles_velocity",
-                          Patterns::FileName(),
-                          "File output particles velocity.");
-
-        prm.declare_entry("granular temperature output name",
-                          "granular_temperature",
-                          Patterns::FileName(),
-                          "File output granular temperature.");
       }
       prm.leave_subsection();
     }
@@ -1167,16 +1129,7 @@ namespace Parameters
     {
       prm.enter_subsection("post-processing");
       {
-        Lagrangian_post_processing = prm.get_bool("Lagrangian post processing");
-        calculate_particles_average_velocity =
-          prm.get_bool("calculate particles average velocity");
-        calculate_granular_temperature =
-          prm.get_bool("calculate granular temperature");
-        initial_step              = prm.get_integer("initial step");
-        end_step                  = prm.get_integer("end step");
-        output_frequency          = prm.get_integer("output frequency");
-        particles_velocity_name   = prm.get("particles velocity output name");
-        granular_temperature_name = prm.get("granular temperature output name");
+        Lagrangian_post_processing = prm.get_bool("Lagrangian post-processing");
       }
       prm.leave_subsection();
     }

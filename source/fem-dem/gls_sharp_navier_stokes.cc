@@ -113,17 +113,21 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         {
           bool         cell_is_cut;
           bool         cell_is_inside;
-          unsigned int p_id_cut    = 0;
-          unsigned int p_id_inside = 0;
-          // is the particle index that cut the cell if it's cut.  If the cell
+          unsigned int particle_id_which_cuts_this_cell           = 0;
+          unsigned int particle_id_in_which_this_cell_is_embedded = 0;
+          unsigned int number_of_particles_cutting_this_cell      = 0;
+          // is the particle index that cuts the cell if it's cut. If the cell
           // is not cut the default value is stored (0). If the cell is not cut
           // this value will never be used.
-
+          // number_of_particles_cutting_this_cell count the number of particles
+          // that cut a cell if multiple particles cut this cell. This is used
+          // to treat cells that are cut by multiple particles differently.
           cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
               unsigned int nb_dof_inside = 0;
+
 
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
@@ -140,36 +144,56 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
               // If some of the DOFs are inside the boundary, some are outside,
               // the cell is cut.
-
               if (nb_dof_inside != 0)
                 {
+                  // If all the DOFs are inside the boundary this cell is inside
+                  // the particle. Otherwise the particle is cut.
                   if (nb_dof_inside == dofs_per_cell_local_v_x)
                     {
-                      cell_is_cut    = false;
-                      p_id_cut       = 0;
-                      cell_is_inside = true;
-                      p_id_inside    = p;
+                      // We only register the particle the lowest id as the
+                      // particle in which this cell is embedded if the cell is
+                      // embedded in multiple particles.
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = false;
+                          particle_id_which_cuts_this_cell           = 0;
+                          cell_is_inside                             = true;
+                          particle_id_in_which_this_cell_is_embedded = p;
+                        }
                       break;
                     }
                   else
                     {
-                      cell_is_cut    = true;
-                      p_id_cut       = p;
-                      cell_is_inside = false;
-                      p_id_inside    = 0;
-                      break;
+                      // We only register the particle with the lowest id as the
+                      // particle by this cell is cut if the cell is cut in
+                      // multiple particles.
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = true;
+                          particle_id_which_cuts_this_cell           = p;
+                          cell_is_inside                             = false;
+                          particle_id_in_which_this_cell_is_embedded = 0;
+                        }
+                      number_of_particles_cutting_this_cell += 1;
                     }
                 }
               else
                 {
-                  cell_is_cut    = false;
-                  p_id_cut       = 0;
-                  cell_is_inside = false;
-                  p_id_inside    = 0;
+                  if (number_of_particles_cutting_this_cell == 0)
+                    {
+                      cell_is_cut                                = false;
+                      particle_id_which_cuts_this_cell           = 0;
+                      cell_is_inside                             = false;
+                      particle_id_in_which_this_cell_is_embedded = 0;
+                    }
                 }
             }
-          cut_cells_map[cell]    = {cell_is_cut, p_id_cut};
-          cells_inside_map[cell] = {cell_is_inside, p_id_inside};
+
+          cut_cells_map[cell]    = {cell_is_cut,
+                                 particle_id_which_cuts_this_cell,
+                                 number_of_particles_cutting_this_cell};
+          cells_inside_map[cell] = {cell_is_inside,
+                                    particle_id_in_which_this_cell_is_embedded};
         }
     }
 }
@@ -193,7 +217,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          cut_cells_map[cell]    = {false, 0};
+          cut_cells_map[cell]    = {false, 0, 0};
           cells_inside_map[cell] = {false, 0};
         }
     }
@@ -288,7 +312,7 @@ GLSSharpNavierStokesSolver<dim>::optimized_generate_cut_cells_map()
                       // If it is an active cell, add it to cells_cut_map
                       if (cell->is_active())
                         {
-                          cut_cells_map[cell] = {true, p};
+                          cut_cells_map[cell] = {true, p, 0};
                         }
                       else
                         {
@@ -656,8 +680,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         {
           // Particle id that cut the cell.
           unsigned int p;
+          unsigned int p_count;
           bool         cell_is_cut;
-          std::tie(cell_is_cut, p) = cut_cells_map[cell];
+          std::tie(cell_is_cut, p, p_count) = cut_cells_map[cell];
           // If the cell is cut
           if (cell_is_cut)
             {
@@ -1308,8 +1333,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
         {
           bool cell_is_cut;
           // std::ignore is used because we don't care about what particle cut
-          // the cell.
-          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+          // the cell or the number of particles that cut the cell.
+          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
 
@@ -1359,8 +1384,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
           bool cell_is_cut;
           // std::ignore is used because we don't care about what particle cut
-          // the cell.
-          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
+          // the cell or the number of particles that cut the cell.
+          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -1634,17 +1659,31 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             (particles[p].impulsion) / particles[p].mass / dt;
           // Approximate a diagonal Jacobian with a secant methods.
 
-          double d_residual_dv =
+          double inverse_of_relaxation_coefficient_velocity =
             -bdf_coefs[0] -
             0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
+
+          // Evaluate the relaxation parameter using a generalization of the
+          // secant method.
           if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
             {
-              d_residual_dv =
-                -bdf_coefs[0] -
-                (particles[p].impulsion - particles[p].impulsion_iter).norm() /
-                  (particles[p].velocity - particles[p].velocity_iter).norm() /
-                  particles[p].mass / dt +
-                DBL_MIN;
+              auto vector_of_velocity_variation =
+                (particles[p].velocity - particles[p].velocity_iter);
+              auto vector_of_residual_variation =
+                (bdf_coefs[0] *
+                   (-particles[p].velocity + particles[p].velocity_iter) +
+                 (particles[p].impulsion - particles[p].impulsion_iter) /
+                   particles[p].mass / dt);
+              double dot_product_of_the_variation_vectors =
+                scalar_product(vector_of_velocity_variation,
+                               vector_of_residual_variation);
+              inverse_of_relaxation_coefficient_velocity =
+                1 / (vector_of_velocity_variation.norm() /
+                       vector_of_residual_variation.norm() *
+                       dot_product_of_the_variation_vectors /
+                       (vector_of_velocity_variation.norm() *
+                        vector_of_residual_variation.norm()) +
+                     DBL_MIN);
             }
           // Relaxation parameter for the particle dynamics.
           double local_alpha = 1;
@@ -1654,16 +1693,18 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
           IBParticle<dim> save_particle_state         = particles[p];
           bool            save_particle_state_is_used = false;
           // Define the correction vector.
-          Tensor<1, 3> dv = residual_velocity * 1 / d_residual_dv;
+          Tensor<1, 3> velocity_correction_vector =
+            residual_velocity * 1 / inverse_of_relaxation_coefficient_velocity;
 
           // Update the particle state and keep in memory the last iteration
           // information.
 
           particles[p].velocity_iter = particles[p].velocity;
           particles[p].velocity =
-            particles[p].velocity_iter - dv * alpha * local_alpha;
-          particles[p].impulsion_iter                = particles[p].impulsion;
-          particles[p].previous_d_velocity           = dv;
+            particles[p].velocity_iter -
+            velocity_correction_vector * alpha * local_alpha;
+          particles[p].impulsion_iter      = particles[p].impulsion;
+          particles[p].previous_d_velocity = velocity_correction_vector;
           particles[p].previous_local_alpha_velocity = local_alpha;
 
 
@@ -1734,32 +1775,45 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           residual_omega += inv_inertia * (particles[p].omega_impulsion) / dt;
 
-          double d_residual_domega =
+          double inverse_of_relaxation_coefficient_omega =
             -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
                               particles[p].radius * particles[p].radius *
                               inv_inertia.norm() / dt;
-
+          // Evaluate the relaxation parameter using a generalization of the
+          // secant method.
           if ((particles[p].omega - particles[p].omega_iter).norm() != 0)
             {
-              d_residual_domega =
-                -bdf_coefs[0] -
-                (particles[p].omega_impulsion -
-                 particles[p].omega_impulsion_iter)
-                    .norm() /
-                  (particles[p].omega - particles[p].omega_iter).norm() *
-                  inv_inertia.norm() / dt;
-              ;
+              auto vector_of_omega_variation =
+                (particles[p].omega - particles[p].omega_iter);
+              auto vector_of_residual_variation =
+                (bdf_coefs[0] *
+                   (-particles[p].omega + particles[p].omega_iter) +
+                 (particles[p].omega_impulsion -
+                  particles[p].omega_impulsion_iter) *
+                   inv_inertia.norm() / dt);
+              double dot_product_of_the_variation_vectors =
+                scalar_product(vector_of_omega_variation,
+                               vector_of_residual_variation);
+              inverse_of_relaxation_coefficient_omega =
+                1 / (vector_of_omega_variation.norm() /
+                       vector_of_residual_variation.norm() *
+                       dot_product_of_the_variation_vectors /
+                       (vector_of_omega_variation.norm() *
+                        vector_of_residual_variation.norm()) +
+                     DBL_MIN);
             }
           // Define the correction vector.
-          Tensor<1, 3> d_omega = residual_omega * 1 / d_residual_domega;
+          Tensor<1, 3> omega_correction_vector =
+            residual_omega * 1 / inverse_of_relaxation_coefficient_omega;
 
           double local_alpha_omega = 1;
 
           particles[p].omega_iter = particles[p].omega;
           particles[p].omega =
-            particles[p].omega_iter - d_omega * alpha * local_alpha_omega;
+            particles[p].omega_iter -
+            omega_correction_vector * alpha * local_alpha_omega;
           particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
-          particles[p].previous_d_omega     = d_omega;
+          particles[p].previous_d_omega     = omega_correction_vector;
           particles[p].previous_local_alpha_omega = local_alpha_omega;
 
 
@@ -1870,7 +1924,8 @@ GLSSharpNavierStokesSolver<dim>::Visualization_IB::build_patches(
   /**
    * A list of field names for all data components stored in patches.
    */
-
+  vector_datasets.clear();
+  dataset_names.clear();
   // Defining property field position
   int field_position = 0;
   // Iterating over properties
@@ -1966,18 +2021,36 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
   const unsigned int group_files =
     this->simulation_parameters.simulation_control.group_files;
 
-  Visualization_IB ib_particles_data;
-  ib_particles_data.build_patches(particles);
+  // If the processor id is id=0 we write the particles pvd.
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      Visualization_IB ib_particles_data;
+      ib_particles_data.build_patches(particles);
+      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                ib_particles_data,
+                                folder,
+                                particles_solution_name,
+                                time,
+                                iter,
+                                group_files,
+                                this->mpi_communicator);
+    }
+  else
+    {
+      // If the processor id is not id=0 we add an empty particle vector.
+      Visualization_IB             ib_particles_data;
+      std::vector<IBParticle<dim>> empty_particle_vector(0);
+      ib_particles_data.build_patches(empty_particle_vector);
+      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                ib_particles_data,
+                                folder,
+                                particles_solution_name,
+                                time,
+                                iter,
+                                group_files,
+                                this->mpi_communicator);
+    }
 
-
-  write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
-                            ib_particles_data,
-                            folder,
-                            particles_solution_name,
-                            time,
-                            iter,
-                            group_files,
-                            this->mpi_communicator);
 
   table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
@@ -2401,9 +2474,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // cut the cell. If the particle is cut
           bool cell_is_cut;
           // The id of the particle that cut the cell. Returns 0 if the cell is
-          // not cut.
+          // not cut.We also check the number of particles that cut the cell. If
+          // multiple particles cut the cell, the dummy dofs of pressure will be
+          // treated differently to avoid self-reference.
           unsigned int ib_particle_id;
-          std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+          unsigned int count_particles;
+          std::tie(cell_is_cut, ib_particle_id, count_particles) =
+            cut_cells_map[cell];
 
           if (cell_is_cut)
             {
@@ -2418,10 +2495,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   bool         dof_is_inside =
                     particles[ib_particle_id].get_levelset(
                       support_points[local_dof_indices[i]]) < 0;
+
+                  // If multiple particles cut the cell, we treat the dof of
+                  // pressure as a dummy dof. We don't use them to set the
+                  // boundary condition for the Poisson problem inside the
+                  // particle.
                   bool use_ib_for_pressure =
                     (dof_is_inside) && (component_i == dim) &&
                     (this->simulation_parameters.particlesParameters
-                       ->assemble_navier_stokes_inside == false);
+                       ->assemble_navier_stokes_inside == false) &&
+                    count_particles < 2;
 
                   // Check if the DOfs is owned and if it's not a hanging node.
                   if (((component_i < dim) || use_ib_for_pressure) &&
@@ -2508,8 +2591,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       bool point_in_cell = cell->point_inside(
                         interpolation_points[stencil.nb_points(order) - 1]);
 
-                      if (cell_2 == cell || point_in_cell ||
-                          use_ib_for_pressure || particle_close_to_wall)
+                      bool         dof_is_dummy = false;
+                      bool         cell2_is_cut;
+                      unsigned int ib_particle_id_2;
+                      std::tie(cell2_is_cut, ib_particle_id_2, std::ignore) =
+                        cut_cells_map[cell_2];
+                      if (cell2_is_cut || point_in_cell)
+                        {
+                          dof_is_dummy = true;
+                        }
+
+                      if (dof_is_dummy || use_ib_for_pressure ||
+                          particle_close_to_wall)
                         {
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passes from part
@@ -2786,7 +2879,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // it's not cut this dof must not
                                       // be overwritten
                                       bool cell_is_cut;
-                                      std::tie(cell_is_cut, std::ignore) =
+                                      std::tie(cell_is_cut,
+                                               std::ignore,
+                                               std::ignore) =
                                         cut_cells_map[cell_3];
 
 
@@ -2953,8 +3048,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-  copy_data.cell_is_cut                 = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  copy_data.cell_is_cut                              = cell_is_cut;
 
   if (cell_is_cut)
     return;
@@ -3043,8 +3138,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // The id of the particle that cut the cell. Returns 0 if the cell is
   // not cut.
   unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-  copy_data.cell_is_cut                 = cell_is_cut;
+  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  copy_data.cell_is_cut                              = cell_is_cut;
 
   if (cell_is_cut)
     return;
@@ -3135,6 +3230,7 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
         ".ib_particles";
       std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
+      ib_particles_pvdhandler.save(prefix + ".ib_particles");
 
       this->pvdhandler.save(prefix);
       for (unsigned int i_particle = 0; i_particle < particles.size();
@@ -3265,6 +3361,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
 
+  ib_particles_pvdhandler.read(prefix + ".ib_particles");
   // refill the table from checkpoint
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -3438,7 +3535,16 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
 
-  // Finish the time step of the particle.
+  // Finish the time step of the particles.
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].velocity_iter        = particles[p_i].velocity;
+      particles[p_i].impulsion_iter       = particles[p_i].impulsion;
+      particles[p_i].omega_iter           = particles[p_i].omega;
+      particles[p_i].omega_impulsion_iter = particles[p_i].omega_impulsion;
+      particles[p_i].residual_velocity    = DBL_MAX;
+      particles[p_i].residual_omega       = DBL_MAX;
+    }
 }
 
 template <int dim>

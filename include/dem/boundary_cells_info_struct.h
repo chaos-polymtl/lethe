@@ -59,9 +59,6 @@ struct periodic_boundaries_cells_info_struct
   // ID of boundary
   types::boundary_id boundary_id;
 
-  // ID of boundary face in the boundary cell
-  unsigned int global_face_id;
-
   // Normal vector of the boundary face
   Tensor<1, dim> normal_vector;
 
@@ -70,12 +67,6 @@ struct periodic_boundaries_cells_info_struct
 
   // The periodic boundary cell
   typename Triangulation<dim>::active_cell_iterator periodic_cell;
-
-  // ID of periodic boundary
-  types::boundary_id periodic_boundary_id;
-
-  // ID of periodic boundary face in the boundary cell
-  unsigned int global_periodic_face_id;
 
   // Normal vector of the periodic boundary face
   Tensor<1, dim> periodic_normal_vector;

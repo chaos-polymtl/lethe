@@ -333,8 +333,9 @@ namespace Parameters
       std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
 
       // Periodic boundary IDs
-      std::vector<unsigned int> periodic_boundaries;
-      std::vector<unsigned int> periodic_direction;
+      types::boundary_id periodic_boundary_0;
+      types::boundary_id periodic_boundary_1;
+      types::boundary_id periodic_direction;
 
 
       void
@@ -355,9 +356,7 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
         std::unordered_map<unsigned int, Tensor<1, 3>>
           &                        boundary_rotational_vector,
-        std::vector<unsigned int> &outlet_boundaries,
-        std::vector<unsigned int> &periodic_boundaries,
-        std::vector<unsigned int> &periodic_direction);
+        std::vector<unsigned int> &outlet_boundaries);
     };
 
     template <int dim>
@@ -397,27 +396,6 @@ namespace Parameters
     {
       // A bool variable which sets-up the Lagrangian post-processing
       bool Lagrangian_post_processing;
-
-      // Enable particles velocity post-processing
-      bool calculate_particles_average_velocity;
-
-      // Enable granular temperature post-processing
-      bool calculate_granular_temperature;
-
-      // Set initial step to start post-processing calculations
-      unsigned int initial_step;
-
-      // Set end step to finish post-processing calculations
-      unsigned int end_step;
-
-      // Set post-processing output frequency
-      unsigned int output_frequency;
-
-      // Prefix for particles velocity output
-      std::string particles_velocity_name;
-
-      // Prefix for granular temperature output
-      std::string granular_temperature_name;
 
       static void
       declare_parameters(ParameterHandler &prm);

@@ -1,6 +1,6 @@
 Boundary Conditions
 -------------------
-In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined. There are four boundary types: ``fixed_wall``, ``outlet``, ``rotational`` (around the center), and ``translational``. For ``rotational`` motion, ``rotational speed`` and ``rotational vector`` are required, while for ``translational`` motion, the ``speed`` should be defined in each direction.
+In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined. There are five boundary types: ``fixed_wall``, ``outlet``, ``rotational`` (around the center), ``translational``, and ``periodic``. For ``rotational`` motion, ``rotational speed`` and ``rotational vector`` are required, while for ``translational`` motion, the ``speed`` should be defined in each direction. For ``periodic`` boundaries, ``periodic id 0``, ``periodic id 1`` and ``periodic direction`` are required.
 
 ``fixed_wall`` is a static wall, and particles collide with these static walls upon reaching the wall. The only way to move these walls is to move the entire triangulation. If the ``outlet`` condition is chosen for a boundary, particles can leave the simulation domain via this outlet. Using ``rotational`` and ``translational`` boundary conditions, exerts imaginary rotational and translational velocities to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls receive a rotational or translational velocity from the wall. This feature is used in the rotating drum example.
 
@@ -8,7 +8,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 
  subsection DEM boundary conditions
   # Total number of boundary motion
-  set number of boundary conditions         		= 2
+  set number of boundary conditions         		= 3
 
     # For each motion, we need a separate subsection
     subsection boundary condition 0
@@ -49,9 +49,16 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 
 * For each boundary condition, we have to define a separate subsection. In the sample parameter list above, the ``number of boundary conditions`` is equal to 2. Hence, we need to define two subsections (``subsection boundary condition 0`` and ``subsection boundary condition 1``).
 
-* The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied.
+* The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied, periodic boundaries are an exception.
 
-* The ``type`` parameter specifies the type of the boundary condition. Acceptable types are: ``fixed_wall``, ``outlet``, ``rotational``, and ``translational``. The default boundary condition type is ``fixed_wall``.
+* The ``periodic id 0`` and ``periodic id 1`` parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied.
+
+.. note::
+        Only periodic boundaries which have co-linear normal vectors which align along one axis of the problem (e.g., x axis) are currently supported.
+
+* The ``type`` parameter specifies the type of the boundary condition. Acceptable types are: ``fixed_wall``, ``outlet``, ``rotational``, ``translational`` and ``periodic``. The default boundary condition type is ``fixed_wall``.
+
+* The ``periodic direction`` parameter specifies the perpendicular axis to the periodic boundaries.
 
 * The ``rotational speed`` parameter defines the rotational speed of the specified boundary.  
 

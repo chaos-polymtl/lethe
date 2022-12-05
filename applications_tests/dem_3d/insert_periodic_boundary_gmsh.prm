@@ -89,8 +89,8 @@ subsection DEM boundary conditions
 
   subsection boundary condition 0
     set type               = periodic
-    set boundary id        = 5
-    set periodic id        = 6
+    set periodic id 0      = 5
+    set periodic id 1      = 6
     set periodic direction = 0
   end
 end

@@ -54,19 +54,16 @@ void
 match_periodic_boundaries(Triangulation<dim, spacedim> &       triangulation,
                           const Parameters::Lagrangian::BCDEM &bc_param)
 {
-  for (unsigned int i_bc = 0; i_bc < bc_param.DEM_BC_number; ++i_bc)
-    {
-      std::vector<GridTools::PeriodicFacePair<
-        typename Triangulation<dim, spacedim>::cell_iterator>>
-        periodicity_vector;
+  std::vector<GridTools::PeriodicFacePair<
+    typename Triangulation<dim, spacedim>::cell_iterator>>
+    periodicity_vector;
 
-      GridTools::collect_periodic_faces(triangulation,
-                                        bc_param.outlet_boundaries[i_bc],
-                                        bc_param.periodic_boundaries[i_bc],
-                                        bc_param.periodic_direction[i_bc],
-                                        periodicity_vector);
-      triangulation.add_periodicity(periodicity_vector);
-    }
+  GridTools::collect_periodic_faces(triangulation,
+                                    bc_param.periodic_boundary_0,
+                                    bc_param.periodic_boundary_1,
+                                    bc_param.periodic_direction,
+                                    periodicity_vector);
+  triangulation.add_periodicity(periodicity_vector);
 }
 
 template void

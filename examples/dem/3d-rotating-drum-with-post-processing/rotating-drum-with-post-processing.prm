@@ -97,12 +97,5 @@ end
 # Lagrangian post-processing
 #---------------------------------------------------
 subsection post-processing
-    set Lagrangian post processing			= true
-    set calculate particles average velocity            = true
-    set calculate granular temperature			= true
-    set initial step            			= 12500000
-    set end step       					= 14500000
-    set output frequency				= 1000
-    set particles velocity output name   		= average_velocity
-    set granular temperature output name		= granular_temperature
+    set Lagrangian post-processing			= true
 end

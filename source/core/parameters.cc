@@ -192,8 +192,12 @@ namespace Parameters
       startup_timestep_scaling = prm.get_double("startup time scaling");
       number_mesh_adaptation   = prm.get_integer("number mesh adapt");
 
-      output_folder     = prm.get("output path");
-      output_name       = prm.get("output name");
+      output_folder = prm.get("output path");
+      output_name   = prm.get("output name");
+      output_name.erase(std::remove(output_name.begin(),
+                                    output_name.end(),
+                                    '/'),
+                        output_name.end());
       output_frequency  = prm.get_integer("output frequency");
       output_time       = prm.get_double("output time");
       output_boundaries = prm.get_bool("output boundaries");
@@ -1126,6 +1130,11 @@ namespace Parameters
                         Patterns::Selection("fluid 0|fluid 1|both"),
                         "Fluid to which the viscous dissipation is applied "
                         "in the heat equation <fluid 0|fluid 1|both>");
+
+      prm.declare_entry("smoothed output fields",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable smoothing postprocessed vectors and scalars.");
     }
     prm.leave_subsection();
   }
@@ -1176,6 +1185,8 @@ namespace Parameters
         throw(
           std::runtime_error("Invalid postprocessed fluid. "
                              "Options are 'fluid 0', 'fluid 1' or 'both'."));
+
+      smoothed_output_fields      = prm.get_bool("smoothed output fields");
     }
     prm.leave_subsection();
   }
