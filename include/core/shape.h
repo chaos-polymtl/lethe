@@ -875,8 +875,8 @@ public:
    * @param mapping the mapping associated to the triangulation
    */
   void
-  update_precalculations(DoFHandler<dim> &             dof_handler,
-                         std::shared_ptr<Mapping<dim>> mapping);
+  update_precalculations(DoFHandler<dim> &dof_handler,
+                         std::shared_ptr<Mapping<dim>> /*mapping*/);
 
   /**
    * @brief Compact Wendland C2 function defined from 0 to 1.
@@ -1234,6 +1234,7 @@ private:
          likely_nodes_map;
   size_t max_number_of_nodes;
   int    minimal_mesh_level;
+  int    highest_level_searched;
 
 public:
   std::vector<size_t>           nodes_id;

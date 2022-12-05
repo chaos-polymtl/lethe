@@ -535,6 +535,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , likely_nodes_map()
   , max_number_of_nodes(1)
   , minimal_mesh_level(std::numeric_limits<int>::max())
+  , highest_level_searched(-1)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -563,9 +564,10 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  iterable_nodes      = nodes_id;
-  max_number_of_nodes = 1;
-  minimal_mesh_level  = std::numeric_limits<int>::max();
+  iterable_nodes         = nodes_id;
+  max_number_of_nodes    = 1;
+  minimal_mesh_level     = std::numeric_limits<int>::max();
+  highest_level_searched = -1;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -740,8 +742,6 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   const Point<dim>                                      support_point)
 {
-  if (!cell->is_locally_owned())
-    return;
   // We exit the function immediately if the cell is already in the map
   if (likely_nodes_map.find(cell) != likely_nodes_map.end())
     return;
@@ -773,9 +773,9 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     {
       centered_support_point = this->align_and_center(support_point);
       distance = (centered_support_point - nodes_positions[node_id]).norm();
-      // We only check for one support point, but we use the maximal distance
+      // We only check for one point, but we use the maximal distance
       // from any point in the cell added to the support radius.
-      // This allows not to loop over all support points.
+      // This allows not to loop over many points.
       max_distance = cell_diameter + support_radii[node_id];
       if (distance < max_distance)
         likely_nodes_map[cell].push_back(node_id);
@@ -794,23 +794,22 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(DoFHandler<dim> &             dof_handler,
-                                      std::shared_ptr<Mapping<dim>> mapping)
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
+                                      std::shared_ptr<Mapping<dim>> /*mapping*/)
 {
-  const auto &cell_iterator = dof_handler.active_cell_iterators();
-  std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(*mapping, dof_handler, support_points);
-  const size_t dofs_per_cell = dof_handler.get_fe().dofs_per_cell;
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  Point<dim>                           support_point;
-  for (const auto &cell : cell_iterator)
+  int maximal_level = dof_handler.get_triangulation().n_levels();
+
+  for (int level = highest_level_searched + 1; level < maximal_level; level++)
     {
-      if (cell->is_locally_owned())
+      const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
+      for (const auto &cell : cell_iterator)
         {
-          cell->get_dof_indices(local_dof_indices);
-          support_point = support_points[local_dof_indices[0]];
-          determine_likely_nodes_for_one_cell(cell, support_point);
+          if (level == maximal_level)
+            if (!cell->is_locally_owned())
+              break;
+          determine_likely_nodes_for_one_cell(cell, cell->vertex(0));
         }
+      highest_level_searched = level;
     }
 }
 
