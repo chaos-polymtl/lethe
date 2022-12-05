@@ -207,6 +207,7 @@ IBParticle<dim>::closest_surface_point(
   closest_point =
     p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
 }
+
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
