@@ -796,15 +796,13 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   Point<dim> centered_support_point;
 
   likely_nodes_map[cell].reserve(max_number_of_nodes);
-  for (auto &node_id : iterable_nodes)
+  for (const auto &node_id : iterable_nodes)
     {
-      // We only check for one support point, but we use a high security
-      // factor. This allows not to loop over all support points.
       centered_support_point = this->align_and_center(support_point);
       distance = (centered_support_point - nodes_positions[node_id]).norm();
-      // We check if the distance is lower than 1 cell diagonal, since we
-      // only check the distance with 1 support point, added to the support
-      // radius
+      // We only check for one support point, but we use the maximal distance
+      // from any point in the cell added to the support radius.
+      // This allows not to loop over all support points.
       max_distance = cell_diameter + support_radii[node_id];
       if (distance < max_distance)
         likely_nodes_map[cell].push_back(node_id);

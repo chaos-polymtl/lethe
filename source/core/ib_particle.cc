@@ -235,8 +235,8 @@ IBParticle<dim>::get_number_properties()
 template <int dim>
 double
 IBParticle<dim>::get_levelset(
-  const Point<dim> &                                   p,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+  const Point<dim> &                                    p,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   return shape->value_with_cell_guess(p, cell_guess);
 }
@@ -250,9 +250,9 @@ IBParticle<dim>::get_levelset(const Point<dim> &p)
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(
-  const Point<dim> &                                   p,
-  Point<dim> &                                         closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+  const Point<dim> &                                    p,
+  Point<dim> &                                          closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
@@ -278,10 +278,10 @@ IBParticle<dim>::closest_surface_point(const Point<dim> &p,
 template <int dim>
 bool
 IBParticle<dim>::is_inside_crown(
-  const Point<dim> &                                   evaluation_point,
-  const double                                         outer_radius,
-  const double                                         inside_radius,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+  const Point<dim> &                                    evaluation_point,
+  const double                                          outer_radius,
+  const double                                          inside_radius,
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   const double radius = shape->effective_radius;
 

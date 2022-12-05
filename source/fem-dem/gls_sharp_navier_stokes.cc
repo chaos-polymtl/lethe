@@ -3234,6 +3234,7 @@ GLSSharpNavierStokesSolver<dim>::write_checkpoint()
         ".ib_particles";
       std::ofstream output(filename.c_str());
       this->simulation_control->save(prefix);
+      ib_particles_pvdhandler.save(prefix + ".ib_particles");
 
       this->pvdhandler.save(prefix);
       for (unsigned int i_particle = 0; i_particle < particles.size();
@@ -3364,6 +3365,7 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
     this->simulation_parameters.simulation_control.output_folder + prefix +
     ".ib_particles";
 
+  ib_particles_pvdhandler.read(prefix + ".ib_particles");
   // refill the table from checkpoint
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -3536,7 +3538,16 @@ GLSSharpNavierStokesSolver<dim>::read_checkpoint()
 
   // Create the list of contact candidates
   ib_dem.update_contact_candidates();
-
+  // Finish the time step of the particles.
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].velocity_iter        = particles[p_i].velocity;
+      particles[p_i].impulsion_iter       = particles[p_i].impulsion;
+      particles[p_i].omega_iter           = particles[p_i].omega;
+      particles[p_i].omega_impulsion_iter = particles[p_i].omega_impulsion;
+      particles[p_i].residual_velocity    = DBL_MAX;
+      particles[p_i].residual_omega       = DBL_MAX;
+    }
   // Finish the time step of the particle.
 }
 
@@ -3756,11 +3767,14 @@ GLSSharpNavierStokesSolver<dim>::solve()
   define_particles();
   this->setup_dofs();
   this->box_refine_mesh();
-  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-    {
-      particles[p_i].update_precalculations(this->dof_handler, this->mapping);
-    }
-
+  {
+    TimerOutput::Scope t(this->computing_timer,
+                         "update_precalculations_shape_distance");
+    for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+      {
+        particles[p_i].update_precalculations(this->dof_handler, this->mapping);
+      }
+  }
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
       // To change once refinement is split into two function
@@ -3791,11 +3805,15 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-            {
-              particles[p_i].update_precalculations(this->dof_handler,
-                                                    this->mapping);
-            }
+          {
+            TimerOutput::Scope t(this->computing_timer,
+                                 "update_precalculations_shape_distance");
+            for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+              {
+                particles[p_i].update_precalculations(this->dof_handler,
+                                                      this->mapping);
+              }
+          }
         }
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.refinement_fraction = temp_refine;
@@ -3858,11 +3876,15 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-            {
-              particles[p_i].update_precalculations(this->dof_handler,
-                                                    this->mapping);
-            }
+          {
+            TimerOutput::Scope t(this->computing_timer,
+                                 "update_precalculations_shape_distance");
+            for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+              {
+                particles[p_i].update_precalculations(this->dof_handler,
+                                                      this->mapping);
+              }
+          }
           vertices_cell_mapping();
 
           if (all_spheres)

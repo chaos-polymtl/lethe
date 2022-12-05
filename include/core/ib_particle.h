@@ -101,8 +101,9 @@ public:
    * is useful to reduce computation time
    */
   double
-  get_levelset(const Point<dim> &                                   p,
-               const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+  get_levelset(
+    const Point<dim> &                                    p,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   /**
    * See overloaded function
    */
@@ -121,9 +122,9 @@ public:
    */
   void
   closest_surface_point(
-    const Point<dim> &                                   p,
-    Point<dim> &                                         closest_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+    const Point<dim> &                                    p,
+    Point<dim> &                                          closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   /**
    * See overloaded function
    */
@@ -144,10 +145,10 @@ public:
    */
   bool
   is_inside_crown(
-    const Point<dim> &                                   evaluation_point,
-    const double                                         outer_radius,
-    const double                                         inside_radius,
-    const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+    const Point<dim> &                                    evaluation_point,
+    const double                                          outer_radius,
+    const double                                          inside_radius,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   /**
    * See overloaded function
    */
