@@ -761,7 +761,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
             iterable_nodes.swap(parent_iterator->second);
           }
       }
-    catch (...)
+    catch (TriaAccessorExceptions::ExcCellHasNoParent())
       {}
 
   double     distance, max_distance;

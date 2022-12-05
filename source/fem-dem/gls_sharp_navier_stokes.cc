@@ -781,7 +781,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   // Count the number of evaluation
 
                                   auto [point, interpolation_points] =
-                                    stencil.points(
+                                    stencil.support_points_for_interpolation(
                                       order,
                                       length_ratio,
                                       particles[p],
@@ -2537,11 +2537,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // calculation.
 
                       auto [point, interpolation_points] =
-                        stencil.points(order,
-                                       length_ratio,
-                                       particles[ib_particle_id],
-                                       support_points[local_dof_indices[i]],
-                                       cell);
+                        stencil.support_points_for_interpolation(
+                          order,
+                          length_ratio,
+                          particles[ib_particle_id],
+                          support_points[local_dof_indices[i]],
+                          cell);
                       // Find the cell used for the stencil definition.
                       auto point_to_find_cell =
                         stencil.point_for_cell_detection(
@@ -2591,7 +2592,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // definition of the stencil ("cell_2") is on a face
                       // between the cell that is cut ("cell") and the "cell_2".
                       bool point_in_cell = cell->point_inside(
-                        interpolation_points[stencil.nb_points(order) - 1]);
+                        interpolation_points
+                          [stencil.number_of_interpolation_support_points(
+                             order) -
+                           1]);
 
                       bool         dof_is_dummy = false;
                       bool         cell2_is_cut;

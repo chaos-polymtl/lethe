@@ -7,7 +7,7 @@
 
 template <int dim>
 unsigned int
-IBStencil<dim>::nb_points(const unsigned int order)
+IBStencil<dim>::number_of_interpolation_support_points(const unsigned int order)
 {
   // The number of points used in the stencil excluding the DOF is equal to the
   // order.
@@ -92,7 +92,7 @@ IBStencil<dim>::coefficients(const unsigned int order,
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
-IBStencil<dim>::points(
+IBStencil<dim>::support_points_for_interpolation(
   const unsigned int                                    order,
   const double                                          length_ratio,
   IBParticle<dim> &                                     p,
@@ -139,10 +139,10 @@ IBStencil<dim>::points(
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
-IBStencil<dim>::points(const unsigned int order,
-                       const double       length_ratio,
-                       IBParticle<dim> &  p,
-                       const Point<dim> & dof_point)
+IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
+                                                 const double      length_ratio,
+                                                 IBParticle<dim> & p,
+                                                 const Point<dim> &dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the

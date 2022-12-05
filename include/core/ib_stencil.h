@@ -42,7 +42,7 @@ public:
   * @param order, the stencil order.
   */
   virtual unsigned int
-  nb_points(const unsigned int order);
+  number_of_interpolation_support_points(const unsigned int order);
 
   /**
    * @brief
@@ -63,19 +63,21 @@ public:
    *  is useful to reduce computation time
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  points(const unsigned int                                    order,
-         const double                                          length_ratio,
-         IBParticle<dim> &                                     p,
-         const Point<dim> &                                    dof_point,
-         const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+  support_points_for_interpolation(
+    const unsigned int                                    order,
+    const double                                          length_ratio,
+    IBParticle<dim> &                                     p,
+    const Point<dim> &                                    dof_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
   /**
    * See overloaded function
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  points(const unsigned int order,
-         const double       length_ratio,
-         IBParticle<dim> &  p,
-         const Point<dim> & dof_point);
+  support_points_for_interpolation(const unsigned int order,
+                                   const double       length_ratio,
+                                   IBParticle<dim> &  p,
+                                   const Point<dim> & dof_point);
 
   /**
    * @brief
@@ -91,6 +93,7 @@ public:
     IBParticle<dim> &                                     p,
     const Point<dim> &                                    dof_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
   /**
    * See overloaded function
    */
@@ -127,6 +130,7 @@ public:
               const Point<dim> &                                    dof_point,
               const unsigned int                                    component,
               const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
   /**
    * See overloaded function
    */
