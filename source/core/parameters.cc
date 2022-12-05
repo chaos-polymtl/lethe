@@ -1,6 +1,6 @@
-#include <core/parameters.h>
-
 #include <deal.II/base/exceptions.h>
+
+#include <core/parameters.h>
 
 DeclException2(
   PhaseChangeIntervalError,
@@ -1116,7 +1116,7 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of heat flux.");
 
-      prm.declare_entry("heat flux output name",
+      prm.declare_entry("heat flux name",
                         "heat_flux",
                         Patterns::FileName(),
                         "File name output temperature statistics");
@@ -1162,7 +1162,7 @@ namespace Parameters
         prm.get_bool("calculate temperature statistics");
       temperature_output_name = prm.get("temperature statistics name");
       calculate_heat_flux     = prm.get_bool("calculate heat flux");
-      heat_flux_output_name   = prm.get("heat flux output name");
+      heat_flux_output_name   = prm.get("heat flux name");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");

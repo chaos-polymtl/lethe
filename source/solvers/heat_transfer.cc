@@ -1,13 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -25,6 +15,15 @@
 
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 void
@@ -672,9 +671,9 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Temperature statistics
   if (simulation_parameters.post_processing.calculate_temperature_statistics)
     {
-      calculate_temperature_statistics(gather_vof,
-                                       monitored_fluid,
-                                       domain_name);
+      postprocess_temperature_statistics(gather_vof,
+                                         monitored_fluid,
+                                         domain_name);
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -688,26 +687,26 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       // Parse fluid present solution
       if (multiphysics->fluid_dynamics_is_block())
         {
-          calculate_heat_flux_on_bc(gather_vof,
+          postprocess_heat_flux_on_bc(gather_vof,
+                                      *multiphysics->get_block_solution(
+                                        PhysicsID::fluid_dynamics));
+
+          postprocess_heat_on_fluid(gather_vof,
+                                    monitored_fluid,
+                                    domain_name,
                                     *multiphysics->get_block_solution(
                                       PhysicsID::fluid_dynamics));
-
-          calculate_heat(gather_vof,
-                         monitored_fluid,
-                         domain_name,
-                         *multiphysics->get_block_solution(
-                           PhysicsID::fluid_dynamics));
         }
       else
         {
-          calculate_heat_flux_on_bc(
+          postprocess_heat_flux_on_bc(
             gather_vof, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
 
-          calculate_heat(gather_vof,
-                         monitored_fluid,
-                         domain_name,
-                         *multiphysics->get_solution(
-                           PhysicsID::fluid_dynamics));
+          postprocess_heat_on_fluid(gather_vof,
+                                    monitored_fluid,
+                                    domain_name,
+                                    *multiphysics->get_solution(
+                                      PhysicsID::fluid_dynamics));
         }
 
       if (simulation_control->get_step_number() %
@@ -1021,7 +1020,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-HeatTransfer<dim>::calculate_temperature_statistics(
+HeatTransfer<dim>::postprocess_temperature_statistics(
   const bool                       gather_vof,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name)
@@ -1287,7 +1286,7 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 template <int dim>
 template <typename VectorType>
 void
-HeatTransfer<dim>::calculate_heat_flux_on_bc(
+HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   const bool        gather_vof,
   const VectorType &current_solution_fd)
 {
@@ -1516,29 +1515,31 @@ HeatTransfer<dim>::calculate_heat_flux_on_bc(
 }
 
 template void
-HeatTransfer<2>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
+HeatTransfer<2>::postprocess_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
   const bool                           gather_vof,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
-HeatTransfer<3>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
+HeatTransfer<3>::postprocess_heat_flux_on_bc<TrilinosWrappers::MPI::Vector>(
   const bool                           gather_vof,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
-HeatTransfer<2>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::BlockVector>(
+HeatTransfer<2>::postprocess_heat_flux_on_bc<
+  TrilinosWrappers::MPI::BlockVector>(
   const bool                                gather_vof,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template void
-HeatTransfer<3>::calculate_heat_flux_on_bc<TrilinosWrappers::MPI::BlockVector>(
+HeatTransfer<3>::postprocess_heat_flux_on_bc<
+  TrilinosWrappers::MPI::BlockVector>(
   const bool                                gather_vof,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template <int dim>
 template <typename VectorType>
 void
-HeatTransfer<dim>::calculate_heat(
+HeatTransfer<dim>::postprocess_heat_on_fluid(
   const bool                       gather_vof,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
@@ -1748,28 +1749,28 @@ HeatTransfer<dim>::calculate_heat(
 }
 
 template void
-HeatTransfer<2>::calculate_heat<TrilinosWrappers::MPI::Vector>(
+HeatTransfer<2>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::Vector>(
   const bool                           gather_vof,
   const Parameters::FluidIndicator     monitored_fluid,
   const std::string                    domain_name,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
-HeatTransfer<3>::calculate_heat<TrilinosWrappers::MPI::Vector>(
+HeatTransfer<3>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::Vector>(
   const bool                           gather_vof,
   const Parameters::FluidIndicator     monitored_fluid,
   const std::string                    domain_name,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
-HeatTransfer<2>::calculate_heat<TrilinosWrappers::MPI::BlockVector>(
+HeatTransfer<2>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::BlockVector>(
   const bool                                gather_vof,
   const Parameters::FluidIndicator          monitored_fluid,
   const std::string                         domain_name,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template void
-HeatTransfer<3>::calculate_heat<TrilinosWrappers::MPI::BlockVector>(
+HeatTransfer<3>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::BlockVector>(
   const bool                                gather_vof,
   const Parameters::FluidIndicator          monitored_fluid,
   const std::string                         domain_name,

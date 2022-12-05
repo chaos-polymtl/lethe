@@ -43,10 +43,12 @@ This subsection controls the post-processing other than the forces and torque on
 	set calculate tracer statistics   = false
 	set tracer statistics name        = tracer_statistics
 
-	# Temperature statistics	
+	# Thermal postprocesses
+	set postprocessed fluid 		= both
 	set calculate temperature statistics   	= false
 	set temperature statistics name 	= temperature_statistics
-	set postprocessed fluid 		= both
+	set calculate heat flux			= false
+	set heat flux name 			= heat_flux
 	
   end
  
@@ -78,18 +80,47 @@ This subsection controls the post-processing other than the forces and torque on
 
 	* ``tracer statistics name``: output filename for tracer statistics calculations.
 
+* ``postprocessed fluid``: fluid domain used for thermal postprocesses. Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
+	* For monophasic simulations (``set VOF = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
+	* For multiphasic simulations (``set VOF = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+
+	.. note::
+
+		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all domain``.
+
 * ``calculate temperature statistics``: controls if calculation of temperature statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
 	.. warning::
 
 		Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
 	* ``temperature statistics name``: output filename for temperature statistics calculations.
-	* ``postprocessed fluid``: fluid domain over which temperature is computed. 
 
-	Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
-		* For monophasic simulations (``set VOF = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
-		* For multiphasic simulations (``set VOF = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+	.. admonition:: Example of temperature statistics table:
 
-	.. note::
+		.. code-block:: text
 
-		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all domain``.
+			 time  min    max    average std-dev 
+			0.0000 0.0000 3.9434  0.1515  0.6943 
+			0.2000 2.5183 4.9390  3.3917  0.7229 
+
+* ``calculate heat flux``: controls if calculation of heat flux is enabled. If enabled, two quantities are postprocessed: 
+	* the heat flux :math:`\mathbf{\Phi}` for each :ref:`heat transfer bc` boundary condition. 
+
+	The output table is appended with one column per boundary condition, name ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
+
+	* the heat (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
+
+	.. warning::
+
+		Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+
+	* ``heat flux name``: output filename for temperature statistics calculations.
+
+	.. admonition:: Example of heat flux table:
+
+		.. code-block:: text
+
+			 time   bc_0    bc_1   heat_fluid_1 
+			0.0000 64.0000  0.6400       0.0313 
+			0.2000  3.6963  0.0976       0.6965 
+

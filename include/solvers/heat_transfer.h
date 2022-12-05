@@ -25,14 +25,6 @@
 #ifndef lethe_heat_transfer_h
 #define lethe_heat_transfer_h
 
-#include <core/bdf.h>
-#include <core/simulation_control.h>
-
-#include <solvers/auxiliary_physics.h>
-#include <solvers/heat_transfer_assemblers.h>
-#include <solvers/heat_transfer_scratch_data.h>
-#include <solvers/multiphysics_interface.h>
-
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
 
@@ -46,6 +38,13 @@
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
+
+#include <core/bdf.h>
+#include <core/simulation_control.h>
+#include <solvers/auxiliary_physics.h>
+#include <solvers/heat_transfer_assemblers.h>
+#include <solvers/heat_transfer_scratch_data.h>
+#include <solvers/multiphysics_interface.h>
 
 
 template <int dim>
@@ -370,7 +369,7 @@ private:
    */
 
   void
-  calculate_temperature_statistics(
+  postprocess_temperature_statistics(
     const bool                       gather_vof,
     const Parameters::FluidIndicator monitored_fluid,
     const std::string                domain_name);
@@ -395,8 +394,8 @@ private:
 
   template <typename VectorType>
   void
-  calculate_heat_flux_on_bc(const bool        gather_vof,
-                            const VectorType &current_solution_fd);
+  postprocess_heat_flux_on_bc(const bool        gather_vof,
+                              const VectorType &current_solution_fd);
 
   /**
    * Post-processing. Calculate the heat (rho*Cp*T) in a fluid domain.
@@ -415,10 +414,10 @@ private:
 
   template <typename VectorType>
   void
-  calculate_heat(const bool                       gather_vof,
-                 const Parameters::FluidIndicator monitored_fluid,
-                 const std::string                domain_name,
-                 const VectorType &               current_solution_fd);
+  postprocess_heat_on_fluid(const bool                       gather_vof,
+                            const Parameters::FluidIndicator monitored_fluid,
+                            const std::string                domain_name,
+                            const VectorType &current_solution_fd);
 
   /**
    * @brief Post-processing. Write the heat transfer values to an output file.
