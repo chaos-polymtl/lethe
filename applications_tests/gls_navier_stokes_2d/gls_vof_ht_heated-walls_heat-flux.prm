@@ -46,7 +46,9 @@ end
 subsection post-processing
       set output frequency      = 1
       set verbosity             = verbose
+      set calculate temperature statistics = true
       set calculate heat flux   = true
+      set postprocessed fluid   = fluid 1
 end
 
 #---------------------------------------------------
