@@ -85,7 +85,7 @@ public:
    * iquilezles.org/articles/distfunctions
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual double
   value(const Point<dim> & evaluation_point,
@@ -97,7 +97,7 @@ public:
    * the evaluation point
    * @param evaluation_point The point at which the function will be evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual double
   value_with_cell_guess(
@@ -109,7 +109,7 @@ public:
    * @brief Return the analytical gradient of the distance
    * @param evaluation_point The point at which the function will be evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual Tensor<1, dim>
   gradient_with_cell_guess(
@@ -138,8 +138,11 @@ public:
    *
    * @param The new position the shape will be placed at
    */
-  virtual void
-  set_position(const Point<dim> &position);
+  inline virtual void
+  set_position(const Point<dim> &position)
+  {
+    this->position = position;
+  }
 
   /**
    * @brief
@@ -147,24 +150,33 @@ public:
    *
    * @param The new orientation the shape will be set at
    */
-  virtual void
-  set_orientation(const Tensor<1, 3> &orientation);
+  inline virtual void
+  set_orientation(const Tensor<1, 3> &orientation)
+  {
+    this->orientation = orientation;
+  }
 
   /**
    * @brief
    * Returns the position of the shape
    *
    */
-  virtual Point<dim>
-  get_position();
+  inline virtual Point<dim>
+  get_position()
+  {
+    return position;
+  }
 
   /**
    * @brief
    * Returns the orientation of the shape
    *
    */
-  virtual Tensor<1, 3>
-  get_orientation();
+  inline virtual Tensor<1, 3>
+  get_orientation()
+  {
+    return orientation;
+  }
 
   /**
    * @brief
@@ -224,7 +236,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -239,7 +251,7 @@ public:
   /**
    * @brief Return the analytical gradient of the distance
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,
@@ -287,7 +299,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -334,7 +346,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -385,7 +397,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -438,7 +450,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -497,7 +509,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -560,7 +572,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -624,7 +636,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -636,13 +648,13 @@ public:
    * the evaluation point
    * @param evaluation_point The point at which the function will be evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value_with_cell_guess(
     const Point<dim> &                                   evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+    const unsigned int /*component = 0*/) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -755,7 +767,7 @@ public:
    * corresponding bounding box.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -767,19 +779,19 @@ public:
    * the evaluation point
    * @param evaluation_point The point at which the function will be evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value_with_cell_guess(
-    const Point<dim> &                                   evaluation_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell,
-    const unsigned int component = 0) override;
+    const Point<dim> &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+    const unsigned int /*component = 0*/) override;
 
   /**
    * @brief Return the analytical gradient of the distance
    * @param evaluation_point The point at which the function will be evaluated
    * @param cell The cell that is likely to contain the evaluation point
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
   gradient_with_cell_guess(
@@ -790,7 +802,7 @@ public:
   /**
    * @brief Return the analytical gradient of the distance for the current RBF
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,

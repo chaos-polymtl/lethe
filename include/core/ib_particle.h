@@ -58,6 +58,7 @@ public:
     tz           = 14,
     n_properties = 15,
   };
+
   /**
    * @brief
    * initialised the particle
@@ -65,30 +66,37 @@ public:
    */
   void
   initialize_all();
+
   /**
    * @brief
    * initialize the value of the last state of the particle
    */
   void
   initialize_previous_solution();
+
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
+
   /**
    * @brief
    * Return the value of the properties of the particle for visualisation.
    */
   std::vector<double>
   get_properties();
+
   /**
    * @brief
    * Return the number of properties of the particle for visualisation.
    */
-  unsigned int
-  get_number_properties();
+  inline unsigned int
+  get_number_properties()
+  {
+    return PropertiesIndex::n_properties;
+  }
 
   /**
    * @brief
@@ -100,15 +108,21 @@ public:
    * @param cell_guess A guess of the cell containing the evaluation point, which
    * is useful to reduce computation time
    */
-  double
-  get_levelset(
-    const Point<dim> &                                    p,
-    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+  inline double
+  get_levelset(const Point<dim> &                                    p,
+               const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+  {
+    return shape->value_with_cell_guess(p, cell_guess);
+  }
+
   /**
    * See overloaded function
    */
-  double
-  get_levelset(const Point<dim> &p);
+  inline double
+  get_levelset(const Point<dim> &p)
+  {
+    return shape->value(p);
+  }
 
   /**
    * @brief
@@ -125,6 +139,7 @@ public:
     const Point<dim> &                                    p,
     Point<dim> &                                          closest_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
   /**
    * See overloaded function
    */
@@ -149,6 +164,7 @@ public:
     const double                                          outer_radius,
     const double                                          inside_radius,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
   /**
    * See overloaded function
    */
@@ -163,8 +179,12 @@ public:
    *
    * @param position The new position to set the particle at
    */
-  void
-  set_position(const Point<dim> position);
+  inline void
+  set_position(const Point<dim> position)
+  {
+    this->position = position;
+    this->shape->set_position(this->position);
+  }
 
   /**
    * @brief
@@ -186,9 +206,13 @@ public:
    * @param position_component The component of the new position to set the particle at
    * @param component The component index for which the position will be updated
    */
-  void
+  inline void
   set_position(const double       position_component,
-               const unsigned int component = 0);
+               const unsigned int component = 0)
+  {
+    this->position[component] = position_component;
+    this->shape->set_position(this->position);
+  }
 
   /**
    * @brief

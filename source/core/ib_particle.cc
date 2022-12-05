@@ -1,5 +1,4 @@
 #include <core/ib_particle.h>
-#include <core/shape.h>
 
 #include <cfloat>
 
@@ -121,6 +120,7 @@ IBParticle<dim>::get_properties_name()
 
   return properties;
 }
+
 template <int dim>
 std::vector<double>
 IBParticle<dim>::get_properties()
@@ -152,7 +152,6 @@ IBParticle<dim>::get_properties()
 
   return properties;
 }
-
 
 template <int dim>
 void
@@ -224,29 +223,6 @@ IBParticle<dim>::initialize_shape(const std::string         type,
     StandardExceptions::ExcNotImplemented();
 }
 
-
-template <int dim>
-unsigned int
-IBParticle<dim>::get_number_properties()
-{
-  return PropertiesIndex::n_properties;
-}
-
-template <int dim>
-double
-IBParticle<dim>::get_levelset(
-  const Point<dim> &                                    p,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
-{
-  return shape->value_with_cell_guess(p, cell_guess);
-}
-template <int dim>
-double
-IBParticle<dim>::get_levelset(const Point<dim> &p)
-{
-  return shape->value(p);
-}
-
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(
@@ -262,6 +238,7 @@ IBParticle<dim>::closest_surface_point(
   closest_point =
     p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
 }
+
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
@@ -291,6 +268,7 @@ IBParticle<dim>::is_inside_crown(
 
   return is_inside_outer_ring && is_outside_inner_ring;
 }
+
 template <int dim>
 bool
 IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
@@ -304,23 +282,6 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
   bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
 
   return is_inside_outer_ring && is_outside_inner_ring;
-}
-
-template <int dim>
-void
-IBParticle<dim>::set_position(const Point<dim> position)
-{
-  this->position = position;
-  this->shape->set_position(this->position);
-}
-
-template <int dim>
-void
-IBParticle<dim>::set_position(const double       position_component,
-                              const unsigned int component)
-{
-  this->position[component] = position_component;
-  this->shape->set_position(this->position);
 }
 
 template <int dim>

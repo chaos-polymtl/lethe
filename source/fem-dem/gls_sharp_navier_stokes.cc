@@ -3750,6 +3750,17 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
     }
 }
 
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::update_precalculations_for_ib()
+{
+  TimerOutput::Scope t(this->computing_timer,
+                       "update_precalculations_shape_distance");
+  for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
+    {
+      particles[p_i].update_precalculations(this->dof_handler, this->mapping);
+    }
+}
 
 
 template <int dim>
@@ -3767,14 +3778,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   define_particles();
   this->setup_dofs();
   this->box_refine_mesh();
-  {
-    TimerOutput::Scope t(this->computing_timer,
-                         "update_precalculations_shape_distance");
-    for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-      {
-        particles[p_i].update_precalculations(this->dof_handler, this->mapping);
-      }
-  }
+  update_precalculations_for_ib();
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
       // To change once refinement is split into two function
@@ -3805,15 +3809,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          {
-            TimerOutput::Scope t(this->computing_timer,
-                                 "update_precalculations_shape_distance");
-            for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-              {
-                particles[p_i].update_precalculations(this->dof_handler,
-                                                      this->mapping);
-              }
-          }
+          update_precalculations_for_ib();
         }
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.refinement_fraction = temp_refine;
@@ -3876,15 +3872,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          {
-            TimerOutput::Scope t(this->computing_timer,
-                                 "update_precalculations_shape_distance");
-            for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
-              {
-                particles[p_i].update_precalculations(this->dof_handler,
-                                                      this->mapping);
-              }
-          }
+          update_precalculations_for_ib();
           vertices_cell_mapping();
 
           if (all_spheres)

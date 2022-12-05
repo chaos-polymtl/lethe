@@ -63,11 +63,11 @@ public:
    *  is useful to reduce computation time
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  points(const unsigned int                                   order,
-         const double                                         length_ratio,
-         IBParticle<dim> &                                    p,
-         const Point<dim> &                                   dof_point,
-         const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+  points(const unsigned int                                    order,
+         const double                                          length_ratio,
+         IBParticle<dim> &                                     p,
+         const Point<dim> &                                    dof_point,
+         const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   /**
    * See overloaded function
    */
@@ -88,9 +88,9 @@ public:
    */
   virtual Point<dim>
   point_for_cell_detection(
-    IBParticle<dim> &                                    p,
-    const Point<dim> &                                   dof_point,
-    const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+    IBParticle<dim> &                                     p,
+    const Point<dim> &                                    dof_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   /**
    * See overloaded function
    */
@@ -123,10 +123,10 @@ public:
    *  is useful to reduce computation time
    */
   virtual double
-  ib_velocity(IBParticle<dim> &                                    p,
-              const Point<dim> &                                   dof_point,
-              const unsigned int                                   component,
-              const typename DoFHandler<dim>::active_cell_iterator cell_guess);
+  ib_velocity(IBParticle<dim> &                                     p,
+              const Point<dim> &                                    dof_point,
+              const unsigned int                                    component,
+              const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   /**
    * See overloaded function
    */

@@ -102,33 +102,6 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   return translated_point;
 }
 
-template <int dim>
-void
-Shape<dim>::set_position(const Point<dim> &position)
-{
-  this->position = position;
-}
-
-template <int dim>
-void
-Shape<dim>::set_orientation(const Tensor<1, 3> &orientation)
-{
-  this->orientation = orientation;
-}
-
-template <int dim>
-Point<dim>
-Shape<dim>::get_position()
-{
-  return position;
-}
-
-template <int dim>
-Tensor<1, 3>
-Shape<dim>::get_orientation()
-{
-  return orientation;
-}
 
 template <int dim>
 double
