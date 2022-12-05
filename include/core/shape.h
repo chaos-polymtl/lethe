@@ -719,7 +719,7 @@ public:
     C0C2,
     C1C2,
     C2C2,
-    COSINUS,
+    COS,
   };
 
   /**
@@ -1040,7 +1040,7 @@ public:
    * @param distance distance to the node normalized by the support radius
    */
   inline double
-  cosinus(const double distance) const
+  cos(const double distance) const
   {
     return distance > 1.0 ? 0.0 : 0.5 + 0.5 * std::cos(distance * M_PI);
   }

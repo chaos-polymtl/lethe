@@ -848,8 +848,8 @@ RBFShape<dim>::evaluate_basis_function(const RBFBasisFunction basis_function,
         return RBFShape<dim>::c1c2(distance);
       case RBFBasisFunction::C2C2:
         return RBFShape<dim>::c2c2(distance);
-      case RBFBasisFunction::COSINUS:
-        return RBFShape<dim>::cosinus(distance);
+      case RBFBasisFunction::COS:
+        return RBFShape<dim>::cos(distance);
       default:
         return RBFShape<dim>::linear(distance);
     }
@@ -889,7 +889,7 @@ RBFShape<dim>::evaluate_basis_function_derivative(
         return RBFShape<dim>::c1c2_derivative(distance);
       case RBFBasisFunction::C2C2:
         return RBFShape<dim>::c2c2_derivative(distance);
-      case RBFBasisFunction::COSINUS:
+      case RBFBasisFunction::COS:
         return RBFShape<dim>::cosinus_derivative(distance);
       default:
         return RBFShape<dim>::linear_derivative(distance);
