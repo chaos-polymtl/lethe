@@ -1,6 +1,6 @@
-#include <deal.II/base/exceptions.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/base/exceptions.h>
 
 DeclException2(
   PhaseChangeIntervalError,
