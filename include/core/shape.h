@@ -18,7 +18,8 @@
 
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function.h>
-
+#include <deal.II/grid/manifold.h>
+#include <deal.II/grid/manifold_lib.h>
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -223,6 +224,14 @@ public:
 
   /**
    * @brief
+   * Returns the default manifold of the shape if not redefine it is a flat manifold.
+   */
+  virtual std::shared_ptr< Manifold<dim-1,dim>>
+  get_shape_manifold();
+
+
+  /**
+   * @brief
    * Returns the orientation of the shape
    *
    */
@@ -246,6 +255,18 @@ public:
   Point<dim>
   align_and_center(const Point<dim> &evaluation_point) const;
 
+  /**
+   * @brief
+   * This function applied the inverse rotation of align_and_center
+   *
+   * Returns the centered and aligned point used on the levelset evaluation in the global reference frame.
+   *
+   * @param evaluation_point The point that will be recentered and realigned
+   * @return The aligned and centered point
+   */
+  Point<dim>
+  reverse_align_and_center(const Point<dim> &evaluation_point) const;
+
   std::string
   point_to_string(const Point<dim> &evaluation_point) const;
   // Effective radius used for crown refinement
@@ -265,6 +286,7 @@ protected:
 
   std::unordered_map<std::string,double> value_cache;
   std::unordered_map<std::string,Tensor<1,dim>> gradient_cache;
+
 };
 
 
@@ -289,6 +311,7 @@ public:
       std::make_shared<Functions::SignedDistance::Sphere<dim>>(position,
                                                                radius);
 #endif
+
   }
 
   /**
@@ -334,6 +357,13 @@ public:
 
   void
   set_position(const Point<dim> &position) override;
+
+  /**
+   * @brief
+   * Returns the spherical_manifold_of_the_shape.
+   */
+  virtual std::shared_ptr< Manifold<dim-1,dim>>
+  get_shape_manifold()override;
 
 
 private:
@@ -843,19 +873,16 @@ public:
     if (found_step != std::string::npos || found_step_2 != std::string::npos)
       {
         shape = OpenCASCADE::read_STEP(file_name);
-        std::cout<<"hi_step"<<std::endl;
         this->additional_info_on_shape="step";
       }
     if (found_igs != std::string::npos || found_igs_2 != std::string::npos)
       {
         shape = OpenCASCADE::read_IGES(file_name);
-        std::cout<<"hi_iges"<<std::endl;
         this->additional_info_on_shape="iges";
       }
     if (found_stl != std::string::npos)
       {
         shape = OpenCASCADE::read_STL(file_name);
-        std::cout<<"hi_stl"<<std::endl;
         this->additional_info_on_shape="stl";
       }
 
@@ -911,6 +938,7 @@ public:
   void
   closest_surface_point(const Point<dim> &p,
                         Point<dim>       &closest_point) override;
+
 
   /**
    * @brief
@@ -1026,6 +1054,7 @@ public:
   value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
+
   /**
    * @brief Return the evaluation of the signed distance function of this solid
    * at the given point evaluation point with a guess for the cell containing
@@ -1131,6 +1160,14 @@ public:
   void
   update_precalculations(DoFHandler<dim> &  dof_handler,
                          const unsigned int levels_not_precalculated);
+
+  /**
+   * @brief Rotate RBF nodes in the global reference frame.
+   * @param dof_handler the reference to the new dof_handler
+   * @param mapping the mapping associated to the triangulation
+   */
+  void
+  rotate_nodes() ;
 
   /**
    * @brief Compact Wendland C2 function defined from 0 to 1.
@@ -1509,6 +1546,7 @@ public:
   std::vector<size_t>           nodes_id;
   std::vector<double>           weights;
   std::vector<Point<dim>>       nodes_positions;
+  std::vector<Point<dim>>       rotated_nodes_positions;
   std::vector<double>           support_radii;
   std::vector<RBFBasisFunction> basis_functions;
 };

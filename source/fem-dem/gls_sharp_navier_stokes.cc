@@ -815,6 +815,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                       local_face_cell_data[0].material_id = 0;
 
+
                       local_face_projection_triangulation =
                         Triangulation<dim - 1, dim>();
                       // Create a dof handler that contains the triangulation of

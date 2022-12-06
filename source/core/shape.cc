@@ -14,10 +14,10 @@
  * ---------------------------------------------------------------------
  */
 #include <core/shape.h>
-
+#include <deal.II/grid/manifold.h>
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
-
+#include <deal.II/grid/manifold_lib.h>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 
@@ -119,6 +119,136 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   return translated_point;
 }
 
+template <int dim>
+Point<dim>
+Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
+{
+  // Translation and rotation to standard position and orientation for
+  // distance calculations
+  Point<dim> center_of_rotation = position;
+
+  Point<dim> rotated_point;
+  Point<dim> translated_point;
+
+  // Rotation from the solid orientation
+  // Angular position around x, y and z axis
+  Tensor<1, 3> theta = orientation;
+
+  // The centralized point is the one to be rotated, and it is updated after
+  // each rotation around one axis The centralized rotated point is the result
+  // of each rotation, and it is initialized in case no rotation is performed
+  Point<dim> centralized_point;
+  centralized_point              = evaluation_point ;
+  Point<dim> centralized_rotated = centralized_point;
+
+  // Selection of the first axis around which to rotate:
+  // x -> 0, y -> 1, z -> 2
+  // In 2D, only rotation around the z axis is possible
+
+
+
+  if constexpr (dim == 2)
+    {
+      if (std::abs(theta[2]) > 1e-10)
+        {
+          Tensor<2, 2> rotation_matrix =
+            Physics::Transformations::Rotations::rotation_matrix_2d(-theta[2]);
+
+          // Multiplication
+          centralized_rotated.clear();
+          for (unsigned int j = 0; j < dim; ++j)
+            {
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  centralized_rotated[j] +=
+                    rotation_matrix[j][k] * centralized_point[k];
+                }
+            }
+          centralized_point = centralized_rotated;
+        }
+    }
+  else // (dim == 3)
+    {
+      for (unsigned int i = 3 - 1; i > 0;
+           --i)
+        {
+          if (std::abs(theta[i]) > 1e-10)
+            {
+              Tensor<1, 3> axis;
+              axis[i] = 1.0;
+              Tensor<2, 3> rotation_matrix =
+                Physics::Transformations::Rotations::rotation_matrix_3d(
+                  axis, -theta[i]);
+
+              // Multiplication
+              centralized_rotated.clear();
+              for (unsigned int j = 0; j < dim; ++j)
+                {
+                  for (unsigned int k = 0; k < dim; ++k)
+                    {
+                      centralized_rotated[j] +=
+                        rotation_matrix[j][k] * centralized_point[k];
+                    }
+                }
+              centralized_point = centralized_rotated;
+            }
+        }
+    }
+  rotated_point = centralized_rotated + center_of_rotation;
+
+  // Translation from the solid position
+  translated_point = rotated_point;
+
+  return translated_point;
+}
+
+template <int dim>
+void
+Shape<dim>::set_position(const Point<dim> &position)
+{
+  this->position = position;
+}
+
+template <int dim>
+void
+Shape<dim>::set_orientation(const Tensor<1, 3> &orientation)
+{
+  this->orientation = orientation;
+}
+
+template <int dim>
+Point<dim>
+Shape<dim>::get_position()
+{
+  return position;
+}
+
+template <int dim>
+std::shared_ptr< Manifold<dim-1,dim>>
+Shape<dim>::get_shape_manifold()
+{
+    return std::make_shared<FlatManifold<dim-1,dim>>();
+}
+
+template <int dim>
+std::string
+Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
+{
+
+  std::string point_in_string="";
+  for(unsigned int d=0;d<dim;++d){
+      point_in_string = point_in_string+";"+std::to_string(std::round(evaluation_point[d]*1e8)/1e8);
+    }
+  //std::cout<<"point to string of p"<< evaluation_point<<"in string"<<point_in_string<<std::endl;
+  return point_in_string;
+}
+
+template <int dim>
+Tensor<1, 3>
+Shape<dim>::get_orientation()
+{
+  return orientation;
+}
 
 template <int dim>
 double
@@ -282,6 +412,12 @@ Sphere<dim>::set_position(const Point<dim> &position)
     position, this->effective_radius);
 #endif
 }
+template <int dim>
+std::shared_ptr< Manifold<dim-1,dim>>
+Sphere<dim>::get_shape_manifold()
+{
+  return std::make_shared<SphericalManifold<dim-1,dim>>(this->position);
+}
 
 template <int dim>
 double
@@ -317,6 +453,7 @@ OpenCascadeShape<dim>::value_with_cell_guess(
 {
   auto point_in_string=this->point_to_string(evaluation_point);
   auto iterator=this->value_cache.find(point_in_string);
+
 if (iterator == this->value_cache.end() )
   {
     Point<dim> centered_point = this->align_and_center(evaluation_point);
@@ -340,12 +477,14 @@ if (iterator == this->value_cache.end() )
     if (distancetool.InnerSolution())
       {
         this->value_cache[point_in_string]= -(evaluation_point - projected_point).norm();
+        this->gradient_cache[point_in_string]=projected_point;
         return -(evaluation_point - projected_point).norm();
 
       }
     else
       {
         this->value_cache[point_in_string]= (evaluation_point - projected_point).norm();
+        this->gradient_cache[point_in_string]=projected_point;
         return (evaluation_point - projected_point).norm();
       }
   }
@@ -403,6 +542,7 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
 {
   auto point_in_string=this->point_to_string(evaluation_point);
   auto iterator=this->gradient_cache.find(point_in_string);
+
   if (iterator == this->gradient_cache.end() )
     {
       Point<dim> centered_point = this->align_and_center(evaluation_point);
@@ -423,6 +563,7 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
+      this->value_cache[point_in_string]= (evaluation_point- projected_point).norm();
       this->gradient_cache[point_in_string]=projected_point;
       return projected_point;
     }
@@ -492,12 +633,14 @@ OpenCascadeShape<dim>::closest_surface_point(
           projected_point[2] = pt_on_surface.Z();
         }
       this->gradient_cache[point_in_string]=projected_point;
+      this->value_cache[point_in_string]= (p - projected_point).norm();
       closest_point=projected_point;
     }
   else{
       closest_point=this->gradient_cache[point_in_string];
     }
 }
+
 
 template <int dim>
 double
@@ -937,6 +1080,7 @@ RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
 {
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
+  rotate_nodes();
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
 }
@@ -979,6 +1123,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
       nodes_positions[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
       nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
     }
+  rotate_nodes();
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
 }
@@ -990,12 +1135,20 @@ RBFShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  if (has_shape_moved())
-    update_precalculations(*this->dof_handler, this->levels_not_precalculated);
-  prepare_iterable_nodes(cell);
-  double value = this->value(evaluation_point);
-  reset_iterable_nodes(cell);
-  return value;
+  auto point_in_string=this->point_to_string(evaluation_point);
+  auto iterator=this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end() )
+    {
+      //std::cout<<"hi value "<<std::endl;
+      prepare_iterable_nodes(cell);
+      double value = this->value(evaluation_point);
+      reset_iterable_nodes(cell);
+      this->value_cache[point_in_string]=value;
+      return value;
+    }
+  else{
+      return this->value_cache[point_in_string];
+    }
 }
 
 template <int dim>
@@ -1005,12 +1158,20 @@ RBFShape<dim>::gradient_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  if (has_shape_moved())
-    update_precalculations(*this->dof_handler, this->levels_not_precalculated);
-  prepare_iterable_nodes(cell);
-  Tensor<1, dim> gradient = this->gradient(evaluation_point);
-  reset_iterable_nodes(cell);
-  return gradient;
+  auto point_in_string=this->point_to_string(evaluation_point);
+  auto iterator=this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end() )
+    {
+      //std::cout<<"hi gradient"<<std::endl;
+      prepare_iterable_nodes(cell);
+      Tensor<1, dim> gradient = this->gradient(evaluation_point);
+      reset_iterable_nodes(cell);
+      this->gradient_cache[point_in_string]=gradient;
+      return gradient;
+    }
+  else{
+      return this->gradient_cache[point_in_string];
+    }
 }
 
 template <int dim>
@@ -1030,7 +1191,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (const size_t &node_id : iterable_nodes)
     {
-      normalized_distance = (centered_point - nodes_positions[node_id]).norm() /
+      normalized_distance = (centered_point - rotated_nodes_positions[node_id]).norm() /
                             support_radii[node_id];
       basis =
         evaluate_basis_function(basis_functions[node_id], normalized_distance);
@@ -1045,7 +1206,8 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
                         const unsigned int /*component*/) const
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
-
+  //Point<dim> centered_point = evaluation_point;
+  //std::cout<<"hi bad_gradient"<<std::endl;
   double         bounding_box_distance = bounding_box->value(centered_point);
   Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
   if (bounding_box_distance > 0.)
@@ -1067,7 +1229,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
       for (const size_t &node_id : iterable_nodes)
         {
           // Calculation of the dr/dx
-          relative_position   = centered_point - nodes_positions[node_id];
+          relative_position   = (centered_point - rotated_nodes_positions[node_id]);
           distance            = (relative_position).norm();
           normalized_distance = distance / support_radii[node_id];
           if (distance > 0.0)
@@ -1128,9 +1290,9 @@ RBFShape<dim>::initialize_bounding_box()
       for (size_t i = 0; i < number_of_nodes; i++)
         {
           low_bounding_point[d] =
-            std::min(low_bounding_point[d], nodes_positions[i][d]);
+            std::min(low_bounding_point[d], rotated_nodes_positions[i][d]);
           high_bounding_point[d] =
-            std::max(high_bounding_point[d], nodes_positions[i][d]);
+            std::max(high_bounding_point[d], rotated_nodes_positions[i][d]);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
@@ -1202,6 +1364,8 @@ RBFShape<dim>::update_precalculations(
   DoFHandler<dim> &  dof_handler,
   const unsigned int levels_not_precalculated)
 {
+  rotate_nodes();
+  int maximal_level = dof_handler.get_triangulation().n_levels();
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
   // reset does not have a significant impact of global computational cost.
@@ -1258,6 +1422,20 @@ RBFShape<dim>::update_precalculations(
     }
   position_precalculated    = Point<dim>(this->position);
   orientation_precalculated = Tensor<1, 3>(this->orientation);
+}
+
+template <int dim>
+void
+RBFShape<dim>::rotate_nodes()
+{
+  rotated_nodes_positions.clear();
+  rotated_nodes_positions.resize(nodes_positions.size());
+  for (unsigned int i =0; i<nodes_positions.size();++i)
+    {
+      //rotated_nodes_positions[i]=this->reverse_align_and_center(nodes_positions[i]);
+      rotated_nodes_positions[i]=nodes_positions[i];
+    }
+
 }
 
 
