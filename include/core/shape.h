@@ -22,6 +22,9 @@
 #else
 #  include <deal.II/base/function_signed_distance.h>
 #endif
+#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_tools.h>
+
 #include <deal.II/physics/transformations.h>
 
 #include <cfloat>
@@ -82,11 +85,37 @@ public:
    * iquilezles.org/articles/distfunctions
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override = 0;
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point with a guess for the cell containing
+   * the evaluation point
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  virtual double
+  value_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int                                   component = 0);
+
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  virtual Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int                                   component = 0);
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -109,8 +138,11 @@ public:
    *
    * @param The new position the shape will be placed at
    */
-  virtual void
-  set_position(const Point<dim> &position);
+  inline virtual void
+  set_position(const Point<dim> &position)
+  {
+    this->position = position;
+  }
 
   /**
    * @brief
@@ -118,24 +150,33 @@ public:
    *
    * @param The new orientation the shape will be set at
    */
-  virtual void
-  set_orientation(const Tensor<1, 3> &orientation);
+  inline virtual void
+  set_orientation(const Tensor<1, 3> &orientation)
+  {
+    this->orientation = orientation;
+  }
 
   /**
    * @brief
    * Returns the position of the shape
    *
    */
-  virtual Point<dim>
-  get_position();
+  inline virtual Point<dim>
+  get_position()
+  {
+    return position;
+  }
 
   /**
    * @brief
    * Returns the orientation of the shape
    *
    */
-  virtual Tensor<1, 3>
-  get_orientation();
+  inline virtual Tensor<1, 3>
+  get_orientation()
+  {
+    return orientation;
+  }
 
   /**
    * @brief
@@ -195,7 +236,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -210,7 +251,7 @@ public:
   /**
    * @brief Return the analytical gradient of the distance
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,
@@ -258,7 +299,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -279,7 +320,6 @@ public:
   double
   displaced_volume(const double fluid_density) override;
 
-private:
   // Half-lengths of every side of the box
   Tensor<1, dim> half_lengths;
 };
@@ -306,7 +346,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -357,7 +397,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -410,7 +450,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -469,7 +509,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -532,7 +572,7 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
@@ -596,11 +636,25 @@ public:
    * at the given point evaluation point.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point with a guess for the cell containing
+   * the evaluation point
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int /*component = 0*/) override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -616,6 +670,15 @@ public:
    */
   double
   displaced_volume(const double fluid_density) override;
+
+  /**
+   * @brief Sets the proper dof handler, then computes/updates the map of cells
+   * and their likely non-null nodes
+   * @param updated_dof_handler the reference to the new dof_handler
+   */
+  void
+  update_precalculations(DoFHandler<dim> &             updated_dof_handler,
+                         std::shared_ptr<Mapping<dim>> mapping);
 
 private:
   std::vector<std::shared_ptr<Shape<dim>>> components;
@@ -656,6 +719,7 @@ public:
     C0C2,
     C1C2,
     C2C2,
+    COS,
   };
 
   /**
@@ -703,11 +767,46 @@ public:
    * corresponding bounding box.
    *
    * @param evaluation_point The point at which the function will be evaluated
-   * @param component Not applicable
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point with a guess for the cell containing
+   * the evaluation point
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value_with_cell_guess(
+    const Point<dim> &evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+    const unsigned int /*component = 0*/) override;
+
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+  /**
+   * @brief Return the analytical gradient of the distance for the current RBF
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -748,6 +847,37 @@ public:
   inline double
   evaluate_basis_function(const RBFBasisFunction basis_function,
                           const double           distance) const;
+
+  /**
+   * @brief Returns the derivative of the basis function for a given distance.
+   * Inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+   * @param basis_function basis function to be used for calculation
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  evaluate_basis_function_derivative(const RBFBasisFunction basis_function,
+                                     const double           distance) const;
+
+  /**
+   * @brief Establishes which nodes bring a non null contribution to the RBF
+   * @param cell the cell for which the likely nodes are to be found
+   * @param support_point one point that is located inside the cell
+   */
+  void
+  determine_likely_nodes_for_one_cell(
+    const typename DoFHandler<dim>::cell_iterator &cell,
+    const Point<dim>                               support_point);
+
+  /**
+   * @brief Sets the proper dof handler, then computes/updates the map of cells
+   * and their likely non-null nodes
+   * @param dof_handler the reference to the new dof_handler
+   * @param mapping the mapping associated to the triangulation
+   */
+  void
+  update_precalculations(DoFHandler<dim> &dof_handler,
+                         std::shared_ptr<Mapping<dim>> /*mapping*/);
+
   /**
    * @brief Compact Wendland C2 function defined from 0 to 1.
    * @param distance distance to the node normalized by the support radius
@@ -905,13 +1035,210 @@ public:
               15.0 * std::pow(distance, 4.0) - 6.0 * std::pow(distance, 5.0));
   }
 
+  /**
+   * @brief Compact cosinusoidal basis function. It is null when r>1
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  cos(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : 0.5 + 0.5 * std::cos(distance * M_PI);
+  }
+
+
+  /**
+   * @brief Derivative of a compact Wendland C2 function defined from 0 to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  wendlandc2_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 :
+                            -20.0 * distance * std::pow(1.0 - distance, 3.0);
+  }
+
+  /**
+   * @brief Derivative of a compact linear function defined from 0 to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  linear_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : -1.0;
+  }
+
+  /**
+   * @brief Derivative of a non-compact Gaussian function with 0.1 value at distance equal to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  gauss90_derivative(const double distance) const
+  {
+    double eps = std::pow(-1.0 * std::log(0.1), 0.5);
+    return -2.0 * std::pow(eps, 2.0) * distance *
+           std::exp(-1.0 * std::pow(distance * eps, 2.0));
+  }
+
+  /**
+   * @brief Derivative of a non-compact Gaussian function with 0.05 value at distance equal to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  gauss95_derivative(const double distance) const
+  {
+    double eps = std::pow(-1.0 * std::log(0.05), 0.5);
+    return -2.0 * std::pow(eps, 2.0) * distance *
+           std::exp(-1.0 * std::pow(distance * eps, 2.0));
+  }
+
+  /**
+   * @brief Derivative of a non-compact Gaussian function with 0.01 value at distance equal to 1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  gauss99_derivative(const double distance) const
+  {
+    double eps = std::pow(-1.0 * std::log(0.01), 0.5);
+    return -2.0 * std::pow(eps, 2.0) * distance *
+           std::exp(-1.0 * std::pow(distance * eps, 2.0));
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C1 continuity at distance=0, and C0 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c1c0_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : -2.0 * distance;
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C2 continuity at distance=0, and C0 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c2c0_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : -3.0 * std::pow(distance, 2.0);
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C0 continuity at distance=0, and C1 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c0c1_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : 2.0 * (distance - 1.0);
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C1 continuity at distance=0, and C1 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c1c1_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : 6.0 * (distance - 1.0) * distance;
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C2 continuity at distance=0, and C1 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c2c1_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 :
+                            12 * (distance - 1.0) * std::pow(distance, 2.0);
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C0 continuity at distance=0, and C2 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c0c2_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : -3.0 * std::pow(distance - 1.0, 2.0);
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C1 continuity at distance=0, and C2 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c1c2_derivative(const double distance) const
+  {
+    return distance > 1.0 ?
+             0.0 :
+             (1.0 - 6.0 * std::pow(distance, 2.0) +
+              8.0 * std::pow(distance, 3.0) - 3.0 * std::pow(distance, 4.0));
+  }
+
+  /**
+   * @brief Derivative of a compact polynomial function defined from 0 to 1.
+   * It preserves C2 continuity at distance=0, and C2 continuity at distance=1.
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  c2c2_derivative(const double distance) const
+  {
+    return distance > 1.0 ?
+             0.0 :
+             -30.0 * std::pow(distance - 1.0, 2.0) * std::pow(distance, 2.0);
+  }
+
+  /**
+   * @brief Derivative of a compact cosinusoidal basis function.
+   * It preserves continuity at every point
+   * @param distance distance to the node normalized by the support radius
+   */
+  inline double
+  cosinus_derivative(const double distance) const
+  {
+    return distance > 1.0 ? 0.0 : -M_PI_2 * std::sin(M_PI * distance);
+  }
+
+  /**
+   * @brief Checks if possible nodes affecting the current cell have been identified, and returns the proper vector to use for iteration
+   * @param cell A likely one where the evaluation point is located
+   */
+  void
+  prepare_iterable_nodes(
+    const typename DoFHandler<dim>::active_cell_iterator cell);
+
+  /**
+   * @brief Resets the iterable nodes to all nodes
+   * @param cell A likely one where the evaluation point is located
+   */
+  void
+  reset_iterable_nodes(
+    const typename DoFHandler<dim>::active_cell_iterator cell);
+
 private:
   size_t                          number_of_nodes;
   std::shared_ptr<Rectangle<dim>> bounding_box;
+  std::vector<size_t>             iterable_nodes;
+
+  std::map<const typename DoFHandler<dim>::cell_iterator, std::vector<size_t>>
+         likely_nodes_map;
+  size_t max_number_of_nodes;
+  int    minimal_mesh_level;
+  int    highest_level_searched;
 
 public:
+  std::vector<size_t>           nodes_id;
   std::vector<double>           weights;
-  std::vector<Point<dim>>       nodes;
+  std::vector<Point<dim>>       nodes_positions;
   std::vector<double>           support_radii;
   std::vector<RBFBasisFunction> basis_functions;
 };
