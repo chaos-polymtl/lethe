@@ -1,5 +1,6 @@
 add_library(lethe-rpt
   # Sources
+  compartmentalization.cc
   parameters_rpt.cc
   particle_detector_interactions.cc
   particle_visualization.cc
@@ -8,6 +9,7 @@ add_library(lethe-rpt
   rpt_cell_reconstruction.cc
   rpt_fem_reconstruction.cc
   # Headers
+  ../../include/rpt/compartmentalization.h
   ../../include/rpt/detector.h
   ../../include/rpt/parameters_rpt.h
   ../../include/rpt/particle_detector_interactions.h
