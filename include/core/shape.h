@@ -865,8 +865,8 @@ public:
    */
   void
   determine_likely_nodes_for_one_cell(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const Point<dim>                                      support_point);
+    const typename DoFHandler<dim>::cell_iterator &cell,
+    const Point<dim>                               support_point);
 
   /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
@@ -1229,8 +1229,7 @@ private:
   std::shared_ptr<Rectangle<dim>> bounding_box;
   std::vector<size_t>             iterable_nodes;
 
-  std::map<const typename DoFHandler<dim>::active_cell_iterator,
-           std::vector<size_t>>
+  std::map<const typename DoFHandler<dim>::cell_iterator, std::vector<size_t>>
          likely_nodes_map;
   size_t max_number_of_nodes;
   int    minimal_mesh_level;

@@ -739,8 +739,8 @@ RBFShape<dim>::initialize_bounding_box()
 template <int dim>
 void
 RBFShape<dim>::determine_likely_nodes_for_one_cell(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const Point<dim>                                      support_point)
+  const typename DoFHandler<dim>::cell_iterator &cell,
+  const Point<dim>                               support_point)
 {
   // We exit the function immediately if the cell is already in the map
   if (likely_nodes_map.find(cell) != likely_nodes_map.end())
