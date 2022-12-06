@@ -184,27 +184,6 @@ IBParticle<dim>::initialize_shape(const std::string type,
     }
 }
 
-template <int dim>
-unsigned int
-IBParticle<dim>::get_number_properties()
-{
-  return PropertiesIndex::n_properties;
-}
-
-template <int dim>
-double
-IBParticle<dim>::get_levelset(
-  const Point<dim>                                    &p,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
-{
-  return shape->value_with_cell_guess(p, cell_guess);
-}
-template <int dim>
-double
-IBParticle<dim>::get_levelset(const Point<dim> &p)
-{
-  return shape->value(p);
-}
 
 template <int dim>
 void
@@ -257,7 +236,7 @@ IBParticle<dim>::is_inside_crown(
   const Point<dim>                                    &evaluation_point,
   const double                                         outer_radius,
   const double                                         inside_radius,
-  const typename DoFHandler<dim>::active_cell_iterator cell_guess)
+  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   const double radius = shape->effective_radius;
 
