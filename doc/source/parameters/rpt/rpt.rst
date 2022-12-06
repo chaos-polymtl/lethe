@@ -9,7 +9,7 @@ The parameter file is composed of different subsections. The principal subsectio
 .. toctree::
    :maxdepth: 1
    
-   rpt_parameters
    detector_parameters
-   parameter_tuning
    fem_reconstruction
+   parameter_tuning
+   rpt_parameters

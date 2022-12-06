@@ -6,14 +6,14 @@ There are two discrete element method (DEM) solvers in Lethe: ``dem_2d`` and ``d
 .. toctree::
    :maxdepth: 1
 
-   simulation_control
-   timer
-   test
-   model_parameters
-   lagrangian_physical_properties
-   insertion_info
-   floating_wall
-   floating_mesh
-   mesh
    boundary_conditions
+   floating_mesh
+   floating_wall
+   insertion_info
+   lagrangian_physical_properties
+   mesh
+   model_parameters
    post-processing
+   simulation_control
+   test
+   timer
