@@ -1,12 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -23,6 +14,14 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
 
 #include <cmath>
 
@@ -2147,20 +2146,29 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                       else
                         phase_lighter_fluid_q += 1;
 
+                      double max_pressure_gradient_q(-DBL_MAX);
+                      bool   peeling_condition_q(false);
                       // Condition on the pressure gradient
                       for (unsigned int d = 0; d < dim; d++)
                         {
-                          double pressure_gradient_q_d =
+                          double pressure_gradient_q =
                             pressure_gradients[q][d] *
                             fe_face_values_fd.normal_vector(q)[d];
 
-                          if (pressure_gradient_q_d <
+                          if (pressure_gradient_q > max_pressure_gradient_q)
+                            max_pressure_gradient_q = pressure_gradient_q;
+
+                          // Peeling condition reached in at least one dimension
+                          if (pressure_gradient_q <
                               -std::numeric_limits<double>::min())
-                            nb_pressure_grad_meet_peel_condition += 1;
-                          else if (pressure_gradient_q_d >
-                                   std::numeric_limits<double>::min())
-                            nb_pressure_grad_meet_wet_condition += 1;
+                            peeling_condition_q = true;
                         }
+
+                      // Wetting condition must be reach all dimensions
+                      if (peeling_condition_q)
+                        nb_pressure_grad_meet_peel_condition += 1;
+                      // if (max_pressure_gradient_q > DBL_MIN)
+                      // nb_pressure_grad_meet_wet_condition += 1;
 
                       pressure_values_q += pressure_values[q];
                       phase_values_q += phase_values[q];
