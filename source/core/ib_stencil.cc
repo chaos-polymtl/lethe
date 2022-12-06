@@ -226,24 +226,56 @@ IBStencil<dim>::ib_velocity(
   unsigned int                                          component,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
+  double v_ib = 0;
+
   // Return the value of the IB condition for that specific stencil.
   Tensor<1, 3, double> radial_vector;
   Point<dim>           closest_point;
   p.closest_surface_point(dof_point, closest_point, cell_guess);
   Point<dim> position_to_surface;
   position_to_surface = closest_point - p.position;
-  for (unsigned int d = 0; d < dim; d++)
+  radial_vector[0]    = position_to_surface[0];
+  radial_vector[1]    = position_to_surface[1];
+  // We have to do that conversion as there is no proper conversion from
+  // tensor of dim 2 to 3.
+  if constexpr (dim == 3)
+    radial_vector[2] = position_to_surface[2];
+
+  if (dim == 2)
     {
-      if constexpr (dim == 3)
-        radial_vector[d] = position_to_surface[d];
-      // We have to do that conversion as there is no proper conversion from
-      // tensor of dim 2 to 3.
-      else if constexpr (dim == 2)
-        if (d < 2)
-          radial_vector[d] = position_to_surface[d];
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      if (component == 0)
+        {
+          // vx in 2D
+          v_ib = v_rot[0] + p.velocity[0];
+        }
+      if (component == 1)
+        {
+          // vy in 2D
+          v_ib = v_rot[1] + p.velocity[1];
+        }
     }
-  Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
-  return v_rot[component] + p.velocity[component];
+  if (dim == 3)
+    {
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      if (component == 0)
+        {
+          // vx in 3D
+          v_ib = v_rot[0] + p.velocity[0];
+        }
+      if (component == 1)
+        {
+          // vy in 3D
+          v_ib = v_rot[1] + p.velocity[1];
+        }
+      if (component == 2)
+        {
+          // vz in 3D
+          v_ib = v_rot[2] + p.velocity[2];
+        }
+    }
+
+  return v_ib;
 }
 
 template <int dim>
@@ -252,24 +284,56 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
                             const Point<dim> &dof_point,
                             unsigned int      component)
 {
+  double v_ib = 0;
+
   // Return the value of the IB condition for that specific stencil.
   Tensor<1, 3, double> radial_vector;
   Point<dim>           closest_point;
   p.closest_surface_point(dof_point, closest_point);
   Point<dim> position_to_surface;
   position_to_surface = closest_point - p.position;
-  for (unsigned int d = 0; d < dim; d++)
+  radial_vector[0]    = position_to_surface[0];
+  radial_vector[1]    = position_to_surface[1];
+  // We have to do that conversion as there is no proper conversion from
+  // tensor of dim 2 to 3.
+  if constexpr (dim == 3)
+    radial_vector[2] = position_to_surface[2];
+
+  if (dim == 2)
     {
-      if constexpr (dim == 3)
-        radial_vector[d] = position_to_surface[d];
-      // We have to do that conversion as there is no proper conversion from
-      // tensor of dim 2 to 3.
-      else if constexpr (dim == 2)
-        if (d < 2)
-          radial_vector[d] = position_to_surface[d];
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      if (component == 0)
+        {
+          // vx in 2D
+          v_ib = v_rot[0] + p.velocity[0];
+        }
+      if (component == 1)
+        {
+          // vy in 2D
+          v_ib = v_rot[1] + p.velocity[1];
+        }
     }
-  Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
-  return v_rot[component] + p.velocity[component];
+  if (dim == 3)
+    {
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      if (component == 0)
+        {
+          // vx in 3D
+          v_ib = v_rot[0] + p.velocity[0];
+        }
+      if (component == 1)
+        {
+          // vy in 3D
+          v_ib = v_rot[1] + p.velocity[1];
+        }
+      if (component == 2)
+        {
+          // vz in 3D
+          v_ib = v_rot[2] + p.velocity[2];
+        }
+    }
+
+  return v_ib;
 }
 
 template class IBStencil<2>;
