@@ -782,7 +782,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     }
   max_number_of_nodes =
     std::max(max_number_of_nodes, likely_nodes_map[cell].size());
-  if (cell->level() > 0)
+  if (cell->level() > minimal_mesh_level)
     if (parent_found)
       {
         const auto cell_parent     = cell->parent();
