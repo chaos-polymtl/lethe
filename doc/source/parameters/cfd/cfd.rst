@@ -6,28 +6,28 @@ General, CFD and Multiphysics
 .. toctree::
    :maxdepth: 1
 
-   simulation_control
+   analytical_solution
+   boundary_conditions_cfd
+   boundary_conditions_multiphysics
+   box_refinement
    dimensionality
-   physical_properties
+   dynamic_flow_control
+   fem
+   force_and_torque
    initial_conditions
+   laser_heat_source
+   linear_solver_control
    mesh
    mesh_adaptation_control
-   fem
-   boundary_conditions_cfd
-   source_term
-   analytical_solution
-   force_and_torque
-   post_processing
-   timer
-   non-linear_solver_control
-   linear_solver_control
-   stabilization
    multiphysics
-   volume_of_fluid
-   boundary_conditions_multiphysics
    nitsche
+   non-linear_solver_control
+   physical_properties
+   post_processing
    restart
-   dynamic_flow_control
-   laser_heat_source
-   box_refinement
+   simulation_control
+   source_term
+   stabilization
+   timer
    velocity_source.rst
+   volume_of_fluid
