@@ -58,6 +58,7 @@ public:
     tz           = 14,
     n_properties = 15,
   };
+
   /**
    * @brief
    * initialised the particle
@@ -65,30 +66,38 @@ public:
    */
   void
   initialize_all();
+
   /**
    * @brief
    * initialize the value of the last state of the particle
    */
   void
   initialize_previous_solution();
+
   /**
    * @brief
    * Return the names of properties of the IB_particle for visualisation.
    */
   std::vector<std::pair<std::string, int>>
   get_properties_name();
+
   /**
    * @brief
    * Return the value of the properties of the particle for visualisation.
    */
   std::vector<double>
   get_properties();
+
   /**
    * @brief
    * Return the number of properties of the particle for visualisation.
    */
-  unsigned int
-  get_number_properties();
+  inline unsigned int
+  get_number_properties()
+  {
+    return PropertiesIndex::n_properties;
+  }
+
   /**
    * @brief
    * Returns the evaluation of the signed distance function of this shape
@@ -96,9 +105,24 @@ public:
    * iquilezles.org/articles/distfunctions
    *
    * @param p The point at which the evaluation is performed
+   * @param cell_guess A guess of the cell containing the evaluation point, which
+   * is useful to reduce computation time
    */
-  double
-  get_levelset(const Point<dim> &p);
+  inline double
+  get_levelset(const Point<dim> &                                    p,
+               const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+  {
+    return shape->value_with_cell_guess(p, cell_guess);
+  }
+
+  /**
+   * See overloaded function
+   */
+  inline double
+  get_levelset(const Point<dim> &p)
+  {
+    return shape->value(p);
+  }
 
   /**
    * @brief
@@ -107,6 +131,17 @@ public:
    *
    * @param p The point at which the evaluation is performed
    * @param closest_point The reference to the closest point. This point will be modified by the function.
+   * @param cell_guess A guess of the cell containing the evaluation point, which
+   * is useful to reduce computation time
+   */
+  void
+  closest_surface_point(
+    const Point<dim> &                                    p,
+    Point<dim> &                                          closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
+  /**
+   * See overloaded function
    */
   void
   closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
@@ -120,6 +155,18 @@ public:
    *  @param evaluation_point The point at which the evaluation is performed
    *  @param outer_radius The factor to be multiplied by the effective radius to check if the evaluation point is inside the outer limits
    *  @param inside_radius The factor to be multiplied by the effective radius to check if the evaluation point is outside the inner limits
+   *  @param cell_guess A guess of the cell containing the evaluation point, which
+   *  is useful to reduce computation time
+   */
+  bool
+  is_inside_crown(
+    const Point<dim> &                                    evaluation_point,
+    const double                                          outer_radius,
+    const double                                          inside_radius,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
+  /**
+   * See overloaded function
    */
   bool
   is_inside_crown(const Point<dim> &evaluation_point,
@@ -132,8 +179,12 @@ public:
    *
    * @param position The new position to set the particle at
    */
-  void
-  set_position(const Point<dim> position);
+  inline void
+  set_position(const Point<dim> position)
+  {
+    this->position = position;
+    this->shape->set_position(this->position);
+  }
 
   /**
    * @brief
@@ -155,9 +206,13 @@ public:
    * @param position_component The component of the new position to set the particle at
    * @param component The component index for which the position will be updated
    */
-  void
+  inline void
   set_position(const double       position_component,
-               const unsigned int component = 0);
+               const unsigned int component = 0)
+  {
+    this->position[component] = position_component;
+    this->shape->set_position(this->position);
+  }
 
   /**
    * @brief
@@ -167,6 +222,17 @@ public:
    */
   void
   set_orientation(const Tensor<1, 3> orientation);
+
+  /**
+   * @brief Sets the proper dof handler, then computes/updates the map of cells
+   * and their likely non-null nodes
+   * @param updated_dof_handler the reference to the new dof_handler
+   * @param mapping the mapping representing the dofs in the elements to obtain
+   * the support points of each cell
+   */
+  void
+  update_precalculations(DoFHandler<dim> &             updated_dof_handler,
+                         std::shared_ptr<Mapping<dim>> mapping);
 
 
   // This class defines values related to a particle used in the sharp interface

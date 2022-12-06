@@ -15,8 +15,6 @@
  */
 #include <core/shape.h>
 
-#include <cfloat>
-
 template <int dim>
 double
 Shape<dim>::displaced_volume(const double /*fluid_density*/)
@@ -104,32 +102,25 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   return translated_point;
 }
 
+
 template <int dim>
-void
-Shape<dim>::set_position(const Point<dim> &position)
+double
+Shape<dim>::value_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
 {
-  this->position = position;
+  return this->value(evaluation_point);
 }
 
 template <int dim>
-void
-Shape<dim>::set_orientation(const Tensor<1, 3> &orientation)
+Tensor<1, dim>
+Shape<dim>::gradient_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
 {
-  this->orientation = orientation;
-}
-
-template <int dim>
-Point<dim>
-Shape<dim>::get_position()
-{
-  return position;
-}
-
-template <int dim>
-Tensor<1, 3>
-Shape<dim>::get_orientation()
-{
-  return orientation;
+  return this->gradient(evaluation_point);
 }
 
 template <int dim>
@@ -465,10 +456,26 @@ double
 CompositeShape<dim>::value(const Point<dim> &evaluation_point,
                            const unsigned int /*component*/) const
 {
-  double levelset = DBL_MAX;
+  double levelset = std::numeric_limits<double>::max();
   for (const std::shared_ptr<Shape<dim>> &elem : components)
     {
       levelset = std::min(elem->value(evaluation_point), levelset);
+    }
+  return levelset;
+}
+
+template <int dim>
+double
+CompositeShape<dim>::value_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  double levelset = std::numeric_limits<double>::max();
+  for (const std::shared_ptr<Shape<dim>> &elem : components)
+    {
+      levelset =
+        std::min(elem->value_with_cell_guess(evaluation_point, cell), levelset);
     }
   return levelset;
 }
@@ -495,6 +502,27 @@ CompositeShape<dim>::displaced_volume(const double fluid_density)
 }
 
 template <int dim>
+void
+CompositeShape<dim>::update_precalculations(
+  DoFHandler<dim> &             updated_dof_handler,
+  std::shared_ptr<Mapping<dim>> mapping)
+{
+  for (const std::shared_ptr<Shape<dim>> &elem : components)
+    {
+      if (typeid(*elem) == typeid(RBFShape<dim>))
+        {
+          std::static_pointer_cast<RBFShape<dim>>(elem)->update_precalculations(
+            updated_dof_handler, mapping);
+        }
+      else if (typeid(*elem) == typeid(CompositeShape<dim>))
+        {
+          std::static_pointer_cast<CompositeShape<dim>>(elem)
+            ->update_precalculations(updated_dof_handler, mapping);
+        }
+    }
+}
+
+template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
                         const std::vector<double> &          weights,
@@ -503,12 +531,21 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const Tensor<1, 3> &                 orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
+  , iterable_nodes(weights.size())
+  , likely_nodes_map()
+  , max_number_of_nodes(1)
+  , minimal_mesh_level(std::numeric_limits<int>::max())
+  , highest_level_searched(-1)
+  , nodes_id(weights.size())
   , weights(weights)
-  , nodes(nodes)
+  , nodes_positions(nodes)
   , support_radii(support_radii)
   , basis_functions(basis_functions)
 {
+  std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
+  iterable_nodes = nodes_id;
   initialize_bounding_box();
+  this->effective_radius = bounding_box->half_lengths.norm();
 }
 
 template <int dim>
@@ -524,18 +561,52 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   weights.resize(number_of_nodes);
   support_radii.resize(number_of_nodes);
   basis_functions.resize(number_of_nodes);
-  nodes.resize(number_of_nodes);
+  nodes_positions.resize(number_of_nodes);
+  nodes_id.resize(number_of_nodes);
+  std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
+  iterable_nodes         = nodes_id;
+  max_number_of_nodes    = 1;
+  minimal_mesh_level     = std::numeric_limits<int>::max();
+  highest_level_searched = -1;
+
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
       weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
       support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
       basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
         round(shape_arguments[2 * number_of_nodes + n_i]));
-      nodes[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
-      nodes[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
-      nodes[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
+      nodes_positions[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
+      nodes_positions[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
+      nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
     }
   initialize_bounding_box();
+  this->effective_radius = bounding_box->half_lengths.norm();
+}
+
+template <int dim>
+double
+RBFShape<dim>::value_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  prepare_iterable_nodes(cell);
+  double value = this->value(evaluation_point);
+  reset_iterable_nodes(cell);
+  return value;
+}
+
+template <int dim>
+Tensor<1, dim>
+RBFShape<dim>::gradient_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  prepare_iterable_nodes(cell);
+  Tensor<1, dim> gradient = this->gradient(evaluation_point);
+  reset_iterable_nodes(cell);
+  return gradient;
 }
 
 template <int dim>
@@ -548,16 +619,72 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double bounding_box_distance = bounding_box->value(centered_point);
   double value                 = std::max(bounding_box_distance, 0.0);
 
-  double dist, basis;
-  size_t number_of_nodes = weights.size();
+  double normalized_distance, basis;
+
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-  for (size_t i = 0; i < number_of_nodes; ++i)
+  for (const size_t &node_id : iterable_nodes)
     {
-      dist  = (centered_point - nodes[i]).norm() / support_radii[i];
-      basis = evaluate_basis_function(basis_functions[i], dist);
-      value += basis * weights[i];
+      normalized_distance = (centered_point - nodes_positions[node_id]).norm() /
+                            support_radii[node_id];
+      basis =
+        evaluate_basis_function(basis_functions[node_id], normalized_distance);
+      value += basis * weights[node_id];
     }
   return value;
+}
+
+template <int dim>
+Tensor<1, dim>
+RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
+                        const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  double         bounding_box_distance = bounding_box->value(centered_point);
+  Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
+  if (bounding_box_distance >
+      *std::max_element(support_radii.begin(), support_radii.end()))
+    return bounding_box_gradient;
+
+  double     distance, normalized_distance;
+  Point<dim> relative_position{};
+  // We use chain derivation to express the gradient of the basis in regards to
+  // the position d(basis)/dx = d(basis)              /d(normalized_distance)
+  //             * d(normalized_distance)/d(distance)
+  //             * d(distance)           /dx
+  double         dbasis_drnorm_derivative;
+  double         drnorm_dr_derivative;
+  Tensor<1, dim> dr_dx_derivative{};
+  Tensor<1, dim> gradient{};
+
+  if (iterable_nodes.size() > 0)
+    {
+      for (const size_t &node_id : iterable_nodes)
+        {
+          // Calculation of the dr/dx
+          relative_position   = centered_point - nodes_positions[node_id];
+          distance            = (relative_position).norm();
+          normalized_distance = distance / support_radii[node_id];
+          if (distance > 0.0)
+            dr_dx_derivative = relative_position / distance;
+          else
+            for (int d = 0; d < dim; d++)
+              // Can be proved by taking the limit (definition of a derivative)
+              dr_dx_derivative[d] = 1.0;
+          // Calculation of the dr_norm/dr
+          drnorm_dr_derivative = 1.0 / support_radii[node_id];
+          // Calculation of the d(basis)/dr
+          dbasis_drnorm_derivative =
+            evaluate_basis_function_derivative(basis_functions[node_id],
+                                               normalized_distance);
+          // Sum
+          gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
+                      dr_dx_derivative * weights[node_id];
+        }
+    }
+  else
+    gradient = bounding_box_gradient;
+  return gradient;
 }
 
 template <int dim>
@@ -568,7 +695,7 @@ RBFShape<dim>::static_copy() const
     std::make_shared<RBFShape<dim>>(this->support_radii,
                                     this->basis_functions,
                                     this->weights,
-                                    this->nodes,
+                                    this->nodes_positions,
                                     this->position,
                                     this->orientation);
   return copy;
@@ -595,10 +722,10 @@ RBFShape<dim>::initialize_bounding_box()
       low_bounding_point[d]  = std::numeric_limits<double>::max();
       for (size_t i = 0; i < number_of_nodes; i++)
         {
-          if (low_bounding_point[d] > nodes[i][d])
-            low_bounding_point[d] = nodes[i][d];
-          if (high_bounding_point[d] < nodes[i][d])
-            high_bounding_point[d] = nodes[i][d];
+          low_bounding_point[d] =
+            std::min(low_bounding_point[d], nodes_positions[i][d]);
+          high_bounding_point[d] =
+            std::max(high_bounding_point[d], nodes_positions[i][d]);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
@@ -608,6 +735,84 @@ RBFShape<dim>::initialize_bounding_box()
                                                   bounding_box_center,
                                                   Tensor<1, 3>());
 }
+
+template <int dim>
+void
+RBFShape<dim>::determine_likely_nodes_for_one_cell(
+  const typename DoFHandler<dim>::cell_iterator &cell,
+  const Point<dim>                               support_point)
+{
+  // We exit the function immediately if the cell is already in the map
+  if (likely_nodes_map.find(cell) != likely_nodes_map.end())
+    return;
+
+  bool parent_found  = false;
+  minimal_mesh_level = std::min(minimal_mesh_level, cell->level());
+  std::vector<size_t> temporary_iterable_nodes;
+  if (cell->level() > minimal_mesh_level)
+    try
+      {
+        const auto cell_parent     = cell->parent();
+        const auto parent_iterator = likely_nodes_map.find(cell_parent);
+        if (parent_iterator != likely_nodes_map.end())
+          {
+            parent_found = true;
+            temporary_iterable_nodes.swap(iterable_nodes);
+            iterable_nodes.swap(parent_iterator->second);
+          }
+      }
+    catch (TriaAccessorExceptions::ExcCellHasNoParent())
+      {}
+
+  double     distance, max_distance;
+  double     cell_diameter = cell->diameter();
+  Point<dim> centered_support_point;
+
+  likely_nodes_map[cell].reserve(max_number_of_nodes);
+  for (const auto &node_id : iterable_nodes)
+    {
+      centered_support_point = this->align_and_center(support_point);
+      distance = (centered_support_point - nodes_positions[node_id]).norm();
+      // We only check for one point, but we use the maximal distance
+      // from any point in the cell added to the support radius.
+      // This allows not to loop over many points.
+      max_distance = cell_diameter + support_radii[node_id];
+      if (distance < max_distance)
+        likely_nodes_map[cell].push_back(node_id);
+    }
+  max_number_of_nodes =
+    std::max(max_number_of_nodes, likely_nodes_map[cell].size());
+  if (cell->level() > minimal_mesh_level)
+    if (parent_found)
+      {
+        const auto cell_parent     = cell->parent();
+        const auto parent_iterator = likely_nodes_map.find(cell_parent);
+        iterable_nodes.swap(parent_iterator->second);
+        temporary_iterable_nodes.swap(iterable_nodes);
+      }
+}
+
+template <int dim>
+void
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
+                                      std::shared_ptr<Mapping<dim>> /*mapping*/)
+{
+  int maximal_level = dof_handler.get_triangulation().n_levels();
+
+  for (int level = highest_level_searched + 1; level < maximal_level; level++)
+    {
+      const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
+      for (const auto &cell : cell_iterator)
+        {
+          if (level == maximal_level)
+            if (!cell->is_locally_owned())
+              break;
+          determine_likely_nodes_for_one_cell(cell, cell->vertex(0));
+        }
+      highest_level_searched = level;
+    }
+}
+
 
 template <int dim>
 double
@@ -642,9 +847,78 @@ RBFShape<dim>::evaluate_basis_function(const RBFBasisFunction basis_function,
         return RBFShape<dim>::c1c2(distance);
       case RBFBasisFunction::C2C2:
         return RBFShape<dim>::c2c2(distance);
+      case RBFBasisFunction::COS:
+        return RBFShape<dim>::cos(distance);
       default:
         return RBFShape<dim>::linear(distance);
     }
+}
+
+template <int dim>
+double
+RBFShape<dim>::evaluate_basis_function_derivative(
+  const RBFBasisFunction basis_function,
+  const double           distance) const
+{
+  switch (basis_function)
+    {
+      case RBFBasisFunction::WENDLANDC2:
+        return RBFShape<dim>::wendlandc2_derivative(distance);
+      case RBFBasisFunction::LINEAR:
+        return RBFShape<dim>::linear_derivative(distance);
+      case RBFBasisFunction::GAUSS90:
+        return RBFShape<dim>::gauss90_derivative(distance);
+      case RBFBasisFunction::GAUSS95:
+        return RBFShape<dim>::gauss95_derivative(distance);
+      case RBFBasisFunction::GAUSS99:
+        return RBFShape<dim>::gauss99_derivative(distance);
+      case RBFBasisFunction::C1C0:
+        return RBFShape<dim>::c1c0_derivative(distance);
+      case RBFBasisFunction::C2C0:
+        return RBFShape<dim>::c2c0_derivative(distance);
+      case RBFBasisFunction::C0C1:
+        return RBFShape<dim>::c0c1_derivative(distance);
+      case RBFBasisFunction::C1C1:
+        return RBFShape<dim>::c1c1_derivative(distance);
+      case RBFBasisFunction::C2C1:
+        return RBFShape<dim>::c2c1_derivative(distance);
+      case RBFBasisFunction::C0C2:
+        return RBFShape<dim>::c0c2_derivative(distance);
+      case RBFBasisFunction::C1C2:
+        return RBFShape<dim>::c1c2_derivative(distance);
+      case RBFBasisFunction::C2C2:
+        return RBFShape<dim>::c2c2_derivative(distance);
+      case RBFBasisFunction::COS:
+        return RBFShape<dim>::cosinus_derivative(distance);
+      default:
+        return RBFShape<dim>::linear_derivative(distance);
+    }
+}
+
+template <int dim>
+void
+RBFShape<dim>::prepare_iterable_nodes(
+  const typename DoFHandler<dim>::active_cell_iterator cell)
+{
+  // Here we check if the likely nodes have been identified
+  auto iterator = likely_nodes_map.find(cell);
+  if (iterator != likely_nodes_map.end())
+    iterable_nodes.swap(likely_nodes_map[cell]);
+  else
+    iterable_nodes.swap(nodes_id);
+}
+
+template <int dim>
+void
+RBFShape<dim>::reset_iterable_nodes(
+  const typename DoFHandler<dim>::active_cell_iterator cell)
+{
+  // Here we check if the likely nodes have been identified
+  auto iterator = likely_nodes_map.find(cell);
+  if (iterator != likely_nodes_map.end())
+    iterable_nodes.swap(likely_nodes_map[cell]);
+  else
+    iterable_nodes.swap(nodes_id);
 }
 
 template class Sphere<2>;

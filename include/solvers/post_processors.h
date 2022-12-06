@@ -283,6 +283,41 @@ private:
   std::shared_ptr<Function<dim>> scalar_function;
 };
 
+/**
+ * @brief LevelsetPostprocessor Post-processor class used to calculate
+ * the levelset field for a given shape within the domain.
+ */
+template <int dim>
+class LevelsetPostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  LevelsetPostprocessor(const std::shared_ptr<Shape<dim>> shape)
+    : DataPostprocessorScalar<dim>("levelset", update_quadrature_points)
+    , shape(shape)
+  {}
+
+  virtual void
+  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
+                        std::vector<Vector<double>> &computed_quantities) const
+  {
+    const unsigned int n_quadrature_points =
+      input_data.evaluation_points.size();
+
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        AssertDimension(computed_quantities[q].size(), 1);
+
+        const Point<dim> evaluation_point = input_data.evaluation_points[q];
+        const auto       cell             = input_data.template get_cell<dim>();
+        computed_quantities[q] =
+          shape->value_with_cell_guess(evaluation_point, cell);
+      }
+  }
+
+private:
+  std::shared_ptr<Shape<dim>> shape;
+};
+
 
 
 #endif

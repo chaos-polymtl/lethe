@@ -458,6 +458,13 @@ Return a bool that describes  if a cell contains a specific point
   }
 
   /**
+   * @brief
+   *This function updates the precalculations for every immersed particle
+   */
+  void
+  update_precalculations_for_ib();
+
+  /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
    */
   struct Visualization_IB : public dealii::DataOutInterface<0, dim>
@@ -581,7 +588,7 @@ private:
   IBParticlesDEM<dim> ib_dem;
 
   // Postprocessor to output the signed distance function of the immersed solids
-  std::shared_ptr<ScalarFunctionPostprocessor<dim>> scalar_function;
+  std::shared_ptr<LevelsetPostprocessor<dim>> levelset_postprocessor;
 };
 
 

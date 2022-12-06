@@ -42,7 +42,7 @@ public:
   * @param order, the stencil order.
   */
   virtual unsigned int
-  nb_points(const unsigned int order);
+  number_of_interpolation_support_points(const unsigned int order);
 
   /**
    * @brief
@@ -59,12 +59,25 @@ public:
    * @param length_ratio the length ratio between the 2 side of the stencil.
    * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
+   *  @param cell_guess A guess of the cell containing the evaluation point, which
+   *  is useful to reduce computation time
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  points(const unsigned int order,
-         const double       length_ratio,
-         IBParticle<dim> &  p,
-         const Point<dim> & dof_point);
+  support_points_for_interpolation(
+    const unsigned int                                    order,
+    const double                                          length_ratio,
+    IBParticle<dim> &                                     p,
+    const Point<dim> &                                    dof_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
+  /**
+   * See overloaded function
+   */
+  virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
+  support_points_for_interpolation(const unsigned int order,
+                                   const double       length_ratio,
+                                   IBParticle<dim> &  p,
+                                   const Point<dim> & dof_point);
 
   /**
    * @brief
@@ -72,6 +85,17 @@ public:
    *
    * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
+   *  @param cell_guess A guess of the cell containing the evaluation point, which
+   *  is useful to reduce computation time
+   */
+  virtual Point<dim>
+  point_for_cell_detection(
+    IBParticle<dim> &                                     p,
+    const Point<dim> &                                    dof_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
+  /**
+   * See overloaded function
    */
   virtual Point<dim>
   point_for_cell_detection(IBParticle<dim> &p, const Point<dim> &dof_point);
@@ -98,6 +122,17 @@ public:
    * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
    * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
+   *  @param cell_guess A guess of the cell containing the evaluation point, which
+   *  is useful to reduce computation time
+   */
+  virtual double
+  ib_velocity(IBParticle<dim> &                                     p,
+              const Point<dim> &                                    dof_point,
+              const unsigned int                                    component,
+              const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+
+  /**
+   * See overloaded function
    */
   virtual double
   ib_velocity(IBParticle<dim> &  p,
