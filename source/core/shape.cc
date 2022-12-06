@@ -1179,7 +1179,9 @@ double
 RBFShape<dim>::value(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  Point<dim> centered_point = evaluation_point;
+  double bounding_box_distance = bounding_box->value(centered_point);
+  double value                 = std::max(bounding_box_distance, 0.0);
 
   double value              = 0.;
   double bounding_box_value = bounding_box->value(centered_point);
@@ -1187,6 +1189,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
     return bounding_box_value + bounding_box->half_lengths.norm();
 
   double normalized_distance, basis;
+  
 
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (const size_t &node_id : iterable_nodes)
@@ -1205,9 +1208,7 @@ Tensor<1, dim>
 RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
                         const unsigned int /*component*/) const
 {
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-  //Point<dim> centered_point = evaluation_point;
-  //std::cout<<"hi bad_gradient"<<std::endl;
+  Point<dim> centered_point = evaluation_point;
   double         bounding_box_distance = bounding_box->value(centered_point);
   Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
   if (bounding_box_distance > 0.)
@@ -1338,9 +1339,11 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   likely_nodes_map[cell]->reserve(max_number_of_nodes);
   for (const auto &node_id : iterable_nodes)
     {
-      centered_support_point = this->align_and_center(support_point);
-      distance = (centered_support_point - nodes_positions[node_id]).norm();
-      // We check if the distance is lower than a cell diagonal length, since we
+      // We only check for one support point, but we use a high security
+      // factor. This allows not to loop over all support points.
+      centered_support_point =support_point;
+      distance = (centered_support_point - rotated_nodes_positions[node_id]).norm();
+      // We check if the distance is lower than 1 cell diagonal, since we
       // only check the distance with 1 support point, added to the support
       // radius
       max_distance = cell_diameter + support_radii[node_id];
@@ -1348,14 +1351,16 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
         likely_nodes_map[cell]->push_back(node_id);
     }
   max_number_of_nodes =
-    std::max(max_number_of_nodes, likely_nodes_map[cell]->size());
-  if (parent_found)
-    {
-      const auto cell_parent     = cell->parent();
-      const auto parent_iterator = likely_nodes_map.find(cell_parent);
-      iterable_nodes.swap(*parent_iterator->second);
-      temporary_iterable_nodes.swap(iterable_nodes);
-    }
+    std::max(max_number_of_nodes, likely_nodes_map[cell].size());
+  if (cell->level() > minimal_mesh_level)
+    if (parent_found)
+      {
+        const auto cell_parent     = cell->parent();
+        const auto parent_iterator = likely_nodes_map.find(cell_parent);
+        iterable_nodes.swap(parent_iterator->second);
+        temporary_iterable_nodes.swap(iterable_nodes);
+      }
+
 }
 
 template <int dim>
@@ -1432,10 +1437,8 @@ RBFShape<dim>::rotate_nodes()
   rotated_nodes_positions.resize(nodes_positions.size());
   for (unsigned int i =0; i<nodes_positions.size();++i)
     {
-      //rotated_nodes_positions[i]=this->reverse_align_and_center(nodes_positions[i]);
-      rotated_nodes_positions[i]=nodes_positions[i];
+      rotated_nodes_positions[i]=this->reverse_align_and_center(nodes_positions[i]);
     }
-
 }
 
 
