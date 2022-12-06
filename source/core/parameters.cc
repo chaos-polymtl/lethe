@@ -1186,7 +1186,7 @@ namespace Parameters
           std::runtime_error("Invalid postprocessed fluid. "
                              "Options are 'fluid 0', 'fluid 1' or 'both'."));
 
-      smoothed_output_fields      = prm.get_bool("smoothed output fields");
+      smoothed_output_fields = prm.get_bool("smoothed output fields");
     }
     prm.leave_subsection();
   }
