@@ -17,6 +17,7 @@
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/tensor_function.h>
 #include <deal.II/base/timer.h>
 #include <deal.II/base/vectorization.h>
 
@@ -235,6 +236,22 @@ public:
   }
 };
 
+template <int dim>
+class AdvectionField : public TensorFunction<1, dim>
+{
+public:
+  virtual Tensor<1, dim>
+  value(const Point<dim> &p) const override
+  {
+    Tensor<1, dim> value;
+    value[0] = 0;
+    for (unsigned int i = 1; i < dim; ++i)
+      value[i] = 1;
+
+    return value;
+  }
+};
+
 template <int dim, int fe_degree, typename number>
 class JacobianOperator
   : public MatrixFreeOperators::Base<dim,
@@ -255,6 +272,9 @@ public:
   evaluate_newton_step(
     const LinearAlgebra::distributed::Vector<number> &newton_step);
 
+  void
+  evaluate_advection_field(const AdvectionField<dim> &advection_field);
+
   virtual void
   compute_diagonal() override;
 
@@ -274,6 +294,7 @@ private:
   local_compute_diagonal(FECellIntegrator &integrator) const;
 
   Table<2, VectorizedArray<number>> nonlinear_values;
+  Table<2, VectorizedArray<number>> advection_values;
 };
 
 
@@ -317,7 +338,27 @@ JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
     }
 }
 
+template <int dim, int fe_degree, typename number>
+void
+JacobianOperator<dim, fe_degree, number>::evaluate_advection_field(
+  const AdvectionField<dim> &advection_field)
+{
+  const unsigned int n_cells = this->data->n_cell_batches();
+  FECellIntegrator   phi(*this->data);
 
+  advection_values.reinit(n_cells, phi.n_q_points);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      phi.reinit(cell);
+
+      for (unsigned int q = 0; q < phi.n_q_points; ++q)
+        {
+          advection_values(cell, q) =
+            advection_field.value(phi.quadrature_point(q));
+        }
+    }
+}
 
 template <int dim, int fe_degree, typename number>
 void
@@ -329,12 +370,15 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
 {
   FECellIntegrator phi(data);
 
+  Tensor<1, dim> advection_transport;
+  advection_transport[0] = 0;
+  advection_transport[1] = 1;
+
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
       AssertDimension(nonlinear_values.size(0),
                       phi.get_matrix_free().n_cell_batches());
       AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
 
       phi.reinit(cell);
 
@@ -343,7 +387,9 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q), q);
+          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
+                             advection_transport * phi.get_gradient(q),
+                           q);
           phi.submit_gradient(phi.get_gradient(q), q);
         }
 
@@ -379,9 +425,15 @@ JacobianOperator<dim, fe_degree, number>::local_compute_diagonal(
 
   phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
+  Tensor<1, dim> advection_transport;
+  advection_transport[0] = 0;
+  advection_transport[1] = 1;
+
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
-      phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q), q);
+      phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
+                         advection_transport * phi.get_gradient(q),
+                       q);
       phi.submit_gradient(phi.get_gradient(q), q);
     }
 
@@ -415,10 +467,10 @@ JacobianOperator<dim, fe_degree, number>::compute_diagonal()
 
 
 template <int dim, int fe_degree>
-class MatrixFreePoissonProblem
+class MatrixFreeAdvectionDiffusion
 {
 public:
-  MatrixFreePoissonProblem(const Settings &parameters);
+  MatrixFreeAdvectionDiffusion(const Settings &parameters);
 
   void
   run();
@@ -494,7 +546,7 @@ private:
 };
 
 template <int dim, int fe_degree>
-MatrixFreePoissonProblem<dim, fe_degree>::MatrixFreePoissonProblem(
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::MatrixFreeAdvectionDiffusion(
   const Settings &parameters)
   : triangulation(
       MPI_COMM_WORLD,
@@ -514,7 +566,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::MatrixFreePoissonProblem(
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
@@ -537,7 +589,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
           break;
         }
         case Settings::hypercube: {
-          GridGenerator::hyper_cube(triangulation);
+          GridGenerator::hyper_cube(triangulation, -1.0, 1.0);
           break;
         }
     }
@@ -549,7 +601,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::setup_system()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
 {
   TimerOutput::Scope t(computing_timer, "setup system");
 
@@ -593,7 +645,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::setup_system()
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::setup_gmg()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
 {
   TimerOutput::Scope t(computing_timer, "setup GMG");
 
@@ -647,19 +699,22 @@ MatrixFreePoissonProblem<dim, fe_degree>::setup_gmg()
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::evaluate_residual(
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::evaluate_residual(
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   auto matrix_free = system_matrix.get_matrix_free();
 
-  matrix_free->cell_loop(
-    &MatrixFreePoissonProblem::local_evaluate_residual, this, dst, src, true);
+  matrix_free->cell_loop(&MatrixFreeAdvectionDiffusion::local_evaluate_residual,
+                         this,
+                         dst,
+                         src,
+                         true);
 }
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
   const MatrixFree<dim, double> &                   data,
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src,
@@ -667,6 +722,10 @@ MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
 {
   FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
   SourceTerm<dim>                                        source_term_function;
+
+  Tensor<1, dim>                                         advection_transport;
+  advection_transport[0] = 0;
+  advection_transport[1] = 1;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -692,7 +751,10 @@ MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
                   source_value[v] = source_term_function.value(single_point);
                 }
             }
-          phi.submit_value(-std::exp(phi.get_value(q)) - source_value, q);
+          phi.submit_value(-std::exp(phi.get_value(q)) +
+                             advection_transport * phi.get_gradient(q) -
+                             source_value,
+                           q);
           phi.submit_gradient(phi.get_gradient(q), q);
         }
 
@@ -704,7 +766,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::local_evaluate_residual(
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::assemble_rhs()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 {
   TimerOutput::Scope t(computing_timer, "assemble right hand side");
 
@@ -715,7 +777,8 @@ MatrixFreePoissonProblem<dim, fe_degree>::assemble_rhs()
 
 template <int dim, int fe_degree>
 double
-MatrixFreePoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_residual(
+  const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
 
@@ -738,7 +801,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_residual(const double alpha)
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::compute_update()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 {
   TimerOutput::Scope t(computing_timer, "compute update");
 
@@ -829,7 +892,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_update()
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::solve()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -877,7 +940,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::solve()
 
 template <int dim, int fe_degree>
 double
-MatrixFreePoissonProblem<dim, fe_degree>::compute_solution_norm() const
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
@@ -900,7 +963,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_solution_norm() const
 
 template <int dim, int fe_degree>
 double
-MatrixFreePoissonProblem<dim, fe_degree>::compute_l2_error() const
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
@@ -923,7 +986,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_l2_error() const
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::output_results(
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
   const unsigned int cycle) const
 {
   if (triangulation.n_global_active_cells() > 1e6)
@@ -959,7 +1022,7 @@ MatrixFreePoissonProblem<dim, fe_degree>::output_results(
 
 template <int dim, int fe_degree>
 void
-MatrixFreePoissonProblem<dim, fe_degree>::run()
+MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
 {
   {
     const unsigned int n_ranks =
@@ -1099,22 +1162,22 @@ main(int argc, char *argv[])
               switch (parameters.element_order)
                 {
                     case 1: {
-                      MatrixFreePoissonProblem<2, 1> non_linear_poisson_problem(
-                        parameters);
+                      MatrixFreeAdvectionDiffusion<2, 1>
+                        non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 2: {
-                      MatrixFreePoissonProblem<2, 2> non_linear_poisson_problem(
-                        parameters);
+                      MatrixFreeAdvectionDiffusion<2, 2>
+                        non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 3: {
-                      MatrixFreePoissonProblem<2, 3> non_linear_poisson_problem(
-                        parameters);
+                      MatrixFreeAdvectionDiffusion<2, 3>
+                        non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
@@ -1127,22 +1190,22 @@ main(int argc, char *argv[])
               switch (parameters.element_order)
                 {
                     case 1: {
-                      MatrixFreePoissonProblem<3, 1> non_linear_poisson_problem(
-                        parameters);
+                      MatrixFreeAdvectionDiffusion<3, 1>
+                        non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 2: {
-                      MatrixFreePoissonProblem<3, 2> non_linear_poisson_problem(
-                        parameters);
+                      MatrixFreeAdvectionDiffusion<3, 2>
+                        non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 3: {
-                      MatrixFreePoissonProblem<3, 3> non_linear_poisson_problem(
-                        parameters);
+                      MatrixFreeAdvectionDiffusion<3, 3>
+                        non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
