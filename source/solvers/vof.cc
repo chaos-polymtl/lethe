@@ -1,3 +1,12 @@
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+
+#include <solvers/vof.h>
+#include <solvers/vof_assemblers.h>
+#include <solvers/vof_scratch_data.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -14,14 +23,6 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-#include <solvers/vof.h>
-#include <solvers/vof_assemblers.h>
-#include <solvers/vof_scratch_data.h>
 
 #include <cmath>
 
@@ -2146,29 +2147,35 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                       else
                         phase_lighter_fluid_q += 1;
 
-                      double max_pressure_gradient_q(-DBL_MAX);
-                      bool   peeling_condition_q(false);
                       // Condition on the pressure gradient
+                      bool peeling_condition_q(false);
+                      bool wetting_condition_q(false);
                       for (unsigned int d = 0; d < dim; d++)
                         {
                           double pressure_gradient_q =
                             pressure_gradients[q][d] *
                             fe_face_values_fd.normal_vector(q)[d];
 
-                          if (pressure_gradient_q > max_pressure_gradient_q)
-                            max_pressure_gradient_q = pressure_gradient_q;
-
-                          // Peeling condition reached in at least one dimension
+                          // Peeling if condition reached in at least one
+                          // dimension
                           if (pressure_gradient_q <
                               -std::numeric_limits<double>::min())
                             peeling_condition_q = true;
+                          if (pressure_gradient_q >
+                              std::numeric_limits<double>::min())
+                            wetting_condition_q = true;
                         }
 
-                      // Wetting condition must be reach all dimensions
+                      // Peeling if condition reached in at least one dimension
                       if (peeling_condition_q)
                         nb_pressure_grad_meet_peel_condition += 1;
-                      // if (max_pressure_gradient_q > DBL_MIN)
-                      // nb_pressure_grad_meet_wet_condition += 1;
+                      // Wetting if condition reached in xxx dimensions
+                      bool consider_wetting = false;
+                      if (consider_wetting)
+                        {
+                          if (wetting_condition_q)
+                            nb_pressure_grad_meet_wet_condition += 1;
+                        }
 
                       pressure_values_q += pressure_values[q];
                       phase_values_q += phase_values[q];
@@ -2189,14 +2196,12 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
               double pressure_values_cell =
                 pressure_values_q / static_cast<double>(n_q_points_face);
 
-              // Check peeling condition on the pressure gradient
+              // Check peeling condition
+              // Note that it has priority over the wetting condition
               if (pressure_values_cell < pressure_monitored_avg and
                   nb_pressure_grad_meet_peel_condition > n_q_points_face * 0.5)
                 {
                   // Peel the higher density fluid
-                  // conditions phase_values_cell < 1 or phase_values_cell
-                  // > 0 prevent from treating values outside of the range
-                  // [0,1]
                   if (phase_denser_fluid_cell == 1 and phase_values_cell > 0.5)
                     {
                       // Progressive phase value change
@@ -2222,6 +2227,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                                         dof_indices_vof);
                     }
                 }
+              // Check wetting condition if the cell is not marked as pelt
               else if (pressure_values_cell > pressure_monitored_avg and
                        nb_pressure_grad_meet_wet_condition >
                          n_q_points_face * 0.5)
