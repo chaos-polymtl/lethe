@@ -93,6 +93,7 @@ struct Settings
   unsigned int element_order;
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
+  double       kinematic_viscosity;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -124,6 +125,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "1",
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
+  prm.declare_entry("kinematic viscosity",
+                    "1",
+                    Patterns::Double(),
+                    "Kinematic viscosity");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -189,13 +194,14 @@ Settings::try_parse(const std::string &prm_filename)
   else
     AssertThrow(false, ExcNotImplemented());
 
-  this->dimension          = prm.get_integer("dim");
-  this->element_order      = prm.get_integer("element order");
-  this->number_of_cycles   = prm.get_integer("number of cycles");
-  this->initial_refinement = prm.get_integer("initial refinement");
-  this->output             = prm.get_bool("output");
-  this->output_name        = prm.get("output name");
-  this->output_path        = prm.get("output path");
+  this->dimension           = prm.get_integer("dim");
+  this->element_order       = prm.get_integer("element order");
+  this->number_of_cycles    = prm.get_integer("number of cycles");
+  this->initial_refinement  = prm.get_integer("initial refinement");
+  this->kinematic_viscosity = prm.get_double("kinematic viscosity");
+  this->output              = prm.get_bool("output");
+  this->output_name         = prm.get("output name");
+  this->output_path         = prm.get("output path");
 
 
   return true;
@@ -237,18 +243,18 @@ public:
 };
 
 template <int dim>
-class AdvectionField : public TensorFunction<1, dim>
+class AdvectionField : public Function<dim>
 {
 public:
   virtual Tensor<1, dim>
-  value(const Point<dim> &p) const override
+  gradient(const Point<dim> &p, const unsigned int = 0) const override
   {
-    Tensor<1, dim> value;
-    value[0] = 0;
+    Tensor<1, dim> grad;
+    grad[0] = 0;
     for (unsigned int i = 1; i < dim; ++i)
-      value[i] = 1;
+      grad[i] = 1;
 
-    return value;
+    return grad;
   }
 };
 
@@ -354,8 +360,8 @@ JacobianOperator<dim, fe_degree, number>::evaluate_advection_field(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          advection_values(cell, q) =
-            advection_field.value(phi.quadrature_point(q));
+          advection_values(cell, q) = 
+            advection_field.gradient(phi.quadrature_point(q));
         }
     }
 }
@@ -723,7 +729,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
   FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
   SourceTerm<dim>                                        source_term_function;
 
-  Tensor<1, dim>                                         advection_transport;
+  Tensor<1, dim> advection_transport;
   advection_transport[0] = 0;
   advection_transport[1] = 1;
 
@@ -755,7 +761,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
                              advection_transport * phi.get_gradient(q) -
                              source_value,
                            q);
-          phi.submit_gradient(phi.get_gradient(q), q);
+          phi.submit_gradient(parameters.kinematic_viscosity* phi.get_gradient(q), q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -836,6 +842,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
       mg_matrices[level].evaluate_newton_step(mg_solution[level]);
       mg_matrices[level].compute_diagonal();
+      mg_matrices[level].evaluate_advection_field(AdvectionField<dim>());
 
       smoother_data[level].preconditioner =
         mg_matrices[level].get_matrix_diagonal_inverse();
