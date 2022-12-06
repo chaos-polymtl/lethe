@@ -226,7 +226,7 @@ IBStencil<dim>::ib_velocity(
   unsigned int                                          component,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  double v_ib = 0;
+  double immersed_boundary_velocity = 0;
 
   // Return the value of the IB condition for that specific stencil.
   Tensor<1, 3, double> radial_vector;
@@ -241,41 +241,48 @@ IBStencil<dim>::ib_velocity(
   if constexpr (dim == 3)
     radial_vector[2] = position_to_surface[2];
 
-  if (dim == 2)
+  if constexpr (dim == 2)
     {
-      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      Tensor<1, 3> relative_tangential_velocity =
+        cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
           // vx in 2D
-          v_ib = v_rot[0] + p.velocity[0];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[0] + p.velocity[0];
         }
       if (component == 1)
         {
           // vy in 2D
-          v_ib = v_rot[1] + p.velocity[1];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[1] + p.velocity[1];
         }
     }
-  if (dim == 3)
+  if constexpr (dim == 3)
     {
-      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      Tensor<1, 3> relative_tangential_velocity =
+        cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
           // vx in 3D
-          v_ib = v_rot[0] + p.velocity[0];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[0] + p.velocity[0];
         }
       if (component == 1)
         {
           // vy in 3D
-          v_ib = v_rot[1] + p.velocity[1];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[1] + p.velocity[1];
         }
       if (component == 2)
         {
           // vz in 3D
-          v_ib = v_rot[2] + p.velocity[2];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[2] + p.velocity[2];
         }
     }
 
-  return v_ib;
+  return immersed_boundary_velocity;
 }
 
 template <int dim>
@@ -284,7 +291,7 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
                             const Point<dim> &dof_point,
                             unsigned int      component)
 {
-  double v_ib = 0;
+  double immersed_boundary_velocity = 0;
 
   // Return the value of the IB condition for that specific stencil.
   Tensor<1, 3, double> radial_vector;
@@ -299,41 +306,48 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> & p,
   if constexpr (dim == 3)
     radial_vector[2] = position_to_surface[2];
 
-  if (dim == 2)
+  if constexpr (dim == 2)
     {
-      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      Tensor<1, 3> relative_tangential_velocity =
+        cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
           // vx in 2D
-          v_ib = v_rot[0] + p.velocity[0];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[0] + p.velocity[0];
         }
       if (component == 1)
         {
           // vy in 2D
-          v_ib = v_rot[1] + p.velocity[1];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[1] + p.velocity[1];
         }
     }
-  if (dim == 3)
+  if constexpr (dim == 3)
     {
-      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
+      Tensor<1, 3> relative_tangential_velocity =
+        cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
           // vx in 3D
-          v_ib = v_rot[0] + p.velocity[0];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[0] + p.velocity[0];
         }
       if (component == 1)
         {
           // vy in 3D
-          v_ib = v_rot[1] + p.velocity[1];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[1] + p.velocity[1];
         }
       if (component == 2)
         {
           // vz in 3D
-          v_ib = v_rot[2] + p.velocity[2];
+          immersed_boundary_velocity =
+            relative_tangential_velocity[2] + p.velocity[2];
         }
     }
 
-  return v_ib;
+  return immersed_boundary_velocity;
 }
 
 template class IBStencil<2>;
