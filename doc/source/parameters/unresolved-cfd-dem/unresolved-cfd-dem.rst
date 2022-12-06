@@ -6,6 +6,6 @@ The CFD-DEM solver templates are available in both 2D (``cfd_dem_coupling_2d``) 
 .. toctree::
    :maxdepth: 1
 
-   void-fraction
    cfd-dem
+   void-fraction
 
