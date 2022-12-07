@@ -67,7 +67,7 @@ This subsection controls the post-processing other than the forces and torque on
 	* ``initial time``: initial time used for the average velocities calculations.
 
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled. 
-	* ``inlet boundary id`` and ``outlet boundary id``: defines the id for inlet and outlet boundaries, respectively. 
+	* ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
 	* ``pressure drop name``: output filename for pressure drop calculations.
 
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
