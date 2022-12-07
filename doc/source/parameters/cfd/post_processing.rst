@@ -30,8 +30,8 @@ This subsection controls the post-processing other than the forces and torque on
 	set calculate enstrophy         = false
 	set enstrophy name              = enstrophy
   
-  # Others
-  set smoothing                   = false
+  	# Others
+  	set smoothing                   = false
 
 	#---------------------------------------------------
   	# Physical properties post-processing
