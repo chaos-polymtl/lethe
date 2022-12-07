@@ -79,6 +79,7 @@ public:
     cells_local_periodic_neighbor_list.clear();
     cells_ghost_periodic_neighbor_list.clear();
     cells_ghost_local_periodic_neighbor_list.clear();
+    total_neighbor_list.clear();
 
     execute_cell_neighbors_search(triangulation,
                                   has_periodic_boundaries,
