@@ -1128,7 +1128,7 @@ namespace Parameters
       prm.declare_entry("postprocessed fluid",
                         "both",
                         Patterns::Selection("fluid 0|fluid 1|both"),
-                        "Fluid to which the viscous dissipation is applied "
+                        "Fluid domain used for thermal postprocesses "
                         "in the heat equation <fluid 0|fluid 1|both>");
 
       prm.declare_entry("smoothed output fields",
