@@ -91,7 +91,7 @@ This subsection controls the post-processing other than the forces and torque on
 
 	.. note::
 
-		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all domain``.
+		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all_domain``.
 
 * ``calculate temperature statistics``: controls if calculation of temperature statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
 	.. warning::
