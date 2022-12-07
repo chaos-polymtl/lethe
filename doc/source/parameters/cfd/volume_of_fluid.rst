@@ -176,7 +176,7 @@ The default values of the VOF parameters are given in the text box below.
 
   * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
 
-    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluids defined in Physical properties - :ref:`two phase simulations`.
+    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
   * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid given as ``monitored fluid`` (``fluid 0`` or ``fluid 1`` (default)). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 
