@@ -111,7 +111,7 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate heat flux``: controls if calculation of heat flux is enabled. If enabled, two quantities are postprocessed: 
 	* the heat flux :math:`\mathbf{\Phi}` for each :ref:`heat transfer bc` boundary condition. 
 
-	The output table is appended with one column per boundary condition, name ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
+	The output table is appended with one column per boundary condition, named ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
 
 	* the heat (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
 
