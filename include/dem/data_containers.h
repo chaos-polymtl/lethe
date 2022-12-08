@@ -221,7 +221,11 @@ namespace DEM
 
     // [cell iterators]
     typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
-      cell_container;
+      cell_vector;
+
+    // [cell iterators]
+    typedef std::set<typename Triangulation<dim>::active_cell_iterator>
+      cell_set;
 
     // <cell id, periodic cells info>
     typedef std::unordered_map<types::global_cell_index,

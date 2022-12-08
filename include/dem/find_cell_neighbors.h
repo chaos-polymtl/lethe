@@ -169,7 +169,7 @@ private:
       &vertex_to_coinciding_vertex_group,
     const std::vector<
       std::set<typename Triangulation<dim>::active_cell_iterator>> &v_to_c,
-    typename DEM::dem_data_structures<dim>::cell_container
+    typename DEM::dem_data_structures<dim>::cell_vector
       &periodic_neighbor_list);
 };
 
