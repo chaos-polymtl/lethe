@@ -244,20 +244,56 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandl
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   cell->get_dof_indices(local_dof_indices);
   bool cell_is_cut=false;
-  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+  const unsigned int vertices_per_cell= GeometryInfo<dim>::vertices_per_cell;
+  Point<dim> centroid_of_cell;
+  for (unsigned int i = 0; i < vertices_per_cell; ++i)
     {
-      // Count the number of DOFs that are inside
-      // of the particles. If all the DOfs are on one side
-      // the cell is not cut by the boundary.
-      if (0 == this->fe->system_to_component_index(j).first)
-        {
-          Point<dim>projected_point;
-          particles[p].closest_surface_point(support_points[ local_dof_indices[j]],projected_point,cell);
+      centroid_of_cell+=cell->vertex(i);
+    }
+  centroid_of_cell=centroid_of_cell/vertices_per_cell;
+  Point<dim>projected_point;
+  particles[p].closest_surface_point(centroid_of_cell,projected_point,cell);
 
-          if (cell->point_inside(projected_point))
+/*  Triangulation<dim ,dim> local_triangulation_of_oversize_cell;
+  std::vector<Point<dim>>        vertices_of_face_projection(vertices_per_cell);
+  std::vector<CellData<dim - 1>> local_face_cell_data(1);
+
+  // Create the list of vertices
+  for (unsigned int j = 0; j < dim; ++j)
+    {
+      vertices_of_face_projection[i][j] =
+        vertex_projection[j];
+    }
+  // Create the connectivity of the vertices of the cell
+  local_face_cell_data[0].vertices[i] = i;*/
+
+  if (cell->point_inside(projected_point))
+    {
+      cell_is_cut = true;
+      return cell_is_cut;
+    }
+  else
+    {
+      for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+        {
+          // Count the number of DOFs that are inside
+          // of the particles. If all the DOfs are on one side
+          // the cell is not cut by the boundary.
+          if (0 == this->fe->system_to_component_index(j).first)
             {
-              cell_is_cut = true;
-              break;
+              particles[p].closest_surface_point(
+                support_points[local_dof_indices[j]], projected_point, cell);
+
+              if (cell->point_inside(projected_point))
+                {
+                  cell_is_cut = true;
+                  break;
+                }
+              if (particles[p].get_levelset(support_points[local_dof_indices[j]])<cell->diameter()*0.01)
+                {
+                  cell_is_cut = true;
+                  break;
+                }
             }
         }
     }
@@ -1299,6 +1335,23 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
+  Vector<float> cell_cuts(this->triangulation->n_active_cells());
+  // Define cell iterator
+  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  unsigned int i=0;
+  for (const auto &cell : cell_iterator)
+    {
+      bool cell_is_cut;
+      std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+      if(cell_is_cut)
+        cell_cuts(i) = 1.0;
+      else
+        cell_cuts(i) = 0;
+
+      i+=1;
+    }
+  data_out.add_data_vector(cell_cuts, "cell cut");
+
 }
 
 template <int dim>
@@ -3909,9 +3962,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
     this->simulation_parameters.restart_parameters.restart,
     this->simulation_parameters.boundary_conditions);
 
-  define_particles();
+
   this->setup_dofs();
   this->box_refine_mesh();
+  define_particles();
   update_precalculations_for_ib();
   if (this->simulation_parameters.restart_parameters.restart == false)
     {

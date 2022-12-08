@@ -223,12 +223,12 @@ Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
 }
 
 
-template <int dim>
+/*template <int dim>
 double
 Shape<dim>::value_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
-  const unsigned int /*component*/)
+  const typename DoFHandler<dim>::active_cell_iterator ,
+  const unsigned int )
 {
   auto point_in_string=this->point_to_string(evaluation_point);
   auto iterator=this->value_cache.find(point_in_string);
@@ -247,11 +247,11 @@ template <int dim>
 Tensor<1, dim>
 Shape<dim>::gradient_with_cell_guess(
   const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
-  const unsigned int /*component*/)
+  const typename DoFHandler<dim>::active_cell_iterator ,
+  const unsigned int)
 {
   return this->gradient(evaluation_point);
-}
+}*/
 
 template <int dim>
 void
@@ -449,16 +449,18 @@ if (iterator == this->value_cache.end() )
       }
     if (distancetool.InnerSolution())
       {
-        this->value_cache[point_in_string]= -(evaluation_point - projected_point).norm();
-        this->gradient_cache[point_in_string]=projected_point;
-        return -(evaluation_point - projected_point).norm();
+        this->value_cache[point_in_string]= -(centered_point - projected_point).norm();
+        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+        this->gradient_cache[point_in_string]=rotate_in_globalpoint;
+        return -(centered_point - projected_point).norm();
 
       }
     else
       {
-        this->value_cache[point_in_string]= (evaluation_point - projected_point).norm();
-        this->gradient_cache[point_in_string]=projected_point;
-        return (evaluation_point - projected_point).norm();
+        this->value_cache[point_in_string]= (centered_point - projected_point).norm();
+        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+        this->gradient_cache[point_in_string]=rotate_in_globalpoint;
+        return (centered_point - projected_point).norm();
       }
   }
 else{
@@ -472,7 +474,7 @@ std::shared_ptr<Shape<dim>>
 OpenCascadeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Sphere<dim>>(this->effective_radius,
+    std::make_shared<OpenCascadeShape<dim>>(local_file_name,
                                   this->position,
                                   this->orientation);
   return copy;
@@ -536,9 +538,10 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
-      this->value_cache[point_in_string]= (evaluation_point- projected_point).norm();
-      this->gradient_cache[point_in_string]=projected_point;
-      return projected_point;
+
+      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+      this->gradient_cache[point_in_string]=rotate_in_globalpoint;
+      return rotate_in_globalpoint;
     }
   else{
       return this->gradient_cache[point_in_string];
@@ -605,9 +608,9 @@ OpenCascadeShape<dim>::closest_surface_point(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
-      this->gradient_cache[point_in_string]=projected_point;
-      this->value_cache[point_in_string]= (p - projected_point).norm();
-      closest_point=projected_point;
+      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+      this->gradient_cache[point_in_string]=rotate_in_globalpoint;
+      closest_point=rotate_in_globalpoint;
     }
   else{
       closest_point=this->gradient_cache[point_in_string];

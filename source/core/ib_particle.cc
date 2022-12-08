@@ -206,21 +206,6 @@ IBParticle<dim>::closest_surface_point(
   shape->closest_surface_point(p,closest_point,cell_guess);
 }
 
-template <int dim>
-void
-IBParticle<dim>::closest_surface_point(
-  const Point<dim> &                                    p,
-  Point<dim> &                                          closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
-{
-  Tensor<1, dim> actual_gradient;
-  double         distance_from_surface;
-  actual_gradient       = shape->gradient_with_cell_guess(p, cell_guess);
-  distance_from_surface = shape->value_with_cell_guess(p, cell_guess);
-
-  closest_point =
-    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
-}
 
 template <int dim>
 void

@@ -22,6 +22,7 @@
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
+
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
 #else
 #  include <deal.II/base/function_signed_distance.h>
@@ -864,6 +865,7 @@ public:
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(1.0, position, orientation)
   {
+    local_file_name=file_name;
     std::size_t found_step   = file_name.find(".step");
     std::size_t found_step_2 = file_name.find(".stp");
     std::size_t found_igs    = file_name.find(".iges");
@@ -954,6 +956,7 @@ public:
 
 
 private:
+  std::string local_file_name;
   TopoDS_Shape                  shape;
   std::vector<TopoDS_Compound>  compounds;
   std::vector<TopoDS_CompSolid> compsolids;
