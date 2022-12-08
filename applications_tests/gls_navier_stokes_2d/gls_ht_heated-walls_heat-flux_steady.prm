@@ -4,11 +4,8 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  = bdf1
-  set number mesh adapt       = 0
-  set time end                = 1
-  set time step               = 0.2
-  set output name             = vof_ht_heated-walls
+  set method                  = steady
+  set output name             = ht_heated-walls_steady
   set output frequency        = 0
 end
 
@@ -17,44 +14,27 @@ end
 #---------------------------------------------------
 subsection multiphysics
 	set heat transfer = true
-	set VOF 	  = true
 end
 
 #---------------------------------------------------
-# VOF
+# Post-Processing
 #---------------------------------------------------
-subsection VOF	
-	subsection interface sharpening
-		set enable = true
-		set frequency   = 1
-		set interface sharpness    = 1.5
-	end
-end
-
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
-subsection initial conditions
-    subsection VOF
-	set Function expression = if (x<=0,1,0)
-    end
+subsection post-processing
+      set output frequency    = 1
+      set verbosity           = verbose
+      set calculate temperature statistics = true
+      set calculate heat flux = true
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-  set number of fluids     = 2
-  subsection fluid 1
-    set density              = 1
-    set specific heat 	     = 1
-    set thermal conductivity = 2
-    set kinematic viscosity  = 1
-  end
+  set number of fluids     = 1
   subsection fluid 0
     set density              = 1
     set specific heat 	     = 1
-    set thermal conductivity = 0.1
+    set thermal conductivity = 2
     set kinematic viscosity  = 1
   end
 end
@@ -76,14 +56,11 @@ subsection analytical solution
   set enable     = true
   set verbosity  = verbose
   subsection temperature
-    set Function constants = k1=2, k0=0.1, T1=5, T0=1, L=0.5
-    #temperature for fluid 1 (x<=0) : T = k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
-    #temperature for fluid 0 (x>0) : T = k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
-    set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
+    set Function constants = Tl=5, Tr=1, L=1
+    #temperature : T = kr*(Tr-Tl)/(L*(kl+kr)) * x + Tl+(Tr-Tl)*kr/(kl+kr)
+    set Function expression = (Tr-Tl)/L * x + (Tr+Tl)/2
   end  
-  subsection VOF
-    set Function expression = if(x<=0,1,0)
-  end
+  # heat flux : -k*(dT/dx)*Ly = -2*((1-5)/1)*0.2 = -1.6
 end
 
 # --------------------------------------------------
@@ -101,6 +78,8 @@ subsection boundary conditions heat transfer
       set type		    = temperature
       set value		    = 1
     end
+  # T average at the end of the simualtion = 3
+  # heat in all_domain = V*rho*cp*T = 0.2*1*1*1*3 = 0.6
 end
 
 # --------------------------------------------------

@@ -273,25 +273,6 @@ calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
                     const Mapping<dim> &       mapping);
 
 
-/**
- * @brief Calculates the minimum and maximum temperature in the simulation domain
- *
- * @param dof_handler_ht. The dof handler associated with the heat transfer problem
- *
- * @param evaluation_point Temperature solution
- *
- * @param quadrature_formula The quadrature formula for the calculation
- *
- * @param mapping
- */
-template <int dim, typename VectorType>
-std::pair<double, double>
-calculate_min_max_temperature(const DoFHandler<dim> &dof_handler_ht,
-                              const VectorType &     evaluation_point,
-                              const Quadrature<dim> &quadrature_formula,
-                              const Mapping<dim> &   mapping);
-
-
 
 #  define lethe_postprocessing_cfd_h
 

@@ -70,11 +70,11 @@ The default values of the VOF parameters are given in the text box below.
 
 
 .. seealso::
-  See :doc:`initial_conditions` for the definition of the VOF initial conditions and `Physical properties - two phase simulations <https://lethe-cfd.github.io/lethe/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
+  See :doc:`initial_conditions` for the definition of the VOF initial conditions and Physical properties - :ref:`two phase simulations` for the definition of the physical properties of both fluids.
 
 * ``viscous dissipative fluid``: defines fluid(s) to which viscous dissipation is applied. 
 
-  Choices are: ``fluid 0``, ``fluid 1`` (default) or ``both``, with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+  Choices are: ``fluid 0``, ``fluid 1`` (default) or ``both``, with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
   .. warning::
 
@@ -174,9 +174,9 @@ The default values of the VOF parameters are given in the text box below.
 
 * ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
-  * ``conservative fluid``: defines fluid(s) to which conservation is solved. 
+  * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
 
-    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluids defined in the :doc:`./physical_properties` for two phase simulations.
+    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
   * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid given as ``monitored fluid`` (``fluid 0`` or ``fluid 1`` (default)). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 

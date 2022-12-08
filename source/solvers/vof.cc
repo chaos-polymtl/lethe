@@ -295,11 +295,6 @@ VolumeOfFluid<dim>::calculate_L2_error()
                               update_values | update_quadrature_points |
                                 update_JxW_values);
 
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-
-  //  Local connectivity
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> phase_exact_solution(n_q_points);
   std::vector<double> phase_values(n_q_points);
@@ -316,9 +311,6 @@ VolumeOfFluid<dim>::calculate_L2_error()
           fe_values_vof.reinit(cell);
           fe_values_vof.get_function_values(this->present_solution,
                                             phase_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values_vof.get_quadrature_points(),
@@ -347,8 +339,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
                               *this->cell_quadrature,
-                              update_values | update_quadrature_points |
-                                update_JxW_values);
+                              update_values | update_JxW_values);
 
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> phase_values(n_q_points);
@@ -746,8 +737,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
   double mass_deviation_min = calculate_mass_deviation(monitored_fluid, st_min);
   double mass_deviation_max = calculate_mass_deviation(monitored_fluid, st_max);
-  double mass_deviation_avg = DBL_MAX;
-  double st_avg             = 0;
+  double mass_deviation_avg = 0.;
+  double st_avg             = 0.;
 
 
   // Bissection algorithm to calculate an interface sharpening value that would
@@ -927,17 +918,13 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
                                          *this->cell_quadrature,
-                                         update_values |
-                                           update_quadrature_points |
-                                           update_JxW_values |
-                                           update_gradients);
+                                         update_values | update_gradients);
 
   FEValues<dim> fe_values_filtered_phase_fraction_gradient(
     *this->mapping,
     *this->fe_filtered_phase_fraction_gradient,
     *this->cell_quadrature,
-    update_values | update_quadrature_points | update_JxW_values |
-      update_gradients);
+    update_values | update_JxW_values | update_gradients);
 
 
   // const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
@@ -1120,15 +1107,14 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
                                     *this->fe_curvature,
                                     *this->cell_quadrature,
-                                    update_values | update_quadrature_points |
-                                      update_JxW_values | update_gradients);
+                                    update_values | update_JxW_values |
+                                      update_gradients);
 
   FEValues<dim> fe_values_filtered_phase_fraction_gradient(
     *this->mapping,
     *this->fe_filtered_phase_fraction_gradient,
     *this->cell_quadrature,
-    update_values | update_quadrature_points | update_JxW_values |
-      update_gradients);
+    update_values);
 
   const unsigned int dofs_per_cell = this->fe_curvature->dofs_per_cell;
 
@@ -1197,7 +1183,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   if (filtered_phase_fraction_gradient_values[q].norm() >
-                      DBL_MIN)
+                      std::numeric_limits<double>::min())
                     {
                       // Matrix assembly
                       for (unsigned int j = 0; j < dofs_per_cell; ++j)
@@ -1810,10 +1796,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
   FEValues<dim> fe_values_vof(*this->mapping,
                               *this->fe,
                               *this->cell_quadrature,
-                              update_values | update_quadrature_points |
-                                update_JxW_values | update_gradients);
-
-
+                              update_values | update_JxW_values);
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int n_q_points    = this->cell_quadrature->size();
@@ -2058,14 +2041,12 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
   FEFaceValues<dim> fe_face_values_vof(*this->mapping,
                                        *this->fe,
                                        *this->face_quadrature,
-                                       update_values |
-                                         update_quadrature_points);
+                                       update_values);
 
   FEFaceValues<dim> fe_face_values_fd(*this->mapping,
                                       dof_handler_fd->get_fe(),
                                       *this->face_quadrature,
-                                      update_values | update_quadrature_points |
-                                        update_gradients |
+                                      update_values | update_gradients |
                                         update_normal_vectors);
 
   const unsigned int n_q_points_face = this->face_quadrature->size();
@@ -2173,9 +2154,11 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                             pressure_gradients[q][d] *
                             fe_face_values_fd.normal_vector(q)[d];
 
-                          if (pressure_gradient_q_d < -DBL_MIN)
+                          if (pressure_gradient_q_d <
+                              -std::numeric_limits<double>::min())
                             nb_pressure_grad_meet_peel_condition += 1;
-                          else if (pressure_gradient_q_d > DBL_MIN)
+                          else if (pressure_gradient_q_d >
+                                   std::numeric_limits<double>::min())
                             nb_pressure_grad_meet_wet_condition += 1;
                         }
 

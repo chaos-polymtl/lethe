@@ -355,6 +355,108 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
+  /**
+   * @brief Post-processing.
+   * Calculate temperature statistics on the domain : Max, min, average and
+   * standard-deviation.
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param domain_name string indicating the monitored_fluid in the output filename
+   */
+
+  void
+  postprocess_temperature_statistics(
+    const bool                       gather_vof,
+    const Parameters::FluidIndicator monitored_fluid,
+    const std::string                domain_name);
+
+  /**
+   * @brief Post-processing. Write the temperature statistics to an output file.
+   *
+   * @param domain_name string indicating the postprocessed_fluid in the
+   * console output, table and filename.
+   */
+
+  void
+  write_temperature_statistics(const std::string domain_name);
+
+  /**
+   * Post-processing. Calculate the heat flux at heat transfer boundary
+   * conditions.
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   *
+   * @param current_solution_fd current solution for the fluid dynamics, parsed
+   * by postprocess
+   */
+
+  template <typename VectorType>
+  void
+  postprocess_heat_flux_on_bc(const bool        gather_vof,
+                              const VectorType &current_solution_fd);
+
+  /**
+   * Post-processing. Calculate the thermal energy (rho*Cp*T) in a fluid domain.
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param domain_name string indicating the monitored_fluid in the console output,
+   * table and filename.
+   *
+   * @param current_solution_fd current solution for the fluid dynamics, parsed
+   * by postprocess
+   */
+
+  template <typename VectorType>
+  void
+  postprocess_thermal_energy_in_fluid(
+    const bool                       gather_vof,
+    const Parameters::FluidIndicator monitored_fluid,
+    const std::string                domain_name,
+    const VectorType &               current_solution_fd);
+
+  /**
+   * @brief Post-processing. Write the heat transfer values to an output file.
+   *
+   * @param domain_name string indicating the postprocessed_fluid in the
+   * console output, table and filename.
+   */
+
+  void
+  write_heat_flux(const std::string domain_name);
+
+  /**
+   * @brief Set a phase_coefficient that is used in the postprocessing, to
+   * account for multiphase flow.
+   *
+   * Returns
+   * - a double: phase_coefficient from 0 to 1, see the documentation on VOF for
+   * more information,
+   * - a boolean: point_is_in_postprocessed_fluid, true if the quadrature point
+   * is in the postprocessed_fluid (used for min_max_temperature calculation)
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param phase_value_q double corresponding to the phase value at this quadrature point
+   */
+
+  std::pair<double, bool>
+  set_phase_coefficient(const bool                       gather_vof,
+                        const Parameters::FluidIndicator monitored_fluid,
+                        const double                     phase_value_q);
+
+
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
@@ -410,6 +512,12 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<HeatTransferAssemblerBase<dim>>> assemblers;
+
+  // Temperature statistics table (post-process)
+  TableHandler statistics_table;
+
+  // Heat flux table (post-process)
+  TableHandler heat_flux_table;
 };
 
 

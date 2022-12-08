@@ -249,12 +249,6 @@ Tracer<dim>::calculate_L2_error()
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
-  const unsigned int dofs_per_cell =
-    fe->dofs_per_cell; // This gives you dofs per cell
-
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell); //  Local connectivity
-
   const unsigned int n_q_points = cell_quadrature->size();
 
   std::vector<double> q_exact_solution(n_q_points);
@@ -271,9 +265,6 @@ Tracer<dim>::calculate_L2_error()
         {
           fe_values.reinit(cell);
           fe_values.get_function_values(present_solution, q_scalar_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution.value_list(fe_values.get_quadrature_points(),
@@ -371,12 +362,6 @@ Tracer<dim>::calculate_tracer_statistics()
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
-  const unsigned int dofs_per_cell =
-    fe->dofs_per_cell; // This gives you dofs per cell
-
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell); //  Local connectivity
-
   const unsigned int  n_q_points = cell_quadrature->size();
   std::vector<double> q_tracer_values(n_q_points);
 
@@ -390,9 +375,6 @@ Tracer<dim>::calculate_tracer_statistics()
         {
           fe_values.reinit(cell);
           fe_values.get_function_values(present_solution, q_tracer_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -415,9 +397,6 @@ Tracer<dim>::calculate_tracer_statistics()
           fe_values.reinit(cell);
           fe_values.get_function_values(present_solution, q_tracer_values);
 
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
-
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               variance_integral += (q_tracer_values[q] - tracer_average) *
@@ -431,11 +410,16 @@ Tracer<dim>::calculate_tracer_statistics()
   double tracer_variance      = variance_integral / global_volume;
   double tracer_std_deviation = std::sqrt(tracer_variance);
 
-  this->pcout << "Tracer statistics : " << std::endl;
-  this->pcout << "\t     Min : " << min_tracer_value << std::endl;
-  this->pcout << "\t     Max : " << max_tracer_value << std::endl;
-  this->pcout << "\t Average : " << tracer_average << std::endl;
-  this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Tracer statistics : " << std::endl;
+      this->pcout << "\t     Min : " << min_tracer_value << std::endl;
+      this->pcout << "\t     Max : " << max_tracer_value << std::endl;
+      this->pcout << "\t Average : " << tracer_average << std::endl;
+      this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+    }
 
   statistics_table.add_value("time", simulation_control->get_current_time());
   statistics_table.add_value("min", min_tracer_value);
@@ -453,6 +437,7 @@ Tracer<dim>::write_tracer_statistics()
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
       std::string filename =
+        simulation_parameters.simulation_control.output_folder +
         simulation_parameters.post_processing.tracer_output_name + ".dat";
       std::ofstream output(filename.c_str());
 

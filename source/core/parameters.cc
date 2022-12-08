@@ -1054,12 +1054,6 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of between two boundaries.");
 
-      prm.declare_entry(
-        "calculate temperature range",
-        "false",
-        Patterns::Bool(),
-        "Enable calculation of minimum and maximum temperature.");
-
       prm.declare_entry("inlet boundary id",
                         "0",
                         Patterns::Integer(),
@@ -1096,16 +1090,10 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output apparent viscosity");
 
-      prm.declare_entry("calculation frequency",
-                        "1",
-                        Patterns::Integer(),
-                        "Calculation frequency");
-
       prm.declare_entry("output frequency",
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
-
 
       prm.declare_entry("calculate tracer statistics",
                         "false",
@@ -1116,6 +1104,32 @@ namespace Parameters
                         "tracer_statistics",
                         Patterns::FileName(),
                         "File name output tracer statistics");
+
+      prm.declare_entry("calculate temperature statistics",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of temperature statistics.");
+
+      prm.declare_entry("temperature statistics name",
+                        "temperature_statistics",
+                        Patterns::FileName(),
+                        "File name output temperature statistics");
+
+      prm.declare_entry("calculate heat flux",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of heat flux.");
+
+      prm.declare_entry("heat flux name",
+                        "heat_flux",
+                        Patterns::FileName(),
+                        "File name output temperature statistics");
+
+      prm.declare_entry("postprocessed fluid",
+                        "both",
+                        Patterns::Selection("fluid 0|fluid 1|both"),
+                        "Fluid domain used for thermal postprocesses "
+                        "in the heat equation <fluid 0|fluid 1|both>");
 
       prm.declare_entry("smoothed output fields",
                         "false",
@@ -1142,9 +1156,7 @@ namespace Parameters
         prm.get_bool("calculate apparent viscosity");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      calculate_pressure_drop = prm.get_bool("calculate pressure drop");
-      calculate_min_max_temperature =
-        prm.get_bool("calculate temperature range");
+      calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
       initial_time                   = prm.get_double("initial time");
@@ -1152,11 +1164,29 @@ namespace Parameters
       pressure_drop_output_name      = prm.get("pressure drop name");
       enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
-      calculation_frequency          = prm.get_integer("calculation frequency");
       output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
-      smoothed_output_fields      = prm.get_bool("smoothed output fields");
+      calculate_temperature_statistics =
+        prm.get_bool("calculate temperature statistics");
+      temperature_output_name = prm.get("temperature statistics name");
+      calculate_heat_flux     = prm.get_bool("calculate heat flux");
+      heat_flux_output_name   = prm.get("heat flux name");
+
+      // Viscous dissipative fluid
+      const std::string op_fluid = prm.get("postprocessed fluid");
+      if (op_fluid == "fluid 1")
+        postprocessed_fluid = Parameters::FluidIndicator::fluid1;
+      else if (op_fluid == "fluid 0")
+        postprocessed_fluid = Parameters::FluidIndicator::fluid0;
+      else if (op_fluid == "both")
+        postprocessed_fluid = Parameters::FluidIndicator::both;
+      else
+        throw(
+          std::runtime_error("Invalid postprocessed fluid. "
+                             "Options are 'fluid 0', 'fluid 1' or 'both'."));
+
+      smoothed_output_fields = prm.get_bool("smoothed output fields");
     }
     prm.leave_subsection();
   }

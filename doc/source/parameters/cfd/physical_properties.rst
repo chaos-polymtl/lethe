@@ -67,6 +67,8 @@ where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the th
 .. note:: 
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
 
+.. _two phase simulations:
+
 Two phase simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. note:: 

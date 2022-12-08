@@ -46,19 +46,7 @@ namespace Parameters
     adaptative
   };
 
-  /** @brief Class to account for different fluid indicator:
-   *  - fluid0: fluid 0 only,
-   *  - fluid1: fluid 1 only,
-   *  - both: both fluids
-   * This is used in VOF for the viscous dissipation (see parameter
-   * viscous_dissipative_fluid) and mass conservation
-   */
-  enum class FluidIndicator
-  {
-    fluid0,
-    fluid1,
-    both
-  };
+
 
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
