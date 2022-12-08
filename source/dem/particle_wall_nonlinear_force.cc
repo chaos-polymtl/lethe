@@ -219,7 +219,6 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
             }
         }
     }
-  this->mpi_correction_over_calculation_of_forces_and_torques();
 }
 
 
