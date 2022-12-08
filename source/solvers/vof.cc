@@ -628,7 +628,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               this->table_monitoring_vof.add_value("mass_per_length_" +
                                                      fluid_id,
                                                    this->mass_monitored);
-              this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
+              this->table_monitoring_vof.set_scientific("mass_per_length_" +
+                                                          fluid_id,
                                                         true);
             }
           else if (dim == 3)
