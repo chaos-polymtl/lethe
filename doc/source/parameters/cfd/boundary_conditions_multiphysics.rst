@@ -1,8 +1,10 @@
 ==================================
-Boundary Contitions - Multiphysics
+Boundary Conditions - Multiphysics
 ==================================
 
 This subsection's purpose is defining the boundary conditions associated to multiphysic problems. 
+
+.. _heat transfer bc:
 
 Heat Transfer
 ^^^^^^^^^^^^^

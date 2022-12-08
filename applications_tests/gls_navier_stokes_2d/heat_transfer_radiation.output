@@ -3,14 +3,22 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 27
    Volume of triangulation:      0.0001
    Number of thermal degrees of freedom: 9
-Minimum and maximum temperatures : 1000 , 1000
+Temperature statistics on entire_domain : 
+	     Min : 1000
+	     Max : 1000
+	 Average : 1000
+	 Std-Dev : 8.03887e-14
 
 *****************************************************************
 Transient iteration : 1        Time : 0.01     Time step : 0.01     CFL : 0       
 *****************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.000338465
-Minimum and maximum temperatures : 979.082 , 979.232
+Temperature statistics on entire_domain : 
+	     Min : 979.082
+	     Max : 979.232
+	 Average : 979.157
+	 Std-Dev : 0.0527873
  time  error_velocity 
 0.0100 0.000000e+00   
 cells error_temperature 

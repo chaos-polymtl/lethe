@@ -52,7 +52,19 @@ namespace Parameters
     extra_verbose
   };
 
-
+  /** @brief Class to account for different fluid indicator:
+   *  - fluid0: fluid 0 only,
+   *  - fluid1: fluid 1 only,
+   *  - both: both fluids
+   * This is used for multiphase simulations, in PostProcessing and in
+   * VOF (see parameter_multiphysics.h)
+   */
+  enum class FluidIndicator
+  {
+    fluid0,
+    fluid1,
+    both
+  };
 
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
@@ -560,9 +572,6 @@ namespace Parameters
     // Enable pressure drop post-processing
     bool calculate_pressure_drop;
 
-    // Print minimum and maximum temperature
-    bool calculate_min_max_temperature;
-
     // The outlet boundary ID for pressure drop calculation
     unsigned int inlet_boundary_id;
 
@@ -595,6 +604,21 @@ namespace Parameters
 
     // Prefix for the tracer output
     std::string tracer_output_name;
+
+    // Enable temperature statistics
+    bool calculate_temperature_statistics;
+
+    // Prefix for the temperature output
+    std::string temperature_output_name;
+
+    // Enable heat flux calculation
+    bool calculate_heat_flux;
+
+    // Prefix for the heat flux output
+    std::string heat_flux_output_name;
+
+    // Fluid domain, used when post-processing a multiphase simulation
+    Parameters::FluidIndicator postprocessed_fluid;
 
     // Enable smoothing postprocessed vectors and scalars
     bool smoothed_output_fields;

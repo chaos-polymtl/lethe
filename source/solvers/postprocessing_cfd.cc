@@ -853,13 +853,7 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
-
-  const unsigned int dofs_per_cell =
-    fe.dofs_per_cell; // This gives you dofs per cell
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell); //  Local connectivity
-
-  const unsigned int n_q_points = quadrature_formula.size();
+  const unsigned int               n_q_points = quadrature_formula.size();
 
   std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(dim + 1));
 
@@ -881,10 +875,6 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
           // Get the exact solution at all gauss points
           exact_solution->vector_value_list(fe_values.get_quadrature_points(),
                                             q_exactSol);
-
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -918,9 +908,6 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
                                                     local_velocity_values);
           fe_values[pressure].get_function_values(evaluation_point,
                                                   local_pressure_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
           exact_solution->vector_value_list(fe_values.get_quadrature_points(),
@@ -1076,77 +1063,3 @@ calculate_flow_rate(const DoFHandler<3> &                     dof_handler,
                     const unsigned int &                      boundary_id,
                     const Quadrature<2> &face_quadrature_formula,
                     const Mapping<3> &   mapping);
-
-template <int dim, typename VectorType>
-std::pair<double, double>
-calculate_min_max_temperature(const DoFHandler<dim> &dof_handler_ht,
-                              const VectorType &     evaluation_point,
-                              const Quadrature<dim> &quadrature_formula,
-                              const Mapping<dim> &   mapping)
-{
-  const FESystem<dim, dim> fe = dof_handler_ht.get_fe();
-
-  const unsigned int  n_q_points = quadrature_formula.size();
-  std::vector<double> local_temperature_values(n_q_points);
-
-  FEValues<dim> fe_values(mapping, fe, quadrature_formula, update_values);
-
-  double minimum_temperature = DBL_MAX;
-  double maximum_temperature = -DBL_MAX;
-
-  for (const auto &cell : dof_handler_ht.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values.get_function_values(evaluation_point,
-                                        local_temperature_values);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              double temperature = local_temperature_values[q];
-
-              if (temperature > maximum_temperature)
-                maximum_temperature = temperature;
-              if (temperature < minimum_temperature)
-                minimum_temperature = temperature;
-            }
-        }
-    }
-
-  const MPI_Comm mpi_communicator = dof_handler_ht.get_communicator();
-  minimum_temperature =
-    Utilities::MPI::min(minimum_temperature, mpi_communicator);
-  maximum_temperature =
-    Utilities::MPI::max(maximum_temperature, mpi_communicator);
-
-  return std::make_pair(minimum_temperature, maximum_temperature);
-}
-
-template std::pair<double, double>
-calculate_min_max_temperature(
-  const DoFHandler<2> &                dof_handler,
-  const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Quadrature<2> &                quadrature_formula,
-  const Mapping<2> &                   mapping);
-
-template std::pair<double, double>
-calculate_min_max_temperature(
-  const DoFHandler<3> &                dof_handler,
-  const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Quadrature<3> &                quadrature_formula,
-  const Mapping<3> &                   mapping);
-
-template std::pair<double, double>
-calculate_min_max_temperature(
-  const DoFHandler<2> &                     dof_handler,
-  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Quadrature<2> &                     quadrature_formula,
-  const Mapping<2> &                        mapping);
-
-template std::pair<double, double>
-calculate_min_max_temperature(
-  const DoFHandler<3> &                     dof_handler,
-  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Quadrature<3> &                     quadrature_formula,
-  const Mapping<3> &                        mapping);
