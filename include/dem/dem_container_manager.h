@@ -279,7 +279,7 @@ public:
     torques_boundary_information;
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     periodic_boundaries_cells_information;
-  typename DEM::dem_data_structures<dim>::cell_container
+  typename DEM::dem_data_structures<dim>::cell_vector
     periodic_cells_container;
 
 private:

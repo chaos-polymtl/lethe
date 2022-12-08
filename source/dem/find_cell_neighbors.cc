@@ -23,14 +23,14 @@ FindCellNeighbors<dim>::find_cell_neighbors(
   // of all local cells; while the second contains all the ghost cells of all
   // local cells. They are two vectors with size of the number of active cells.
   // The first elements of all vectors are the main cells
-  typename DEM::dem_data_structures<dim>::cell_container local_neighbor_vector;
-  typename DEM::dem_data_structures<dim>::cell_container ghost_neighbor_vector;
+  typename DEM::dem_data_structures<dim>::cell_vector local_neighbor_vector;
+  typename DEM::dem_data_structures<dim>::cell_vector ghost_neighbor_vector;
 
   // This vector is used to avoid repetition of adjacent cells. For instance if
   // cell B is recognized as the neighbor of cell A, cell A will not be added to
   // the neighbor list of cell B again. This is done using the total_cell_list
   // vector
-  typename DEM::dem_data_structures<dim>::cell_container total_cell_list;
+  typename DEM::dem_data_structures<dim>::cell_set total_cell_list;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -45,7 +45,7 @@ FindCellNeighbors<dim>::find_cell_neighbors(
           // The first element of each vector is the cell itself.
           local_neighbor_vector.push_back(cell);
 
-          total_cell_list.push_back(cell);
+          total_cell_list.insert(cell);
 
           for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
             {
@@ -53,9 +53,7 @@ FindCellNeighbors<dim>::find_cell_neighbors(
                 {
                   if (neighbor->is_locally_owned())
                     {
-                      auto search_iterator = std::find(total_cell_list.begin(),
-                                                       total_cell_list.end(),
-                                                       neighbor);
+                      auto search_iterator = total_cell_list.find(neighbor);
                       auto local_search_iterator =
                         std::find(local_neighbor_vector.begin(),
                                   local_neighbor_vector.end(),
@@ -117,15 +115,15 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
   typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list)
 {
-  typename DEM::dem_data_structures<dim>::cell_container
+  typename DEM::dem_data_structures<dim>::cell_vector
     local_periodic_neighbor_vector;
-  typename DEM::dem_data_structures<dim>::cell_container
+  typename DEM::dem_data_structures<dim>::cell_vector
     ghost_periodic_neighbor_vector;
-  typename DEM::dem_data_structures<dim>::cell_container
+  typename DEM::dem_data_structures<dim>::cell_vector
     ghost_local_periodic_neighbor_vector;
 
-  typename DEM::dem_data_structures<dim>::cell_container total_cell_list;
-  typename DEM::dem_data_structures<dim>::cell_container total_ghost_cell_list;
+  typename DEM::dem_data_structures<dim>::cell_set       total_cell_list;
+  typename DEM::dem_data_structures<dim>::cell_vector total_ghost_cell_list;
 
   // For each cell, the cell vertices are found and used to find adjacent cells.
   // The reason is to find the cells located on the corners of the main cell.
@@ -153,10 +151,10 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
         {
           // The first element of each vector is the cell itself.
           local_periodic_neighbor_vector.push_back(cell);
-          total_cell_list.push_back(cell);
+          total_cell_list.insert(cell);
 
           // Empty list of periodic cell neighbor
-          typename DEM::dem_data_structures<dim>::cell_container
+          typename DEM::dem_data_structures<dim>::cell_vector
             periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
@@ -170,9 +168,8 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
             {
               if (periodic_neighbor->is_locally_owned())
                 {
-                  auto search_iterator = std::find(total_cell_list.begin(),
-                                                   total_cell_list.end(),
-                                                   periodic_neighbor);
+                  auto search_iterator =
+                    total_cell_list.find(periodic_neighbor);
                   auto local_search_iterator =
                     std::find(local_periodic_neighbor_vector.begin(),
                               local_periodic_neighbor_vector.end(),
@@ -232,7 +229,7 @@ FindCellNeighbors<dim>::find_cell_periodic_neighbors(
           total_ghost_cell_list.push_back(cell);
 
           // Empty list of periodic cell neighbor
-          typename DEM::dem_data_structures<dim>::cell_container
+          typename DEM::dem_data_structures<dim>::cell_vector
             periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
@@ -326,11 +323,11 @@ void
 FindCellNeighbors<dim>::get_periodic_neighbor_list(
   const typename Triangulation<dim>::active_cell_iterator &cell,
   const std::map<unsigned int, std::vector<unsigned int>>
-    &                                         coinciding_vertex_groups,
+                                             &coinciding_vertex_groups,
   const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
   const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     &v_to_c,
-  typename DEM::dem_data_structures<dim>::cell_container
+  typename DEM::dem_data_structures<dim>::cell_vector
     &periodic_neighbor_list)
 {
   // Loop over vertices of the cell
