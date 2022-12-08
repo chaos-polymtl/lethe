@@ -24,7 +24,7 @@ end
 #---------------------------------------------------
 subsection VOF	
 	subsection peeling wetting
-		set enable = true
+		set enable peeling = true
 		set verbosity = verbose
 	end
 	subsection interface sharpening
