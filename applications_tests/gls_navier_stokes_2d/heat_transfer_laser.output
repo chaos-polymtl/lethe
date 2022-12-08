@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      0.01
    Number of thermal degrees of freedom: 1089
-Temperature statistics on all_domain : 
+Temperature statistics on entire_domain : 
 	     Min : 0
 	     Max : 0
 	 Average : 0
@@ -12,7 +12,7 @@ Temperature statistics on all_domain :
 *****************************************************************
 Transient iteration : 1        Time : 0.01     Time step : 0.01     CFL : 0       
 *****************************************************************
-Temperature statistics on all_domain : 
+Temperature statistics on entire_domain : 
 	     Min : 0.000179891
 	     Max : 1540.48
 	 Average : 21.9343
@@ -21,7 +21,7 @@ Temperature statistics on all_domain :
 *****************************************************************
 Transient iteration : 2        Time : 0.02     Time step : 0.01     CFL : 0       
 *****************************************************************
-Temperature statistics on all_domain : 
+Temperature statistics on entire_domain : 
 	     Min : 0.0162123
 	     Max : 1722.86
 	 Average : 45.0885
@@ -30,7 +30,7 @@ Temperature statistics on all_domain :
 *****************************************************************
 Transient iteration : 3        Time : 0.03     Time step : 0.01     CFL : 0       
 *****************************************************************
-Temperature statistics on all_domain : 
+Temperature statistics on entire_domain : 
 	     Min : 0.0911536
 	     Max : 1726.81
 	 Average : 67.9798
@@ -39,7 +39,7 @@ Temperature statistics on all_domain :
 *****************************************************************
 Transient iteration : 4        Time : 0.04     Time step : 0.01     CFL : 0       
 *****************************************************************
-Temperature statistics on all_domain : 
+Temperature statistics on entire_domain : 
 	     Min : 0.180836
 	     Max : 1080.52
 	 Average : 67.3216
@@ -48,7 +48,7 @@ Temperature statistics on all_domain :
 *****************************************************************
 Transient iteration : 5        Time : 0.05     Time step : 0.01     CFL : 0       
 *****************************************************************
-Temperature statistics on all_domain : 
+Temperature statistics on entire_domain : 
 	     Min : 0.281314
 	     Max : 789.985
 	 Average : 66.8228
