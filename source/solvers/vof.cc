@@ -616,15 +616,35 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               fluid_id = "fluid_0";
             }
 
-          // Add volume column
-          this->table_monitoring_vof.add_value("volume_" + fluid_id,
-                                               this->volume_monitored);
-          this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
+          if (dim == 2)
+            {
+              // Add surface column
+              this->table_monitoring_vof.add_value("surface_" + fluid_id,
+                                                   this->volume_monitored);
+              this->table_monitoring_vof.set_scientific("surface_" + fluid_id,
+                                                        true);
 
-          // Add mass column
-          this->table_monitoring_vof.add_value("mass_" + fluid_id,
-                                               this->mass_monitored);
-          this->table_monitoring_vof.set_scientific("mass_" + fluid_id, true);
+              // Add mass per length column
+              this->table_monitoring_vof.add_value("mass_per_length_" +
+                                                     fluid_id,
+                                                   this->mass_monitored);
+              this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
+                                                        true);
+            }
+          else if (dim == 3)
+            {
+              // Add volume column
+              this->table_monitoring_vof.add_value("volume_" + fluid_id,
+                                                   this->volume_monitored);
+              this->table_monitoring_vof.set_scientific("volume_" + fluid_id,
+                                                        true);
+
+              // Add mass column
+              this->table_monitoring_vof.add_value("mass_" + fluid_id,
+                                                   this->mass_monitored);
+              this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
+                                                        true);
+            }
 
           // Add sharpening threshold column
           this->table_monitoring_vof.add_value("sharpening_threshold",

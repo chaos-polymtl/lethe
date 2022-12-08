@@ -162,7 +162,9 @@ The default values of the VOF parameters are given in the text box below.
     The cell is then filled with the higher density fluid by changing its phase value progressively.
 
     .. tip ::
-      When the densities of the two fluids are of very different order of magnitude (typically, one fluid is more than a hundred times denser than the other), the wetting mechanism can result in the denser fluid crawling on the wall in a non-physical way. Then, using ``set enable wetting = false`` and relying on the ``diffusivity`` parameter to wet the boundaries (see :ref:`improve wetting`) can give better results. Again, this is still a heuristic, so do not hesitate to write to the team through the `Lethe github page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
+      Using ``set enable wetting = false`` and relying on the ``diffusivity`` to wet the boundaries (see :ref:`improve wetting`) can give better results when the densities of the two fluids are of very different order of magnitude. 
+
+      Typically, when one fluid is more than a hundred times denser than the other, the wetting mechanism can result in the denser fluid crawling on the wall in a non-physical way. Again, this is still a heuristic, so do not hesitate to write to the team through the `Lethe github page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
 
   * ``verbosity``: enables the display of the number of peeled and wet cells at each time-step. Choices are: ``quiet`` (default, no output) and ``verbose``.
 
@@ -180,11 +182,14 @@ The default values of the VOF parameters are given in the text box below.
 
     Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
-  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid given as ``monitored fluid`` (``fluid 0`` or ``fluid 1`` (default)). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume (3D) or surface (2D) computation of the fluid given as ``monitored fluid`` (``fluid 1`` (default) or ``fluid 0``). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+
+    .. tip::
+      In 2D, the mass returned is in the dimension of :math:`\left[\text{mass}/\text{length}\right]`: multiply this value by the depth of your system to get the ``monitored fluid`` mass (in :math:`\text{kg}` if using SI units).
 
     .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
 
-      The ``volume_fluid_1`` column gives the surface/volume (2D/3D) occupied by the fluid with index 1, its total mass, and the sharpening threshold used for this iteration.
+      The ``volume_fluid_1`` column gives the volume occupied by the fluid with index 1, its total mass, and the sharpening threshold used for this iteration.
   
       .. code-block:: text
 
