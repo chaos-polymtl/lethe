@@ -2122,8 +2122,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
           unsigned int phase_lighter_fluid_q(0);
           float        phase_values_q(0);
           double       pressure_values_q(0);
-          unsigned int nb_pressure_grad_meet_peel_condition(0);
-          unsigned int nb_pressure_grad_meet_wet_condition(0);
+          unsigned int n_q_negative_pressure_grad(0);
+          unsigned int n_q_positive_pressure_grad(0);
 
           bool cell_face_at_pw_bounday(false);
 
@@ -2179,22 +2179,21 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                             pressure_gradients[q][d] *
                             fe_face_values_fd.normal_vector(q)[d];
 
-                          // Peeling if condition reached in at least one
-                          // dimension
+                          // Peeling if pressure_gradient_q is negative
                           if (pressure_gradient_q <
                               -std::numeric_limits<double>::min())
                             peeling_condition_q = true;
+                          // Wetting if pressure_gradient_q is positive
                           if (pressure_gradient_q >
                               std::numeric_limits<double>::min())
                             wetting_condition_q = true;
                         }
 
-                      // Peeling if condition reached in at least one dimension
+                      // Check if condition is reached for this quadrature point
                       if (peeling_condition_q)
-                        nb_pressure_grad_meet_peel_condition += 1;
-                      // Wetting if condition reached in xxx dimensions
+                        n_q_negative_pressure_grad += 1;
                       if (wetting_condition_q)
-                        nb_pressure_grad_meet_wet_condition += 1;
+                        n_q_positive_pressure_grad += 1;
 
                       pressure_values_q += pressure_values[q];
                       phase_values_q += phase_values[q];
@@ -2218,7 +2217,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
               // Check peeling condition
               // Note that it has priority over the wetting condition
               if (pressure_values_cell < pressure_monitored_avg and
-                  nb_pressure_grad_meet_peel_condition > n_q_points_face * 0.5)
+                  n_q_negative_pressure_grad > n_q_points_face * 0.5)
                 {
                   if (this->simulation_parameters.multiphysics.vof_parameters
                         .peeling_wetting.enable_peeling)
@@ -2256,8 +2255,7 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                 } // end condition peeling
               // Check wetting condition if the cell is not marked as pelt
               else if (pressure_values_cell > pressure_monitored_avg and
-                       nb_pressure_grad_meet_wet_condition >
-                         n_q_points_face * 0.5)
+                       n_q_positive_pressure_grad > n_q_points_face * 0.5)
                 {
                   if (this->simulation_parameters.multiphysics.vof_parameters
                         .peeling_wetting.enable_wetting)
