@@ -30,8 +30,8 @@ This subsection controls the post-processing other than the forces and torque on
 	set calculate enstrophy         = false
 	set enstrophy name              = enstrophy
   
-	# Others
-	set smoothing                   = false
+  	# Others
+  	set smoothing                   = false
 
 	#---------------------------------------------------
   	# Physical properties post-processing
@@ -67,7 +67,7 @@ This subsection controls the post-processing other than the forces and torque on
 	* ``initial time``: initial time used for the average velocities calculations.
 
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled. 
-	* ``inlet boundary id`` and ``outlet boundary id``: defines the id for inlet and outlet boundaries, respectively. 
+	* ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
 	* ``pressure drop name``: output filename for pressure drop calculations.
 
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
@@ -91,7 +91,7 @@ This subsection controls the post-processing other than the forces and torque on
 
 	.. note::
 
-		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all domain``.
+		The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all_domain``.
 
 * ``calculate temperature statistics``: controls if calculation of temperature statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
 	.. warning::
@@ -111,7 +111,7 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate heat flux``: controls if calculation of heat flux is enabled. If enabled, two quantities are postprocessed: 
 	* the heat flux :math:`\mathbf{\Phi}` for each :ref:`heat transfer bc` boundary condition. 
 
-	The output table is appended with one column per boundary condition, name ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
+	The output table is appended with one column per boundary condition, named ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
 
 	* the thermal energy (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
 
