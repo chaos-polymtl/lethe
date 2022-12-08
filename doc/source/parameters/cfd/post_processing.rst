@@ -30,8 +30,8 @@ This subsection controls the post-processing other than the forces and torque on
 	set calculate enstrophy         = false
 	set enstrophy name              = enstrophy
   
-  # Others
-  set smoothing                   = false
+	# Others
+	set smoothing                   = false
 
 	#---------------------------------------------------
   	# Physical properties post-processing
@@ -113,7 +113,7 @@ This subsection controls the post-processing other than the forces and torque on
 
 	The output table is appended with one column per boundary condition, name ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
 
-	* the heat (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
+	* the thermal energy (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
 
 	.. warning::
 
@@ -125,6 +125,6 @@ This subsection controls the post-processing other than the forces and torque on
 
 		.. code-block:: text
 
-			 time   bc_0    bc_1   heat_fluid_1 
-			0.0000 64.0000  0.6400       0.0313 
-			0.2000  3.6963  0.0976       0.6965 
+			 time   bc_0    bc_1   	thermal_energy_fluid_1 
+			0.0000 64.0000  0.6400       		0.0313 
+			0.2000  3.6963  0.0976       		0.6965 

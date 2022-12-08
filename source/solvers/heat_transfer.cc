@@ -641,7 +641,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.post_processing.postprocessed_fluid;
   // default: monophase simulations
-  std::string domain_name("all_domain");
+  std::string domain_name("entire_domain");
   bool        gather_vof(false);
 
   if (this->simulation_parameters.physical_properties_manager
@@ -653,7 +653,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         {
           default:
             {
-              domain_name = "all_domain";
+              domain_name = "entire_domain";
               break;
             }
           case Parameters::FluidIndicator::fluid0:
@@ -692,28 +692,28 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                       *multiphysics->get_block_solution(
                                         PhysicsID::fluid_dynamics));
 
-          postprocess_heat_on_fluid(gather_vof,
-                                    monitored_fluid,
-                                    domain_name,
-                                    *multiphysics->get_block_solution(
-                                      PhysicsID::fluid_dynamics));
+          postprocess_thermal_energy_in_fluid(gather_vof,
+                                              monitored_fluid,
+                                              domain_name,
+                                              *multiphysics->get_block_solution(
+                                                PhysicsID::fluid_dynamics));
         }
       else
         {
           postprocess_heat_flux_on_bc(
             gather_vof, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
 
-          postprocess_heat_on_fluid(gather_vof,
-                                    monitored_fluid,
-                                    domain_name,
-                                    *multiphysics->get_solution(
-                                      PhysicsID::fluid_dynamics));
+          postprocess_thermal_energy_in_fluid(gather_vof,
+                                              monitored_fluid,
+                                              domain_name,
+                                              *multiphysics->get_solution(
+                                                PhysicsID::fluid_dynamics));
         }
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        this->write_heat_flux();
+        this->write_heat_flux(domain_name);
     }
 }
 
@@ -1053,11 +1053,14 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
   // Other initializations
   double phase_coefficient(0.);
-  bool   take_min_max(false);
   double volume_integral(0.);
   double temperature_integral(0.);
-  double minimum_temperature(DBL_MAX);
-  double maximum_temperature(-DBL_MAX);
+  double minimum_temperature(std::numeric_limits<double>::max());
+  double maximum_temperature(std::numeric_limits<double>::lowest());
+  // boolean used to state if the quadrature point is in the
+  // postprocessed_fluid, i.e. its temperature should be considered
+  // in the minimum and maximum temperature calculation
+  bool point_is_in_postprocessed_fluid(false);
 
   // Calculate min, max and average
   for (const auto &cell : this->dof_handler.active_cell_iterators())
@@ -1087,60 +1090,12 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              switch (monitored_fluid)
-                {
-                  case Parameters::FluidIndicator::both:
-                    {
-                      phase_coefficient = 1.;
-                      take_min_max      = true;
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid0:
-                    {
-                      if (gather_vof)
-                        {
-                          phase_coefficient = 1. - phase_values[q];
-                          if (phase_values[q] < 0.5)
-                            take_min_max = true;
-                          else
-                            take_min_max = false;
-                        }
-                      else
-                        {
-                          // In the case of monophase simulations, "fluid0" is
-                          // equivalent to "both" (all domain) calculation
-                          phase_coefficient = 1.;
-                          take_min_max      = true;
-                        }
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid1:
-                    {
-                      if (gather_vof)
-                        {
-                          phase_coefficient = phase_values[q];
-                          if (phase_values[q] > 0.5)
-                            take_min_max = true;
-                          else
-                            take_min_max = false;
-                        }
-                      else
-                        {
-                          // Defensive only here, this has been checked already
-                          // in simulation_parameters.h
-                          throw std::logic_error(
-                            "Inconsistency in .prm!\n when VOF = false"
-                            "\n use (default value): set postprocessed fluid = both"
-                            "\n or: set postprocessed fluid = fluid 0");
-                        }
-                      break;
-                    }
-                  default:
-                    throw std::runtime_error(
-                      "Unsupported number of fluids (>2)");
-                } // end switch on monitored fluid
+              std::tie(phase_coefficient, point_is_in_postprocessed_fluid) =
+                set_phase_coefficient(gather_vof,
+                                      monitored_fluid,
+                                      phase_values[q]);
 
-              if (take_min_max)
+              if (point_is_in_postprocessed_fluid)
                 {
                   maximum_temperature =
                     std::max(local_temperature_values[q], maximum_temperature);
@@ -1193,44 +1148,10 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              switch (monitored_fluid)
-                {
-                  case Parameters::FluidIndicator::both:
-                    {
-                      phase_coefficient = 1.;
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid0:
-                    {
-                      if (gather_vof)
-                        phase_coefficient = 1. - phase_values[q];
-                      else
-                        {
-                          // In the case of monophase simulations, "fluid0" is
-                          // equivalent to "both" (all domain) calculation
-                          phase_coefficient = 1.;
-                        }
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid1:
-                    {
-                      if (gather_vof)
-                        phase_coefficient = phase_values[q];
-                      else
-                        {
-                          // Defensive only here, this has been checked already
-                          // in simulation_parameters.h
-                          throw std::logic_error(
-                            "Inconsistency in .prm!\n when VOF = false"
-                            "\n use (default value): set postprocessed fluid = both"
-                            "\n or: set postprocessed fluid = fluid 0");
-                        }
-                      break;
-                    }
-                  default:
-                    throw std::runtime_error(
-                      "Unsupported number of fluids (>2)");
-                } // end switch on monitored fluid
+              phase_coefficient = set_phase_coefficient(gather_vof,
+                                                        monitored_fluid,
+                                                        phase_values[q])
+                                    .first;
 
               temperature_variance_integral +=
                 (local_temperature_values[q] - temperature_average) *
@@ -1330,7 +1251,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
     }
 
   // Initialize fluid properties
-  auto properties_manager =
+  auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
   std::map<field, double>              field_values;
   std::map<field, std::vector<double>> fields;
@@ -1350,7 +1271,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
 
   switch (properties_manager.get_number_of_fluids())
     {
-      case 1:
+      default:
         {
           // Get values for monophase flow
           const auto density_model = properties_manager.get_density();
@@ -1540,7 +1461,7 @@ HeatTransfer<3>::postprocess_heat_flux_on_bc<
 template <int dim>
 template <typename VectorType>
 void
-HeatTransfer<dim>::postprocess_heat_on_fluid(
+HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const bool                       gather_vof,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
@@ -1583,7 +1504,7 @@ HeatTransfer<dim>::postprocess_heat_on_fluid(
     }
 
   // Initialize fluid properties
-  auto properties_manager =
+  auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
   std::map<field, double>              field_values;
   std::map<field, std::vector<double>> fields;
@@ -1600,7 +1521,7 @@ HeatTransfer<dim>::postprocess_heat_on_fluid(
 
   switch (properties_manager.get_number_of_fluids())
     {
-      case 1:
+      default:
         {
           // Get values for monophase flow
           const auto density_model = properties_manager.get_density();
@@ -1675,44 +1596,10 @@ HeatTransfer<dim>::postprocess_heat_on_fluid(
           // Loop on the quadrature points
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              switch (monitored_fluid)
-                {
-                  case Parameters::FluidIndicator::both:
-                    {
-                      phase_coefficient = 1.;
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid0:
-                    {
-                      if (gather_vof)
-                        phase_coefficient = 1. - phase_values[q];
-                      else
-                        {
-                          // In the case of monophase simulations, "fluid0" is
-                          // equivalent to "both" (all domain) calculation
-                          phase_coefficient = 1.;
-                        }
-                      break;
-                    }
-                  case Parameters::FluidIndicator::fluid1:
-                    {
-                      if (gather_vof)
-                        phase_coefficient = phase_values[q];
-                      else
-                        {
-                          // Defensive only here, this has been checked already
-                          // in simulation_parameters.h
-                          throw std::logic_error(
-                            "Inconsistency in .prm!\n when VOF = false"
-                            "\n use (default value): set postprocessed fluid = both"
-                            "\n or: set postprocessed fluid = fluid 0");
-                        }
-                      break;
-                    }
-                  default:
-                    throw std::runtime_error(
-                      "Unsupported number of fluids (>2)");
-                } // end switch on monitored fluid
+              phase_coefficient = set_phase_coefficient(gather_vof,
+                                                        monitored_fluid,
+                                                        phase_values[q])
+                                    .first;
 
               if (properties_manager.get_number_of_fluids() == 2)
                 {
@@ -1741,37 +1628,42 @@ HeatTransfer<dim>::postprocess_heat_on_fluid(
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Heat in " << domain_name << " : " << heat_in_domain
-                  << std::endl;
+      this->pcout << "Thermal energy in " << domain_name << " : "
+                  << heat_in_domain << std::endl;
     }
 
   // Filling table
-  this->heat_flux_table.add_value("heat_" + domain_name, heat_in_domain);
+  this->heat_flux_table.add_value("thermal_energy_" + domain_name,
+                                  heat_in_domain);
 }
 
 template void
-HeatTransfer<2>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::Vector>(
+HeatTransfer<2>::postprocess_thermal_energy_in_fluid<
+  TrilinosWrappers::MPI::Vector>(
   const bool                           gather_vof,
   const Parameters::FluidIndicator     monitored_fluid,
   const std::string                    domain_name,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
-HeatTransfer<3>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::Vector>(
+HeatTransfer<3>::postprocess_thermal_energy_in_fluid<
+  TrilinosWrappers::MPI::Vector>(
   const bool                           gather_vof,
   const Parameters::FluidIndicator     monitored_fluid,
   const std::string                    domain_name,
   const TrilinosWrappers::MPI::Vector &current_solution_fd);
 
 template void
-HeatTransfer<2>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::BlockVector>(
+HeatTransfer<2>::postprocess_thermal_energy_in_fluid<
+  TrilinosWrappers::MPI::BlockVector>(
   const bool                                gather_vof,
   const Parameters::FluidIndicator          monitored_fluid,
   const std::string                         domain_name,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 template void
-HeatTransfer<3>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::BlockVector>(
+HeatTransfer<3>::postprocess_thermal_energy_in_fluid<
+  TrilinosWrappers::MPI::BlockVector>(
   const bool                                gather_vof,
   const Parameters::FluidIndicator          monitored_fluid,
   const std::string                         domain_name,
@@ -1779,7 +1671,7 @@ HeatTransfer<3>::postprocess_heat_on_fluid<TrilinosWrappers::MPI::BlockVector>(
 
 template <int dim>
 void
-HeatTransfer<dim>::write_heat_flux()
+HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
 {
   auto mpi_communicator = triangulation->get_communicator();
 
@@ -1787,11 +1679,72 @@ HeatTransfer<dim>::write_heat_flux()
     {
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.heat_flux_output_name + ".dat";
+        simulation_parameters.post_processing.heat_flux_output_name + "_" +
+        domain_name + ".dat";
       std::ofstream output(filename.c_str());
 
       this->heat_flux_table.write_text(output);
     }
+}
+
+template <int dim>
+std::pair<double, bool>
+HeatTransfer<dim>::set_phase_coefficient(
+  const bool                       gather_vof,
+  const Parameters::FluidIndicator monitored_fluid,
+  const double                     phase_value_q)
+{
+  double phase_coefficient(0.);
+  bool   point_is_in_postprocessed_fluid(false);
+
+  switch (monitored_fluid)
+    {
+      default:
+        {
+          // Parameters::FluidIndicator::both
+          phase_coefficient               = 1.;
+          point_is_in_postprocessed_fluid = true;
+          break;
+        }
+      case Parameters::FluidIndicator::fluid0:
+        {
+          if (gather_vof)
+            {
+              phase_coefficient = 1. - phase_value_q;
+              if (phase_value_q < 0.5)
+                point_is_in_postprocessed_fluid = true;
+            }
+          else
+            {
+              // In the case of monophase simulations, "fluid0" is
+              // equivalent to "both" (all domain) calculation
+              phase_coefficient               = 1.;
+              point_is_in_postprocessed_fluid = true;
+            }
+          break;
+        }
+      case Parameters::FluidIndicator::fluid1:
+        {
+          if (gather_vof)
+            {
+              phase_coefficient = phase_value_q;
+              if (phase_value_q > 0.5)
+                point_is_in_postprocessed_fluid = true;
+            }
+          else
+            {
+              // Defensive only here, this has been checked already
+              // in simulation_parameters.h
+              throw std::logic_error(
+                "Inconsistency in .prm!\n when VOF = false"
+                "\n use (default value): set postprocessed fluid = both"
+                "\n or: set postprocessed fluid = fluid 0");
+            }
+          break;
+        }
+    } // end switch on monitored fluid
+
+  return std::make_pair(phase_coefficient, point_is_in_postprocessed_fluid);
 }
 
 template class HeatTransfer<2>;

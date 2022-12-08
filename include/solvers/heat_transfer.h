@@ -377,6 +377,9 @@ private:
 
   /**
    * @brief Post-processing. Write the temperature statistics to an output file.
+   *
+   * @param domain_name string indicating the postprocessed_fluid in the
+   * console output, table and filename.
    */
 
   void
@@ -399,7 +402,7 @@ private:
                               const VectorType &current_solution_fd);
 
   /**
-   * Post-processing. Calculate the heat (rho*Cp*T) in a fluid domain.
+   * Post-processing. Calculate the thermal energy (rho*Cp*T) in a fluid domain.
    *
    * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
    * VOF information
@@ -407,7 +410,8 @@ private:
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
    *
-   * @param domain_name string indicating the monitored_fluid in the output filename
+   * @param domain_name string indicating the monitored_fluid in the console output,
+   * table and filename.
    *
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
@@ -415,17 +419,42 @@ private:
 
   template <typename VectorType>
   void
-  postprocess_heat_on_fluid(const bool                       gather_vof,
-                            const Parameters::FluidIndicator monitored_fluid,
-                            const std::string                domain_name,
-                            const VectorType &current_solution_fd);
+  postprocess_thermal_energy_in_fluid(
+    const bool                       gather_vof,
+    const Parameters::FluidIndicator monitored_fluid,
+    const std::string                domain_name,
+    const VectorType &               current_solution_fd);
 
   /**
    * @brief Post-processing. Write the heat transfer values to an output file.
+   *
+   * @param domain_name string indicating the postprocessed_fluid in the
+   * console output, table and filename.
    */
 
   void
-  write_heat_flux();
+  write_heat_flux(const std::string domain_name);
+
+  /**
+   * @brief Set a phase_coefficient that is used in the postprocessing, to
+   * account for multiphase flow.
+   *
+   * Returns
+   * - a double: phase_coefficient from 0 to 1, see the documentation on VOF for
+   * more information,
+   * - a boolean: point_is_in_postprocessed_fluid, true if the quadrature point
+   * is in the postprocessed_fluid (used for min_max_temperature calculation)
+   *
+   * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
+   * to the phase of interest.
+   *
+   * @param phase_value_q double corresponding to the phase value at this quadrature point
+   */
+
+  std::pair<double, bool>
+  set_phase_coefficient(const bool                       gather_vof,
+                        const Parameters::FluidIndicator monitored_fluid,
+                        const double                     phase_value_q);
 
 
   MultiphysicsInterface<dim> *     multiphysics;

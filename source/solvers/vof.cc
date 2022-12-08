@@ -737,8 +737,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
   double mass_deviation_min = calculate_mass_deviation(monitored_fluid, st_min);
   double mass_deviation_max = calculate_mass_deviation(monitored_fluid, st_max);
-  double mass_deviation_avg = DBL_MAX;
-  double st_avg             = 0;
+  double mass_deviation_avg = 0.;
+  double st_avg             = 0.;
 
 
   // Bissection algorithm to calculate an interface sharpening value that would
@@ -1183,7 +1183,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   if (filtered_phase_fraction_gradient_values[q].norm() >
-                      DBL_MIN)
+                      std::numeric_limits<double>::min())
                     {
                       // Matrix assembly
                       for (unsigned int j = 0; j < dofs_per_cell; ++j)
@@ -2154,9 +2154,11 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                             pressure_gradients[q][d] *
                             fe_face_values_fd.normal_vector(q)[d];
 
-                          if (pressure_gradient_q_d < -DBL_MIN)
+                          if (pressure_gradient_q_d <
+                              -std::numeric_limits<double>::min())
                             nb_pressure_grad_meet_peel_condition += 1;
-                          else if (pressure_gradient_q_d > DBL_MIN)
+                          else if (pressure_gradient_q_d >
+                                   std::numeric_limits<double>::min())
                             nb_pressure_grad_meet_wet_condition += 1;
                         }
 

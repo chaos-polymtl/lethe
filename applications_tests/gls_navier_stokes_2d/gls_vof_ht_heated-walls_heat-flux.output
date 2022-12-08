@@ -12,7 +12,7 @@ Temperature statistics on fluid_1 :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 64
 	 boundary 1 : 0.64
-Heat in fluid_1 : 0.015625
+Thermal energy in fluid_1 : 0.015625
 
 *****************************************************************
 Transient iteration : 1        Time : 0.2      Time step : 0.2      CFL : 0       
@@ -27,7 +27,7 @@ Temperature statistics on fluid_1 :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 2.39833
 	 boundary 1 : 0.0905848
-Heat in fluid_1 : 0.399593
+Thermal energy in fluid_1 : 0.399593
 L2 error phase : 0.00208465
 
 *****************************************************************
@@ -43,7 +43,7 @@ Temperature statistics on fluid_1 :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 0.737056
 	 boundary 1 : -0.012363
-Heat in fluid_1 : 0.471345
+Thermal energy in fluid_1 : 0.471345
 L2 error phase : 0.00208505
 
 *****************************************************************
@@ -59,7 +59,7 @@ Temperature statistics on fluid_1 :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 0.379891
 	 boundary 1 : -0.0720555
-Heat in fluid_1 : 0.491977
+Thermal energy in fluid_1 : 0.491977
 L2 error phase : 0.00208424
 
 *****************************************************************
@@ -75,7 +75,7 @@ Temperature statistics on fluid_1 :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 0.260893
 	 boundary 1 : -0.110035
-Heat in fluid_1 : 0.499108
+Thermal energy in fluid_1 : 0.499108
 L2 error phase : 0.00208425
 
 *****************************************************************
@@ -91,7 +91,7 @@ Temperature statistics on fluid_1 :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 0.212121
 	 boundary 1 : -0.133064
-Heat in fluid_1 : 0.502118
+Thermal energy in fluid_1 : 0.502118
 L2 error phase : 0.00208425
  time  error_velocity error_pressure 
 0.2000 0.000000e+00   0.0000         
