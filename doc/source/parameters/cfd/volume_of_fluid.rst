@@ -153,7 +153,7 @@ The default values of the VOF parameters are given in the text box below.
     .. important::
       Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
 
-  * ``enable wetting``: controls if wetting mechanism is enabled. Wetting occurs in a cell where those conditions are met: 
+  * ``enable wetting``: controls if the wetting mechanism is enabled. Wetting occurs in a cell where those conditions are met: 
 
     * the cell is in the domain of the lower density fluid,
     * the cell pressure value is above the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
