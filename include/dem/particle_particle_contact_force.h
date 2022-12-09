@@ -30,6 +30,8 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <vector>
+
 using namespace dealii;
 
 #ifndef particle_particle_contact_force_h
@@ -434,35 +436,37 @@ protected:
     // using particle properties
     double normal_spring_constant =
       1.0667 * sqrt(this->effective_radius) *
-      this->effective_youngs_modulus
-        [particle_one_type][particle_two_properties[PropertiesIndex::type]] *
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_properties[PropertiesIndex::type])] *
       pow((0.9375 * this->effective_mass * normal_relative_velocity_value *
            normal_relative_velocity_value /
            (sqrt(this->effective_radius) *
-            this->effective_youngs_modulus[particle_one_type]
-                                          [particle_two_type])),
+            this->effective_youngs_modulus[vec_particle_type_index(
+              particle_one_type, particle_two_type)])),
           0.2);
     double tangential_spring_constant =
       1.0667 * sqrt(this->effective_radius) *
-        this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+        this->effective_youngs_modulus[vec_particle_type_index(
+          particle_one_type, particle_two_type)] *
         pow((0.9375 * this->effective_mass *
              contact_info.tangential_relative_velocity *
              contact_info.tangential_relative_velocity /
              (sqrt(this->effective_radius) *
-              this->effective_youngs_modulus[particle_one_type]
-                                            [particle_two_type])),
+              this->effective_youngs_modulus[vec_particle_type_index(
+                particle_one_type, particle_two_type)])),
             0.2) +
       DBL_MIN;
     double normal_damping_constant = sqrt(
       (4.0 * this->effective_mass * normal_spring_constant) /
       (1.0 +
        (M_PI /
-        (log(this->effective_coefficient_of_restitution[particle_one_type]
-                                                       [particle_two_type]) +
+        (log(this->effective_coefficient_of_restitution[vec_particle_type_index(
+           particle_one_type, particle_two_type)]) +
          DBL_MIN)) *
          (M_PI /
-          (log(this->effective_coefficient_of_restitution[particle_one_type]
-                                                         [particle_two_type]) +
+          (log(
+             this->effective_coefficient_of_restitution[vec_particle_type_index(
+               particle_one_type, particle_two_type)]) +
            DBL_MIN))));
     double tangential_damping_constant =
       normal_damping_constant *
@@ -483,8 +487,8 @@ protected:
       damping_tangential_force;
 
     double coulomb_threshold =
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] *
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       normal_force.norm();
 
 
@@ -522,8 +526,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -532,8 +536,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -542,8 +546,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
   }
@@ -593,11 +597,13 @@ protected:
       sqrt(this->effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 *
-      this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       radius_times_overlap_sqrt;
     double model_parameter_st =
       8.0 *
-      this->effective_shear_modulus[particle_one_type][particle_two_type] *
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       radius_times_overlap_sqrt;
 
     // Calculation of normal and tangential spring and dashpot constants
@@ -605,11 +611,13 @@ protected:
     double normal_spring_constant = 0.66665 * model_parameter_sn;
     double normal_damping_constant =
       -1.8257 *
-      this->model_parameter_beta[particle_one_type][particle_two_type] *
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] *
       sqrt(model_parameter_sn * this->effective_mass);
     double tangential_spring_constant =
       8.0 *
-        this->effective_shear_modulus[particle_one_type][particle_two_type] *
+        this->effective_shear_modulus[vec_particle_type_index(
+          particle_one_type, particle_two_type)] *
         radius_times_overlap_sqrt +
       DBL_MIN;
     double tangential_damping_constant =
@@ -630,8 +638,8 @@ protected:
       damping_tangential_force;
 
     double coulomb_threshold =
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] *
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       normal_force.norm();
 
     // Check for gross sliding
@@ -668,8 +676,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -678,8 +686,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -688,8 +696,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
   }
@@ -738,11 +746,13 @@ protected:
       sqrt(this->effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 *
-      this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       radius_times_overlap_sqrt;
     double model_parameter_st =
       8.0 *
-      this->effective_shear_modulus[particle_one_type][particle_two_type] *
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       radius_times_overlap_sqrt;
 
     // Calculation of normal and tangential spring and dashpot constants
@@ -750,11 +760,13 @@ protected:
     double normal_spring_constant = 0.66665 * model_parameter_sn;
     double normal_damping_constant =
       -1.8257 *
-      this->model_parameter_beta[particle_one_type][particle_two_type] *
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] *
       sqrt(model_parameter_sn * this->effective_mass);
     double tangential_spring_constant =
       8.0 *
-        this->effective_shear_modulus[particle_one_type][particle_two_type] *
+        this->effective_shear_modulus[vec_particle_type_index(
+          particle_one_type, particle_two_type)] *
         radius_times_overlap_sqrt +
       DBL_MIN;
     double tangential_damping_constant =
@@ -774,8 +786,8 @@ protected:
       tangential_damping_constant * contact_info.tangential_relative_velocity;
 
     double coulomb_threshold =
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] *
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       normal_force.norm();
 
     // Check for gross sliding
@@ -807,8 +819,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -817,8 +829,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -827,8 +839,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
   }
@@ -875,7 +887,9 @@ protected:
     const double radius_times_overlap_sqrt =
       sqrt(this->effective_radius * normal_overlap);
     const double model_parameter_sn =
-      2 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      2 *
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       radius_times_overlap_sqrt;
 
     // Calculation of normal and tangential spring and dashpot constants
@@ -883,11 +897,13 @@ protected:
     double normal_spring_constant = 0.66665 * model_parameter_sn;
     double normal_damping_constant =
       -1.8257 *
-      this->model_parameter_beta[particle_one_type][particle_two_type] *
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] *
       sqrt(model_parameter_sn * this->effective_mass);
     double tangential_spring_constant =
       8.0 *
-        this->effective_shear_modulus[particle_one_type][particle_two_type] *
+        this->effective_shear_modulus[vec_particle_type_index(
+          particle_one_type, particle_two_type)] *
         radius_times_overlap_sqrt +
       DBL_MIN;
 
@@ -905,8 +921,8 @@ protected:
       tangential_spring_constant * contact_info.tangential_overlap;
 
     double coulomb_threshold =
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] *
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] *
       normal_force.norm();
 
     // Check for gross sliding
@@ -939,8 +955,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -949,8 +965,8 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
     if (this->rolling_resistance_model ==
@@ -959,31 +975,35 @@ protected:
         this->effective_radius,
         particle_one_properties,
         particle_two_properties,
-        this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                       [particle_two_type],
+        this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+          particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
   }
 
 private:
-  // Members of the class
-  std::unordered_map<int, std::unordered_map<int, double>>
-    effective_youngs_modulus;
-  std::unordered_map<int, std::unordered_map<int, double>>
-    effective_shear_modulus;
-  std::unordered_map<int, std::unordered_map<int, double>>
-    effective_coefficient_of_restitution;
-  std::unordered_map<int, std::unordered_map<int, double>>
-    effective_coefficient_of_friction;
-  std::unordered_map<int, std::unordered_map<int, double>>
-         effective_coefficient_of_rolling_friction;
-  double effective_radius;
-  double effective_mass;
+  inline unsigned int
+  vec_particle_type_index(const unsigned int i, const unsigned int j)
+  {
+    return i * n_particle_types + j;
+  }
 
+  // Members of the class
   // Contact model parameter. It is calculated in the constructor for different
   // combinations of particle types. For different combinations, a map of map is
   // used to store this variable
-  std::unordered_map<int, std::unordered_map<int, double>> model_parameter_beta;
+  unsigned int        n_particle_types;
+  std::vector<double> effective_youngs_modulus;
+  std::vector<double> effective_shear_modulus;
+  std::vector<double> effective_coefficient_of_restitution;
+  std::vector<double> effective_coefficient_of_friction;
+  std::vector<double> effective_coefficient_of_rolling_friction;
+  std::vector<double> model_parameter_beta;
+
+  double effective_radius;
+  double effective_mass;
+
+
 
   // Normal and tangential contact forces, tangential and rolling torques,
   // normal unit vector of the contact and contact relative velocity in the

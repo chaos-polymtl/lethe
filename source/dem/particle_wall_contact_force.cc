@@ -152,6 +152,8 @@ ParticleWallContactForce<dim>::calculate_force_and_torque_on_boundary(
 {
   if (calculate_force_torque_on_boundary == true)
     {
+      mpi_correction_over_calculation_of_forces_and_torques();
+
       force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
 
       torque_on_walls[boundary_id] =
