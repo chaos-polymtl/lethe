@@ -93,6 +93,9 @@ public:
             std::vector<Tensor<1, 3>> &      torque,
             std::vector<Tensor<1, 3>> &      force,
             const std::vector<double> &      MOI) override;
+
+  // std::vector<typename DEM::dem_data_structures<dim>::cell_set>
+  // status_to_cell;
 };
 
 #endif

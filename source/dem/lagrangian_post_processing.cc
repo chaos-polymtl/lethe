@@ -180,7 +180,9 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   const DEMSolverParameters<dim> &                 dem_parameters,
   const double                                     current_time,
   const unsigned int                               step_number,
-  const MPI_Comm &                                 mpi_communicator)
+  const MPI_Comm &                                 mpi_communicator,
+  const std::vector<typename DEM::dem_data_structures<dim>::cell_set>
+    &mobility_status_to_cell)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -234,14 +236,35 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);
 
+  average_solution_names.push_back("mobility_status");
 
+  Vector<float> mobility_status(triangulation.n_active_cells());
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      // Loop over all set with different mobility status
+      for (unsigned int i_set = 0; i_set < mobility_status_to_cell.size();
+           i_set++)
+        {
+          if (cell->is_locally_owned())
+            {
+              for (auto &cell : mobility_status_to_cell[i_set])
+                {
+                  unsigned int cell_id     = cell->active_cell_index();
+                  mobility_status[cell_id] = i_set;
+                }
+            }
+        }
+    }
+
+  data_out.add_data_vector(mobility_status,
+                           average_solution_names.back(),
+                           DataOut<dim>::type_cell_data);
 
   // Attach the solution data to data_out object
   Vector<float> subdomain(triangulation.n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = triangulation.locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
-
 
   const std::string postprocess_file_name =
     dem_parameters.simulation_control.output_name + "-postprocess_data";

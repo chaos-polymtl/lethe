@@ -21,6 +21,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_particle_contact.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
@@ -283,6 +284,7 @@ private:
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
+  DisableParticleContact<dim>        disable_contact_object;
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
@@ -298,6 +300,9 @@ private:
   std::vector<double>       MOI;
   Tensor<1, dim>            periodic_offset;
   bool                      has_periodic_boundaries;
+  std::vector<unsigned int> cell_status;
+  std::vector<typename DEM::dem_data_structures<dim>::cell_set>
+    mobility_status_to_cell;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

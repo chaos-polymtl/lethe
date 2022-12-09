@@ -211,6 +211,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     {
       has_periodic_boundaries = true;
     }
+
+  // Assign gravity/acceleration
+  g = parameters.lagrangian_physical_properties.g;
 }
 
 template <int dim>
@@ -674,7 +677,8 @@ DEMSolver<dim>::post_process_results()
     parameters,
     simulation_control->get_current_time(),
     simulation_control->get_step_number(),
-    mpi_communicator);
+    mpi_communicator,
+    mobility_status_to_cell);
 }
 
 template <int dim>
@@ -875,6 +879,20 @@ DEMSolver<dim>::solve()
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
+          if (!simulation_control->is_at_start())
+            {
+              disable_contact_object.identify_mobility_status(
+                triangulation, particle_handler, container_manager);
+
+              mobility_status_to_cell =
+                disable_contact_object.get_mobility_status();
+
+              integrator_object->status_to_cell = mobility_status_to_cell;
+
+              disable_contact_object.print_cell_mobility_info(
+                particle_handler, simulation_control->get_current_time());
+            }
+
           displacement.resize(particle_handler.get_max_local_particle_index());
           force.resize(displacement.size());
           torque.resize(displacement.size());
@@ -912,7 +930,7 @@ DEMSolver<dim>::solve()
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates
           container_manager.execute_particle_particle_broad_search(
-            particle_handler, has_periodic_boundaries);
+            particle_handler, mobility_status_to_cell, has_periodic_boundaries);
 
           // Updating number of contact builds
           contact_build_number++;
@@ -959,6 +977,7 @@ DEMSolver<dim>::solve()
           simulation_control->get_time_step(),
           torque,
           force,
+          mobility_status_to_cell,
           periodic_offset);
 
       // We have to update the positions of the points on boundary faces and
@@ -991,7 +1010,7 @@ DEMSolver<dim>::solve()
         {
           integrator_object->integrate_half_step_location(
             particle_handler,
-            parameters.lagrangian_physical_properties.g,
+            g,
             simulation_control->get_time_step(),
             torque,
             force,
@@ -999,13 +1018,12 @@ DEMSolver<dim>::solve()
         }
       else
         {
-          integrator_object->integrate(
-            particle_handler,
-            parameters.lagrangian_physical_properties.g,
-            simulation_control->get_time_step(),
-            torque,
-            force,
-            MOI);
+          integrator_object->integrate(particle_handler,
+                                       g,
+                                       simulation_control->get_time_step(),
+                                       torque,
+                                       force,
+                                       MOI);
         }
 
       // Particles displacement if passing through a periodic boundary
@@ -1018,6 +1036,7 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
+
       if (parameters.forces_torques.calculate_force_torque &&
           (this_mpi_process == 0) &&
           (simulation_control->get_step_number() %

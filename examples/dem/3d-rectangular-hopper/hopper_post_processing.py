@@ -98,7 +98,7 @@ data = pd.DataFrame({'time': particle.time_list, 'rate': rate,
                     'number_of_particles': number_of_particles_below, 'mass_discharge': mass_discharge})
 
 # Export data to csv
-data.to_csv(save_path + '/results_' + pvd_name + '.csv')
+data.to_csv(save_path + '/results_tuned2_' + pvd_name + '.csv')
 
 # Read data from paper
 paper_data = pd.read_csv('paper_data.csv', ',')
@@ -119,7 +119,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')
 plt.legend()
 plt.grid()
-plt.savefig('figure_' + pvd_name + '.png')
+plt.savefig('figure_tuned2' + pvd_name + '.png')
 plt.show()
 
 

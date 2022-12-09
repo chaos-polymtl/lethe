@@ -20,6 +20,7 @@
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
@@ -70,7 +71,9 @@ public:
     const DEMSolverParameters<dim> &                 dem_parameters,
     const double                                     current_time,
     const unsigned int                               step_number,
-    const MPI_Comm &                                 mpi_communicator);
+    const MPI_Comm &                                 mpi_communicator,
+    const std::vector<typename DEM::dem_data_structures<dim>::cell_set>
+      &mobility_status_to_cell);
 
 private:
   /**

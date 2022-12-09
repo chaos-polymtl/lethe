@@ -131,7 +131,9 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const bool                               has_periodic_boundaries = false);
+    std::vector<typename DEM::dem_data_structures<dim>::cell_set>
+               status_to_cell,
+    const bool has_periodic_boundaries = false);
 
   /**
    * Carries out the broad contact detection search using the

@@ -238,7 +238,8 @@ template <int dim>
 void
 DEMContainerManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const bool                               has_periodic_boundaries)
+  std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell,
+  const bool has_periodic_boundaries)
 {
   particle_particle_broad_search_object.find_particle_particle_contact_pairs(
     particle_handler, *this);

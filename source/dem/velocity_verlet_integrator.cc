@@ -65,67 +65,106 @@ VelocityVerletIntegrator<dim>::integrate(
 
   for (auto &particle : particle_handler)
     {
+      // Check if particle is in a cell that must skip integration step
+      auto &cell_particle = particle.get_surrounding_cell();
       // Get the total array view to the particle properties once to improve
       // efficiency
       types::particle_index particle_id = particle.get_local_index();
 
-      auto          particle_properties = particle.get_properties();
-      Tensor<1, 3> &particle_torque     = torque[particle_id];
-      Tensor<1, 3> &particle_force      = force[particle_id];
-
-      double dt_mass_inverse = dt / particle_properties[PropertiesIndex::mass];
-      double dt_MOI_inverse  = dt / MOI[particle_id];
-
-      particle_position = [&] {
-        if constexpr (dim == 3)
-          {
-            return particle.get_location();
-          }
-        else
-          {
-            return (point_nd_to_3d(particle.get_location()));
-          }
-      }();
-
-      // Loop is manually unrolled for performance reason.
-      // for (int d = 0; d < 3; ++d)
-      {
-        // Particle velocity integration
-        particle_properties[PropertiesIndex::v_x] +=
-          dt_g[0] + particle_force[0] * dt_mass_inverse;
-        particle_properties[PropertiesIndex::v_y] +=
-          dt_g[1] + particle_force[1] * dt_mass_inverse;
-        particle_properties[PropertiesIndex::v_z] +=
-          dt_g[2] + particle_force[2] * dt_mass_inverse;
-
-
-        // Particle location integration
-        particle_position[0] += particle_properties[PropertiesIndex::v_x] * dt;
-        particle_position[1] += particle_properties[PropertiesIndex::v_y] * dt;
-        particle_position[2] += particle_properties[PropertiesIndex::v_z] * dt;
-
-        // Updating angular velocity
-        particle_properties[PropertiesIndex::omega_x] +=
-          particle_torque[0] * dt_MOI_inverse;
-        particle_properties[PropertiesIndex::omega_y] +=
-          particle_torque[1] * dt_MOI_inverse;
-        particle_properties[PropertiesIndex::omega_z] +=
-          particle_torque[2] * dt_MOI_inverse;
-      }
-
-      // Reinitialize force and torque of particle
-      particle_force  = 0;
-      particle_torque = 0;
-
-      if constexpr (dim == 3)
-        particle.set_location(particle_position);
-
-      if constexpr (dim == 2)
+      // Look if the velocity calculation of the cell is inactive
+      bool tmp_var = false;
+      if (!this->status_to_cell.empty())
         {
-          Point<2> position_2d;
-          position_2d[0] = particle_position[0];
-          position_2d[1] = particle_position[1];
-          particle.set_location(position_2d);
+          auto search_status_iterator =
+            this->status_to_cell[2].find(cell_particle);
+          tmp_var = search_status_iterator != this->status_to_cell[2].end();
+
+          if (!tmp_var)
+            {
+              auto search_status_iterator =
+                this->status_to_cell[3].find(cell_particle);
+              tmp_var = search_status_iterator != this->status_to_cell[3].end();
+            }
+        }
+
+      auto particle_properties = particle.get_properties();
+      if (this->status_to_cell.empty() || tmp_var)
+        {
+          Tensor<1, 3> &particle_torque = torque[particle_id];
+          Tensor<1, 3> &particle_force  = force[particle_id];
+
+          double dt_mass_inverse =
+            dt / particle_properties[PropertiesIndex::mass];
+          double dt_MOI_inverse = dt / MOI[particle_id];
+
+          particle_position = [&] {
+            if constexpr (dim == 3)
+              {
+                return particle.get_location();
+              }
+            else
+              {
+                return (point_nd_to_3d(particle.get_location()));
+              }
+          }();
+
+          // Loop is manually unrolled for performance reason.
+          // for (int d = 0; d < 3; ++d)
+          {
+            // Particle velocity integration
+            particle_properties[PropertiesIndex::v_x] +=
+              dt_g[0] + particle_force[0] * dt_mass_inverse;
+            particle_properties[PropertiesIndex::v_y] +=
+              dt_g[1] + particle_force[1] * dt_mass_inverse;
+            particle_properties[PropertiesIndex::v_z] +=
+              dt_g[2] + particle_force[2] * dt_mass_inverse;
+
+
+            // Particle location integration
+            particle_position[0] +=
+              particle_properties[PropertiesIndex::v_x] * dt;
+            particle_position[1] +=
+              particle_properties[PropertiesIndex::v_y] * dt;
+            particle_position[2] +=
+              particle_properties[PropertiesIndex::v_z] * dt;
+
+            // Updating angular velocity
+            particle_properties[PropertiesIndex::omega_x] +=
+              particle_torque[0] * dt_MOI_inverse;
+            particle_properties[PropertiesIndex::omega_y] +=
+              particle_torque[1] * dt_MOI_inverse;
+            particle_properties[PropertiesIndex::omega_z] +=
+              particle_torque[2] * dt_MOI_inverse;
+          }
+
+          // Reinitialize force and torque of particle
+          particle_force  = 0;
+          particle_torque = 0;
+
+          if constexpr (dim == 3)
+            particle.set_location(particle_position);
+
+          if constexpr (dim == 2)
+            {
+              Point<2> position_2d;
+              position_2d[0] = particle_position[0];
+              position_2d[1] = particle_position[1];
+              particle.set_location(position_2d);
+            }
+        }
+      else
+        {
+          // Reset forces and velocity
+          torque[particle_id] = 0.0;
+          force[particle_id]  = 0.0;
+
+          particle_properties[PropertiesIndex::v_x] = 0.0;
+          particle_properties[PropertiesIndex::v_y] = 0.0;
+          particle_properties[PropertiesIndex::v_z] = 0.0;
+
+          particle_properties[PropertiesIndex::omega_x] = 0.0;
+          particle_properties[PropertiesIndex::omega_y] = 0.0;
+          particle_properties[PropertiesIndex::omega_z] = 0.0;
         }
     }
 }

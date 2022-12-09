@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -85,6 +86,8 @@ public:
             std::vector<Tensor<1, 3>> &      torque,
             std::vector<Tensor<1, 3>> &      force,
             const std::vector<double> &      MOI) = 0;
+
+  std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell;
 };
 
 #endif /* integration_h */

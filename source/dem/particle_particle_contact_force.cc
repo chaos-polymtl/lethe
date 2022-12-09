@@ -22,6 +22,8 @@
 
 #include <dem/particle_particle_contact_force.h>
 
+#include <deal.II/particles/particle_accessor.h>
+
 using namespace DEM;
 
 
@@ -116,7 +118,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    const Tensor<1, dim>       periodic_offset)
+    std::vector<typename DEM::dem_data_structures<dim>::cell_set>
+      &                  status_to_cell,
+    const Tensor<1, dim> periodic_offset)
 {
   auto &local_adjacent_particles = container_manager.local_adjacent_particles;
   auto &ghost_adjacent_particles = container_manager.ghost_adjacent_particles;
@@ -142,6 +146,9 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
           auto particle_one       = first_contact_info->second.particle_one;
           auto particle_one_properties = particle_one->get_properties();
 
+          // Check if particle is in a cell that must skip integration step
+          auto &cell_particle_one = particle_one->get_surrounding_cell();
+
           types::particle_index particle_one_id =
             particle_one->get_local_index();
           Tensor<1, 3> &particle_one_torque = torque[particle_one_id];
@@ -166,6 +173,61 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
               // contact with particle 1
               auto particle_two            = contact_info.particle_two;
               auto particle_two_properties = particle_two->get_properties();
+
+              //              auto &cell_particle_two =
+              //              particle_two->get_surrounding_cell();
+              //
+              //              // Look if the velocity calculation of the cell is
+              //              inactive unsigned int status_particle_one = 0;
+              //              unsigned int status_particle_two = 0;
+              //              if (!status_to_cell.empty())
+              //                {
+              //                  bool tmp_var;
+              //
+              //                  typename
+              //                  Triangulation<dim>::active_cell_iterator>
+              //                  search_status_1_iterator;
+              //
+              //                    // Check if particle one has status 1 or 2,
+              //                    if not, it's 0
+              //                  search_status_1_iterator =
+              //                  status_to_cell[1].find(cell_particle_one);
+              //                  auto search_status_2_iterator =
+              //                  status_to_cell[2].find(cell_particle_one); if
+              //                  (search_status_1_iterator !=
+              //                  status_to_cell[1].end())
+              //                    {
+              //                      status_particle_one = 1;
+              //                    }
+              //                  else if (search_status_2_iterator !=
+              //                  status_to_cell[2].end())
+              //                    {
+              //                      status_particle_one = 2;
+              //                    }
+              //
+              //                  // Check if particle one has status 1
+              //                  auto search_status_1_iterator =
+              //                  status_to_cell[1].find(cell_particle_two);
+              //                  auto search_status_2_iterator =
+              //                  status_to_cell[2].find(cell_particle_two); if
+              //                  (search_status_1_iterator !=
+              //                  status_to_cell[1].end())
+              //                    {
+              //                      status_particle_two = 1;
+              //                    }
+              //                  else if (search_status_2_iterator !=
+              //                  status_to_cell[2].end())
+              //                    {
+              //                      status_particle_two = 2;
+              //                    }
+              //
+              //                  auto search_status_iterator =
+              //                  status_to_cell[2].find(cell_particle_two);
+              //                  tmp_var = search_status_iterator ==
+              //                  status_to_cell[2].end();
+              //                }
+              //
+              //              if (status_to_cell.empty() || tmp_var)
 
               // Get particle 2 location in dimension independent way
               Point<3> particle_two_location = [&] {

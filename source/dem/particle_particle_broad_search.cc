@@ -220,6 +220,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
 
+
       // Particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_main_cell =
