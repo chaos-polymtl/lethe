@@ -164,7 +164,7 @@ The default values of the VOF parameters are given in the text box below.
     .. tip ::
       Using ``set enable wetting = false`` and relying on the ``diffusivity`` to wet the boundaries (see :ref:`improve wetting`) can give better results when the densities of the two fluids are of a very different order of magnitude. 
 
-      Typically, when one fluid is more than a hundred times denser than the other, the wetting mechanism can result in the denser fluid crawling on the wall in a non-physical way. Again, this is still a heuristic, so do not hesitate to write to the team through the `Lethe github page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
+      Typically, when one fluid is more than a hundred times denser than the other, the wetting mechanism can result in the denser fluid crawling on the wall in a non-physical way. Again, this is still a heuristic, so do not hesitate to write to the team through the `Lethe GitHub page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
 
   * ``verbosity``: enables the display of the number of peeled and wet cells at each time-step. Choices are: ``quiet`` (default, no output) and ``verbose``.
 
