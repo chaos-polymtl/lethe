@@ -196,6 +196,14 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                             position,
                                             orientation);
     }
+  else if (type == "cylinder")
+    {
+      if constexpr (dim == 3)
+        shape = std::make_shared<Cylinder<dim>>(shape_arguments[0],
+                                            shape_arguments[1],
+                                            position,
+                                            orientation);
+    }
   else if (type == "cut hollow sphere")
     {
       if constexpr (dim == 3)

@@ -921,6 +921,50 @@ RBFShape<dim>::reset_iterable_nodes(
     iterable_nodes.swap(nodes_id);
 }
 
+template <int dim>
+double
+Cylinder<dim>::value(const Point<dim> &evaluation_point,
+                      const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+
+  double p_radius=std::pow(centered_point[0]*centered_point[0]+centered_point[1]*centered_point[1],0.5);
+  double radius_diff=p_radius-radius;
+  double h_diff=abs(centered_point[2])-half_length;
+
+  if(radius_diff>0 &&h_diff>0)
+    return std::pow(radius_diff*radius_diff+h_diff*h_diff,0.5);
+  else if(radius_diff<=0 &&h_diff>0)
+    return h_diff;
+  else if(radius_diff>0 &&h_diff<=0)
+    return radius_diff;
+
+  return std::max(radius_diff,h_diff);
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+Cylinder<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<Cylinder<dim>>(this->radius,
+                                    this->half_length,
+                                     this->position,
+                                     this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+Cylinder<dim>::displaced_volume(const double /*fluid_density*/)
+{
+  using numbers::PI;
+  double solid_volume = PI * radius*radius*half_length*2;
+
+  return solid_volume;
+}
+
 template class Sphere<2>;
 template class Sphere<3>;
 template class Rectangle<2>;
@@ -929,6 +973,7 @@ template class Ellipsoid<2>;
 template class Ellipsoid<3>;
 template class Torus<3>;
 template class Cone<3>;
+template class Cylinder<3>;
 template class CutHollowSphere<3>;
 template class DeathStar<3>;
 template class CompositeShape<2>;

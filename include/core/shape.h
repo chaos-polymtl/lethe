@@ -55,6 +55,7 @@ public:
     ellipsoid,
     torus,
     cone,
+    cylinder,
     cut_hollow_sphere,
     death_star,
     composite_shape,
@@ -1241,6 +1242,61 @@ public:
   std::vector<Point<dim>>       nodes_positions;
   std::vector<double>           support_radii;
   std::vector<RBFBasisFunction> basis_functions;
+};
+
+
+template <int dim>
+class Cylinder : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
+   * by a given depth
+   * @param radius The radius of the smallest sphere containing the cut hollow sphere
+   * @param cut_depth The height of the slice removed from the sphere
+   * @param shell_thickness The thickness of the hollow sphere shell
+   * @param position The center of the sphere
+   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   */
+  Cylinder<dim>(double              radius,
+                       double             half_length,
+                       const Point<dim> &  position,
+                       const Tensor<1, 3> &orientation)
+    : Shape<dim>(radius, position, orientation)
+    , radius(radius)
+    , half_length(half_length)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double half_length;
+
 };
 
 #endif // lethe_shape_h
