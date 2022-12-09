@@ -435,6 +435,7 @@ if (iterator == this->value_cache.end() )
     vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
     distancetool.LoadS2(vertex);
     distancetool.Perform();
+
     gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
     if (dim == 2)
       {
@@ -449,6 +450,23 @@ if (iterator == this->value_cache.end() )
       }
     if (distancetool.InnerSolution())
       {
+        if(shells.size()>0)
+            {
+              distancetool_shell.LoadS2(vertex);
+              distancetool_shell.Perform();
+              pt_on_surface = distancetool_shell.PointOnShape1(1);
+              if (dim == 2)
+                {
+                  projected_point[0] = pt_on_surface.X();
+                  projected_point[1] = pt_on_surface.Y();
+                }
+              if (dim == 3)
+                {
+                  projected_point[0] = pt_on_surface.X();
+                  projected_point[1] = pt_on_surface.Y();
+                  projected_point[2] = pt_on_surface.Z();
+                }
+            }
         this->value_cache[point_in_string]= -(centered_point - projected_point).norm();
         auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
         this->gradient_cache[point_in_string]=rotate_in_globalpoint;

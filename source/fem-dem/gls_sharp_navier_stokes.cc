@@ -289,7 +289,7 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandl
                   cell_is_cut = true;
                   break;
                 }
-              if (particles[p].get_levelset(support_points[local_dof_indices[j]])<cell->diameter()*0.01)
+              if ((projected_point-support_points[local_dof_indices[j]]).norm()<cell->diameter()*0.1)
                 {
                   cell_is_cut = true;
                   break;
@@ -1342,11 +1342,12 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   for (const auto &cell : cell_iterator)
     {
       bool cell_is_cut;
-      std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+      int particle_id;
+      std::tie(cell_is_cut, particle_id, std::ignore) = cut_cells_map[cell];
       if(cell_is_cut)
-        cell_cuts(i) = 1.0;
+        cell_cuts(i) = particle_id;
       else
-        cell_cuts(i) = 0;
+        cell_cuts(i) = -1;
 
       i+=1;
     }

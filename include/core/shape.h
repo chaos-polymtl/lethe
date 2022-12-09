@@ -893,6 +893,8 @@ public:
     distancetool    = BRepExtrema_DistShapeShape(shape, vertex);
     OpenCASCADE::extract_compound_shapes(
       shape, compounds, compsolids, solids, shells, wires);
+    if(shells.size()>0)
+      distancetool_shell = BRepExtrema_DistShapeShape(shells[0], vertex);
   }
 
   /**
@@ -966,6 +968,7 @@ private:
   gp_Pnt                        vertex_position;
   TopoDS_Vertex                 vertex;
   BRepExtrema_DistShapeShape    distancetool;
+  BRepExtrema_DistShapeShape    distancetool_shell;
 };
 
 
