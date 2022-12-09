@@ -140,7 +140,7 @@ The default values of the VOF parameters are given in the text box below.
 
   .. warning::
 
-    As peeling/wetting mechanisms result in fluid generation and loss, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
+    As peeling/wetting mechanisms result in fluid generation and loss, it is highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
 
   * ``enable peeling``: controls if peeling mechanism is enabled. Peeling occurs in a cell where the following conditions are met:
 
