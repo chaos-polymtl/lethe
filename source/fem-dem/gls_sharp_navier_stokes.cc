@@ -759,7 +759,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
   std::vector<double>     local_interp_sol(ib_coef.size());
 
-  std::map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>> force_eval;
+  std::unordered_map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>> force_eval;
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();

@@ -169,16 +169,16 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
     }
   else // (dim == 3)
     {
-      for (unsigned int i = 3 - 1; i > 0;
-           --i)
+      for (unsigned int i = 0; i < dim;
+           ++i)
         {
-          if (std::abs(theta[i]) > 1e-10)
+          if (std::abs(theta[2-i]) > 1e-10)
             {
               Tensor<1, 3> axis;
-              axis[i] = 1.0;
+              axis[2-i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
-                  axis, -theta[i]);
+                  axis, -theta[2-i]);
 
               // Multiplication
               centralized_rotated.clear();
@@ -542,9 +542,9 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
       vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
-      distancetool.LoadS2(vertex);
-      distancetool.Perform();
-      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+      distancetool_shell.LoadS2(vertex);
+      distancetool_shell.Perform();
+      gp_Pnt pt_on_surface = distancetool_shell.PointOnShape1(1);
       if (dim == 2)
         {
           projected_point[0] = pt_on_surface.X();
@@ -612,9 +612,9 @@ OpenCascadeShape<dim>::closest_surface_point(
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
       vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
-      distancetool.LoadS2(vertex);
-      distancetool.Perform();
-      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+      distancetool_shell.LoadS2(vertex);
+      distancetool_shell.Perform();
+      gp_Pnt pt_on_surface = distancetool_shell.PointOnShape1(1);
       if (dim == 2)
         {
           projected_point[0] = pt_on_surface.X();
