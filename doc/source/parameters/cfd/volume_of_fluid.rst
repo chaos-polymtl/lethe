@@ -136,7 +136,7 @@ The default values of the VOF parameters are given in the text box below.
 * ``subsection peeling wetting``: Peeling and wetting mechanisms are very important to consider when there are solid boundaries in the domain, like a wall. If the fluid is already on the wall and its velocity drives it away from it, the fluid should be able to detach from the wall, meaning to `peel` from it. If the fluid is not already on the wall and its velocity drives it toward it, the fluid should be able to attach to the wall, meaning to `wet` it. This subsection defines the parameters for peeling and wetting mechanisms at the VOF boundaries, as defined in :doc:`boundary_conditions_multiphysics`. 
 
   .. important::
-    This peeling/wetting mechanism implementation is a heuristic. It has been developed to meet the need of specific projects and gave satisfactory results as is, but it has not been broadly tested nor demonstrated, so its results should be considered with cautions. Do not hesitate to write to the team through the `Lethe github page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
+    This peeling/wetting mechanism implementation is a heuristic. It has been developed to meet the need of specific projects and gave satisfactory results as is, but it has not been broadly tested nor demonstrated, so its results should be considered with caution. Do not hesitate to write to the team through the `Lethe GitHub page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
 
   .. warning::
 
