@@ -151,7 +151,7 @@ The default values of the VOF parameters are given in the text box below.
     The cell is then filled with the lower density fluid by changing its phase value progressively.
 
     .. important::
-      Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered as the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
+      Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
 
   * ``enable wetting``: controls if wetting mechanism is enabled. Wetting occurs in a cell where those conditions are met: 
 
