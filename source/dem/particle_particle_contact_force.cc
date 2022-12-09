@@ -31,9 +31,18 @@ template <
 ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
   const DEMSolverParameters<dim> &dem_parameters)
 {
-  auto properties = dem_parameters.lagrangian_physical_properties;
+  auto properties  = dem_parameters.lagrangian_physical_properties;
+  n_particle_types = properties.particle_type_number;
+  effective_youngs_modulus.resize(n_particle_types * n_particle_types);
+  effective_shear_modulus.resize(n_particle_types * n_particle_types);
+  effective_coefficient_of_restitution.resize(n_particle_types *
+                                              n_particle_types);
+  effective_coefficient_of_friction.resize(n_particle_types * n_particle_types);
+  effective_coefficient_of_rolling_friction.resize(n_particle_types *
+                                                   n_particle_types);
+  model_parameter_beta.resize(n_particle_types * n_particle_types);
 
-  for (unsigned int i = 0; i < properties.particle_type_number; ++i)
+  for (unsigned int i = 0; i < n_particle_types; ++i)
     {
       const double youngs_modulus_i = properties.youngs_modulus_particle.at(i);
       const double poisson_ratio_i  = properties.poisson_ratio_particle.at(i);
@@ -44,8 +53,10 @@ ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
       const double rolling_friction_coefficient_i =
         properties.rolling_friction_coefficient_particle.at(i);
 
-      for (unsigned int j = 0; j < properties.particle_type_number; ++j)
+      for (unsigned int j = 0; j < n_particle_types; ++j)
         {
+          const unsigned int k = i * n_particle_types + j;
+
           const double youngs_modulus_j =
             properties.youngs_modulus_particle.at(j);
           const double poisson_ratio_j =
@@ -57,13 +68,13 @@ ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
           const double rolling_friction_coefficient_j =
             properties.rolling_friction_coefficient_particle.at(j);
 
-          this->effective_youngs_modulus[i][j] =
+          this->effective_youngs_modulus[k] =
             (youngs_modulus_i * youngs_modulus_j) /
             ((youngs_modulus_j * (1.0 - poisson_ratio_i * poisson_ratio_i)) +
              (youngs_modulus_i * (1.0 - poisson_ratio_j * poisson_ratio_j)) +
              DBL_MIN);
 
-          this->effective_shear_modulus[i][j] =
+          this->effective_shear_modulus[k] =
             (youngs_modulus_i * youngs_modulus_j) /
             (2.0 * ((youngs_modulus_j * (2.0 - poisson_ratio_i) *
                      (1.0 + poisson_ratio_i)) +
@@ -71,25 +82,24 @@ ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
                      (1.0 + poisson_ratio_j))) +
              DBL_MIN);
 
-          this->effective_coefficient_of_restitution[i][j] =
+          this->effective_coefficient_of_restitution[k] =
             harmonic_mean(restitution_coefficient_i, restitution_coefficient_j);
 
-          this->effective_coefficient_of_friction[i][j] =
+          this->effective_coefficient_of_friction[k] =
             harmonic_mean(friction_coefficient_i, friction_coefficient_j);
 
-          this->effective_coefficient_of_rolling_friction[i][j] =
+          this->effective_coefficient_of_rolling_friction[k] =
             harmonic_mean(rolling_friction_coefficient_i,
                           rolling_friction_coefficient_j);
 
           double restitution_coefficient_particle_log =
-            std::log(this->effective_coefficient_of_restitution[i][j]);
+            std::log(this->effective_coefficient_of_restitution[k]);
 
-          this->model_parameter_beta[i].insert(
-            {j,
-             restitution_coefficient_particle_log /
-               sqrt(restitution_coefficient_particle_log *
-                      restitution_coefficient_particle_log +
-                    9.8696)});
+          this->model_parameter_beta[k] =
+            restitution_coefficient_particle_log /
+            sqrt(restitution_coefficient_particle_log *
+                   restitution_coefficient_particle_log +
+                 9.8696);
         }
     }
 
@@ -1048,6 +1058,16 @@ ParticleParticleContactForce<dim, contact_model>::
   particle_two_properties[PropertiesIndex::type] = 0;
   particle_two_properties[PropertiesIndex::dp]   = 2.0 * particle_two_radius;
 
+  n_particle_types = 1;
+  effective_youngs_modulus.resize(n_particle_types * n_particle_types);
+  effective_shear_modulus.resize(n_particle_types * n_particle_types);
+  effective_coefficient_of_restitution.resize(n_particle_types *
+                                              n_particle_types);
+  effective_coefficient_of_friction.resize(n_particle_types * n_particle_types);
+  effective_coefficient_of_rolling_friction.resize(n_particle_types *
+                                                   n_particle_types);
+  model_parameter_beta.resize(n_particle_types * n_particle_types);
+
   // DEM::PropertiesIndex::type is the first (0) property of particles in the
   // DEM solver. For the IB particles, the first property is ID. For force and
   // torque calculations, we need pairwise properties (such as effective
@@ -1062,7 +1082,8 @@ ParticleParticleContactForce<dim, contact_model>::
   if constexpr (contact_model == Parameters::Lagrangian::
                                    ParticleParticleContactForceModel::linear)
     {
-      this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         ((particle_two.youngs_modulus *
           (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
@@ -1070,7 +1091,8 @@ ParticleParticleContactForce<dim, contact_model>::
           (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
          DBL_MIN);
 
-      this->effective_shear_modulus[particle_one_type][particle_two_type] =
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         (2.0 *
            ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
@@ -1079,16 +1101,16 @@ ParticleParticleContactForce<dim, contact_model>::
              (1.0 + particle_two.poisson_ratio))) +
          DBL_MIN);
 
-      this->effective_coefficient_of_restitution[particle_one_type]
-                                                [particle_two_type] =
+      this->effective_coefficient_of_restitution[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.restitution_coefficient,
                       particle_two.restitution_coefficient);
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] =
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.friction_coefficient,
                       particle_two.friction_coefficient);
-      this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                     [particle_two_type] =
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.rolling_friction_coefficient,
                       particle_two.rolling_friction_coefficient);
 
@@ -1121,7 +1143,8 @@ ParticleParticleContactForce<dim, contact_model>::
   if constexpr (contact_model == Parameters::Lagrangian::
                                    ParticleParticleContactForceModel::hertz)
     {
-      this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         ((particle_two.youngs_modulus *
           (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
@@ -1129,7 +1152,8 @@ ParticleParticleContactForce<dim, contact_model>::
           (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
          DBL_MIN);
 
-      this->effective_shear_modulus[particle_one_type][particle_two_type] =
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         (2.0 *
            ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
@@ -1138,24 +1162,25 @@ ParticleParticleContactForce<dim, contact_model>::
              (1.0 + particle_two.poisson_ratio))) +
          DBL_MIN);
 
-      this->effective_coefficient_of_restitution[particle_one_type]
-                                                [particle_two_type] =
+      this->effective_coefficient_of_restitution[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.restitution_coefficient,
                       particle_two.restitution_coefficient);
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] =
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.friction_coefficient,
                       particle_two.friction_coefficient);
-      this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                     [particle_two_type] =
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.rolling_friction_coefficient,
                       particle_two.rolling_friction_coefficient);
 
-      const double restitution_coefficient_particle_log =
-        std::log(this->effective_coefficient_of_restitution[particle_one_type]
-                                                           [particle_two_type]);
+      const double restitution_coefficient_particle_log = std::log(
+        this->effective_coefficient_of_restitution[vec_particle_type_index(
+          particle_one_type, particle_two_type)]);
 
-      this->model_parameter_beta[particle_one_type][particle_two_type] =
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] =
         restitution_coefficient_particle_log /
         sqrt(restitution_coefficient_particle_log *
                restitution_coefficient_particle_log +
@@ -1190,7 +1215,8 @@ ParticleParticleContactForce<dim, contact_model>::
                 Parameters::Lagrangian::ParticleParticleContactForceModel::
                   hertz_mindlin_limit_force)
     {
-      this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         ((particle_two.youngs_modulus *
           (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
@@ -1198,7 +1224,8 @@ ParticleParticleContactForce<dim, contact_model>::
           (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
          DBL_MIN);
 
-      this->effective_shear_modulus[particle_one_type][particle_two_type] =
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         (2.0 *
            ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
@@ -1207,24 +1234,25 @@ ParticleParticleContactForce<dim, contact_model>::
              (1.0 + particle_two.poisson_ratio))) +
          DBL_MIN);
 
-      this->effective_coefficient_of_restitution[particle_one_type]
-                                                [particle_two_type] =
+      this->effective_coefficient_of_restitution[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.restitution_coefficient,
                       particle_two.restitution_coefficient);
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] =
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.friction_coefficient,
                       particle_two.friction_coefficient);
-      this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                     [particle_two_type] =
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.rolling_friction_coefficient,
                       particle_two.rolling_friction_coefficient);
 
-      const double restitution_coefficient_particle_log =
-        std::log(this->effective_coefficient_of_restitution[particle_one_type]
-                                                           [particle_two_type]);
+      const double restitution_coefficient_particle_log = std::log(
+        this->effective_coefficient_of_restitution[vec_particle_type_index(
+          particle_one_type, particle_two_type)]);
 
-      this->model_parameter_beta[particle_one_type][particle_two_type] =
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] =
         restitution_coefficient_particle_log /
         sqrt(restitution_coefficient_particle_log *
                restitution_coefficient_particle_log +
@@ -1260,7 +1288,8 @@ ParticleParticleContactForce<dim, contact_model>::
                 Parameters::Lagrangian::ParticleParticleContactForceModel::
                   hertz_mindlin_limit_overlap)
     {
-      this->effective_youngs_modulus[particle_one_type][particle_two_type] =
+      this->effective_youngs_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         ((particle_two.youngs_modulus *
           (1.0 - particle_one.poisson_ratio * particle_one.poisson_ratio)) +
@@ -1268,7 +1297,8 @@ ParticleParticleContactForce<dim, contact_model>::
           (1.0 - particle_two.poisson_ratio * particle_two.poisson_ratio)) +
          DBL_MIN);
 
-      this->effective_shear_modulus[particle_one_type][particle_two_type] =
+      this->effective_shear_modulus[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         (particle_one.youngs_modulus * particle_two.youngs_modulus) /
         (2.0 *
            ((particle_two.youngs_modulus * (2.0 - particle_one.poisson_ratio) *
@@ -1277,24 +1307,25 @@ ParticleParticleContactForce<dim, contact_model>::
              (1.0 + particle_two.poisson_ratio))) +
          DBL_MIN);
 
-      this->effective_coefficient_of_restitution[particle_one_type]
-                                                [particle_two_type] =
+      this->effective_coefficient_of_restitution[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.restitution_coefficient,
                       particle_two.restitution_coefficient);
-      this->effective_coefficient_of_friction[particle_one_type]
-                                             [particle_two_type] =
+      this->effective_coefficient_of_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.friction_coefficient,
                       particle_two.friction_coefficient);
-      this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                     [particle_two_type] =
+      this->effective_coefficient_of_rolling_friction[vec_particle_type_index(
+        particle_one_type, particle_two_type)] =
         harmonic_mean(particle_one.rolling_friction_coefficient,
                       particle_two.rolling_friction_coefficient);
 
-      const double restitution_coefficient_particle_log =
-        std::log(this->effective_coefficient_of_restitution[particle_one_type]
-                                                           [particle_two_type]);
+      const double restitution_coefficient_particle_log = std::log(
+        this->effective_coefficient_of_restitution[vec_particle_type_index(
+          particle_one_type, particle_two_type)]);
 
-      this->model_parameter_beta[particle_one_type][particle_two_type] =
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] =
         restitution_coefficient_particle_log /
         sqrt(restitution_coefficient_particle_log *
                restitution_coefficient_particle_log +
