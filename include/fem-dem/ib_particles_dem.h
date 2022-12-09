@@ -277,7 +277,7 @@ private:
 
   // Particles contact history
   std::map<unsigned int,
-           std::map<unsigned int, particle_particle_contact_info_struct<dim>>>
+           std::map<unsigned int, particle_particle_contact_info<dim>>>
     pp_contact_map;
   std::map<unsigned int,
            std::map<unsigned int, particle_wall_contact_info_struct<dim>>>

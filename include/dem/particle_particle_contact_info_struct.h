@@ -24,15 +24,26 @@
 #  define particle_particle_contact_info_struct_h
 
 /**
- * This struct handles the information related to the calculation of the
+ * This class handles the information related to the calculation of the
  * particle-particle contact force
  */
 
 using namespace dealii;
 
 template <int dim>
-struct particle_particle_contact_info_struct
+class particle_particle_contact_info
 {
+public:
+  particle_particle_contact_info(Particles::ParticleIterator<dim> &particle_one,
+                                 Particles::ParticleIterator<dim> &particle_two)
+    : particle_one(particle_one)
+    , particle_two(particle_two)
+  {}
+
+  particle_particle_contact_info()
+  {}
+
+
   Tensor<1, 3>                     tangential_relative_velocity;
   Tensor<1, 3>                     tangential_overlap;
   Particles::ParticleIterator<dim> particle_one;

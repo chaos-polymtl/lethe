@@ -162,7 +162,7 @@ namespace DEM
     typedef std::unordered_map<
       types::particle_index,
       std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
+                         particle_particle_contact_info<dim>>>
       adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>

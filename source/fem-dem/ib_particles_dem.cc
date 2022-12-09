@@ -132,7 +132,7 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
             {
               const Point<dim> particle_one_location = particle_one.position;
               const Point<dim> particle_two_location = particle_two.position;
-              particle_particle_contact_info_struct<dim> contact_info;
+              particle_particle_contact_info<dim> contact_info;
 
               // Check if there is already information on the contact of these
               // to particles. If not initialize it in the contact map with 0
