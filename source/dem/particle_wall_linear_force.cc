@@ -8,12 +8,12 @@ using namespace dealii;
 template <int dim>
 ParticleWallLinearForce<dim>::ParticleWallLinearForce(
   const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                 boundary_translational_velocity,
+    boundary_translational_velocity,
   const std::unordered_map<unsigned int, double> boundary_rotational_speed,
   const std::unordered_map<unsigned int, Tensor<1, 3>>
                                         boundary_rotational_vector,
   const double                          triangulation_radius,
-  const DEMSolverParameters<dim> &      dem_parameters,
+  const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
@@ -61,24 +61,20 @@ ParticleWallLinearForce<dim>::ParticleWallLinearForce(
            (1 - wall_poisson_ratio * wall_poisson_ratio) +
          DBL_MIN);
 
-      this->effective_coefficient_of_restitution.insert(
-        {i,
-         2 * particle_restitution_coefficient * wall_restitution_coefficient /
-           (particle_restitution_coefficient + wall_restitution_coefficient +
-            DBL_MIN)});
+      this->effective_coefficient_of_restitution[i] =
+        2 * particle_restitution_coefficient * wall_restitution_coefficient /
+        (particle_restitution_coefficient + wall_restitution_coefficient +
+         DBL_MIN);
 
-      this->effective_coefficient_of_friction.insert(
-        {i,
-         2 * particle_friction_coefficient * wall_friction_coefficient /
-           (particle_friction_coefficient + wall_friction_coefficient +
-            DBL_MIN)});
+      this->effective_coefficient_of_friction[i] =
+        2 * particle_friction_coefficient * wall_friction_coefficient /
+        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
 
-      this->effective_coefficient_of_rolling_friction.insert(
-        {i,
-         2 * particle_rolling_friction_coefficient *
-           wall_rolling_friction_coefficient /
-           (particle_rolling_friction_coefficient +
-            wall_rolling_friction_coefficient + DBL_MIN)});
+      this->effective_coefficient_of_rolling_friction[i] =
+        2 * particle_rolling_friction_coefficient *
+        wall_rolling_friction_coefficient /
+        (particle_rolling_friction_coefficient +
+         wall_rolling_friction_coefficient + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -115,7 +111,7 @@ template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &                        particle_wall_pairs_in_contact,
+                            &particle_wall_pairs_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
@@ -213,7 +209,7 @@ template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &                        particle_floating_mesh_in_contact,
+                            &particle_floating_mesh_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force,
@@ -378,7 +374,7 @@ template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
   particle_wall_contact_info_struct<dim> &contact_info,
-  const ArrayView<const double> &         particle_properties)
+  const ArrayView<const double>          &particle_properties)
 {
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];

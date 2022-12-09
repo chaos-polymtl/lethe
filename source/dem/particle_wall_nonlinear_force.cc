@@ -8,12 +8,12 @@ using namespace dealii;
 template <int dim>
 ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
   const std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                 boundary_translational_velocity,
+    boundary_translational_velocity,
   const std::unordered_map<unsigned int, double> boundary_rotational_speed,
   const std::unordered_map<unsigned int, Tensor<1, 3>>
                                         boundary_rotational_vector,
   const double                          triangulation_radius,
-  const DEMSolverParameters<dim> &      dem_parameters,
+  const DEMSolverParameters<dim>       &dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
@@ -52,14 +52,13 @@ ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
         dem_parameters.lagrangian_physical_properties
           .rolling_friction_coefficient_particle.at(i);
 
-      this->effective_youngs_modulus.insert(
-        {i,
-         (particle_youngs_modulus * wall_youngs_modulus) /
-           (wall_youngs_modulus *
-              (1 - particle_poisson_ratio * particle_poisson_ratio) +
-            particle_youngs_modulus *
-              (1 - wall_poisson_ratio * wall_poisson_ratio) +
-            DBL_MIN)});
+      this->effective_youngs_modulus[i] =
+        (particle_youngs_modulus * wall_youngs_modulus) /
+        (wall_youngs_modulus *
+           (1 - particle_poisson_ratio * particle_poisson_ratio) +
+         particle_youngs_modulus *
+           (1 - wall_poisson_ratio * wall_poisson_ratio) +
+         DBL_MIN);
 
       this->effective_shear_modulus.insert(
         {i,
@@ -123,7 +122,7 @@ template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &                        particle_wall_pairs_in_contact,
+                            &particle_wall_pairs_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
@@ -226,7 +225,7 @@ template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-    &                        particle_floating_mesh_in_contact,
+                            &particle_floating_mesh_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force,
@@ -393,7 +392,7 @@ template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   particle_wall_contact_info_struct<dim> &contact_info,
-  const ArrayView<const double> &         particle_properties)
+  const ArrayView<const double>          &particle_properties)
 {
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
@@ -478,11 +477,11 @@ template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   particle_wall_contact_info_struct<dim> &contact_info,
-  Tensor<1, 3> &                          normal_force,
-  Tensor<1, 3> &                          tangential_force,
-  Tensor<1, 3> &                          tangential_torque,
-  Tensor<1, 3> &                          rolling_resistance_torque,
-  IBParticle<dim> &                       particle,
+  Tensor<1, 3>                           &normal_force,
+  Tensor<1, 3>                           &tangential_force,
+  Tensor<1, 3>                           &tangential_torque,
+  Tensor<1, 3>                           &rolling_resistance_torque,
+  IBParticle<dim>                        &particle,
   const double                            wall_youngs_modulus,
   const double                            wall_poisson_ratio,
   const double                            wall_restitution_coefficient,

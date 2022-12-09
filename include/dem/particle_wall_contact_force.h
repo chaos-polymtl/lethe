@@ -64,7 +64,7 @@ public:
   virtual void
   calculate_particle_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-      &                        particle_wall_pairs_in_contact,
+                              &particle_wall_pairs_in_contact,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force) = 0;
@@ -83,7 +83,7 @@ public:
   virtual void
   calculate_particle_floating_wall_contact_force(
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-      &                        particle_floating_mesh_in_contact,
+                              &particle_floating_mesh_in_contact,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
@@ -124,11 +124,11 @@ public:
   virtual void
   calculate_IB_particle_wall_contact_force(
     particle_wall_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                          normal_force,
-    Tensor<1, 3> &                          tangential_force,
-    Tensor<1, 3> &                          tangential_torque,
-    Tensor<1, 3> &                          rolling_resistance_torque,
-    IBParticle<dim> &                       particle,
+    Tensor<1, 3>                           &normal_force,
+    Tensor<1, 3>                           &tangential_force,
+    Tensor<1, 3>                           &tangential_torque,
+    Tensor<1, 3>                           &rolling_resistance_torque,
+    IBParticle<dim>                        &particle,
     const double                            wall_youngs_modulus,
     const double                            wall_poisson_ratio,
     const double                            wall_restitution_coefficient,
@@ -166,7 +166,7 @@ protected:
   void
   update_contact_information(
     particle_wall_contact_info_struct<dim> &contact_pair_information,
-    const ArrayView<const double> &         particle_properties,
+    const ArrayView<const double>          &particle_properties,
     const double                            dt);
 
   /**
@@ -185,10 +185,10 @@ protected:
   void
   update_particle_floating_wall_contact_information(
     particle_wall_contact_info_struct<dim> &contact_pair_information,
-    const ArrayView<const double> &         particle_properties,
+    const ArrayView<const double>          &particle_properties,
     const double                            dt,
-    const Tensor<1, 3> &                    cut_cell_translational_velocity,
-    const Tensor<1, 3> &                    cut_cell_rotational_velocity,
+    const Tensor<1, 3>                     &cut_cell_translational_velocity,
+    const Tensor<1, 3>                     &cut_cell_rotational_velocity,
     const double center_of_rotation_particle_distance);
 
   /**
@@ -207,9 +207,9 @@ protected:
   inline void
   apply_force_and_torque(
     const std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
-      &             forces_and_torques,
-    Tensor<1, 3> &  particle_torque,
-    Tensor<1, 3> &  particle_force,
+                   &forces_and_torques,
+    Tensor<1, 3>   &particle_torque,
+    Tensor<1, 3>   &particle_force,
     const Point<3> &point_on_boundary,
     int             boundary_id = 0)
   {
@@ -259,15 +259,14 @@ protected:
   double effective_radius;
   double effective_mass;
   std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                 boundary_translational_velocity_map;
-  std::unordered_map<unsigned int, double>       boundary_rotational_speed_map;
+                                           boundary_translational_velocity_map;
+  std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
-  std::map<types::particle_index, double>        effective_youngs_modulus;
-  std::map<types::particle_index, double>        effective_shear_modulus;
-  std::map<types::particle_index, double> effective_coefficient_of_restitution;
-  std::map<types::particle_index, double> effective_coefficient_of_friction;
-  std::map<types::particle_index, double>
-    effective_coefficient_of_rolling_friction;
+  std::vector<double>                            effective_youngs_modulus;
+  std::vector<double>                            effective_shear_modulus;
+  std::vector<double> effective_coefficient_of_restitution;
+  std::vector<double> effective_coefficient_of_friction;
+  std::vector<double> effective_coefficient_of_rolling_friction;
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;
