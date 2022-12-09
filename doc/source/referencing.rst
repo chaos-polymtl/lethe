@@ -16,13 +16,23 @@ Discrete Element Method
 
 * `S. Golshan and B. Blais, “Load-balancing strategies in discrete element method simulations”, Processes, 10, 1, 2022 <https://www.mdpi.com/2227-9717/10/1/79>`_. 
 
+Unresolved CFD-DEM
+-------------------
+
+* `T. E. Geitani, S. Golshan and B. Blais, "Towards High-order CFD-DEM: Development and Validation", September 2022 <https://doi.org/10.48550/arXiv.2211.01185>`_.
+
 Sharp-Edge Immersed Boundary Method
 ------------------------------------
 
-* `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_. 
+* `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_
 
-Non-Newtonian (shear thinning)
+Nitsche Immersed Boundary Method
+------------------------------------
+
+* `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", October 2022 <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4264140>`_
+
+
+Non-Newtonian fluids
 -------------------------------
 
-* (pre-print) `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", September 2022 <http://dx.doi.org/10.2139/ssrn.4224480>`_.
-
+* `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", Journal of Non-Newtonian Fluid Mechanics, 311, 104951, 2023 <https://doi.org/10.1016/j.jnnfm.2022.104951>`_.
