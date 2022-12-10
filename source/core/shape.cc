@@ -523,7 +523,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -603,12 +603,12 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
+RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double> &          weights,
-                        const std::vector<Point<dim>> &      nodes,
-                        const Point<dim> &                   position,
-                        const Tensor<1, 3> &                 orientation)
+                        const std::vector<double>           &weights,
+                        const std::vector<Point<dim>>       &nodes,
+                        const Point<dim>                    &position,
+                        const Tensor<1, 3>                  &orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -633,8 +633,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim> &         position,
-                        const Tensor<1, 3> &       orientation)
+                        const Point<dim>          &position,
+                        const Tensor<1, 3>        &orientation)
   : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
                position,
                orientation)
@@ -676,7 +676,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -691,7 +691,7 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1421,25 +1421,30 @@ CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
 
-  //external cylinder
-  double level_set_of_cylinder_hallow=0;
-  double p_radius=std::pow(centered_point[0]*centered_point[0]+centered_point[1]*centered_point[1],0.5);
-  double radius_diff_o=p_radius-(radius+rectangular_base/2);
-  double radius_diff_i = p_radius -(radius-rectangular_base/2);
-  double h_diff_o=abs(centered_point[2]-height/2)-height/2;
+  // external cylinder
+  double level_set_of_cylinder_hallow = 0;
+  double p_radius      = std::pow(centered_point[0] * centered_point[0] +
+                               centered_point[1] * centered_point[1],
+                             0.5);
+  double radius_diff_o = p_radius - (radius + rectangular_base / 2);
+  double radius_diff_i = p_radius - (radius - rectangular_base / 2);
+  double h_diff_o      = abs(centered_point[2] - height / 2) - height / 2;
 
-  if(radius_diff_o>0 &&h_diff_o>0)
-    level_set_of_cylinder_hallow= std::pow(radius_diff_o*radius_diff_o+h_diff_o*h_diff_o,0.5);
-  else if(radius_diff_o>0 &&h_diff_o<=0)
-    level_set_of_cylinder_hallow=radius_diff_o;
-  else if(radius_diff_o<=0&& radius_diff_i>0&&h_diff_o>0)
-    level_set_of_cylinder_hallow=h_diff_o;
-  else if(radius_diff_i<=0&&h_diff_o>0)
-    level_set_of_cylinder_hallow=std::pow(radius_diff_i*radius_diff_i+h_diff_o*h_diff_o,0.5);
-  else if(radius_diff_i<=0&&h_diff_o<=0)
-    level_set_of_cylinder_hallow=-radius_diff_i;
+  if (radius_diff_o > 0 && h_diff_o > 0)
+    level_set_of_cylinder_hallow =
+      std::pow(radius_diff_o * radius_diff_o + h_diff_o * h_diff_o, 0.5);
+  else if (radius_diff_o > 0 && h_diff_o <= 0)
+    level_set_of_cylinder_hallow = radius_diff_o;
+  else if (radius_diff_o <= 0 && radius_diff_i > 0 && h_diff_o > 0)
+    level_set_of_cylinder_hallow = h_diff_o;
+  else if (radius_diff_i <= 0 && h_diff_o > 0)
+    level_set_of_cylinder_hallow =
+      std::pow(radius_diff_i * radius_diff_i + h_diff_o * h_diff_o, 0.5);
+  else if (radius_diff_i <= 0 && h_diff_o <= 0)
+    level_set_of_cylinder_hallow = -radius_diff_i;
   else
-    level_set_of_cylinder_hallow=std::max(std::max(radius_diff_o,h_diff_o),-radius_diff_i);
+    level_set_of_cylinder_hallow =
+      std::max(std::max(radius_diff_o, h_diff_o), -radius_diff_i);
 
 
 
@@ -1451,11 +1456,11 @@ std::shared_ptr<Shape<dim>>
 CylindricalTube<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<CylindricalTube<dim>>(this->radius+rectangular_base/2,
-                                           this->radius-rectangular_base/2,
-                                    this->height,
-                                    this->position,
-                                    this->orientation);
+    std::make_shared<CylindricalTube<dim>>(this->radius + rectangular_base / 2,
+                                           this->radius - rectangular_base / 2,
+                                           this->height,
+                                           this->position,
+                                           this->orientation);
   return copy;
 }
 
@@ -1464,7 +1469,11 @@ double
 CylindricalTube<dim>::displaced_volume(const double /*fluid_density*/)
 {
   using numbers::PI;
-  double solid_volume = height*PI*((this->radius+rectangular_base/2)*(this->radius+rectangular_base/2)-(this->radius-rectangular_base/2)*(this->radius-rectangular_base/2));
+  double solid_volume = height * PI *
+                        ((this->radius + rectangular_base / 2) *
+                           (this->radius + rectangular_base / 2) -
+                         (this->radius - rectangular_base / 2) *
+                           (this->radius - rectangular_base / 2));
 
   return solid_volume;
 }
@@ -1473,88 +1482,119 @@ CylindricalTube<dim>::displaced_volume(const double /*fluid_density*/)
 template <int dim>
 double
 CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
-                            const unsigned int /*component*/) const
+                             const unsigned int /*component*/) const
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
+  // distance to the center of helix
 
-  //distance to the center of helix
+  double level_set_of_cylinder_hallow = 0;
+  double p_radius        = std::pow(centered_point[0] * centered_point[0] +
+                               centered_point[1] * centered_point[1],
+                             0.5);
+  double radial_distance = p_radius - radius;
 
+  double phase =
+    std::atan2(centered_point[1], centered_point[0]) ;
+  if (phase != phase)
+    phase = 0;
+  if (phase < 0)
+    phase = phase+2*numbers::PI;
 
-  double level_set_of_cylinder_hallow=0;
-  double p_radius=std::pow(centered_point[0]*centered_point[0]+centered_point[1]*centered_point[1],0.5);
-  double radial_distance=p_radius-radius;
+  // helix
+  double nb_turns     = height / pitch;
+  double phase_at_top = (nb_turns - std::floor(nb_turns)) * 2 * numbers::PI;
+  double nb_full_turns_helix = std::floor(height / pitch);
 
-  double phase= std::atan2(-centered_point[1],-centered_point[0])+numbers::PI;
-  if(phase!=phase)
-    phase=0;
-  if (phase<0)
-    phase=phase;
+  double nb_full_turns = std::floor(centered_point[2] / pitch);
 
-  //helix
-  double nb_full_turn=std::floor(centered_point[2]/pitch);
-  double level_set_tube=0;
-  if(nb_full_turn>0)
+  double level_set_tube = 0;
+  double x=centered_point[2]-phase * pitch / (2 * numbers::PI);
+
+  unsigned int n_periode=0;
+  if(phase/(2 * numbers::PI)<nb_turns-std::floor(nb_turns))
     {
-      double z_diff =
-        std::min(abs(centered_point[2] - (nb_full_turn * pitch +
-                                          phase * pitch / (2 * numbers::PI))),
-                 abs(centered_point[2] - ((nb_full_turn + 1) * pitch +
-                                          phase * pitch / (2 * numbers::PI))));
-      z_diff =
-        std::min(abs(centered_point[2] - ((nb_full_turn - 1) * pitch +
-                                          phase * pitch / (2 * numbers::PI))),
-                 z_diff);
-      level_set_tube =
-        std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
-        radius_tube;
-    }
-  else if(nb_full_turn==0) {
-      double z_diff =
-        std::min(abs(centered_point[2] - (nb_full_turn * pitch +
-                                          phase * pitch / (2 * numbers::PI))),
-                 abs(centered_point[2] - ((nb_full_turn + 1) * pitch +
-                                          phase * pitch / (2 * numbers::PI))));
-      level_set_tube =
-        std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
-        radius_tube;
+      n_periode =std::ceil( nb_turns - 1);
     }
   else{
-      double z_diff =abs(centered_point[2] -phase * pitch / (2 * numbers::PI));
-      level_set_tube =
-        std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
-        radius_tube;
+      n_periode =std::floor( nb_turns - 1);
     }
 
-  //base cap
-  double p_radius_cap_base=std::pow((centered_point[0]-radius)*(centered_point[0]-radius)+centered_point[2]*centered_point[2],0.5);
-  double radial_distance_cap_base=p_radius_cap_base-radius_tube;
-  double h_dist_from_cap_0=-centered_point[1];
+  double z_diff=0;
+  if(x<0){
+      z_diff=-x;
+    }
+  else if(x>n_periode*pitch){
+      z_diff=x-n_periode*pitch;
+    }
+  else{
+      z_diff=1*abs(x-pitch*std::floor(1/pitch*(x+pitch/2)));
+    }
 
-  double dist_from_cap=0;
-  if(radial_distance_cap_base>0 &&h_dist_from_cap_0>0)
-    dist_from_cap=std::pow(h_dist_from_cap_0*h_dist_from_cap_0+radial_distance_cap_base*radial_distance_cap_base,0.5);
-  else if(radial_distance_cap_base<=0 &&h_dist_from_cap_0>0)
-    dist_from_cap= h_dist_from_cap_0;
-  else if(radial_distance_cap_base>0 &&h_dist_from_cap_0<=0)
-    dist_from_cap= h_dist_from_cap_0;
+  level_set_tube =
+    std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
+    radius_tube;
+
+
+  // base cap
+  double p_radius_cap_base =
+    std::pow((centered_point[0] - radius) * (centered_point[0] - radius) +
+               centered_point[2] * centered_point[2],
+             0.5);
+  double radial_distance_cap_base = p_radius_cap_base - radius_tube;
+  double h_dist_from_cap_0        = abs(centered_point[1]);
+
+  double dist_from_cap = 0;
+  if (radial_distance_cap_base > 0 )
+    dist_from_cap =
+      std::pow(h_dist_from_cap_0 * h_dist_from_cap_0 +
+                 radial_distance_cap_base * radial_distance_cap_base,
+               0.5);
   else
-    dist_from_cap= h_dist_from_cap_0;
+    dist_from_cap = h_dist_from_cap_0;
 
 
-  double level_set=0;
-  if(dist_from_cap>0)
-    level_set=std::min(level_set_tube,dist_from_cap);
+  // top cap
+
+  Point<dim>     point_at_top;
+  Tensor<1, dim> vector_at_top;
+  point_at_top[0]  = std::cos(phase_at_top) * radius;
+  point_at_top[1]  = std::sin(phase_at_top) * radius;
+  point_at_top[2]  = height;
+  vector_at_top[0] = -point_at_top[1] / radius;
+  vector_at_top[1] = point_at_top[0] / radius;
+  vector_at_top[2] = 0;
+
+  double p_radius_cap_top =
+    ((centered_point - point_at_top) -
+     scalar_product((centered_point - point_at_top), vector_at_top) /
+       vector_at_top.norm_square() * vector_at_top)
+      .norm();
+  double radial_distance_cap_top = p_radius_cap_top - radius_tube;
+  double h_dist_from_cap_top =
+      (scalar_product((centered_point - point_at_top), vector_at_top) /
+       vector_at_top.norm_square() * vector_at_top)
+        .norm();
+
+  double dist_from_cap_top = 0;
+  if (radial_distance_cap_top > 0 )
+    dist_from_cap_top =
+      std::pow(h_dist_from_cap_top * h_dist_from_cap_top +
+                 radial_distance_cap_top * radial_distance_cap_top,
+               0.5);
   else
-    level_set=std::max(level_set_tube,dist_from_cap);
+    dist_from_cap_top = h_dist_from_cap_top;
 
 
 
+  double level_set = 0;
+  if (level_set_tube>0)
+    level_set =std::min(std::min(level_set_tube, dist_from_cap), dist_from_cap_top);
+  else
+    level_set =std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
 
 
-
-
-
+  
   return level_set;
 }
 
@@ -1564,11 +1604,11 @@ CylindricalHelix<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CylindricalHelix<dim>>(this->radius,
-                                           this->radius_tube,
-                                           this->height,
-                                           this->pitch,
-                                           this->position,
-                                           this->orientation);
+                                            this->radius_tube,
+                                            this->height,
+                                            this->pitch,
+                                            this->position,
+                                            this->orientation);
   return copy;
 }
 
