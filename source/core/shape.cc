@@ -965,6 +965,175 @@ Cylinder<dim>::displaced_volume(const double /*fluid_density*/)
   return solid_volume;
 }
 
+template <int dim>
+double
+CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
+                     const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+
+  //external cylinder
+  double level_set_of_cylinder_hallow=0;
+  double p_radius=std::pow(centered_point[0]*centered_point[0]+centered_point[1]*centered_point[1],0.5);
+  double radius_diff_o=p_radius-(radius+rectangular_base/2);
+  double radius_diff_i = p_radius -(radius-rectangular_base/2);
+  double h_diff_o=abs(centered_point[2]-height/2)-height/2;
+
+  if(radius_diff_o>0 &&h_diff_o>0)
+    level_set_of_cylinder_hallow= std::pow(radius_diff_o*radius_diff_o+h_diff_o*h_diff_o,0.5);
+  else if(radius_diff_o>0 &&h_diff_o<=0)
+    level_set_of_cylinder_hallow=radius_diff_o;
+  else if(radius_diff_o<=0&& radius_diff_i>0&&h_diff_o>0)
+    level_set_of_cylinder_hallow=h_diff_o;
+  else if(radius_diff_i<=0&&h_diff_o>0)
+    level_set_of_cylinder_hallow=std::pow(radius_diff_i*radius_diff_i+h_diff_o*h_diff_o,0.5);
+  else if(radius_diff_i<=0&&h_diff_o<=0)
+    level_set_of_cylinder_hallow=-radius_diff_i;
+  else
+    level_set_of_cylinder_hallow=std::max(std::max(radius_diff_o,h_diff_o),-radius_diff_i);
+
+
+
+  return level_set_of_cylinder_hallow;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+CylindricalTube<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<CylindricalTube<dim>>(this->radius+rectangular_base/2,
+                                           this->radius-rectangular_base/2,
+                                    this->height,
+                                    this->position,
+                                    this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+CylindricalTube<dim>::displaced_volume(const double /*fluid_density*/)
+{
+  using numbers::PI;
+  double solid_volume = height*PI*((this->radius+rectangular_base/2)*(this->radius+rectangular_base/2)-(this->radius-rectangular_base/2)*(this->radius-rectangular_base/2));
+
+  return solid_volume;
+}
+
+
+template <int dim>
+double
+CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
+                            const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+
+  //distance to the center of helix
+
+
+  double level_set_of_cylinder_hallow=0;
+  double p_radius=std::pow(centered_point[0]*centered_point[0]+centered_point[1]*centered_point[1],0.5);
+  double radial_distance=p_radius-radius;
+
+  double phase= std::atan2(-centered_point[1],-centered_point[0])+numbers::PI;
+  if(phase!=phase)
+    phase=0;
+  if (phase<0)
+    phase=phase;
+
+  //helix
+  double nb_full_turn=std::floor(centered_point[2]/pitch);
+  double level_set_tube=0;
+  if(nb_full_turn>0)
+    {
+      double z_diff =
+        std::min(abs(centered_point[2] - (nb_full_turn * pitch +
+                                          phase * pitch / (2 * numbers::PI))),
+                 abs(centered_point[2] - ((nb_full_turn + 1) * pitch +
+                                          phase * pitch / (2 * numbers::PI))));
+      z_diff =
+        std::min(abs(centered_point[2] - ((nb_full_turn - 1) * pitch +
+                                          phase * pitch / (2 * numbers::PI))),
+                 z_diff);
+      level_set_tube =
+        std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
+        radius_tube;
+    }
+  else if(nb_full_turn==0) {
+      double z_diff =
+        std::min(abs(centered_point[2] - (nb_full_turn * pitch +
+                                          phase * pitch / (2 * numbers::PI))),
+                 abs(centered_point[2] - ((nb_full_turn + 1) * pitch +
+                                          phase * pitch / (2 * numbers::PI))));
+      level_set_tube =
+        std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
+        radius_tube;
+    }
+  else{
+      double z_diff =abs(centered_point[2] -phase * pitch / (2 * numbers::PI));
+      level_set_tube =
+        std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
+        radius_tube;
+    }
+
+  //base cap
+  double p_radius_cap_base=std::pow((centered_point[0]-radius)*(centered_point[0]-radius)+centered_point[2]*centered_point[2],0.5);
+  double radial_distance_cap_base=p_radius_cap_base-radius_tube;
+  double h_dist_from_cap_0=-centered_point[1];
+
+  double dist_from_cap=0;
+  if(radial_distance_cap_base>0 &&h_dist_from_cap_0>0)
+    dist_from_cap=std::pow(h_dist_from_cap_0*h_dist_from_cap_0+radial_distance_cap_base*radial_distance_cap_base,0.5);
+  else if(radial_distance_cap_base<=0 &&h_dist_from_cap_0>0)
+    dist_from_cap= h_dist_from_cap_0;
+  else if(radial_distance_cap_base>0 &&h_dist_from_cap_0<=0)
+    dist_from_cap= h_dist_from_cap_0;
+  else
+    dist_from_cap= h_dist_from_cap_0;
+
+
+  double level_set=0;
+  if(dist_from_cap>0)
+    level_set=std::min(level_set_tube,dist_from_cap);
+  else
+    level_set=std::max(level_set_tube,dist_from_cap);
+
+
+
+
+
+
+
+
+  return level_set;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+CylindricalHelix<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<CylindricalHelix<dim>>(this->radius,
+                                           this->radius_tube,
+                                           this->height,
+                                           this->pitch,
+                                           this->position,
+                                           this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
+{
+  using numbers::PI;
+  double solid_volume = 1;
+
+  return solid_volume;
+}
+
 template class Sphere<2>;
 template class Sphere<3>;
 template class Rectangle<2>;
@@ -974,6 +1143,8 @@ template class Ellipsoid<3>;
 template class Torus<3>;
 template class Cone<3>;
 template class Cylinder<3>;
+template class CylindricalTube<3>;
+template class CylindricalHelix<3>;
 template class CutHollowSphere<3>;
 template class DeathStar<3>;
 template class CompositeShape<2>;

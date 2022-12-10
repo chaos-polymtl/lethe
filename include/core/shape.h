@@ -70,7 +70,7 @@ public:
    * @param orientation The orientation to set the shape at
    */
   Shape(double              radius,
-        const Point<dim> &  position,
+        const Point<dim>   &position,
         const Tensor<1, 3> &orientation)
 
     : AutoDerivativeFunction<dim>(1e-8)
@@ -89,7 +89,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   virtual double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override = 0;
 
   /**
@@ -102,7 +102,7 @@ public:
    */
   virtual double
   value_with_cell_guess(
-    const Point<dim> &                                   evaluation_point,
+    const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int                                   component = 0);
 
@@ -114,7 +114,7 @@ public:
    */
   virtual Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim> &                                   evaluation_point,
+    const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int                                   component = 0);
 
@@ -220,7 +220,7 @@ public:
    * @param orientation The sphere orientation
    */
   Sphere<dim>(double              radius,
-              const Point<dim> &  position,
+              const Point<dim>   &position,
               const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
   {
@@ -240,7 +240,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -255,7 +255,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
-  gradient(const Point<dim> & evaluation_point,
+  gradient(const Point<dim>  &evaluation_point,
            const unsigned int component = 0) const override;
 
   /**
@@ -289,8 +289,8 @@ public:
    * @param orientation The rectangle orientation
    */
   Rectangle<dim>(const Tensor<1, dim> &half_lengths,
-                 const Point<dim> &    position,
-                 const Tensor<1, 3> &  orientation)
+                 const Point<dim>     &position,
+                 const Tensor<1, 3>   &orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
   {}
@@ -303,7 +303,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -336,8 +336,8 @@ public:
    * @param orientation The ellipsoid orientation
    */
   Ellipsoid<dim>(const Tensor<1, dim> &radii,
-                 const Point<dim> &    position,
-                 const Tensor<1, 3> &  orientation)
+                 const Point<dim>     &position,
+                 const Tensor<1, 3>   &orientation)
     : Shape<dim>(radii.norm(), position, orientation)
     , radii(radii)
   {}
@@ -350,7 +350,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -386,7 +386,7 @@ public:
    */
   Torus<dim>(double              ring_radius,
              double              ring_thickness,
-             const Point<dim> &  position,
+             const Point<dim>   &position,
              const Tensor<1, 3> &orientation)
     : Shape<dim>(ring_thickness, position, orientation)
     , ring_radius(ring_radius)
@@ -401,7 +401,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -437,7 +437,7 @@ public:
    */
   Cone<dim>(double              tan_base_angle,
             double              height,
-            const Point<dim> &  position,
+            const Point<dim>   &position,
             const Tensor<1, 3> &orientation)
     : Shape<dim>(height, position, orientation)
     , tan_base_angle(tan_base_angle)
@@ -454,7 +454,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -496,7 +496,7 @@ public:
   CutHollowSphere<dim>(double              radius,
                        double              cut_depth,
                        double              shell_thickness,
-                       const Point<dim> &  position,
+                       const Point<dim>   &position,
                        const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
@@ -513,7 +513,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -555,7 +555,7 @@ public:
   DeathStar<dim>(double              radius,
                  double              hole_radius,
                  double              spheres_distance,
-                 const Point<dim> &  position,
+                 const Point<dim>   &position,
                  const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
@@ -576,7 +576,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -640,7 +640,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -653,7 +653,7 @@ public:
    */
   double
   value_with_cell_guess(
-    const Point<dim> &                                   evaluation_point,
+    const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int /*component = 0*/) override;
 
@@ -678,7 +678,7 @@ public:
    * @param updated_dof_handler the reference to the new dof_handler
    */
   void
-  update_precalculations(DoFHandler<dim> &             updated_dof_handler,
+  update_precalculations(DoFHandler<dim>              &updated_dof_handler,
                          std::shared_ptr<Mapping<dim>> mapping);
 
 private:
@@ -736,12 +736,12 @@ public:
    * @param orientation the orientation of the shape in relation to each main
    * axis
    */
-  RBFShape<dim>(const std::vector<double> &          support_radii,
+  RBFShape<dim>(const std::vector<double>           &support_radii,
                 const std::vector<RBFBasisFunction> &basis_functions,
-                const std::vector<double> &          weights,
-                const std::vector<Point<dim>> &      nodes,
-                const Point<dim> &                   position,
-                const Tensor<1, 3> &                 orientation);
+                const std::vector<double>           &weights,
+                const std::vector<Point<dim>>       &nodes,
+                const Point<dim>                    &position,
+                const Tensor<1, 3>                  &orientation);
 
   /**
    * @brief An RBFShape represents a physical object by describing its signed
@@ -756,8 +756,8 @@ public:
    * axis
    */
   RBFShape<dim>(const std::vector<double> &shape_arguments,
-                const Point<dim> &         position,
-                const Tensor<1, 3> &       orientation);
+                const Point<dim>          &position,
+                const Tensor<1, 3>        &orientation);
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
@@ -771,7 +771,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -796,7 +796,7 @@ public:
    */
   Tensor<1, dim>
   gradient_with_cell_guess(
-    const Point<dim> &                                   evaluation_point,
+    const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int component = 0) override;
 
@@ -806,7 +806,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   Tensor<1, dim>
-  gradient(const Point<dim> & evaluation_point,
+  gradient(const Point<dim>  &evaluation_point,
            const unsigned int component = 0) const override;
 
   /**
@@ -1259,9 +1259,9 @@ public:
    * @param orientation The orientation of the sphere, from it's center to the cut's center
    */
   Cylinder<dim>(double              radius,
-                       double             half_length,
-                       const Point<dim> &  position,
-                       const Tensor<1, 3> &orientation)
+                double              half_length,
+                const Point<dim>   &position,
+                const Tensor<1, 3> &orientation)
     : Shape<dim>(radius, position, orientation)
     , radius(radius)
     , half_length(half_length)
@@ -1275,7 +1275,7 @@ public:
    * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
    */
   double
-  value(const Point<dim> & evaluation_point,
+  value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
   /**
@@ -1296,6 +1296,186 @@ public:
 private:
   double radius;
   double half_length;
+};
+
+template <int dim>
+class CylindricalTube : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
+   * by a given depth
+   * @param radius The radius of the smallest sphere containing the cut hollow sphere
+   * @param cut_depth The height of the slice removed from the sphere
+   * @param shell_thickness The thickness of the hollow sphere shell
+   * @param position The center of the sphere
+   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   */
+  CylindricalTube<dim>(double              radius_i,
+                       double              radius_o ,
+                       double              height,
+                       const Point<dim>   &position,
+                       const Tensor<1, 3> &orientation)
+    : Shape<dim>((radius_o+radius_i)/2, position, orientation)
+    , radius((radius_o+radius_i)/2)
+    , height(height)
+    , rectangular_base(radius_o-radius_i)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim>  &evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double height;
+  double rectangular_base;
+
+};
+
+template <int dim>
+class CylindricalHelix : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
+   * by a given depth
+   * @param radius The radius of the smallest sphere containing the cut hollow sphere
+   * @param cut_depth The height of the slice removed from the sphere
+   * @param shell_thickness The thickness of the hollow sphere shell
+   * @param position The center of the sphere
+   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   */
+  CylindricalHelix<dim>(double             radius,
+                       double              radius_tube ,
+                       double              height,
+                        double              pitch,
+                       const Point<dim>   &position,
+                       const Tensor<1, 3> &orientation)
+    : Shape<dim>(radius_tube, position, orientation)
+    , radius(radius)
+    , radius_tube(radius_tube)
+    , height(height)
+    , pitch(pitch)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim>  &evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double height;
+  double pitch;
+  double radius_tube;
+
+};
+
+
+template <int dim>
+class RectangularHelix : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
+   * by a given depth
+   * @param radius The radius of the smallest sphere containing the cut hollow sphere
+   * @param cut_depth The height of the slice removed from the sphere
+   * @param shell_thickness The thickness of the hollow sphere shell
+   * @param position The center of the sphere
+   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   */
+  RectangularHelix<dim>(double              radius,
+                       double              height,
+                       double              rectangular_base,
+                       double              rectangular_height,
+                       double              pitch,
+                       const Point<dim>   &position,
+                       const Tensor<1, 3> &orientation)
+    : Shape<dim>(radius, position, orientation)
+    , radius(radius)
+    , height(height)
+    , rectangular_base(rectangular_base)
+    , rectangular_height(rectangular_height)
+    , pitch(pitch)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim>  &evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double height;
+  double rectangular_base;
+  double rectangular_height;
+  double pitch;
 
 };
 
