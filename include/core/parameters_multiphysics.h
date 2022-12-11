@@ -69,7 +69,8 @@ namespace Parameters
    */
   struct VOF_PeelingWetting
   {
-    bool enable;
+    bool enable_peeling;
+    bool enable_wetting;
 
     // Type of verbosity for the peeling-wetting mechanism
     Parameters::Verbosity verbosity;

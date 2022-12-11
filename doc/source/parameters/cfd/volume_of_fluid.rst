@@ -1,4 +1,4 @@
-Multiphase Flow - Volume of Fluid
+Volume of Fluid (Multiphase Flow)
 ----------------------------------
 
 In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (VOF) are specified. 
@@ -35,8 +35,9 @@ The default values of the VOF parameters are given in the text box below.
 		end
 
 		subsection peeling wetting
-			set enable 	= false
-			set verbosity 	= quiet
+			set enable peeling	= false
+			set enable wetting	= false
+			set verbosity 		= quiet
 		end
 
 		subsection mass conservation
@@ -135,10 +136,36 @@ The default values of the VOF parameters are given in the text box below.
 * ``subsection peeling wetting``: Peeling and wetting mechanisms are very important to consider when there are solid boundaries in the domain, like a wall. If the fluid is already on the wall and its velocity drives it away from it, the fluid should be able to detach from the wall, meaning to `peel` from it. If the fluid is not already on the wall and its velocity drives it toward it, the fluid should be able to attach to the wall, meaning to `wet` it. This subsection defines the parameters for peeling and wetting mechanisms at the VOF boundaries, as defined in :doc:`boundary_conditions_multiphysics`. 
 
   .. important::
-    This peeling/wetting mechanism implementation is an heuristic. It has been developed to meet the need of specific projects and gave satisfactory results as is, but it has not been broadly tested nor demonstrated, so its results should be considered with cautions. Do not hesitate to write to the team through the `Lethe github page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
+    This peeling/wetting mechanism implementation is a heuristic. It has been developed to meet the need of specific projects and gave satisfactory results as is, but it has not been broadly tested nor demonstrated, so its results should be considered with caution. Do not hesitate to write to the team through the `Lethe GitHub page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
 
+  .. warning::
 
-  * ``enable``: controls if peeling/wetting mechanism is enabled.
+    As peeling/wetting mechanisms result in fluid generation and loss, it is highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
+
+  * ``enable peeling``: controls if peeling mechanism is enabled. Peeling occurs in a cell where the following conditions are met:
+
+    * the cell is in the domain of the higher density fluid,
+    * the cell pressure value is below the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
+    * the pressure gradient is negative for more than half of the quadrature points.
+
+    The cell is then filled with the lower density fluid by changing its phase value progressively.
+
+    .. important::
+      Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
+
+  * ``enable wetting``: controls if the wetting mechanism is enabled. Wetting occurs in a cell where those conditions are met: 
+
+    * the cell is in the domain of the lower density fluid,
+    * the cell pressure value is above the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
+    * the pressure gradient is positive for more than half of the quadrature points.
+
+    The cell is then filled with the higher density fluid by changing its phase value progressively.
+
+    .. tip ::
+      Using ``set enable wetting = false`` and relying on the ``diffusivity`` to wet the boundaries (see :ref:`improve wetting`) can give better results when the densities of the two fluids are of a very different order of magnitude. 
+
+      Typically, when one fluid is more than a hundred times denser than the other, the wetting mechanism can result in the denser fluid crawling on the wall in a non-physical way. Again, this is still a heuristic, so do not hesitate to write to the team through the `Lethe GitHub page <https://github.com/lethe-cfd/lethe>`_ would you need assistance.
+
   * ``verbosity``: enables the display of the number of peeled and wet cells at each time-step. Choices are: ``quiet`` (default, no output) and ``verbose``.
 
     .. admonition:: Example of a ``set verbosity = verbose`` output:
@@ -149,40 +176,20 @@ The default values of the VOF parameters are given in the text box below.
           -number of wet cells: 24
           -number of peeled cells: 1
 
-  * Peeling occurs in a cell where the following conditions are met:
-
-    * the cell is in the domain of the higher density fluid,
-    * the cell pressure value is below the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
-    * the pressure gradient is negative for more than half of the quadrature points.
-
-    The cell is then filled with the lower density fluid by changing its phase value progressively.
-
-  * Wetting occurs in a cell where those conditions are met: 
-
-    * the cell is in the domain of the lower density fluid,
-    * the cell pressure value is above the average pressure of the ``monitored fluid`` (``fluid 1`` by default, see ``subsection mass conservation``), and
-    * the pressure gradient is positive for more than half of the quadrature points.
-
-    The cell is then filled with the higher density fluid by changing its phase value.
-
-    .. tip::
-      Even if ``monitoring`` is not enabled, the ``monitored fluid`` (``fluid 1`` by default) will be considered as the fluid of interest for the average pressure calculation in the peeling/wetting mechanism.
-
-.. warning::
-
-  As peeling/wetting mechanisms result in fluid generation and loss, is it highly advised to monitor the mass conservation of the fluid of interest (``subsection mass conservation``) and to change the type of sharpening threshold to adaptative (``subsection sharpening``).
-
 * ``subsection mass conservation``: By default, mass conservation (continuity) equations are solved on the whole domain, i.e. on both fluids (``set conservative fluid = both``). However, replacing the mass conservation by a zero-pressure condition on one of the fluid (typically, the air), so that it can get in and out of the domain, can be useful to :ref:`improve wetting`. This subsection defines parameters that can be used to solve mass conservation in one fluid instead of both, and to monitor the surface/volume (2D/3D) occupied by the other fluid of interest.
 
   * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
 
     Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
-  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume computation of the fluid given as ``monitored fluid`` (``fluid 0`` or ``fluid 1`` (default)). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+  * ``monitoring``: controls if conservation is monitored at each iteration, through the volume (3D) or surface (2D) computation of the fluid given as ``monitored fluid`` (``fluid 1`` (default) or ``fluid 0``). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
+
+    .. tip::
+      In 2D, the mass returned is in the dimension of :math:`\left[\text{mass}/\text{length}\right]`: multiply this value by the depth of your system to get the ``monitored fluid`` mass (in :math:`\text{kg}` if using SI units).
 
     .. admonition:: Example of file output, `VOF_monitoring_fluid_1.dat`:
 
-      The ``volume_fluid_1`` column gives the surface/volume (2D/3D) occupied by the fluid with index 1, its total mass, and the sharpening threshold used for this iteration.
+      The ``volume_fluid_1`` column gives the volume occupied by the fluid with index 1, its total mass, and the sharpening threshold used for this iteration.
   
       .. code-block:: text
 

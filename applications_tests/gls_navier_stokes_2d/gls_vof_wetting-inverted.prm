@@ -26,7 +26,7 @@ subsection VOF
 	set diffusivity = 5e-3
 
 	subsection peeling wetting
-		set enable = true
+		set enable wetting = true
 		set verbosity = verbose
 	end
 	subsection interface sharpening
