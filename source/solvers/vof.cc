@@ -253,7 +253,8 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
-  if (vof_parameters.peeling_wetting.enable)
+  if (vof_parameters.peeling_wetting.enable_peeling ||
+      vof_parameters.peeling_wetting.enable_wetting)
     {
       // Peeling/wetting output
       data_out.add_data_vector(this->dof_handler, marker_pw, "marker_pw");
@@ -615,15 +616,36 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               fluid_id = "fluid_0";
             }
 
-          // Add volume column
-          this->table_monitoring_vof.add_value("volume_" + fluid_id,
-                                               this->volume_monitored);
-          this->table_monitoring_vof.set_scientific("volume_" + fluid_id, true);
+          if (dim == 2)
+            {
+              // Add surface column
+              this->table_monitoring_vof.add_value("surface_" + fluid_id,
+                                                   this->volume_monitored);
+              this->table_monitoring_vof.set_scientific("surface_" + fluid_id,
+                                                        true);
 
-          // Add mass column
-          this->table_monitoring_vof.add_value("mass_" + fluid_id,
-                                               this->mass_monitored);
-          this->table_monitoring_vof.set_scientific("mass_" + fluid_id, true);
+              // Add mass per length column
+              this->table_monitoring_vof.add_value("mass_per_length_" +
+                                                     fluid_id,
+                                                   this->mass_monitored);
+              this->table_monitoring_vof.set_scientific("mass_per_length_" +
+                                                          fluid_id,
+                                                        true);
+            }
+          else if (dim == 3)
+            {
+              // Add volume column
+              this->table_monitoring_vof.add_value("volume_" + fluid_id,
+                                                   this->volume_monitored);
+              this->table_monitoring_vof.set_scientific("volume_" + fluid_id,
+                                                        true);
+
+              // Add mass column
+              this->table_monitoring_vof.add_value("mass_" + fluid_id,
+                                                   this->mass_monitored);
+              this->table_monitoring_vof.set_scientific("mass_" + fluid_id,
+                                                        true);
+            }
 
           // Add sharpening threshold column
           this->table_monitoring_vof.add_value("sharpening_threshold",
@@ -645,7 +667,8 @@ VolumeOfFluid<dim>::modify_solution()
 {
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
   // Peeling/wetting
-  if (vof_parameters.peeling_wetting.enable)
+  if (vof_parameters.peeling_wetting.enable_peeling ||
+      vof_parameters.peeling_wetting.enable_wetting)
     {
       handle_peeling_wetting();
     }
@@ -2099,8 +2122,8 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
           unsigned int phase_lighter_fluid_q(0);
           float        phase_values_q(0);
           double       pressure_values_q(0);
-          unsigned int nb_pressure_grad_meet_peel_condition(0);
-          unsigned int nb_pressure_grad_meet_wet_condition(0);
+          unsigned int n_q_negative_pressure_grad(0);
+          unsigned int n_q_positive_pressure_grad(0);
 
           bool cell_face_at_pw_bounday(false);
 
@@ -2148,19 +2171,29 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
                         phase_lighter_fluid_q += 1;
 
                       // Condition on the pressure gradient
+                      bool peeling_condition_q(false);
+                      bool wetting_condition_q(false);
                       for (unsigned int d = 0; d < dim; d++)
                         {
-                          double pressure_gradient_q_d =
+                          double pressure_gradient_q =
                             pressure_gradients[q][d] *
                             fe_face_values_fd.normal_vector(q)[d];
 
-                          if (pressure_gradient_q_d <
+                          // Peeling if pressure_gradient_q is negative
+                          if (pressure_gradient_q <
                               -std::numeric_limits<double>::min())
-                            nb_pressure_grad_meet_peel_condition += 1;
-                          else if (pressure_gradient_q_d >
-                                   std::numeric_limits<double>::min())
-                            nb_pressure_grad_meet_wet_condition += 1;
+                            peeling_condition_q = true;
+                          // Wetting if pressure_gradient_q is positive
+                          if (pressure_gradient_q >
+                              std::numeric_limits<double>::min())
+                            wetting_condition_q = true;
                         }
+
+                      // Check if condition is reached for this quadrature point
+                      if (peeling_condition_q)
+                        n_q_negative_pressure_grad += 1;
+                      if (wetting_condition_q)
+                        n_q_positive_pressure_grad += 1;
 
                       pressure_values_q += pressure_values[q];
                       phase_values_q += phase_values[q];
@@ -2181,70 +2214,83 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
               double pressure_values_cell =
                 pressure_values_q / static_cast<double>(n_q_points_face);
 
-              // Check peeling condition on the pressure gradient
+              // Check peeling condition
+              // Note that it has priority over the wetting condition
               if (pressure_values_cell < pressure_monitored_avg and
-                  nb_pressure_grad_meet_peel_condition > n_q_points_face * 0.5)
+                  n_q_negative_pressure_grad > n_q_points_face * 0.5)
                 {
-                  // Peel the higher density fluid
-                  // conditions phase_values_cell < 1 or phase_values_cell
-                  // > 0 prevent from treating values outside of the range
-                  // [0,1]
-                  if (phase_denser_fluid_cell == 1 and phase_values_cell > 0.5)
+                  if (this->simulation_parameters.multiphysics.vof_parameters
+                        .peeling_wetting.enable_peeling)
                     {
-                      // Progressive phase value change
-                      double new_phase =
-                        std::max(phase_values_cell - 0.25,
-                                 static_cast<double>(phase_lighter_fluid_cell));
+                      // Peel the higher density fluid
+                      if (phase_denser_fluid_cell == 1 and
+                          phase_values_cell > 0.5)
+                        {
+                          // Progressive phase value change
+                          double new_phase =
+                            std::max(phase_values_cell - 0.25,
+                                     static_cast<double>(
+                                       phase_lighter_fluid_cell));
 
-                      change_cell_phase(PhaseChange::peeling,
-                                        new_phase,
-                                        solution_pw,
-                                        dof_indices_vof);
-                    }
-                  if (phase_denser_fluid_cell == 0 and phase_values_cell < 0.5)
-                    {
-                      // Progressive phase value change
-                      double new_phase =
-                        std::max(phase_values_cell + 0.25,
-                                 static_cast<double>(phase_lighter_fluid_cell));
+                          change_cell_phase(PhaseChange::peeling,
+                                            new_phase,
+                                            solution_pw,
+                                            dof_indices_vof);
+                        }
+                      if (phase_denser_fluid_cell == 0 and
+                          phase_values_cell < 0.5)
+                        {
+                          // Progressive phase value change
+                          double new_phase =
+                            std::max(phase_values_cell + 0.25,
+                                     static_cast<double>(
+                                       phase_lighter_fluid_cell));
 
-                      change_cell_phase(PhaseChange::peeling,
-                                        new_phase,
-                                        solution_pw,
-                                        dof_indices_vof);
+                          change_cell_phase(PhaseChange::peeling,
+                                            new_phase,
+                                            solution_pw,
+                                            dof_indices_vof);
+                        }
                     }
-                }
+                } // end condition peeling
+              // Check wetting condition if the cell is not marked as pelt
               else if (pressure_values_cell > pressure_monitored_avg and
-                       nb_pressure_grad_meet_wet_condition >
-                         n_q_points_face * 0.5)
+                       n_q_positive_pressure_grad > n_q_points_face * 0.5)
                 {
-                  if (phase_denser_fluid_cell == 1 and phase_values_cell > 0.5)
+                  if (this->simulation_parameters.multiphysics.vof_parameters
+                        .peeling_wetting.enable_wetting)
                     {
-                      // Progressive phase value change
-                      double new_phase =
-                        std::min(phase_values_cell + 0.25,
-                                 static_cast<double>(phase_denser_fluid_cell));
+                      if (phase_denser_fluid_cell == 1 and
+                          phase_values_cell > 0.5)
+                        {
+                          // Progressive phase value change
+                          double new_phase =
+                            std::min(phase_values_cell + 0.25,
+                                     static_cast<double>(
+                                       phase_denser_fluid_cell));
 
-                      change_cell_phase(PhaseChange::wetting,
-                                        new_phase,
-                                        solution_pw,
-                                        dof_indices_vof);
-                    }
-                  else if (phase_denser_fluid_cell == 0 and
-                           phase_values_cell < 0.5)
-                    {
-                      // Progressive phase value change
-                      double new_phase =
-                        std::min(phase_values_cell - 0.25,
-                                 static_cast<double>(phase_denser_fluid_cell));
+                          change_cell_phase(PhaseChange::wetting,
+                                            new_phase,
+                                            solution_pw,
+                                            dof_indices_vof);
+                        }
+                      else if (phase_denser_fluid_cell == 0 and
+                               phase_values_cell < 0.5)
+                        {
+                          // Progressive phase value change
+                          double new_phase =
+                            std::min(phase_values_cell - 0.25,
+                                     static_cast<double>(
+                                       phase_denser_fluid_cell));
 
-                      change_cell_phase(PhaseChange::wetting,
-                                        new_phase,
-                                        solution_pw,
-                                        dof_indices_vof);
+                          change_cell_phase(PhaseChange::wetting,
+                                            new_phase,
+                                            solution_pw,
+                                            dof_indices_vof);
+                        }
                     }
-                }
-            }
+                } // end condition wetting condition
+            }     // end condition cell_face_at_pw_bounday
 
         } // end condition cell at boundary
     }     // end loop on cells

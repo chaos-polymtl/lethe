@@ -378,10 +378,16 @@ Parameters::VOF_PeelingWetting::declare_parameters(ParameterHandler &prm)
   prm.enter_subsection("peeling wetting");
   {
     prm.declare_entry(
-      "enable",
+      "enable peeling",
       "false",
       Patterns::Bool(),
-      "Enable peeling/wetting mechanism in free surface simulation <true|false>");
+      "Enable peeling mechanism in free surface simulation <true|false>");
+
+    prm.declare_entry(
+      "enable wetting",
+      "false",
+      Patterns::Bool(),
+      "Enable wetting mechanism in free surface simulation <true|false>");
 
     prm.declare_entry(
       "verbosity",
@@ -398,7 +404,8 @@ Parameters::VOF_PeelingWetting::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("peeling wetting");
   {
-    enable = prm.get_bool("enable");
+    enable_peeling = prm.get_bool("enable peeling");
+    enable_wetting = prm.get_bool("enable wetting");
 
     const std::string op = prm.get("verbosity");
     if (op == "verbose")
