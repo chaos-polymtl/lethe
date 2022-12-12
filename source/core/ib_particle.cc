@@ -200,9 +200,9 @@ IBParticle<dim>::initialize_shape(const std::string         type,
     {
       if constexpr (dim == 3)
         shape = std::make_shared<Cylinder<dim>>(shape_arguments[0],
-                                            shape_arguments[1],
-                                            position,
-                                            orientation);
+                                                shape_arguments[1],
+                                                position,
+                                                orientation);
     }
   else if (type == "cylindrical tube")
     {
@@ -287,7 +287,7 @@ IBParticle<dim>::is_inside_crown(
   const double                                          inside_radius,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  const double radius = shape->effective_radius;
+  radius = shape->effective_radius;
 
   double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
   bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
@@ -302,7 +302,7 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
                                  const double      outer_radius,
                                  const double      inside_radius)
 {
-  const double radius = shape->effective_radius;
+  radius = shape->effective_radius;
 
   double distance              = shape->value(evaluation_point);
   bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
@@ -313,10 +313,10 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
 
 template <int dim>
 void
-IBParticle<dim>::set_orientation(const Tensor<1, 3> orientation)
+IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 {
-  this->orientation = orientation;
-  this->shape->set_orientation(this->orientation);
+  this->orientation = new_orientation;
+  this->shape->set_orientation(new_orientation);
 }
 
 template <int dim>

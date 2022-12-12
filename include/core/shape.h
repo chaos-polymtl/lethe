@@ -140,9 +140,9 @@ public:
    * @param The new position the shape will be placed at
    */
   inline virtual void
-  set_position(const Point<dim> &position)
+  set_position(const Point<dim> &new_position)
   {
-    this->position = position;
+    position = new_position;
   }
 
   /**
@@ -152,9 +152,9 @@ public:
    * @param The new orientation the shape will be set at
    */
   inline virtual void
-  set_orientation(const Tensor<1, 3> &orientation)
+  set_orientation(const Tensor<1, 3> &new_orientation)
   {
-    this->orientation = orientation;
+    orientation = new_orientation;
   }
 
   /**
@@ -614,21 +614,61 @@ template <int dim>
 class CompositeShape : public Shape<dim>
 {
 public:
+  enum class BooleanOperation : int
+  {
+    Union,
+    Difference,
+    Intersection,
+  };
+
   /**
    * @brief Constructs an assembly of shapes into a composite shape
    * @param components The shapes from which this composite sphere will be composed
    */
-  CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
+  CompositeShape<dim>(
+    std::map<unsigned int, std::shared_ptr<Shape<dim>>> components,
+    std::map<unsigned int,
+             std::tuple<BooleanOperation, unsigned int, unsigned int>>
+      operations)
     : Shape<dim>(0.,
                  components[0]->get_position(),
                  components[0]->get_orientation())
     , components(components)
+    , operations(operations)
   {
     // Calculation of the effective radius
-    for (const std::shared_ptr<Shape<dim>> &elem : components)
+    for (auto const &[component_id, component] : components)
       {
         this->effective_radius =
-          std::max(this->effective_radius, elem->effective_radius);
+          std::max(this->effective_radius, component->effective_radius);
+      }
+  }
+
+  /**
+   * @brief Constructs an assembly of shapes into a composite shape
+   * @param components The shapes from which this composite sphere will be composed
+   */
+  CompositeShape<dim>(
+    std::vector<std::shared_ptr<Shape<dim>>> components_vector)
+    : Shape<dim>(0.,
+                 components_vector[0]->get_position(),
+                 components_vector[0]->get_orientation())
+  {
+    size_t number_of_components = components_vector.size();
+
+    // run for loop from 0 to vecSize
+    for (size_t i = 0; i < number_of_components; i++)
+      {
+        components[i] = components_vector[i];
+        if (i < number_of_components - 1)
+          operations[i + number_of_components] =
+            std::make_tuple(BooleanOperation::Union, i, i + 1);
+      }
+    // Calculation of the effective radius
+    for (auto const &[component_id, component] : components)
+      {
+        this->effective_radius =
+          std::max(this->effective_radius, component->effective_radius);
       }
   }
 
@@ -682,7 +722,10 @@ public:
                          std::shared_ptr<Mapping<dim>> mapping);
 
 private:
-  std::vector<std::shared_ptr<Shape<dim>>> components;
+  std::map<unsigned int, std::shared_ptr<Shape<dim>>> components;
+  std::map<unsigned int,
+           std::tuple<BooleanOperation, unsigned int, unsigned int>>
+    operations;
 };
 
 

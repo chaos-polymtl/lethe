@@ -456,10 +456,38 @@ double
 CompositeShape<dim>::value(const Point<dim> &evaluation_point,
                            const unsigned int /*component*/) const
 {
-  double levelset = std::numeric_limits<double>::max();
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  std::map<unsigned int, double> components_value;
+  for (auto const &[component_id, component] : components)
     {
-      levelset = std::min(elem->value(evaluation_point), levelset);
+      components_value[component_id] = component->value(evaluation_point);
+    }
+  double levelset = 0.;
+  for (auto const &[operation_id, op_triplet] : operations)
+    {
+      BooleanOperation operation;
+      unsigned int     first_id;
+      unsigned int     second_id;
+      std::tie(operation, first_id, second_id) = op_triplet;
+
+      double value_first_component, value_second_component;
+      value_first_component  = components_value.at(first_id);
+      value_second_component = components_value.at(second_id);
+      switch (operation)
+        {
+          case BooleanOperation::Union:
+            if (components_value[operation_id] < 0.)
+              components_value[operation_id] =
+                -std::min(-value_first_component, -value_second_component);
+            break;
+          case BooleanOperation::Difference:
+            components_value[operation_id] =
+              std::max(-value_first_component, value_second_component);
+            break;
+          default: // BooleanOperation::Intersection
+            components_value[operation_id] =
+              std::max(value_first_component, value_second_component);
+        }
+      levelset = components_value[operation_id];
     }
   return levelset;
 }
@@ -471,11 +499,41 @@ CompositeShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  double levelset = std::numeric_limits<double>::max();
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  std::map<unsigned int, double> components_value;
+  for (auto const &[component_id, component] : components)
     {
-      levelset =
-        std::min(elem->value_with_cell_guess(evaluation_point, cell), levelset);
+      components_value[component_id] =
+        component->value_with_cell_guess(evaluation_point, cell);
+    }
+  double levelset = 0.;
+  for (auto const &[operation_id, op_triplet] : operations)
+    {
+      BooleanOperation operation;
+      unsigned int     first_id;
+      unsigned int     second_id;
+      std::tie(operation, first_id, second_id) = op_triplet;
+
+      double value_first_component, value_second_component;
+      value_first_component  = components_value.at(first_id);
+      value_second_component = components_value.at(second_id);
+      switch (operation)
+        {
+          case BooleanOperation::Union:
+            components_value[operation_id] =
+              std::min(value_first_component, value_second_component);
+            if (components_value[operation_id] < 0.)
+              components_value[operation_id] =
+                -std::min(-value_first_component, -value_second_component);
+            break;
+          case BooleanOperation::Difference:
+            components_value[operation_id] =
+              std::max(-value_first_component, value_second_component);
+            break;
+          default: // BooleanOperation::Intersection
+            components_value[operation_id] =
+              std::max(value_first_component, value_second_component);
+        }
+      levelset = components_value[operation_id];
     }
   return levelset;
 }
@@ -485,7 +543,7 @@ std::shared_ptr<Shape<dim>>
 CompositeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<CompositeShape<dim>>(this->components);
+    std::make_shared<CompositeShape<dim>>(components, operations);
   return copy;
 }
 
@@ -494,9 +552,9 @@ double
 CompositeShape<dim>::displaced_volume(const double fluid_density)
 {
   double solid_volume = 0;
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  for (auto const &[component_id, component] : components)
     {
-      solid_volume += elem->displaced_volume(fluid_density);
+      solid_volume += component->displaced_volume(fluid_density);
     }
   return solid_volume;
 }
@@ -507,16 +565,16 @@ CompositeShape<dim>::update_precalculations(
   DoFHandler<dim>              &updated_dof_handler,
   std::shared_ptr<Mapping<dim>> mapping)
 {
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  for (auto const &[component_id, component] : components)
     {
-      if (typeid(*elem) == typeid(RBFShape<dim>))
+      if (typeid(*component) == typeid(RBFShape<dim>))
         {
-          std::static_pointer_cast<RBFShape<dim>>(elem)->update_precalculations(
-            updated_dof_handler, mapping);
+          std::static_pointer_cast<RBFShape<dim>>(component)
+            ->update_precalculations(updated_dof_handler, mapping);
         }
-      else if (typeid(*elem) == typeid(CompositeShape<dim>))
+      else if (typeid(*component) == typeid(CompositeShape<dim>))
         {
-          std::static_pointer_cast<CompositeShape<dim>>(elem)
+          std::static_pointer_cast<CompositeShape<dim>>(component)
             ->update_precalculations(updated_dof_handler, mapping);
         }
     }
@@ -950,7 +1008,7 @@ std::shared_ptr<Shape<dim>>
 Cylinder<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Cylinder<dim>>(
-    this->radius, this->half_length, this->position, this->orientation);
+    this->radius,this->half_length, this->position, this->orientation);
   return copy;
 }
 
@@ -1009,9 +1067,7 @@ CylindricalTube<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CylindricalTube<dim>>(this->radius + rectangular_base / 2,
                                            this->radius - rectangular_base / 2,
-                                           this->height,
-                                           this->position,
-                                           this->orientation);
+                                           this->height, this->position, this->orientation);
   return copy;
 }
 
@@ -1145,7 +1201,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
     level_set =std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
 
 
-  
+
   return level_set;
 }
 
