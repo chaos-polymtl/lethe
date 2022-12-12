@@ -495,7 +495,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -562,7 +562,7 @@ CompositeShape<dim>::displaced_volume(const double fluid_density)
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim>              &updated_dof_handler,
+  DoFHandler<dim> &             updated_dof_handler,
   std::shared_ptr<Mapping<dim>> mapping)
 {
   for (auto const &[component_id, component] : components)
@@ -581,12 +581,12 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
+RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double>           &weights,
-                        const std::vector<Point<dim>>       &nodes,
-                        const Point<dim>                    &position,
-                        const Tensor<1, 3>                  &orientation)
+                        const std::vector<double> &          weights,
+                        const std::vector<Point<dim>> &      nodes,
+                        const Point<dim> &                   position,
+                        const Tensor<1, 3> &                 orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -608,8 +608,8 @@ RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim>          &position,
-                        const Tensor<1, 3>        &orientation)
+                        const Point<dim> &         position,
+                        const Tensor<1, 3> &       orientation)
   : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
                position,
                orientation)
@@ -644,7 +644,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -657,7 +657,7 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1008,7 +1008,7 @@ std::shared_ptr<Shape<dim>>
 Cylinder<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Cylinder<dim>>(
-    this->radius,this->half_length, this->position, this->orientation);
+    this->radius, this->half_length, this->position, this->orientation);
   return copy;
 }
 
@@ -1067,7 +1067,9 @@ CylindricalTube<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CylindricalTube<dim>>(this->radius + rectangular_base / 2,
                                            this->radius - rectangular_base / 2,
-                                           this->height, this->position, this->orientation);
+                                           this->height,
+                                           this->position,
+                                           this->orientation);
   return copy;
 }
 
@@ -1101,12 +1103,11 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
                              0.5);
   double radial_distance = p_radius - radius;
 
-  double phase =
-    std::atan2(centered_point[1], centered_point[0]) ;
+  double phase = std::atan2(centered_point[1], centered_point[0]);
   if (phase != phase)
     phase = 0;
   if (phase < 0)
-    phase = phase+2*numbers::PI;
+    phase = phase + 2 * numbers::PI;
 
   // helix
   double nb_turns     = height / pitch;
@@ -1116,26 +1117,30 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   double nb_full_turns = std::floor(centered_point[2] / pitch);
 
   double level_set_tube = 0;
-  double x=centered_point[2]-phase * pitch / (2 * numbers::PI);
+  double x              = centered_point[2] - phase * pitch / (2 * numbers::PI);
 
-  unsigned int n_periode=0;
-  if(phase/(2 * numbers::PI)<nb_turns-std::floor(nb_turns))
+  unsigned int n_periode = 0;
+  if (phase / (2 * numbers::PI) < nb_turns - std::floor(nb_turns))
     {
-      n_periode =std::ceil( nb_turns - 1);
+      n_periode = std::ceil(nb_turns - 1);
     }
-  else{
-      n_periode =std::floor( nb_turns - 1);
+  else
+    {
+      n_periode = std::floor(nb_turns - 1);
     }
 
-  double z_diff=0;
-  if(x<0){
-      z_diff=-x;
+  double z_diff = 0;
+  if (x < 0)
+    {
+      z_diff = -x;
     }
-  else if(x>n_periode*pitch){
-      z_diff=x-n_periode*pitch;
+  else if (x > n_periode * pitch)
+    {
+      z_diff = x - n_periode * pitch;
     }
-  else{
-      z_diff=1*abs(x-pitch*std::floor(1/pitch*(x+pitch/2)));
+  else
+    {
+      z_diff = 1 * abs(x - pitch * std::floor(1 / pitch * (x + pitch / 2)));
     }
 
   level_set_tube =
@@ -1152,7 +1157,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   double h_dist_from_cap_0        = abs(centered_point[1]);
 
   double dist_from_cap = 0;
-  if (radial_distance_cap_base > 0 )
+  if (radial_distance_cap_base > 0)
     dist_from_cap =
       std::pow(h_dist_from_cap_0 * h_dist_from_cap_0 +
                  radial_distance_cap_base * radial_distance_cap_base,
@@ -1179,12 +1184,12 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
       .norm();
   double radial_distance_cap_top = p_radius_cap_top - radius_tube;
   double h_dist_from_cap_top =
-      (scalar_product((centered_point - point_at_top), vector_at_top) /
-       vector_at_top.norm_square() * vector_at_top)
-        .norm();
+    (scalar_product((centered_point - point_at_top), vector_at_top) /
+     vector_at_top.norm_square() * vector_at_top)
+      .norm();
 
   double dist_from_cap_top = 0;
-  if (radial_distance_cap_top > 0 )
+  if (radial_distance_cap_top > 0)
     dist_from_cap_top =
       std::pow(h_dist_from_cap_top * h_dist_from_cap_top +
                  radial_distance_cap_top * radial_distance_cap_top,
@@ -1195,10 +1200,12 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
 
 
   double level_set = 0;
-  if (level_set_tube>0)
-    level_set =std::min(std::min(level_set_tube, dist_from_cap), dist_from_cap_top);
+  if (level_set_tube > 0)
+    level_set =
+      std::min(std::min(level_set_tube, dist_from_cap), dist_from_cap_top);
   else
-    level_set =std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
+    level_set =
+      std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
 
 
 
