@@ -495,7 +495,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -562,7 +562,7 @@ CompositeShape<dim>::displaced_volume(const double fluid_density)
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &             updated_dof_handler,
+  DoFHandler<dim>              &updated_dof_handler,
   std::shared_ptr<Mapping<dim>> mapping)
 {
   for (auto const &[component_id, component] : components)
@@ -581,12 +581,12 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
+RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double> &          weights,
-                        const std::vector<Point<dim>> &      nodes,
-                        const Point<dim> &                   position,
-                        const Tensor<1, 3> &                 orientation)
+                        const std::vector<double>           &weights,
+                        const std::vector<Point<dim>>       &nodes,
+                        const Point<dim>                    &position,
+                        const Tensor<1, 3>                  &orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -608,8 +608,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim> &         position,
-                        const Tensor<1, 3> &       orientation)
+                        const Point<dim>          &position,
+                        const Tensor<1, 3>        &orientation)
   : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
                position,
                orientation)
@@ -644,7 +644,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -657,7 +657,7 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
+  const Point<dim>                                    &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1096,65 +1096,156 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   // distance to the center of helix
-
-  double level_set_of_cylinder_hallow = 0;
-  double p_radius        = std::pow(centered_point[0] * centered_point[0] +
-                               centered_point[1] * centered_point[1],
-                             0.5);
-  double radial_distance = p_radius - radius;
-
+  // First we find a good initial guess for the non linear resolution.
   double phase = std::atan2(centered_point[1], centered_point[0]);
   if (phase != phase)
     phase = 0;
   if (phase < 0)
     phase = phase + 2 * numbers::PI;
 
-  // helix
+  // Some calculation to find a good initial guess
   double nb_turns     = height / pitch;
   double phase_at_top = (nb_turns - std::floor(nb_turns)) * 2 * numbers::PI;
-  double nb_full_turns_helix = std::floor(height / pitch);
+  double x            = centered_point[2] - phase * pitch / (2 * numbers::PI);
 
-  double nb_full_turns = std::floor(centered_point[2] / pitch);
+  // Initialize the parametric variable t for the helix
+  double t               = 0;
+  double t_initial_guess = 0;
 
+  // We select two initial guess for which we do the full computation. Both
+  // point have the same phase as the point we are evaluating one is above on
+  // the helix the other bellow. We keep the closest one.
+  t_initial_guess = std::floor(x / pitch) * 2 * numbers::PI + phase;
+
+  // Solve the non-linear equation to find the point on the helix with the first guess
   double level_set_tube = 0;
-  double x              = centered_point[2] - phase * pitch / (2 * numbers::PI);
+  t                     = t_initial_guess;
+  double residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+                    (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+                    (pitch / (2 * numbers::PI) * t - centered_point[2]) *
+                      pitch / (2 * numbers::PI);
 
-  unsigned int n_periode = 0;
-  if (phase / (2 * numbers::PI) < nb_turns - std::floor(nb_turns))
+  unsigned int i = 0;
+
+  //Newton iterations.
+  while (abs(residual) > 1e-8 && i < 20)
     {
-      n_periode = std::ceil(nb_turns - 1);
+      residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+                 (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+                 (pitch / (2 * numbers::PI) * t - centered_point[2]) * pitch /
+                   (2 * numbers::PI);
+      double dr_dt = centered_point[0] * cos(t) * radius +
+                     centered_point[1] * sin(t) * radius +
+                     (pitch / (2 * numbers::PI)) * (pitch / (2 * numbers::PI));
+      t = t - residual / dr_dt;
+      i += 1;
+    }
+  // Cap the value of the parametric variable t and find the point.
+  double dist_helix = 0;
+  if (t > nb_turns * numbers::PI * 2)
+    {
+      t = nb_turns * numbers::PI * 2;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube    = (centered_point - point_on_helix).norm();
+    }
+  else if (t < 0)
+    {
+      t = 0;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+
+      level_set_tube = (centered_point - point_on_helix).norm();
     }
   else
     {
-      n_periode = std::floor(nb_turns - 1);
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube = (centered_point - point_on_helix).norm() - radius_tube;
     }
 
-  double z_diff = 0;
-  if (x < 0)
+  // repeat for second guess
+  double level_set_tube_2 = 0;
+  t                       = t_initial_guess + 2 * numbers::PI;
+  residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+             (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+             (pitch / (2 * numbers::PI) * t - centered_point[2]) * pitch /
+               (2 * numbers::PI);
+
+  i = 0;
+  while (abs(residual) > 1e-8 && i < 20)
     {
-      z_diff = -x;
+      residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+                 (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+                 (pitch / (2 * numbers::PI) * t - centered_point[2]) * pitch /
+                   (2 * numbers::PI);
+      double dr_dt = centered_point[0] * cos(t) * radius +
+                     centered_point[1] * sin(t) * radius +
+                     (pitch / (2 * numbers::PI)) * (pitch / (2 * numbers::PI));
+      t = t - residual / dr_dt;
+      i += 1;
     }
-  else if (x > n_periode * pitch)
+
+  if (t > nb_turns * numbers::PI * 2)
     {
-      z_diff = x - n_periode * pitch;
+      t = nb_turns * numbers::PI * 2;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube_2  = (centered_point - point_on_helix).norm();
+    }
+  else if (t < 0)
+    {
+      t = 0;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+
+      level_set_tube_2 = (centered_point - point_on_helix).norm();
     }
   else
     {
-      z_diff = 1 * abs(x - pitch * std::floor(1 / pitch * (x + pitch / 2)));
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube_2 = (centered_point - point_on_helix).norm() - radius_tube;
     }
 
-  level_set_tube =
-    std::pow(radial_distance * radial_distance + z_diff * z_diff, 0.5) -
-    radius_tube;
+  //Keep the best guess
+  level_set_tube = std::min(level_set_tube, level_set_tube_2);
 
 
-  // base cap
+
+  // Cap the helix with a plane at each end. Cap at the base.
+  Point<dim>     point_at_base;
+  Tensor<1, dim> vector_at_base;
+  point_at_base[0]  = radius;
+  point_at_base[1]  = 0;
+  point_at_base[2]  = 0;
+  vector_at_base[0] = 0;
+  vector_at_base[1] = -radius;
+  vector_at_base[2] = -pitch / (2 * numbers::PI);
+
   double p_radius_cap_base =
-    std::pow((centered_point[0] - radius) * (centered_point[0] - radius) +
-               centered_point[2] * centered_point[2],
-             0.5);
+    ((centered_point - point_at_base) -
+     scalar_product((centered_point - point_at_base), vector_at_base) /
+       vector_at_base.norm_square() * vector_at_base)
+      .norm();
   double radial_distance_cap_base = p_radius_cap_base - radius_tube;
-  double h_dist_from_cap_0        = abs(centered_point[1]);
+  double h_dist_from_cap_0 =
+    (scalar_product((centered_point - point_at_base), vector_at_base) /
+     vector_at_base.norm_square() * vector_at_base)
+      .norm();
+  ;
 
   double dist_from_cap = 0;
   if (radial_distance_cap_base > 0)
@@ -1165,17 +1256,15 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   else
     dist_from_cap = h_dist_from_cap_0;
 
-
-  // top cap
-
+  // Cap the helix with a plane at each end. The cap at the top.
   Point<dim>     point_at_top;
   Tensor<1, dim> vector_at_top;
   point_at_top[0]  = std::cos(phase_at_top) * radius;
   point_at_top[1]  = std::sin(phase_at_top) * radius;
   point_at_top[2]  = height;
-  vector_at_top[0] = -point_at_top[1] / radius;
-  vector_at_top[1] = point_at_top[0] / radius;
-  vector_at_top[2] = 0;
+  vector_at_top[0] = -point_at_top[1];
+  vector_at_top[1] = point_at_top[0];
+  vector_at_top[2] = pitch / (2 * numbers::PI);
 
   double p_radius_cap_top =
     ((centered_point - point_at_top) -
@@ -1197,8 +1286,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   else
     dist_from_cap_top = h_dist_from_cap_top;
 
-
-
+  // Do the union of the helix and the cap.
   double level_set = 0;
   if (level_set_tube > 0)
     level_set =
@@ -1206,8 +1294,6 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   else
     level_set =
       std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
-
-
 
   return level_set;
 }
