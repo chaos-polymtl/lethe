@@ -12,9 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <deal.II/base/tensor.h>
 
@@ -23,9 +21,11 @@
 #ifndef particle_particle_contact_info_struct_h
 #  define particle_particle_contact_info_struct_h
 
-/**
+/** @brief
  * This class handles the information related to the calculation of the
- * particle-particle contact force
+ * particle-particle contact force. Notably it is responsible for storing
+ * information that has to be preserved over multiple iterations of a contact,
+ * namely everything related to tangential overlaps
  */
 
 using namespace dealii;
@@ -34,13 +34,27 @@ template <int dim>
 class particle_particle_contact_info
 {
 public:
-  particle_particle_contact_info(Particles::ParticleIterator<dim> &particle_one,
-                                 Particles::ParticleIterator<dim> &particle_two)
+  /** @brief Constructor for cases where the two particle iterators are known.
+   *  This constructor is used everywhere in the regular DEM and unresolved
+   * CFD-DEM code
+   *
+   *  @param particle_one A reference to the iterator of particle one
+   *  @param particle_two A reference to the iterator of particle two
+   */
+
+  inline particle_particle_contact_info(
+    Particles::ParticleIterator<dim> &particle_one,
+    Particles::ParticleIterator<dim> &particle_two)
     : particle_one(particle_one)
     , particle_two(particle_two)
   {}
 
-  particle_particle_contact_info()
+  /** @brief Dummy constructor for cases where the two particle iterators are unknown.
+   *  This constructor is only used in the resolved CFD-DEM and should be
+   * deprecated eventually.
+   */
+
+  inline particle_particle_contact_info()
   {}
 
 
