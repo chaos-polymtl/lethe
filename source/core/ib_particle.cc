@@ -213,7 +213,7 @@ IBParticle<dim>::is_inside_crown(
   const double                                          inside_radius,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  const double radius = shape->effective_radius;
+  radius = shape->effective_radius;
 
   double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
   bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
@@ -228,7 +228,7 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
                                  const double      outer_radius,
                                  const double      inside_radius)
 {
-  const double radius = shape->effective_radius;
+  radius = shape->effective_radius;
 
   double distance              = shape->value(evaluation_point);
   bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);

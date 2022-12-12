@@ -1100,7 +1100,7 @@ std::shared_ptr<Shape<dim>>
 Cylinder<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<Cylinder<dim>>(
-    this->radius, this->half_length, this->position, this->orientation);
+    this->radius,this->half_length, this->position, this->orientation);
   return copy;
 }
 
@@ -1458,9 +1458,7 @@ CylindricalTube<dim>::static_copy() const
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CylindricalTube<dim>>(this->radius + rectangular_base / 2,
                                            this->radius - rectangular_base / 2,
-                                           this->height,
-                                           this->position,
-                                           this->orientation);
+                                           this->height, this->position, this->orientation);
   return copy;
 }
 
@@ -1594,7 +1592,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
     level_set =std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
 
 
-  
+
   return level_set;
 }
 
