@@ -38,8 +38,8 @@ public:
    *  This constructor is used everywhere in the regular DEM and unresolved
    * CFD-DEM code
    *
-   *  @param particle_one A reference to the iterator of particle one
-   *  @param particle_two A reference to the iterator of particle two
+   *  @param particle_one The iterator of particle one
+   *  @param particle_two The iterator of particle two
    */
 
   inline particle_particle_contact_info(

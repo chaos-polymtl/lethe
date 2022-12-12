@@ -33,8 +33,6 @@ ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
   const double wall_rolling_friction_coefficient =
     dem_parameters.lagrangian_physical_properties.rolling_friction_wall;
 
-
-
   for (unsigned int i = 0;
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
