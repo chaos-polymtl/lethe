@@ -461,7 +461,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
     {
       components_value[component_id] = component->value(evaluation_point);
     }
-  double levelset = 0.;
+  double levelset = components_value[0];
   for (auto const &[operation_id, op_triplet] : operations)
     {
       BooleanOperation operation;
@@ -505,7 +505,7 @@ CompositeShape<dim>::value_with_cell_guess(
       components_value[component_id] =
         component->value_with_cell_guess(evaluation_point, cell);
     }
-  double levelset = 0.;
+  double levelset = components_value[0];
   for (auto const &[operation_id, op_triplet] : operations)
     {
       BooleanOperation operation;
