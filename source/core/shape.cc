@@ -1486,7 +1486,11 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  // distance to the center of helix
+  // The evaluation proposed in this function is exact close to the helix but
+  // far away above or bellow the helix some error may happen since the wrong
+  // helix loop may be evaluated.
+
+  // Distance to the center of helix
   // First we find a good initial guess for the non linear resolution.
   double phase = std::atan2(centered_point[1], centered_point[0]);
   if (phase != phase)
@@ -1508,7 +1512,8 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   // the helix the other bellow. We keep the closest one.
   t_initial_guess = std::floor(x / pitch) * 2 * numbers::PI + phase;
 
-  // Solve the non-linear equation to find the point on the helix with the first guess
+  // Solve the non-linear equation to find the point on the helix with the first
+  // guess
   double level_set_tube = 0;
   t                     = t_initial_guess;
   double residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
@@ -1518,7 +1523,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
 
   unsigned int i = 0;
 
-  //Newton iterations.
+  // Newton iterations.
   while (abs(residual) > 1e-8 && i < 20)
     {
       residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
@@ -1611,7 +1616,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
       level_set_tube_2 = (centered_point - point_on_helix).norm() - radius_tube;
     }
 
-  //Keep the best guess
+  // Keep the best guess
   level_set_tube = std::min(level_set_tube, level_set_tube_2);
 
 
