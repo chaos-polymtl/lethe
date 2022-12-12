@@ -8,12 +8,12 @@ using namespace dealii;
 template <int dim>
 ParticleWallLinearForce<dim>::ParticleWallLinearForce(
   const std::unordered_map<unsigned int, Tensor<1, 3>>
-    boundary_translational_velocity,
+                                                 boundary_translational_velocity,
   const std::unordered_map<unsigned int, double> boundary_rotational_speed,
   const std::unordered_map<unsigned int, Tensor<1, 3>>
                                         boundary_rotational_vector,
   const double                          triangulation_radius,
-  const DEMSolverParameters<dim>       &dem_parameters,
+  const DEMSolverParameters<dim> &      dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
   : ParticleWallContactForce<dim>(dem_parameters)
 {
@@ -112,7 +112,7 @@ template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_particle_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                            &particle_wall_pairs_in_contact,
+    &                        particle_wall_pairs_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force)
@@ -210,7 +210,7 @@ template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_in_contact
-                            &particle_floating_mesh_in_contact,
+    &                        particle_floating_mesh_in_contact,
   const double               dt,
   std::vector<Tensor<1, 3>> &torque,
   std::vector<Tensor<1, 3>> &force,
@@ -375,7 +375,7 @@ template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
   particle_wall_contact_info_struct<dim> &contact_info,
-  const ArrayView<const double>          &particle_properties)
+  const ArrayView<const double> &         particle_properties)
 {
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
