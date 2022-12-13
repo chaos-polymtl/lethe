@@ -34,6 +34,7 @@
 #include <core/dimensionality.h>
 #include <core/ib_particle.h>
 #include <core/multiphysics.h>
+#include <core/shape.h>
 #include <core/utilities.h>
 
 #include <deal.II/base/conditional_ostream.h>
@@ -1033,7 +1034,8 @@ namespace Parameters
      *
      * @param i The particle id
      * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
-     * rectangle, death star, cut hollow sphere, torus, or rbf
+
+     * rectangle, death star, cut hollow sphere, torus, rbf, or composite
      * @param shape_arguments The dimensions to be used for shape initialization
      */
     void

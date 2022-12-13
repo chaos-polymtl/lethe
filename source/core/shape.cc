@@ -475,11 +475,15 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
       switch (operation)
         {
           case BooleanOperation::Union:
-            if (components_value[operation_id] < 0.)
-              components_value[operation_id] =
-                -std::min(-value_first_component, -value_second_component);
+            components_value[operation_id] =
+              std::min(value_first_component, value_second_component);
+            // TODO Fix Union
+            // if (components_value[operation_id] < 0.)
+            //  components_value[operation_id] =
+            //    -std::min(-value_first_component, -value_second_component);
             break;
           case BooleanOperation::Difference:
+            // We substract the first component to the second
             components_value[operation_id] =
               std::max(-value_first_component, value_second_component);
             break;
@@ -521,9 +525,10 @@ CompositeShape<dim>::value_with_cell_guess(
           case BooleanOperation::Union:
             components_value[operation_id] =
               std::min(value_first_component, value_second_component);
-            if (components_value[operation_id] < 0.)
-              components_value[operation_id] =
-                -std::min(-value_first_component, -value_second_component);
+            // TODO fix union
+            // if (components_value[operation_id] < 0.)
+            // components_value[operation_id] =
+            //  -std::min(-value_first_component, -value_second_component);
             break;
           case BooleanOperation::Difference:
             components_value[operation_id] =
@@ -1054,8 +1059,6 @@ CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
   else
     level_set_of_cylinder_hallow =
       std::max(std::max(radius_diff_o, h_diff_o), -radius_diff_i);
-
-
 
   return level_set_of_cylinder_hallow;
 }

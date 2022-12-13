@@ -1980,9 +1980,9 @@ namespace Parameters
       "type",
       "sphere",
       Patterns::Selection(
-        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|rectangular helix|cut hollow sphere|death star|rbf"),
+        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|rectangular helix|cut hollow sphere|death star|rbf|composite"),
       "The type of shape considered."
-      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star|rbf>."
+      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star|rbf|composite>."
       "The parameter for a sphere is: radius. "
       "The parameters for a rectangle are, in order: x half length,"
       "y half length, z half length."
@@ -1996,7 +1996,8 @@ namespace Parameters
       "cut thickness, wall thickness. "
       "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers."
-      "The parameter for an rbf is the file name.");
+      "The parameter for an rbf is the file name."
+      "The parameter for a composite is the file name.");
     prm.declare_entry("shape arguments",
                       "1",
                       Patterns::Anything(),
@@ -2382,13 +2383,178 @@ namespace Parameters
                                          rbf_data["node_z"].begin(),
                                          rbf_data["node_z"].end());
                 }
+              particles[i].initialize_shape(shape_type, shape_arguments);
+            }
+          else if (shape_type == "composite")
+            {
+              if (shape_arguments_str == "1") // Default case
+                {
+                  // Default
+                  shape_type      = "sphere";
+                  shape_arguments = std::vector<double>(1.);
+                }
+              else
+                {
+                  // The following lines retrieve information regarding a
+                  // composite shape.
+                  std::string shape_name = shape_arguments_str_list[0];
+                  std::map<unsigned int, std::shared_ptr<Shape<dim>>>
+                    components;
+                  std::map<
+                    unsigned int,
+                    std::tuple<typename CompositeShape<dim>::BooleanOperation,
+                               unsigned int,
+                               unsigned int>>
+                    operations;
+                  // In the file, we first loop over all component shapes, then
+                  // we loop over operations
+                  std::ifstream myfile(shape_name);
+                  // open the file.
+                  if (myfile.is_open())
+                    {
+                      std::string              line;
+                      std::vector<std::string> column_names;
+                      std::vector<double>      line_of_data;
+                      unsigned int             line_count         = 0;
+                      bool                     parsing_shapes     = false;
+                      bool                     parsing_operations = false;
+                      while (std::getline(myfile, line))
+                        {
+                          if (line == "shapes")
+                            {
+                              parsing_shapes     = true;
+                              parsing_operations = false;
+                            }
+                          else if (line == "operations")
+                            {
+                              parsing_shapes     = false;
+                              parsing_operations = true;
+                            }
+                          else
+                            {
+                              std::vector<std::string> list_of_words_base =
+                                Utilities::split_string_list(line, ";");
+                              std::vector<std::string> list_of_words_clean;
+                              for (unsigned int j = 0;
+                                   j < list_of_words_base.size();
+                                   ++j)
+                                {
+                                  if (list_of_words_base[j] != "")
+                                    {
+                                      list_of_words_clean.push_back(
+                                        list_of_words_base[j]);
+                                    }
+                                }
+                              if (parsing_shapes)
+                                {
+                                  unsigned int identifier =
+                                    stoi(list_of_words_clean[0]);
+                                  std::string type = list_of_words_clean[1];
+                                  std::string arguments_str =
+                                    list_of_words_clean[2];
+                                  std::string position_str =
+                                    list_of_words_clean[3];
+                                  std::string orientation_str =
+                                    list_of_words_clean[4];
+
+                                  std::vector<std::string>
+                                    arguments_str_component =
+                                      Utilities::split_string_list(
+                                        arguments_str, ":");
+                                  std::vector<std::string>
+                                    position_str_component =
+                                      Utilities::split_string_list(position_str,
+                                                                   ":");
+                                  std::vector<std::string>
+                                    orientation_str_component =
+                                      Utilities::split_string_list(
+                                        orientation_str, ":");
+
+                                  shape_arguments = Utilities::string_to_double(
+                                    arguments_str_component);
+                                  std::vector<double> temp_position_vec =
+                                    Utilities::string_to_double(
+                                      position_str_component);
+                                  std::vector<double> temp_orientation_vec =
+                                    Utilities::string_to_double(
+                                      orientation_str_component);
+
+                                  Point<dim> temp_position;
+                                  Point<3>   temp_orientation =
+                                    Point<3>({temp_orientation_vec[0],
+                                              temp_orientation_vec[1],
+                                              temp_orientation_vec[2]});
+                                  temp_position[0] = temp_position_vec[0];
+                                  temp_position[1] = temp_position_vec[1];
+                                  if constexpr (dim == 3)
+                                    temp_position[2] = temp_position_vec[2];
+
+                                  IBParticle<dim> temp;
+                                  temp.initialize_shape(type, shape_arguments);
+                                  temp.shape->set_position(temp_position);
+                                  temp.shape->set_orientation(temp_orientation);
+                                  components[identifier] =
+                                    temp.shape->static_copy();
+                                }
+                              else if (parsing_operations)
+                                {
+                                  unsigned int identifier =
+                                    stoi(list_of_words_clean[0]);
+                                  std::string type = list_of_words_clean[1];
+                                  std::string arguments_str =
+                                    list_of_words_clean[2];
+                                  std::vector<std::string>
+                                    arguments_str_component =
+                                      Utilities::split_string_list(
+                                        arguments_str, ":");
+
+                                  unsigned int first_shape =
+                                    stoi(arguments_str_component[0]);
+                                  unsigned int second_shape =
+                                    stoi(arguments_str_component[1]);
+                                  if (type == "union")
+                                    {
+                                      operations[identifier] = std::make_tuple(
+                                        CompositeShape<
+                                          dim>::BooleanOperation::Union,
+                                        first_shape,
+                                        second_shape);
+                                    }
+                                  else if (type == "difference")
+                                    {
+                                      operations[identifier] = std::make_tuple(
+                                        CompositeShape<
+                                          dim>::BooleanOperation::Difference,
+                                        first_shape,
+                                        second_shape);
+                                    }
+                                  else if (type == "intersection")
+                                    {
+                                      operations[identifier] = std::make_tuple(
+                                        CompositeShape<
+                                          dim>::BooleanOperation::Intersection,
+                                        first_shape,
+                                        second_shape);
+                                    }
+                                }
+                            }
+                          ++line_count;
+                        }
+                      myfile.close();
+                      particles[i].shape =
+                        std::make_shared<CompositeShape<dim>>(components,
+                                                              operations);
+                    }
+                  else
+                    std::cout << "Unable to open file";
+                }
             }
           else
             {
               shape_arguments =
                 Utilities::string_to_double(shape_arguments_str_list);
+              particles[i].initialize_shape(shape_type, shape_arguments);
             }
-          particles[i].initialize_shape(shape_type, shape_arguments);
 
           particles[i].radius = particles[i].shape->effective_radius;
 
