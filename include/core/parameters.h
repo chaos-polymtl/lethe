@@ -32,6 +32,7 @@
 #include <core/dimensionality.h>
 #include <core/ib_particle.h>
 #include <core/multiphysics.h>
+#include <core/shape.h>
 #include <core/utilities.h>
 
 #include <deal.II/base/conditional_ostream.h>
