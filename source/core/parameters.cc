@@ -2415,7 +2415,6 @@ namespace Parameters
                       std::string              line;
                       std::vector<std::string> column_names;
                       std::vector<double>      line_of_data;
-                      unsigned int             line_count         = 0;
                       bool                     parsing_shapes     = false;
                       bool                     parsing_operations = false;
                       while (std::getline(myfile, line))
@@ -2538,12 +2537,14 @@ namespace Parameters
                                     }
                                 }
                             }
-                          ++line_count;
                         }
                       myfile.close();
                       particles[i].shape =
-                        std::make_shared<CompositeShape<dim>>(components,
-                                                              operations);
+                        std::make_shared<CompositeShape<dim>>(
+                          components,
+                          operations,
+                          particles[i].position,
+                          particles[i].orientation);
                     }
                   else
                     std::cout << "Unable to open file";
@@ -2591,9 +2592,9 @@ namespace Parameters
     else if (type == "rectangle")
       {
         Tensor<1, dim> half_lengths;
-        for (unsigned int i = 0; i < dim; ++i)
+        for (unsigned int d = 0; d < dim; ++d)
           {
-            half_lengths[i] = shape_arguments[i];
+            half_lengths[d] = shape_arguments[d];
           }
         particles[i].shape =
           std::make_shared<Rectangle<dim>>(half_lengths,
@@ -2603,9 +2604,9 @@ namespace Parameters
     else if (type == "ellipsoid")
       {
         Tensor<1, dim> radii;
-        for (unsigned int i = 0; i < dim; ++i)
+        for (unsigned int d = 0; d < dim; ++d)
           {
-            radii[i] = shape_arguments[i];
+            radii[d] = shape_arguments[d];
           }
         particles[i].shape =
           std::make_shared<Ellipsoid<dim>>(radii,

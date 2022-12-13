@@ -629,10 +629,10 @@ public:
     std::map<unsigned int, std::shared_ptr<Shape<dim>>> components,
     std::map<unsigned int,
              std::tuple<BooleanOperation, unsigned int, unsigned int>>
-      operations)
-    : Shape<dim>(0.,
-                 components[0]->get_position(),
-                 components[0]->get_orientation())
+                        operations,
+    const Point<dim> &  position,
+    const Tensor<1, 3> &orientation)
+    : Shape<dim>(0., position, orientation)
     , components(components)
     , operations(operations)
   {
@@ -649,10 +649,10 @@ public:
    * @param components The shapes from which this composite sphere will be composed
    */
   CompositeShape<dim>(
-    std::vector<std::shared_ptr<Shape<dim>>> components_vector)
-    : Shape<dim>(0.,
-                 components_vector[0]->get_position(),
-                 components_vector[0]->get_orientation())
+    std::vector<std::shared_ptr<Shape<dim>>> components_vector,
+    const Point<dim> &                       position,
+    const Tensor<1, 3> &                     orientation)
+    : Shape<dim>(0., position, orientation)
   {
     size_t number_of_components = components_vector.size();
 

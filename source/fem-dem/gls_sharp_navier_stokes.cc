@@ -1193,7 +1193,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
       all_shapes.push_back(particle.shape);
     }
   std::shared_ptr<Shape<dim>> combined_shapes =
-    std::make_shared<CompositeShape<dim>>(all_shapes);
+    std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
 
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
