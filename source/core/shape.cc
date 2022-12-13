@@ -477,10 +477,6 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
           case BooleanOperation::Union:
             components_value[operation_id] =
               std::min(value_first_component, value_second_component);
-            // TODO Fix Union
-            // if (components_value[operation_id] < 0.)
-            //  components_value[operation_id] =
-            //    -std::min(-value_first_component, -value_second_component);
             break;
           case BooleanOperation::Difference:
             // We substract the first component to the second
@@ -499,7 +495,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -525,10 +521,6 @@ CompositeShape<dim>::value_with_cell_guess(
           case BooleanOperation::Union:
             components_value[operation_id] =
               std::min(value_first_component, value_second_component);
-            // TODO fix union
-            // if (components_value[operation_id] < 0.)
-            // components_value[operation_id] =
-            //  -std::min(-value_first_component, -value_second_component);
             break;
           case BooleanOperation::Difference:
             components_value[operation_id] =
@@ -567,7 +559,7 @@ CompositeShape<dim>::displaced_volume(const double fluid_density)
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim>              &updated_dof_handler,
+  DoFHandler<dim> &             updated_dof_handler,
   std::shared_ptr<Mapping<dim>> mapping)
 {
   for (auto const &[component_id, component] : components)
@@ -586,12 +578,12 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
+RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double>           &weights,
-                        const std::vector<Point<dim>>       &nodes,
-                        const Point<dim>                    &position,
-                        const Tensor<1, 3>                  &orientation)
+                        const std::vector<double> &          weights,
+                        const std::vector<Point<dim>> &      nodes,
+                        const Point<dim> &                   position,
+                        const Tensor<1, 3> &                 orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -613,8 +605,8 @@ RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim>          &position,
-                        const Tensor<1, 3>        &orientation)
+                        const Point<dim> &         position,
+                        const Tensor<1, 3> &       orientation)
   : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
                position,
                orientation)
@@ -649,7 +641,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -662,7 +654,7 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
