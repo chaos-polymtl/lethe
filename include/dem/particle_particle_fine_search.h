@@ -20,7 +20,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_particle_contact_info.h>
 
 #include <deal.II/base/tensor.h>
 

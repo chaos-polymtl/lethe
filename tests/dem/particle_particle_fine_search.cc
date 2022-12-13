@@ -39,7 +39,7 @@
 #include <dem/dem_container_manager.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
-#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_particle_contact_info.h>
 #include <dem/particle_particle_fine_search.h>
 
 // Tests (with common definitions)

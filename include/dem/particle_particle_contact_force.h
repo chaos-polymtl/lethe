@@ -23,7 +23,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_particle_contact_info.h>
 #include <dem/rolling_resistance_torque_models.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -103,22 +103,22 @@ public:
    */
   virtual void
   calculate_IB_particle_particle_contact_force(
-    const double                                normal_overlap,
-    particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque,
-    IBParticle<dim> &                           particle_one,
-    IBParticle<dim> &                           particle_two,
-    const Point<dim> &                          particle_one_location,
-    const Point<dim> &                          particle_two_location,
-    const double                                dt,
-    const double                                particle_one_radius,
-    const double                                particle_two_radius,
-    const double                                particle_one_mass,
-    const double                                particle_two_mass) = 0;
+    const double                         normal_overlap,
+    particle_particle_contact_info<dim> &contact_info,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque,
+    IBParticle<dim> &                    particle_one,
+    IBParticle<dim> &                    particle_two,
+    const Point<dim> &                   particle_one_location,
+    const Point<dim> &                   particle_two_location,
+    const double                         dt,
+    const double                         particle_one_radius,
+    const double                         particle_two_radius,
+    const double                         particle_one_mass,
+    const double                         particle_two_mass) = 0;
 };
 
 /**
@@ -189,22 +189,22 @@ public:
    */
   virtual void
   calculate_IB_particle_particle_contact_force(
-    const double                                normal_overlap,
-    particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque,
-    IBParticle<dim> &                           particle_one,
-    IBParticle<dim> &                           particle_two,
-    const Point<dim> &                          particle_one_location,
-    const Point<dim> &                          particle_two_location,
-    const double                                dt,
-    const double                                particle_one_radius,
-    const double                                particle_two_radius,
-    const double                                particle_one_mass,
-    const double                                particle_two_mass) override;
+    const double                         normal_overlap,
+    particle_particle_contact_info<dim> &contact_info,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque,
+    IBParticle<dim> &                    particle_one,
+    IBParticle<dim> &                    particle_two,
+    const Point<dim> &                   particle_one_location,
+    const Point<dim> &                   particle_two_location,
+    const double                         dt,
+    const double                         particle_one_radius,
+    const double                         particle_two_radius,
+    const double                         particle_one_mass,
+    const double                         particle_two_mass) override;
 
 protected:
   /**
@@ -222,14 +222,14 @@ protected:
    */
   inline void
   update_contact_information(
-    particle_particle_contact_info_struct<dim> &contact_info,
-    double &                                    normal_relative_velocity_value,
-    Tensor<1, 3> &                              normal_unit_vector,
-    const ArrayView<const double> &             particle_one_properties,
-    const ArrayView<const double> &             particle_two_properties,
-    const Point<3> &                            particle_one_location,
-    const Point<3> &                            particle_two_location,
-    const double                                dt)
+    particle_particle_contact_info<dim> &contact_info,
+    double &                             normal_relative_velocity_value,
+    Tensor<1, 3> &                       normal_unit_vector,
+    const ArrayView<const double> &      particle_one_properties,
+    const ArrayView<const double> &      particle_two_properties,
+    const Point<3> &                     particle_one_location,
+    const Point<3> &                     particle_two_location,
+    const double                         dt)
   {
     // Calculation of the contact vector from particle one to particle two
     auto contact_vector = particle_two_location - particle_one_location;
@@ -412,17 +412,17 @@ protected:
    */
   inline void
   calculate_linear_contact(
-    particle_particle_contact_info_struct<dim> &contact_info,
-    const double                                normal_relative_velocity_value,
-    const Tensor<1, 3> &                        normal_unit_vector,
-    const double                                normal_overlap,
-    const ArrayView<const double> &             particle_one_properties,
-    const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque)
+    particle_particle_contact_info<dim> &contact_info,
+    const double                         normal_relative_velocity_value,
+    const Tensor<1, 3> &                 normal_unit_vector,
+    const double                         normal_overlap,
+    const ArrayView<const double> &      particle_one_properties,
+    const ArrayView<const double> &      particle_two_properties,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,
@@ -572,17 +572,17 @@ protected:
    */
   inline void
   calculate_hertz_mindlin_limit_overlap_contact(
-    particle_particle_contact_info_struct<dim> &contact_info,
-    const double                                normal_relative_velocity_value,
-    const Tensor<1, 3> &                        normal_unit_vector,
-    const double                                normal_overlap,
-    const ArrayView<const double> &             particle_one_properties,
-    const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque)
+    particle_particle_contact_info<dim> &contact_info,
+    const double                         normal_relative_velocity_value,
+    const Tensor<1, 3> &                 normal_unit_vector,
+    const double                         normal_overlap,
+    const ArrayView<const double> &      particle_one_properties,
+    const ArrayView<const double> &      particle_two_properties,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,
@@ -721,17 +721,17 @@ protected:
    */
   inline void
   calculate_hertz_mindlin_limit_force_contact(
-    particle_particle_contact_info_struct<dim> &contact_info,
-    const double                                normal_relative_velocity_value,
-    const Tensor<1, 3> &                        normal_unit_vector,
-    const double                                normal_overlap,
-    const ArrayView<const double> &             particle_one_properties,
-    const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque)
+    particle_particle_contact_info<dim> &contact_info,
+    const double                         normal_relative_velocity_value,
+    const Tensor<1, 3> &                 normal_unit_vector,
+    const double                         normal_overlap,
+    const ArrayView<const double> &      particle_one_properties,
+    const ArrayView<const double> &      particle_two_properties,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,
@@ -863,17 +863,17 @@ protected:
    */
   inline void
   calculate_hertz_contact(
-    particle_particle_contact_info_struct<dim> &contact_info,
-    const double                                normal_relative_velocity_value,
-    const Tensor<1, 3> &                        normal_unit_vector,
-    const double                                normal_overlap,
-    const ArrayView<const double> &             particle_one_properties,
-    const ArrayView<const double> &             particle_two_properties,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque)
+    particle_particle_contact_info<dim> &contact_info,
+    const double                         normal_relative_velocity_value,
+    const Tensor<1, 3> &                 normal_unit_vector,
+    const double                         normal_overlap,
+    const ArrayView<const double> &      particle_one_properties,
+    const ArrayView<const double> &      particle_two_properties,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque)
   {
     // Calculation of effective radius and mass
     this->find_effective_radius_and_mass(particle_one_properties,

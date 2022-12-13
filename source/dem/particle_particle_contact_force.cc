@@ -1009,22 +1009,22 @@ template <
 void
 ParticleParticleContactForce<dim, contact_model>::
   calculate_IB_particle_particle_contact_force(
-    const double                                normal_overlap,
-    particle_particle_contact_info_struct<dim> &contact_info,
-    Tensor<1, 3> &                              normal_force,
-    Tensor<1, 3> &                              tangential_force,
-    Tensor<1, 3> &                              particle_one_tangential_torque,
-    Tensor<1, 3> &                              particle_two_tangential_torque,
-    Tensor<1, 3> &                              rolling_resistance_torque,
-    IBParticle<dim> &                           particle_one,
-    IBParticle<dim> &                           particle_two,
-    const Point<dim> &                          particle_one_location,
-    const Point<dim> &                          particle_two_location,
-    const double                                dt,
-    const double                                particle_one_radius,
-    const double                                particle_two_radius,
-    const double                                particle_one_mass,
-    const double                                particle_two_mass)
+    const double                         normal_overlap,
+    particle_particle_contact_info<dim> &contact_info,
+    Tensor<1, 3> &                       normal_force,
+    Tensor<1, 3> &                       tangential_force,
+    Tensor<1, 3> &                       particle_one_tangential_torque,
+    Tensor<1, 3> &                       particle_two_tangential_torque,
+    Tensor<1, 3> &                       rolling_resistance_torque,
+    IBParticle<dim> &                    particle_one,
+    IBParticle<dim> &                    particle_two,
+    const Point<dim> &                   particle_one_location,
+    const Point<dim> &                   particle_two_location,
+    const double                         dt,
+    const double                         particle_one_radius,
+    const double                         particle_two_radius,
+    const double                         particle_one_mass,
+    const double                         particle_two_mass)
 {
   Point<3> particle_one_location_3d = [&] {
     if constexpr (dim == 3)

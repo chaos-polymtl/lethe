@@ -17,7 +17,7 @@
  */
 
 #include <dem/boundary_cells_info_struct.h>
-#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_particle_contact_info.h>
 #include <dem/particle_point_line_contact_info_struct.h>
 #include <dem/particle_wall_contact_info_struct.h>
 
@@ -162,7 +162,7 @@ namespace DEM
     typedef std::unordered_map<
       types::particle_index,
       std::unordered_map<types::particle_index,
-                         particle_particle_contact_info_struct<dim>>>
+                         particle_particle_contact_info<dim>>>
       adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>

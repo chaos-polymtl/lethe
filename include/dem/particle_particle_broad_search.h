@@ -18,7 +18,7 @@
  */
 #include <dem/data_containers.h>
 #include <dem/find_boundary_cells_information.h>
-#include <dem/particle_particle_contact_info_struct.h>
+#include <dem/particle_particle_contact_info.h>
 
 #include <deal.II/distributed/tria.h>
 
