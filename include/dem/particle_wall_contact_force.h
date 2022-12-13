@@ -44,8 +44,16 @@ template <int dim>
 class ParticleWallContactForce
 {
 public:
-  ParticleWallContactForce()
-  {}
+  ParticleWallContactForce(const DEMSolverParameters<dim> &dem_parameters)
+    : n_particle_types(
+        dem_parameters.lagrangian_physical_properties.particle_type_number)
+  {
+    effective_youngs_modulus.resize(n_particle_types);
+    effective_shear_modulus.resize(n_particle_types);
+    effective_coefficient_of_restitution.resize(n_particle_types);
+    effective_coefficient_of_friction.resize(n_particle_types);
+    effective_coefficient_of_rolling_friction.resize(n_particle_types);
+  }
 
   virtual ~ParticleWallContactForce()
   {}
@@ -262,12 +270,12 @@ protected:
                                                  boundary_translational_velocity_map;
   std::unordered_map<unsigned int, double>       boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
-  std::map<types::particle_index, double>        effective_youngs_modulus;
-  std::map<types::particle_index, double>        effective_shear_modulus;
-  std::map<types::particle_index, double> effective_coefficient_of_restitution;
-  std::map<types::particle_index, double> effective_coefficient_of_friction;
-  std::map<types::particle_index, double>
-    effective_coefficient_of_rolling_friction;
+  unsigned int                                   n_particle_types;
+  std::vector<double>                            effective_youngs_modulus;
+  std::vector<double>                            effective_shear_modulus;
+  std::vector<double> effective_coefficient_of_restitution;
+  std::vector<double> effective_coefficient_of_friction;
+  std::vector<double> effective_coefficient_of_rolling_friction;
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;

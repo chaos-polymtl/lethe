@@ -66,7 +66,7 @@ add_library(lethe-dem
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h
-  ../../include/dem/particle_particle_contact_info_struct.h
+  ../../include/dem/particle_particle_contact_info.h
   ../../include/dem/particle_particle_fine_search.h
   ../../include/dem/particle_point_line_broad_search.h
   ../../include/dem/particle_point_line_contact_force.h

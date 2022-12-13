@@ -15,6 +15,7 @@ ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
   const double                          triangulation_radius,
   const DEMSolverParameters<dim> &      dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
+  : ParticleWallContactForce<dim>(dem_parameters)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
   this->boundary_rotational_speed_map       = boundary_rotational_speed;
@@ -52,42 +53,36 @@ ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
         dem_parameters.lagrangian_physical_properties
           .rolling_friction_coefficient_particle.at(i);
 
-      this->effective_youngs_modulus.insert(
-        {i,
-         (particle_youngs_modulus * wall_youngs_modulus) /
-           (wall_youngs_modulus *
-              (1 - particle_poisson_ratio * particle_poisson_ratio) +
-            particle_youngs_modulus *
-              (1 - wall_poisson_ratio * wall_poisson_ratio) +
-            DBL_MIN)});
+      this->effective_youngs_modulus[i] =
+        (particle_youngs_modulus * wall_youngs_modulus) /
+        (wall_youngs_modulus *
+           (1 - particle_poisson_ratio * particle_poisson_ratio) +
+         particle_youngs_modulus *
+           (1 - wall_poisson_ratio * wall_poisson_ratio) +
+         DBL_MIN);
 
-      this->effective_shear_modulus.insert(
-        {i,
-         (particle_youngs_modulus * wall_youngs_modulus) /
-           ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
-             (1 + particle_poisson_ratio)) +
-            (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
-             (1 + wall_poisson_ratio)) +
-            DBL_MIN)});
+      this->effective_shear_modulus[i] =
+        (particle_youngs_modulus * wall_youngs_modulus) /
+        ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
+          (1 + particle_poisson_ratio)) +
+         (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
+          (1 + wall_poisson_ratio)) +
+         DBL_MIN);
 
-      this->effective_coefficient_of_restitution.insert(
-        {i,
-         2 * particle_restitution_coefficient * wall_restitution_coefficient /
-           (particle_restitution_coefficient + wall_restitution_coefficient +
-            DBL_MIN)});
+      this->effective_coefficient_of_restitution[i] =
+        2 * particle_restitution_coefficient * wall_restitution_coefficient /
+        (particle_restitution_coefficient + wall_restitution_coefficient +
+         DBL_MIN);
 
-      this->effective_coefficient_of_friction.insert(
-        {i,
-         2 * particle_friction_coefficient * wall_friction_coefficient /
-           (particle_friction_coefficient + wall_friction_coefficient +
-            DBL_MIN)});
+      this->effective_coefficient_of_friction[i] =
+        2 * particle_friction_coefficient * wall_friction_coefficient /
+        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
 
-      this->effective_coefficient_of_rolling_friction.insert(
-        {i,
-         2 * particle_rolling_friction_coefficient *
-           wall_rolling_friction_coefficient /
-           (particle_rolling_friction_coefficient +
-            wall_rolling_friction_coefficient + DBL_MIN)});
+      this->effective_coefficient_of_rolling_friction[i] =
+        2 * particle_rolling_friction_coefficient *
+        wall_rolling_friction_coefficient /
+        (particle_rolling_friction_coefficient +
+         wall_rolling_friction_coefficient + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -505,6 +500,16 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   // DEM::PropertiesIndex::type) and use them in force calculations.
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
+
+  // Allocate memory for effective properties
+  // TODO - Refactor this so that the calculation uses the common engine
+  this->n_particle_types = 1;
+  this->effective_youngs_modulus.resize(this->n_particle_types);
+  this->effective_shear_modulus.resize(this->n_particle_types);
+  this->effective_coefficient_of_restitution.resize(this->n_particle_types);
+  this->effective_coefficient_of_friction.resize(this->n_particle_types);
+  this->effective_coefficient_of_rolling_friction.resize(
+    this->n_particle_types);
 
   this->effective_youngs_modulus[particle_type] =
     (particle.youngs_modulus * wall_youngs_modulus) /

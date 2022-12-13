@@ -15,6 +15,7 @@ ParticleWallLinearForce<dim>::ParticleWallLinearForce(
   const double                          triangulation_radius,
   const DEMSolverParameters<dim> &      dem_parameters,
   const std::vector<types::boundary_id> boundary_index)
+  : ParticleWallContactForce<dim>(dem_parameters)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
   this->boundary_rotational_speed_map       = boundary_rotational_speed;
@@ -61,24 +62,20 @@ ParticleWallLinearForce<dim>::ParticleWallLinearForce(
            (1 - wall_poisson_ratio * wall_poisson_ratio) +
          DBL_MIN);
 
-      this->effective_coefficient_of_restitution.insert(
-        {i,
-         2 * particle_restitution_coefficient * wall_restitution_coefficient /
-           (particle_restitution_coefficient + wall_restitution_coefficient +
-            DBL_MIN)});
+      this->effective_coefficient_of_restitution[i] =
+        2 * particle_restitution_coefficient * wall_restitution_coefficient /
+        (particle_restitution_coefficient + wall_restitution_coefficient +
+         DBL_MIN);
 
-      this->effective_coefficient_of_friction.insert(
-        {i,
-         2 * particle_friction_coefficient * wall_friction_coefficient /
-           (particle_friction_coefficient + wall_friction_coefficient +
-            DBL_MIN)});
+      this->effective_coefficient_of_friction[i] =
+        2 * particle_friction_coefficient * wall_friction_coefficient /
+        (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
 
-      this->effective_coefficient_of_rolling_friction.insert(
-        {i,
-         2 * particle_rolling_friction_coefficient *
-           wall_rolling_friction_coefficient /
-           (particle_rolling_friction_coefficient +
-            wall_rolling_friction_coefficient + DBL_MIN)});
+      this->effective_coefficient_of_rolling_friction[i] =
+        2 * particle_rolling_friction_coefficient *
+        wall_rolling_friction_coefficient /
+        (particle_rolling_friction_coefficient +
+         wall_rolling_friction_coefficient + DBL_MIN);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==

@@ -85,14 +85,10 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
                   auto particle_one_contact_list =
                     &adjacent_particles[particle_one_id];
 
-                  // Adding the elements to contact info
-                  particle_particle_contact_info_struct<dim> contact_info;
-                  contact_info.tangential_overlap = 0;
-                  contact_info.particle_one       = particle_one;
-                  contact_info.particle_two       = particle_two;
-
-                  particle_one_contact_list->insert(
-                    {particle_two_id, contact_info});
+                  particle_one_contact_list->emplace(
+                    particle_two_id,
+                    particle_particle_contact_info<dim>(particle_one,
+                                                        particle_two));
                 }
             }
         }
