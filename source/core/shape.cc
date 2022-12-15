@@ -53,7 +53,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
       if (std::abs(theta[2]) > 1e-10)
         {
           Tensor<2, 2> rotation_matrix =
-            Physics::Transformations::Rotations::rotation_matrix_2d(theta[2]);
+            Physics::Transformations::Rotations::rotation_matrix_2d(-theta[2]);
 
           // Multiplication
           centralized_rotated.clear();
@@ -78,7 +78,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
               axis[i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
-                  axis, theta[i]);
+                  axis, -theta[i]);
 
               // Multiplication
               centralized_rotated.clear();
