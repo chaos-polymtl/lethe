@@ -28,10 +28,10 @@ In `Example 9 <./granular-mixer/granular-mixer.html>`_ (granular mixer) we simul
 
     packing-in-circle/packing-in-circle
     packing-in-ball/packing-in-ball
+    small-scale-rotating-drum/small-scale-rotating-drum
     rotating-drum/rotating-drum
     rotating-drum-with-post-processing/rotating-drum-with-post-processing
     rotation-of-box/rotation-of-box
     silo/silo
     rectangular-hopper/rectangular-hopper
-    3d-small-scale-rotating-drum/3d-small-scale-rotating-drum
     granular-mixer/granular-mixer
