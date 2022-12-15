@@ -300,7 +300,6 @@ private:
   std::vector<double>       MOI;
   Tensor<1, dim>            periodic_offset;
   bool                      has_periodic_boundaries;
-  std::vector<unsigned int> cell_status;
   std::vector<typename DEM::dem_data_structures<dim>::cell_set>
     mobility_status_to_cell;
 

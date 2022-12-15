@@ -176,13 +176,13 @@ void
 LagrangianPostProcessing<dim>::write_post_processing_results(
   const parallel::distributed::Triangulation<dim> &triangulation,
   PVDHandler &                                     grid_pvdhandler,
+  const DoFHandler<dim> &                          background_dh,
   const Particles::ParticleHandler<dim> &          particle_handler,
   const DEMSolverParameters<dim> &                 dem_parameters,
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm &                                 mpi_communicator,
-  const std::vector<typename DEM::dem_data_structures<dim>::cell_set>
-    &mobility_status_to_cell)
+  DisableParticleContact<dim> &                    disable_contact_object)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -191,9 +191,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
     dem_parameters.simulation_control.group_files;
 
   DataOut<dim> data_out;
-  // Write grid
-  // data_out.attach_dof_handler(background_dh);
-  data_out.attach_triangulation(triangulation);
+  data_out.attach_dof_handler(background_dh);
 
   std::vector<std::string> average_solution_names;
 
@@ -238,6 +236,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
 
   average_solution_names.push_back("mobility_status");
 
+  auto mobility_status_to_cell = disable_contact_object.get_mobility_status();
   Vector<float> mobility_status(triangulation.n_active_cells());
   for (const auto &cell : triangulation.active_cell_iterators())
     {
@@ -259,6 +258,11 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   data_out.add_data_vector(mobility_status,
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);
+
+  average_solution_names.push_back("mobility_status_node");
+
+  data_out.add_data_vector(disable_contact_object.get_mobility_at_nodes(),
+                           average_solution_names.back());
 
   // Attach the solution data to data_out object
   Vector<float> subdomain(triangulation.n_active_cells());

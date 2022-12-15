@@ -280,6 +280,7 @@ void
 DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
+  background_dh.reinit(triangulation);
   background_dh.distribute_dofs(background_fe);
 }
 
@@ -293,6 +294,7 @@ DEMSolver<dim>::load_balance()
 
   pcout << "-->Repartitionning triangulation" << std::endl;
   triangulation.repartition();
+  setup_background_dofs();
 
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
@@ -648,7 +650,6 @@ DEMSolver<dim>::write_output_results()
       DataOutFaces<dim> data_out_faces;
 
       // Setup background dofs to initiate right sized boundary_id vector
-      setup_background_dofs();
       Vector<float> boundary_id(background_dh.n_dofs());
 
       // Attach the boundary_id to data_out_faces object
@@ -673,12 +674,13 @@ DEMSolver<dim>::post_process_results()
   post_processing_object.write_post_processing_results(
     triangulation,
     grid_pvdhandler,
+    background_dh,
     particle_handler,
     parameters,
     simulation_control->get_current_time(),
     simulation_control->get_step_number(),
     mpi_communicator,
-    mobility_status_to_cell);
+    disable_contact_object);
 }
 
 template <int dim>
@@ -842,6 +844,9 @@ DEMSolver<dim>::solve()
                                           triangulation,
                                           triangulation_cell_diameter);
 
+  // Setup background dof
+  setup_background_dofs();
+
   // DEM engine iterator:
   while (simulation_control->integrate())
     {
@@ -881,16 +886,19 @@ DEMSolver<dim>::solve()
 
           if (!simulation_control->is_at_start())
             {
-              disable_contact_object.identify_mobility_status(
-                triangulation, particle_handler, container_manager);
+              disable_contact_object.identify_mobility_status(triangulation,
+                                                              background_dh,
+                                                              particle_handler,
+                                                              mpi_communicator);
 
               mobility_status_to_cell =
                 disable_contact_object.get_mobility_status();
 
               integrator_object->status_to_cell = mobility_status_to_cell;
 
-              disable_contact_object.print_cell_mobility_info(
-                particle_handler, simulation_control->get_current_time());
+              //              disable_contact_object.print_cell_mobility_info(
+              //                particle_handler,
+              //                simulation_control->get_current_time());
             }
 
           displacement.resize(particle_handler.get_max_local_particle_index());

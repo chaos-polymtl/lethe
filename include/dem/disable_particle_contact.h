@@ -24,6 +24,12 @@
 
 #include <deal.II/distributed/tria.h>
 
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_values.h>
+
+#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/vector.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -46,15 +52,16 @@ public:
     inactive,
     active,
     mobile,
-    mobile_extended,
+    empty,
     n_mobility_status
   };
 
   void
   identify_mobility_status(
     const parallel::distributed::Triangulation<dim> &triangulation,
+    const DoFHandler<dim> &                          background_dh,
     const Particles::ParticleHandler<dim> &          particle_handler,
-    const DEMContainerManager<dim> &                 container_manager);
+    MPI_Comm                                         mpi_communicator);
 
   /**
    * Carries out the calculation of the granular temperature in each local cell.
@@ -95,7 +102,7 @@ public:
 
     for (auto &status_set : {status_to_cell[mobility_status::active],
                              status_to_cell[mobility_status::mobile],
-                             status_to_cell[mobility_status::mobile_extended]})
+                             status_to_cell[mobility_status::empty]})
       {
         if (!status_set.empty())
           {
@@ -150,6 +157,12 @@ public:
     return status_to_cell;
   }
 
+  LinearAlgebra::distributed::Vector<float>
+  get_mobility_at_nodes()
+  {
+    return mobility_at_nodes;
+  }
+
   unsigned int
   get_n_mobility_status()
   {
@@ -164,35 +177,38 @@ private:
     const Particles::ParticleHandler<dim> &particle_handler);
 
 
-  void
-  check_if_mobile(const typename dem_data_structures<dim>::cells_neighbor_list
-                    &                                    cells_neighbor_list,
-                  const Particles::ParticleHandler<dim> &particle_handler);
-
-  void
-  check_if_mobile_extended(
-    const typename dem_data_structures<dim>::cells_neighbor_list
-      &                                    cells_neighbor_list,
-    const Particles::ParticleHandler<dim> &particle_handler);
-
-  void
-  check_if_mobile_extended_extended(
-    const typename dem_data_structures<dim>::cells_neighbor_list
-      &                                    cells_neighbor_list,
-    const Particles::ParticleHandler<dim> &particle_handler);
-
-  void
-  check_if_active(const typename dem_data_structures<dim>::cells_neighbor_list
-                    &cells_neighbor_list);
+  //  void
+  //  check_if_mobile(const typename
+  //  dem_data_structures<dim>::cells_neighbor_list
+  //                    & cells_neighbor_list,
+  //                  const Particles::ParticleHandler<dim> &particle_handler);
+  //
+  //  void
+  //  check_if_mobile_extended(
+  //    const typename dem_data_structures<dim>::cells_neighbor_list
+  //      &                                    cells_neighbor_list,
+  //    const Particles::ParticleHandler<dim> &particle_handler);
+  //
+  //  void
+  //  check_if_mobile_extended_extended(
+  //    const typename dem_data_structures<dim>::cells_neighbor_list
+  //      &                                    cells_neighbor_list,
+  //    const Particles::ParticleHandler<dim> &particle_handler);
+  //
+  //  void
+  //  check_if_active(const typename
+  //  dem_data_structures<dim>::cells_neighbor_list
+  //                    &cells_neighbor_list);
 
   std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell;
   std::vector<unsigned int>                                     cell_status;
-  std::vector<double>                                           void_fractions;
+  Vector<double>                                                solid_fractions;
 
-  std::vector<double> granular_temperature_average;
+  Vector<double>                            granular_temperature_average;
+  LinearAlgebra::distributed::Vector<float> mobility_at_nodes;
 
   const double granular_temperature_limit = 1e-4;
-  const double void_fraction_limit        = 0.6;
+  const double solid_fraction_limit       = 0.4;
 };
 
 

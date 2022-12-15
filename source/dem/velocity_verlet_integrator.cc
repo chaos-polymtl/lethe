@@ -78,13 +78,6 @@ VelocityVerletIntegrator<dim>::integrate(
           auto search_status_iterator =
             this->status_to_cell[2].find(cell_particle);
           tmp_var = search_status_iterator != this->status_to_cell[2].end();
-
-          if (!tmp_var)
-            {
-              auto search_status_iterator =
-                this->status_to_cell[3].find(cell_particle);
-              tmp_var = search_status_iterator != this->status_to_cell[3].end();
-            }
         }
 
       auto particle_properties = particle.get_properties();
@@ -158,13 +151,13 @@ VelocityVerletIntegrator<dim>::integrate(
           torque[particle_id] = 0.0;
           force[particle_id]  = 0.0;
 
-          particle_properties[PropertiesIndex::v_x] = 0.0;
-          particle_properties[PropertiesIndex::v_y] = 0.0;
-          particle_properties[PropertiesIndex::v_z] = 0.0;
-
-          particle_properties[PropertiesIndex::omega_x] = 0.0;
-          particle_properties[PropertiesIndex::omega_y] = 0.0;
-          particle_properties[PropertiesIndex::omega_z] = 0.0;
+          //          particle_properties[PropertiesIndex::v_x] = 0.0;
+          //          particle_properties[PropertiesIndex::v_y] = 0.0;
+          //          particle_properties[PropertiesIndex::v_z] = 0.0;
+          //
+          //          particle_properties[PropertiesIndex::omega_x] = 0.0;
+          //          particle_properties[PropertiesIndex::omega_y] = 0.0;
+          //          particle_properties[PropertiesIndex::omega_z] = 0.0;
         }
     }
 }
