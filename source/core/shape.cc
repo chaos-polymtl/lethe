@@ -1537,7 +1537,6 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
       i += 1;
     }
   // Cap the value of the parametric variable t and find the point.
-  double dist_helix = 0;
   if (t > nb_turns * numbers::PI * 2)
     {
       t = nb_turns * numbers::PI * 2;
