@@ -456,12 +456,18 @@ double
 CompositeShape<dim>::value(const Point<dim> &evaluation_point,
                            const unsigned int /*component*/) const
 {
+  // We align and center the evaluation point according to the shape referential
   Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  // The levelset value of all component shapes is computed
   std::map<unsigned int, double> components_value;
   for (auto const &[component_id, component] : components)
     {
       components_value[component_id] = component->value(centered_point);
     }
+
+  // The boolean operations between the shapes are applied in order
+  // The last computed levelset value is considered to be the right value
   double levelset = components_value[0];
   for (auto const &[operation_id, op_triplet] : operations)
     {
@@ -500,13 +506,19 @@ CompositeShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  // We align and center the evaluation point according to the shape referential
   Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  // The levelset value of all component shapes is computed
   std::map<unsigned int, double> components_value;
   for (auto const &[component_id, component] : components)
     {
       components_value[component_id] =
         component->value_with_cell_guess(centered_point, cell);
     }
+
+  // The boolean operations between the shapes are applied in order
+  // The last computed levelset value is considered to be the right value
   double levelset = components_value[0];
   for (auto const &[operation_id, op_triplet] : operations)
     {

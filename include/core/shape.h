@@ -1296,13 +1296,11 @@ class Cylinder : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
-   * by a given depth
-   * @param radius The radius of the smallest sphere containing the cut hollow sphere
-   * @param cut_depth The height of the slice removed from the sphere
-   * @param shell_thickness The thickness of the hollow sphere shell
-   * @param position The center of the sphere
-   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   * @brief Constructs a cylinder aligned with the z axis
+   * @param radius the radius of the cylinder
+   * @param half_length the half-length of the cylinder
+   * @param position position of the barycenter of the cylinder
+   * @param orientation orientation of the cylinder
    */
   Cylinder<dim>(double              radius,
                 double              half_length,
@@ -1349,22 +1347,21 @@ class CylindricalTube : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
-   * by a given depth
-   * @param radius The radius of the smallest sphere containing the cut hollow sphere
-   * @param cut_depth The height of the slice removed from the sphere
-   * @param shell_thickness The thickness of the hollow sphere shell
-   * @param position The center of the sphere
-   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   * @brief Constructs a tube by boolean difference of two tubes aligned with the z axis
+   * @param radius_inside the radius of the negative (inside) cylinder
+   * @param radius_outside the radius of the positive (outside) cylinder
+   * @param half_length the half-length of the cylinders
+   * @param position position of the barycenter of the cylinder
+   * @param orientation orientation of the cylinder
    */
   CylindricalTube<dim>(double              radius_inside,
                        double              radius_outside,
-                       double              height,
+                       double              half_length,
                        const Point<dim> &  position,
                        const Tensor<1, 3> &orientation)
     : Shape<dim>((radius_outside + radius_inside) / 2, position, orientation)
     , radius((radius_outside + radius_inside) / 2)
-    , height(height)
+    , height(half_length * 2.)
     , rectangular_base(radius_outside - radius_inside)
   {}
 
@@ -1405,13 +1402,14 @@ class CylindricalHelix : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
-   * by a given depth
-   * @param radius_helix The radius of the smallest sphere containing the cut hollow sphere
-   * @param cut_depth The height of the slice removed from the sphere
-   * @param shell_thickness The thickness of the hollow sphere shell
-   * @param position The center of the sphere
-   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   * @brief Constructs a cylindrical helix by extruding a disk through a helicoidal path
+   * aligned with the z axis
+   * @param radius_helix the helicoidal path radius
+   * @param radius_tube the extruded disk radius
+   * @param height the total height of the helicoiadal path
+   * @param pitch the pitch angle by which the height increases around the axis
+   * @param position the position of the helix base
+   * @param orientation the orientation of the helix axis compared to the z axis
    */
   CylindricalHelix<dim>(double              radius_helix,
                         double              radius_tube,
@@ -1465,13 +1463,15 @@ class RectangularHelix : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructs a hollow sphere that has a wall thickness and that is cut
-   * by a given depth
-   * @param radius The radius of the smallest sphere containing the cut hollow sphere
-   * @param cut_depth The height of the slice removed from the sphere
-   * @param shell_thickness The thickness of the hollow sphere shell
-   * @param position The center of the sphere
-   * @param orientation The orientation of the sphere, from it's center to the cut's center
+   * @brief Constructs a rectangular helix by extruding a rectangle through a helicoidal path
+   * aligned with the z axis
+   * @param radius the helicoidal path radius
+   * @param height the total height of the helicoiadal path
+   * @param rectangular_base the basis rectangle width
+   * @param rectangular_height the basis rectangle height
+   * @param pitch the pitch angle by which the height increases around the axis
+   * @param position the position of the helix base
+   * @param orientation the orientation of the helix base compared to the z axis
    */
   RectangularHelix<dim>(double              radius,
                         double              height,
