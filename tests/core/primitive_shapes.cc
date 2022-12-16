@@ -52,7 +52,7 @@ test()
 
   deallog << "Testing rotation and translation" << std::endl;
   // Only on one shape: rectangle
-  Tensor<1, 3> rotation({1., 0.5, 0.});
+  Tensor<1, 3> rotation({-1., -0.5, -0.});
   Point<3>     translation({0.2, 0., 0.3});
   rectangle->set_orientation(rotation);
   rectangle->set_position(translation);

@@ -1593,10 +1593,11 @@ LaplaceAssembly<dim>::assemble_matrix(
               const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
               // Laplacian on the velocity terms
-              double local_matrix_ij =scalar_product(grad_phi_u_j, grad_phi_u_i);
+              double local_matrix_ij =
+                scalar_product(grad_phi_u_j, grad_phi_u_i);
 
               // Laplacian on the pressure terms
-              local_matrix_ij +=scalar_product(grad_phi_p_j, grad_phi_p_i);
+              local_matrix_ij += scalar_product(grad_phi_p_j, grad_phi_p_i);
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization

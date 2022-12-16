@@ -96,7 +96,7 @@ subsection particles
 		    set Function expression =0.01;2.01
 		end
 		subsection orientation
-		    set Function expression =0;0;2
+		    set Function expression =0;0;-2
 		end
 	end
 	subsection particle info 2
