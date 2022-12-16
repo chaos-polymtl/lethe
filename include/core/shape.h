@@ -863,30 +863,42 @@ public:
   OpenCascadeShape<dim>(std::string         file_name,
                         const Point<dim>   &position,
                         const Tensor<1, 3> &orientation)
-    : Shape<dim>(1.0, position, orientation)
+    : Shape<dim>(0.1, position, orientation)
   {
-    local_file_name=file_name;
-    std::size_t found_step   = file_name.find(".step");
-    std::size_t found_step_2 = file_name.find(".stp");
-    std::size_t found_igs    = file_name.find(".iges");
-    std::size_t found_igs_2  = file_name.find(".igs");
-    std::size_t found_stl    = file_name.find(".stl");
+    std::vector<std::string> shape_arguments_str_list(
+      Utilities::split_string_list(file_name, ";"));
+    local_file_name=shape_arguments_str_list[0];
+
+    if (shape_arguments_str_list.size()>1)
+      {
+        this->effective_radius = Utilities::string_to_double(
+          shape_arguments_str_list[1]);
+      }
+    std::size_t found_step   = local_file_name.find(".step");
+    std::size_t found_step_2 = local_file_name.find(".stp");
+    std::size_t found_igs    = local_file_name.find(".iges");
+    std::size_t found_igs_2  = local_file_name.find(".igs");
+    std::size_t found_stl    = local_file_name.find(".stl");
 
     if (found_step != std::string::npos || found_step_2 != std::string::npos)
       {
-        shape = OpenCASCADE::read_STEP(file_name);
+        shape = OpenCASCADE::read_STEP(local_file_name);
         this->additional_info_on_shape="step";
+       // OpenCASCADE::write_STL(shape,local_file_name+"out_stl",1e-8);
       }
     if (found_igs != std::string::npos || found_igs_2 != std::string::npos)
       {
-        shape = OpenCASCADE::read_IGES(file_name);
+        shape = OpenCASCADE::read_IGES(local_file_name);
         this->additional_info_on_shape="iges";
+       // OpenCASCADE::write_STL(shape,local_file_name+"out_stl",1e-8);
       }
     if (found_stl != std::string::npos)
       {
-        shape = OpenCASCADE::read_STL(file_name);
+        shape = OpenCASCADE::read_STL(local_file_name);
         this->additional_info_on_shape="stl";
       }
+
+
 
     vertex_position = OpenCASCADE::point(Point<dim>());
     vertex          = BRepBuilderAPI_MakeVertex(vertex_position);

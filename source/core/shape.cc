@@ -152,7 +152,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
       if (std::abs(theta[2]) > 1e-10)
         {
           Tensor<2, 2> rotation_matrix =
-            Physics::Transformations::Rotations::rotation_matrix_2d(-theta[2]);
+            Physics::Transformations::Rotations::rotation_matrix_2d(theta[2]);
 
           // Multiplication
           centralized_rotated.clear();
@@ -178,7 +178,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
               axis[2-i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
-                  axis, -theta[2-i]);
+                  axis, theta[2-i]);
 
               // Multiplication
               centralized_rotated.clear();
@@ -535,28 +535,47 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
 {
   auto point_in_string=this->point_to_string(evaluation_point);
   auto iterator=this->gradient_cache.find(point_in_string);
-
   if (iterator == this->gradient_cache.end() )
     {
       Point<dim> centered_point = this->align_and_center(evaluation_point);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
       vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
-      distancetool_shell.LoadS2(vertex);
-      distancetool_shell.Perform();
-      gp_Pnt pt_on_surface = distancetool_shell.PointOnShape1(1);
-      if (dim == 2)
-        {
-          projected_point[0] = pt_on_surface.X();
-          projected_point[1] = pt_on_surface.Y();
-        }
-      if (dim == 3)
-        {
-          projected_point[0] = pt_on_surface.X();
-          projected_point[1] = pt_on_surface.Y();
-          projected_point[2] = pt_on_surface.Z();
-        }
+      distancetool.LoadS2(vertex);
+      distancetool.Perform();
 
+      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+      if (dim == 2)
+      {
+        projected_point[0] = pt_on_surface.X();
+        projected_point[1] = pt_on_surface.Y();
+      }
+      if (dim == 3)
+      {
+        projected_point[0] = pt_on_surface.X();
+        projected_point[1] = pt_on_surface.Y();
+        projected_point[2] = pt_on_surface.Z();
+      }
+      if (distancetool.InnerSolution())
+      {
+        if (shells.size() > 0)
+            {
+              distancetool_shell.LoadS2(vertex);
+              distancetool_shell.Perform();
+              pt_on_surface = distancetool_shell.PointOnShape1(1);
+              if (dim == 2)
+                {
+                  projected_point[0] = pt_on_surface.X();
+                  projected_point[1] = pt_on_surface.Y();
+                }
+              if (dim == 3)
+                {
+                  projected_point[0] = pt_on_surface.X();
+                  projected_point[1] = pt_on_surface.Y();
+                  projected_point[2] = pt_on_surface.Z();
+                }
+            }
+      }
       auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
       this->gradient_cache[point_in_string]=rotate_in_globalpoint;
       return rotate_in_globalpoint;
@@ -603,18 +622,19 @@ OpenCascadeShape<dim>::closest_surface_point(
   Point<dim>                                          &closest_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
+
   auto point_in_string=this->point_to_string(p);
   auto iterator=this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end() )
     {
-      //std::cout<<"hi"<<std::endl;
       Point<dim> centered_point = this->align_and_center(p);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
       vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
-      distancetool_shell.LoadS2(vertex);
-      distancetool_shell.Perform();
-      gp_Pnt pt_on_surface = distancetool_shell.PointOnShape1(1);
+      distancetool.LoadS2(vertex);
+      distancetool.Perform();
+
+      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
       if (dim == 2)
         {
           projected_point[0] = pt_on_surface.X();
@@ -625,6 +645,26 @@ OpenCascadeShape<dim>::closest_surface_point(
           projected_point[0] = pt_on_surface.X();
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
+        }
+      if (distancetool.InnerSolution())
+        {
+          if (shells.size() > 0)
+            {
+              distancetool_shell.LoadS2(vertex);
+              distancetool_shell.Perform();
+              pt_on_surface = distancetool_shell.PointOnShape1(1);
+              if (dim == 2)
+                {
+                  projected_point[0] = pt_on_surface.X();
+                  projected_point[1] = pt_on_surface.Y();
+                }
+              if (dim == 3)
+                {
+                  projected_point[0] = pt_on_surface.X();
+                  projected_point[1] = pt_on_surface.Y();
+                  projected_point[2] = pt_on_surface.Z();
+                }
+            }
         }
       auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
       this->gradient_cache[point_in_string]=rotate_in_globalpoint;

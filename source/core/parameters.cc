@@ -2040,7 +2040,7 @@ namespace Parameters
       "type",
       "sphere",
       Patterns::Selection(
-        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|composite"),
+        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|rectangular helix|cut hollow sphere|death star|rbf|opencascade|composite"),
       "The type of shape considered."
       "Choices are <sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|composite>."
       "The parameter for a sphere is: radius. "

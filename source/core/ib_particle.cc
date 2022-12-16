@@ -170,12 +170,13 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                                        position,
                                                        orientation);
 }
+
 template <int dim>
 void
 IBParticle<dim>::initialize_shape(const std::string type,
                                   const std::string shape_arguments)
 {
-  if (type == "step")
+  if (type == "opencascade")
     {
       particle_type = type;
       shape         = std::make_shared<OpenCascadeShape<dim>>(shape_arguments,

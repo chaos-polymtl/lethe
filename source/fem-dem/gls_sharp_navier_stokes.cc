@@ -239,7 +239,6 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandl
                                                unsigned int                                   p)
 {
   //this function aims at defining if a cell is cu by a step loaded from open cascade.
-
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   cell->get_dof_indices(local_dof_indices);
@@ -250,30 +249,20 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandl
     {
       centroid_of_cell+=cell->vertex(i);
     }
+
   centroid_of_cell=centroid_of_cell/vertices_per_cell;
   Point<dim>projected_point;
   particles[p].closest_surface_point(centroid_of_cell,projected_point,cell);
 
-/*  Triangulation<dim ,dim> local_triangulation_of_oversize_cell;
-  std::vector<Point<dim>>        vertices_of_face_projection(vertices_per_cell);
-  std::vector<CellData<dim - 1>> local_face_cell_data(1);
-
-  // Create the list of vertices
-  for (unsigned int j = 0; j < dim; ++j)
-    {
-      vertices_of_face_projection[i][j] =
-        vertex_projection[j];
-    }
-  // Create the connectivity of the vertices of the cell
-  local_face_cell_data[0].vertices[i] = i;*/
-
   if (cell->point_inside(projected_point))
     {
       cell_is_cut = true;
+
       return cell_is_cut;
     }
   else
     {
+
       for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
           // Count the number of DOFs that are inside
