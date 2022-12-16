@@ -14,4 +14,4 @@ ________________________________________________________________________________
 |master                                          | 2212c29fcea13a3aeb2daae9dbc190ca83ed9340  |   18/10/2022   |    50.4       |     26.8      |     16.63     |    20.3        |      19.5
 |dem_optimize_find_cell_neighbors                | abdb2998346093680fa7df8c507b9ed47ab93c8e  |   08/12/2022   |    48.3       |     25.0      |     17.2      |    19.3        |      17.4
 |dem_refactor_containers_for_contact_properties  | 4daeeaa4179fe3302f3109bf76361a3e6dc16ada  |   08/12/2022   |    48.8       |     25.4      |     15.3      |    16.7        |      15.5
-
+|master                                          | d3b06b889e54356dd1addcf2cb7db867566f96ff  |   12/16/2022   |    52.6       |     23.1      |     14.6      |    18.1        |      16.4 
