@@ -109,6 +109,7 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
                 set poisson ratio particles             = 0.24
                 set restitution coefficient particles   = 0.97
                 set friction coefficient particles      = 0.3
+<<<<<<< HEAD
 <<<<<<<< HEAD:doc/source/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.rst
                 set rolling friction particles          = 0.1
 
@@ -119,6 +120,9 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
         set friction coefficient wall                   = 0.35
 ========
                 set rolling friction particles             = 0.1
+=======
+                set rolling friction particles          = 0.1
+>>>>>>> 836d4b33 (Remove all tabs)
 
         end
         set young modulus wall            				= 100000000
