@@ -1,6 +1,6 @@
 
 ==================================
-Small scale rotating drum (3D)
+Small scale rotating drum
 ==================================
 
 This example of Lethe-DEM simulates dry granular flow behaviour in a small scale rotating drum. The discrete element method (DEM) is responsible for describing the behaviour of particles.  More information regarding the DEM parameters are given in the Lethe-DEM documentation, i.e. `DEM parameters <../../../parameters/dem/dem.html>`_.
@@ -41,10 +41,10 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 .. code-block:: text
 
     subsection mesh
-        set type                 				= dealii
-        set grid type      	     				= cylinder
-        set grid arguments       				= 0.056:0.051
-        set initial refinement   				= 3
+        set type                          = dealii
+        set grid type                     = cylinder
+        set grid arguments                = 0.056:0.051
+        set initial refinement            = 3
     end
 
 
@@ -57,18 +57,18 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
 
 
     subsection insertion info
-    	set insertion method				        = non_uniform
-    	set inserted number of particles at each time step      = 8000
-    	set insertion frequency            		 	= 100000
-    	set insertion box minimum x            	 	= -0.05
-    	set insertion box minimum y            	        = 0.
-    	set insertion box minimum z            	        = -0.04
-    	set insertion box maximum x            	        = 0.05
-    	set insertion box maximum y           	 	= 0.04
-    	set insertion box maximum z            	        = 0.04
-    	set insertion distance threshold			= 1.1
-    	set insertion random number range			= 0.05
-    	set insertion random number seed			= 19
+      set insertion method                               = non_uniform
+      set inserted number of particles at each time step = 8000
+      set insertion frequency                            = 100000
+      set insertion box minimum x                        = -0.05
+      set insertion box minimum y                        = 0.
+      set insertion box minimum z                        = -0.04
+      set insertion box maximum x                        = 0.05
+      set insertion box maximum y                        = 0.04
+      set insertion box maximum z                        = 0.04
+      set insertion distance threshold                   = 1.1
+      set insertion random number range                  = 0.05
+      set insertion random number seed                   = 19
     end
 
 Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.
@@ -81,24 +81,27 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx            		 						= 0.0
-        set gy            		 						= -9.81
-        set gz            		 						= 0.0
-        set number of particle types	                = 1
+        set gx                                          = 0.0
+        set gy                                          = -9.81
+        set gz                                          = 0.0
+        set number of particle types                    = 1
             subsection particle type 0
-            set size distribution type					= uniform
-                set diameter            	 			= 0.003
-                set number              				= 20000
-                set density particles  	 				= 2500
-                set young modulus particles         	= 100000000
-                set poisson ratio particles          	= 0.24
-                set restitution coefficient particles	= 0.97
+                set size distribution type              = uniform
+                set diameter                            = 0.003
+                set number                              = 20000
+                set density particles                   = 2500
+                set young modulus particles             = 100000000
+                set poisson ratio particles             = 0.24
+                set restitution coefficient particles   = 0.97
                 set friction coefficient particles      = 0.3
+                set rolling friction particles          = 0.1
+
         end
-        set young modulus wall            				= 100000000
-        set poisson ratio wall            				= 0.24
-        set restitution coefficient wall           		= 0.85
-        set friction coefficient wall         			= 0.35
+        set young modulus wall                         = 100000000
+        set poisson ratio wall                         = 0.24
+        set restitution coefficient wall               = 0.85
+        set friction coefficient wall                   = 0.35
+        set rolling friction wall                       = 0.1
     end
 
 
@@ -110,15 +113,16 @@ In this example, we use the ``dynamic`` load balancing method. This method check
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method 		   	 = dynamic
-      set dynamic contact search size coefficient	 = 0.8
-      set neighborhood threshold			 = 1.3
-      set load balance method				 = dynamic
-      set load balance threshold			 = 0.5
-      set dynamic load balance check frequency		 = 10000
-      set particle particle contact force method         = hertz_mindlin_limit_overlap
-      set particle wall contact force method             = nonlinear
-      set integration method				 = velocity_verlet
+      set contact detection method                  = dynamic
+      set dynamic contact search size coefficient   = 0.8
+      set neighborhood threshold                    = 1.3
+      set load balance method                       = dynamic
+      set load balance threshold                    = 0.5
+      set dynamic load balance check frequency      = 10000
+      set particle particle contact force method    = hertz_mindlin_limit_overlap
+      set particle wall contact force method        = nonlinear
+      set rolling resistance torque method          = constant_resistance
+      set integration method                        = velocity_verlet
     end
 
 Boundary condition
@@ -129,14 +133,14 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
 .. code-block:: text
 
     subsection DEM boundary conditions
-      set number of boundary conditions         = 1
+      set number of boundary conditions    = 1
         subsection boundary condition 0
-            set boundary id					= 0
-            set type              				= rotational
-            set rotational speed				= 1
-            set rotational vector x				= 1
-            set rotational vector y				= 0
-            set rotational vector z				= 0
+            set boundary id                = 0
+            set type                       = rotational
+            set rotational speed           = 1
+            set rotational vector x        = 1
+            set rotational vector y        = 0
+            set rotational vector z        = 0
         end
     end
 
@@ -149,11 +153,11 @@ The packing dem simulation was run for 2 seconds in real time.
 .. code-block:: text
 
     subsection simulation control
-      set time step                 		 = 5e-6
-      set time end       			 = 2
-      set log frequency				 = 2000
-      set output frequency            		 = 10000
-      set output path                  	 	 = ./output_dem/
+      set time step                     = 5e-6
+      set time end                      = 2
+      set log frequency                 = 2000
+      set output frequency              = 2000
+      set output path                   = ./output_dem/
     end
     
 The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation.
@@ -161,27 +165,26 @@ The actual rotation of the drum is 3 seconds in real time. We set the time equal
 .. code-block:: text
 
     subsection simulation control
-      set time step                 		 = 5e-6
-      set time end       			 = 5
-      set log frequency				 = 2000
-      set output frequency            		 = 10000
-      set output path                  	 	 = ./output_dem/
+      set time step                     = 5e-6
+      set time end                      = 5
+      set log frequency                 = 2000
+      set output frequency              = 2000
+      set output path                   = ./output_dem/
     end
 
 Running the simulation
 -----------------------
 
-The simulation is launched in two steps: the first step packs the particle in the cylinder, while the second step rotates the drum and simulates the movement of the particles. The simulation could have been performed in a single step, however; doing it this way allows us to use the restart files of the packing to run the simulation using DEM for a dry simulation and a CFD-DEM for a wet simulation without having to pack the particles twice.
+The simulation is launched in two steps: the first step packs the particle in the cylinder, while the second step rotates the drum and simulates the movement of the particles. 
 
 .. code-block:: text
 
-   mpirun -np 6 dem_3d packing-rotating-drum.prm
-   mpirun -np 6 dem_3d small-rotating-drum-dem.prm
+   mpirun -np 8 dem_3d packing-rotating-drum.prm
+   mpirun -np 8 dem_3d small-rotating-drum-dem.prm
 
 
 .. note::
- This example needs a simulation time of approximately 135 minutes on 6 processors using an Intel(R) Core(TM) i7-9700K CPU at 3.60GHz. 
-
+ This example needs a simulation time of approximately 60 minutes on 8 processors using an 12th Gen Intel(R) Core(TM) i9-12900K
 
 Results
 ---------
@@ -190,16 +193,7 @@ The following movie displays the rolling regime inside the rotating drum obtaine
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/EQM19wEkEaI" frameborder="0" allowfullscreen></iframe>
-     
-  
-The following movie displays the centrifuging regime inside the rotating drum for a drum rotational velocity of 18 rad/s.
-
-    
-.. raw:: html
-
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/Rx0AOmD2rU0" frameborder="0" allowfullscreen></iframe>
-    
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/F-uo2lzhObk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 Possibilities for extension
 ----------------------------
