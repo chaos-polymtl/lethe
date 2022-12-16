@@ -1035,7 +1035,7 @@ namespace Parameters
      * @param i The particle id
      * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
      * rectangle, death star, cut hollow sphere, torus, cylinder, cylindrical
-     * tube, cylindrical helix, rectangular helix, rbf, or composite
+     * tube, cylindrical helix, rbf, or composite
      * @param shape_arguments The dimensions to be used for shape initialization
      */
     void

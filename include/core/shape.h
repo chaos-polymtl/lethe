@@ -58,7 +58,6 @@ public:
     cylinder,
     cylindrical_tube,
     cylindrical_helix,
-    rectangular_helix,
     cut_hollow_sphere,
     death_star,
     composite_shape,

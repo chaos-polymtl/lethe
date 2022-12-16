@@ -1980,9 +1980,9 @@ namespace Parameters
       "type",
       "sphere",
       Patterns::Selection(
-        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|rectangular helix|cut hollow sphere|death star|rbf|composite"),
+        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|composite"),
       "The type of shape considered."
-      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|rectangular helix|cut hollow sphere|death star|rbf|composite>."
+      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|composite>."
       "The parameter for a sphere is: radius. "
       "The parameters for a rectangle are, in order: x half length,"
       "y half length, z half length."
@@ -1997,9 +1997,8 @@ namespace Parameters
       "The parameters for a cylindrical tube are, in order: inside radius,"
       "outside radius, half-length. It is aligned to the z axis by default."
       "The parameters for a cylindrical helix are, in order: helix radius,"
-      "tube radius, helix total height, pitch."
-      "The parameters for a rectangular helix are, in order: helix radius,"
-      "height, rectangle base width, rectangle base height, pitch."
+      "tube radius, helix total height, pitch (height between two consecutive "
+      "loops)."
       "The parameters for a cut hollow sphere are, in order: sphere radius,"
       "cut thickness, wall thickness. "
       "The parameters for a death star are, in order: sphere radius,"

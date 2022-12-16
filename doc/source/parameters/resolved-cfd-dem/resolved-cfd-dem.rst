@@ -179,7 +179,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
 
-* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``, ``cylinder``, ``cylindrical tube``, ``cylindrical helix``, ``rectangular helix``, ``composite``, ``rbf``. An ``rbf`` geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a `bitpit <https://github.com/optimad/bitpit>`_-based script.
+* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``, ``cylinder``, ``cylindrical tube``, ``cylindrical helix``, ``composite``, ``rbf``. An ``rbf`` geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a `bitpit <https://github.com/optimad/bitpit>`_-based script.
 
 * The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``,``. The required arguments and the effective radius, used for near-particle refinement, are:
     * Sphere: *radius*; the effective radius is the *radius*;
@@ -196,15 +196,13 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Cylindrical Tube: *hole radius*, *cylinder radius*, *half-length*; the effective radius is the average between *hole radius* and *cylinder radius*.
 
-    * Cylindrical Helix: *helix radius*, *extruded disk radius*, *helicoid height*, *pitch*; the effective radius is the *extruded disk radius*.
-
-    * Rectangular Helix: *helix radius*, *helicoid height*, *rectangle width*, *rectangle height*, *pitch*; the effective radius is the *helix radius*.
+    * Cylindrical Helix: *helix radius*, *extruded disk radius*, *helicoid height*, *pitch* (height difference between each loop); the effective radius is the *extruded disk radius*.
 
     * Cut Hollow Sphere: *radius*, *cut height*, *wall thickness*; the effective radius is the *radius*;
 
     * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*.
 
-    * Composite: *file name*. The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. Here is the content of a file that defines a cylinder topped with a sphere:
+    * Composite: *file name*. The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. Here is the content of a file that defines a cylinder topped with a sphere:
 
     .. code-block:: text
 
