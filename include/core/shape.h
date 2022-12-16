@@ -607,10 +607,9 @@ private:
 };
 
 /**
- * @class Composite Shapes are currently used only to output the signed distance
- * of particles in the GLS Sharp Navier Stokes solver. The class was however
- * designed so that specific composite shapes could be defined through the
- * parameter file, although this functionality has not been implemented yet.
+ * @class This class was designed so that specific composite shapes could be
+ * defined through the parameter file. Boolean operations such as union,
+ * difference, and intersection are allowed.
  * @tparam dim Dimension of the shape
  */
 template <int dim>
