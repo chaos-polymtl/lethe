@@ -1357,15 +1357,15 @@ public:
    * @param position The center of the sphere
    * @param orientation The orientation of the sphere, from it's center to the cut's center
    */
-  CylindricalTube<dim>(double              radius_i,
-                       double              radius_o,
+  CylindricalTube<dim>(double              radius_inside,
+                       double              radius_outside,
                        double              height,
                        const Point<dim> &  position,
                        const Tensor<1, 3> &orientation)
-    : Shape<dim>((radius_o + radius_i) / 2, position, orientation)
-    , radius((radius_o + radius_i) / 2)
+    : Shape<dim>((radius_outside + radius_inside) / 2, position, orientation)
+    , radius((radius_outside + radius_inside) / 2)
     , height(height)
-    , rectangular_base(radius_o - radius_i)
+    , rectangular_base(radius_outside - radius_inside)
   {}
 
   /**
@@ -1407,20 +1407,20 @@ public:
   /**
    * @brief Constructs a hollow sphere that has a wall thickness and that is cut
    * by a given depth
-   * @param radius The radius of the smallest sphere containing the cut hollow sphere
+   * @param radius_helix The radius of the smallest sphere containing the cut hollow sphere
    * @param cut_depth The height of the slice removed from the sphere
    * @param shell_thickness The thickness of the hollow sphere shell
    * @param position The center of the sphere
    * @param orientation The orientation of the sphere, from it's center to the cut's center
    */
-  CylindricalHelix<dim>(double              radius,
+  CylindricalHelix<dim>(double              radius_helix,
                         double              radius_tube,
                         double              height,
                         double              pitch,
                         const Point<dim> &  position,
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(radius_tube, position, orientation)
-    , radius(radius)
+    , radius(radius_helix)
     , height(height)
     , pitch(pitch)
     , radius_tube(radius_tube)

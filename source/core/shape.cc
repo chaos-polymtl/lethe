@@ -1096,7 +1096,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   // far away above or bellow the helix some error may happen since the wrong
   // helix loop may be evaluated.
 
-  // Distance to the center of helix
+  // Distance to the center of the helix
   // First we find a good initial guess for the non linear resolution.
   double phase = std::atan2(centered_point[1], centered_point[0]);
   if (phase != phase)
