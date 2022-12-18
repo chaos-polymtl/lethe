@@ -75,9 +75,7 @@ public:
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    std::vector<typename DEM::dem_data_structures<dim>::cell_set>
-      &                  status_to_cell,
-    const Tensor<1, dim> periodic_offset = Tensor<1, dim>()) = 0;
+    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) = 0;
 
 
   /**
@@ -173,9 +171,7 @@ public:
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
-    std::vector<typename DEM::dem_data_structures<dim>::cell_set>
-      &                  status_to_cell,
-    const Tensor<1, dim> periodic_offset = Tensor<1, dim>()) override;
+    const Tensor<1, dim>       periodic_offset = Tensor<1, dim>()) override;
 
   /**
    * Carries out the calculation of the contact force for IB particles. This

@@ -514,6 +514,26 @@ namespace Parameters
           Patterns::Selection("velocity_verlet|explicit_euler|gear3"),
           "Choosing integration method"
           "Choices are <velocity_verlet|explicit_euler|gear3>.");
+
+        prm.declare_entry(
+          "enable dynamic disabling contacts",
+          "false",
+          Patterns::Selection("true|false"),
+          "Enable the dynamic search for disabling particle contacts"
+          "Choices are <true|false>.");
+
+        prm.declare_entry(
+          "granular temperature limit",
+          "1e-4",
+          Patterns::Double(),
+          "The minimal granular temperature where particle contacts are considered");
+
+        prm.declare_entry(
+          "solid fraction limit",
+          "0.4",
+          Patterns::Double(),
+          "The maximal solid fraction where particle contacts are considered "
+          "no matter the granular temperature");
       }
       prm.leave_subsection();
     }
@@ -640,6 +660,15 @@ namespace Parameters
         else
           {
             throw(std::runtime_error("Invalid integration method "));
+          }
+
+        disabling_particle_contacts =
+          prm.get_bool("enable dynamic disabling contacts");
+        if (disabling_particle_contacts)
+          {
+            granular_temperature_limit =
+              prm.get_double("granular temperature limit");
+            solid_fraction_limit = prm.get_double("solid fraction limit");
           }
       }
       prm.leave_subsection();

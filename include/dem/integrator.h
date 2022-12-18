@@ -19,6 +19,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_particle_contact.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -87,7 +88,15 @@ public:
             std::vector<Tensor<1, 3>> &      force,
             const std::vector<double> &      MOI) = 0;
 
-  std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell;
+  virtual void
+  integrate(Particles::ParticleHandler<dim> &particle_handler,
+            const Tensor<1, 3> &             body_force,
+            const double                     time_step,
+            std::vector<Tensor<1, 3>> &      torque,
+            std::vector<Tensor<1, 3>> &      force,
+            const std::vector<double> &      MOI,
+            const typename DEM::dem_data_structures<dim>::cell_set
+              &mobile_cells_container) = 0;
 };
 
 #endif /* integration_h */

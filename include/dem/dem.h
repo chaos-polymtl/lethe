@@ -44,6 +44,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <unordered_set>
@@ -284,7 +285,6 @@ private:
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
-  DisableParticleContact<dim>        disable_contact_object;
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
@@ -300,8 +300,6 @@ private:
   std::vector<double>       MOI;
   Tensor<1, dim>            periodic_offset;
   bool                      has_periodic_boundaries;
-  std::vector<typename DEM::dem_data_structures<dim>::cell_set>
-    mobility_status_to_cell;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
@@ -311,9 +309,15 @@ private:
   // Storage of statistics about time and contact lists
   statistics contact_list;
   statistics simulation_time;
+  Timer      clock;
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
+
+  // Dynamic disabling of particle contacts in cells object
+  DisableParticleContact<dim> disable_contact_object;
+  bool                        has_disabled_contacts;
+  bool                        print_mobility_info = false;
 };
 
 #endif

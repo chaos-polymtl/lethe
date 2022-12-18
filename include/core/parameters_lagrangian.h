@@ -241,6 +241,11 @@ namespace Parameters
         gear3
       } integration_method;
 
+      // Disabling particle contacts to optimize performance
+      bool   disabling_particle_contacts;
+      double granular_temperature_limit;
+      double solid_fraction_limit;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void

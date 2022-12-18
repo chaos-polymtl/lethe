@@ -18,8 +18,13 @@
 
 #include <dem/disable_particle_contact.h>
 
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+
 template <int dim>
 DisableParticleContact<dim>::DisableParticleContact()
+  : status_to_cell(mobility_status::n_mobility_status)
 {}
 
 template <int dim>
@@ -130,263 +135,6 @@ DisableParticleContact<dim>::calculate_average_granular_temperature(
     }
 }
 
-// template <int dim>
-// void
-// DisableParticleContact<dim>::check_if_mobile(
-//  const typename dem_data_structures<dim>::cells_neighbor_list
-//    &                                    cells_neighbor_list,
-//  const Particles::ParticleHandler<dim> &particle_handler)
-//{
-//  for (auto cell_neighbor_list_iterator = cells_neighbor_list.begin();
-//       cell_neighbor_list_iterator != cells_neighbor_list.end();
-//       ++cell_neighbor_list_iterator)
-//    {
-//      // 1st loop : assign mobility status to the main cell
-//      auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
-//      const unsigned int cell_id =
-//        (*cell_neighbor_iterator)->active_cell_index();
-//      const unsigned int n_particles_in_cell =
-//        particle_handler.n_particles_in_cell(*cell_neighbor_iterator);
-//
-//      // Check to see if the cell has any particles
-//      if (n_particles_in_cell > 0)
-//        {
-//          if (granular_temperature_average[cell_id] >=
-//                granular_temperature_limit ||
-//              solid_fractions[cell_id] <= solid_fraction_limit)
-//            {
-//              cell_status[cell_id] = mobility_status::mobile;
-//              status_to_cell[mobility_status::mobile].insert(
-//                *cell_neighbor_iterator);
-//            }
-//        }
-//
-//      if (cell_status[cell_id] != mobility_status::mobile)
-//        {
-//          status_to_cell[mobility_status::inactive].insert(
-//            *cell_neighbor_iterator);
-//        }
-//
-//      // Assign mobility status to neighbor cells
-//      ++cell_neighbor_iterator;
-//      for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
-//           ++cell_neighbor_iterator)
-//        {
-//          const unsigned int cell_id =
-//            (*cell_neighbor_iterator)->active_cell_index();
-//
-//          const unsigned int n_particles_in_cell =
-//            particle_handler.n_particles_in_cell(*cell_neighbor_iterator);
-//
-//          // Check if the cell has any particles
-//          if (n_particles_in_cell > 0)
-//            {
-//              if (granular_temperature_average[cell_id] >=
-//                    granular_temperature_limit ||
-//                  solid_fractions[cell_id] <= solid_fraction_limit)
-//                {
-//                  cell_status[cell_id] = mobility_status::mobile;
-//                  status_to_cell[mobility_status::mobile].insert(
-//                    *cell_neighbor_iterator);
-//                }
-//            }
-//
-//          // No particles or not mobile => inactive
-//          if (cell_status[cell_id] != mobility_status::mobile)
-//            {
-//              status_to_cell[mobility_status::inactive].insert(
-//                *cell_neighbor_iterator);
-//            }
-//        }
-//    }
-//}
-//
-//
-// template <int dim>
-// void
-// DisableParticleContact<dim>::check_if_mobile_extended(
-//  const typename dem_data_structures<dim>::cells_neighbor_list
-//    &                                    cells_neighbor_list,
-//  const Particles::ParticleHandler<dim> &particle_handler)
-//{
-//  for (auto cell_neighbor_list_iterator = cells_neighbor_list.begin();
-//       cell_neighbor_list_iterator != cells_neighbor_list.end();
-//       ++cell_neighbor_list_iterator)
-//    {
-//      // The main cell
-//      auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
-//      auto main_cell_iterator     = cell_neighbor_list_iterator->begin();
-//      unsigned int main_cell_id =
-//        (*cell_neighbor_iterator)->active_cell_index();
-//      const unsigned int n_particles_in_cell =
-//        particle_handler.n_particles_in_cell(*cell_neighbor_iterator);
-//
-//      ++cell_neighbor_iterator;
-//      for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
-//           ++cell_neighbor_iterator)
-//        {
-//          unsigned int neighbor_cell_id =
-//            (*cell_neighbor_iterator)->active_cell_index();
-//
-//          const unsigned int n_particles_in_neighbor_cell =
-//            particle_handler.n_particles_in_cell(*cell_neighbor_iterator);
-//
-//          // Cell is mobile if has particles and an empty neighbor
-//          if (n_particles_in_cell > 0 && n_particles_in_neighbor_cell == 0 &&
-//              cell_status[main_cell_id] != mobility_status::mobile)
-//            {
-//              cell_status[main_cell_id] = mobility_status::mobile;
-//
-//              status_to_cell[mobility_status::inactive].erase(
-//                *main_cell_iterator);
-//              status_to_cell[mobility_status::mobile].insert(
-//                *main_cell_iterator);
-//            }
-//
-//
-//          //          if (cell_status[neighbor_cell_id] ==
-//          //          mobility_status::mobile &&
-//          //              cell_status[main_cell_id] ==
-//          //              mobility_status::inactive)
-//          //            {
-//          //              cell_status[main_cell_id] =
-//          //              mobility_status::mobile_extended;
-//          //
-//          //              status_to_cell[mobility_status::inactive].erase(
-//          //                *main_cell_iterator);
-//          // status_to_cell[mobility_status::mobile_extended].insert(
-//          //                *main_cell_iterator);
-//          //            }
-//
-//          if (n_particles_in_neighbor_cell > 0 && n_particles_in_cell == 0 &&
-//              cell_status[neighbor_cell_id] != mobility_status::mobile)
-//            {
-//              cell_status[neighbor_cell_id] = mobility_status::mobile;
-//
-//              status_to_cell[mobility_status::inactive].erase(
-//                *cell_neighbor_iterator);
-//              status_to_cell[mobility_status::mobile].insert(
-//                *cell_neighbor_iterator);
-//            }
-//
-//          //          // Neighbor is mobile if has particles and an empty cell
-//          //          if (cell_status[main_cell_id] == mobility_status::mobile
-//          //          &&
-//          //              cell_status[neighbor_cell_id] ==
-//          //              mobility_status::inactive)
-//          //            {
-//          //              cell_status[neighbor_cell_id] =
-//          //              mobility_status::mobile_extended;
-//          //
-//          //              status_to_cell[mobility_status::inactive].erase(
-//          //                *cell_neighbor_iterator);
-//          // status_to_cell[mobility_status::mobile_extended].insert(
-//          //                *cell_neighbor_iterator);
-//          //            }
-//        }
-//    }
-//}
-//
-// template <int dim>
-// void
-// DisableParticleContact<dim>::check_if_mobile_extended_extended(
-//  const typename dem_data_structures<dim>::cells_neighbor_list
-//    &                                    cells_neighbor_list,
-//  const Particles::ParticleHandler<dim> &particle_handler)
-//{
-//  for (auto cell_neighbor_list_iterator = cells_neighbor_list.begin();
-//       cell_neighbor_list_iterator != cells_neighbor_list.end();
-//       ++cell_neighbor_list_iterator)
-//    {
-//      // The main cell
-//      auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
-//      auto main_cell_iterator     = cell_neighbor_list_iterator->begin();
-//      unsigned int main_cell_id =
-//        (*cell_neighbor_iterator)->active_cell_index();
-//
-//      ++cell_neighbor_iterator;
-//      for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
-//           ++cell_neighbor_iterator)
-//        {
-//          unsigned int neighbor_cell_id =
-//            (*cell_neighbor_iterator)->active_cell_index();
-//
-//          if ((granular_temperature_average[main_cell_id] -
-//               granular_temperature_average[neighbor_cell_id]) >=
-//                0.25 * granular_temperature_limit &&
-//              cell_status[neighbor_cell_id] == mobility_status::inactive)
-//            {
-//              cell_status[neighbor_cell_id] = mobility_status::mobile;
-//
-//              status_to_cell[mobility_status::inactive].erase(
-//                *cell_neighbor_iterator);
-//              status_to_cell[mobility_status::mobile].insert(
-//                *cell_neighbor_iterator);
-//            }
-//
-//          if ((granular_temperature_average[neighbor_cell_id] -
-//               granular_temperature_average[main_cell_id]) >=
-//                0.25 * granular_temperature_limit &&
-//              cell_status[main_cell_id] == mobility_status::inactive)
-//            {
-//              cell_status[main_cell_id] = mobility_status::mobile;
-//
-//              status_to_cell[mobility_status::inactive].erase(
-//                *main_cell_iterator);
-//              status_to_cell[mobility_status::mobile].insert(
-//                *main_cell_iterator);
-//            }
-//        }
-//    }
-//}
-//
-// template <int dim>
-// void
-// DisableParticleContact<dim>::check_if_active(
-//  const typename dem_data_structures<dim>::cells_neighbor_list
-//    &cells_neighbor_list)
-//{
-//  for (auto cell_neighbor_list_iterator = cells_neighbor_list.begin();
-//       cell_neighbor_list_iterator != cells_neighbor_list.end();
-//       ++cell_neighbor_list_iterator)
-//    {
-//      // The main cell
-//      auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
-//      auto main_cell_iterator     = cell_neighbor_list_iterator->begin();
-//      unsigned int main_cell_id =
-//        (*cell_neighbor_iterator)->active_cell_index();
-//
-//      ++cell_neighbor_iterator;
-//      for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
-//           ++cell_neighbor_iterator)
-//        {
-//          unsigned int neighbor_cell_id =
-//            (*cell_neighbor_iterator)->active_cell_index();
-//
-//          if (cell_status[neighbor_cell_id] == mobility_status::mobile &&
-//              cell_status[main_cell_id] == mobility_status::inactive)
-//            {
-//              cell_status[main_cell_id] = mobility_status::active;
-//
-//              status_to_cell[mobility_status::inactive].erase(
-//                *main_cell_iterator);
-//              status_to_cell[mobility_status::active].insert(
-//                *main_cell_iterator);
-//            }
-//
-//          if (cell_status[main_cell_id] == mobility_status::mobile &&
-//              cell_status[neighbor_cell_id] == mobility_status::inactive)
-//            {
-//              cell_status[neighbor_cell_id] = mobility_status::active;
-//
-//              status_to_cell[mobility_status::inactive].erase(
-//                *cell_neighbor_iterator);
-//              status_to_cell[mobility_status::active].insert(
-//                *cell_neighbor_iterator);
-//            }
-//        }
-//    }
-//}
 
 template <int dim>
 void
@@ -397,9 +145,6 @@ DisableParticleContact<dim>::identify_mobility_status(
   MPI_Comm                                         mpi_communicator)
 {
   // Reset cell status containers
-  cell_status.clear();
-  cell_status.resize(triangulation.n_active_cells(), 0);
-
   status_to_cell.clear();
   status_to_cell.resize(mobility_status::n_mobility_status);
 
@@ -463,8 +208,7 @@ DisableParticleContact<dim>::identify_mobility_status(
               bool has_empty_neighbor = false;
               for (auto dof_index : local_dofs_indices)
                 {
-                  if (std::fabs(mobility_at_nodes[dof_index] -
-                                mobility_status::empty) < 1e-6)
+                  if (mobility_at_nodes[dof_index] == mobility_status::empty)
                     {
                       has_empty_neighbor = true;
                       break;
@@ -481,7 +225,7 @@ DisableParticleContact<dim>::identify_mobility_status(
                     {
                       // Don't overwrite empty nodes
                       mobility_at_nodes(dof_index) =
-                        std::max((float)mobility_status::mobile,
+                        std::max((int)mobility_status::mobile,
                                  mobility_at_nodes[dof_index]);
                     }
                 }
@@ -504,8 +248,7 @@ DisableParticleContact<dim>::identify_mobility_status(
 
               for (auto dof_index : local_dofs_indices)
                 {
-                  if (std::fabs(mobility_at_nodes[dof_index] -
-                                mobility_status::mobile) < 1e-6)
+                  if (mobility_at_nodes[dof_index] == mobility_status::mobile)
                     {
                       status_to_cell[mobility_status::mobile].insert(cell);
 
@@ -513,7 +256,7 @@ DisableParticleContact<dim>::identify_mobility_status(
                       for (auto dof_index : local_dofs_indices)
                         {
                           mobility_at_nodes[dof_index] =
-                            std::max((float)mobility_status::active,
+                            std::max((int)mobility_status::active,
                                      mobility_at_nodes[dof_index]);
                         }
                       break;
@@ -538,13 +281,13 @@ DisableParticleContact<dim>::identify_mobility_status(
           bool has_mobile_nodes = false;
           for (auto dof_index : local_dofs_indices)
             {
-              has_active_nodes = (std::fabs(mobility_at_nodes[dof_index] -
-                                            mobility_status::active) < 1e-6) ||
-                                 has_active_nodes;
+              has_active_nodes =
+                (mobility_at_nodes[dof_index] == mobility_status::active) ||
+                has_active_nodes;
 
-              has_mobile_nodes = (std::fabs(mobility_at_nodes[dof_index] -
-                                            mobility_status::mobile) < 1e-6) ||
-                                 has_mobile_nodes;
+              has_mobile_nodes =
+                (mobility_at_nodes[dof_index] == mobility_status::mobile) ||
+                has_mobile_nodes;
             }
 
           if (has_active_nodes && !has_mobile_nodes)

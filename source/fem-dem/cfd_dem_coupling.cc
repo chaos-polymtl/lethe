@@ -1003,11 +1003,13 @@ CFDDEMSolver<dim>::dem_post_process_results()
   dem_post_processing_object.write_post_processing_results(
     *parallel_triangulation,
     grid_pvdhandler,
+    this->dof_handler,
     this->particle_handler,
     dem_parameters,
     this->simulation_control->get_current_time(),
     this->simulation_control->get_step_number(),
-    this->mpi_communicator);
+    this->mpi_communicator,
+    disable_contact_object);
 }
 
 template <int dim>

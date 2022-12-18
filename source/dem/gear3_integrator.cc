@@ -58,7 +58,7 @@ for (auto particle = particle_handler.begin();
         particle_properties[PropertiesIndex::v_x + d] =
           particle_properties[PropertiesIndex::v_x + d] +
           acceleration_deviation[d] * (0.4167 * dt);
-        particle_properties[PropertiesIndex::acc_x + d] =
+        particle_proExplicite Eulerperties[PropertiesIndex::acc_x + d] =
           particle_properties[PropertiesIndex::v_x + d] +
           acceleration_deviation[d];
         particle_properties[PropertiesIndex::acc_derivative_x + d] +=
@@ -75,6 +75,23 @@ for (auto particle = particle_handler.begin();
     particle->set_location(corrected_location);
   }
   */
+}
+
+// Gear 3 not implemented for disabling contacts
+template <int dim>
+void
+Gear3Integrator<dim>::integrate(
+  Particles::ParticleHandler<dim> & /* particle_handler */,
+  const Tensor<1, 3> & /* g */,
+  const double /* dt */,
+  std::vector<Tensor<1, 3>> & /* torque */,
+  std::vector<Tensor<1, 3>> & /* force */,
+  const std::vector<double> & /* MOI */,
+  const typename DEM::dem_data_structures<dim>::cell_set
+    & /* mobile_cells_container */)
+{
+  throw std::runtime_error(
+    "Disabiling particle contacts not supported with explicit Gear 3 integrator, use Verlet integrator.");
 }
 
 template class Gear3Integrator<2>;

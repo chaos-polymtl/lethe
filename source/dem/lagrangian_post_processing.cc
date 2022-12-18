@@ -259,10 +259,10 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);
 
-  average_solution_names.push_back("mobility_status_node");
-
-  data_out.add_data_vector(disable_contact_object.get_mobility_at_nodes(),
-                           average_solution_names.back());
+  //  average_solution_names.push_back("mobility_status_node");
+  //
+  //  data_out.add_data_vector((LinearAlgebra::distributed::Vector<float>)disable_contact_object.get_mobility_at_nodes(),
+  //                           average_solution_names.back());
 
   // Attach the solution data to data_out object
   Vector<float> subdomain(triangulation.n_active_cells());

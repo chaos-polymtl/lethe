@@ -18,7 +18,6 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -26,11 +25,8 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_values.h>
-
 #include <deal.II/lac/la_parallel_vector.h>
-#include <deal.II/lac/vector.h>
+#include <deal.II/lac/la_parallel_vector.templates.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -40,6 +36,11 @@ using namespace dealii;
 
 #ifndef lethe_disable_particle_contact_h
 #  define lethe_disable_particle_contact_h
+
+// Special template instance for this class.
+// Unsigned integer would have been a better choice, but is not working
+// with the Vector class (error because of calling of abs() function)
+template class LinearAlgebra::distributed::Vector<int>;
 
 template <int dim>
 class DisableParticleContact
@@ -76,6 +77,32 @@ public:
   calculate_average_granular_temperature(
     const parallel::distributed::Triangulation<dim> &triangulation,
     const Particles::ParticleHandler<dim> &          particle_handler);
+
+
+  inline unsigned int
+  check_cell_mobility(
+    const typename Triangulation<dim>::active_cell_iterator &cell) const
+  {
+    unsigned int status = mobility_status::mobile;
+    auto         cell_iterator_from_mobile_container =
+      status_to_cell[status].find(cell);
+
+    if (cell_iterator_from_mobile_container != status_to_cell[status].end())
+      {
+        return status;
+      }
+
+    status = mobility_status::active;
+    auto cell_iterator_from_active_container =
+      status_to_cell[status].find(cell);
+
+    if (cell_iterator_from_active_container != status_to_cell[status].end())
+      {
+        return status;
+      }
+
+    return mobility_status::inactive;
+  }
 
   void
   print_cell_mobility_info(
@@ -157,7 +184,7 @@ public:
     return status_to_cell;
   }
 
-  LinearAlgebra::distributed::Vector<float>
+  LinearAlgebra::distributed::Vector<int>
   get_mobility_at_nodes()
   {
     return mobility_at_nodes;
@@ -169,46 +196,29 @@ public:
     return mobility_status::n_mobility_status;
   }
 
+  void
+  set_limit_value(const double granular_temperature,
+                  const double solid_fraction)
+  {
+    granular_temperature_limit = granular_temperature;
+    solid_fraction_limit       = solid_fraction;
+  }
+
 private:
   void
   check_granular_temperature(
-    const typename dem_data_structures<dim>::cells_neighbor_list
+    const typename DEM::dem_data_structures<dim>::cells_neighbor_list
       &                                    cells_neighbor_list,
     const Particles::ParticleHandler<dim> &particle_handler);
 
-
-  //  void
-  //  check_if_mobile(const typename
-  //  dem_data_structures<dim>::cells_neighbor_list
-  //                    & cells_neighbor_list,
-  //                  const Particles::ParticleHandler<dim> &particle_handler);
-  //
-  //  void
-  //  check_if_mobile_extended(
-  //    const typename dem_data_structures<dim>::cells_neighbor_list
-  //      &                                    cells_neighbor_list,
-  //    const Particles::ParticleHandler<dim> &particle_handler);
-  //
-  //  void
-  //  check_if_mobile_extended_extended(
-  //    const typename dem_data_structures<dim>::cells_neighbor_list
-  //      &                                    cells_neighbor_list,
-  //    const Particles::ParticleHandler<dim> &particle_handler);
-  //
-  //  void
-  //  check_if_active(const typename
-  //  dem_data_structures<dim>::cells_neighbor_list
-  //                    &cells_neighbor_list);
-
   std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell;
-  std::vector<unsigned int>                                     cell_status;
   Vector<double>                                                solid_fractions;
 
-  Vector<double>                            granular_temperature_average;
-  LinearAlgebra::distributed::Vector<float> mobility_at_nodes;
+  Vector<double>                          granular_temperature_average;
+  LinearAlgebra::distributed::Vector<int> mobility_at_nodes;
 
-  const double granular_temperature_limit = 1e-4;
-  const double solid_fraction_limit       = 0.4;
+  double granular_temperature_limit;
+  double solid_fraction_limit;
 };
 
 

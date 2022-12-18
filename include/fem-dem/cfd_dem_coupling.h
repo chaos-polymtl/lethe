@@ -242,12 +242,13 @@ private:
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
 
+  DisableParticleContact<dim> disable_contact_object;
+
   DEM::DEMProperties<dim> properties_class;
 
   // Information for parallel grid processing
-  DoFHandler<dim> background_dh;
-  PVDHandler      grid_pvdhandler;
-  PVDHandler      particles_pvdhandler;
+  PVDHandler grid_pvdhandler;
+  PVDHandler particles_pvdhandler;
 
   DEMSolverParameters<dim>      dem_parameters;
   double                        dem_time_step;

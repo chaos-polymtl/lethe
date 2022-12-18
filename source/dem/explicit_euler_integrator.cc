@@ -87,5 +87,22 @@ ExplicitEulerIntegrator<dim>::integrate(
     }
 }
 
+// Explicite Euler not implemented for disabling contacts
+template <int dim>
+void
+ExplicitEulerIntegrator<dim>::integrate(
+  Particles::ParticleHandler<dim> & /* particle_handler */,
+  const Tensor<1, 3> & /* g */,
+  const double /* dt */,
+  std::vector<Tensor<1, 3>> & /* torque */,
+  std::vector<Tensor<1, 3>> & /* force */,
+  const std::vector<double> & /* MOI */,
+  const typename DEM::dem_data_structures<dim>::cell_set
+    & /* mobile_cells_container */)
+{
+  throw std::runtime_error(
+    "Disabiling particle contacts not supported with explicit Euler integrator, use Verlet integrator.");
+}
+
 template class ExplicitEulerIntegrator<2>;
 template class ExplicitEulerIntegrator<3>;

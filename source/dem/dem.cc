@@ -71,6 +71,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , has_periodic_boundaries(false)
   , background_dh(triangulation)
   , has_floating_mesh(false)
+  , has_disabled_contacts(false)
 {
   // Print simulation starting information
   print_initial_information(pcout, n_mpi_processes);
@@ -165,6 +166,14 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   else
     {
       throw std::runtime_error("Specified load balance method is not valid");
+    }
+
+  if (parameters.model_parameters.disabling_particle_contacts)
+    {
+      has_disabled_contacts = true;
+      disable_contact_object.set_limit_value(
+        parameters.model_parameters.granular_temperature_limit,
+        parameters.model_parameters.solid_fraction_limit);
     }
 
   // Calling input_parameter_inspection to evaluate input parameters in the
@@ -852,7 +861,14 @@ DEMSolver<dim>::solve()
     {
       simulation_control->print_progression(pcout);
       if (simulation_control->is_verbose_iteration())
-        report_statistics();
+        {
+          report_statistics();
+          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+            {
+              std::cout << "time;" << simulation_control->get_current_time()
+                        << ";" << clock.wall_time() << std::endl;
+            }
+        }
 
       // Grid motion
       if (parameters.grid_motion.motion_type !=
@@ -884,21 +900,19 @@ DEMSolver<dim>::solve()
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
-          if (!simulation_control->is_at_start())
+          if (has_disabled_contacts && !simulation_control->is_at_start())
             {
+              // Compute cell mobility for all cells
               disable_contact_object.identify_mobility_status(triangulation,
                                                               background_dh,
                                                               particle_handler,
                                                               mpi_communicator);
 
-              mobility_status_to_cell =
-                disable_contact_object.get_mobility_status();
-
-              integrator_object->status_to_cell = mobility_status_to_cell;
-
-              //              disable_contact_object.print_cell_mobility_info(
-              //                particle_handler,
-              //                simulation_control->get_current_time());
+              if (print_mobility_info)
+                {
+                  disable_contact_object.print_cell_mobility_info(
+                    particle_handler, simulation_control->get_current_time());
+                }
             }
 
           displacement.resize(particle_handler.get_max_local_particle_index());
@@ -936,21 +950,38 @@ DEMSolver<dim>::solve()
           checkpoint_step = false;
 
           // Execute broad search by filling containers of particle-particle
+          // contact pair candidates and containers of particle-wall
           // contact pair candidates
-          container_manager.execute_particle_particle_broad_search(
-            particle_handler, mobility_status_to_cell, has_periodic_boundaries);
+          if (has_disabled_contacts && contact_build_number > 1)
+            {
+              container_manager.execute_particle_particle_broad_search(
+                particle_handler,
+                disable_contact_object,
+                has_periodic_boundaries);
+
+              container_manager.execute_particle_wall_broad_search(
+                particle_handler,
+                boundary_cell_object,
+                parameters.floating_walls,
+                simulation_control->get_current_time(),
+                disable_contact_object,
+                has_floating_mesh);
+            }
+          else
+            {
+              container_manager.execute_particle_particle_broad_search(
+                particle_handler, has_periodic_boundaries);
+
+              container_manager.execute_particle_wall_broad_search(
+                particle_handler,
+                boundary_cell_object,
+                parameters.floating_walls,
+                simulation_control->get_current_time(),
+                has_floating_mesh);
+            }
 
           // Updating number of contact builds
           contact_build_number++;
-
-          // Execute broad search by filling containers of particle-wall
-          // contact pair candidates
-          container_manager.execute_particle_wall_broad_search(
-            particle_handler,
-            boundary_cell_object,
-            parameters.floating_walls,
-            simulation_control->get_current_time(),
-            has_floating_mesh);
 
           // Update contacts, remove replicates and add new contact pairs
           // to the contact containers when particles are exchanged between
@@ -985,7 +1016,6 @@ DEMSolver<dim>::solve()
           simulation_control->get_time_step(),
           torque,
           force,
-          mobility_status_to_cell,
           periodic_offset);
 
       // We have to update the positions of the points on boundary faces and
@@ -1026,12 +1056,27 @@ DEMSolver<dim>::solve()
         }
       else
         {
-          integrator_object->integrate(particle_handler,
-                                       g,
-                                       simulation_control->get_time_step(),
-                                       torque,
-                                       force,
-                                       MOI);
+          if (has_disabled_contacts && contact_build_number > 1)
+            {
+              unsigned int mobile_set = DisableParticleContact<dim>::mobile;
+              integrator_object->integrate(
+                particle_handler,
+                g,
+                simulation_control->get_time_step(),
+                torque,
+                force,
+                MOI,
+                disable_contact_object.get_mobility_status()[mobile_set]);
+            }
+          else
+            {
+              integrator_object->integrate(particle_handler,
+                                           g,
+                                           simulation_control->get_time_step(),
+                                           torque,
+                                           force,
+                                           MOI);
+            }
         }
 
       // Particles displacement if passing through a periodic boundary
