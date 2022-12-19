@@ -163,7 +163,7 @@ The ``simulation control`` subsection controls the flow of the simulation. Two a
       set method            = steady
       set output name       = couette
       set subdivision       = 2
-      set number mesh adapt = 3 # If steady, no mesh adaptation
+      set number mesh adapt = 2 # If steady, no mesh adaptation
     end
 
 

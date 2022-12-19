@@ -105,8 +105,8 @@ Model parameters
 
     subsection model parameters
       set contact detection method                = dynamic
-      set dynamic contact search size coefficient = 0.5
-      set neighborhood threshold                  = 1.4
+      set dynamic contact search size coefficient = 0.7
+      set neighborhood threshold                  = 1.5
       set particle particle contact force method  = hertz_mindlin_limit_overlap
       set particle wall contact force method      = nonlinear
       set integration method                      = velocity_verlet
