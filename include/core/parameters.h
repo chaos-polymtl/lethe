@@ -614,10 +614,10 @@ namespace Parameters
     // Enable heat flux calculation
     bool calculate_heat_flux;
 
-    // Prefix for the heat flux output
+    // Prefix for the total heat flux output
     std::string heat_flux_output_name;
 
-    // Prefix for the heat flux output
+    // Prefix for the convective heat flux output
     std::string convective_flux_output_name;
 
     // Fluid domain, used when post-processing a multiphase simulation
