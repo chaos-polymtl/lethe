@@ -65,10 +65,10 @@ In the parameter file, the mesh is read this way:
 
 .. code-block:: text
 
-  subsection mesh
-    set type               = gmsh
-    set file name          = sphere.msh
-  end
+    subsection mesh
+      set type      = gmsh
+      set file name = sphere.msh
+    end
 
 .. note:: text
 
@@ -82,27 +82,27 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 
 .. code-block:: text
 
-  subsection boundary conditions
-    set number                  = 3
-    subsection bc 0
-        set type              = noslip
-    end
-    subsection bc 1
-        set type              = function
+    subsection boundary conditions
+      set number = 3
+      subsection bc 0
+        set type = noslip
+      end
+      subsection bc 1
+        set type = function
         subsection u
-            set Function expression = 1
+          set Function expression = 1
         end
         subsection v
-            set Function expression = 0
+          set Function expression = 0
         end
         subsection w
-            set Function expression = 0
+          set Function expression = 0
         end
+      end
+      subsection bc 2
+        set type = slip
+      end
     end
-    subsection bc 2
-        set type              = slip
-    end
-  end
 
 There are three boundary conditions, as shown in the figure above. A ``noslip`` condition is applied on the surface of the sphere, where the velocity should be 0. The inlet velocity is set to `u=1m/s`, and the boundaries of the domain that are parallel to the flow direction have a ``slip`` boundary condition.
 
@@ -123,21 +123,21 @@ Taking this into account and the fact that the sphere diameter :math:`D` is 1 m,
 
 .. code-block:: text
 
-  subsection physical properties
-    subsection fluid 0
-      set kinematic viscosity = 10
+    subsection physical properties
+      subsection fluid 0
+        set kinematic viscosity = 10
+      end
     end
-  end
 
 * In ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-150.prm`` and ``/examples/incompressible-flow/3d_flow_around_sphere/sphere-adapt.prm`` (:math:`Re=150`)
 
 .. code-block:: text
 
-  subsection physical properties
-    subsection fluid 0
-      set kinematic viscosity = 0.006666667
+    subsection physical properties
+      subsection fluid 0
+        set kinematic viscosity = 0.006666667
+      end
     end
-  end
 
 By default, simulations only contain a single fluid which is labeled ``0``.
 
@@ -152,8 +152,8 @@ We specify the interpolation order for both pressure and velocity using the ``FE
 .. code-block:: text
 
     subsection FEM
-        set velocity order            = 1
-        set pressure order            = 1
+      set velocity order = 1
+      set pressure order = 1
     end
 
 .. warning:: 
@@ -170,30 +170,30 @@ In fact, for the Re = 0.1, we have a laminar to creeping flow, meaning that the 
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                  = steady
-    set number mesh adapt       = 0
-    set output name             = sphere-output
-    set output frequency        = 1
-    set subdivision             = 1
-  end
+    subsection simulation control
+      set method            = steady
+      set number mesh adapt = 0
+      set output name       = sphere-output
+      set output frequency  = 1
+      set subdivision       = 1
+    end
 
 At Re = 150, the flow has separated, resulting in an unstable wake and recirculation. It is hence more difficult to converge to a steady-state solution. 
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                  = steady_bdf
-    set time step        	      = 0.1
-    set adapt 		              = true
-    set max cfl		              = 1000
-    set stop tolerance          = 1e-5
-    set adaptative time step scaling = 1.2
-    set number mesh adapt       = 0
-    set output name             = sphere-output
-    set output frequency        = 1
-    set subdivision             = 1
-  end
+    subsection simulation control
+      set method                       = steady_bdf
+      set time step                    = 0.1
+      set adapt                        = true
+      set max cfl                      = 1000
+      set stop tolerance               = 1e-5
+      set adaptative time step scaling = 1.2
+      set number mesh adapt            = 0
+      set output name                  = sphere-output
+      set output frequency             = 1
+      set subdivision                  = 1
+    end
 
 The ``steady_bdf`` method solves for a steady-state simulation using adjoint time stepping with a bdf1 scheme. An initial time step is used to complete a transient iteration, and with each iteration, the time step is increased. The simulation is considered to have reached steady-state when the L2 norm of the initial residual is lower than stop tolerance at the start of a non-linear solution step, i.e. until the time step is large enough that a pseudo-steady-state has been reached.
 
@@ -205,10 +205,10 @@ An initial condition is introduced for the Re = 150 problem. This way, a Re = 10
 
 .. code-block:: text
 
-  subsection initial conditions
-    set type = viscous
-    set viscosity = 0.1
-  end
+    subsection initial conditions
+      set type      = viscous
+      set viscosity = 0.1
+    end
 
 
 Mesh adaptation control
@@ -218,17 +218,17 @@ To increase the accuracy of the drag coefficient, the mesh must be refined in ar
 
 .. code-block:: text
 
-  subsection mesh adaptation
-    set type                    = kelly
-    set fraction coarsening     = 0.05
-    set fraction refinement     = 0.1
-    set fraction type	      = number
-    set max number elements     = 100000
-    set min refinement level    = 0
-    set max refinement level    = 4
-    set variable		      = pressure
-    set frequency         = 5 
-  end
+    subsection mesh adaptation
+      set type                 = kelly
+      set fraction coarsening  = 0.05
+      set fraction refinement  = 0.1
+      set fraction type        = number
+      set max number elements  = 100000
+      set min refinement level = 0
+      set max refinement level = 4
+      set variable             = pressure
+      set frequency            = 5
+    end
 
 The mesh is dynamically adapted based on an estimate of the error of the solution for the pressure (the Kelly error estimator). The refinement is based on the number of elements. This means that the number of cells refined/coarsened per iteration is based on the fraction of the number of cells, rather than the fraction of the error (where all cells which have the fraction of the error are refined/coarsened).
 

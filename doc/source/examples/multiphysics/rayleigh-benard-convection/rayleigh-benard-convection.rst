@@ -79,17 +79,18 @@ time step of :math:`0.01` second.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                          = bdf1
-        set time end                        = 10000
-        set time step                       = 0.01
-        set adapt                           = true
-        set max cfl                         = 0.5
-        set stop tolerance                  = 1e-5
-        set adaptative time step scaling    = 1.3
-        set output name                     = rayleigh-benard_convection
-        set output control                  = time
-        set output time                     = 25
-        set output path                     = ./output/     
+      set method                       = bdf1
+      set time end                     = 10000
+      set time step                    = 0.01
+      set adapt                        = true
+      set max cfl                      = 0.5
+      set stop tolerance               = 1e-5
+      set adaptative time step scaling = 1.3
+      set number mesh adapt            = 0
+      set output name                  = rayleigh-benard_convection
+      set output control               = time
+      set output time                  = 25
+      set output path                  = ./output/
     end
 
 
@@ -101,10 +102,10 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set buoyancy force      = true
-        set heat transfer       = true
-        set fluid dynamics      = true
-    end 
+      set buoyancy force = true
+      set heat transfer  = true
+      set fluid dynamics = true
+    end
     
 The ``source term`` subsection defines gravitational acceleration.
 
@@ -114,10 +115,10 @@ The ``source term`` subsection defines gravitational acceleration.
     # Source term
     #---------------------------------------------------
     subsection source term
-        set enable                      = true
-        subsection xyz
-            set Function expression     = 0 ; -10 ; 0
-        end
+      set enable = true
+      subsection xyz
+        set Function expression = 0 ; -10 ; 0
+      end
     end
 
 
@@ -130,15 +131,15 @@ The ``physical properties`` subsection defines the physical properties of the fl
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-        set number of fluids            = 1
-        subsection fluid 0
-            set density                 = 100
-            set kinematic viscosity     = 0.01
-            set thermal expansion       = 0.0002
-            set thermal conductivity    = 0.15625	# for Ra = 10000
-            #set thermal conductivity   = 0.0625	# for Ra = 25000
-            set specific heat           = 100
-        end
+      set number of fluids = 1
+      subsection fluid 0
+        set density              = 100
+        set kinematic viscosity  = 0.01
+        set thermal expansion    = 0.0002
+        set thermal conductivity = 0.15625 # for Ra = 10000
+        #set thermal conductivity = 0.0625 # for Ra = 25000
+        set specific heat        = 100
+      end
     end
 
 ---------------------------

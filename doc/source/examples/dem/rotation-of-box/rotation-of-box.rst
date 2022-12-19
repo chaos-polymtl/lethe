@@ -32,10 +32,10 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 0.04 m
 .. code-block:: text
 
     subsection mesh
-        set type                 				= dealii
-        set grid type            				= hyper_cube
-        set grid arguments       				= -0.02 : 0.02 : false
-        set initial refinement   				= 3
+      set type               = dealii
+      set grid type          = hyper_cube
+      set grid arguments     = -0.02 : 0.02 : false
+      set initial refinement = 3
     end
 
 
@@ -47,18 +47,18 @@ An insertion box is defined inside the cubic domain. 4000 particles are inserted
 .. code-block:: text
 
     subsection insertion info
-        set insertion method								= non_uniform
-        set inserted number of particles at each time step  = 4000
-        set insertion frequency            		 			= 2000000
-        set insertion box minimum x            	 			= -0.019
-        set insertion box minimum y            	        	= -0.019
-        set insertion box minimum z            	        	= -0.01
-        set insertion box maximum x            	        	= 0.019
-        set insertion box maximum y           	 			= 0.019
-        set insertion box maximum z            	        	= 0.019
-        set insertion distance threshold					= 1.5
-        set insertion random number range					= 0.2
-        set insertion random number seed					= 19
+      set insertion method                               = non_uniform
+      set inserted number of particles at each time step = 4000
+      set insertion frequency                            = 2000000
+      set insertion box minimum x                        = -0.019
+      set insertion box minimum y                        = -0.019
+      set insertion box minimum z                        = -0.01
+      set insertion box maximum x                        = 0.019
+      set insertion box maximum y                        = 0.019
+      set insertion box maximum z                        = 0.019
+      set insertion distance threshold                   = 1.5
+      set insertion random number range                  = 0.2
+      set insertion random number seed                   = 19
     end
 
 
@@ -70,26 +70,26 @@ The ``number`` of particles (4000) is equal to the specified ``inserted number o
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx            		 						= 0.0
-        set gy            		 						= 0.0
-        set gz											= -9.81
-        set number of particle types	                = 1
-            subsection particle type 0
-            set size distribution type					= uniform
-                set diameter            	 			= 0.001
-                set number								= 4000
-                set density particles	 				= 1000
-                set young modulus particles         	= 1000000
-                set poisson ratio particles          	= 0.3
-                set restitution coefficient particles	= 0.3
-                set friction coefficient particles      = 0.1
-                set rolling friction particles         	= 0.05
-        end
-        set young modulus wall            				= 1000000
-        set poisson ratio wall            				= 0.3
-        set restitution coefficient wall           		= 0.3
-        set friction coefficient wall         			= 0.1
-        set rolling friction wall         	      	  	= 0.05
+      set gx                       = 0.0
+      set gy                       = 0.0
+      set gz                       = -9.81
+      set number of particle types = 1
+      subsection particle type 0
+        set size distribution type            = uniform
+        set diameter                          = 0.001
+        set number                            = 4000
+        set density particles                 = 1000
+        set young modulus particles           = 1000000
+        set poisson ratio particles           = 0.3
+        set restitution coefficient particles = 0.3
+        set friction coefficient particles    = 0.1
+        set rolling friction particles        = 0.05
+      end
+      set young modulus wall           = 1000000
+      set poisson ratio wall           = 0.3
+      set restitution coefficient wall = 0.3
+      set friction coefficient wall    = 0.1
+      set rolling friction wall        = 0.05
     end
 
 
@@ -99,13 +99,13 @@ Model parameters
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method 		   		 	= dynamic
-      set dynamic contact search size coefficient	= 0.9
-      set neighborhood threshold				 	= 1.3
-      set particle particle contact force method	= hertz_mindlin_limit_overlap
-      set particle wall contact force method		= nonlinear
-      set rolling resistance torque method			= constant_resistance
-      set integration method				 		= velocity_verlet
+      set contact detection method                = dynamic
+      set dynamic contact search size coefficient = 0.9
+      set neighborhood threshold                  = 1.3
+      set particle particle contact force method  = hertz_mindlin_limit_overlap
+      set particle wall contact force method      = nonlinear
+      set rolling resistance torque method        = constant_resistance
+      set integration method                      = velocity_verlet
     end
 
 
@@ -115,10 +115,10 @@ Simulation control
 .. code-block:: text
 
     subsection simulation control
-      set time step							= 1e-5
-      set time end       					= 5
-      set log frequency				       	= 1000
-      set output frequency            		= 1000
+      set time step        = 1e-5
+      set time end         = 5
+      set log frequency    = 1000
+      set output frequency = 1000
     end
 
 Running the simulation

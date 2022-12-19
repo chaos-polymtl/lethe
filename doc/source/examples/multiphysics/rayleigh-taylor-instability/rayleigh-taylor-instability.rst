@@ -77,15 +77,15 @@ and the max CFL is :math:`0.9`.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method         = bdf1
-        set time end       = 0.75
-        set time step      = 0.0002
-        set adapt          = true
-        set max cfl        = 0.9
-        set output name    = rayleigh-taylor
-        set output path    = ./output/
-        set output control = time
-        set output time    = 0.005
+      set method         = bdf1
+      set time end       = 0.75
+      set time step      = 0.0002
+      set adapt          = true
+      set max cfl        = 0.9
+      set output name    = rayleigh-taylor
+      set output path    = ./output/
+      set output control = time
+      set output time    = 0.005
     end
 
 
@@ -97,7 +97,7 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set VOF       = true
+      set VOF = true
     end 
     
 The ``source term`` subsection defines gravitational acceleration.
@@ -108,10 +108,10 @@ The ``source term`` subsection defines gravitational acceleration.
     # Source term
     #---------------------------------------------------
     subsection source term
-        set enable                      = true
-        subsection xyz
-            set Function expression     = 0 ; -9.81 ; 0
-        end
+      set enable = true
+      subsection xyz
+        set Function expression = 0 ; -9.81 ; 0
+      end
     end
 
 
@@ -124,17 +124,16 @@ The ``physical properties`` subsection defines the physical properties of the fl
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-        set number of fluids     = 2
-        subsection fluid 0
-          set density              	= 100
-          set kinematic viscosity  	= 0.00153
-        end
-        subsection fluid 1
-          set density 		= 300
-          set kinematic viscosity 	= 0.00153
-        end
+      set number of fluids = 2
+      subsection fluid 0
+        set density             = 100
+        set kinematic viscosity = 0.00153
+      end
+      subsection fluid 1
+        set density             = 300
+        set kinematic viscosity = 0.00153
+      end
     end
-
 
 In the ``initial condition`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial condition``.
 
@@ -145,14 +144,14 @@ In the ``initial condition`` subsection, we need to define the interface between
     # Initial Condition
     #---------------------------------------------------
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-                set Function expression = 0; 0; 0
-        end
-        
-        subsection VOF
-                set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0
+      end
+    
+      subsection VOF
+        set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
+      end
     end
 
 In the ``mesh`` subsection we configure the simulation domain. The ``initial refinement`` of the mesh is equal to 5, but we use mesh adaptation to coarsen the mesh in cells far from the interface to improve the computation performance.
@@ -182,15 +181,15 @@ We set ``initial refinement steps = 4`` to adapt the mesh to the initial value o
     # Mesh Adaptation
     #---------------------------------------------------
     subsection mesh adaptation
-      set type                    	= kelly
-      set variable                	= phase
-      set fraction type           	= fraction
-      set max refinement level    	= 7
-      set min refinement level    	= 5
-      set frequency               	= 1
-      set fraction refinement     	= 0.99
-      set fraction coarsening     	= 0.01
-      set initial refinement steps  	= 4
+      set type                     = kelly
+      set variable                 = phase
+      set fraction type            = fraction
+      set max refinement level     = 7
+      set min refinement level     = 5
+      set frequency                = 1
+      set fraction refinement      = 0.99
+      set fraction coarsening      = 0.01
+      set initial refinement steps = 4
     end
 
 
@@ -203,21 +202,21 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
     # Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions
-      set number                  = 3
-        subsection bc 0
-        set id = 0
-            set type              = periodic
-            set periodic_id	      = 1
-            set periodic_direction = 0
-        end
-        subsection bc 1
-        set id = 2
-            set type              = noslip
-        end
-        subsection bc 2
-        set id = 3
-            set type              = noslip
-        end
+      set number = 3
+      subsection bc 0
+        set id                 = 0
+        set type               = periodic
+        set periodic_id        = 1
+        set periodic_direction = 0
+      end
+      subsection bc 1
+        set id   = 2
+        set type = noslip
+      end
+      subsection bc 2
+        set id   = 3
+        set type = noslip
+      end
     end
 
 
@@ -231,18 +230,18 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
     #---------------------------------------------------
     subsection VOF
       subsection interface sharpening
-        set enable      		= true
-        set threshold		= 0.5
-        set interface sharpness	= 1.5
-        set frequency		= 25
-        set type        		= constant
+        set enable              = true
+        set threshold           = 0.5
+        set interface sharpness = 1.5
+        set frequency           = 25
+        set type                = constant
       end
-     
+    
       subsection mass conservation
-        set monitoring          	= true
-        set monitored fluid     	= fluid 1
-        set tolerance           	= 1e-6
-        set verbosity           	= quiet
+        set monitoring      = true
+        set monitored fluid = fluid 1
+        set tolerance       = 1e-6
+        set verbosity       = quiet
       end
     end
 
@@ -264,15 +263,14 @@ and for the ``adaptive`` refinement
         set type                    = adaptative
         set threshold max deviation = 0.2
         set max iterations          = 50
-     end
-    
-     subsection mass conservation
-        set monitoring          	= true
-        set  monitored fluid     	= fluid 1
-        set tolerance           	= 1e-2
-        set verbosity           	= quiet
       end
     
+      subsection mass conservation
+        set monitoring      = true
+        set monitored fluid = fluid 1
+        set tolerance       = 1e-2
+        set verbosity       = quiet
+      end
     end
 
 

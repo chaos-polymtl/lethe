@@ -44,12 +44,12 @@ This example uses a 2nd order backward differentiation (``method = bdf2``) for t
 .. code-block:: text
 
     subsection simulation control
-        set method                = bdf2
-        set output name           = cylinder-output
-        set output frequency      = 1
-        set output path           = ./Re200/
-        set time end              = 200.0
-        set time step		          = 0.05
+      set method           = bdf2
+      set output name      = cylinder-output
+      set output frequency = 1
+      set output path      = ./Re200/
+      set time end         = 200.0
+      set time step        = 0.05
     end
 
 FEM interpolation
@@ -60,8 +60,8 @@ The interpolation orders for the velocity and pressure are set to Q2-Q1 in the `
 .. code-block:: text
 
     subsection FEM
-        set velocity order  = 2
-        set pressure order  = 1
+      set velocity order = 2
+      set pressure order = 1
     end
 
 Mesh
@@ -72,9 +72,9 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
 .. code-block:: text
 
     subsection mesh
-        set type                = gmsh
-        set file name           = cylinder-structured.msh
-        set initial refinement  = 1
+      set type               = gmsh
+      set file name          = cylinder-structured.msh
+      set initial refinement = 1
     end
 
 Mesh adaptation control
@@ -84,17 +84,17 @@ While the discretization in the wake of the cylinder has less impact on the forc
 
 .. code-block:: text
 
-   subsection mesh adaptation
-       set type                   = kelly
-       set variable               = pressure
-       set fraction type          = number
-       set max number elements    = 70000
-       set max refinement level   = 3
-       set min refinement level   = 1
-       set frequency              = 1
-       set fraction refinement    = 0.02
-       set fraction coarsening    = 0.01
-   end
+    subsection mesh adaptation
+      set type                 = kelly
+      set variable             = pressure
+      set fraction type        = number
+      set max number elements  = 70000
+      set max refinement level = 3
+      set min refinement level = 1
+      set frequency            = 1
+      set fraction refinement  = 0.02
+      set fraction coarsening  = 0.01
+    end
 
 Here, we are using the pressure as the variable for the `Kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Indeed, we have observed that the refinement has less tendency to follow the vortices as they move through the wake with the pressure as the refinement indicator than if we select the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
 
@@ -106,32 +106,32 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial
 .. code-block:: text
 
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-                set Function expression = 1; 0; 0
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 1; 0; 0
+      end
     end
 
     subsection boundary conditions
-        set number                  = 3
-        subsection bc 0
-            set type              = noslip
+      set number = 3
+      subsection bc 0
+        set type = noslip
+      end
+      subsection bc 1
+        set type = function
+        subsection u
+          set Function expression = 1
         end
-        subsection bc 1
-            set type              = function
-            subsection u
-                set Function expression = 1
-            end
-            subsection v
-                set Function expression = 0
-            end
-            subsection w
-                set Function expression = 0
-            end
+        subsection v
+          set Function expression = 0
         end
-        subsection bc 2
-            set type              = slip
+        subsection w
+          set Function expression = 0
         end
+      end
+      subsection bc 2
+        set type = slip
+      end
     end
 
 Physical Properties
@@ -142,9 +142,9 @@ The Reynolds number must be high enough to capture a transient flow and study th
 .. code-block:: text
 
     subsection physical properties
-        subsection fluid 0
-          set kinematic viscosity            = 0.005
-        end
+      subsection fluid 0
+        set kinematic viscosity = 0.005
+      end
     end
 
 Forces
@@ -154,7 +154,7 @@ Since we want to study the time evolution of the drag and lift coefficients, the
 
 .. code-block:: text
 
-   subsection forces
+    subsection forces
       set verbosity             = verbose
       set calculate force       = true
       set calculate torque      = false
@@ -162,7 +162,7 @@ Since we want to study the time evolution of the drag and lift coefficients, the
       set output precision      = 10
       set calculation frequency = 1
       set output frequency      = 10
-   end
+    end
 
 As we set ``calculation frequency`` to 1, the forces on each boundary are computed at each time step and written in the file specified by the field ``force name``.
 

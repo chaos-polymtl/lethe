@@ -55,12 +55,12 @@ time step of :math:`5.0 \times 10^{-6}` seconds.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-      set method                  		= bdf2
-      set time end                		= 0.005
-      set time step               		= 0.000005
-      set output name             		= laser-meltpool
-      set output frequency        		= 1
-      set output path                  	= ./output/
+      set method           = bdf2
+      set time end         = 0.005
+      set time step        = 0.000005
+      set output name      = laser-meltpool
+      set output frequency = 1
+      set output path      = ./output/
     end
 
 
@@ -72,54 +72,54 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
     # Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions
-      set number                  = 4
-        subsection bc 0
-            set id = 0
-            set type              = noslip
-        end
-        subsection bc 1
-            set id = 1
-            set type              = noslip
-        end
-        subsection bc 2
-            set id = 2
-            set type              = noslip
-        end
-        subsection bc 3
-            set id = 3
-            set type              = noslip
-        end
+      set number = 4
+      subsection bc 0
+        set id   = 0
+        set type = noslip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = noslip
+      end
+      subsection bc 2
+        set id   = 2
+        set type = noslip
+      end
+      subsection bc 3
+        set id   = 3
+        set type = noslip
+      end
     end
     subsection boundary conditions heat transfer
-      set number                  = 4
-        subsection bc 0
-        	set id = 0
-    	set type	      = convection-radiation
-            set h                   = 80
-            set Tinf                = 20
-            set emissivity          = 0.6
-        end
-        subsection bc 1
-        	set id = 1
-    	set type	      = convection-radiation
-            set h                   = 80
-            set Tinf                = 20
-            set emissivity          = 0.6
-        end
-        subsection bc 2
-        	set id = 2
-    	set type	      = convection-radiation
-            set h                   = 80
-            set Tinf                = 20
-            set emissivity          = 0.6
-        end
-        subsection bc 3
-        	set id = 3
-    	set type	      = convection-radiation
-            set h                   = 80
-            set Tinf                = 20
-            set emissivity          = 0.6
-        end
+      set number = 4
+      subsection bc 0
+        set id         = 0
+        set type       = convection-radiation
+        set h          = 80
+        set Tinf       = 20
+        set emissivity = 0.6
+      end
+      subsection bc 1
+        set id         = 1
+        set type       = convection-radiation
+        set h          = 80
+        set Tinf       = 20
+        set emissivity = 0.6
+      end
+      subsection bc 2
+        set id         = 2
+        set type       = convection-radiation
+        set h          = 80
+        set Tinf       = 20
+        set emissivity = 0.6
+      end
+      subsection bc 3
+        set id         = 3
+        set type       = convection-radiation
+        set h          = 80
+        set Tinf       = 20
+        set emissivity = 0.6
+      end
     end
 
 
@@ -133,10 +133,10 @@ and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy 
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-	    set heat transfer          = true
-	    set buoyancy force         = true
-	    set fluid dynamics         = true
-    end 
+      set heat transfer  = true
+      set buoyancy force = true
+      set fluid dynamics = true
+    end
     
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
@@ -158,19 +158,19 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
     # Laser parameters
     #---------------------------------------------------
     subsection laser parameters
-        	set enable = true
-	    	set concentration factor      = 2
-	    	set power                     = 100
-	    	set absorptivity              = 0.6
-	    	set penetration depth         = 0.000070
-	    	set beam radius               = 0.000050
-	    	set start time                = 0
-	    	set end time                  = 0.001
-	    	set beam orientation          = y-
-	    	subsection path
-    		    	set Function expression   =  0.5 * t; 0.000500
-	    	end
-    end    
+      set enable               = true
+      set concentration factor = 2
+      set power                = 100
+      set absorptivity         = 0.6
+      set penetration depth    = 0.000070
+      set beam radius          = 0.000050
+      set start time           = 0
+      set end time             = 0.001
+      set beam orientation     = y-
+      subsection path
+        set Function expression = 0.5 * t; 0.000500
+      end
+    end  
 
 
 The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. Interested readers may find more information on phase change model in the `Stefan problem example <https://lethe-cfd.github.io/lethe/examples/multiphysics/stefan-problem/stefan-problem.html>`_ . In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
@@ -182,45 +182,46 @@ The laser heat source locally melts the material, which is initially in the soli
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-      set number of fluids                      = 1
-      	subsection fluid 0
-        	    set thermal conductivity model     = phase_change
-        	    set thermal expansion model        = phase_change
-        	    set rheological model              = phase_change
-        	    set specific heat model            = phase_change
-            
-        	    set density 			              = 4420
+      set number of fluids = 1
+      subsection fluid 0
+        set thermal conductivity model = phase_change
+        set thermal expansion model    = phase_change
+        set rheological model          = phase_change
+        set specific heat model        = phase_change
     
-	    	    subsection phase change
-        		      # Enthalpy of the phase change
-        		      set latent enthalpy      		= 286000
-        
-        		      # Temperature of the liquidus
-        		      set liquidus temperature 		= 1650
-        
-        		      # Temperature of the solidus
-        		      set solidus temperature  		= 1604
-        
-        		      # Specific heat of the liquid phase
-        		      set specific heat liquid 		= 831
-        
-        		      # Specific heat of the solid phase
-        		      set specific heat solid  		= 670
-        
-        		      # viscosity of the liquid phase
-        		      set viscosity liquid 		= 0.00000069
-        			  
-        		      # viscosity of the solid phase
-        		      set viscosity solid  		= 0.008
-        		      
-        		      set thermal conductivity solid	= 33.4
-        		      set thermal conductivity liquid	= 10.6
-        	      
-        		      set thermal expansion liquid	= 0.0002
-        		      set thermal expansion solid	= 0.0
-		    end
-        	end
+        set density = 4420
+    
+        subsection phase change
+          # Enthalpy of the phase change
+          set latent enthalpy = 286000
+    
+          # Temperature of the liquidus
+          set liquidus temperature = 1650
+    
+          # Temperature of the solidus
+          set solidus temperature = 1604
+    
+          # Specific heat of the liquid phase
+          set specific heat liquid = 831
+    
+          # Specific heat of the solid phase
+          set specific heat solid = 670
+    
+          # viscosity of the liquid phase
+          set viscosity liquid = 0.00000069
+    
+          # viscosity of the solid phase
+          set viscosity solid = 0.008
+    
+          set thermal conductivity solid  = 33.4
+          set thermal conductivity liquid = 10.6
+    
+          set thermal expansion liquid = 0.0002
+          set thermal expansion solid  = 0.0
+        end
+      end
     end
+
 
 
 .. note:: 
@@ -238,10 +239,10 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
     # Mesh
     #---------------------------------------------------
     subsection mesh
-            set type                = dealii
-            set grid type           = subdivided_hyper_rectangle
-            set grid arguments      = 4, 2 : -0.0001, 0 : 0.0009, 0.000500 : true
-            set initial refinement  = 7
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 4, 2 : -0.0001, 0 : 0.0009, 0.000500 : true
+      set initial refinement = 7
     end
     
 
