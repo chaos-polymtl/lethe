@@ -559,18 +559,6 @@ CompositeShape<dim>::static_copy() const
 }
 
 template <int dim>
-double
-CompositeShape<dim>::displaced_volume(const double fluid_density)
-{
-  double solid_volume = 0;
-  for (auto const &[component_id, component] : components)
-    {
-      solid_volume += component->displaced_volume(fluid_density);
-    }
-  return solid_volume;
-}
-
-template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
   DoFHandler<dim> &             updated_dof_handler,

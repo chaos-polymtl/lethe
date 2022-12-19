@@ -97,7 +97,7 @@ subsection particles
             set Function expression =0;0
         end
         subsection omega
-            set Function expression =0;0;-1
+            set Function expression =0;0;1
         end
 	    set pressure location = 0.00001; 0.00001
 	    set type       = sphere

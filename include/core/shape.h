@@ -133,7 +133,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   virtual double
-  displaced_volume(const double fluid_density) = 0;
+  displaced_volume(const double fluid_density);
 
   /**
    * @brief
@@ -646,7 +646,9 @@ public:
   }
 
   /**
-   * @brief Constructs an assembly of shapes into a composite shape
+   * @brief Constructs an assembly of shapes into a composite shape from a vector of shapes.
+   * This constructor is mainly used for outputting multiple shapes with a
+   * global levelset function defined as a union.
    * @param components The shapes from which this composite sphere will be composed
    */
   CompositeShape<dim>(
@@ -703,15 +705,6 @@ public:
    */
   std::shared_ptr<Shape<dim>>
   static_copy() const override;
-
-  /**
-   * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
-   */
-  double
-  displaced_volume(const double fluid_density) override;
 
   /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
@@ -1357,8 +1350,8 @@ public:
                        double              half_length,
                        const Point<dim> &  position,
                        const Tensor<1, 3> &orientation)
-    : Shape<dim>((radius_outside + radius_inside) / 2, position, orientation)
-    , radius((radius_outside + radius_inside) / 2)
+    : Shape<dim>((radius_outside + radius_inside) / 2., position, orientation)
+    , radius((radius_outside + radius_inside) / 2.)
     , height(half_length * 2.)
     , rectangular_base(radius_outside - radius_inside)
   {}

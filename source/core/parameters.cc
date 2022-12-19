@@ -2399,6 +2399,7 @@ namespace Parameters
                   // Default
                   shape_type      = "sphere";
                   shape_arguments = std::vector<double>(1.);
+                  particles[i].initialize_shape(shape_type, shape_arguments);
                 }
               else
                 {
@@ -2417,6 +2418,7 @@ namespace Parameters
                   // we loop over operations
                   std::ifstream myfile(shape_name);
                   // open the file.
+                  // Read file line by line for section names or arguments
                   if (myfile.is_open())
                     {
                       std::string              line;

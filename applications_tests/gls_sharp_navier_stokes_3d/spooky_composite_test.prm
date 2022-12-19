@@ -1,102 +1,82 @@
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 0     
-  set output name             = out 
-  set output frequency        = 0   
-  set log precision     = 4
+  set method           = steady
+  set output frequency = 0
+  set log precision    = 4
 end
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1
-    set density =1
+    set kinematic viscosity = 1
+    set density             = 1
   end
 end
 
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 subsection mesh
-    set type                 = dealii
-    set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 5,5,5: -2,-2,-2 : 2 , 2 ,2 : true
-    set initial refinement   =1
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,5,5: -2,-2,-2 : 2 , 2 ,2 : true
+  set initial refinement = 1
 end
 
 subsection boundary conditions
-set number                  = 6
-    subsection bc 0
-	set id = 0
-        set type              = function
-        subsection u
-            set Function expression = 1
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 0
-        end
+  set number = 6
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
     end
-    subsection bc 1
-	set id = 1
-        set type              = outlet
-    end    
-    subsection bc 2
-	set id = 2
-        set type              = noslip
+    subsection v
+      set Function expression = 0
     end
-    subsection bc 3
-	set id = 3
-        set type              = noslip
+    subsection w
+      set Function expression = 0
     end
-    subsection bc 4
-	set id = 4
-        set type              = noslip
-    end
-    subsection bc 5
-	set id = 5
-        set type              = noslip
-    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 5
+    set id   = 5
+    set type = noslip
+  end
 end
 
 subsection particles
-	set number of particles = 1
-	set stencil order = 2
-	set refine mesh inside radius factor = 0
-	set refine mesh outside radius factor = 1.2
-	set initial refinement =2
-	set integrate motion = false
-	set assemble Navier-Stokes inside particles = false
+  set number of particles                     = 1
+  set stencil order                           = 2
+  set refine mesh inside radius factor        = 0
+  set refine mesh outside radius factor       = 1.2
+  set initial refinement                      = 2
+  set integrate motion                        = false
+  set assemble Navier-Stokes inside particles = false
 
-    subsection particle info 0 
-        subsection position
-            set Function expression =0;0;0
-        end
-        subsection velocity
-            set Function expression =0;0;0
-        end
-	    subsection orientation
-            set Function expression =0;0;0
-        end
-	    set type       =composite
-            set shape arguments = spooky_composite_shape
-	    set density = 0.001120
-    end
+  subsection particle info 0
+    set type            = composite
+    set shape arguments = spooky_composite_shape
+  end
 end
 
 subsection mesh adaptation
-  set fraction coarsening  = 0
-  set fraction refinement  = 0.1
-  set fraction type        = number
-  set frequency            = 1
-  set max number elements  = 7500000
-  set max refinement level = 5
-  set min refinement level =0
-  set type                 = kelly
-  set variable             = velocity
+  set type = kelly
 end
 
 subsection initial conditions
@@ -105,37 +85,17 @@ subsection initial conditions
 end
 
 subsection non-linear solver
-  set tolerance               = 1e-6
-  set max iterations          = 10
-  set residual precision      = 5
-  set verbosity               =quiet
-  set force rhs calculation   = true
+  set verbosity = quiet
 end
 
 subsection forces
-  set verbosity  = verbose
+  set verbosity = verbose
 end
 
 subsection timer
-	set type = none
+  set type = none
 end
 
 subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 1000
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-12
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-20
-  set ilu preconditioner relative tolerance  = 1.00
-  set amg aggregation threshold                 = 1e-20
-  set amg n cycles                              = 1
-  set amg preconditioner ilu absolute tolerance = 1e-20
-  set amg preconditioner ilu fill               = 0
-  set amg preconditioner ilu relative tolerance = 1.00
-  set amg smoother overlap                      = 1
-  set amg smoother sweeps                       = 2
-  set amg w cycles                              = false
-  set verbosity               =quiet
-  set max krylov vectors = 1000
+  set verbosity = quiet
 end
