@@ -57,10 +57,6 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
 
 
     subsection insertion info
-<<<<<<< HEAD
-<<<<<<<< HEAD:doc/source/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
       set insertion method                               = non_uniform
       set inserted number of particles at each time step = 8000
       set insertion frequency                            = 100000
@@ -73,23 +69,6 @@ An insertion box is defined inside the cylindrical domain, inserting 8000 partic
       set insertion distance threshold                   = 1.1
       set insertion random number range                  = 0.05
       set insertion random number seed                   = 19
-<<<<<<< HEAD
-========
-    	set insertion method				               = non_uniform
-    	set inserted number of particles at each time step = 8000
-    	set insertion frequency            		 	       = 100000
-    	set insertion box minimum x            	 	       = -0.05
-    	set insertion box minimum y            	           = 0.
-    	set insertion box minimum z            	           = -0.04
-    	set insertion box maximum x            	           = 0.05
-    	set insertion box maximum y           	 	       = 0.04
-    	set insertion box maximum z            	           = 0.04
-    	set insertion distance threshold			       = 1.1
-    	set insertion random number range			       = 0.05
-    	set insertion random number seed			       = 19
->>>>>>>> 112c0aa3 (Update example and documentation):doc/source/examples/dem/small-scale-rotating-drum/3d-small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
     end
 
 Restart files are written once the packing ends. The restart files are used to start the DEM simulation with the imposed rotating boundary condition.
@@ -115,8 +94,6 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
                 set poisson ratio particles             = 0.24
                 set restitution coefficient particles   = 0.97
                 set friction coefficient particles      = 0.3
-<<<<<<< HEAD
-<<<<<<<< HEAD:doc/source/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.rst
                 set rolling friction particles          = 0.1
 
         end
@@ -124,21 +101,6 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
         set poisson ratio wall                         = 0.24
         set restitution coefficient wall               = 0.85
         set friction coefficient wall                   = 0.35
-<<<<<<< HEAD
-========
-                set rolling friction particles             = 0.1
-=======
-                set rolling friction particles          = 0.1
->>>>>>> 836d4b33 (Remove all tabs)
-
-        end
-        set young modulus wall            				= 100000000
-        set poisson ratio wall            				= 0.24
-        set restitution coefficient wall           		= 0.85
-        set friction coefficient wall         			= 0.35
->>>>>>>> 112c0aa3 (Update example and documentation):doc/source/examples/dem/small-scale-rotating-drum/3d-small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
         set rolling friction wall                       = 0.1
     end
 
@@ -151,18 +113,16 @@ In this example, we use the ``dynamic`` load balancing method. This method check
 .. code-block:: text
 
     subsection model parameters
-
-      set contact detection method 		   	         = dynamic
-      set dynamic contact search size coefficient	 = 0.8
-      set neighborhood threshold			         = 1.3
-      set load balance method				         = dynamic
-      set load balance threshold			         = 0.5
-      set dynamic load balance check frequency		 = 10000
-      set particle particle contact force method     = hertz_mindlin_limit_overlap
-      set particle wall contact force method         = nonlinear
-      set rolling resistance torque method           = constant_resistance
-      set integration method				         = velocity_verlet
-
+      set contact detection method                  = dynamic
+      set dynamic contact search size coefficient   = 0.8
+      set neighborhood threshold                    = 1.3
+      set load balance method                       = dynamic
+      set load balance threshold                    = 0.5
+      set dynamic load balance check frequency      = 10000
+      set particle particle contact force method    = hertz_mindlin_limit_overlap
+      set particle wall contact force method        = nonlinear
+      set rolling resistance torque method          = constant_resistance
+      set integration method                        = velocity_verlet
     end
 
 Boundary condition
@@ -175,27 +135,12 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
     subsection DEM boundary conditions
       set number of boundary conditions    = 1
         subsection boundary condition 0
-<<<<<<< HEAD
-<<<<<<<< HEAD:doc/source/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
             set boundary id                = 0
             set type                       = rotational
             set rotational speed           = 1
             set rotational vector x        = 1
             set rotational vector y        = 0
             set rotational vector z        = 0
-<<<<<<< HEAD
-========
-            set boundary id					    = 0
-            set type              				= rotational
-            set rotational speed				= 1
-            set rotational vector x				= 1
-            set rotational vector y				= 0
-            set rotational vector z				= 0
->>>>>>>> 112c0aa3 (Update example and documentation):doc/source/examples/dem/small-scale-rotating-drum/3d-small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
         end
     end
 
@@ -208,25 +153,11 @@ The packing dem simulation was run for 2 seconds in real time.
 .. code-block:: text
 
     subsection simulation control
-<<<<<<< HEAD
-<<<<<<<< HEAD:doc/source/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
       set time step                     = 5e-6
       set time end                      = 2
       set log frequency                 = 2000
       set output frequency              = 2000
       set output path                   = ./output_dem/
-<<<<<<< HEAD
-========
-      set time step                 		 = 5e-6
-      set time end       			         = 2
-      set log frequency				         = 2000
-      set output frequency            		 = 2000
-      set output path                  	 	 = ./output_dem/
->>>>>>>> 112c0aa3 (Update example and documentation):doc/source/examples/dem/small-scale-rotating-drum/3d-small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
     end
     
 The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation.
@@ -234,25 +165,11 @@ The actual rotation of the drum is 3 seconds in real time. We set the time equal
 .. code-block:: text
 
     subsection simulation control
-<<<<<<< HEAD
-<<<<<<<< HEAD:doc/source/examples/dem/small-scale-rotating-drum/small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
       set time step                     = 5e-6
       set time end                      = 5
       set log frequency                 = 2000
       set output frequency              = 2000
       set output path                   = ./output_dem/
-<<<<<<< HEAD
-========
-      set time step                 		 = 5e-6
-      set time end       			         = 5
-      set log frequency				         = 2000
-      set output frequency            		 = 2000
-      set output path                  	 	 = ./output_dem/
->>>>>>>> 112c0aa3 (Update example and documentation):doc/source/examples/dem/small-scale-rotating-drum/3d-small-scale-rotating-drum.rst
-=======
->>>>>>> c34b32c1 (Tabs begone)
     end
 
 Running the simulation
