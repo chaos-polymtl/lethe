@@ -5,12 +5,12 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set time step          = 5e-6
-  set time end           = 5
-  set log frequency      = 2000
-  set output frequency   = 2000
-  set output path        = ./output_dem/
-  set output boundaries  = true
+  set time step         = 5e-6
+  set time end          = 5
+  set log frequency     = 2000
+  set output frequency  = 2000
+  set output path       = ./output_dem/
+  set output boundaries = true
 end
 
 #---------------------------------------------------
@@ -95,20 +95,19 @@ subsection lagrangian physical properties
   set gz                       = 0
   set number of particle types = 1
   subsection particle type 0
-    set size distribution type                 = uniform
-    set diameter                               = 0.003
-    set number                                 = 20000
-    set density particles                      = 2500
-    set young modulus particles                = 1e8
-    set poisson ratio particles                = 0.24
-    set restitution coefficient particles      = 0.97
-    set friction coefficient particles         = 0.3
-    set rolling friction particles             = 0.1
-
+    set size distribution type            = uniform
+    set diameter                          = 0.003
+    set number                            = 20000
+    set density particles                 = 2500
+    set young modulus particles           = 1e8
+    set poisson ratio particles           = 0.24
+    set restitution coefficient particles = 0.97
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.1
   end
   set young modulus wall           = 1e8
   set poisson ratio wall           = 0.24
   set restitution coefficient wall = 0.85
   set friction coefficient wall    = 0.3
-  set rolling friction wall          = 0.1
+  set rolling friction wall        = 0.1
 end

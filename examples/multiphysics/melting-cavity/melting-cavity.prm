@@ -2,167 +2,177 @@
 # ---------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  		= bdf2
-  set time end                		= 40000
-  set time step               		= 0.1
-  set max cfl		      		= 0.5
-  set stop tolerance          		= 1e-5
-  set adaptative time step scaling 	= 1.3
-  set output name             		= melting
-  set output control               	= time
-  set output time                  	= 100
-  set output path                  	= ./output/
+  set method                       = bdf2
+  set time end                     = 40000
+  set time step                    = 0.1
+  set max cfl                      = 0.5
+  set stop tolerance               = 1e-5
+  set adaptative time step scaling = 1.3
+  set output name                  = melting
+  set output control               = time
+  set output time                  = 100
+  set output path                  = ./output/
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-	set heat transfer  		= true
-	set buoyancy force 		= true
-	set fluid dynamics 		= true
+  set heat transfer  = true
+  set buoyancy force = true
+  set fluid dynamics = true
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-        set Function expression 	= 0; 0; 0
-    end
-    subsection temperature
-    	set Function expression 	= 104.9
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 104.9
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 		= true
-    subsection xyz
-            set Function expression 	= 0 ; -0.00516 ; 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = 0 ; -0.00516 ; 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     		= 1
+  set number of fluids = 1
   subsection fluid 0
-    set thermal conductivity model 	= constant
-    set thermal conductivity 	= 60
-          
-    set thermal expansion model 	= constant
-    set thermal expansion 		= 0.0002
-    
-    set rheological model 		= phase_change
-    set specific heat model 		= phase_change
-    
-    set density 			= 7500
-    
+    set thermal conductivity model = constant
+    set thermal conductivity       = 60
+
+    set thermal expansion model = constant
+    set thermal expansion       = 0.0002
+
+    set rheological model   = phase_change
+    set specific heat model = phase_change
+
+    set density = 7500
+
     subsection phase change
       # Enthalpy of the phase change
-      set latent enthalpy      		= 14634.1463
+      set latent enthalpy = 14634.1463
 
       # Temperature of the liquidus
-      set liquidus temperature 		= 105.1
+      set liquidus temperature = 105.1
 
       # Temperature of the solidus
-      set solidus temperature  		= 105
+      set solidus temperature = 105
 
       # Specific heat of the liquid phase
-      set specific heat liquid 		= 200
+      set specific heat liquid = 200
 
       # Specific heat of the solid phase
-      set specific heat solid  		= 200
+      set specific heat solid = 200
 
       # viscosity of the liquid phase
-      set viscosity liquid 		= 0.00000075
-          
-      # viscosity of the solid phase
-      set viscosity solid  		= 0.008
-    end
+      set viscosity liquid = 0.00000075
 
+      # viscosity of the solid phase
+      set viscosity solid = 0.008
+    end
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-        set type = dealii
-        set grid type 		= subdivided_hyper_rectangle
-        set grid arguments 	= 30, 20 : 0, 0 : 1, 0.714 : true
-        set initial refinement 	= 4
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 30, 20 : 0, 0 : 1, 0.714 : true
+  set initial refinement = 4
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 0
-        set id = 0
-        set type              = noslip
-    end
-    subsection bc 1
-        set id = 1
-        set type              = noslip
-    end
-    subsection bc 2
-        set id = 2
-        set type              = noslip
-    end
-    subsection bc 3
-        set id = 3
-        set type              = noslip
-    end
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
 end
+
 subsection boundary conditions heat transfer
-  set number                  = 2
-    subsection bc 0
-    	set id = 0
-	set type	      = temperature
-        set value	      = 108
-    end
-    subsection bc 1
-    	set id = 1
-	set type	      = temperature
-        set value	      = 104.9
-    end
+  set number = 2
+  subsection bc 0
+    set id    = 0
+    set type  = temperature
+    set value = 108
+  end
+  subsection bc 1
+    set id    = 1
+    set type  = temperature
+    set value = 104.9
+  end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-6
-  set max iterations          = 100
-  set verbosity               = verbose
+  set tolerance      = 1e-6
+  set max iterations = 100
+  set verbosity      = verbose
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               		     = verbose
-  set method                                 = gmres
-  set max iters                              = 10000
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-8
-  set ilu preconditioner fill                = 1
-  set ilu preconditioner absolute tolerance  = 1e-10
-  set ilu preconditioner relative tolerance  = 1.00
+  set verbosity                             = verbose
+  set method                                = gmres
+  set max iters                             = 10000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-8
+  set ilu preconditioner fill               = 1
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
 end

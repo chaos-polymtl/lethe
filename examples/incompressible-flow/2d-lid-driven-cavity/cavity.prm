@@ -3,84 +3,92 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady 
+  set method = steady
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 0.0025
+    set kinematic viscosity = 0.0025
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = 0 : 1 : true
-    set initial refinement   = 6
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 1 : true
+  set initial refinement = 6
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-   set type = iteration
+  set type = iteration
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 0
-        set id                = 0
-        set type              = noslip
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = 1
     end
-    subsection bc 1
-        set id                = 1
-        set type              = noslip
+    subsection v
+      set Function expression = 0
     end
-    subsection bc 2
-        set id                = 2
-        set type              = noslip
-    end
-    subsection bc 3
-        set id                = 3
-        set type              = function
-        subsection u
-            set Function expression = 1
-        end
-        subsection v
-            set Function expression = 0
-        end
-    end
+  end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set verbosity               = verbose
+  set tolerance = 1e-8
+  set verbosity = verbose
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity                              = verbose
+  set verbosity = verbose
 end
