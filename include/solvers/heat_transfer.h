@@ -176,13 +176,13 @@ public:
    * mesh refinement/coarsening
    */
   void
-  pre_mesh_adaptation();
+  pre_mesh_adaptation() override;
 
   /**
    * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
    */
   void
-  post_mesh_adaptation();
+  post_mesh_adaptation() override;
 
   /**
    * @brief Compute the Kelly error estimator for mesh refinement.
@@ -194,7 +194,7 @@ public:
   void
   compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
-                dealii::Vector<float> &estimated_error_per_cell);
+                dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
    * @brief Prepares Heat Transfer to write checkpoint
@@ -233,7 +233,7 @@ public:
    */
   void
   solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true);
+                      const bool renewed_matrix = true) override;
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
@@ -516,8 +516,14 @@ private:
   // Temperature statistics table (post-process)
   TableHandler statistics_table;
 
-  // Heat flux table (post-process)
+  // Post-processing table
+  // The heat flux table contains the total fluxes on a boundary: (-k grad T + u
+  // * rho * Cp) * n
   TableHandler heat_flux_table;
+
+  // The convective flux table contains the convective heat flux on a boundary:
+  // h(T-T_inf)
+  TableHandler convective_flux_table;
 };
 
 
