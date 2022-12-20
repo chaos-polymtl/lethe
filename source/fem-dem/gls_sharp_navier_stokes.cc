@@ -97,7 +97,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   // with the key being the cell.
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   std::map<types::global_dof_index, Point<dim>> support_points;
-  std::vector< std::unordered_map<types::global_dof_index,bool>>inside_outside_support_point_vector(particles.size());
+  std::vector<std::unordered_map<types::global_dof_index, bool>>
+    inside_outside_support_point_vector(particles.size());
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
@@ -135,10 +136,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
               if (particles[p].shape->additional_info_on_shape == "stl" ||
                   particles[p].shape->additional_info_on_shape == "iges")
                 {
-                  cell_is_cut=cell_cut_by_p_exception(cell,support_points,p);
-                  particle_id_which_cuts_this_cell=p;
-                  if (cell_is_cut){
-                      number_of_particles_cutting_this_cell+=1;
+                  cell_is_cut =
+                    cell_cut_by_p_exception(cell, support_points, p);
+                  particle_id_which_cuts_this_cell = p;
+                  if (cell_is_cut)
+                    {
+                      number_of_particles_cutting_this_cell += 1;
                     }
                 }
               else
@@ -180,14 +183,17 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                         }
                     }
 
-                  // If some of the DOFs are inside the boundary, some are outside, the cell is cut.
+                  // If some of the DOFs are inside the boundary, some are
+                  // outside, the cell is cut.
                   if (nb_dof_inside != 0)
                     {
-                      // If all the DOFs are inside the boundary this cell is inside the particle. Otherwise the particle is cut.
+                      // If all the DOFs are inside the boundary this cell is
+                      // inside the particle. Otherwise the particle is cut.
                       if (nb_dof_inside == dofs_per_cell_local_v_x)
                         {
                           // We only register the particle the lowest id as the
-                          // particle in which this cell is embedded if the cell is embedded in multiple particles.
+                          // particle in which this cell is embedded if the cell
+                          // is embedded in multiple particles.
                           if (number_of_particles_cutting_this_cell == 0)
                             {
                               cell_is_cut                      = false;
@@ -199,7 +205,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                         }
                       else
                         {
-                          // We only register the particle with the lowest id as the particle by this cell is cut if the cell is cut in multiple particles.
+                          // We only register the particle with the lowest id as
+                          // the particle by this cell is cut if the cell is cut
+                          // in multiple particles.
                           if (number_of_particles_cutting_this_cell == 0)
                             {
                               cell_is_cut                      = true;
@@ -234,25 +242,27 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
 template <int dim>
 bool
-GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandler<dim>::active_cell_iterator &         cell,
-                                               std::map<types::global_dof_index, Point<dim>> &support_points,
-                                               unsigned int                                   p)
+GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  std::map<types::global_dof_index, Point<dim>>        &support_points,
+  unsigned int                                          p)
 {
-  //this function aims at defining if a cell is cu by a step loaded from open cascade.
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  // this function aims at defining if a cell is cu by a step loaded from open
+  // cascade.
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   cell->get_dof_indices(local_dof_indices);
-  bool cell_is_cut=false;
-  const unsigned int vertices_per_cell= GeometryInfo<dim>::vertices_per_cell;
-  Point<dim> centroid_of_cell;
+  bool               cell_is_cut       = false;
+  const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+  Point<dim>         centroid_of_cell;
   for (unsigned int i = 0; i < vertices_per_cell; ++i)
     {
-      centroid_of_cell+=cell->vertex(i);
+      centroid_of_cell += cell->vertex(i);
     }
 
-  centroid_of_cell=centroid_of_cell/vertices_per_cell;
-  Point<dim>projected_point;
-  particles[p].closest_surface_point(centroid_of_cell,projected_point,cell);
+  centroid_of_cell = centroid_of_cell / vertices_per_cell;
+  Point<dim> projected_point;
+  particles[p].closest_surface_point(centroid_of_cell, projected_point, cell);
 
   if (cell->point_inside(projected_point))
     {
@@ -262,7 +272,6 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandl
     }
   else
     {
-
       for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
           // Count the number of DOFs that are inside
@@ -278,7 +287,8 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(const typename DoFHandl
                   cell_is_cut = true;
                   break;
                 }
-              if ((projected_point-support_points[local_dof_indices[j]]).norm()<cell->diameter()*0.1)
+              if ((projected_point - support_points[local_dof_indices[j]])
+                    .norm() < cell->diameter() * 0.1)
                 {
                   cell_is_cut = true;
                   break;
@@ -748,7 +758,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
   std::vector<double>     local_interp_sol(ib_coef.size());
 
-  std::unordered_map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>> force_eval;
+  std::unordered_map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>>
+    force_eval;
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
@@ -810,10 +821,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // solution. Define the triangulation of the surface cell.
                       for (unsigned int i = 0; i < vertices_per_face; ++i)
                         {
-                          for (unsigned int j = 0; j < local_face_dof_indices.size();
+                          Point<dim> vertex_projection;
+                          for (unsigned int j = 0;
+                               j < local_face_dof_indices.size();
                                ++j)
                             {
-                              if ((support_points[local_face_dof_indices[j]]-local_face->vertex(i)).norm()<1e-12)
+                              if ((support_points[local_face_dof_indices[j]] -
+                                   local_face->vertex(i))
+                                    .norm() < 1e-12)
                                 {
                                   Point<dim> vertex_projection;
                                   particles[p].closest_surface_point(
@@ -1326,22 +1341,21 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
   // Define cell iterator
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-  unsigned int i=0;
+  const auto  &cell_iterator = this->dof_handler.active_cell_iterators();
+  unsigned int i             = 0;
   for (const auto &cell : cell_iterator)
     {
       bool cell_is_cut;
-      int particle_id;
+      int  particle_id;
       std::tie(cell_is_cut, particle_id, std::ignore) = cut_cells_map[cell];
-      if(cell_is_cut)
+      if (cell_is_cut)
         cell_cuts(i) = particle_id;
       else
         cell_cuts(i) = -1;
 
-      i+=1;
+      i += 1;
     }
   data_out.add_data_vector(cell_cuts, "cell cut");
-
 }
 
 template <int dim>
@@ -2053,7 +2067,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   particles[p].position[2] += particles[p].velocity[2] * dt;
                 }
             }
-          if(particles[p].position!=particles[p].previous_positions[0]||particles[p].orientation!=particles[p].previous_orientation[0])
+          if (particles[p].position != particles[p].previous_positions[0] ||
+              particles[p].orientation != particles[p].previous_orientation[0])
             particles[p].clear_shape_cache();
 
           particles[p].set_position(particles[p].position);
@@ -2687,23 +2702,23 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // the locations of the points use in the stencil
                           // calculation.
 
-                      auto [point, interpolation_points] =
-                        stencil.support_points_for_interpolation(
-                          order,
-                          length_ratio,
-                          particles[ib_particle_id],
-                          support_points[local_dof_indices[i]],
-                          cell);
-                      // Find the cell used for the stencil definition.
-                      auto point_to_find_cell =
-                        stencil.point_for_cell_detection(
-                          particles[ib_particle_id],
-                          support_points[local_dof_indices[i]],
-                          cell);
-                      typename DoFHandler<dim>::active_cell_iterator cell_2;
-                      bool particle_close_to_wall = false;
-                      (void)particle_close_to_wall;
-                      try
+                          auto [point, interpolation_points] =
+                            stencil.support_points_for_interpolation(
+                              order,
+                              length_ratio,
+                              particles[ib_particle_id],
+                              support_points[local_dof_indices[i]],
+                              cell);
+                          // Find the cell used for the stencil definition.
+                          auto point_to_find_cell =
+                            stencil.point_for_cell_detection(
+                              particles[ib_particle_id],
+                              support_points[local_dof_indices[i]],
+                              cell);
+                          typename DoFHandler<dim>::active_cell_iterator cell_2;
+                          bool particle_close_to_wall = false;
+                          (void)particle_close_to_wall;
+                          try
                             {
                               cell_2 = LetheGridTools::
                                 find_cell_around_point_with_neighbors<dim>(
@@ -2738,15 +2753,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Check if the DOF intersect the IB
                           bool dof_on_ib = false;
 
-                      // Check if this dof is a dummy dof or directly on IB and
-                      // Check if the point used to define the cell used for the
-                      // definition of the stencil ("cell_2") is on a face
-                      // between the cell that is cut ("cell") and the "cell_2".
-                      bool point_in_cell = cell->point_inside(
-                        interpolation_points
-                          [stencil.number_of_interpolation_support_points(
-                             order) -
-                           1]);
+                          // Check if this dof is a dummy dof or directly on IB
+                          // and Check if the point used to define the cell used
+                          // for the definition of the stencil ("cell_2") is on
+                          // a face between the cell that is cut ("cell") and
+                          // the "cell_2".
+                          bool point_in_cell = cell->point_inside(
+                            interpolation_points
+                              [stencil.number_of_interpolation_support_points(
+                                 order) -
+                               1]);
 
                           bool         dof_is_dummy = false;
                           bool         cell2_is_cut;
