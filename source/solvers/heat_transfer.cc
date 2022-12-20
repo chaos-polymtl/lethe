@@ -1037,7 +1037,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *        dof_handler_vof;
+  const DoFHandler<dim> *        dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            phase_values(n_q_points);
 
@@ -1236,7 +1236,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                       update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *            dof_handler_vof;
+  DoFHandler<dim> *                  dof_handler_vof = NULL;
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
   std::vector<double>                phase_values(n_q_points_face);
 
@@ -1310,30 +1310,44 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
         }
     } // end switch on number of fluids
 
-  // Other initializations
-  Tensor<1, dim>      normal_vector_ht;
-  double              heat_flux_bc;
   std::vector<double> heat_flux_vector(
-    this->simulation_parameters.boundary_conditions_ht.size);
+    this->simulation_parameters.boundary_conditions_ht.size, 0);
 
-  // Integrate on BC
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-       ++i_bc)
+  std::vector<double> convective_flux_vector(
+    this->simulation_parameters.boundary_conditions_ht.size, 0);
+
+
+  // Get vector of heat transfer boundary conditions
+  const auto boundary_conditions_ht_ids =
+    this->simulation_parameters.boundary_conditions_ht.id;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
-      unsigned int boundary_id =
-        this->simulation_parameters.boundary_conditions_ht.id[i_bc];
-      heat_flux_bc = 0;
-
-      for (const auto &cell : this->dof_handler.active_cell_iterators())
+      if (cell->is_locally_owned() && cell->at_boundary())
         {
-          if (cell->is_locally_owned() && cell->at_boundary())
+          for (const auto face : cell->face_indices())
             {
-              for (const auto face : cell->face_indices())
+              if (cell->face(face)->at_boundary())
                 {
-                  if (cell->face(face)->at_boundary() &&
-                      cell->face(face)->boundary_id() == boundary_id)
+                  const auto boundary_id =
+                    std::find(begin(boundary_conditions_ht_ids),
+                              end(boundary_conditions_ht_ids),
+                              cell->face(face)->boundary_id());
+
+                  if (boundary_id != end(boundary_conditions_ht_ids))
                     {
+                      unsigned int vector_index =
+                        boundary_id - boundary_conditions_ht_ids.begin();
+
+                      // Gather h coefficient and T_inf
+                      const double h_coefficient =
+                        this->simulation_parameters.boundary_conditions_ht
+                          .h[vector_index];
+                      const double T_inf =
+                        this->simulation_parameters.boundary_conditions_ht
+                          .Tinf[vector_index];
+
+
                       // Gather heat transfer information
                       fe_face_values_ht.reinit(cell, face);
                       fe_face_values_ht.get_function_values(
@@ -1392,10 +1406,10 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                                          specific_heat_1[q]);
                             }
 
-                          normal_vector_ht =
+                          Tensor<1, dim> normal_vector_ht =
                             -fe_face_values_ht.normal_vector(q);
 
-                          heat_flux_bc +=
+                          heat_flux_vector[vector_index] +=
                             (-thermal_conductivity * temperature_gradient[q] *
                                normal_vector_ht +
                              local_temperature_values[q] * density *
@@ -1403,14 +1417,29 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                normal_vector_ht) *
                             fe_face_values_ht.JxW(q);
 
+                          convective_flux_vector[vector_index] +=
+                            h_coefficient *
+                            (local_temperature_values[q] - T_inf) *
+                            fe_face_values_ht.JxW(q);
+
                         } // end loop on quadrature points
                     }     // end condition face at heat transfer boundary
                 }         // end loop on faces
-            }             // end condition cell at boundary
-        }                 // end loop on cells
+            }             // End face is a boundary face
+        }                 // end condition cell at boundary
+    }                     // end loop on cells
 
+
+  // Sum accross all cores
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+       ++i_bc)
+    {
       heat_flux_vector[i_bc] =
-        Utilities::MPI::sum(heat_flux_bc, mpi_communicator);
+        Utilities::MPI::sum(heat_flux_vector[i_bc], mpi_communicator);
+
+      convective_flux_vector[i_bc] =
+        Utilities::MPI::sum(convective_flux_vector[i_bc], mpi_communicator);
     }
 
   // Console output
@@ -1424,6 +1453,15 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
            ++i_bc)
         this->pcout << "\t boundary " << i_bc << " : " << heat_flux_vector[i_bc]
                     << std::endl;
+
+
+      this->pcout << "Convective flux on heat transfer boundary conditions : "
+                  << std::endl;
+      for (unsigned int i_bc = 0;
+           i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+           ++i_bc)
+        this->pcout << "\t boundary " << i_bc << " : "
+                    << convective_flux_vector[i_bc] << std::endl;
     }
 
   // Filling table
@@ -1434,6 +1472,16 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
        ++i_bc)
     this->heat_flux_table.add_value("bc_" + Utilities::int_to_string(i_bc, 1),
                                     heat_flux_vector[i_bc]);
+
+
+  this->convective_flux_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+       ++i_bc)
+    this->convective_flux_table.add_value("bc_" +
+                                            Utilities::int_to_string(i_bc, 1),
+                                          convective_flux_vector[i_bc]);
 }
 
 template void
@@ -1489,7 +1537,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                              update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *        dof_handler_vof;
+  const DoFHandler<dim> *        dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            phase_values(n_q_points);
 
@@ -1677,13 +1725,25 @@ HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      std::string filename =
-        simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.heat_flux_output_name + "_" +
-        domain_name + ".dat";
-      std::ofstream output(filename.c_str());
+      {
+        std::string filename =
+          simulation_parameters.simulation_control.output_folder +
+          simulation_parameters.post_processing.heat_flux_output_name + "_" +
+          domain_name + ".dat";
+        std::ofstream output(filename.c_str());
 
-      this->heat_flux_table.write_text(output);
+        this->heat_flux_table.write_text(output);
+      }
+
+      {
+        std::string filename =
+          simulation_parameters.simulation_control.output_folder +
+          simulation_parameters.post_processing.convective_flux_output_name +
+          "_" + domain_name + ".dat";
+        std::ofstream output(filename.c_str());
+
+        this->convective_flux_table.write_text(output);
+      }
     }
 }
 

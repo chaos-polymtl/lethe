@@ -556,13 +556,11 @@ calculate_forces(
   Tensor<2, dim>                   fluid_stress;
   Tensor<2, dim>                   fluid_viscous_stress;
   Tensor<2, dim>                   fluid_pressure;
-  Tensor<1, dim>                   viscous_force;
-  Tensor<1, dim>                   pressure_force;
-  Tensor<1, dim>                   force;
 
   std::vector<Tensor<1, dim>> viscous_force_vector(boundary_conditions.size);
   std::vector<Tensor<1, dim>> pressure_force_vector(boundary_conditions.size);
   std::vector<Tensor<1, dim>> force_vector(boundary_conditions.size);
+
 
   FEFaceValues<dim> fe_face_values(mapping,
                                    fe,
@@ -571,76 +569,83 @@ calculate_forces(
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
   const MPI_Comm    mpi_communicator = dof_handler.get_communicator();
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      unsigned int boundary_id = boundary_conditions.id[i_bc];
-      viscous_force            = 0;
-      pressure_force           = 0;
-      force                    = 0;
-      for (const auto &cell : dof_handler.active_cell_iterators())
+      if (cell->is_locally_owned())
         {
-          if (cell->is_locally_owned())
+          if (cell->at_boundary())
             {
-              if (cell->at_boundary())
+              for (const auto face : cell->face_indices())
                 {
-                  for (const auto face : cell->face_indices())
+                  if (cell->face(face)->at_boundary())
                     {
-                      if (cell->face(face)->at_boundary())
+                      const auto boundary_id =
+                        std::find(begin(boundary_conditions.id),
+                                  end(boundary_conditions.id),
+                                  cell->face(face)->boundary_id());
+
+
+                      if (boundary_id != end(boundary_conditions.id))
                         {
+                          unsigned int vector_index =
+                            boundary_id - begin(boundary_conditions.id);
                           fe_face_values.reinit(cell, face);
-                          if (cell->face(face)->boundary_id() == boundary_id)
+
+                          std::vector<Point<dim>> q_points =
+                            fe_face_values.get_quadrature_points();
+                          fe_face_values[velocities].get_function_gradients(
+                            evaluation_point, velocity_gradients);
+                          fe_face_values[pressure].get_function_values(
+                            evaluation_point, pressure_values);
+                          for (unsigned int q = 0; q < n_q_points; q++)
                             {
-                              std::vector<Point<dim>> q_points =
-                                fe_face_values.get_quadrature_points();
-                              fe_face_values[velocities].get_function_gradients(
-                                evaluation_point, velocity_gradients);
-                              fe_face_values[pressure].get_function_values(
-                                evaluation_point, pressure_values);
-                              for (unsigned int q = 0; q < n_q_points; q++)
+                              normal_vector = -fe_face_values.normal_vector(q);
+                              for (int d = 0; d < dim; ++d)
                                 {
-                                  normal_vector =
-                                    -fe_face_values.normal_vector(q);
-                                  for (int d = 0; d < dim; ++d)
-                                    {
-                                      fluid_pressure[d][d] = pressure_values[q];
-                                    }
-                                  shear_rate = velocity_gradients[q] +
-                                               transpose(velocity_gradients[q]);
-
-                                  const double shear_rate_magnitude =
-                                    calculate_shear_rate_magnitude(shear_rate);
-
-                                  std::map<field, double> field_values;
-                                  field_values[field::shear_rate] =
-                                    shear_rate_magnitude;
-
-                                  viscosity =
-                                    rheological_model->value(field_values);
-                                  fluid_viscous_stress =
-                                    -viscosity * shear_rate;
-                                  fluid_stress =
-                                    -fluid_viscous_stress - fluid_pressure;
-
-                                  viscous_force -= fluid_viscous_stress *
-                                                   normal_vector *
-                                                   fe_face_values.JxW(q);
-                                  pressure_force -= fluid_pressure *
-                                                    normal_vector *
-                                                    fe_face_values.JxW(q);
-                                  force += fluid_stress * normal_vector *
-                                           fe_face_values.JxW(q);
+                                  fluid_pressure[d][d] = pressure_values[q];
                                 }
+                              shear_rate = velocity_gradients[q] +
+                                           transpose(velocity_gradients[q]);
+
+                              const double shear_rate_magnitude =
+                                calculate_shear_rate_magnitude(shear_rate);
+
+                              std::map<field, double> field_values;
+                              field_values[field::shear_rate] =
+                                shear_rate_magnitude;
+
+                              viscosity =
+                                rheological_model->value(field_values);
+                              fluid_viscous_stress = -viscosity * shear_rate;
+                              fluid_stress =
+                                -fluid_viscous_stress - fluid_pressure;
+
+                              viscous_force_vector[vector_index] -=
+                                fluid_viscous_stress * normal_vector *
+                                fe_face_values.JxW(q);
+                              pressure_force_vector[vector_index] -=
+                                fluid_pressure * normal_vector *
+                                fe_face_values.JxW(q);
+                              force_vector[vector_index] +=
+                                fluid_stress * normal_vector *
+                                fe_face_values.JxW(q);
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+    {
       viscous_force_vector[i_bc] =
-        Utilities::MPI::sum(viscous_force, mpi_communicator);
+        Utilities::MPI::sum(viscous_force_vector[i_bc], mpi_communicator);
       pressure_force_vector[i_bc] =
-        Utilities::MPI::sum(pressure_force, mpi_communicator);
-      force_vector[i_bc] = Utilities::MPI::sum(force, mpi_communicator);
+        Utilities::MPI::sum(pressure_force_vector[i_bc], mpi_communicator);
+      force_vector[i_bc] =
+        Utilities::MPI::sum(force_vector[i_bc], mpi_communicator);
     }
   std::vector<std::vector<Tensor<1, dim>>> forces{force_vector,
                                                   viscous_force_vector,
