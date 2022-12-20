@@ -57,10 +57,10 @@ The ``mesh`` subsection specifies the computational grid:
 .. code-block:: text
 
     subsection mesh
-        set type                 = dealii
-        set grid type            = hyper_cube
-        set grid arguments       = 0 : 1 : true
-        set initial refinement   = 6
+      set type               = dealii
+      set grid type          = hyper_cube
+      set grid arguments     = 0 : 1 : true
+      set initial refinement = 6
     end
 
 The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by it's ``grid arguments``. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids. 
@@ -80,29 +80,29 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 .. code-block:: text
 
     subsection boundary conditions
-    set number                  = 4
-        subsection bc 0
-            set id                = 0
-            set type              = noslip
+      set number = 4
+      subsection bc 0
+        set id   = 0
+        set type = noslip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = noslip
+      end
+      subsection bc 2
+        set id   = 2
+        set type = noslip
+      end
+      subsection bc 3
+        set id   = 3
+        set type = function
+        subsection u
+          set Function expression = 1
         end
-        subsection bc 1
-            set id                = 1
-            set type              = noslip
+        subsection v
+          set Function expression = 0
         end
-        subsection bc 2
-            set id                = 2
-            set type              = noslip
-        end
-        subsection bc 3
-            set id                = 3
-            set type              = function
-            subsection u
-                set Function expression = 1
-            end
-            subsection v
-                set Function expression = 0
-            end
-        end
+      end
     end
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expressions which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
@@ -115,11 +115,11 @@ For the base case, we wish to simulate the lid-driven cavity at a Reynolds numbe
 
 .. code-block:: text
 
-  subsection physical properties
-    subsection fluid 0
-      set kinematic viscosity            = 0.0025
+    subsection physical properties
+      subsection fluid 0
+        set kinematic viscosity = 0.0025
+      end
     end
-  end
 
 By default, simulations only contain a single fluid which is labeled ``0``.
 
@@ -134,8 +134,8 @@ We specify the interpolation order for both pressure and velocity using the ``FE
 .. code-block:: text
 
     subsection FEM
-        set velocity order            = 1
-        set pressure order            = 1
+      set velocity order = 1
+      set pressure order = 1
     end
 
 .. warning:: 
@@ -148,10 +148,10 @@ Lethe is an implicit CFD solver. Consequently, each time-step requires the solut
 
 .. code-block:: text
 
-  subsection non-linear solver
-    set tolerance               = 1e-8
-    set verbosity               = verbose
-  end
+    subsection non-linear solver
+      set tolerance = 1e-8
+      set verbosity = verbose
+    end
 
 The ``verbosity`` option specifies if details about the non-linear solver steps (residual value and iteration number) will be printed out to the terminal. By setting it to ``verbose``, this information is printed out, whereas ``quiet`` would mute all outputs of the non-linear solver. We recommend to always set ``verbosity=verbose`` in order to monitor possible non-convergence of the solver.
 
@@ -168,8 +168,8 @@ Each non-linear solver step requires the solution of a linear system of equation
 .. code-block:: text
 
   subsection linear solver
-    set method                                 = amg
-    set verbosity                              = verbose
+    set method    = amg
+    set verbosity = verbose
   end
 
 Simulation control
@@ -225,20 +225,17 @@ It can be used by modifying the ``simulation control`` subsection:
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                  = steady_bdf
-
-    set adapt = true
-    # Maximum CFL value
-    set max cfl                      = 1000
-    # Tolerance at which the simulation is stopped
-    set stop tolerance               = 1e-10
-  
-    # Adaptative time step scaling
-    set adaptative time step scaling = 1.05
-
-    set time step = 0.001
-  end
+    subsection simulation control
+      set method = steady_bdf
+      set adapt = true
+      # Maximum CFL value
+      set max cfl = 1000
+      # Tolerance at which the simulation is stopped
+      set stop tolerance = 1e-10
+      # Adaptative time step scaling
+      set adaptative time step scaling = 1.05
+      set time step = 0.001
+    end
 
 The ``adapt`` parameter allows dynamic time-step adaptation. This feature is also used in transient simulations to carry simulations at a constant CFL number. The ``max cfl`` controls the maximum value of the CFL reached during the simulation. Remember that Lethe is an implicit solver and, as such, can theoretically manage absurdly large values of the CFL. The ``stop-tolerance`` controls the initial tolerance of a time-step below which steady-state will be considered reached.  The ``time step`` controls the initial value of the time step and, finally, the ``adaptative time step scaling`` controls the rate of increase of the time step. The increase of the time step follows:
 

@@ -47,11 +47,11 @@ Time integration is defined by a 2nd order backward differentiation (``bdf2``), 
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-      set method                  = bdf2
-      set time step               = 0.05
-      set time end                = 7.0     
-      set output name             = warming-up
-      set output frequency        = 1       
+      set method           = bdf2
+      set time step        = 0.05
+      set time end         = 7.0
+      set output name      = warming-up
+      set output frequency = 1
     end
 
 .. note:: 
@@ -68,9 +68,9 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
     # FEM
     #---------------------------------------------------
     subsection FEM
-      set velocity order        = 1
-      set pressure order        = 1
-      set temperature order     = 2
+      set velocity order    = 1
+      set pressure order    = 1
+      set temperature order = 2
     end
 
 Physical properties
@@ -86,11 +86,11 @@ The fluid's ``physical properties`` are defined in the following subsection, acc
     subsection physical properties
       subsection fluid 0
         set density              = 0.9
-        set kinematic viscosity    = 0.5
+        set kinematic viscosity  = 0.5
         set thermal conductivity = 0.12
       end
-    # water = 1 density, 0.01 viscosity, 0.59 conductivity
-    # oil = 0.9 density, 0.5 viscosity, 0.12 conductivity
+      # water = 1 density, 0.01 viscosity, 0.59 conductivity
+      # oil = 0.9 density, 0.5 viscosity, 0.12 conductivity
     end
 
 .. warning:: 
@@ -107,9 +107,9 @@ The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid typ
     # Mesh
     #---------------------------------------------------
     subsection mesh
-      set type = dealii
-      set grid type = hyper_rectangle
-      set grid arguments = 0, 0 : 0.5, 1 : true
+      set type               = dealii
+      set grid type          = hyper_rectangle
+      set grid arguments     = 0, 0 : 0.5, 1 : true
       set initial refinement = 4
     end
 
@@ -127,7 +127,7 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-      set heat transfer = true
+      set heat transfer       = true
       set viscous dissipation = true
     end
 
@@ -147,15 +147,15 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
     # Analytical Solution
     #---------------------------------------------------
     subsection analytical solution
-      set enable                 = true
+      set enable    = true
       set verbosity = verbose
-        subsection uvwp
-                set Function expression =  0 ; 0 ; 0
-        end
-        subsection temperature
-    	  set Function constants = rho=0.9, nu=0.5, K=0.12, Tw=80, v=2, B=0.5
-              set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(x/B)*(x/B))
-        end
+      subsection uvwp
+        set Function expression = 0 ; 0 ; 0
+      end
+      subsection temperature
+        set Function constants  = rho=0.9, nu=0.5, K=0.12, Tw=80, v=2, B=0.5
+        set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(x/B)*(x/B))
+      end
     end
 
 Boundary conditions
@@ -172,36 +172,36 @@ The ``boundary conditions`` are set for:
     # Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions
-      set number                  = 2
-        subsection bc 0
-        set id = 0
-            set type              = noslip
+      set number = 2
+      subsection bc 0
+        set id   = 0
+        set type = noslip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = function
+        subsection u
+          set Function expression = 0
         end
-        subsection bc 1
-        set id = 1
-            set type              = function
-            subsection u
-                set Function expression = 0
-            end
-            subsection v
-                set Function expression = 2
-            end
+        subsection v
+          set Function expression = 2
         end
+      end
     end
 
     subsection boundary conditions heat transfer
-      set number                  = 2
-        subsection bc 0
-        set id = 0
-            set type          = convection
-    	set h             = 0
-    	set Tinf	  = 0
-        end
-        subsection bc 1
-        set id = 1
-            set type              = temperature
-    	set value             = 80
-        end
+      set number = 2
+      subsection bc 0
+        set id   = 0
+        set type = convection-radiation
+        set h    = 0
+        set Tinf = 0
+      end
+      subsection bc 1
+        set id    = 1
+        set type  = temperature
+        set value = 80
+      end
     end
 
 Running the simulation
@@ -271,9 +271,11 @@ For water, ``physical properties`` are:
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-      set density              = 1
-      set kinematic viscosity    = 0.01
-      set thermal conductivity = 0.59
+      subsection fluid 0
+       set density              = 1
+       set kinematic viscosity    = 0.01
+       set thermal conductivity = 0.59
+      end
     # water = 1 density, 0.01 viscosity, 0.59 conductivity
     # oil = 0.9 density, 0.5 viscosity, 0.12 conductivity
     end
@@ -335,38 +337,38 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 
 .. code-block:: text
 
-	subsection boundary conditions
-	  set number                  = 2
-	    subsection bc 0
-	    set id = 2
-		set type              = noslip
-	    end
-	    subsection bc 1
-	    set id = 3
-		set type              = function
-		subsection u
-		    set Function expression = 2
-		end
-		subsection v
-		    set Function expression = 0
-		end
-	    end
-	end
+    subsection boundary conditions
+      set number = 2
+      subsection bc 0
+        set id   = 2
+        set type = noslip
+      end
+      subsection bc 1
+        set id   = 3
+        set type = function
+        subsection u
+          set Function expression = 2
+        end
+        subsection v
+          set Function expression = 0
+        end
+      end
+    end
 
-	subsection boundary conditions heat transfer
-	  set number                  = 4
-	    subsection bc 2
-	    set id = 2
-		set type          = convection-radiation
-		set h             = 0
-		set Tinf	  = 0
-	    end
-	    subsection bc 3
-	    set id = 3
-		set type              = temperature
-		set value             = 80
-	    end
-	end
+    subsection boundary conditions heat transfer
+      set number = 4
+      subsection bc 2
+        set id   = 2
+        set type = convection-radiation
+        set h    = 0
+        set Tinf = 0
+      end
+      subsection bc 3
+        set id    = 3
+        set type  = temperature
+        set value = 80
+      end
+    end
 
 .. important::
 	For the fluid ``boundary conditions``, we use ``set number = 2``, whereas for ``boundary conditions heat transfer`` we use ``set number = 4``. These two notations are perfectly equivalent, as the boundary conditions are ``none`` by default (or ``noflux`` in the case of heat transfer, see :doc:`../../../parameters/cfd/boundary_conditions_multiphysics`). However, it is important to make sure that:

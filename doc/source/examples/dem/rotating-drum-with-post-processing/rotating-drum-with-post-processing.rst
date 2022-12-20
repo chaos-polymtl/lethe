@@ -34,6 +34,6 @@ First, we set the variable ``Lagrangian post-processing`` equal to ``true``. Thi
 .. code-block:: text
 
     subsection post-processing
-        set Lagrangian post-processing = true
+      set Lagrangian post-processing = true
     end
 

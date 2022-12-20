@@ -55,12 +55,12 @@ The ``mesh`` subsection specifies the computational grid:
 
 .. code-block:: text
 
-  subsection mesh
-      set type                 = dealii
-      set grid type = hyper_shell
-      set grid arguments = 0, 0 : 0.25 : 1 : 4:  true
-      set initial refinement   = 3
-  end
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_shell
+      set grid arguments     = 0, 0 : 0.25 : 1 : 4:  true
+      set initial refinement = 3
+    end
 
 The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . This GridGenerator generates the mesh of the interstice between two cocentric cylinder. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivision in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``.
 
@@ -75,24 +75,24 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 
 .. code-block:: text
 
-  subsection boundary conditions
-    set number                  = 2
-    subsection bc 0
-        set type              = function
+    subsection boundary conditions
+      set number = 2
+      subsection bc 0
+        set type = function
         subsection u
-            set Function expression = -y
+          set Function expression = -y
         end
         subsection v
-            set Function expression = x
+          set Function expression = x
         end
         subsection w
-            set Function expression = 0
+          set Function expression = 0
         end
       end
-    subsection bc 1
-        set type              = noslip
+      subsection bc 1
+        set type = noslip
+      end
     end
-  end
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The outer cylinder (``1``) is static and, consequently, a ``noslip`` boundary condition is applied. The inner cylinder is rotating at a constant angular velocity (:math:`\omega=1`). To impose this boundary condition, we use the ``type=function`` and prescribe a function for the components of the velocity (remembering that :math:`\mathbf{u}=[u,v]^T`). By prescribing :math:`\mathbf{u}=[-y,x]^T`, we prescribe the rotation of the inner cylinder at an angular velocity of 1 rad/s in the trigonometric direction.
 
@@ -103,11 +103,11 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
 
 .. code-block:: text
 
-  subsection physical properties
-    subsection fluid 0
-      set kinematic viscosity            = 1.0
+    subsection physical properties
+      subsection fluid 0
+        set kinematic viscosity = 1.0
+      end
     end
-  end
 
 
 FEM interpolation
@@ -118,8 +118,8 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
 .. code-block:: text
 
     subsection FEM
-        set velocity order            = 2
-        set pressure order            = 1
+        set velocity order = 2
+        set pressure order = 1
     end
 
 .. warning:: 
@@ -138,15 +138,15 @@ where :math:`u` is the numerical solution, :math:`u_a` is the analytical solutio
 
 .. code-block:: text
 
-  subsection analytical solution
-    set enable                 = true
+    subsection analytical solution
+      set enable = true
       subsection uvwp
-              # A= -(kappa * kappa) / (1. - kappa * kappa);
-              # B= ri * ri / (1. - kappa * kappa);
-              set Function constants = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
-              set Function expression = -sin(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
+        # A= -(kappa * kappa) / (1. - kappa * kappa);
+        # B= ri * ri / (1. - kappa * kappa);
+        set Function constants  = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
+        set Function expression = -sin(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(kappa*kappa) / (1-kappa*kappa)* sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
       end
-  end
+    end
 
 To monitor the error in a simulation, we must set ``enable=true``. We must convert the analytical solution from cylindrical coordinates to Cartesian and this is why the resulting ``Function expression`` is slightly barbaric. Notably, this explains why we often see the occurrence of the term ``sqrt(x^2+y^2)`` which is in fact the radius :math:`r=\sqrt{x^2+y^2}`.
 
@@ -159,12 +159,12 @@ The ``simulation control`` subsection controls the flow of the simulation. Two a
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                  = steady
-    set output name             = couette
-    set subdivision             = 2
-    set number mesh adapt       = 2      # If steady, no mesh adaptation
-  end
+    subsection simulation control
+      set method            = steady
+      set output name       = couette
+      set subdivision       = 2
+      set number mesh adapt = 2 # If steady, no mesh adaptation
+    end
 
 
 Mesh adaptation
@@ -174,9 +174,9 @@ Mesh adaptation is quite complex in Lethe. The mesh can be dynamically adapted u
 
 .. code-block:: text
 
-  subsection mesh adaptation
-    set type                    = uniform
-  end
+    subsection mesh adaptation
+      set type = uniform
+    end
 
 
 Forces
@@ -186,10 +186,10 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 
 .. code-block:: text
 
-  subsection forces
-      set verbosity             = verbose   # Output force and torque in log <quiet|verbose>
-      set calculate torque      = true      # Enable torque calculation
-  end
+    subsection forces
+      set verbosity        = verbose # Output force and torques in log <quiet|verbose>
+      set calculate torque = true    # Enable torque calculation
+    end
 
 By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
 

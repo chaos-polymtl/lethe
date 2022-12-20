@@ -38,11 +38,11 @@ In a three-dimensional simulation, ``hyper_ball`` creates a three-dimensional ba
 .. code-block:: text
 
     subsection mesh
-        set type                 			 	  = dealii
-        set grid type      	     			 	= hyper_ball
-        set grid arguments       				   = 0.0, 0.0, 0.0 : 0.1 : false
-        set initial refinement   				   = 3
-        set expand particle-wall contact search = true
+      set type                                = dealii
+      set grid type                           = hyper_ball
+      set grid arguments                      = 0.0, 0.0, 0.0 : 0.1 : false
+      set initial refinement                  = 3
+      set expand particle-wall contact search = true
     end
 
 
@@ -54,18 +54,18 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
 .. code-block:: text
 
     subsection insertion info
-        set insertion method								= non_uniform
-        set inserted number of particles at each time step  = 1000
-        set insertion frequency            		 			= 150000
-        set insertion box minimum x            	 			= -0.05
-        set insertion box minimum y            	         	= -0.05
-        set insertion box minimum z            	         	= -0.03
-        set insertion box maximum x            	         	= 0.05
-        set insertion box maximum y           	 		 	= 0.05
-        set insertion box maximum z            	         	= 0.07
-        set insertion distance threshold					= 2
-        set insertion random number range					= 0.75
-        set insertion random number seed					= 19
+      set insertion method                               = non_uniform
+      set inserted number of particles at each time step = 1000
+      set insertion frequency                            = 150000
+      set insertion box minimum x                        = -0.05
+      set insertion box minimum y                        = -0.05
+      set insertion box minimum z                        = -0.03
+      set insertion box maximum x                        = 0.05
+      set insertion box maximum y                        = 0.05
+      set insertion box maximum z                        = 0.07
+      set insertion distance threshold                   = 2
+      set insertion random number range                  = 0.75
+      set insertion random number seed                   = 19
     end
 
 
@@ -77,24 +77,24 @@ Gravitational acceleration has three components in three directions.
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx            		 					  	= 0.0
-        set gy            		 					  	= 0.0
-        set gz            		 					  	= -9.81
-        set number of particle types	                = 1
-            subsection particle type 0
-            set size distribution type					= uniform
-                set diameter            	 			= 0.005
-            set number									= 5000
-                set density particles  	 			 	= 2000
-                set young modulus particles         	= 10000000
-                set poisson ratio particles          	= 0.3
-                set restitution coefficient particles	= 0.75
-                set friction coefficient particles      = 0.3
-        end
-        set young modulus wall            				= 10000000
-        set poisson ratio wall            				= 0.3
-        set restitution coefficient wall           		= 0.75
-        set friction coefficient wall         			= 0.3
+      set gx                       = 0.0
+      set gy                       = 0.0
+      set gz                       = -9.81
+      set number of particle types = 1
+      subsection particle type 0
+        set size distribution type            = uniform
+        set diameter                          = 0.005
+        set number                            = 5000
+        set density particles                 = 2000
+        set young modulus particles           = 10000000
+        set poisson ratio particles           = 0.3
+        set restitution coefficient particles = 0.75
+        set friction coefficient particles    = 0.3
+      end
+      set young modulus wall           = 10000000
+      set poisson ratio wall           = 0.3
+      set restitution coefficient wall = 0.75
+      set friction coefficient wall    = 0.3
     end
 
 
@@ -104,12 +104,12 @@ Model parameters
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method 		   	   		= dynamic
-      set dynamic contact search size coefficient	= 0.7
-      set neighborhood threshold				 	= 1.5
-      set particle particle contact force method    = hertz_mindlin_limit_overlap
-      set particle wall contact force method        = nonlinear
-      set integration method				 		= velocity_verlet
+      set contact detection method                = dynamic
+      set dynamic contact search size coefficient = 0.7
+      set neighborhood threshold                  = 1.5
+      set particle particle contact force method  = hertz_mindlin_limit_overlap
+      set particle wall contact force method      = nonlinear
+      set integration method                      = velocity_verlet
     end
 
 
@@ -119,10 +119,10 @@ Simulation control
 .. code-block:: text
 
     subsection simulation control
-      set time step                 		= 1e-6
-      set time end       					= 3
-      set log frequency				    	= 10000
-      set output frequency            		= 10000
+      set time step        = 1e-6
+      set time end         = 1
+      set log frequency    = 10000
+      set output frequency = 10000
     end
 
 Running the simulation

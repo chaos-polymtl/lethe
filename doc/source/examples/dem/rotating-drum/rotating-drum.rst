@@ -33,11 +33,11 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 .. code-block:: text
 
     subsection mesh
-        set type                 				   = dealii
-        set grid type      	     				= cylinder
-        set grid arguments       				   = 0.12:0.18
-        set initial refinement   				   = 4
-        set expand particle-wall contact search = true
+      set type                                = dealii
+      set grid type                           = cylinder
+      set grid arguments                      = 0.12:0.18
+      set initial refinement                  = 4
+      set expand particle-wall contact search = true
     end
 
 
@@ -49,18 +49,18 @@ An insertion box is defined inside the cylindrical domain. 75110 particles are i
 .. code-block:: text
 
     subsection insertion info
-        set insertion method								= non_uniform
-        set inserted number of particles at each time step  = 37555
-        set insertion frequency            		 			= 150000
-        set insertion box minimum x            	 			= -0.175
-        set insertion box minimum y            	        	= -0.07
-        set insertion box minimum z            	        	= 0
-        set insertion box maximum x            	        	= 0.175
-        set insertion box maximum y           	 			= 0.07
-        set insertion box maximum z            	        	= 0.09
-        set insertion distance threshold					= 1.575
-        set insertion random number range					= 0.05
-        set insertion random number seed					= 19
+      set insertion method                               = non_uniform
+      set inserted number of particles at each time step = 37555
+      set insertion frequency                            = 150000
+      set insertion box minimum x                        = -0.175
+      set insertion box minimum y                        = -0.07
+      set insertion box minimum z                        = 0
+      set insertion box maximum x                        = 0.175
+      set insertion box maximum y                        = 0.07
+      set insertion box maximum z                        = 0.09
+      set insertion distance threshold                   = 1.575
+      set insertion random number range                  = 0.05
+      set insertion random number seed                   = 19
     end
 
 
@@ -72,24 +72,24 @@ The particles (226080 particles) are monodispersed, their diameter and density a
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx            		 						= 0.0
-        set gy            		 						= 0.0
-        set gz            		 						= -9.81
-        set number of particle types	                = 1
-            subsection particle type 0
-            set size distribution type					= uniform
-                set diameter            	 			= 0.003
-                set number              				= 226080
-                set density particles  	 				= 2500
-                set young modulus particles         	= 100000000
-                set poisson ratio particles          	= 0.24
-                set restitution coefficient particles	= 0.97
-                set friction coefficient particles      = 0.3
-        end
-        set young modulus wall            				= 100000000
-        set poisson ratio wall            				= 0.24
-        set restitution coefficient wall           		= 0.85
-        set friction coefficient wall         			= 0.35
+      set gx                       = 0.0
+      set gy                       = 0.0
+      set gz                       = -9.81
+      set number of particle types = 1
+      subsection particle type 0
+        set size distribution type            = uniform
+        set diameter                          = 0.003
+        set number                            = 226080
+        set density particles                 = 2500
+        set young modulus particles           = 100000000
+        set poisson ratio particles           = 0.24
+        set restitution coefficient particles = 0.97
+        set friction coefficient particles    = 0.3
+      end
+      set young modulus wall           = 100000000
+      set poisson ratio wall           = 0.24
+      set restitution coefficient wall = 0.85
+      set friction coefficient wall    = 0.35
     end
 
 
@@ -110,14 +110,14 @@ In the rotating drum simulation, we use a ``once`` load-balancing method, since 
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method 		   		 	= dynamic
-      set dynamic contact search size coefficient	= 0.8
-      set neighborhood threshold				 	= 1.3
-      set load balance method				 		= once
-  	  set load balance step					 		= 150000
-      set particle particle contact force method	= hertz_mindlin_limit_overlap
-      set particle wall contact force method        = nonlinear
-      set integration method				 		= velocity_verlet
+      set contact detection method                = dynamic
+      set dynamic contact search size coefficient = 0.8
+      set neighborhood threshold                  = 1.3
+      set load balance method                     = once
+      set load balance step                       = 150000
+      set particle particle contact force method  = hertz_mindlin_limit_overlap
+      set particle wall contact force method      = nonlinear
+      set integration method                      = velocity_verlet
     end
 
 
@@ -131,15 +131,15 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 .. code-block:: text
 
     subsection DEM boundary conditions
-      set number of boundary conditions         = 1
-        subsection boundary condition 0
-            set boundary id						= 4
-            set type              				= rotational
-            set rotational speed				= 11.6
-            set rotational vector x				= 1
-            set rotational vector y				= 0
-            set rotational vector z				= 0
-        end
+      set number of boundary conditions = 1
+      subsection boundary condition 0
+        set boundary id         = 4
+        set type                = rotational
+        set rotational speed    = 11.6
+        set rotational vector x = 1
+        set rotational vector y = 0
+        set rotational vector z = 0
+      end
     end
 
 
@@ -149,10 +149,10 @@ Simulation control
 .. code-block:: text
 
     subsection simulation control
-      set time step                 		 = 1e-6
-      set time end       					 = 15
-      set log frequency				         = 1000
-      set output frequency            		 = 1000
+      set time step        = 1e-6
+      set time end         = 15
+      set log frequency    = 1000
+      set output frequency = 1000
     end
 
 Running the simulation
