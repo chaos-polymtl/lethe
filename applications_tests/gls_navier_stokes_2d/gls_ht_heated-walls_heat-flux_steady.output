@@ -11,6 +11,9 @@ Temperature statistics on entire_domain :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 64
 	 boundary 1 : 12.8
+Convective flux on heat transfer boundary conditions : 
+	 boundary 0 : 0
+	 boundary 1 : 0
 Thermal energy in entire_domain : 0.01875
 
 *****************************************************************
@@ -26,6 +29,9 @@ Temperature statistics on entire_domain :
 Heat flux on heat transfer boundary conditions : 
 	 boundary 0 : 1.6
 	 boundary 1 : -1.6
+Convective flux on heat transfer boundary conditions : 
+	 boundary 0 : 0
+	 boundary 1 : 0
 Thermal energy in entire_domain : 0.6
 cells error_velocity error_pressure 
  1024 0.000000e+00 - 0.000000e+00 - 
