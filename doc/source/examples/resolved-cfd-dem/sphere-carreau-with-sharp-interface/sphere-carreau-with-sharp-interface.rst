@@ -38,26 +38,26 @@ The mesh is defined using the following subsection.
 
 .. code-block:: text
 
-	subsection mesh
-	  set type                 = dealii
-	  set grid type            = subdivided_hyper_rectangle
-	  set grid arguments       = 2,1,1 : -18,-15,-15 : 42,15,15 : true
-	  set initial refinement   = 4
-	end
-	
+    subsection mesh
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 2,1,1 : -18,-15,-15 : 42,15,15 : true
+      set initial refinement = 4
+    end
+
 The dimensions of the used domain are :math:`(60 \times 30 \times 30)`, and the ``subdivided_hyper_rectangle`` is initially divided in :math:`(2 \times 1 \times 1)` cells, the cells are therefore cubic and of initial size :math:`(30 \times 30 \times 30)`. Using ``set initial refinement = 4``, the initial size of the cubic cells is :math:`30/2^4 = 1.875`. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see :doc:`../../../parameters/cfd/box_refinement` for more details).
 
 .. code-block:: text
 
-	subsection  box refinement
-	  set initial refinement   = 3
-	  subsection mesh
-	      set type                 = dealii
-	      set grid type            = subdivided_hyper_rectangle
-	      set grid arguments       = 1,1,1: -2,-2,-2 : 6,2,2 : true
-	      set initial refinement   = 0
-	  end
-	end
+    subsection box refinement
+      set initial refinement = 3
+      subsection mesh
+        set type               = dealii
+        set grid type          = subdivided_hyper_rectangle
+        set grid arguments     = 1,1,1: -2,-2,-2 : 6,2,2 : true
+        set initial refinement = 0
+      end
+    end
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~~
@@ -66,36 +66,36 @@ We define the boundary conditions in order to have an inlet velocity of :math:`1
 .. code-block:: text
 
     subsection boundary conditions
-        set number                  = 5
-        subsection bc 0
-            set id 		= 0
-            set type    = function
-            subsection u
-                set Function expression = 1
-            end
-            subsection v
-                set Function expression = 0
-            end
-            subsection w
-                set Function expression = 0
-            end
+      set number = 5
+      subsection bc 0
+        set id   = 0
+        set type = function
+        subsection u
+          set Function expression = 1
         end
-        subsection bc 1
-            set id 		= 2
-            set type    = slip
+        subsection v
+          set Function expression = 0
         end
-        subsection bc 2
-            set id 		= 3
-            set type    = slip
+        subsection w
+          set Function expression = 0
         end
-        subsection bc 3
-            set id 		= 4
-            set type    = slip
-        end
-        subsection bc 4
-            set id 		= 5
-            set type    = slip
-        end
+      end
+      subsection bc 1
+        set id   = 2
+        set type = slip
+      end
+      subsection bc 2
+        set id   = 3
+        set type = slip
+      end
+      subsection bc 3
+        set id   = 4
+        set type = slip
+      end
+      subsection bc 4
+        set id   = 5
+        set type = slip
+      end
     end
 
 .. note::
@@ -109,19 +109,20 @@ This example showcases a shear-thinning flow, for which the viscosity decreases 
 .. code-block:: text
 
     subsection physical properties
-        set number of fluids = 1
-        subsection fluid 0
-            set rheological model	= carreau
-            subsection non newtonian
-                subsection carreau
-                    set n               = 0.5
-                    set viscosity_0     = 0.063403
-                    set viscosity_inf   = 0
-                    set lambda          = 10
-                    set a               = 2.0
-                end
-            end
+      set number of fluids = 1
+      subsection fluid 0
+        set rheological model = carreau
+    
+        subsection non newtonian
+          subsection carreau
+            set viscosity_0   = 0.063403
+            set viscosity_inf = 0
+            set lambda        = 10
+            set a             = 2.0
+            set n             = 0.5
+          end
         end
+      end
     end
 
 With ``viscosity_inf = 0`` (3-parameter Carreau model), the *a priori* Reynolds number can be estimated using :
@@ -140,19 +141,19 @@ This example uses a ramping initial condition that first ramps on the ``n`` para
 .. code-block:: text
 
     subsection initial conditions
-        set type = ramp
-        subsection ramp
-            subsection n
-                set initial n   = 1.0
-                set iterations  = 2
-                set alpha       = 0.5
-            end
-            subsection viscosity
-                set initial viscosity   = 1.0
-                set iterations          = 2
-                set alpha               = 0.5
-            end
+      set type = ramp
+      subsection ramp
+        subsection n
+          set initial n  = 1.0
+          set iterations = 2
+          set alpha      = 0.5
         end
+        subsection viscosity
+          set initial viscosity = 1.0
+          set iterations        = 2
+          set alpha             = 0.5
+        end
+      end
     end
 	
 The first initial condition simulation solves for ``n=1.0``, ``viscosity_0 = 1.0``, ``viscosity_inf = 0``, ``lambda=10`` and ``a=2``. The subsequent initial simulations are:
@@ -171,22 +172,22 @@ In this case, we want to define a spherical boundary of radius :math:`0.5`, with
 .. code-block:: text
 
     subsection particles
-        set number of particles = 1
-        set stencil order = 2
-        set length ratio  = 1
-        set refine mesh inside radius factor = 0.85
-        set refine mesh outside radius factor = 1.3
-        set initial refinement = 2
-        set integrate motion = false
-        set assemble Navier-Stokes inside particles = false
-        subsection particle info 0
-            subsection position
-                set Function expression =0;0;0
-            end
-            set pressure location = 0.00001; 0.00001; 0.00001
-            set type       = sphere
-            set shape arguments = 0.5
+      set number of particles                     = 1
+      set stencil order                           = 2
+      set length ratio                            = 1
+      set refine mesh inside radius factor        = 0.85
+      set refine mesh outside radius factor       = 1.3
+      set initial refinement                      = 2
+      set integrate motion                        = false
+      set assemble Navier-Stokes inside particles = false
+      subsection particle info 0
+        subsection position
+          set Function expression = 0;0;0
         end
+        set pressure location = 0.00001; 0.00001; 0.00001
+        set type            = sphere
+        set shape arguments = 0.5
+      end
     end
 
 The hypershell around the boundary between ``refine mesh inside radius factor`` (:math:`r = 0.425`) and ``refine mesh outside radius factor`` (:math:`r = 0.65`) will initially be refined twice (``initial refinement = 2``). 
@@ -198,13 +199,13 @@ The simulation is solved at steady-state with 2 mesh adaptations.
 
 .. code-block:: text
 
-	subsection simulation control
-  	  set method                  = steady
-	  set number mesh adapt       = 2
-	  set output name             = sharp-carreau-output
-	  set output frequency        = 1
-	  set subdivision             = 1
-	end
+    subsection simulation control
+      set method            = steady
+      set number mesh adapt = 2
+      set output name       = sharp-carreau-output
+      set output frequency  = 1
+      set subdivision       = 1
+    end
 
 Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -213,17 +214,17 @@ In order to generate an additional refinement zone around the immersed boundary,
 
 .. code-block:: text
 
-	subsection mesh adaptation
-	  set type                  = kelly
-	  set fraction coarsening   = 0.0
-	  set fraction refinement   = 0.4
-	  set fraction type	   = number
-	  set frequency             = 1
-	  set max number elements   = 8000000
-	  set min refinement level  = 0
-	  set max refinement level  = 11
-	  set variable		     = velocity
-	end
+    subsection mesh adaptation
+      set type                 = kelly
+      set fraction coarsening  = 0.1
+      set fraction refinement  = 0.4
+      set fraction type        = number
+      set frequency            = 1
+      set max number elements  = 8000000
+      set min refinement level = 0
+      set max refinement level = 11
+      set variable = velocity
+    end
 
 Results
 ---------------

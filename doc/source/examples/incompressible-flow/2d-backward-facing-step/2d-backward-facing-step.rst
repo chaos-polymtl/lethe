@@ -38,14 +38,14 @@ For :math:`Re < 700`, the solution is stable enough to be computed in steady sta
 
 .. code-block:: text
 
-	subsection simulation control
-	  set method = steady
-	  set number mesh adapt = 10
-	  set output name = backward_facing_step_output
-	  set output frequency = 1
-	  set subdivision = 1
-	  set output boundaries = false
-	end
+    subsection simulation control
+      set method            = steady
+      set number mesh adapt = 10
+      set output name       = backward_facing_step_output
+      set output frequency  = 1
+      set subdivision       = 1
+      set output boundaries = false
+    end
 	
 A mesh refinement analysis can be done with ``set number mesh adapt = 10``. By starting from a very coarse mesh and by dynamically refining the mesh at least 10 times, asymptotic convergence can be clearly observed.
 
@@ -53,19 +53,19 @@ However, for :math:`Re \geq 700`, convergence can be quite difficult to obtain w
 
 .. code-block:: text
 
-	subsection simulation control
-	  set method = steady_bdf
-	  set stop tolerance = 1e-6
-	  set time step                     = 0.005
-	  set adapt                         = true
-	  set max cfl                       = 1e6
-	  set adaptative time step scaling = 1.2
-	  set number mesh adapt = 0
-	  set output name = backward_facing_step_output
-	  set output frequency = 1
-	  set subdivision = 1
-	  set output boundaries = false
-	end
+    subsection simulation control
+      set method                       = steady_bdf
+      set stop tolerance               = 1e-6
+      set time step                    = 0.005
+      set adapt                        = true
+      set max cfl                      = 1e6
+      set adaptative time step scaling = 1.2
+      set number mesh adapt            = 0
+      set output name                  = backward_facing_step_output
+      set output frequency             = 1
+      set subdivision                  = 1
+      set output boundaries            = false
+    end
   
 ``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo-steady simulation. In this case, choosing ``stop tolerance = 1e-6`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
 
@@ -88,12 +88,12 @@ Consequently, the physical properties are defined as follows :
 
 .. code-block:: text
 	
-	subsection physical properties
-	  set number of fluids = 1
-	  subsection fluid 0
-		set kinematic viscosity = 0.01 # Re_h=2/nu
-	  end
-	end
+    subsection physical properties
+      set number of fluids = 1
+      subsection fluid 0
+        set kinematic viscosity = 0.01 # Re_h=2/nu
+      end
+    end
 	
 .. note::
 	The ``kinematic viscosity`` is the only parameter that changes coherently with :math:`Re` (for example, to obtain :math:`Re = 100`, ``kinematic viscosity = 0.02`` can be used as input). 
@@ -103,10 +103,10 @@ Mesh
 
 .. code-block:: text
 
-	subsection mesh
-	  set type = gmsh
-	  set file name = ../backward-facing-step.msh
-	end
+    subsection mesh
+      set type      = gmsh
+      set file name = ../backward-facing-step.msh
+    end
 	
 The mesh features quadrilateral elements as well as unit step and inlet heights (:math:`h_{in}=h=1`). In that direction, the expansion ratio has been set to :math:`\beta=\frac{h_{out}}{h_{in}}=2` throughout the entirety of the simulations. Also, the inlet and outlet lengths should be long enough that they allow the formation of a fully developed flow. Finally, since a ``gmsh`` mesh file is used, the initial mesh should be as coarse as possible, since these cells cannot be coarsened with the mesh adaptation algorithm.
 
@@ -117,11 +117,11 @@ In this example, the mesh adaptation algorithm is based on the Kelly error estim
 
 .. code-block:: text
 
-	subsection mesh adaptation
-	  set variable = velocity
-	  set type = kelly
-	  set fraction refinement  = 0.2
-	end
+    subsection mesh adaptation
+      set variable            = velocity
+      set type                = kelly
+      set fraction refinement = 0.2
+    end
 	
 For higher Reynolds number with adjoint time stepping, ``frequency = 5`` can be added to the above parameters in order to obtain a reasonable number of elements throughout the simulation. In this particular case, the mesh would be refined at every fifth time iteration.
 	
@@ -146,10 +146,10 @@ In this example, the interpolation order has been set to one for both velocity a
 
 .. code-block:: text
 
-	subsection FEM
-	  set pressure order = 1
-	  set velocity order = 1
-	end
+    subsection FEM
+      set pressure order = 1
+      set velocity order = 1
+    end
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -158,25 +158,25 @@ As presented in the description of the case (see figure above), three different 
 
 .. code-block:: text
 
-	subsection boundary conditions
-	  set number         = 2
-	  set time dependent = false
-	  subsection bc 0
-		set type = noslip
-	  end
-	  subsection bc 1
-		set type = function
-		subsection u
-		  set Function expression = 1
-		end
-		subsection v
-		  set Function expression = 0
-		end
-		subsection w
-		  set Function expression = 0
-		end
-	  end
-	end
+    subsection boundary conditions
+      set number         = 2
+      set time dependent = false
+      subsection bc 0
+        set type = noslip
+      end
+      subsection bc 1
+        set type = function
+        subsection u
+          set Function expression = 1
+        end
+        subsection v
+          set Function expression = 0
+        end
+        subsection w
+          set Function expression = 0
+        end
+      end
+    end
 	
 First, ``subsection bc 0`` represents a Dirichlet boundary condition (or ``noslip``) at each wall where :math:`\mathbf{u}=\mathbf{0}.` The boundary condition at the inlet is represented as a uniform unit flow such that :math:`[u,v,w] = [1,0,0]`. In that case, the parameter ``type = function`` is used in ``subsection bc 1``. With this parameter, :math:`u`, :math:`v` and :math:`w` can be set numerically and independently. The outflow boundary condition is considered a natural boundary condition (also known as the *do nothing* boundary condition) and it is used since we can consider the outlet to be very far from the step. In fact, this condition specifies :math:`p \rightarrow 0` or in other words, that the traction on the fluid equals zero. In *Lethe*, this particular boundary condition is automatically loaded when nothing is assigned to a specific ID  (in our case, there is none at the outlet).
 
@@ -187,11 +187,11 @@ The ``newton`` non-linear solver is used with a medium ``tolerance``, since conv
 
 .. code-block:: text
 
-	subsection non-linear solver
-	  set verbosity               = verbose
-	  set tolerance               = 1e-6
-	  set max iterations          = 10
-	end
+    subsection non-linear solver
+      set verbosity      = verbose
+      set tolerance      = 1e-6
+      set max iterations = 10
+    end
 
 Linear solver
 ~~~~~~~~~~~~~
@@ -200,32 +200,32 @@ For :math:`Re < 700`, standard parameters are suitable to achieve convergence.
 
 .. code-block:: text
 
-	subsection linear solver
-	  set verbosity               = verbose
-	  set method                  = gmres
-	  set max iters               = 10000
-	  set relative residual       = 1e-4
-	  set minimum residual        = 1e-9
-	  set ilu preconditioner fill = 2
-	  set ilu preconditioner absolute tolerance = 1e-12
-	  set ilu preconditioner relative tolerance = 1.00
-	end
+    subsection linear solver
+      set verbosity                             = verbose
+      set method                                = gmres
+      set max iters                             = 10000
+      set relative residual                     = 1e-4
+      set minimum residual                      = 1e-9
+      set ilu preconditioner fill               = 2
+      set ilu preconditioner absolute tolerance = 1e-12
+      set ilu preconditioner relative tolerance = 1.00
+    end         
 	
 For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtionner fill = 2`` in order to save calculation time. Also, adjusting ``max krylov vectors = 200`` can help to reach convergence.
 
 .. code-block:: text
 
-	subsection linear solver
-	  set verbosity               = verbose
-	  set method                  = gmres
-	  set max iters               = 10000
-	  set relative residual       = 1e-4
-	  set minimum residual        = 1e-9
-	  set ilu preconditioner fill = 2
-	  set ilu preconditioner absolute tolerance = 1e-12
-	  set ilu preconditioner relative tolerance = 1.00
-	  set max krylov vectors = 200
-	end
+    subsection linear solver
+      set verbosity                             = verbose
+      set method                                = gmres
+      set max iters                             = 10000
+      set relative residual                     = 1e-4
+      set minimum residual                      = 1e-9
+      set ilu preconditioner fill               = 2
+      set ilu preconditioner absolute tolerance = 1e-12
+      set ilu preconditioner relative tolerance = 1.00
+      set max krylov vectors                    = 200
+    end
 	
 .. tip::
 	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the nonlinear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.

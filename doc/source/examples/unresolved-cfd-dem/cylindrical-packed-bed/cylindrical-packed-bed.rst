@@ -38,10 +38,10 @@ The ``mesh`` subsection specifies the computational grid:
 .. code-block:: text
 
     subsection mesh
-        set type               = dealii
-  	set grid type          = subdivided_cylinder
-  	set grid arguments     = 16:0.01:0.1
-  	set initial refinement = 1
+      set type               = dealii
+      set grid type          = subdivided_cylinder
+      set grid arguments     = 16:0.01:0.1
+      set initial refinement = 1
     end
 
 Simulation control
@@ -52,11 +52,11 @@ Another subsection, which is generally the one we put at the top of the paramete
 .. code-block:: text
 
     subsection simulation control
-        set time step        = 0.00001
-  	set time end         = 0.6
-  	set log frequency    = 1000
-  	set output frequency = 1000
-  	set output path      = ./output_dem/
+      set time step        = 0.00001
+      set time end         = 0.6
+      set log frequency    = 1000
+      set output frequency = 1000
+      set output path      = ./output_dem/
     end
 
 .. warning:: 
@@ -85,12 +85,12 @@ The section on model parameters is explained in the DEM examples. We show the ch
 .. code-block:: text
 
     subsection model parameters
-        set contact detection method               = dynamic
-  	set contact detection frequency            = 10
-  	set neighborhood threshold                 = 1.3
-  	set particle particle contact force method = hertz_mindlin_limit_overlap
-  	set particle wall contact force method     = nonlinear
-  	set integration method                     = velocity_verlet
+      set contact detection method               = dynamic
+      set contact detection frequency            = 10
+      set neighborhood threshold                 = 1.3
+      set particle particle contact force method = hertz_mindlin_limit_overlap
+      set particle wall contact force method     = nonlinear
+      set integration method                     = velocity_verlet
     end
 
 Lagrangian physical properties
@@ -102,26 +102,26 @@ The gravitational acceleration as well as the physical properties of particles a
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx                       = -9.8
-  	set gy                       = 0.0
-  	set gz                       = 0
-  	set number of particle types = 1
-  	subsection particle type 0
-    		set size distribution type            = uniform
-    		set diameter                          = 0.001
-    		set number                            = 10000
-    		set density particles                 = 2500
-    		set young modulus particles           = 1e6
-    		set poisson ratio particles           = 0.3
-    		set restitution coefficient particles = 0.2
-    		set friction coefficient particles    = 0.1
-    		set rolling friction particles        = 0.2
-  	end
-  	set young modulus wall           = 1e6
-  	set poisson ratio wall           = 0.3
-  	set restitution coefficient wall = 0.2
-  	set friction coefficient wall    = 0.1
-  	set rolling friction wall        = 0.3
+      set gx                       = -9.8
+      set gy                       = 0.0
+      set gz                       = 0
+      set number of particle types = 1
+      subsection particle type 0
+        set size distribution type            = uniform
+        set diameter                          = 0.001
+        set number                            = 10000
+        set density particles                 = 2500
+        set young modulus particles           = 1e6
+        set poisson ratio particles           = 0.3
+        set restitution coefficient particles = 0.2
+        set friction coefficient particles    = 0.1
+        set rolling friction particles        = 0.2
+      end
+      set young modulus wall           = 1e6
+      set poisson ratio wall           = 0.3
+      set restitution coefficient wall = 0.2
+      set friction coefficient wall    = 0.1
+      set rolling friction wall        = 0.3
     end
     
 Insertion info
@@ -132,18 +132,18 @@ The ``insertion info`` subsection manages the insertion of particles. It allows 
 .. code-block:: text
 
     subsection insertion info
-        set insertion method                               = non_uniform
-  	set inserted number of particles at each time step = 500
-  	set insertion frequency                            = 1000
-  	set insertion box minimum x                        = 0
-  	set insertion box minimum y                        = -0.01
-  	set insertion box minimum z                        = 0
-  	set insertion box maximum x                        = 0.1
-  	set insertion box maximum y                        = 0.01
-  	set insertion box maximum z                        = 0.01
-  	set insertion distance threshold                   = 2.2
-  	set insertion random number range                  = 0.5
-  	set insertion random number seed                   = 19
+      set insertion method                               = non_uniform
+      set inserted number of particles at each time step = 500
+      set insertion frequency                            = 1000
+      set insertion box minimum x                        = 0
+      set insertion box minimum y                        = -0.01
+      set insertion box minimum z                        = 0
+      set insertion box maximum x                        = 0.1
+      set insertion box maximum y                        = 0.01
+      set insertion box maximum z                        = 0.01
+      set insertion distance threshold                   = 2.2
+      set insertion random number range                  = 0.5
+      set insertion random number seed                   = 19
     end
 
 Floating walls
@@ -154,21 +154,21 @@ We need to pack the particles in the middle of the cylinder. Therefore, we creat
 .. code-block:: text
 
     subsection floating walls
-        set number of floating walls = 1
-  	subsection wall 0
-    		subsection point on wall
-      			set x = -0.01
-      			set y = 0
-      			set z = 0
-    		end
-    		subsection normal vector
-      			set nx = 1
-      			set ny = 0
-      			set nz = 0
-    		end
-    		set start time = 0
-    		set end time   = 2
-  	end
+      set number of floating walls = 1
+      subsection wall 0
+        subsection point on wall
+          set x = -0.01
+          set y = 0
+          set z = 0
+        end
+        subsection normal vector
+          set nx = 1
+          set ny = 0
+          set nz = 0
+        end
+        set start time = 0
+        set end time   = 2
+      end
     end
     
 Running the DEM simulation
@@ -217,14 +217,14 @@ The simulation was run for 0.5 s with a time step of 0.002 s. The time scheme ch
 .. code-block:: text
 
     subsection simulation control
-        set method            = bdf1
-  	set number mesh adapt = 0
-  	set output name       = result_
-  	set output frequency  = 1
-  	set time end          = 0.5
-  	set time step         = 0.002
-  	set subdivision       = 1
-  	set output path       = ./output/
+      set method            = bdf1
+      set number mesh adapt = 0
+      set output name       = result_
+      set output frequency  = 1
+      set time end          = 0.5
+      set time step         = 0.002
+      set subdivision       = 1
+      set output path       = ./output/
     end
 
 .. warning:: 
@@ -238,10 +238,10 @@ The physical properties subsection allows us to determine the density and viscos
 .. code-block:: text
 
     subsection physical properties
-        subsection fluid 0
-    		set kinematic viscosity = 0.00001
-    		set density             = 1
-  	end
+      subsection fluid 0
+        set kinematic viscosity = 0.00001
+        set density             = 1
+      end
     end
 
 Initial conditions
@@ -252,10 +252,10 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 .. code-block:: text
 
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression = 0; 0; 0; 0
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0; 0
+      end
     end
 
 Boundary conditions
@@ -266,24 +266,24 @@ For the boundary conditions, we choose a slip boundary condition on the walls of
 .. code-block:: text
 
     subsection boundary conditions
-       set number = 2
-  	subsection bc 0
-    		set id   = 0
-    		set type = slip
-  	end
-  	subsection bc 1
-    		set id   = 1
-    		set type = function
-    			subsection u
-      				set Function expression = 0.2
-    			end
-    			subsection v
-      				set Function expression = 0
-    			end
-    			subsection w
-      				set Function expression = 0
-    			end
-  	end
+      set number = 2
+      subsection bc 0
+        set id   = 0
+        set type = slip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = function
+        subsection u
+          set Function expression = 0.2
+        end
+        subsection v
+          set Function expression = 0
+        end
+        subsection w
+          set Function expression = 0
+        end
+      end
     end
 
 
@@ -297,12 +297,12 @@ Void fraction
 .. code-block:: text
 
     subsection void fraction
-        set mode                = pcm
-  	set read dem            = true
-  	set dem file name       = dem
-  	set l2 smoothing factor = 0.000005
-  	set l2 lower bound      = 0
-  	set l2 upper bound      = 1
+      set mode                = pcm
+      set read dem            = true
+      set dem file name       = dem
+      set l2 smoothing factor = 0.000005
+      set l2 lower bound      = 0
+      set l2 upper bound      = 1
     end
 
 CFD-DEM
@@ -316,15 +316,15 @@ We also enable ``grad_div`` stabilisation in order to improve local mass conserv
 .. code-block:: text
 
     subsection cfd-dem
-        set grad div                      = true
-  	set void fraction time derivative = true
-  	set drag force                    = true
-  	set buoyancy force                = true
-  	set shear force                   = false
-  	set pressure force                = false
-  	set drag model                    = rong
-  	set post processing               = true
-  	set vans model                    = modelB
+      set grad div                      = true
+      set void fraction time derivative = true
+      set drag force                    = true
+      set buoyancy force                = true
+      set shear force                   = false
+      set pressure force                = false
+      set drag model                    = rong
+      set post processing               = true
+      set vans model                    = modelB
     end
     
 We determine the ``drag model`` to be used for the calculation of particle-fluid forces. Currently, Difelice, Rong and Dallavalle models are supported. Other optional forces that can be enabled are the ``buoyancy force``, the ``shear force`` and the ``pressure force``. As we are simulating a static bed, we choose to disable these forces. The VANS model we are solving is model B. Other possible option is model A.
@@ -337,9 +337,9 @@ Non-linear solver control
 .. code-block:: text
 
     subsection non-linear solver
-        set tolerance               = 1e-9
-        set max iterations          = 10
-        set verbosity               = verbose
+      set tolerance      = 1e-9
+      set max iterations = 10
+      set verbosity      = verbose
     end
     
 Linear solver control
@@ -348,15 +348,15 @@ Linear solver control
 .. code-block:: text
 
     subsection linear solver
-        set method                                 = gmres
-        set max iters                              = 5000
-        set relative residual                      = 1e-3
-        set minimum residual                       = 1e-11
-        set ilu preconditioner fill                = 1
-        set ilu preconditioner absolute tolerance  = 1e-14
-        set ilu preconditioner relative tolerance  = 1.00
-        set verbosity                              = verbose
-        set max krylov vectors                     = 200
+      set method                                = gmres
+      set max iters                             = 5000
+      set relative residual                     = 1e-3
+      set minimum residual                      = 1e-11
+      set ilu preconditioner fill               = 1
+      set ilu preconditioner absolute tolerance = 1e-14
+      set ilu preconditioner relative tolerance = 1.00
+      set verbosity                             = verbose
+	  set max krylov vectors                    = 200
     end
 
 Running the VANS simulation

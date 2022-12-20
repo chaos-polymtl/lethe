@@ -52,12 +52,12 @@ The ``mesh`` subsection specifies the computational grid:
 
 .. code-block:: text
 
-  subsection mesh
-    set type = dealii
-    set grid type = hyper_ball
-    set grid arguments = 0, 0 : 1 : true
-    set initial refinement = 3
-  end
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_ball
+      set grid arguments     = 0, 0 : 1 : true
+      set initial refinement = 3
+    end
 
 The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_. This GridGenerator generates the mesh of the interstice between two concentric cylinders. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivisions in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``
 
@@ -81,24 +81,24 @@ Gauss quadrature points of the immersed mesh to represent the immersed body. For
 
 .. code-block:: text
 
-  subsection nitsche
-    set beta = 10
-    set number of solids = 1
-    subsection nitsche solid 0
-      subsection mesh
-        set type = dealii
-        set grid type = hyper_ball
-        set grid arguments = 0, 0 : 0.25 : true
-        set initial refinement = 6
+    subsection nitsche
+      set beta             = 10
+      set verbosity        = verbose
+      set number of solids = 1
+    
+      subsection nitsche solid 0
+        subsection mesh
+          set type               = dealii
+          set grid type          = hyper_ball
+          set grid arguments     = 0, 0 : 0.25 : true
+          set initial refinement = 6
+        end
+        subsection solid velocity
+          set Function expression = -y ; x
+        end
+        set calculate torque on solid = true
       end
-      subsection solid velocity
-        set Function expression = -y ; x
-      end
-      set enable particles motion	= false
-      set calculate torque on solid 	= true
     end
-    set verbosity = verbose
-  end
 
 The ``beta`` coefficient is a parameter used to enforce the Nitsche IB. It's value is generally between 1 and 100, according to the size of the mesh. 
 A value of 10 is reasonable. Then, we specify the ``number of solids`` geometries that with be represented with Nitsche IB. 
@@ -120,12 +120,13 @@ The ``boundary conditions`` subsection becomes simple since the inner cylinder b
 
 .. code-block:: text
 
-  subsection boundary conditions
-    set number                  = 1
+    subsection boundary conditions
+      set number = 1
       subsection bc 0
-          set type              = noslip
+        set id   = 0
+        set type = noslip
       end
-  end
+    end
 
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The outer cylinder (``0``) is static and, consequently, a ``noslip`` boundary condition is applied. 
@@ -138,11 +139,11 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
 
 .. code-block:: text
 
-  subsection physical properties
-    subsection fluid 0
-      set kinematic viscosity            = 1.0
+    subsection physical properties
+      subsection fluid 0
+        set kinematic viscosity = 1.0
+      end
     end
-  end
 
 
 FEM interpolation
@@ -155,10 +156,9 @@ FEM interpolation
 .. code-block:: text
 
     subsection FEM
-        set velocity order            = 1
-        set pressure order            = 1
+      set velocity order = 1
+      set pressure order = 1
     end
-
 
 Analytical solution
 ~~~~~~~~~~~~~~~~~~~
@@ -175,13 +175,13 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 
 .. code-block:: text
 
-  subsection forces
-    set verbosity             = verbose   # Output force and torques in log 
-    set calculate torque      = true      # Enable torque calculation
-    set torque name           = torque    # Name prefix of torque files
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
-  end
+    subsection forces
+      set verbosity             = verbose   # Output force and torques in log 
+      set calculate torque      = true      # Enable torque calculation
+      set torque name           = torque    # Name prefix of torque files
+      set calculation frequency = 1         # Frequency of the force calculation
+      set output frequency      = 1         # Frequency of file update
+    end
 
 
 By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. 
@@ -203,21 +203,21 @@ This approach is very interesting, because the solution on the coarse mesh also 
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                  = steady
-    set number mesh adapt       = 4
-    set output name             = taylor_couette_22
-    set output frequency        = 1
-    set output path             = ./
-  end
+    subsection simulation control
+      set method            = steady
+      set number mesh adapt = 4
+      set output name       = taylor_couette_22
+      set output frequency  = 1
+      set output path       = ./
+    end
 
 We then set the mesh adaptation ``type`` to ``uniform``.
 
 .. code-block:: text
 
-  subsection mesh adaptation
-    set type                    = uniform
-  end
+    subsection mesh adaptation
+      set type = uniform
+    end
 
 
 Adaptative mesh refinement
@@ -228,29 +228,29 @@ adaptive mesh refinement. We now consider the following option:
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                  = steady
-    set number mesh adapt       = 6
-    set output name             = taylor_couette_22
-    set output frequency        = 1
-    set output path             = ./
-  end
+    subsection simulation control
+      set method                  = steady
+      set number mesh adapt       = 6
+      set output name             = taylor_couette_22
+      set output frequency        = 1
+      set output path             = ./
+    end
 
 The mesh can be dynamically adapted using Kelly error estimates on the velocity, pressure or variables arising from other physics. 
 
 .. code-block:: text
 
-  subsection mesh adaptation
-    set type                    = kelly
-    set variable                = velocity
-    set fraction type           = number
-    set max number elements     = 500000
-    set max refinement level    = 15
-    set min refinement level    = 0
-    set frequency               = 1
-    set fraction refinement     = 0.3
-    set fraction coarsening     = 0.15
-  end
+    subsection mesh adaptation
+      set type                 = kelly
+      set variable             = velocity
+      set fraction type        = number
+      set max number elements  = 500000
+      set max refinement level = 15
+      set min refinement level = 0
+      set frequency            = 1
+      set fraction refinement  = 0.3
+      set fraction coarsening  = 0.15
+    end
 
 
 Rest of the subsections

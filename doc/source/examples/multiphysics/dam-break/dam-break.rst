@@ -62,15 +62,15 @@ time step of :math:`0.01` seconds.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                         = bdf1
-        set time end                       = 4.1
-        set time step                      = 0.01
-        set adapt                          = true
-        set max cfl                        = 0.5
-        set stop tolerance                 = 1e-5
-        set output name                    = dam-break
-        set output frequency               = 10
-        set output path                    = ./output/
+      set method           = bdf1
+      set time end         = 4.1
+      set time step        = 0.01
+      set adapt            = true
+      set max cfl          = 0.5
+      set stop tolerance   = 1e-5
+      set output name      = dam-break
+      set output frequency = 10
+      set output path      = ./output/
     end
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
@@ -83,7 +83,7 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set VOF = true
+      set VOF = true
     end 
 
 
@@ -137,17 +137,17 @@ the range of :math:`(1,2]`.
 
 .. code-block:: text
 
-	#---------------------------------------------------
-	# VOF
-	#---------------------------------------------------
-	subsection VOF
-	  subsection interface sharpening
-	    set enable      = true
-	    set threshold   = 0.5
-	    set interface sharpness    = 2
-	    set frequency   = 10
-	  end
-	end
+    #---------------------------------------------------
+    # VOF
+    #---------------------------------------------------
+    subsection VOF
+      subsection interface sharpening
+        set enable              = true
+        set threshold           = 0.5
+        set interface sharpness = 2
+        set frequency           = 10
+      end
+    end
 
 """"""""""""""""""""""""""
 Fluid phase parameters 
@@ -163,13 +163,13 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
     # Initial condition
     #---------------------------------------------------
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression = 0; 0; 0
-        end
-        subsection VOF
-             set Function expression = if (x<3.5 & y<7 , 1, 0)
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0
+      end
+      subsection VOF
+        set Function expression = if (x<3.5 & y<7 , 1, 0)
+      end
     end
 
 The ``source term`` subsection defines the gravitational acceleration:
@@ -180,10 +180,10 @@ The ``source term`` subsection defines the gravitational acceleration:
     # Source term
     #---------------------------------------------------
     subsection source term
-        set enable = true
-        subsection xyz
-            set Function expression = 0;-1.0; 0
-        end
+      set enable = true
+      subsection xyz
+        set Function expression = 0;-1.0; 0
+      end
     end
 
 Two fluids are present in this simulation, hence in the ``physical 
@@ -196,15 +196,15 @@ properties`` subsection, their physical properties should be defined:
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-        set number of fluids         = 2
-        subsection fluid 0
-            set density              = 0.02
-            set kinematic viscosity  = 0.1
-        end
-        subsection fluid 1
-            set density              = 0.9982
-            set kinematic viscosity  = 0.01
-        end
+      set number of fluids = 2
+      subsection fluid 0
+        set density             = 0.02
+        set kinematic viscosity = 0.1
+      end
+      subsection fluid 1
+        set density             = 0.9982
+        set kinematic viscosity = 0.01
+      end
     end
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
@@ -226,10 +226,10 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
     # Mesh
     #---------------------------------------------------
     subsection mesh
-            set type = dealii
-            set grid type = subdivided_hyper_rectangle
-            set grid arguments = 14, 10 : 0, 0 : 14, 10 : true
-            set initial refinement = 3
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 14, 10 : 0, 0 : 14, 10 : true
+      set initial refinement = 3
     end
     
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
@@ -246,15 +246,15 @@ is adapted to the initial condition for the phase.
     # Mesh Adaptation
     #---------------------------------------------------
     subsection mesh adaptation
-        set type                    = kelly
-        set variable                = phase
-        set fraction type           = fraction
-        set max refinement level    = 5
-        set min refinement level    = 3
-        set frequency               = 1
-        set fraction refinement     = 0.99
-        set fraction coarsening     = 0.01
-        set initial refinement steps = 4
+      set type                     = kelly
+      set variable                 = phase
+      set fraction type            = fraction
+      set max refinement level     = 5
+      set min refinement level     = 3
+      set frequency                = 1
+      set fraction refinement      = 0.99
+      set fraction coarsening      = 0.01
+      set initial refinement steps = 4
     end
 
 ----------------------

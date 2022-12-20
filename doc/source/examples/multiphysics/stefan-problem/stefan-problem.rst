@@ -73,15 +73,15 @@ We first define the geometry in which the simulation is carried out using the me
 
 .. code-block:: text
 
-   #---------------------------------------------------
-   # Mesh
-   #---------------------------------------------------
-   subsection mesh
-           set type = dealii
-           set grid type = subdivided_hyper_rectangle
-           set grid arguments = 100, 1 : 0, 0 : 1, 0.1 : true
-           set initial refinement = 0
-   end
+    #---------------------------------------------------
+    # Mesh
+    #---------------------------------------------------
+    subsection mesh
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 100, 1 : 0, 0 : 1, 0.1 : true
+      set initial refinement = 0
+    end
 
 We use the ``dealii`` GridGenerator to generate a ``subdivided_hyper_rectangle``. This rectangle contains 100 cells in the x direction and 1 in the y direction. It is created from two points, :math:`(0,0)` and :math:`(1,0.1)`. Finally, we give a different id to each boundary of the domain, hence the colorize option is set to true.
 
@@ -89,17 +89,17 @@ The next step is establishing the boundary conditions:
 
 .. code-block:: text
 
-  # --------------------------------------------------
-  # Boundary Conditions
-  #---------------------------------------------------
-  subsection boundary conditions heat transfer
-    set number                  = 1
+    # --------------------------------------------------
+    # Boundary Conditions
+    #---------------------------------------------------
+    subsection boundary conditions heat transfer
+      set number = 1
       subsection bc 0
-      set id = 0
-  	      set type	      = temperature
-          set value	      = 1
+        set id    = 0
+        set type  = temperature
+        set value = 1
       end
-  end
+    end
 
 Note that we only set one boundary condition for the temperature, which is a constant temperature on the wall which bears the ID 0 (the left wall). By default, boundaries on which boundary conditions are not specified are no-flux Neumann boundary conditions which, for a heat transfer problem results in:
 
@@ -110,32 +110,31 @@ Next, we define the physical properties:
 
 .. code-block:: text
 
-  subsection physical properties
-  set number of fluids = 1
-    subsection fluid 0
-      set thermal conductivity model = constant
-      set thermal conductivity = 1
-  
-      set specific heat model = phase_change
-      subsection phase change
-        # Enthalpy of the phase change
-        set latent enthalpy      = 100
-  
-        # Temperature of the liquidus
-        set liquidus temperature = 0.02
-  
-        # Temperature of the solidus
-        set solidus temperature  = 0
-  
-        # Specific heat of the liquid phase
-        set specific heat liquid = 1
-  
-        # Specific heat of the solid phase
-        set specific heat solid  = 1
+    subsection physical properties
+      set number of fluids = 1
+      subsection fluid 0
+        set thermal conductivity model = constant
+        set thermal conductivity       = 1
+    
+        set specific heat model = phase_change
+        subsection phase change
+          # Enthalpy of the phase change
+          set latent enthalpy = 100
+    
+          # Temperature of the liquidus
+          set liquidus temperature = 0.02
+    
+          # Temperature of the solidus
+          set solidus temperature = 0
+    
+          # Specific heat of the liquid phase
+          set specific heat liquid = 1
+    
+          # Specific heat of the solid phase
+          set specific heat solid = 1
+        end
       end
-  
     end
-  end
 
 This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
 
@@ -143,17 +142,17 @@ Finally, the only remaining section is the simulation control, which controls th
 
 .. code-block:: text
 
-  # --------------------------------------------------
-  # Simulation Control
-  #---------------------------------------------------
-  subsection simulation control
-    set method                  = bdf1
-    set output frequency        = 1
-    set output name             = stefan
-    set output path = ./output/
-    set time end = 5
-    set time step = 0.02
-  end
+    # --------------------------------------------------
+    # Simulation Control
+    #---------------------------------------------------
+    subsection simulation control
+      set method           = bdf1
+      set output frequency = 1
+      set output name      = stefan
+      set output path      = ./output/
+      set time end         = 5
+      set time step        = 0.02
+    end
 
 
 

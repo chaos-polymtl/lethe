@@ -105,18 +105,18 @@ As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindri
     # RPT Monte Carlo technique
     #---------------------------------------------------
     subsection rpt parameters
-        set particle positions file          = positions.particle
-        set verbosity                        = quiet
-        set export counts                    = false
-        set counts file                      = run.csv
-        set monte carlo iteration            = 10000
-        set random number seed               = 0
-        set reactor height                   = 0.3
-        set reactor radius                   = 0.4
-        set peak-to-total ratio              = 0.4
-        set sampling time                    = 0.01
-        set gamma-rays emitted               = 2
-        set attenuation coefficient detector = 21.477
+      set particle positions file          = positions.particle
+      set verbosity                        = quiet
+      set export counts                    = false
+      set counts file                      = run.csv
+      set monte carlo iteration            = 10000
+      set random number seed               = 0
+      set reactor height                   = 0.3
+      set reactor radius                   = 0.4
+      set peak-to-total ratio              = 0.4
+      set sampling time                    = 0.01
+      set gamma-rays emitted               = 2
+      set attenuation coefficient detector = 21.477
     end
 
 .. attention::
@@ -134,9 +134,9 @@ In the subsection ``parameter tuning``, we enable parameters tuning, we specify 
     # Tuning with NOMAD
     #---------------------------------------------------
     subsection parameter tuning
-        set tuning                           = true
-        set cost function type               = larachi
-        set experimental data file           = counts.experimental
+      set tuning                 = true
+      set cost function type     = larachi
+      set experimental data file = counts.experimental
     end
 
 
@@ -151,12 +151,12 @@ In the subsection ``detector parameters``, we specify the file that contains the
     # Detector parameters
     #---------------------------------------------------
     subsection detector parameters
-        set detector positions file          = positions.detector
-        set radius                           = 0.0381
-        set length                           = 0.0762
-        set dead time                        = 1e-5
-        set activity                         = 2e6
-        set attenuation coefficient reactor  = 10
+      set detector positions file         = positions.detector
+      set radius                          = 0.0381
+      set length                          = 0.0762
+      set dead time                       = 1e-5
+      set activity                        = 2e6
+      set attenuation coefficient reactor = 10
     end
 
 *param-nomad.txt* file

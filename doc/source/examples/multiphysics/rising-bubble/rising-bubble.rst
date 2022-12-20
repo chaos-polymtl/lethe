@@ -58,14 +58,14 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                         = bdf1
-        set time end                       = 3
-        set time step                      = 0.001
-        set adapt                          = true
-        set max cfl                        = 0.4
-        set output name                    = rising-bubble
-        set output frequency               = 20
-        set output path                    = ./output/
+      set method           = bdf1
+      set time end         = 3
+      set time step        = 0.001
+      set adapt            = true
+      set max cfl          = 0.4
+      set output name      = rising-bubble
+      set output frequency = 20
+      set output path      = ./output/
     end
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
@@ -78,7 +78,7 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``interfa
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set VOF = true
+      set VOF = true
     end 
 
 The ``source term`` subsection defines the gravitational acceleration:
@@ -89,10 +89,10 @@ The ``source term`` subsection defines the gravitational acceleration:
     # Source term
     #---------------------------------------------------
     subsection source term
-        set enable = true
-        subsection xyz
-            set Function expression = 0;-0.98; 0
-        end
+      set enable = true
+      subsection xyz
+        set Function expression = 0; -0.98; 0
+      end
     end
     
 """"""""""""""""""""""""""""""""
@@ -135,21 +135,21 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 	#---------------------------------------------------
 	# VOF
 	#---------------------------------------------------
-	subsection VOF
-	  subsection interface sharpening
-	    set enable              = true
-	    set threshold           = 0.5
-	    set interface sharpness	= 1.4
-	    set frequency           = 50
-	  end
-	  subsection surface tension force
-	    set enable                          = true
-	    set surface tension coefficient 	= 24.5
-	    set phase fraction gradient filter 	= 0.0005
-	    set curvature filter		        = 0.0005
-	    set output auxiliary fields 	    = true
-	  end
-	end
+    subsection VOF
+      subsection interface sharpening
+        set enable              = true
+        set threshold           = 0.5
+        set interface sharpness	= 1.4
+        set frequency           = 50
+      end
+      subsection surface tension force
+        set enable                         = true
+        set surface tension coefficient    = 24.5
+        set phase fraction gradient filter = 0.0005
+        set curvature filter               = 0.0005
+        set output auxiliary fields        = true
+      end
+    end
 
 .. warning:: 
      If the interface sharpening is not enabled, the interface between phases will become blurry (due to artificial diffusion). 
@@ -167,13 +167,13 @@ defined as a circle with a radius :math:`r= 0.25` at :math:`(x,y)=(0.5, 0.5)`.
     # Initial condition
     #---------------------------------------------------
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression = 0; 0; 0
-        end
-        subsection VOF
-             set Function expression = if if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0
+      end
+      subsection VOF
+        set Function expression = if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
+      end
     end
 
 
@@ -191,15 +191,15 @@ A similar procedure is done for the phase associated with a VOF indicator of 1 i
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-        set number of fluids         = 2
-        subsection fluid 0
-            set density              = 1000
-            set kinematic viscosity  = 0.01
-        end
-        subsection fluid 1
-            set density              = 100
-            set kinematic viscosity  = 0.01
-        end
+      set number of fluids = 2
+      subsection fluid 0
+        set density             = 1000
+        set kinematic viscosity = 0.01
+      end
+      subsection fluid 1
+        set density             = 100
+        set kinematic viscosity = 0.01
+      end
     end
 
 
@@ -219,10 +219,10 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
     # Mesh
     #---------------------------------------------------
     subsection mesh
-            set type = dealii
-            set grid type = subdivided_hyper_rectangle
-            set grid arguments = 1, 2 : 0, 0 : 1, 2 : true
-            set initial refinement = 6
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
+      set initial refinement = 6
     end
     
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
@@ -235,15 +235,15 @@ To capture the bubble adequately, we set ``initial refinement steps = 3`` so tha
     # Mesh Adaptation
     #---------------------------------------------------
     subsection mesh adaptation
-        set type                     = kelly
-        set variable                 = phase
-        set fraction type            = fraction
-        set max refinement level     = 8
-        set min refinement level     = 6
-        set frequency                = 1
-        set fraction refinement      = 0.97
-        set fraction coarsening      = 0.02
-        set initial refinement steps = 3
+      set type                     = kelly
+      set variable                 = phase
+      set fraction type            = fraction
+      set max refinement level     = 8
+      set min refinement level     = 6
+      set frequency                = 1
+      set fraction refinement      = 0.97
+      set fraction coarsening      = 0.02
+      set initial refinement steps = 3
     end
 
 

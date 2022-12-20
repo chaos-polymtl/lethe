@@ -1,152 +1,162 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output name             = mixer
-  set output frequency        = 1
-  set output boundaries       = true
-  set subdivision             = 0
-  set number mesh adapt       = 0      # If steady, nb mesh adaptation
-  set output path = ./
+  set method            = steady
+  set output name       = mixer
+  set output frequency  = 1
+  set output boundaries = true
+  set subdivision       = 0
+  set number mesh adapt = 0 # If steady, nb mesh adaptation
+  set output path       = ./
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-    set qmapping all              = false
+  set velocity order = 1
+  set pressure order = 1
+  set qmapping all   = false
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.0000
+    set kinematic viscosity = 1.0000
   end
 end
 
 subsection timer
-    set type = iteration
+  set type = iteration
 end
+
 #--------------------------------------------------
 # Velocity Source
 #--------------------------------------------------
+
 subsection velocity source
-    set type = srf
-    set omega_z = -6.28318
+  set type    = srf
+  set omega_z = -6.28318
 end
 
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate force       = false     # Enable force calculation
-    set calculate torque      = true      # Enable torque calculation
-    set force name            = force     # Name prefix of force files
-    set torque name           = torque    # Name prefix of torque files
-    set output precision      = 10        # Output precision
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
+  set verbosity             = verbose # Output force and torques in log <quiet|verbose>
+  set calculate force       = false   # Enable force calculation
+  set calculate torque      = true    # Enable torque calculation
+  set force name            = force   # Name prefix of force files
+  set torque name           = torque  # Name prefix of torque files
+  set output precision      = 10      # Output precision
+  set calculation frequency = 1       # Frequency of the force calculation
+  set output frequency      = 1       # Frequency of file update
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = none
+  set type = none
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = gmsh
-    set file name            = ribbon.msh
-    set initial refinement   = 0
-    set simplex = true
+  set type               = gmsh
+  set file name          = ribbon.msh
+  set initial refinement = 0
+  set simplex            = true
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 5
-    subsection bc 0
-        set id = 0
-        set type              = function
-        subsection u
-            set Function expression = -2*3.14159*y
-        end
-        subsection v
-            set Function expression = 2*3.14159*x
-        end
-        subsection w
-            set Function expression = 0
-        end
-    end
-    subsection bc 1
-        set id = 1
-        set type              = slip
-    end
 
-    subsection bc 2
-        set id  = 2
-        set type              = noslip
+subsection boundary conditions
+  set number = 5
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = -2*3.14159*y
     end
-    subsection bc 3
-        set id  = 3
-        set type              = noslip
+    subsection v
+      set Function expression = 2*3.14159*x
     end
-        subsection bc 4
-        set id  = 4
-        set type              = noslip
+    subsection w
+      set Function expression = 0
     end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noslip
+  end
 end
 
 # --------------------------------------------------
 # Manifolds
 #---------------------------------------------------
+
 subsection manifolds
-  set number                  = 0
+  set number = 0
 end
-
-
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-4
-  set max iterations          = 10
-  set residual precision      = 5
-  set verbosity               = verbose
-  end
+  set tolerance          = 1e-4
+  set max iterations     = 10
+  set residual precision = 5
+  set verbosity          = verbose
+end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                    = gmres
-  set max iters                 = 5000
-  set relative residual         = 1e-3
-  set minimum residual          = 1e-11
-  set amg preconditioner ilu fill                  = 0
-  set amg preconditioner ilu absolute tolerance    = 1e-10
-  set amg preconditioner ilu relative tolerance    = 1.00
-  set amg aggregation threshold = 1e-14  # Aggregation
-  set amg n cycles              = 1      # Number of AMG cycles
-  set amg w cycles              = false  # W cycles, otherwise V cycles
-  set amg smoother sweeps       = 2      # Sweeps
-  set amg smoother overlap      = 1      # Overlap
-  set verbosity               = verbose
-  set ilu preconditioner fill = 0
-  set ilu preconditioner absolute tolerance = 1e-10
+  set method                                    = gmres
+  set max iters                                 = 5000
+  set relative residual                         = 1e-3
+  set minimum residual                          = 1e-11
+  set amg preconditioner ilu fill               = 0
+  set amg preconditioner ilu absolute tolerance = 1e-10
+  set amg preconditioner ilu relative tolerance = 1.00
+  set amg aggregation threshold                 = 1e-14 # Aggregation
+  set amg n cycles                              = 1     # Number of AMG cycles
+  set amg w cycles                              = false # W cycles, otherwise V cycles
+  set amg smoother sweeps                       = 2     # Sweeps
+  set amg smoother overlap                      = 1     # Overlap
+  set verbosity                                 = verbose
+  set ilu preconditioner fill                   = 0
+  set ilu preconditioner absolute tolerance     = 1e-10
 end

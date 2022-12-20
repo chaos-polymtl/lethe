@@ -38,15 +38,16 @@ Simulation and IO control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection simulation control
-	  set method                  = bdf2
-	  set bdf startup method      = multiple step bdf
-	  set time step               = 0.0025 # Time step
-	  set time end                = 1.3  # End time of simulation
-	  set output name             = out # Prefix for VTU outputs
-	  set output frequency        = 1       # Frequency of simulation output
-	  set subdivision             = 1       # Mesh subdivision when outputend
-	end
+    subsection simulation control
+      set method             = bdf2
+      set bdf startup method = multiple step bdf
+      set time step          = 0.0025 # Time step
+      set time end           = 1.3    # End time of simulation
+      set output name        = out    # Prefix for VTU outputs
+      set output frequency   = 1      # Frequency of simulation output
+      set subdivision        = 1      # Mesh subdivision when outputend
+    end
+
 
 * The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
@@ -63,12 +64,12 @@ Physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection physical properties
-	  subsection fluid 0
-	    set kinematic viscosity            =0.6041666666666
-	    set density =0.000960
-	  end
-	end
+    subsection physical properties
+      subsection fluid 0
+        set kinematic viscosity = 0.6041666666666
+        set density             = 0.000960
+      end
+    end
 
 * The ``kinematic viscosity`` is set to  0.6041666666666. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`.
 
@@ -80,10 +81,10 @@ FEM
 ~~~
 .. code-block:: text
 
-	subsection FEM
-	    set velocity order        = 1
-	    set pressure order        = 1
-	end
+    subsection FEM
+      set velocity order = 1
+      set pressure order = 1
+    end
 	
 Here we use Q1Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run. 
 
@@ -91,12 +92,12 @@ Mesh
 ~~~~~~
 .. code-block:: text
 
-	subsection mesh
-	    set type                 = dealii
-	    set grid type            = subdivided_hyper_rectangle
-	    set grid arguments       = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
-	    set initial refinement   = 1
-	end
+    subsection mesh
+      set type               = dealii
+      set grid type          = subdivided_hyper_rectangle
+      set grid arguments     = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
+      set initial refinement = 1
+    end
 
 The domain is a rectangular box as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the y-direction with gravity. As such, we have the long side of the box along this axis.
 
@@ -109,34 +110,34 @@ Mesh adaptation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection mesh adaptation
-	   # Fraction of coarsened elements
-	  set fraction coarsening  = 0.3
-
-	  # Fraction of refined elements
-	  set fraction refinement  = 0.05
-
-	  # How the fraction of refinement/coarsening are interepretedChoices are
-	  # <number|fraction>.
-	  set fraction type        = number
-
-	  # Frequency of the mesh refinement
-	  set frequency            = 1
-
-	  # Maximum number of elements
-	  set max number elements  = 750000
-
-	  # Maximum refinement level
-	  set max refinement level = 6
-	 # minimum refinement level
-	  set min refinement level =0
-
-	  # Type of mesh adaptationChoices are <none|uniform|kelly>.
-	  set type                 = kelly
-
-	  # Variable for kelly estimationChoices are <velocity|pressure>.
-	  set variable             = velocity
-	end
+    subsection mesh adaptation
+      # Fraction of coarsened elements
+      set fraction coarsening = 0.3
+    
+      # Fraction of refined elements
+      set fraction refinement = 0.05
+    
+      # How the fraction of refinement/coarsening are interepretedChoices are
+      # <number|fraction>.
+      set fraction type = number
+    
+      # Frequency of the mesh refinement
+      set frequency = 1
+    
+      # Maximum number of elements
+      set max number elements = 750000
+    
+      # Maximum refinement level
+      set max refinement level = 6
+      # minimum refinement level
+      set min refinement level = 0
+    
+      # Type of mesh adaptationChoices are <none|uniform|kelly>.
+      set type = kelly
+    
+      # Variable for kelly estimationChoices are <velocity|pressure>.
+      set variable = velocity
+    end
 
 * The ``fraction coarsening`` is set to 0.3. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
 
@@ -155,30 +156,30 @@ Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection boundary conditions
-	set number                  = 5
-	    subsection bc 0
-		set id = 0
-		set type              = noslip
-	    end
-	    subsection bc 1
-		set id = 1
-		set type              = noslip
-	    end
-
-	    subsection bc 2
-		set id = 2
-		set type              = noslip
-	    end
-	    subsection bc 3
-		set id = 4
-		set type              = noslip
-	    end
-	    subsection bc 4
-		set id = 5
-		set type              = noslip
-	    end
-	end
+    subsection boundary conditions
+      set number = 5
+      subsection bc 0
+        set id   = 0
+        set type = noslip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = noslip
+      end
+    
+      subsection bc 2
+        set id   = 2
+        set type = noslip
+      end
+      subsection bc 3
+        set id   = 4
+        set type = noslip
+      end
+      subsection bc 4
+        set id   = 5
+        set type = noslip
+      end
+    end
 
 Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=3`` free to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
@@ -190,13 +191,13 @@ Initial condition
 ~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection initial conditions
-	  # Type of initial conditionChoices are <L2projection|viscous|nodal>.
-	    set type      = nodal
-	    subsection uvwp
-		    set Function expression = 0; 0; 0
-	    end
-	end 
+    subsection initial conditions
+      # Type of initial conditionChoices are <L2projection|viscous|nodal>.
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0;0
+      end
+    end
 
 The initial condition for this case is simple to define. At the start of the simulation, we assume that the particle and the fluid are at rest. From there, we define a uniform velocity field of 0 everywhere. To do that, we used the ``type = nodal`` and then specified a function expression of 0 for all the velocity components.  
 
@@ -205,13 +206,13 @@ Non-Linear solver control
 
 .. code-block:: text
 
-	subsection non-linear solver
-	  set verbosity               = verbose
-	  set tolerance               = 1e-6
-	  set max iterations          = 10
-	  set residual precision      = 5
-	  set force rhs calculation   = true
-	end
+    subsection non-linear solver
+      set verbosity             = verbose
+      set tolerance             = 1e-6
+      set max iterations        = 10
+      set residual precision    = 5
+      set force rhs calculation = true
+    end
 	
 * The ``tolerance`` is set to 1e-6. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.
 
@@ -229,18 +230,18 @@ Linear solver control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
-	subsection linear solver
-	  set method                                 = gmres
-	  set max iters                              = 1000
-	  set max krylov vectors 		     = 1000
-	  set relative residual                      = 1e-4
-	  set minimum residual                       = 1e-11
-	  set ilu preconditioner fill                = 0
-	  set ilu preconditioner absolute tolerance  = 1e-20
-	  set ilu preconditioner relative tolerance  = 1.00
-	  set verbosity                              = verbose
-	end
-	
+    subsection linear solver
+      set method                                = gmres
+      set max iters                             = 1000
+      set relative residual                     = 1e-4
+      set minimum residual                      = 1e-11
+      set ilu preconditioner fill               = 0
+      set ilu preconditioner absolute tolerance = 1e-20
+      set ilu preconditioner relative tolerance = 1.00
+      set verbosity                             = verbose
+      set max krylov vectors                    = 1000
+    end
+
 * The ``method`` is set to ``gmres``. This solver is less computationally expensive than the other option, and this case does not require any special preconditioner. This makes the ``gmres`` solver the best option available.
 
 * The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
@@ -256,30 +257,30 @@ IB particles
 .. code-block:: text
 
     subsection particles
-        set number of particles = 1
-        set stencil order =3
-        set refine mesh inside radius factor = 0.8
-        set refine mesh outside radius factor = 1.3
-        set initial refinement = 6
-        set integrate motion = true
-        set assemble Navier-Stokes inside particles = false
-        set length ratio = 2
-        set particle nonlinear tolerance=1e-5
-        set alpha =1
-        subsection gravity
-            set Function expression =0;-981;0
+      set number of particles                     = 1
+      set stencil order                           = 3
+      set refine mesh inside radius factor        = 0.8
+      set refine mesh outside radius factor       = 1.3
+      set initial refinement                      = 6
+      set integrate motion                        = true
+      set assemble Navier-Stokes inside particles = false
+      set length ratio                            = 2
+      set particle nonlinear tolerance            = 1e-5
+      set alpha                                   = 1
+      subsection gravity
+        set Function expression = 0;-981;0
+      end
+      subsection particle info 0
+        subsection position
+          set Function expression = 5;12.75;5
         end
-        subsection particle info 0
-            subsection position
-                set Function expression =5;12.75;5
-            end
-            subsection velocity
-                set Function expression =0;0;0
-            end
-            set type       = sphere
-            set shape arguments = 0.75
-            set density= 0.001120
+        subsection velocity
+          set Function expression = 0;0;0
         end
+        set type            = sphere
+        set shape arguments = 0.75
+        set density         = 0.001120
+      end
     end
 
 In this subsection, we define most of the parameters that are related to the particle.

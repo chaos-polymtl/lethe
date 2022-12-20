@@ -91,10 +91,10 @@ In the ``subsection mesh``, the simplex mode can be enabled with ``set simplex =
     # Mesh
     #---------------------------------------------------
     subsection mesh
-        set type                 = gmsh
-        set file name            = vessels.msh
-        set initial refinement   = 0
-        set simplex              = true
+      set type               = gmsh
+      set file name          = vessels.msh
+      set initial refinement = 0
+      set simplex            = true
     end
 
 .. warning:: 
@@ -114,7 +114,7 @@ Using the tracer physics requires four elements: activating the physics, setting
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set tracer = true
+      set tracer = true
     end
 
 .. code-block:: text
@@ -123,8 +123,10 @@ Using the tracer physics requires four elements: activating the physics, setting
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-        set kinematic viscosity            = 1
-        set tracer diffusivity             = 0.001
+      subsection fluid 0
+        set kinematic viscosity = 1
+        set tracer diffusivity  = 0.001
+      end
     end
 
 .. code-block:: text
@@ -133,9 +135,9 @@ Using the tracer physics requires four elements: activating the physics, setting
     # FEM
     #---------------------------------------------------
     subsection FEM
-        set velocity order            = 1
-        set pressure order            = 1
-        set tracer order              = 1
+      set velocity order = 1
+      set pressure order = 1
+      set tracer order   = 1
     end
 
 .. code-block:: text
@@ -144,21 +146,21 @@ Using the tracer physics requires four elements: activating the physics, setting
     # Tracer Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions tracer
-    set number                  = 2
-        subsection bc 0
-        set id = 1
-        set type              = dirichlet
-            subsection dirichlet
-                    set Function expression =  0 
-            end
+      set number = 2
+      subsection bc 0
+        set id   = 1
+        set type = dirichlet
+        subsection dirichlet
+          set Function expression = 0
         end
-        subsection bc 1
-        set id = 2
-        set type              = dirichlet
-            subsection dirichlet
-                    set Function expression =  1 
-            end
+      end
+      subsection bc 1
+        set id   = 2
+        set type = dirichlet
+        subsection dirichlet
+          set Function expression = 1
         end
+      end
     end
 
 The boundary conditions are written in a specific way. 
@@ -181,38 +183,38 @@ must be applied to the outlet flow.
     # Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions
-        set number                  = 3
-        subsection bc 0
-            set id = 1
-            set type              = function
-            subsection u
-                set Function expression = 0
-            end
-            subsection v
-                set Function expression = 0
-            end
-            subsection w
-                set Function expression = 1
-            end
+      set number = 3
+      subsection bc 0
+        set id   = 1
+        set type = function
+        subsection u
+          set Function expression = 0
         end
-        # The boundary id = 2 will have the tracer
-        subsection bc 1
-            set id = 2
-            set type              = function
-            subsection u
-                set Function expression = 0
-            end
-            subsection v
-                set Function expression = 0
-            end
-            subsection w
-                set Function expression = 4
-            end
+        subsection v
+          set Function expression = 0
         end
-        subsection bc 2
-            set id = 3
-            set type              = noslip
+        subsection w
+          set Function expression = 1
         end
+      end
+      # boundary id2 will have the tracer
+      subsection bc 1
+        set id   = 2
+        set type = function
+        subsection u
+          set Function expression = 0
+        end
+        subsection v
+          set Function expression = 0
+        end
+        subsection w
+          set Function expression = 4
+        end
+      end
+      subsection bc 2
+        set id   = 3
+        set type = noslip
+      end
     end
 
 Simulation and results
