@@ -731,7 +731,13 @@ public:
                          std::shared_ptr<Mapping<dim>> mapping);
 
 private:
+  // The members of this class are all the components and operations that are
+  // to be performed to construct the composite shape
+  // This map link all primitive components of the composite shape to an id
   std::map<unsigned int, std::shared_ptr<Shape<dim>>> components;
+  // This map links all operations between primitive components or intermediate
+  // components (resulting from each operation) to an id. The unsigned integers
+  // correspond to the first and second ids of the shapes used for an operation
   std::map<unsigned int,
            std::tuple<BooleanOperation, unsigned int, unsigned int>>
     operations;
