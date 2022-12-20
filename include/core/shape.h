@@ -25,8 +25,9 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/physics/transformations.h>
 #include <deal.II/grid/manifold_lib.h>
+
+#include <deal.II/physics/transformations.h>
 
 #include <cfloat>
 #include <memory>
@@ -125,7 +126,7 @@ public:
   /**
    * @brief Return the manifold of the shape by default the manifold is always Flat.
    */
-  virtual std::shared_ptr< Manifold<dim-1,dim>>
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
   get_shape_manifold();
 
   /**
@@ -256,7 +257,7 @@ public:
   /**
    * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
    */
-  virtual std::shared_ptr< Manifold<dim-1,dim>>
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
   get_shape_manifold() override;
 
   /**

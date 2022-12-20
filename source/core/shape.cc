@@ -14,6 +14,7 @@
  * ---------------------------------------------------------------------
  */
 #include <core/shape.h>
+
 #include <deal.II/grid/manifold_lib.h>
 
 template <int dim>
@@ -137,10 +138,10 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
 }
 
 template <int dim>
-std::shared_ptr< Manifold<dim-1,dim>>
+std::shared_ptr<Manifold<dim - 1, dim>>
 Shape<dim>::get_shape_manifold()
 {
-  return std::make_shared<FlatManifold<dim-1,dim>>();
+  return std::make_shared<FlatManifold<dim - 1, dim>>();
 }
 
 template <int dim>
@@ -169,10 +170,10 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
 }
 
 template <int dim>
-std::shared_ptr< Manifold<dim-1,dim>>
+std::shared_ptr<Manifold<dim - 1, dim>>
 Sphere<dim>::get_shape_manifold()
 {
-  return std::make_shared<SphericalManifold<dim-1,dim>>(this->position);
+  return std::make_shared<SphericalManifold<dim - 1, dim>>(this->position);
 }
 
 template <int dim>
