@@ -26,6 +26,7 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/physics/transformations.h>
+#include <deal.II/grid/manifold_lib.h>
 
 #include <cfloat>
 #include <memory>
@@ -119,6 +120,13 @@ public:
     const Point<dim> &                                   evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int                                   component = 0);
+
+
+  /**
+   * @brief Return the manifold of the shape by default the manifold is always Flat.
+   */
+  virtual std::shared_ptr< Manifold<dim-1,dim>>
+  get_shape_manifold();
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -244,6 +252,12 @@ public:
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
+   */
+  virtual std::shared_ptr< Manifold<dim-1,dim>>
+  get_shape_manifold() override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
