@@ -712,6 +712,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // computational domain.
                   if (nb_dof_inside == 0)
                     {
+                      // Create a vector to approximate the normal of the cell
+                      // to orient the projection of the face.
+                      Tensor<1, dim> approximate_surface_cell_normal;
                       // Projects the face on the surface of the IB. This
                       // creates a surface cell where we can evaluate the
                       // solution. Define the triangulation of the surface cell.
@@ -721,6 +724,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           Point<dim> vertex_projection;
                           particles[p].closest_surface_point(
                             local_face->vertex(i), vertex_projection, cell);
+                          approximate_surface_cell_normal +=
+                            (local_face->vertex(i) - vertex_projection) /
+                            ((local_face->vertex(i) - vertex_projection)
+                               .norm() +
+                             DBL_MIN);
 
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)
@@ -731,6 +739,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Create the connectivity of the vertices of the cell
                           local_face_cell_data[0].vertices[i] = i;
                         }
+                      approximate_surface_cell_normal =
+                        approximate_surface_cell_normal / vertices_per_face;
 
                       local_face_cell_data[0].material_id = 0;
 
@@ -1040,8 +1050,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // since we dont control the orientation of the
                               // cell.
                               normal_vector =
-                                (q_points[q] - particles[p].position) /
-                                (q_points[q] - particles[p].position).norm();
+                                fe_face_projection_values.normal_vector(q);
+                              if (scalar_product(
+                                    normal_vector,
+                                    approximate_surface_cell_normal) < 0)
+                                normal_vector = -normal_vector;
 
                               fluid_viscous_stress = 0;
                               fluid_pressure       = 0;
