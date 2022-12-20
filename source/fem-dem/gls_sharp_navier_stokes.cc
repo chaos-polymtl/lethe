@@ -1098,6 +1098,24 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                               auto force = viscous_force + pressure_force;
 
+                              if (force != force)
+                                {
+                                  // The force is nan; this happens when the
+                                  // face projection is a line. This generally
+                                  // happens when the surface on which the force
+                                  // is evaluated is perfectly flat and aligned
+                                  // with the mesh. Since the area associated
+                                  // with this face projection is zero, we set
+                                  // the local force contribution to zero.
+                                  force          = 0;
+                                  viscous_force  = 0;
+                                  pressure_force = 0;
+                                }
+                              if (force.norm() > 0)
+                                {
+                                  nb_evaluation += local_weight;
+                                }
+
                               if (force.norm() > 0)
                                 {
                                   nb_evaluation += local_weight;
