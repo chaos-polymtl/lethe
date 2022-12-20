@@ -17,7 +17,8 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_wall_candidates
     &particle_wall_contact_pair_candidates,
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-    &particle_wall_pairs_in_contact)
+    &          particle_wall_pairs_in_contact,
+  const double neighborhood_threshold)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
   // the particle_wall_pairs_in_contact
@@ -37,41 +38,52 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
               Point<dim> point_on_boundary =
                 std::get<2>(particle_pair_candidate_content);
 
-              // Setting tangential overlap of the new particle-wall contact
-              // pair equal to zero
-              Tensor<1, 3> tangential_overlap({0, 0, 0});
+              // Calculate distance between particle and wall. If the distance
+              // is below the threshold, then the pair is added to the fine
+              // search
+              Tensor<1, dim> distance_vector =
+                (point_on_boundary - particle->get_location());
+              const double distance =
+                (distance_vector * normal_vector) / normal_vector.norm();
+              if (distance < neighborhood_threshold)
+                {
+                  // Setting tangential overlap of the new particle-wall contact
+                  // pair equal to zero
+                  Tensor<1, 3> tangential_overlap({0, 0, 0});
 
-              Tensor<1, 3> normal_vector_3d;
-              if constexpr (dim == 3)
-                normal_vector_3d = normal_vector;
+                  Tensor<1, 3> normal_vector_3d;
+                  if constexpr (dim == 3)
+                    normal_vector_3d = normal_vector;
 
-              if constexpr (dim == 2)
-                normal_vector_3d = tensor_nd_to_3d(normal_vector);
+                  if constexpr (dim == 2)
+                    normal_vector_3d = tensor_nd_to_3d(normal_vector);
 
-              Point<3> point_on_boundary_3d;
-              if constexpr (dim == 3)
-                point_on_boundary_3d = point_on_boundary;
+                  Point<3> point_on_boundary_3d;
+                  if constexpr (dim == 3)
+                    point_on_boundary_3d = point_on_boundary;
 
-              if constexpr (dim == 2)
-                point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
+                  if constexpr (dim == 2)
+                    point_on_boundary_3d = point_nd_to_3d(point_on_boundary);
 
-              // Adding contact info to the sample to
-              // particle_wall_contact_info_struct
-              particle_wall_contact_info_struct<dim> contact_info;
-              contact_info.particle                 = particle;
-              contact_info.normal_vector            = normal_vector_3d;
-              contact_info.normal_overlap           = .0;
-              contact_info.normal_relative_velocity = .0;
-              contact_info.point_on_boundary        = point_on_boundary_3d;
-              contact_info.boundary_id =
-                std::get<3>(particle_pair_candidate_content);
-              contact_info.tangential_overlap           = tangential_overlap;
-              contact_info.tangential_relative_velocity = .0;
-              contact_info.global_face_id =
-                std::get<4>(particle_pair_candidate_content);
 
-              particle_wall_pairs_in_contact[particle_id].insert(
-                {face_id, contact_info});
+                  // Adding contact info to the sample to
+                  // particle_wall_contact_info_struct
+                  particle_wall_contact_info_struct<dim> contact_info;
+                  contact_info.particle                 = particle;
+                  contact_info.normal_vector            = normal_vector_3d;
+                  contact_info.normal_overlap           = .0;
+                  contact_info.normal_relative_velocity = .0;
+                  contact_info.point_on_boundary        = point_on_boundary_3d;
+                  contact_info.boundary_id =
+                    std::get<3>(particle_pair_candidate_content);
+                  contact_info.tangential_overlap = tangential_overlap;
+                  contact_info.tangential_relative_velocity = .0;
+                  contact_info.global_face_id =
+                    std::get<4>(particle_pair_candidate_content);
+
+                  particle_wall_pairs_in_contact[particle_id].insert(
+                    {face_id, contact_info});
+                }
             }
         }
     }

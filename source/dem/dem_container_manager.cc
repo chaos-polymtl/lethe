@@ -360,7 +360,7 @@ DEMContainerManager<dim>::execute_particle_wall_fine_search(
 {
   // Particle - wall fine search
   particle_wall_fine_search_object.particle_wall_fine_search(
-    particle_wall_candidates, particle_wall_in_contact);
+    particle_wall_candidates, particle_wall_in_contact, neighborhood_threshold);
 
   // Particle - floating wall fine search
   if (floating_walls.floating_walls_number > 0)
