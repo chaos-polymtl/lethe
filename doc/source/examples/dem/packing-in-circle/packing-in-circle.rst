@@ -46,11 +46,11 @@ The ``mesh`` subsection specifies the computational grid:
 .. code-block:: text
 
     subsection mesh
-        set type                 				= dealii
-        set grid type      	     			 	= hyper_ball
-        set grid arguments       				= 0.0, 0.0 : 0.1 : false
-        set expand particle-wall contact search = true
-        set initial refinement   				= 3
+      set type                                = dealii
+      set grid type                           = hyper_ball
+      set grid arguments                      = 0.0, 0.0 : 0.1 : false
+      set initial refinement                  = 3
+      set expand particle-wall contact search = true
     end
 
 The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by its ``grid arguments``. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids.
@@ -79,16 +79,16 @@ The ``insertion info`` subsection manages the insertion of particles.
 .. code-block:: text
 
     subsection insertion info
-        set insertion method								= non_uniform
-        set inserted number of particles at each time step  = 50
-        set insertion frequency            		 			= 1000000
-        set insertion box minimum x            	 			= -0.05
-        set insertion box minimum y            	         	= 0
-        set insertion box maximum x            	         	= 0.05
-        set insertion box maximum y           	 		 	= 0.07
-        set insertion distance threshold					= 2
-        set insertion random number range					= 0.75
-        set insertion random number seed					= 19
+      set insertion method                               = non_uniform
+      set inserted number of particles at each time step = 50
+      set insertion frequency                            = 1000000
+      set insertion box minimum x                        = -0.05
+      set insertion box minimum y                        = 0
+      set insertion box maximum x                        = 0.05
+      set insertion box maximum y                        = 0.07
+      set insertion distance threshold                   = 2
+      set insertion random number range                  = 0.75
+      set insertion random number seed                   = 19
     end
 
 First, the ``insertion method`` is selected. There are two insertion methods (``uniform`` and ``non_uniform``) in Lethe-DEM. In ``uniform`` insertion, the particles are inserted uniformly (without randomness in their initial location), while in ``non_uniform``, particles are inserted randomly in the insertion box. ``inserted number of particles at each time step`` specifies the desired number of particles to be inserted at each insertion step.
@@ -115,23 +115,23 @@ The gravitational acceleration as well as the physical properties of particles a
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx            		 					  	= 0.0
-        set gy            		 					  	= -9.81
-        set number of particle types	               	= 1
-            subsection particle type 0
-            set size distribution type				   	= uniform
-                set diameter            	 			= 0.005
-            	set number								= 150
-                set density particles  	 			 	= 2000
-                set young modulus particles        		= 100000000
-                set poisson ratio particles          	= 0.3
-                set restitution coefficient particles	= 0.9
-                set friction coefficient particles      = 0.3
-        end
-        set young modulus wall            			   	= 100000000
-        set poisson ratio wall            			   	= 0.3
-        set restitution coefficient wall           	  	= 0.9
-        set friction coefficient wall         		   	= 0.3
+      set gx                       = 0.0
+      set gy                       = -9.81
+      set number of particle types = 1
+      subsection particle type 0
+        set size distribution type            = uniform
+        set diameter                          = 0.005
+        set number                            = 150
+        set density particles                 = 2000
+        set young modulus particles           = 100000000
+        set poisson ratio particles           = 0.3
+        set restitution coefficient particles = 0.9
+        set friction coefficient particles    = 0.3
+      end
+      set young modulus wall           = 100000000
+      set poisson ratio wall           = 0.3
+      set restitution coefficient wall = 0.9
+      set friction coefficient wall    = 0.3
     end
 
 First, gravitational acceleration is defined. Since the simulation is two-dimensional, we do not define the gravity in `z` direction. The ``number of particle types`` parameter specifies the number of particle types in a simulation. Particles with different sizes, size distributions, and physical properties have to be defined as separate particle types. The ``size distribution type`` parameter specifies the size distribution for each particle type. The acceptable choices are ``uniform`` and ``normal`` distributions. Since this simulation is monodispersed, the ``size distribution type`` is ``uniform``. ``diameter`` and ``density`` of particles, ``number`` of particles of each type, ``young modulus``, ``poisson ratio``, ``restitution coefficient`` and ``friction coefficient`` are defined.
@@ -148,13 +148,13 @@ In the ``model parameters`` subsection, DEM simulation parameters are defined.
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method 		   	   		= dynamic
-      set dynamic contact search size coefficient	= 0.7
-      set neighborhood threshold				 	= 1.5
-      set particle particle contact force method    = hertz_mindlin_limit_overlap
-      set particle wall contact force method        = nonlinear
-      set integration method				 		= velocity_verlet
-      set rolling resistance torque method          = constant_resistance
+      set contact detection method                = dynamic
+      set dynamic contact search size coefficient = 0.7
+      set neighborhood threshold                  = 1.5
+      set particle particle contact force method  = hertz_mindlin_limit_overlap
+      set particle wall contact force method      = nonlinear
+      set integration method                      = velocity_verlet
+      set rolling resistance torque method        = constant_resistance
     end
 
 These parameters include ``contact detection method`` and its subsequent information (``dynamic contact search size coefficient`` **or** ``contact detection frequency`` for ``dynamic`` **or** ``constant`` contact detection method), ``neighborhood threshold`` (which defines the contact neighbor list size: ``neighborhood threshold`` * particle diameter), ``particle particle contact force method``, ``particle wall contact force method`` and ``integration method``. All the concepts, models, and choices are explained in `DEM parameters <../../../parameters/dem/dem.html>`_.
@@ -181,10 +181,10 @@ The last subsection, which is generally the one we put at the top of the paramet
 .. code-block:: text
 
     subsection simulation control
-      set time step                 		= 1e-6
-      set time end       					= 3
-      set log frequency				       	= 10000
-      set output frequency            		= 10000
+      set time step        = 1e-6
+      set time end         = 3
+      set log frequency    = 10000
+      set output frequency = 10000
     end
 
 Running the simulation

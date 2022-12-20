@@ -49,13 +49,13 @@ time step of :math:`5.0 \times 10^{-5}` seconds.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                      = bdf2
-        set time end                    = 0.003
-        set time step                   = 0.00005
-        set output name                 = laser-heating
-        set output frequency            = 1
-        set output path                 = ./output/
-        set subdivision                 = 1
+      set method           = bdf2
+      set time end         = 0.003
+      set time step        = 0.00005
+      set output name      = laser-heating
+      set output frequency = 1
+      set output path      = ./output/
+      set subdivision      = 1
     end
 
 
@@ -67,19 +67,19 @@ All the boundary conditions are ``noslip``, and the heat transfer boundary condi
     # Boundary Conditions
     #---------------------------------------------------
     subsection boundary conditions
-      set number                  = 1
-        subsection bc 0
-            set type              = noslip
-        end
+      set number = 1
+      subsection bc 0
+        set type = noslip
+      end
     end
     subsection boundary conditions heat transfer
-      set number                  = 1
-        subsection bc 0
-    	set type	      = convection-radiation
-            set h	      	      = 5
-            set Tinf	      = 20
-            set emissivity        = 0.4
-        end
+      set number = 1
+      subsection bc 0
+        set type       = convection-radiation
+        set h          = 5
+        set Tinf       = 20
+        set emissivity = 0.4
+      end
     end
 
 
@@ -93,8 +93,8 @@ and off (``false``) the physics of interest. Here only ``heat transfer`` is enab
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-	    set heat transfer          = true
-    end 
+      set heat transfer = true
+    end
     
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
@@ -116,20 +116,19 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
     # Laser parameters
     #---------------------------------------------------
     subsection laser parameters
-        	set enable = true
-        	set concentration factor = 50
-        	set power = 3
-        	set absorptivity = 0.6
-        	set penetration depth = 0.00005
-        	set beam radius = 0.00005
-        	set start time = 0
-        	set end time = 0.003
-        	set beam orientation = z-
-        	subsection path
-        		set Function expression = if(t<0.001, 0.5 * t, if(t<0.002, 0.0005, if(t<0.003 , 0.0005-0.5 * (t-0.002), -1))); if(t<0.001, 0.00025, if(t < 0.002, 0.00025 - 0.5 * (t-0.001) , if(t < 0.003 , -0.00025, -1))) ; 0.0003
-        	end
-    end    
-
+      set enable               = true
+      set concentration factor = 50
+      set power                = 3
+      set absorptivity         = 0.6
+      set penetration depth    = 0.00005
+      set beam radius          = 0.00005
+      set start time           = 0
+      set end time             = 0.003
+      set beam orientation     = z-
+      subsection path
+        set Function expression = if(t<0.001, 0.5 * t, if(t<0.002, 0.0005, if(t<0.003 , 0.0005-0.5 * (t-0.002), -1))); if(t<0.001, 0.00025, if(t < 0.002, 0.00025 - 0.5 * (t-0.001) , if(t < 0.003 , -0.00025, -1))) ; 0.0003
+      end
+    end
 
 In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the variable ``temperature``. Mesh adaptation is explained in more detail in `mesh adaptation control <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_
 
@@ -140,14 +139,14 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
     # Mesh Adaptation
     #---------------------------------------------------
     subsection mesh adaptation
-      set type                    = kelly
-      set variable                = temperature
-      set fraction type           = fraction
-      set max refinement level    = 4
-      set min refinement level    = 0
-      set frequency               = 1
-      set fraction refinement     = 0.5
-      set fraction coarsening     = 0.2
+      set type                 = kelly
+      set variable             = temperature
+      set fraction type        = fraction
+      set max refinement level = 4
+      set min refinement level = 0
+      set frequency            = 1
+      set fraction refinement  = 0.5
+      set fraction coarsening  = 0.2
     end
 
 ----------------------

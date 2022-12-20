@@ -1,147 +1,158 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf2
-  set output name             = cylinder-output
-  set output frequency        = 1
-  set output path             = ./Re200/
-  set time end                = 200.0
-  set time step		            = 0.05
+  set method           = bdf2
+  set output name      = cylinder-output
+  set output frequency = 1
+  set output path      = ./Re200/
+  set time end         = 200.0
+  set time step        = 0.05
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 2
-    set pressure order        = 1
+  set velocity order = 2
+  set pressure order = 1
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = iteration                                  # <none|iteration|end>
+  set type = iteration # <none|iteration|end>
 end
 
 #---------------------------------------------------
 # Force
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = verbose
-    set calculate force       = true
-    set calculate torque      = false
-    set force name            = force
-    set output precision      = 10
-    set calculation frequency = 1
-    set output frequency      = 10
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set force name            = force
+  set output precision      = 10
+  set calculation frequency = 1
+  set output frequency      = 10
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 1; 0; 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 0.005
+    set kinematic viscosity = 0.005
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = gmsh
-    set file name            = cylinder-structured.msh
-    set initial refinement   = 1
+  set type               = gmsh
+  set file name          = cylinder-structured.msh
+  set initial refinement = 1
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 3
-    subsection bc 0
-        set type              = noslip
+  set number = 3
+  subsection bc 0
+    set type = noslip
+  end
+  subsection bc 1
+    set type = function
+    subsection u
+      set Function expression = 1
     end
-    subsection bc 1
-        set type              = function
-        subsection u
-            set Function expression = 1
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 0
-        end
+    subsection v
+      set Function expression = 0
     end
-    subsection bc 2
-        set type              = slip
+    subsection w
+      set Function expression = 0
     end
+  end
+  subsection bc 2
+    set type = slip
+  end
 end
 
 # --------------------------------------------------
 # Manifolds
 #---------------------------------------------------
+
 subsection manifolds
-  set number                  = 1
-    subsection manifold 0
-        set id                = 0
-        set type              = spherical
-        set arg1              = 8
-        set arg2              = 8
-    end
+  set number = 1
+  subsection manifold 0
+    set id   = 0
+    set type = spherical
+    set arg1 = 8
+    set arg2 = 8
+  end
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = kelly
-  set variable                = pressure
-  set fraction type           = number
-  set max number elements     = 70000
-  set max refinement level    = 3
-  set min refinement level    = 1
-  set frequency               = 1
-  set fraction refinement     = 0.02
-  set fraction coarsening     = 0.01
+  set type                 = kelly
+  set variable             = pressure
+  set fraction type        = number
+  set max number elements  = 70000
+  set max refinement level = 3
+  set min refinement level = 1
+  set frequency            = 1
+  set fraction refinement  = 0.02
+  set fraction coarsening  = 0.01
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = verbose
-  set tolerance               = 1e-6
-  set max iterations          = 100
+  set verbosity      = verbose
+  set tolerance      = 1e-6
+  set max iterations = 100
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = verbose
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-8
-  set ilu preconditioner fill = 0
+  set verbosity                             = verbose
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-8
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
 end

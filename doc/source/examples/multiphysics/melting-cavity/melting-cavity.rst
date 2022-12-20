@@ -84,15 +84,15 @@ time step of :math:`0.1` second.
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-        set method                          = bdf2
-        set time end                        = 40000
-        set time step                       = 0.1
-        set max cfl                         = 0.5
-        set adaptative time step scaling    = 1.3
-        set output name                     = melting
-        set output control                  = time
-        set output time                     = 100
-        set output path                     = ./output/      
+      set method                       = bdf2
+      set time end                     = 40000
+      set time step                    = 0.1
+      set max cfl                      = 0.5
+      set adaptative time step scaling = 1.3
+      set output name                  = melting
+      set output control               = time
+      set output time                  = 100
+      set output path                  = ./output/      
     end
 
 
@@ -104,9 +104,9 @@ The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` th
     # Multiphysics
     #---------------------------------------------------
     subsection multiphysics
-        set heat transfer  		= true
-        set buoyancy force 		= true
-        set fluid dynamics 		= true
+      set heat transfer  = true
+      set buoyancy force = true
+      set fluid dynamics = true
     end 
     
 
@@ -118,13 +118,13 @@ In the ``initial condition``, the initial velocity and initial temperature in th
     # Initial condition
     #---------------------------------------------------
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression 	= 0; 0; 0
-        end
-        subsection temperature
-            set Function expression 	= 104.9
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0
+      end
+      subsection temperature
+        set Function expression = 104.9
+      end
     end
 
 The ``source term`` subsection defines the gravitational acceleration. The value of the gravitational acceleration in this example is selected to satisfy the desired values of Ra and Gr numbers.
@@ -135,10 +135,10 @@ The ``source term`` subsection defines the gravitational acceleration. The value
     # Source term
     #---------------------------------------------------
     subsection source term
-        set enable                 		= true
-        subsection xyz
-                set Function expression 	= 0 ; -0.00516 ; 0
-        end
+      set enable = true
+      subsection xyz
+        set Function expression = 0 ; -0.00516 ; 0
+      end
     end
 
 The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan-problem/stefan-problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
@@ -150,43 +150,43 @@ The solid block melts into liquid in this example, hence in the ``physical prope
     # Physical Properties
     #---------------------------------------------------
     subsection physical properties
-          set number of fluids     		= 1
-          subsection fluid 0
-            set thermal conductivity model 	= constant
-            set thermal conductivity 	        = 60
-                  
-            set thermal expansion model 	= constant
-            set thermal expansion 		= 0.0002
-            
-            set rheological model 		= phase_change
-            set specific heat model 		= phase_change
-            
-            set density 			= 7500
-            
-            subsection phase change
-              # Enthalpy of the phase change
-              set latent enthalpy      		= 14634.1463
-        
-              # Temperature of the liquidus
-              set liquidus temperature 		= 105.1
-        
-              # Temperature of the solidus
-              set solidus temperature  		= 105
-        
-              # Specific heat of the liquid phase
-              set specific heat liquid 		= 200
-        
-              # Specific heat of the solid phase
-              set specific heat solid  		= 200
-        
-              # viscosity of the liquid phase
-              set viscosity liquid 		= 0.00000075
-                  
-              # viscosity of the solid phase
-              set viscosity solid  		= 0.008
-            end
-          end
+      set number of fluids = 1
+      subsection fluid 0
+        set thermal conductivity model = constant
+        set thermal conductivity       = 60
+    
+        set thermal expansion model = constant
+        set thermal expansion       = 0.0002
+    
+        set rheological model   = phase_change
+        set specific heat model = phase_change
+    
+        set density = 7500
+    
+        subsection phase change
+          # Enthalpy of the phase change
+          set latent enthalpy = 14634.1463
+    
+          # Temperature of the liquidus
+          set liquidus temperature = 105.1
+    
+          # Temperature of the solidus
+          set solidus temperature = 105
+    
+          # Specific heat of the liquid phase
+          set specific heat liquid = 200
+    
+          # Specific heat of the solid phase
+          set specific heat solid = 200
+    
+          # viscosity of the liquid phase
+          set viscosity liquid = 0.00000075
+    
+          # viscosity of the solid phase
+          set viscosity solid = 0.008
+        end
       end
+    end
 
 ---------------------------
 Running the simulation

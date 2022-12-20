@@ -39,11 +39,11 @@ In this example, we are simulating a rectangular channel. We use the deal.II Gri
 .. code-block:: text
 
     subsection mesh
-        set type                                = dealii
-        set grid type                           = subdivided_hyper_rectangle
-        set grid arguments                      = 15,70,15:-0.03,0,-0.03:0.03,0.4,0.03:true
-        set initial refinement                  = 0
-        set expand particle-wall contact search = false
+      set type                                = dealii
+      set grid type                           = subdivided_hyper_rectangle
+      set grid arguments                      = 15,70,15:-0.03,0,-0.03:0.03,0.4,0.03:true
+      set initial refinement                  = 0
+      set expand particle-wall contact search = false
     end
 
 
@@ -57,11 +57,11 @@ The time step in this case is the same as the time end. Since we only seek to in
 .. code-block:: text
 
    subsection simulation control
-        set time step        = 1e-6
-        set time end         = 1e-6
-        set log frequency    = 1000
-        set output frequency = 1
-        set output path      = ./output_dem/
+      set time step        = 1e-6
+      set time end         = 1e-6
+      set log frequency    = 1000
+      set output frequency = 1
+      set output path      = ./output_dem/
     end
 
 Restart
@@ -72,10 +72,10 @@ We save the files obtained from the single iteration by setting the frequency = 
 .. code-block:: text
 
     subsection restart
-        set checkpoint = true
-        set frequency  = 1
-        set restart    = false
-        set filename   = dem
+      set checkpoint = true
+      set frequency  = 1
+      set restart    = false
+      set filename   = dem
     end
 
 
@@ -87,13 +87,13 @@ The section on model parameters is explained in the DEM examples. We show the ch
 .. code-block:: text
 
     subsection model parameters
-        set contact detection method               = dynamic
-        set contact detection frequency            = 10
-        set neighborhood threshold                 = 1.3
-        set rolling resistance torque method       = constant_resistance
-        set particle particle contact force method = hertz_mindlin_limit_force
-        set particle wall contact force method     = nonlinear
-        set integration method                     = velocity_verlet
+      set contact detection method               = dynamic
+      set contact detection frequency            = 10
+      set neighborhood threshold                 = 1.3
+      set rolling resistance torque method       = constant_resistance
+      set particle particle contact force method = hertz_mindlin_limit_force
+      set particle wall contact force method     = nonlinear
+      set integration method                     = velocity_verlet
     end
 
 Lagrangian physical properties
@@ -104,26 +104,26 @@ The gravity is set to 0 as we only need to insert the particles in the specified
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx                       = 0.0
-        set gy                       = 0.0
-        set gz                       = 0
-        set number of particle types = 1
-        subsection particle type 0
-                set size distribution type            = uniform
-                set diameter                          = 0.002
-                set number                            = 8379
-                set density particles                 = 1200
-                set young modulus particles           = 1e6
-                set poisson ratio particles           = 0.25
-                set restitution coefficient particles = 0.97
-                set friction coefficient particles    = 0.3
-                set rolling friction particles        = 0.1
-        end
-        set young modulus wall           = 1e6
-        set poisson ratio wall           = 0.25
-        set restitution coefficient wall = 0.97
-        set friction coefficient wall    = 0.3
-        set rolling friction wall        = 0.1
+      set gx                       = 0.0
+      set gy                       = 0.0
+      set gz                       = 0.0
+      set number of particle types = 1
+      subsection particle type 0
+        set size distribution type            = uniform
+        set diameter                          = 0.002
+        set number                            = 8379
+        set density particles                 = 1200
+        set young modulus particles           = 1e6
+        set poisson ratio particles           = 0.25
+        set restitution coefficient particles = 0.97
+        set friction coefficient particles    = 0.3
+        set rolling friction particles        = 0.1
+      end
+      set young modulus wall           = 1e6
+      set poisson ratio wall           = 0.25
+      set restitution coefficient wall = 0.97
+      set friction coefficient wall    = 0.3
+      set rolling friction wall        = 0.1
     end
 
 Insertion info
@@ -134,18 +134,18 @@ We insert the particles uniformly in the specified insertion box at the top of t
 .. code-block:: text
 
     subsection insertion info
-        set insertion method                               = uniform
-        set inserted number of particles at each time step = 8379
-        set insertion frequency                            = 2000
-        set insertion box minimum x                        = -0.025
-        set insertion box minimum y                        = 0.3
-        set insertion box minimum z                        = -0.025
-        set insertion box maximum x                        = 0.026
-        set insertion box maximum y                        = 0.396
-        set insertion box maximum z                        = 0.026
-        set insertion distance threshold                   = 1.2
-        set insertion random number range                  = 0.4
-        set insertion random number seed                   = 19
+      set insertion method                               = uniform
+      set inserted number of particles at each time step = 8379
+      set insertion frequency                            = 2000
+      set insertion box minimum x                        = -0.025
+      set insertion box minimum y                        = 0.3
+      set insertion box minimum z                        = -0.025
+      set insertion box maximum x                        = 0.026
+      set insertion box maximum y                        = 0.396
+      set insertion box maximum z                        = 0.026
+      set insertion distance threshold                   = 1.2
+      set insertion random number range                  = 0.4
+      set insertion random number seed                   = 19
     end
 
 
@@ -183,14 +183,14 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
 
 .. code-block:: text
 
-   subsection simulation control
-        set method               = bdf1
-        set number mesh adapt    = 0
-        set output name          = result_
-        set output frequency     = 20
-        set time end             = 2
-        set time step            = 0.005
-        set output path          = ./output/
+    subsection simulation control
+      set method               = bdf1
+      set number mesh adapt    = 0
+      set output name          = result_
+      set output frequency     = 20
+      set time end             = 2
+      set time step            = 0.005
+      set output path          = ./output/
     end
 
 Physical properties
@@ -203,10 +203,10 @@ The dynamic viscosity of a 20 % sugar-water solution by weight at :math:`20^{\ci
 .. code-block:: text
 
     subsection physical properties
-        subsection fluid 0
-                set kinematic viscosity = 0.00000177
-                set density             = 1115.6
-        end
+      subsection fluid 0
+        set kinematic viscosity = 0.00000177
+        set density             = 1115.6
+      end
     end
 
 
@@ -218,10 +218,10 @@ For the initial conditions, we choose zero initial conditions for the velocity.
 .. code-block:: text
 
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression = 0; 0; 0; 0
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 0; 0; 0; 0
+      end
     end
 
 
@@ -232,32 +232,32 @@ For the boundary conditions, we choose a slip boundary condition on all the wall
 
 .. code-block:: text
 
-   subsection boundary conditions
-        set number = 6
-        subsection bc 0
-                set id   = 0
-                set type = slip
-         end
-        subsection bc 1
-                set id   = 1
-                set type = slip
-        end
-        subsection bc 2
-                set id   = 2
-                set type = noslip
-        end
-        subsection bc 3
-                set id   = 3
-                set type = noslip
-        end
-        subsection bc 4
-                set id   = 4
-                set type = slip
-        end
-        subsection bc 5
-                set id   = 5
-                set type = slip
-        end
+    subsection boundary conditions
+      set number = 6
+      subsection bc 0
+        set id   = 0
+        set type = slip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = slip
+      end
+      subsection bc 2
+        set id   = 2
+        set type = noslip
+      end
+      subsection bc 3
+        set id   = 3
+        set type = noslip
+      end
+      subsection bc 4
+        set id   = 4
+        set type = slip
+      end
+      subsection bc 5
+        set id   = 5
+        set type = slip
+      end
     end
 
 Lagrangian physical properties
@@ -277,11 +277,11 @@ For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since
 .. code-block:: text
 
     subsection void fraction
-        set mode                         = qcm
-        set qcm sphere equal cell volume = false
-        set read dem                     = true
-        set dem file name                = dem
-        set bound void fraction          = false
+      set mode                         = qcm
+      set qcm sphere equal cell volume = false
+      set read dem                     = true
+      set dem file name                = dem
+      set bound void fraction          = false
     end
 
 CFD-DEM
@@ -292,18 +292,17 @@ We also enable grad-div stabilization in order to improve local mass conservatio
 .. code-block:: text
 
     subsection cfd-dem
-        set grad div                      = true
-        set void fraction time derivative = false
-        set drag force                    = true
-        set buoyancy force                = true
-        set shear force                   = true
-        set pressure force                = true
-        set drag model                    = difelice
-        set post processing               = true
-        set coupling frequency            = 250
-        set grad-div length scale         = 0.005
-        set implicit stabilization        = false
-        set vans model                    = modelA
+      set grad div                      = true
+      set void fraction time derivative = false
+      set drag force                    = true
+      set buoyancy force                = true
+      set shear force                   = true
+      set pressure force                = true
+      set drag model                    = difelice
+      set post processing               = true
+      set coupling frequency            = 250
+      set grad-div length scale         = 0.005
+      set vans model                    = modelA
     end
 
 We determine the drag model to be used for the calculation of particle-fluid forces. We enable buoyancy, drag, shear and pressure forces. For drag, we use the Di Felice model to determine the momentum transfer exchange coefficient. The VANS model we are solving is model A. Other possible option is model B.
@@ -316,11 +315,11 @@ Non-linear solver control
 .. code-block:: text
 
     subsection non-linear solver
-        set solver           = inexact_newton
-        set tolerance        = 1e-8
-        set max iterations   = 10
-        set verbosity        = verbose
-        set matrix tolerance = 0.75
+      set solver           = inexact_newton
+      set tolerance        = 1e-8
+      set max iterations   = 10
+      set verbosity        = verbose
+      set matrix tolerance = 0.75
     end
 
 We use the ``inexact_newton`` solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
@@ -331,15 +330,15 @@ Linear solver control
 .. code-block:: text
 
     subsection linear solver
-        set method                                = gmres
-        set max iters                             = 5000
-        set relative residual                     = 1e-3
-        set minimum residual                      = 1e-10
-        set ilu preconditioner fill               = 0
-        set ilu preconditioner absolute tolerance = 1e-12
-        set ilu preconditioner relative tolerance = 1
-        set verbosity                             = verbose
-        set max krylov vectors                    = 200
+      set method                                = gmres
+      set max iters                             = 5000
+      set relative residual                     = 1e-3
+      set minimum residual                      = 1e-10
+      set ilu preconditioner fill               = 0
+      set ilu preconditioner absolute tolerance = 1e-12
+      set ilu preconditioner relative tolerance = 1
+      set verbosity                             = verbose
+      set max krylov vectors                    = 200
     end
 
 For more information about the non-linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_

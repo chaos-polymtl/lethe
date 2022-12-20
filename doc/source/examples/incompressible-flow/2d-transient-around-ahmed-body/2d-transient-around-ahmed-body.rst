@@ -76,8 +76,8 @@ The input mesh ``Ahmed-Body-20-2D.msh`` is in the same folder as the ``.prm`` fi
 .. code-block:: text
 
     subsection mesh
-        set type                 = gmsh
-        set file name            = Ahmed-Body-20-2D.msh
+      set type      = gmsh
+      set file name = Ahmed-Body-20-2D.msh
     end
 
 .. note::
@@ -91,32 +91,32 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial
 .. code-block:: text
 
     subsection initial conditions
-        set type = nodal
-        subsection uvwp
-            set Function expression = 1; 0; 0
-        end
+      set type = nodal
+      subsection uvwp
+        set Function expression = 1; 0; 0
+      end
     end
 
     subsection boundary conditions
-        set number                  = 3
-        subsection bc 0
-            set type              = noslip
-        end
-        subsection bc 1
-            set type              = function
+      set number = 3
+      subsection bc 0
+        set type = noslip
+      end
+      subsection bc 1
+        set type = function
         subsection u
-            set Function expression = 1
+          set Function expression = 1
         end
         subsection v
-            set Function expression = 0
+          set Function expression = 0
         end
         subsection w
-            set Function expression = 0
+          set Function expression = 0
         end
-        end
-        subsection bc 2
-            set type              = slip
-        end
+      end
+      subsection bc 2
+        set type = slip
+      end
     end
 
 Simulation control
@@ -126,12 +126,12 @@ Time integration is defined by a 1st order backward differentiation (``bdf1``), 
 .. code-block:: text
 
     subsection simulation control
-        set method                  = bdf1
-        set output frequency        = 1
-        set output name             = ahmed-output
-        set output path             = ./Re720/
-        set time end                = 4
-        set time step		      = 0.01
+      set method           = bdf1
+      set output frequency = 1
+      set output name      = ahmed-output
+      set output path      = ./Re720/
+      set time end         = 4
+      set time step        = 0.01
     end
 
 
@@ -143,9 +143,9 @@ Ahmed bodies are typically studied considering a 60 m/s flow of air. Here, the f
 .. code-block:: text 
 
     subsection physical properties
-       subsection fluid 0
-           set kinematic viscosity         = 4e-4
-        end
+      subsection fluid 0
+        set kinematic viscosity = 4e-4
+      end
     end
 
 The simulation is launched in the same folder as the ``.prm`` and ``.msh`` file, using the ``gls_navier_stokes_2d`` solver. To decrease simulation time, it is advised to run on multiple cpu, using ``mpirun``:

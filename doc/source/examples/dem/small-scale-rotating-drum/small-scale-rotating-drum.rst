@@ -41,10 +41,10 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 .. code-block:: text
 
     subsection mesh
-        set type                          = dealii
-        set grid type                     = cylinder
-        set grid arguments                = 0.056:0.051
-        set initial refinement            = 3
+      set type               = dealii
+      set grid type          = cylinder
+      set grid arguments     = 0.056:0.051
+      set initial refinement = 3
     end
 
 
@@ -81,27 +81,27 @@ The particles are mono-dispersed with a radius of 0.0015 m and a density of 2500
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx                                          = 0.0
-        set gy                                          = -9.81
-        set gz                                          = 0.0
-        set number of particle types                    = 1
+        set gx                       = 0.0
+        set gy                       = -9.81
+        set gz                       = 0.0
+        set number of particle types = 1
             subsection particle type 0
-                set size distribution type              = uniform
-                set diameter                            = 0.003
-                set number                              = 20000
-                set density particles                   = 2500
-                set young modulus particles             = 100000000
-                set poisson ratio particles             = 0.24
-                set restitution coefficient particles   = 0.97
-                set friction coefficient particles      = 0.3
-                set rolling friction particles          = 0.1
+                set size distribution type            = uniform
+                set diameter                          = 0.003
+                set number                            = 20000
+                set density particles                 = 2500
+                set young modulus particles           = 100000000
+                set poisson ratio particles           = 0.24
+                set restitution coefficient particles = 0.97
+                set friction coefficient particles    = 0.3
+                set rolling friction particles        = 0.1
 
         end
-        set young modulus wall                         = 100000000
-        set poisson ratio wall                         = 0.24
-        set restitution coefficient wall               = 0.85
-        set friction coefficient wall                   = 0.35
-        set rolling friction wall                       = 0.1
+        set young modulus wall           = 100000000
+        set poisson ratio wall           = 0.24
+        set restitution coefficient wall = 0.85
+        set friction coefficient wall    = 0.35
+        set rolling friction wall        = 0.1
     end
 
 
@@ -113,16 +113,16 @@ In this example, we use the ``dynamic`` load balancing method. This method check
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method                  = dynamic
-      set dynamic contact search size coefficient   = 0.8
-      set neighborhood threshold                    = 1.3
-      set load balance method                       = dynamic
-      set load balance threshold                    = 0.5
-      set dynamic load balance check frequency      = 10000
-      set particle particle contact force method    = hertz_mindlin_limit_overlap
-      set particle wall contact force method        = nonlinear
-      set rolling resistance torque method          = constant_resistance
-      set integration method                        = velocity_verlet
+      set contact detection method                = dynamic
+      set dynamic contact search size coefficient = 0.8
+      set neighborhood threshold                  = 1.3
+      set load balance method                     = dynamic
+      set load balance threshold                  = 0.5
+      set dynamic load balance check frequency    = 10000
+      set particle particle contact force method  = hertz_mindlin_limit_overlap
+      set particle wall contact force method      = nonlinear
+      set rolling resistance torque method        = constant_resistance
+      set integration method                      = velocity_verlet
     end
 
 Boundary condition
@@ -133,15 +133,15 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
 .. code-block:: text
 
     subsection DEM boundary conditions
-      set number of boundary conditions    = 1
-        subsection boundary condition 0
-            set boundary id                = 0
-            set type                       = rotational
-            set rotational speed           = 1
-            set rotational vector x        = 1
-            set rotational vector y        = 0
-            set rotational vector z        = 0
-        end
+      set number of boundary conditions = 1
+      subsection boundary condition 0
+        set boundary id         = 0
+        set type                = rotational
+        set rotational speed    = 1
+        set rotational vector x = 1
+        set rotational vector y = 0
+        set rotational vector z = 0
+      end
     end
 
 
@@ -153,11 +153,11 @@ The packing dem simulation was run for 2 seconds in real time.
 .. code-block:: text
 
     subsection simulation control
-      set time step                     = 5e-6
-      set time end                      = 2
-      set log frequency                 = 2000
-      set output frequency              = 2000
-      set output path                   = ./output_dem/
+      set time step        = 5e-6
+      set time end         = 2
+      set log frequency    = 2000
+      set output frequency = 2000
+      set output path      = ./output_dem/
     end
     
 The actual rotation of the drum is 3 seconds in real time. We set the time equal to 5 seconds as the simulation is restarted after the packing dem simulation.
@@ -165,11 +165,11 @@ The actual rotation of the drum is 3 seconds in real time. We set the time equal
 .. code-block:: text
 
     subsection simulation control
-      set time step                     = 5e-6
-      set time end                      = 5
-      set log frequency                 = 2000
-      set output frequency              = 2000
-      set output path                   = ./output_dem/
+      set time step        = 5e-6
+      set time end         = 5
+      set log frequency    = 2000
+      set output frequency = 2000
+      set output path      = ./output_dem/
     end
 
 Running the simulation

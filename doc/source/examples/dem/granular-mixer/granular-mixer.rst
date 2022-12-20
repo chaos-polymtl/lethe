@@ -34,10 +34,10 @@ The background mesh (mixer body) is created using dealii ``subdivided_cylinder``
 .. code-block:: text
 
     subsection mesh
-        set type                = dealii
-        set grid type           = subdivided_cylinder
-        set grid arguments      = 2 : 0.05 : 0.055
-        set initial refinement  = 2
+      set type                = dealii
+      set grid type           = subdivided_cylinder
+      set grid arguments      = 2 : 0.05 : 0.055
+      set initial refinement  = 2
     end
 
 Lagrangian physical properties
@@ -48,34 +48,34 @@ As mentioned earlier, there are two types of particles with the same size and pr
 .. code-block:: text
 
     subsection lagrangian physical properties
-        set gx                                  = -9.81
-        set gy                                  = 0.0
-        set gz                                  = 0.0
-        set number of particle types            = 2
-            	subsection particle type 0
-                set size distribution type              = uniform
-                set diameter                            = 0.0015
-                set number                              = 23500
-                set density particles                   = 1500
-                set young modulus particles         	  = 1e6
-                set poisson ratio particles             = 0.5
-                set restitution coefficient particles   = 0.5
-                set friction coefficient particles      = 0.5
-        	end
-        	subsection particle type 1
-                set size distribution type              = uniform
-                set diameter                            = 0.0015
-                set number                              = 23500
-                set density particles                   = 1500
-                set young modulus particles             = 1e6
-                set poisson ratio particles             = 0.5
-                set restitution coefficient particles   = 0.5
-                set friction coefficient particles      = 0.5
-        	end
-                set young modulus wall                  = 1e6
-                set poisson ratio wall                  = 0.5
-                set restitution coefficient wall        = 0.5
-                set friction coefficient wall           = 0.5
+      set gx                                  = -9.81
+      set gy                                  = 0.0
+      set gz                                  = 0.0
+      set number of particle types            = 2
+      subsection particle type 0
+        set size distribution type              = uniform
+        set diameter                            = 0.0015
+        set number                              = 23500
+        set density particles                   = 1500
+        set young modulus particles         	  = 1e6
+        set poisson ratio particles             = 0.5
+        set restitution coefficient particles   = 0.5
+        set friction coefficient particles      = 0.5
+      end
+      subsection particle type 1
+        set size distribution type              = uniform
+        set diameter                            = 0.0015
+        set number                              = 23500
+        set density particles                   = 1500
+        set young modulus particles             = 1e6
+        set poisson ratio particles             = 0.5
+        set restitution coefficient particles   = 0.5
+        set friction coefficient particles      = 0.5
+      end
+      set young modulus wall                  = 1e6
+      set poisson ratio wall                  = 0.5
+      set restitution coefficient wall        = 0.5
+      set friction coefficient wall           = 0.5
     end
 
 
@@ -87,34 +87,31 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
 .. code-block:: text
 
     subsection solid objects
-        set number of solids        = 1
-        subsection  solid object 0
+      set number of solids = 1
+      subsection solid object 0
         subsection mesh
-            set type                = gmsh
-            set file name           = pitched-blade-impeller.msh
-            set simplex		       = true
-            set initial refinement  = 0
+          set type               = gmsh
+          set file name          = pitched-blade-impeller.msh
+          set simplex            = true
+          set initial refinement = 0
         end
-    	 
+    
         subsection translational velocity
-            set Function expression = 0 ; 0 ; 0
+          set Function expression = 0 ; 0 ; 0
         end
-
         subsection angular velocity
-            set Function expression = if(t > 0.5 , 6 ,0) ; 0 ; 0
+          set Function expression = if(t>0.5,6,0) ; 0 ; 0
         end
     
         subsection center of rotation
-            # X COR
-            set x				= 0
-            # Y COR
-            set y				= 0
-            # Z COR
-            set z				= 0
+          # X COR
+          set x = 0
+          # Y COR
+          set y = 0
+          # Z COR
+          set z = 0
         end
-    
       end
-    
     end
 
 

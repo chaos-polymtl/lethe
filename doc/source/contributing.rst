@@ -142,6 +142,16 @@ C++ syntax highlight:
     .. code-block:: cpp
         your code
 
+The code block in text mode is commonly used in the examples to show sections of a parameter file:
+
+.. code-block:: RST
+
+    .. code-block:: text
+        your code
+
+.. warning::
+    Keep in mind the proper indentation of the sections of the parameter file. We recommend the use of the ``prmindent`` script located in the ``contrib/utilities`` folder before copying sections of a parameter file to the documentation. Do NOT use tabs in these blocks of code, as they will not be recognized, leading to the wrong indentation.
+
 Examples
 ^^^^^^^^
 
