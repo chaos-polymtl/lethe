@@ -29,6 +29,7 @@
 #include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/physics/transformations.h>
+#include <deal.II/grid/manifold_lib.h>
 
 #include <cfloat>
 #include <memory>
