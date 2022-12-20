@@ -1620,8 +1620,6 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   // Keep the best guess
   level_set_tube = std::min(level_set_tube, level_set_tube_2);
 
-
-
   // Cap the helix with a plane at each end. Cap at the base.
   Point<dim>     point_at_base;
   Tensor<1, dim> vector_at_base;
@@ -1642,7 +1640,6 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
     (scalar_product((centered_point - point_at_base), vector_at_base) /
      vector_at_base.norm_square() * vector_at_base)
       .norm();
-  ;
 
   double dist_from_cap = 0;
   if (radial_distance_cap_base > 0)
