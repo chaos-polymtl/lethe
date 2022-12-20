@@ -2428,6 +2428,8 @@ namespace Parameters
                       bool                     parsing_operations = false;
                       while (std::getline(myfile, line))
                         {
+                          if (line == "")
+                            continue;
                           if (line == "shapes")
                             {
                               parsing_shapes     = true;
