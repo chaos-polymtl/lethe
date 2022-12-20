@@ -681,6 +681,9 @@ public:
     for (size_t i = 0; i < number_of_constituents; i++)
       constituents[i] = constituents_vector[i];
     if (number_of_constituents > 1)
+    for (size_t i = 0; i < number_of_components; i++)
+      components[i] = components_vector[i];
+    if (number_of_components > 1)
       {
         // If there are at least two components, the first operation should
         // always be a union of 0 and 1
@@ -693,6 +696,18 @@ public:
               std::make_tuple(BooleanOperation::Union,
                               i + 1,
                               i + number_of_constituents - 1);
+          }
+        // If there are at least two components, the first operation should
+        // always be a union of 0 and 1
+        operations[number_of_components] =
+          std::make_tuple(BooleanOperation::Union, 0, 1);
+        // We make the union until the before last component
+        for (size_t i = 1; i < number_of_components - 1; i++)
+          {
+            operations[i + number_of_components] =
+              std::make_tuple(BooleanOperation::Union,
+                              i + 1,
+                              i + number_of_components - 1);
           }
       }
     // Calculation of the effective radius
