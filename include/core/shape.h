@@ -674,13 +674,22 @@ public:
   {
     size_t number_of_components = components_vector.size();
 
-    // run for loop from 0 to vecSize
     for (size_t i = 0; i < number_of_components; i++)
+      components[i] = components_vector[i];
+    if (number_of_components > 1)
       {
-        components[i] = components_vector[i];
-        if (i < number_of_components - 1)
-          operations[i + number_of_components] =
-            std::make_tuple(BooleanOperation::Union, i, i + 1);
+        // If there are at least two components, the first operation should
+        // always be a union of 0 and 1
+        operations[number_of_components] =
+          std::make_tuple(BooleanOperation::Union, 0, 1);
+        // We make the union until the before last component
+        for (size_t i = 1; i < number_of_components - 1; i++)
+          {
+            operations[i + number_of_components] =
+              std::make_tuple(BooleanOperation::Union,
+                              i + 1,
+                              i + number_of_components - 1);
+          }
       }
     // Calculation of the effective radius
     for (auto const &[component_id, component] : components)
