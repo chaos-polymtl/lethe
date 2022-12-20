@@ -136,12 +136,6 @@ public:
 
 
   /**
-   * @brief Return the manifold of the shape by default the manifold is always Flat.
-   */
-  virtual std::shared_ptr<Manifold<dim - 1, dim>>
-  get_shape_manifold();
-
-  /**
    * @brief Return a pointer to a copy of the Shape
    */
   virtual std::shared_ptr<Shape<dim>>
@@ -326,11 +320,6 @@ public:
   value(const Point<dim>  &evaluation_point,
         const unsigned int component = 0) const override;
 
-  /**
-   * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
-   */
-  virtual std::shared_ptr<Manifold<dim - 1, dim>>
-  get_shape_manifold() override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -360,11 +349,11 @@ public:
   set_position(const Point<dim> &position) override;
 
   /**
-   * @brief
-   * Returns the spherical_manifold_of_the_shape.
+   * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
    */
-  virtual std::shared_ptr< Manifold<dim-1,dim>>
-  get_shape_manifold()override;
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
+  get_shape_manifold() override;
+
 
 
 private:

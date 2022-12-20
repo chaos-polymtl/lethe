@@ -821,25 +821,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // solution. Define the triangulation of the surface cell.
                       for (unsigned int i = 0; i < vertices_per_face; ++i)
                         {
+
                           Point<dim> vertex_projection;
-                          for (unsigned int j = 0;
-                               j < local_face_dof_indices.size();
-                               ++j)
-                            {
-                              if ((support_points[local_face_dof_indices[j]] -
-                                   local_face->vertex(i))
-                                    .norm() < 1e-12)
-                                {
-                                  Point<dim> vertex_projection;
-                                  particles[p].closest_surface_point(
-                                    local_face->vertex(i), vertex_projection, cell);
-                                  approximate_surface_cell_normal +=
-                                    (local_face->vertex(i) - vertex_projection) /
-                                    ((local_face->vertex(i) - vertex_projection)
-                                       .norm() +
-                                     DBL_MIN);
-                                }
-                            }
+                          particles[p].closest_surface_point(
+                            local_face->vertex(i), vertex_projection, cell);
+                          approximate_surface_cell_normal +=
+                            (local_face->vertex(i) - vertex_projection) /
+                            ((local_face->vertex(i) - vertex_projection)
+                               .norm() +
+                             DBL_MIN);
+
                           // Define the vertices of the surface cell.
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)

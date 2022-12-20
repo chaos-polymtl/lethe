@@ -314,12 +314,7 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
 #endif
 }
 
-template <int dim>
-std::shared_ptr<Manifold<dim - 1, dim>>
-Shape<dim>::get_shape_manifold()
-{
-  return std::make_shared<FlatManifold<dim - 1, dim>>();
-}
+
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
@@ -385,12 +380,7 @@ Sphere<dim>::set_position(const Point<dim> &position)
     position, this->effective_radius);
 #endif
 }
-template <int dim>
-std::shared_ptr< Manifold<dim-1,dim>>
-Sphere<dim>::get_shape_manifold()
-{
-  return std::make_shared<SphericalManifold<dim-1,dim>>(this->position);
-}
+
 
 template <int dim>
 double
