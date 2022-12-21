@@ -4,7 +4,7 @@ Rectangular hopper
 
 This example simulates the filling and discharging of particles in a rectangular hopper.
 We set up this simulation based on the simulation of Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
-Main example do not use periodic boundary conditions in depth of the hopper as the article, but the extensional case does.
+The main example does not use periodic boundary conditions in the depth of the hopper like article, but an extended case, presented at the end, does.
 
 Features
 ----------------------------------
@@ -337,14 +337,14 @@ Since the geometry of the mesh and the number of the particles are not the same,
 Results comparison
 ~~~~~~~~~~~~~~~~~~
 Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
-The simulated mass discharging rate is 84.94 g/s from the original simulation and 88.77 g/s with PBC.
+The simulated mass discharging rate is 84.94 g/s from the original simulation and 88.77 g/s with PBC. Also, the run time of the simulation goes from about 3 hours and 15 minutes to 30 minutes on 8 cores.
 
 .. figure:: images/figure_hopper_comparison.png
     :width: 600
     :alt: Comparison
     :align: center
 
-    Comparison of mass discharge results from the 2 simulations and the paper.
+    Comparison of mass discharge results from the 2 simulations and the journal article.
 
 
 Reference
