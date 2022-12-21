@@ -110,9 +110,8 @@ test()
 
   // Calling particle-wall fine search
   ParticleWallFineSearch<dim> fine_search_object;
-  std::unordered_map<
-    unsigned int,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+  std::unordered_map<unsigned int,
+                     std::map<unsigned int, particle_wall_contact_info<dim>>>
     particle_wall_contact_information;
   fine_search_object.particle_wall_fine_search(
     particle_wall_contact_list, particle_wall_contact_information);

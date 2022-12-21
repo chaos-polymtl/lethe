@@ -387,8 +387,8 @@ ParticleWallNonLinearForce<dim>::calculate_particle_floating_wall_contact_force(
 template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
-  particle_wall_contact_info_struct<dim> &contact_info,
-  const ArrayView<const double> &         particle_properties)
+  particle_wall_contact_info<dim> &contact_info,
+  const ArrayView<const double> &  particle_properties)
 {
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
@@ -472,20 +472,20 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
 template <int dim>
 void
 ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
-  particle_wall_contact_info_struct<dim> &contact_info,
-  Tensor<1, 3> &                          normal_force,
-  Tensor<1, 3> &                          tangential_force,
-  Tensor<1, 3> &                          tangential_torque,
-  Tensor<1, 3> &                          rolling_resistance_torque,
-  IBParticle<dim> &                       particle,
-  const double                            wall_youngs_modulus,
-  const double                            wall_poisson_ratio,
-  const double                            wall_restitution_coefficient,
-  const double                            wall_friction_coefficient,
-  const double                            wall_rolling_friction_coefficient,
-  const double                            dt,
-  const double                            mass,
-  const double                            radius)
+  particle_wall_contact_info<dim> &contact_info,
+  Tensor<1, 3> &                   normal_force,
+  Tensor<1, 3> &                   tangential_force,
+  Tensor<1, 3> &                   tangential_torque,
+  Tensor<1, 3> &                   rolling_resistance_torque,
+  IBParticle<dim> &                particle,
+  const double                     wall_youngs_modulus,
+  const double                     wall_poisson_ratio,
+  const double                     wall_restitution_coefficient,
+  const double                     wall_friction_coefficient,
+  const double                     wall_rolling_friction_coefficient,
+  const double                     dt,
+  const double                     mass,
+  const double                     radius)
 {
   auto particle_properties                        = particle.get_properties();
   particle_properties[DEM::PropertiesIndex::mass] = mass;

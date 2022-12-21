@@ -443,7 +443,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           auto &boundary_cell = best_index_of_face->second;
 
           auto boundary_cell_information = boundary_cell;
-          particle_wall_contact_info_struct<dim> contact_info;
+          particle_wall_contact_info<dim> contact_info;
 
           // Check if there is already information on the contact between this
           // particle and this boundary contact point. If not initialize the
