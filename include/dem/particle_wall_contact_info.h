@@ -39,7 +39,6 @@ public:
   Tensor<1, 3>                     normal_vector;
   Point<3>                         point_on_boundary;
   types::boundary_id               boundary_id;
-  int                              global_face_id;
   double                           normal_overlap;
   double                           normal_relative_velocity;
   Tensor<1, 3>                     tangential_overlap;
@@ -49,13 +48,11 @@ public:
   particle_wall_contact_info(const Particles::ParticleIterator<dim> &particle,
                              const Tensor<1, 3> &      normal_vector,
                              const Point<3> &          point_on_boundary,
-                             const types::boundary_id &boundary_id,
-                             const int &               global_face_id)
+                             const types::boundary_id &boundary_id)
     : particle(particle)
     , normal_vector(normal_vector)
     , point_on_boundary(point_on_boundary)
     , boundary_id(boundary_id)
-    , global_face_id(global_face_id)
     , normal_overlap(0)
     , normal_relative_velocity(0)
     , tangential_overlap({0, 0, 0})
@@ -68,7 +65,6 @@ public:
     , normal_vector({0, 0, 0})
     , point_on_boundary({0, 0, 0})
     , boundary_id(0)
-    , global_face_id(0)
     , normal_overlap(0)
     , normal_relative_velocity(0)
     , tangential_overlap({0, 0, 0})
@@ -79,7 +75,6 @@ public:
     : normal_vector({0, 0, 0})
     , point_on_boundary({0, 0, 0})
     , boundary_id(0)
-    , global_face_id(0)
     , normal_overlap(0)
     , normal_relative_velocity(0)
     , tangential_overlap({0, 0, 0})

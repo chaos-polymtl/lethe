@@ -100,7 +100,6 @@ test()
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
-                                  unsigned int,
                                   unsigned int>>>
     particle_wall_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(

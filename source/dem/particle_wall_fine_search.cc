@@ -57,10 +57,8 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
                   particle,
                   normal_vector_3d,
                   point_on_boundary_3d,
-                  std::get<3>(particle_pair_candidate_content),
-                  std::get<4>(particle_pair_candidate_content)));
+                  std::get<3>(particle_pair_candidate_content)));
               // std::get<3> contains the boundary id
-              // std::get<4> contains the global face id
             }
         }
     }
@@ -152,8 +150,7 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                     particle_wall_contact_info<dim>(particle,
                                                     normal_vector_3d,
                                                     point_on_floating_wall_3d,
-                                                    100,
-                                                    0));
+                                                    100));
                 }
             }
         }

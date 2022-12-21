@@ -462,7 +462,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 }
 
               // BB temporary fix for unused variables
-              contact_info.global_face_id           = 0;
               contact_info.boundary_id              = 0;
               contact_info.normal_overlap           = 0;
               contact_info.normal_relative_velocity = 0;

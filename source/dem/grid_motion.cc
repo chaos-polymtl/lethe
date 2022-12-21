@@ -89,19 +89,18 @@ GridMotion<dim, spacedim>::
       for (auto pairs_in_contact_iterator = pairs_in_contact_content.begin();
            pairs_in_contact_iterator != pairs_in_contact_content.end();)
         {
+          auto  global_face_id      = pairs_in_contact_iterator->first;
           auto &contact_information = pairs_in_contact_iterator->second;
 
           // Since we used the negative keys for diamond-shaped cells, we check
           // and remove these elements from the particle_wall_pairs_in_contact
-          if (contact_information.global_face_id >= 0)
+          if (global_face_id >= 0)
             {
               contact_information.normal_vector =
-                updated_boundary_points_and_normal_vectors
-                  .at(contact_information.global_face_id)
+                updated_boundary_points_and_normal_vectors.at(global_face_id)
                   .first;
               contact_information.point_on_boundary =
-                updated_boundary_points_and_normal_vectors
-                  .at(contact_information.global_face_id)
+                updated_boundary_points_and_normal_vectors.at(global_face_id)
                   .second;
               ++pairs_in_contact_iterator;
             }

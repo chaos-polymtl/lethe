@@ -148,8 +148,7 @@ namespace DEM
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
-                                    global_face_id,
-                                    types::global_cell_index>>>
+                                    global_face_id>>>
       particle_wall_candidates;
 
     // <particle id, <global_face_id, particle-wall info>>
