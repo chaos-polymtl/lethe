@@ -70,8 +70,7 @@ public:
     const typename DEM::dem_data_structures<dim>::particle_wall_candidates
       &particle_wall_contact_pair_candidates,
     typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-      &          particle_wall_pairs_in_contact,
-    const double neighborhood_threshold);
+      &particle_wall_pairs_in_contact);
 
   /**
    * Iterates over the contact candidates from particle-floating wall broad

@@ -32,8 +32,9 @@
 using namespace dealii;
 
 template <int dim>
-struct particle_wall_contact_info_struct
+class particle_wall_contact_info_struct
 {
+public:
   Particles::ParticleIterator<dim> particle;
   Tensor<1, 3>                     normal_vector;
   Point<3>                         point_on_boundary;
@@ -43,6 +44,11 @@ struct particle_wall_contact_info_struct
   Tensor<1, 3>                     tangential_relative_velocity;
   types::boundary_id               boundary_id;
   int                              global_face_id;
+
+  // particle_wall_contact_info_struct(Particles::ParticleIterator<dim>
+  // &particle,
+  //                                   Tensor<1,3> &normal_vector,
+  //                                   Point<3> &point_on_boundary)
 };
 
 #endif /* particle_wall_contact_info_struct_h */
