@@ -168,7 +168,7 @@ Floating walls
 
 Floating wall in this example is handled as explained in the `Silo example <../silo/silo.html>`_.
 
-.. code-block:: texthttp://localhost:63342/lethe/doc/build/examples/dem/rectangular-hopper/rectangular-hopper.html#case-with-periodic-boundary-conditions
+.. code-block:: text
 
     subsection floating walls
         set number of floating walls = 1
@@ -217,10 +217,10 @@ Mass flow rate results after post-processing and comparison with the results of 
 
 .. figure:: images/figure_hopper.png
     :width: 600
-    :alt: Results of mass flow rate.
+    :alt: Results of mass discharge.
     :align: center
 
-    Mass flow rate results.
+    Mass discharge results.
 
 Results
 -------
@@ -266,7 +266,7 @@ Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The previous example did not need any parameters on a section for the boundary conditions since all walls are treated as solid boundaries by default.
-We need to specify which boundaries are periodic and the perpendicular direction, here the periodic ids are 0 and 1 and the axis is z corresponding to 2 value.
+We need to specify which boundaries are periodic and the perpendicular direction, here the periodic ids are 0 and 1 and the axis is z, corresponding to value of 2.
 The feature only works with one pair of periodic boundaries.
 
 .. code-block:: text
@@ -285,7 +285,7 @@ The feature only works with one pair of periodic boundaries.
 Lagrangian physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The total number of particles of this simulation is 6790. 6 times less than the previous example.
+The total number of particles of this simulation is 6790: 6 times less than the previous example.
 
 .. code-block:: text
 
@@ -324,7 +324,7 @@ Since the geometry of the mesh and the number of the particles are not the same,
         set inserted number of particles at each time step = 2910
         set insertion frequency                            = 25000
         set insertion box minimum x                        = -0.1030
-        set insertion box minimum y                        = 0.10644
+        set insertion box minimum y                        Rectangular hopper at the end of the simulation.   = 0.10644
         set insertion box minimum z                        = .00224
         set insertion box maximum x                        = 0.1030
         set insertion box maximum y                        = 0.16020
@@ -336,7 +336,15 @@ Since the geometry of the mesh and the number of the particles are not the same,
 
 Results comparison
 ~~~~~~~~~~~~~~~~~~
+Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
+The simulated mass discharging rate is 84.94 g/s from the original simulation and 88.77 g/s with PBC.
 
+.. figure:: images/figure_hopper_comparison.png
+    :width: 600
+    :alt: Comparison
+    :align: center
+
+    Comparison of mass discharge results from the 2 simulations and the paper.
 
 
 Reference
