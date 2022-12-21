@@ -22,7 +22,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_wall_contact_info_struct.h>
+#include <dem/particle_wall_contact_info.h>
 
 #include <boost/math/special_functions.hpp>
 #include <boost/range/adaptor/map.hpp>

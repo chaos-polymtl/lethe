@@ -21,8 +21,8 @@
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef particle_wall_contact_info_struct_h
-#  define particle_wall_contact_info_struct_h
+#ifndef particle_wall_contact_info_h
+#  define particle_wall_contact_info_h
 
 /**
  * This struct handles the information related to the calculation of the

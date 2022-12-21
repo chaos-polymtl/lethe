@@ -59,6 +59,8 @@ ParticleWallFineSearch<dim>::particle_wall_fine_search(
                   point_on_boundary_3d,
                   std::get<3>(particle_pair_candidate_content),
                   std::get<4>(particle_pair_candidate_content)));
+              // std::get<3> contains the boundary id
+              // std::get<4> contains the global face id
             }
         }
     }
@@ -143,6 +145,8 @@ ParticleWallFineSearch<dim>::particle_floating_wall_fine_search(
                   if constexpr (dim == 2)
                     normal_vector_3d = tensor_nd_to_3d(normal_vector);
 
+                  // The boundary ID of floating walls is set to 100, it should
+                  // be modified after adding motion of floating walls
                   particle_floating_wall_pairs_in_contact[particle_id].emplace(
                     floating_wall_id,
                     particle_wall_contact_info<dim>(particle,
