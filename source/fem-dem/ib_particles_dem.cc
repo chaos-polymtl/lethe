@@ -461,11 +461,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   contact_info.tangential_relative_velocity[d] = 0;
                 }
 
-              // BB temporary fix for unused variables
               contact_info.boundary_id              = 0;
               contact_info.normal_overlap           = 0;
               contact_info.normal_relative_velocity = 0;
-              // End BB
 
               pw_contact_map[particle.particle_id]
                             [boundary_cell.boundary_index] = contact_info;
