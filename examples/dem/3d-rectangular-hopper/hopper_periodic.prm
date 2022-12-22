@@ -5,12 +5,12 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 1e-5
-  set time end          = 7.5
-  set log frequency     = 1000
-  set output frequency  = 1000
-  set output path       = ./output/
-  set output name       = hopper
+  set time step        = 1e-5
+  set time end         = 7.5
+  set log frequency    = 1000
+  set output frequency = 1000
+  set output path      = ./output_periodic/
+  set output name      = hopper
   set output boundaries = true
 end
 
@@ -19,7 +19,7 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method                = dynamic
+  set contact detection method 		   		  = dynamic
   set dynamic contact search size coefficient = 0.9
   set load balance method                     = frequent
   set load balance frequency                  = 50000
@@ -42,7 +42,7 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.00224
-    set number                            = 40740
+    set number                            = 6790
     set density particles                 = 2500
     set young modulus particles           = 1e6
     set poisson ratio particles           = 0.3
@@ -63,14 +63,14 @@ end
 
 subsection insertion info
   set insertion method                               = non_uniform
-  set inserted number of particles at each time step = 2910
+  set inserted number of particles at each time step = 485
   set insertion frequency                            = 25000
   set insertion box minimum x                        = -0.06
   set insertion box minimum y                        = 0.10644
-  set insertion box minimum z                        = .00224
+  set insertion box minimum z                        = .00112
   set insertion box maximum x                        = 0.06
   set insertion box maximum y                        = 0.16020
-  set insertion box maximum z                        = 0.03136
+  set insertion box maximum z                        = 0.00448
   set insertion distance threshold                   = 1.5
   set insertion random number range                  = 0.1
   set insertion random number seed                   = 20
@@ -82,7 +82,7 @@ end
 
 subsection mesh
   set type                                = gmsh
-  set file name                           = hopper_structured.msh
+  set file name                           = hopper_structured_periodic.msh
   set initial refinement                  = 1
   set expand particle-wall contact search = false
   set check diamond cells                 = true
@@ -107,6 +107,21 @@ subsection floating walls
     end
     set start time = 0
     set end time   = 4
+  end
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 0
+    set periodic id 1      = 1
+    set periodic direction = 2
   end
 end
 
