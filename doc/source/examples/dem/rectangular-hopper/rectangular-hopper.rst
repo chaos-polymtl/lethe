@@ -4,6 +4,7 @@ Rectangular hopper
 
 This example simulates the filling and discharging of particles in a rectangular hopper.
 We set up this simulation based on the simulation of Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+The main example does not use periodic boundary conditions in the depth of the hopper like article, but an extended case, presented at the end, does.
 
 Features
 ----------------------------------
@@ -11,7 +12,7 @@ Features
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
 - Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
-
+- Periodic boundaries in DEM (for extensional version of the case only, see section 7.9)
 
 Files used in this example
 ----------------------------
@@ -22,7 +23,7 @@ Description of the case
 -----------------------
 
 This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand et al. uses periodic boundaries in the z axis allowing to use a thin width for simulation.
-Since those are not available at the time in Lethe, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
+In the main exemple, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
 
 Parameter file
 --------------
@@ -216,10 +217,10 @@ Mass flow rate results after post-processing and comparison with the results of 
 
 .. figure:: images/figure_hopper.png
     :width: 600
-    :alt: Results of mass flow rate.
+    :alt: Results of mass discharge.
     :align: center
 
-    Mass flow rate results.
+    Mass discharge results.
 
 Results
 -------
@@ -233,6 +234,117 @@ The simulated mass discharging rate is 84.94 g/s.
     :align: center
 
     Rectangular hopper at the end of the simulation.
+
+Case with periodic boundary conditions
+--------------------------------------
+Periodic boundary conditions feature was not implemented when this example was created. Since it is now, this example is now extended to show how to use it. The original case in Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ did use periodic boundaries.
+The modifications on the parameters of the previous example is the mesh thickness and the number of particles and also the addition of the boundary condition section.
+
+Mesh
+~~~~
+
+The hopper in this case has the same shape with a depth reduces by a factor of 6. The depth is the same than the article and a new GMSH file is used.
+
+.. code-block:: text
+
+    subsection mesh
+        set type                                = gmsh
+        set file name                           = hopper_structured_periodic.msh
+        set initial refinement                  = 1
+        set expand particle-wall contact search = false
+        set check diamond cells                 = true
+    end
+
+.. figure:: images/packed_hopper_periodic_3d.png
+    :width: 300
+    :alt: Mesh
+    :align: center
+
+    Rectangular periodic hopper packed with particle before the discharge with a 3d view.
+
+Boundary conditions
+~~~~~~~~~~~~~~~~~~~
+
+The previous example did not need any parameters on a section for the boundary conditions since all walls are treated as solid boundaries by default.
+We need to specify which boundaries are periodic and the perpendicular direction, here the periodic ids are 0 and 1 and the axis is z, corresponding to value of 2.
+The feature only works with one pair of periodic boundaries.
+
+.. code-block:: text
+
+    subsection DEM boundary conditions
+        set number of boundary conditions = 1
+
+        subsection boundary condition 0
+            set type                      = periodic
+            set periodic id 0             = 0
+            set periodic id 1             = 1
+            set periodic direction        = 2
+        end
+    end
+
+Lagrangian physical properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The total number of particles of this simulation is 6790: 6 times less than the previous example.
+
+.. code-block:: text
+
+    subsection lagrangian physical properties
+        set gx                       = 0.0
+        set gy                       = -9.81
+        set gz                       = 0.0
+        set number of particle types = 1
+        subsection particle type 0
+            set size distribution type            = uniform
+            set diameter                          = 0.00224
+            set number                            = 6790
+            set density particles                 = 2500
+            set young modulus particles           = 1e6
+            set poisson ratio particles           = 0.3
+            set restitution coefficient particles = 0.94
+            set friction coefficient particles    = 0.2
+            set rolling friction particles        = 0.09
+        end
+        set young modulus wall           = 1e6
+        set poisson ratio wall           = 0.3
+        set friction coefficient wall    = 0.2
+        set restitution coefficient wall = 0.9
+        set rolling friction wall        = 0.09
+    end
+
+Insertion info
+~~~~~~~~~~~~~~
+
+Since the geometry of the mesh and the number of the particles are not the same, the insertion info have to be modified according to the new domain of the mesh with an inserted number of particles corresponding to the new number.
+
+.. code-block:: text
+
+    subsection insertion info
+        set insertion method                               = non_uniform
+        set inserted number of particles at each time step = 2910
+        set insertion frequency                            = 25000
+        set insertion box minimum x                        = -0.1030
+        set insertion box minimum y                        Rectangular hopper at the end of the simulation.   = 0.10644
+        set insertion box minimum z                        = .00224
+        set insertion box maximum x                        = 0.1030
+        set insertion box maximum y                        = 0.16020
+        set insertion box maximum z                        = 0.03136
+        set insertion distance threshold                   = 1.5
+        set insertion random number range                  = 0.1
+        set insertion random number seed                   = 20
+    end
+
+Results comparison
+~~~~~~~~~~~~~~~~~~
+Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
+The simulated mass discharging rate is 84.94 g/s from the original simulation and 88.77 g/s with PBC. Also, the run time of the simulation goes from about 3 hours and 15 minutes to 30 minutes on 8 cores.
+
+.. figure:: images/figure_hopper_comparison.png
+    :width: 600
+    :alt: Comparison
+    :align: center
+
+    Comparison of mass discharge results from the 2 simulations and the journal article.
 
 
 Reference
