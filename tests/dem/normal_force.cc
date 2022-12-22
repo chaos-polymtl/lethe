@@ -156,7 +156,6 @@ test()
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
-                                  unsigned int,
                                   unsigned int>>>
     particle_wall_contact_list;
   particle_wall_broad_search_object.find_particle_wall_contact_pairs(
@@ -166,9 +165,8 @@ test()
 
   // Particle-Wall fine search
   ParticleWallFineSearch<dim> particle_wall_fine_search_object;
-  std::unordered_map<
-    unsigned int,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+  std::unordered_map<unsigned int,
+                     std::map<unsigned int, particle_wall_contact_info<dim>>>
                                   particle_wall_contact_information;
   ParticleWallNonLinearForce<dim> particle_wall_force_object(
     dem_parameters.boundary_conditions.boundary_translational_velocity,

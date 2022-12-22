@@ -443,7 +443,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           auto &boundary_cell = best_index_of_face->second;
 
           auto boundary_cell_information = boundary_cell;
-          particle_wall_contact_info_struct<dim> contact_info;
+          particle_wall_contact_info<dim> contact_info;
 
           // Check if there is already information on the contact between this
           // particle and this boundary contact point. If not initialize the
@@ -461,12 +461,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   contact_info.tangential_relative_velocity[d] = 0;
                 }
 
-              // BB temporary fix for unused variables
-              contact_info.global_face_id           = 0;
               contact_info.boundary_id              = 0;
               contact_info.normal_overlap           = 0;
               contact_info.normal_relative_velocity = 0;
-              // End BB
 
               pw_contact_map[particle.particle_id]
                             [boundary_cell.boundary_index] = contact_info;
