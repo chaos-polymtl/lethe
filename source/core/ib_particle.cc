@@ -1,5 +1,5 @@
 #include <core/ib_particle.h>
-#include <core/shape.h>
+#include <core/shape_parsing.h>
 
 #include <cfloat>
 

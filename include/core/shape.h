@@ -22,7 +22,6 @@
 #else
 #  include <deal.II/base/function_signed_distance.h>
 #endif
-#include <core/utilities.h>
 
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -1483,37 +1482,5 @@ private:
   double pitch;
   double radius_disk;
 };
-
-namespace ShapeGenerator
-{
-  /**
-   * Initializes the shape from its type and numerical arguments
-   * @param type the type of shape
-   * @param shape_arguments the numerical arguments
-   * @param position the position of the shape
-   * @param orientation the orientation of the shape
-   */
-  template <int dim>
-  std::shared_ptr<Shape<dim>>
-  initialize_shape(const std::string         type,
-                   const std::vector<double> shape_arguments,
-                   const Point<dim> &        position,
-                   const Tensor<1, 3> &      orientation);
-
-  /**
-   * Initializes the shape from its type and a text file that contains the real
-   * initialization data
-   * @param type the type of shape
-   * @param file_name the numerical arguments
-   * @param position the position of the shape
-   * @param orientation the orientation of the shape
-   */
-  template <int dim>
-  std::shared_ptr<Shape<dim>>
-  initialize_shape(const std::string   type,
-                   const std::string   file_name,
-                   const Point<dim> &  position,
-                   const Tensor<1, 3> &orientation);
-} // namespace ShapeGenerator
 
 #endif // lethe_shape_h
