@@ -1494,7 +1494,7 @@ namespace ShapeGenerator
    * @param orientation the orientation of the shape
    */
   template <int dim>
-  static std::shared_ptr<Shape<dim>>
+  std::shared_ptr<Shape<dim>>
   initialize_shape(const std::string         type,
                    const std::vector<double> shape_arguments,
                    const Point<dim> &        position,
@@ -1509,7 +1509,7 @@ namespace ShapeGenerator
    * @param orientation the orientation of the shape
    */
   template <int dim>
-  static std::shared_ptr<Shape<dim>>
+  std::shared_ptr<Shape<dim>>
   initialize_shape(const std::string   type,
                    const std::string   file_name,
                    const Point<dim> &  position,

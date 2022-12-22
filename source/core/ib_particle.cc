@@ -159,10 +159,10 @@ void
 IBParticle<dim>::initialize_shape(const std::string         type,
                                   const std::vector<double> shape_arguments)
 {
-  shape = ShapeGenerator::initialize_shape<dim>(type,
-                                                shape_arguments,
-                                                position,
-                                                orientation);
+  shape = ShapeGenerator::initialize_shape(type,
+                                           shape_arguments,
+                                           position,
+                                           orientation);
 }
 
 template <int dim>
@@ -170,10 +170,8 @@ void
 IBParticle<dim>::initialize_shape(const std::string type,
                                   const std::string file_name)
 {
-  shape = ShapeGenerator::initialize_shape<dim>(type,
-                                                file_name,
-                                                position,
-                                                orientation);
+  shape =
+    ShapeGenerator::initialize_shape(type, file_name, position, orientation);
 }
 
 template <int dim>
