@@ -2394,172 +2394,154 @@ namespace Parameters
             }
           else if (shape_type == "composite")
             {
-              if (shape_arguments_str == "1") // Default case
+              // The following lines retrieve information regarding a
+              // composite shape.
+              std::string shape_name = shape_arguments_str_list[0];
+              std::map<unsigned int, std::shared_ptr<Shape<dim>>> components;
+              std::map<
+                unsigned int,
+                std::tuple<typename CompositeShape<dim>::BooleanOperation,
+                           unsigned int,
+                           unsigned int>>
+                operations;
+              // In the file, we first loop over all component shapes, then
+              // we loop over operations
+              std::ifstream myfile(shape_name);
+              // Read file line by line for section names or arguments
+              if (myfile)
                 {
-                  // Default
-                  shape_type      = "sphere";
-                  shape_arguments = std::vector<double>(1.);
-                  particles[i].initialize_shape(shape_type, shape_arguments);
-                }
-              else
-                {
-                  // The following lines retrieve information regarding a
-                  // composite shape.
-                  std::string shape_name = shape_arguments_str_list[0];
-                  std::map<unsigned int, std::shared_ptr<Shape<dim>>>
-                    components;
-                  std::map<
-                    unsigned int,
-                    std::tuple<typename CompositeShape<dim>::BooleanOperation,
-                               unsigned int,
-                               unsigned int>>
-                    operations;
-                  // In the file, we first loop over all component shapes, then
-                  // we loop over operations
-                  std::ifstream myfile(shape_name);
-                  // open the file.
-                  // Read file line by line for section names or arguments
-                  if (myfile.is_open())
+                  std::string              line;
+                  std::vector<std::string> column_names;
+                  std::vector<double>      line_of_data;
+                  bool                     parsing_shapes     = false;
+                  bool                     parsing_operations = false;
+                  while (std::getline(myfile, line))
                     {
-                      std::string              line;
-                      std::vector<std::string> column_names;
-                      std::vector<double>      line_of_data;
-                      bool                     parsing_shapes     = false;
-                      bool                     parsing_operations = false;
-                      while (std::getline(myfile, line))
+                      if (line == "")
+                        continue;
+                      if (line == "shapes")
                         {
-                          if (line == "")
-                            continue;
-                          if (line == "shapes")
+                          parsing_shapes     = true;
+                          parsing_operations = false;
+                        }
+                      else if (line == "operations")
+                        {
+                          parsing_shapes     = false;
+                          parsing_operations = true;
+                        }
+                      else
+                        {
+                          std::vector<std::string> list_of_words_base =
+                            Utilities::split_string_list(line, ";");
+                          std::vector<std::string> list_of_words_clean;
+                          for (unsigned int j = 0;
+                               j < list_of_words_base.size();
+                               ++j)
                             {
-                              parsing_shapes     = true;
-                              parsing_operations = false;
-                            }
-                          else if (line == "operations")
-                            {
-                              parsing_shapes     = false;
-                              parsing_operations = true;
-                            }
-                          else
-                            {
-                              std::vector<std::string> list_of_words_base =
-                                Utilities::split_string_list(line, ";");
-                              std::vector<std::string> list_of_words_clean;
-                              for (unsigned int j = 0;
-                                   j < list_of_words_base.size();
-                                   ++j)
+                              if (list_of_words_base[j] != "")
                                 {
-                                  if (list_of_words_base[j] != "")
-                                    {
-                                      list_of_words_clean.push_back(
-                                        list_of_words_base[j]);
-                                    }
+                                  list_of_words_clean.push_back(
+                                    list_of_words_base[j]);
                                 }
-                              if (parsing_shapes)
+                            }
+                          if (parsing_shapes)
+                            {
+                              unsigned int identifier =
+                                stoi(list_of_words_clean[0]);
+                              std::string type = list_of_words_clean[1];
+                              std::string arguments_str =
+                                list_of_words_clean[2];
+                              std::string position_str = list_of_words_clean[3];
+                              std::string orientation_str =
+                                list_of_words_clean[4];
+
+                              std::vector<std::string> arguments_str_component =
+                                Utilities::split_string_list(arguments_str,
+                                                             ":");
+                              std::vector<std::string> position_str_component =
+                                Utilities::split_string_list(position_str, ":");
+                              std::vector<std::string>
+                                orientation_str_component =
+                                  Utilities::split_string_list(orientation_str,
+                                                               ":");
+
+                              shape_arguments = Utilities::string_to_double(
+                                arguments_str_component);
+                              std::vector<double> temp_position_vec =
+                                Utilities::string_to_double(
+                                  position_str_component);
+                              std::vector<double> temp_orientation_vec =
+                                Utilities::string_to_double(
+                                  orientation_str_component);
+
+                              Point<dim> temp_position;
+                              Point<3>   temp_orientation =
+                                Point<3>({temp_orientation_vec[0],
+                                          temp_orientation_vec[1],
+                                          temp_orientation_vec[2]});
+                              temp_position[0] = temp_position_vec[0];
+                              temp_position[1] = temp_position_vec[1];
+                              if constexpr (dim == 3)
+                                temp_position[2] = temp_position_vec[2];
+
+                              IBParticle<dim> temp;
+                              temp.initialize_shape(type, shape_arguments);
+                              temp.shape->set_position(temp_position);
+                              temp.shape->set_orientation(temp_orientation);
+                              components[identifier] =
+                                temp.shape->static_copy();
+                            }
+                          else if (parsing_operations)
+                            {
+                              unsigned int identifier =
+                                stoi(list_of_words_clean[0]);
+                              std::string type = list_of_words_clean[1];
+                              std::string arguments_str =
+                                list_of_words_clean[2];
+                              std::vector<std::string> arguments_str_component =
+                                Utilities::split_string_list(arguments_str,
+                                                             ":");
+
+                              unsigned int first_shape =
+                                stoi(arguments_str_component[0]);
+                              unsigned int second_shape =
+                                stoi(arguments_str_component[1]);
+                              if (type == "union")
                                 {
-                                  unsigned int identifier =
-                                    stoi(list_of_words_clean[0]);
-                                  std::string type = list_of_words_clean[1];
-                                  std::string arguments_str =
-                                    list_of_words_clean[2];
-                                  std::string position_str =
-                                    list_of_words_clean[3];
-                                  std::string orientation_str =
-                                    list_of_words_clean[4];
-
-                                  std::vector<std::string>
-                                    arguments_str_component =
-                                      Utilities::split_string_list(
-                                        arguments_str, ":");
-                                  std::vector<std::string>
-                                    position_str_component =
-                                      Utilities::split_string_list(position_str,
-                                                                   ":");
-                                  std::vector<std::string>
-                                    orientation_str_component =
-                                      Utilities::split_string_list(
-                                        orientation_str, ":");
-
-                                  shape_arguments = Utilities::string_to_double(
-                                    arguments_str_component);
-                                  std::vector<double> temp_position_vec =
-                                    Utilities::string_to_double(
-                                      position_str_component);
-                                  std::vector<double> temp_orientation_vec =
-                                    Utilities::string_to_double(
-                                      orientation_str_component);
-
-                                  Point<dim> temp_position;
-                                  Point<3>   temp_orientation =
-                                    Point<3>({temp_orientation_vec[0],
-                                              temp_orientation_vec[1],
-                                              temp_orientation_vec[2]});
-                                  temp_position[0] = temp_position_vec[0];
-                                  temp_position[1] = temp_position_vec[1];
-                                  if constexpr (dim == 3)
-                                    temp_position[2] = temp_position_vec[2];
-
-                                  IBParticle<dim> temp;
-                                  temp.initialize_shape(type, shape_arguments);
-                                  temp.shape->set_position(temp_position);
-                                  temp.shape->set_orientation(temp_orientation);
-                                  components[identifier] =
-                                    temp.shape->static_copy();
+                                  operations[identifier] = std::make_tuple(
+                                    CompositeShape<
+                                      dim>::BooleanOperation::Union,
+                                    first_shape,
+                                    second_shape);
                                 }
-                              else if (parsing_operations)
+                              else if (type == "difference")
                                 {
-                                  unsigned int identifier =
-                                    stoi(list_of_words_clean[0]);
-                                  std::string type = list_of_words_clean[1];
-                                  std::string arguments_str =
-                                    list_of_words_clean[2];
-                                  std::vector<std::string>
-                                    arguments_str_component =
-                                      Utilities::split_string_list(
-                                        arguments_str, ":");
-
-                                  unsigned int first_shape =
-                                    stoi(arguments_str_component[0]);
-                                  unsigned int second_shape =
-                                    stoi(arguments_str_component[1]);
-                                  if (type == "union")
-                                    {
-                                      operations[identifier] = std::make_tuple(
-                                        CompositeShape<
-                                          dim>::BooleanOperation::Union,
-                                        first_shape,
-                                        second_shape);
-                                    }
-                                  else if (type == "difference")
-                                    {
-                                      operations[identifier] = std::make_tuple(
-                                        CompositeShape<
-                                          dim>::BooleanOperation::Difference,
-                                        first_shape,
-                                        second_shape);
-                                    }
-                                  else if (type == "intersection")
-                                    {
-                                      operations[identifier] = std::make_tuple(
-                                        CompositeShape<
-                                          dim>::BooleanOperation::Intersection,
-                                        first_shape,
-                                        second_shape);
-                                    }
+                                  operations[identifier] = std::make_tuple(
+                                    CompositeShape<
+                                      dim>::BooleanOperation::Difference,
+                                    first_shape,
+                                    second_shape);
+                                }
+                              else if (type == "intersection")
+                                {
+                                  operations[identifier] = std::make_tuple(
+                                    CompositeShape<
+                                      dim>::BooleanOperation::Intersection,
+                                    first_shape,
+                                    second_shape);
                                 }
                             }
                         }
-                      myfile.close();
-                      particles[i].shape =
-                        std::make_shared<CompositeShape<dim>>(
-                          components,
-                          operations,
-                          particles[i].position,
-                          particles[i].orientation);
                     }
-                  else
-                    std::cout << "Unable to open file";
+                  myfile.close();
+                  particles[i].shape = std::make_shared<CompositeShape<dim>>(
+                    components,
+                    operations,
+                    particles[i].position,
+                    particles[i].orientation);
                 }
+              else
+                throw std::invalid_argument(shape_name);
             }
           else
             {
