@@ -1,6 +1,5 @@
 /**
- * @brief Tests the shape representation.
- *
+ * @brief Tests the primitive shapes representation.
  */
 
 // Lethe
