@@ -197,6 +197,16 @@ public:
   void
   initialize_shape(const std::string         type,
                    const std::vector<double> shape_arguments);
+  /**
+   * @brief
+   * Sets up a shape in accordance with the given type and file name
+   *
+   * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
+   * rectangle, death star, cut hollow sphere, torus, or rbf
+   * @param file_name The name of the file that contains the initialization data
+   */
+  void
+  initialize_shape(const std::string type, const std::string file_name);
 
   /**
    * @brief

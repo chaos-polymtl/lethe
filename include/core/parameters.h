@@ -26,8 +26,6 @@
  * are required.
  */
 
-
-
 #ifndef lethe_parameters_h
 #define lethe_parameters_h
 
@@ -1042,6 +1040,10 @@ namespace Parameters
     initialize_shape(const unsigned int        i,
                      const std::string         type,
                      const std::vector<double> shape_arguments);
+    void
+    initialize_shape(const unsigned int i,
+                     const std::string  type,
+                     const std::string  file_name);
 
     unsigned int                 nb;
     unsigned int                 order;
