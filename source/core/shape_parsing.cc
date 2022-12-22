@@ -235,18 +235,18 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
                       unsigned int identifier    = stoi(list_of_words_clean[0]);
                       std::string  type          = list_of_words_clean[1];
                       std::string  arguments_str = list_of_words_clean[2];
-                      std::string  position_str  = list_of_words_clean[3];
-                      std::string  orientation_str = list_of_words_clean[4];
+                      std::replace(arguments_str.begin(),
+                                   arguments_str.end(),
+                                   ':',
+                                   ';');
+                      std::string position_str    = list_of_words_clean[3];
+                      std::string orientation_str = list_of_words_clean[4];
 
-                      std::vector<std::string> arguments_str_component =
-                        Utilities::split_string_list(arguments_str, ":");
                       std::vector<std::string> position_str_component =
                         Utilities::split_string_list(position_str, ":");
                       std::vector<std::string> orientation_str_component =
                         Utilities::split_string_list(orientation_str, ":");
 
-                      shape_arguments =
-                        Utilities::string_to_double(arguments_str_component);
                       std::vector<double> temp_position_vec =
                         Utilities::string_to_double(position_str_component);
                       std::vector<double> temp_orientation_vec =
@@ -263,8 +263,8 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
                         temp_position[2] = temp_position_vec[2];
 
                       std::shared_ptr<Shape<dim>> shape_temp;
-                      shape_temp = ShapeGenerator::initialize_shape_from_vector(
-                        type, shape_arguments, Point<dim>(), Tensor<1, 3>());
+                      shape_temp = ShapeGenerator::initialize_shape(
+                        type, arguments_str, Point<dim>(), Tensor<1, 3>());
                       shape_temp->set_position(temp_position);
                       shape_temp->set_orientation(temp_orientation);
                       components[identifier] = shape_temp->static_copy();
