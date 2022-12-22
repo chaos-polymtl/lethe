@@ -2346,19 +2346,7 @@ namespace Parameters
 
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
-          std::vector<std::string> shape_arguments_str_list(
-            Utilities::split_string_list(shape_arguments_str, ";"));
-          std::vector<double> shape_arguments;
-          if (shape_type == "rbf" || shape_type == "composite")
-            {
-              particles[i].initialize_shape(shape_type, shape_arguments_str);
-            }
-          else
-            {
-              shape_arguments =
-                Utilities::string_to_double(shape_arguments_str_list);
-              particles[i].initialize_shape(shape_type, shape_arguments);
-            }
+          particles[i].initialize_shape(shape_type, shape_arguments_str);
 
           particles[i].radius = particles[i].shape->effective_radius;
 

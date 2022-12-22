@@ -203,10 +203,10 @@ public:
    *
    * @param type The type of shape to be initialized: sphere, cone, ellipsoid,
    * rectangle, death star, cut hollow sphere, torus, or rbf
-   * @param file_name The name of the file that contains the initialization data
+   * @param raw_arguments The untreated arguments of the shape
    */
   void
-  initialize_shape(const std::string type, const std::string file_name);
+  initialize_shape(const std::string type, const std::string raw_arguments);
 
   /**
    * @brief
