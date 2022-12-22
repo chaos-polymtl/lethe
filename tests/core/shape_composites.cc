@@ -76,18 +76,18 @@ test()
   std::shared_ptr<Shape<3>> copy_composite_union =
     composite_union->static_copy();
   copy_composite_union->set_position(translation);
-  deallog << " Position of original cone[0] = "
+  deallog << " Position of original composite[0] = "
           << composite_union->get_position()[0] << std::endl;
-  deallog << " Position of original cone[1] = "
+  deallog << " Position of original composite[1] = "
           << composite_union->get_position()[1] << std::endl;
-  deallog << " Position of original cone[2] = "
+  deallog << " Position of original composite[2] = "
           << composite_union->get_position()[2] << std::endl;
-  deallog << " Translation of copy cone" << std::endl;
-  deallog << " Position of copy cone[0] = "
+  deallog << " Translation of copy composite" << std::endl;
+  deallog << " Position of copy composite[0] = "
           << copy_composite_union->get_position()[0] << std::endl;
-  deallog << " Position of copy cone[1] = "
+  deallog << " Position of copy composite[1] = "
           << copy_composite_union->get_position()[1] << std::endl;
-  deallog << " Position of copy cone[2] = "
+  deallog << " Position of copy composite[2] = "
           << copy_composite_union->get_position()[2] << std::endl;
   deallog << "OK" << std::endl;
 }
