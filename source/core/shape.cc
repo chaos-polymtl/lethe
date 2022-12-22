@@ -475,9 +475,9 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
   // We align and center the evaluation point according to the shape referential
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  // The levelset value of all component shapes is computed
+  // The levelset value of all constituent shapes is computed
   std::map<unsigned int, double> components_value;
-  for (auto const &[component_id, component] : components)
+  for (auto const &[component_id, component] : constituents)
     {
       components_value[component_id] = component->value(centered_point);
     }
@@ -506,9 +506,14 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
             components_value[operation_id] =
               std::max(-value_first_component, value_second_component);
             break;
-          default: // BooleanOperation::Intersection
+          case BooleanOperation::Intersection:
             components_value[operation_id] =
               std::max(value_first_component, value_second_component);
+            break;
+          default:
+            throw std::logic_error(
+              "The BooleanOperation isn't supported. Either it is not supported "
+              "yet or it is simply not valid.");
         }
       levelset = components_value[operation_id];
     }
@@ -527,7 +532,7 @@ CompositeShape<dim>::value_with_cell_guess(
 
   // The levelset value of all component shapes is computed
   std::map<unsigned int, double> components_value;
-  for (auto const &[component_id, component] : components)
+  for (auto const &[component_id, component] : constituents)
     {
       components_value[component_id] =
         component->value_with_cell_guess(centered_point, cell);
@@ -570,7 +575,7 @@ std::shared_ptr<Shape<dim>>
 CompositeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy = std::make_shared<CompositeShape<dim>>(
-    components, operations, this->position, this->orientation);
+    constituents, operations, this->position, this->orientation);
   return copy;
 }
 
@@ -580,7 +585,7 @@ CompositeShape<dim>::update_precalculations(
   DoFHandler<dim> &             updated_dof_handler,
   std::shared_ptr<Mapping<dim>> mapping)
 {
-  for (auto const &[component_id, component] : components)
+  for (auto const &[component_id, component] : constituents)
     {
       if (typeid(*component) == typeid(RBFShape<dim>))
         {
@@ -1184,7 +1189,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
       point_on_helix[0] = radius * cos(t);
       point_on_helix[1] = radius * sin(t);
       point_on_helix[2] = t * pitch / (2 * numbers::PI);
-      level_set_tube = (centered_point - point_on_helix).norm() - radius_tube;
+      level_set_tube = (centered_point - point_on_helix).norm() - radius_disk;
     }
 
   // repeat for second guess
@@ -1234,7 +1239,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
       point_on_helix[0] = radius * cos(t);
       point_on_helix[1] = radius * sin(t);
       point_on_helix[2] = t * pitch / (2 * numbers::PI);
-      level_set_tube_2 = (centered_point - point_on_helix).norm() - radius_tube;
+      level_set_tube_2 = (centered_point - point_on_helix).norm() - radius_disk;
     }
 
   // Keep the best guess
@@ -1255,7 +1260,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
      scalar_product((centered_point - point_at_base), vector_at_base) /
        vector_at_base.norm_square() * vector_at_base)
       .norm();
-  double radial_distance_cap_base = p_radius_cap_base - radius_tube;
+  double radial_distance_cap_base = p_radius_cap_base - radius_disk;
   double h_dist_from_cap_0 =
     (scalar_product((centered_point - point_at_base), vector_at_base) /
      vector_at_base.norm_square() * vector_at_base)
@@ -1285,7 +1290,7 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
      scalar_product((centered_point - point_at_top), vector_at_top) /
        vector_at_top.norm_square() * vector_at_top)
       .norm();
-  double radial_distance_cap_top = p_radius_cap_top - radius_tube;
+  double radial_distance_cap_top = p_radius_cap_top - radius_disk;
   double h_dist_from_cap_top =
     (scalar_product((centered_point - point_at_top), vector_at_top) /
      vector_at_top.norm_square() * vector_at_top)
@@ -1318,7 +1323,7 @@ CylindricalHelix<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<CylindricalHelix<dim>>(this->radius,
-                                            this->radius_tube,
+                                            this->radius_disk,
                                             this->height,
                                             this->pitch,
                                             this->position,

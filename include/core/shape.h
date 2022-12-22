@@ -639,21 +639,22 @@ public:
 
   /**
    * @brief Constructs an assembly of shapes into a composite shape
-   * @param components The shapes from which this composite sphere will be composed
+   * @param constituents The shapes from which this composite shape will be composed
+   * @param operations The list of operations to perform to construct the composite
    */
   CompositeShape<dim>(
-    std::map<unsigned int, std::shared_ptr<Shape<dim>>> components,
+    std::map<unsigned int, std::shared_ptr<Shape<dim>>> constituents,
     std::map<unsigned int,
              std::tuple<BooleanOperation, unsigned int, unsigned int>>
                         operations,
     const Point<dim> &  position,
     const Tensor<1, 3> &orientation)
     : Shape<dim>(0., position, orientation)
-    , components(components)
+    , constituents(constituents)
     , operations(operations)
   {
     // Calculation of the effective radius
-    for (auto const &[component_id, component] : components)
+    for (auto const &[component_id, component] : constituents)
       {
         this->effective_radius =
           std::max(this->effective_radius, component->effective_radius);
@@ -664,38 +665,38 @@ public:
    * @brief Constructs an assembly of shapes into a composite shape from a vector of shapes.
    * This constructor is mainly used for outputting multiple shapes with a
    * global levelset function defined as a union.
-   * @param components The shapes from which this composite sphere will be composed
+   * @param constituents_vector The shapes from which this composite sphere will be composed
    */
   CompositeShape<dim>(
-    std::vector<std::shared_ptr<Shape<dim>>> components_vector,
+    std::vector<std::shared_ptr<Shape<dim>>> constituents_vector,
     const Point<dim> &                       position,
     const Tensor<1, 3> &                     orientation)
     : Shape<dim>(0., position, orientation)
   {
-    size_t number_of_components = components_vector.size();
+    size_t number_of_constituents = constituents_vector.size();
 
-    for (size_t i = 0; i < number_of_components; i++)
-      components[i] = components_vector[i];
-    if (number_of_components > 1)
+    for (size_t i = 0; i < number_of_constituents; i++)
+      constituents[i] = constituents_vector[i];
+    if (number_of_constituents > 1)
       {
         // If there are at least two components, the first operation should
         // always be a union of 0 and 1
-        operations[number_of_components] =
+        operations[number_of_constituents] =
           std::make_tuple(BooleanOperation::Union, 0, 1);
         // We make the union until the before last component
-        for (size_t i = 1; i < number_of_components - 1; i++)
+        for (size_t i = 1; i < number_of_constituents - 1; i++)
           {
-            operations[i + number_of_components] =
+            operations[i + number_of_constituents] =
               std::make_tuple(BooleanOperation::Union,
                               i + 1,
-                              i + number_of_components - 1);
+                              i + number_of_constituents - 1);
           }
       }
     // Calculation of the effective radius
-    for (auto const &[component_id, component] : components)
+    for (auto const &[constituent_id, constituent] : constituents)
       {
         this->effective_radius =
-          std::max(this->effective_radius, component->effective_radius);
+          std::max(this->effective_radius, constituent->effective_radius);
       }
   }
 
@@ -740,13 +741,14 @@ public:
                          std::shared_ptr<Mapping<dim>> mapping);
 
 private:
-  // The members of this class are all the components and operations that are
+  // The members of this class are all the constituent and operations that are
   // to be performed to construct the composite shape
-  // This map link all primitive components of the composite shape to an id
-  std::map<unsigned int, std::shared_ptr<Shape<dim>>> components;
-  // This map links all operations between primitive components or intermediate
-  // components (resulting from each operation) to an id. The unsigned integers
-  // correspond to the first and second ids of the shapes used for an operation
+  // This map link all primitive constituents of the composite shape to an id
+  std::map<unsigned int, std::shared_ptr<Shape<dim>>> constituents;
+  // This map links all operations between primitive constituents or
+  // intermediate constituents (resulting from each operation) to an id. The
+  // unsigned integers correspond to the first and second ids of the shapes used
+  // for an operation
   std::map<unsigned int,
            std::tuple<BooleanOperation, unsigned int, unsigned int>>
     operations;
@@ -1368,7 +1370,8 @@ class CylindricalTube : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructs a tube by boolean difference of two tubes aligned with the z axis
+   * @brief Constructs a tube by boolean difference of two tubes aligned with
+   * the z axis when orientation is set to 0;0;0
    * @param radius_inside the radius of the negative (inside) cylinder
    * @param radius_outside the radius of the positive (outside) cylinder
    * @param half_length the half-length of the cylinders
@@ -1424,25 +1427,26 @@ class CylindricalHelix : public Shape<dim>
 public:
   /**
    * @brief Constructs a cylindrical helix by extruding a disk through a helicoidal path
-   * aligned with the z axis
-   * @param radius_helix the helicoidal path radius
-   * @param radius_tube the extruded disk radius
-   * @param height the total height of the helicoiadal path
-   * @param pitch the pitch angle by which the height increases around the axis
+   * aligned with the z axis when orientation is set to 0;0;0
+   * @param radius_helix the radius of the helicoidal path
+   * @param radius_disk the radius of the disk that is extruded along the helicoidal
+   * path
+   * @param height the total height of the helicoidal path
+   * @param pitch the height difference between each helix loop around its axis
    * @param position the position of the helix base
    * @param orientation the orientation of the helix axis compared to the z axis
    */
   CylindricalHelix<dim>(double              radius_helix,
-                        double              radius_tube,
+                        double              radius_disk,
                         double              height,
                         double              pitch,
                         const Point<dim> &  position,
                         const Tensor<1, 3> &orientation)
-    : Shape<dim>(radius_tube, position, orientation)
+    : Shape<dim>(radius_disk, position, orientation)
     , radius(radius_helix)
     , height(height)
     , pitch(pitch)
-    , radius_tube(radius_tube)
+    , radius_disk(radius_disk)
   {}
 
   /**
@@ -1475,7 +1479,7 @@ private:
   double radius;
   double height;
   double pitch;
-  double radius_tube;
+  double radius_disk;
 };
 
 

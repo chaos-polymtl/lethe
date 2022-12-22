@@ -1591,6 +1591,9 @@ LaplaceAssembly<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
+              // Units are not consistent for the following line, but it is
+              // better that way for the problem scaling and it doesn't affect
+              // the end result for our purposes
               // Laplacian on the velocity terms
               double local_matrix_ij =
                 scalar_product(grad_phi_u_j, grad_phi_u_i);
