@@ -39,7 +39,7 @@
 // Lethe
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_wall_broad_search.h>
-#include <dem/particle_wall_contact_info_struct.h>
+#include <dem/particle_wall_contact_info.h>
 #include <dem/particle_wall_fine_search.h>
 
 // Tests (with common definitions)
@@ -100,7 +100,6 @@ test()
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
-                                  unsigned int,
                                   unsigned int>>>
     particle_wall_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
@@ -110,9 +109,8 @@ test()
 
   // Calling particle-wall fine search
   ParticleWallFineSearch<dim> fine_search_object;
-  std::unordered_map<
-    unsigned int,
-    std::map<unsigned int, particle_wall_contact_info_struct<dim>>>
+  std::unordered_map<unsigned int,
+                     std::map<unsigned int, particle_wall_contact_info<dim>>>
     particle_wall_contact_information;
   fine_search_object.particle_wall_fine_search(
     particle_wall_contact_list, particle_wall_contact_information);

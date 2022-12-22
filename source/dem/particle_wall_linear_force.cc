@@ -374,8 +374,8 @@ ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
 template <int dim>
 std::tuple<Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>, Tensor<1, 3>>
 ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
-  particle_wall_contact_info_struct<dim> &contact_info,
-  const ArrayView<const double> &         particle_properties)
+  particle_wall_contact_info<dim> &contact_info,
+  const ArrayView<const double> &  particle_properties)
 {
   const unsigned int particle_type =
     particle_properties[DEM::PropertiesIndex::type];
@@ -460,7 +460,7 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
 template <int dim>
 void
 ParticleWallLinearForce<dim>::calculate_IB_particle_wall_contact_force(
-  particle_wall_contact_info_struct<dim> & /*contact_info*/,
+  particle_wall_contact_info<dim> & /*contact_info*/,
   Tensor<1, 3> & /*normal_force*/,
   Tensor<1, 3> & /*tangential_force*/,
   Tensor<1, 3> & /*tangential_torque*/,

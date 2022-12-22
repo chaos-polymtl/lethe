@@ -19,7 +19,7 @@
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/particle_particle_contact_info.h>
 #include <dem/particle_point_line_contact_info_struct.h>
-#include <dem/particle_wall_contact_info_struct.h>
+#include <dem/particle_wall_contact_info.h>
 
 #include <deal.II/base/tensor.h>
 
@@ -148,14 +148,13 @@ namespace DEM
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
-                                    global_face_id,
-                                    types::global_cell_index>>>
+                                    global_face_id>>>
       particle_wall_candidates;
 
     // <particle id, <global_face_id, particle-wall info>>
     typedef std::unordered_map<
       types::particle_index,
-      std::map<global_face_id, particle_wall_contact_info_struct<dim>>>
+      std::map<global_face_id, particle_wall_contact_info<dim>>>
       particle_wall_in_contact;
 
     // <particle id, <particle id, particle-particle info>>
@@ -175,7 +174,7 @@ namespace DEM
     // <cell iterator, <particle id, particle-wall info>>
     typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                      std::unordered_map<types::particle_index,
-                                        particle_wall_contact_info_struct<dim>>,
+                                        particle_wall_contact_info<dim>>,
                      /* mapped_type */ cut_cell_comparison<dim>>
       particle_floating_wall_from_mesh_in_contact;
 

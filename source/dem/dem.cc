@@ -780,9 +780,8 @@ DEMSolver<dim>::solve()
     }
 
   // Find the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blab
-  // diamater
-  // - 1) *  largest particle radius). This value is used in
+  // cell size - largest particle radius) and (security factor * (blob
+  // diameter - 1) *  largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -

@@ -19,7 +19,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/particle_wall_contact_info_struct.h>
+#include <dem/particle_wall_contact_info.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -87,7 +87,7 @@ public:
   update_boundary_points_and_normal_vectors_in_contact_list(
     std::unordered_map<
       types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info_struct<spacedim>>>
+      std::map<types::boundary_id, particle_wall_contact_info<spacedim>>>
       &particle_wall_pairs_in_contact,
     const typename DEM::dem_data_structures<
       spacedim>::boundary_points_and_normal_vectors
