@@ -71,7 +71,7 @@ test()
           << std::endl;
   deallog << "OK" << std::endl;
 
-  deallog << "Testing copy" << std::endl;
+  deallog << "Testing copy and translation" << std::endl;
   Point<3>                  translation({0.2, 0., 0.3});
   std::shared_ptr<Shape<3>> copy_composite_union =
     composite_union->static_copy();
