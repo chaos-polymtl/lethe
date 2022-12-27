@@ -86,22 +86,19 @@ ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
-      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-        no_resistance)
+      Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     {
       calculate_rolling_resistance_torque =
         &ParticleWallNonLinearForce<dim>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             constant_resistance)
+           Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     {
       calculate_rolling_resistance_torque =
         &ParticleWallNonLinearForce<dim>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             viscous_resistance)
+           Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     {
       calculate_rolling_resistance_torque =
         &ParticleWallNonLinearForce<dim>::viscous_resistance;

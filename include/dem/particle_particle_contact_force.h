@@ -358,11 +358,8 @@ protected:
     Tensor<1, 3> &      particle_one_torque,
     Tensor<1, 3> &      particle_one_force)
   {
-    // Calculation of total force
-    Tensor<1, 3> total_force = normal_force + tangential_force;
-
     // Updating the force and torque acting on particles in the particle handler
-    particle_one_force -= total_force;
+    particle_one_force -= normal_force + tangential_force;
     particle_one_torque +=
       -particle_one_tangential_torque + rolling_resistance_torque;
   }

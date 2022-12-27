@@ -104,18 +104,15 @@ ParticleParticleContactForce<dim, contact_model>::ParticleParticleContactForce(
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
-      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-        no_resistance)
+      Parameters::Lagrangian::RollingResistanceMethod::no_resistance)
     this->rolling_resistance_model =
       RollingResistanceTorqueModel::no_rolling_resistance;
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             constant_resistance)
+           Parameters::Lagrangian::RollingResistanceMethod::constant_resistance)
     this->rolling_resistance_model =
       RollingResistanceTorqueModel::constant_rolling_resistance;
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
-           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             viscous_resistance)
+           Parameters::Lagrangian::RollingResistanceMethod::viscous_resistance)
     this->rolling_resistance_model =
       RollingResistanceTorqueModel::viscous_rolling_resistance;
 }
