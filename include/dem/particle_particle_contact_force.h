@@ -126,13 +126,15 @@ public:
  * particle-particle contact force including non-linear and linear contact
  * models
  */
-template <int                                                       dim,
-          Parameters::Lagrangian::ParticleParticleContactForceModel force_model>
+template <
+  int                                                       dim,
+  Parameters::Lagrangian::ParticleParticleContactForceModel force_model,
+  Parameters::Lagrangian::RollingResistanceMethod rolling_friction_model>
 class ParticleParticleContactForce
   : public ParticleParticleContactForceBase<dim>
 {
 public:
-  ParticleParticleContactForce<dim, force_model>(
+  ParticleParticleContactForce<dim, force_model, rolling_friction_model>(
     const DEMSolverParameters<dim> &dem_parameters);
 
 
@@ -389,7 +391,6 @@ protected:
             particle_two_properties[DEM::PropertiesIndex::dp]));
   }
 
-
   /**
    * Carries out the calculation of the particle-particle linear contact
    * force and torques based on the updated values in contact_info
@@ -517,8 +518,9 @@ protected:
       particle_one_properties[PropertiesIndex::dp];
 
     // Rolling resistance torque
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::no_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    no_resistance)
       rolling_resistance_torque = no_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -527,8 +529,9 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::constant_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    constant_resistance)
       rolling_resistance_torque = constant_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -537,8 +540,8 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::viscous_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::viscous_resistance)
       rolling_resistance_torque = viscous_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -667,8 +670,9 @@ protected:
 
 
     // Rolling resistance torque
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::no_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    no_resistance)
       rolling_resistance_torque = no_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -677,8 +681,9 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::constant_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    constant_resistance)
       rolling_resistance_torque = constant_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -687,8 +692,8 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::viscous_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::viscous_resistance)
       rolling_resistance_torque = viscous_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -810,8 +815,9 @@ protected:
 
 
     // Rolling resistance torque
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::no_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    no_resistance)
       rolling_resistance_torque = no_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -820,8 +826,9 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::constant_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    constant_resistance)
       rolling_resistance_torque = constant_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -830,8 +837,8 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::viscous_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::viscous_resistance)
       rolling_resistance_torque = viscous_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -946,8 +953,9 @@ protected:
 
 
     // Rolling resistance torque
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::no_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    no_resistance)
       rolling_resistance_torque = no_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -956,8 +964,9 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::constant_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::RollingResistanceMethod::
+                    constant_resistance)
       rolling_resistance_torque = constant_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -966,8 +975,8 @@ protected:
           particle_one_type, particle_two_type)],
         normal_force.norm(),
         normal_unit_vector);
-    if (this->rolling_resistance_model ==
-        RollingResistanceTorqueModel::viscous_rolling_resistance)
+    if constexpr (rolling_friction_model ==
+                  Parameters::Lagrangian::viscous_resistance)
       rolling_resistance_torque = viscous_rolling_resistance_torque(
         this->effective_radius,
         particle_one_properties,
@@ -1005,14 +1014,13 @@ private:
   // Normal and tangential contact forces, tangential and rolling torques,
   // normal unit vector of the contact and contact relative velocity in the
   // normal direction
-  Tensor<1, 3>                 normal_unit_vector;
-  Tensor<1, 3>                 normal_force;
-  Tensor<1, 3>                 tangential_force;
-  Tensor<1, 3>                 particle_one_tangential_torque;
-  Tensor<1, 3>                 particle_two_tangential_torque;
-  Tensor<1, 3>                 rolling_resistance_torque;
-  double                       normal_relative_velocity_value;
-  RollingResistanceTorqueModel rolling_resistance_model;
+  Tensor<1, 3> normal_unit_vector;
+  Tensor<1, 3> normal_force;
+  Tensor<1, 3> tangential_force;
+  Tensor<1, 3> particle_one_tangential_torque;
+  Tensor<1, 3> particle_two_tangential_torque;
+  Tensor<1, 3> rolling_resistance_torque;
+  double       normal_relative_velocity_value;
 };
 
 #endif /* particle_particle_contact_force_h */
