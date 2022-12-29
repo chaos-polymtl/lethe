@@ -129,24 +129,26 @@ Moving solid object
 
 The sluice gate which prevents the particle from floating is made of a 3D surface mesh of a flat wall. This is handled using the solid objects parameters. We insert one solid object which is generated using GMSH. To parametrize the motion of the sluice gate, we set its translational velocity to :math:`\mathbf{v}=[0,1,0]^T \forall t \in [0.5,0.7]s` and we keep it static otherwise. This ensures that the sluice gate moves upward between 0.5 and 0.7s and stops moving afterwards. To ensure maximal computational efficiency, it is important to minimize the number of triangles used in the surface meshes that represent moving objects.
 
-subsection solid objects
-  set number of solids = 1
-  subsection solid object 0
-    subsection mesh
-      set type               = gmsh
-      set file name          = square.msh
-      set simplex            = true
-      set initial refinement = 0
-    end
+.. code-block:: text
 
-    subsection translational velocity
-      set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
-    end
-    subsection angular velocity
-      set Function expression = 0 ; 0  ; 0
+  subsection solid objects
+  set number of solids = 1
+    subsection solid object 0
+      subsection mesh
+        set type               = gmsh
+        set file name          = square.msh
+        set simplex            = true
+        set initial refinement = 0
+      end
+  
+      subsection translational velocity
+        set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
+      end
+      subsection angular velocity
+        set Function expression = 0 ; 0  ; 0
+      end
     end
   end
-end
 
 
 Simulation control
@@ -178,7 +180,7 @@ The simulation is launched using a single input file for the insertion of the pa
 
 
 .. note::
- This example needs a simulation time of approximately 20 minutes on 8 processors using an 12th Gen Intel(R) Core(TM) i9-12900K
+ This example needs a simulation time of approximately 10 minutes on 8 processors using an 12th Gen Intel(R) Core(TM) i9-12900K
 
 Results
 ---------
@@ -187,10 +189,9 @@ The following movie displays the dam-break flow
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/F-uo2lzhObk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="840" height="472"  src="https://www.youtube.com/embed/v32ZqxO2X98" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 The following image compares the final repose angle of the particles with the results of Evangelista et al. We note the good agreement between the two. Evangelista et al. also found experimentally that the particle height profile varied from :math:`0.2m` at :math:`x=0.4m` to :math:`\approx 0.025m` at :math:`x=0.8m` which is in good agreement with what we observe here.
-
 
 .. image:: images/final_granular_profile.png
     :alt: Height profile comparison
@@ -200,6 +201,7 @@ Possibilities for extension
 ----------------------------
 
 - Study the impact of the friction and rolling friction coefficients on the dam-break flow.
+- Increase the height of the bed and try to reproduce the other experiments of Evangelista et al.
 - Use smaller particles and reproduce the full experiment of Evagenlista et al.
 
 
