@@ -78,11 +78,11 @@ The particles are mono-dispersed with a radius of 0.005 m and a density of 2560 
     set restitution coefficient wall = 0.9
     set friction coefficient wall    = 0.5
     set rolling friction wall        = 0.3
-  
   end
 
-  Model parameters
-~~~~~~~~~~~~~~~~~
+
+Model parameters
+~~~~~~~~~~~~~~~~~~~~
 
 In this example, we use the ``frequent`` load balancing method to ensure that the divion of the domain amongst the various processing cores follow the particles.
 
@@ -122,6 +122,32 @@ An insertion box is defined inside the rectangular box. 60 000 particles are ins
     set insertion random number range                  = 0.025
     set insertion random number seed                   = 19
   end
+
+
+Moving solid object
+----------------------------
+
+The sluice gate which prevents the particle from floating is made of a 3D surface mesh of a flat wall. This is handled using the solid objects parameters. We insert one solid object which is generated using GMSH. To parametrize the motion of the sluice gate, we set its translational velocity to :math:`\mathbf{v}=[0,1,0]^T \forall t \in [0.5,0.7]s` and we keep it static otherwise. This ensures that the sluice gate moves upward between 0.5 and 0.7s and stops moving afterwards. To ensure maximal computational efficiency, it is important to minimize the number of triangles used in the surface meshes that represent moving objects.
+
+subsection solid objects
+  set number of solids = 1
+  subsection solid object 0
+    subsection mesh
+      set type               = gmsh
+      set file name          = square.msh
+      set simplex            = true
+      set initial refinement = 0
+    end
+
+    subsection translational velocity
+      set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
+    end
+    subsection angular velocity
+      set Function expression = 0 ; 0  ; 0
+    end
+  end
+end
+
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
