@@ -1,9 +1,9 @@
 // Define a variable
 
 lc = 1;
-H=0.2;
-W=0.1;
-x0=0.1;
+H=0.5;
+W=0.4;
+x0=0.6;
 
 
 Point(0) = {x0, 0, 0, lc};
