@@ -201,7 +201,7 @@ Possibilities for extension
 ----------------------------
 
 - Study the impact of the friction and rolling friction coefficients on the dam-break flow.
-- Increase the height of the bed and try to reproduce the other experiments of Evangelista et al.
+- Increase the height of the bed to 0.3m, 0.4m or 0.5m and try to reproduce the other experiments of Evangelista et al.
 - Use smaller particles and reproduce the full experiment of Evagenlista et al.
 
 
