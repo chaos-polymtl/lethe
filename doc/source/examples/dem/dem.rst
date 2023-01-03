@@ -2,7 +2,7 @@
 Discrete Element Method
 ****************************
 
-We organize the DEM examples from the simplest to the most complicated example. 
+We organize the DEM examples from the simplest to the most complicated example: 
 
 
 .. toctree::
