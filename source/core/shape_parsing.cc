@@ -142,7 +142,8 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
   std::vector<double>         shape_arguments;
   if (type == "rbf")
     {
-      if (file_name == "1") // Default case
+      if (file_name == "1") // Default case. This is the default argument for
+        // shapes defined in the parameter file.
         {
           // Default weight, support radius, basis function, x, y
           shape_arguments = {2.0, 1.0, 2.0, 0.0, 0.0};
