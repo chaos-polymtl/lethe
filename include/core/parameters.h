@@ -620,6 +620,9 @@ namespace Parameters
     // Prefix for the convective heat flux output
     std::string convective_flux_output_name;
 
+    // Prefix for the nitsche heat flux output
+    std::string nitsche_flux_output_name;
+
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 

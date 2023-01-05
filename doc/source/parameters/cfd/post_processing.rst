@@ -53,6 +53,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate heat flux              = false
     set heat flux name                   = heat_flux
     set convective flux name             = convective_flux
+    set nitsche flux name             = nitsche_heat_flux
 
   end
  
@@ -132,12 +133,17 @@ This subsection controls the post-processing other than the forces and torque on
 
         Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
-    * ``heat flux name``: output filename for temperature statistics calculations.
+    * ``heat flux name``: output filename for heat flux calculations.
 
     .. admonition:: Example of heat flux table:
 
         .. code-block:: text
 
-             time   bc_0    bc_1       thermal_energy_fluid_1 
+             time   bc_0    bc_1                heat_flux 
             0.0000 64.0000  0.6400               0.0313 
             0.2000  3.6963  0.0976               0.6965 
+    
+    * ``nitsche flux name``: output filename for heat flux calculations on a Nitsche immersed boundary
+
+
+        

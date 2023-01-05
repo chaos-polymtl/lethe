@@ -104,17 +104,19 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
 
               const auto &cell = particle->get_surrounding_cell();
 
-              double h_cell = 0;
-              if (dim == 2)
-                h_cell =
-                  std::sqrt(4. * cell->measure() / M_PI) /
-                  this->simulation_parameters.fem_parameters.velocity_order;
-              else if (dim == 3)
-                h_cell =
-                  pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                  this->simulation_parameters.fem_parameters.velocity_order;
+              // double h_cell = 0;
+              // if (dim == 2)
+              //   h_cell =
+              //     std::sqrt(4. * cell->measure() / M_PI) /
+              //     this->simulation_parameters.fem_parameters.velocity_order;
+              // else if (dim == 3)
+              //   h_cell =
+              //     pow(6 * cell->measure() / M_PI, 1. / 3.) /
+              //     this->simulation_parameters.fem_parameters.velocity_order;
+              //  Penalty parameter is disabled for heat transfer from since we
+              //  don't necessarily want to strictly impose a Dirichlet BC
               const double penalty_parameter =
-                1. / std::pow(h_cell * h_cell, double(dim) / double(dim));
+                1.; /// std::pow(h_cell * h_cell, double(dim) / double(dim));
               const auto &dh_cell =
                 typename DoFHandler<dim>::cell_iterator(*cell,
                                                         &this->dof_handler);
@@ -153,12 +155,10 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
                       else
                         {
                           // Regular residual
-                          local_rhs(i) +=
-                            -rho_cp * penalty_parameter * beta * temperature *
-                              this->fe->shape_value(i, ref_q) * JxW +
-                            rho_cp * penalty_parameter * beta *
-                              solid_temperature->value(real_q, 0) *
-                              this->fe->shape_value(i, ref_q) * JxW;
+                          local_rhs(i) += rho_cp * penalty_parameter * beta *
+                                          (solid_temperature->value(real_q, 0) -
+                                           temperature) *
+                                          this->fe->shape_value(i, ref_q) * JxW;
                         }
                     }
                 }
@@ -175,6 +175,106 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
           this->system_matrix.compress(VectorOperation::add);
           this->system_rhs.compress(VectorOperation::add);
         }
+    }
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
+{
+  auto solids = *this->multiphysics->get_solids(
+    this->simulation_parameters.nitsche->number_solids);
+  std::vector<double> heat_flux_on_nitsche_ib_vector(solids.size(), 0);
+
+  // Loops over solids
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      // Initialize the solid and its particles
+      std::shared_ptr<Particles::ParticleHandler<dim>> &solid_ph =
+        solids[i_solid]->get_solid_particle_handler();
+      double heat_flux_on_nitsche_bc = 0;
+
+      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+            ->enable_heat_bc)
+        {
+          const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+
+          std::vector<types::global_dof_index> heat_dof_indices(dofs_per_cell);
+          FullMatrix<double>     local_matrix(dofs_per_cell, dofs_per_cell);
+          dealii::Vector<double> local_rhs(dofs_per_cell);
+
+          Function<dim> *solid_temperature =
+            solids[i_solid]->get_solid_temperature();
+
+          // Penalization terms
+          const double beta =
+            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+              ->beta_heat;
+
+          // Loop over all local particles
+          auto particle = solid_ph->begin();
+          while (particle != solid_ph->end())
+            {
+              local_matrix = 0;
+              local_rhs    = 0;
+
+              const auto &cell = particle->get_surrounding_cell();
+
+              const auto &dh_cell =
+                typename DoFHandler<dim>::cell_iterator(*cell,
+                                                        &this->dof_handler);
+              dh_cell->get_dof_indices(heat_dof_indices);
+
+              const auto pic = solid_ph->particles_in_cell(cell);
+              Assert(pic.begin() == particle, ExcInternalError());
+              for (const auto &p : pic)
+                {
+                  double      temperature = 0;
+                  const auto &ref_q       = p.get_reference_location();
+                  const auto &real_q      = p.get_location();
+                  const auto &JxW         = p.get_properties()[0];
+
+                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                    {
+                      // Get the temperature at non-quadrature point (particle
+                      // in fluid)
+                      temperature +=
+                        this->present_solution[heat_dof_indices[k]] *
+                        this->fe->shape_value(k, ref_q);
+                    }
+                  // Calculate heat flux on the Nitsche IB
+                  heat_flux_on_nitsche_bc +=
+                    beta * (solid_temperature->value(real_q, 0) - temperature) *
+                    JxW;
+                }
+              particle = pic.end();
+            }
+        }
+      heat_flux_on_nitsche_ib_vector[i_solid] =
+        Utilities::MPI::sum(heat_flux_on_nitsche_bc,
+                            triangulation->get_communicator());
+    }
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Heat flux on nitsche immersed boundary : " << std::endl;
+      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+        {
+          this->pcout << "\t Nitsche boundary " << i_solid << " : "
+                      << heat_flux_on_nitsche_ib_vector[i_solid] << std::endl;
+        }
+    }
+
+  // Filling table
+  this->nitsche_flux_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      this->nitsche_flux_table.add_value(
+        "bc_" + Utilities::int_to_string(i_solid, 1),
+        heat_flux_on_nitsche_ib_vector[i_solid]);
     }
 }
 
@@ -714,6 +814,10 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_heat_flux(domain_name);
+
+
+      if (this->simulation_parameters.nitsche->number_solids > 0)
+        postprocess_heat_flux_on_nitsche_ib();
     }
 }
 
@@ -1740,6 +1844,16 @@ HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
           simulation_parameters.simulation_control.output_folder +
           simulation_parameters.post_processing.convective_flux_output_name +
           "_" + domain_name + ".dat";
+        std::ofstream output(filename.c_str());
+
+        this->convective_flux_table.write_text(output);
+      }
+
+      {
+        std::string filename =
+          simulation_parameters.simulation_control.output_folder +
+          simulation_parameters.post_processing.nitsche_flux_output_name + "_" +
+          domain_name + ".dat";
         std::ofstream output(filename.c_str());
 
         this->convective_flux_table.write_text(output);

@@ -402,6 +402,17 @@ private:
                               const VectorType &current_solution_fd);
 
   /**
+   * Post-processing. Calculate the heat flux in the Nitsche immersed boundary
+   *
+   * @param i_solid identifier of the nitsche solid
+   *
+   * @return The heat flux (in W) on the nitsche solid identified by i_solid
+   *
+   */
+  void
+  postprocess_heat_flux_on_nitsche_ib();
+
+  /**
    * Post-processing. Calculate the thermal energy (rho*Cp*T) in a fluid domain.
    *
    * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
@@ -524,6 +535,10 @@ private:
   // The convective flux table contains the convective heat flux on a boundary:
   // h(T-T_inf)
   TableHandler convective_flux_table;
+
+  // The Nitsche flux table contains the total fluxes on the nitsche immersed
+  // boundaries
+  TableHandler nitsche_flux_table;
 };
 
 

@@ -701,10 +701,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
   this->setup_dofs();
 
-  this->set_initial_condition(
-    this->simulation_parameters.initial_condition->type,
-    this->simulation_parameters.restart_parameters.restart);
-
   // Solid setup
   if (!this->simulation_parameters.restart_parameters.restart)
     {
@@ -721,7 +717,18 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
               output_solid_triangulation(i_solid);
             }
         }
+      if constexpr (dim == spacedim)
+        {
+          // Parse the nitsche solids to the multiphysics interface
+          this->multiphysics->set_solid(&solids);
+        }
     }
+
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
+
+
 
   // Time integration
   while (this->simulation_control->integrate())
