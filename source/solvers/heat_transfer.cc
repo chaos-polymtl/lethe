@@ -56,17 +56,17 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
     RequiresConstantViscosity("assemble_nitsche_heat_restriction"));
 
   // Evaluate fluid properties
-  auto density_model =
-    this->simulation_parameters.physical_properties_manager.get_density();
-  auto specific_heat_model =
-    this->simulation_parameters.physical_properties_manager.get_specific_heat();
-  auto conductivity_model =
-    this->simulation_parameters.physical_properties_manager
-      .get_thermal_conductivity();
-  std::map<field, double> field_values;
+  // auto density_model =
+  //  this->simulation_parameters.physical_properties_manager.get_density();
+  // auto specific_heat_model =
+  //  this->simulation_parameters.physical_properties_manager.get_specific_heat();
+  // auto conductivity_model =
+  //  this->simulation_parameters.physical_properties_manager
+  //    .get_thermal_conductivity();
+  // std::map<field, double> field_values;
 
-  double rho_cp = density_model->value(field_values) *
-                  specific_heat_model->value(field_values);
+  // double rho_cp = density_model->value(field_values) *
+  //                 specific_heat_model->value(field_values);
 
   auto solids = *this->multiphysics->get_solids(
     this->simulation_parameters.nitsche->number_solids);
@@ -147,7 +147,7 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
                           for (unsigned int j = 0; j < dofs_per_cell; ++j)
                             {
                               local_matrix(i, j) +=
-                                rho_cp * penalty_parameter * beta *
+                                penalty_parameter * beta *
                                 this->fe->shape_value(i, ref_q) *
                                 this->fe->shape_value(j, ref_q) * JxW;
                             }
@@ -155,7 +155,7 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
                       else
                         {
                           // Regular residual
-                          local_rhs(i) += rho_cp * penalty_parameter * beta *
+                          local_rhs(i) += penalty_parameter * beta *
                                           (solid_temperature->value(real_q, 0) -
                                            temperature) *
                                           this->fe->shape_value(i, ref_q) * JxW;
@@ -376,8 +376,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  HeatTransferScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  HeatTransferScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -522,8 +522,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  HeatTransferScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  HeatTransferScratchData<dim>                         &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -751,18 +751,15 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       gather_vof = true;
       switch (monitored_fluid)
         {
-          default:
-            {
+            default: {
               domain_name = "entire_domain";
               break;
             }
-          case Parameters::FluidIndicator::fluid0:
-            {
+            case Parameters::FluidIndicator::fluid0: {
               domain_name = "fluid_0";
               break;
             }
-          case Parameters::FluidIndicator::fluid1:
-            {
+            case Parameters::FluidIndicator::fluid1: {
               domain_name = "fluid_1";
               break;
             }
@@ -1141,7 +1138,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              update_values | update_JxW_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *        dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            phase_values(n_q_points);
 
@@ -1340,7 +1337,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                       update_values);
 
   // Initialize VOF information
-  DoFHandler<dim> *                  dof_handler_vof = NULL;
+  DoFHandler<dim>                   *dof_handler_vof = NULL;
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
   std::vector<double>                phase_values(n_q_points_face);
 
@@ -1375,8 +1372,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
 
   switch (properties_manager.get_number_of_fluids())
     {
-      default:
-        {
+        default: {
           // Get values for monophase flow
           const auto density_model = properties_manager.get_density();
           const auto specific_heat_model =
@@ -1390,8 +1386,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
 
           break;
         }
-      case 2:
-        {
+        case 2: {
           // Get prm values for multiphase flow - will be blended in the
           // integration loop
           const auto density_models = properties_manager.get_density_vector();
@@ -1617,7 +1612,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   const bool                       gather_vof,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
-  const VectorType &               current_solution_fd)
+  const VectorType                &current_solution_fd)
 {
   const unsigned int n_q_points       = this->cell_quadrature->size();
   const MPI_Comm     mpi_communicator = this->dof_handler.get_communicator();
@@ -1641,7 +1636,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                              update_values);
 
   // Initialize VOF information
-  const DoFHandler<dim> *        dof_handler_vof = NULL;
+  const DoFHandler<dim>         *dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
   std::vector<double>            phase_values(n_q_points);
 
@@ -1673,8 +1668,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
 
   switch (properties_manager.get_number_of_fluids())
     {
-      default:
-        {
+        default: {
           // Get values for monophase flow
           const auto density_model = properties_manager.get_density();
           const auto specific_heat_model =
@@ -1685,8 +1679,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
 
           break;
         }
-      case 2:
-        {
+        case 2: {
           // Get prm values for multiphase flow - will be blended in the
           // integration loop
           const auto density_models = properties_manager.get_density_vector();
@@ -1873,15 +1866,13 @@ HeatTransfer<dim>::set_phase_coefficient(
 
   switch (monitored_fluid)
     {
-      default:
-        {
+        default: {
           // Parameters::FluidIndicator::both
           phase_coefficient               = 1.;
           point_is_in_postprocessed_fluid = true;
           break;
         }
-      case Parameters::FluidIndicator::fluid0:
-        {
+        case Parameters::FluidIndicator::fluid0: {
           if (gather_vof)
             {
               phase_coefficient = 1. - phase_value_q;
@@ -1897,8 +1888,7 @@ HeatTransfer<dim>::set_phase_coefficient(
             }
           break;
         }
-      case Parameters::FluidIndicator::fluid1:
-        {
+        case Parameters::FluidIndicator::fluid1: {
           if (gather_vof)
             {
               phase_coefficient = phase_value_q;
