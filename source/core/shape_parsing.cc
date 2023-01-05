@@ -142,16 +142,11 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
   std::vector<double>         shape_arguments;
   if (type == "rbf")
     {
-      if (file_name == "1") // Default case. This is the default argument for
-        // shapes defined in the parameter file.
-        {
-          // Default weight, support radius, basis function, x, y
-          shape_arguments = {2.0, 1.0, 2.0, 0.0, 0.0};
-          if constexpr (dim == 3)
-            // and z
-            shape_arguments.insert(shape_arguments.end(), 0.0);
-        }
-      else
+      bool default_case = (file_name == "1"); // Default case. This is the
+                                              // default argument for
+                                              // shapes defined in the parameter
+                                              // file.
+      if (!default_case)
         {
           // The following lines retrieve information regarding an RBF
           // with a given file name. Then, it converts the information
@@ -180,6 +175,14 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
           shape_arguments.insert(shape_arguments.end(),
                                  rbf_data["node_z"].begin(),
                                  rbf_data["node_z"].end());
+        }
+      else
+        {
+          // Default weight, support radius, basis function, x, y
+          shape_arguments = {2.0, 1.0, 2.0, 0.0, 0.0};
+          if constexpr (dim == 3)
+            // and z
+            shape_arguments.insert(shape_arguments.end(), 0.0);
         }
       shape =
         std::make_shared<RBFShape<dim>>(shape_arguments, position, orientation);
