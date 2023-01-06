@@ -33,7 +33,7 @@ Transient iteration : 2        Time : 0.005    Time step : 0.0025   CFL : 0.0758
    Number of degrees of freedom: 10824
    Volume of triangulation:      1600
 particle 0 position 5 0.7755 5
-particle 0 velocity 0.02604 -8.392 -0.01619
+particle 0 velocity 0.02605 -8.392 -0.01618
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
@@ -47,7 +47,7 @@ Transient iteration : 3        Time : 0.0075   Time step : 0.0025   CFL : 0.0676
    Number of degrees of freedom: 8304
    Volume of triangulation:      1600
 particle 0 position 5 0.7555 5
-particle 0 velocity 0.03056 -8.008 -0.007426
+particle 0 velocity 0.03056 -8.008 -0.007425
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+

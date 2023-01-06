@@ -1,4 +1,5 @@
 #include <core/ib_particle.h>
+#include <core/shape_parsing.h>
 
 #include <cfloat>
 
@@ -158,69 +159,21 @@ void
 IBParticle<dim>::initialize_shape(const std::string         type,
                                   const std::vector<double> shape_arguments)
 {
-  if (type == "sphere")
-    shape =
-      std::make_shared<Sphere<dim>>(shape_arguments[0], position, orientation);
-  else if (type == "rectangle")
-    {
-      Tensor<1, dim> half_lengths;
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          half_lengths[i] = shape_arguments[i];
-        }
-      shape =
-        std::make_shared<Rectangle<dim>>(half_lengths, position, orientation);
-    }
-  else if (type == "ellipsoid")
-    {
-      Tensor<1, dim> radii;
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          radii[i] = shape_arguments[i];
-        }
-      shape = std::make_shared<Ellipsoid<dim>>(radii, position, orientation);
-    }
-  else if (type == "torus")
-    {
-      if constexpr (dim == 3)
-        shape = std::make_shared<Torus<dim>>(shape_arguments[0],
-                                             shape_arguments[1],
-                                             position,
-                                             orientation);
-    }
-  else if (type == "cone")
-    {
-      if constexpr (dim == 3)
-        shape = std::make_shared<Cone<dim>>(shape_arguments[0],
-                                            shape_arguments[1],
-                                            position,
-                                            orientation);
-    }
-  else if (type == "cut hollow sphere")
-    {
-      if constexpr (dim == 3)
-        shape = std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
-                                                       shape_arguments[1],
-                                                       shape_arguments[2],
+  shape = ShapeGenerator::initialize_shape_from_vector(type,
+                                                       shape_arguments,
                                                        position,
                                                        orientation);
-    }
-  else if (type == "death star")
-    {
-      if constexpr (dim == 3)
-        shape = std::make_shared<DeathStar<dim>>(shape_arguments[0],
-                                                 shape_arguments[1],
-                                                 shape_arguments[2],
-                                                 position,
-                                                 orientation);
-    }
-  else if (type == "rbf")
-    {
-      shape =
-        std::make_shared<RBFShape<dim>>(shape_arguments, position, orientation);
-    }
-  else
-    StandardExceptions::ExcNotImplemented();
+}
+
+template <int dim>
+void
+IBParticle<dim>::initialize_shape(const std::string type,
+                                  const std::string raw_arguments)
+{
+  shape = ShapeGenerator::initialize_shape(type,
+                                           raw_arguments,
+                                           position,
+                                           orientation);
 }
 
 template <int dim>
@@ -286,10 +239,10 @@ IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
 
 template <int dim>
 void
-IBParticle<dim>::set_orientation(const Tensor<1, 3> orientation)
+IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 {
-  this->orientation = orientation;
-  this->shape->set_orientation(this->orientation);
+  this->orientation = new_orientation;
+  this->shape->set_orientation(new_orientation);
 }
 
 template <int dim>

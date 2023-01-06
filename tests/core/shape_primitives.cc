@@ -1,6 +1,5 @@
 /**
- * @brief Tests the shape representation.
- *
+ * @brief Tests the primitive shapes representation.
  */
 
 // Lethe
@@ -20,6 +19,7 @@ test()
   Tensor<1, 3>              half_lengths({1., 1., 3.});
   double                    tan_theta = 2.;
   double                    height    = 1.5;
+  double                    pitch     = 1;
   Point<3>                  position({0., 0., 0.});
   Tensor<1, 3>              orientation({0., 0., 0.});
   std::shared_ptr<Shape<3>> sphere =
@@ -36,6 +36,14 @@ test()
     radius, height, thickness, position, orientation);
   std::shared_ptr<Shape<3>> death_star = std::make_shared<DeathStar<3>>(
     radius, radius, thickness, position, orientation);
+  std::shared_ptr<Shape<3>> cylinder =
+    std::make_shared<Cylinder<3>>(radius, 0.5 * height, position, orientation);
+  std::shared_ptr<Shape<3>> cylindrical_tube =
+    std::make_shared<CylindricalTube<3>>(
+      0.5 * radius, radius, 0.5 * height, position, orientation);
+  std::shared_ptr<Shape<3>> cylindrical_helix =
+    std::make_shared<CylindricalHelix<3>>(
+      radius, 0.3 * radius, height, pitch, position, orientation);
 
 
   deallog << "Testing value" << std::endl;
@@ -48,11 +56,16 @@ test()
   deallog << " Cone , SD = " << cone->value(p) << std::endl;
   deallog << " Cut Hollow Sphere , SD = " << cut_sphere->value(p) << std::endl;
   deallog << " Death Star , SD = " << death_star->value(p) << std::endl;
+  deallog << " Cylinder , SD = " << cylinder->value(p) << std::endl;
+  deallog << " Cylindrical Tube , SD = " << cylindrical_tube->value(p)
+          << std::endl;
+  deallog << " Cylindrical Helix , SD = " << cylindrical_helix->value(p)
+          << std::endl;
   deallog << "OK" << std::endl;
 
   deallog << "Testing rotation and translation" << std::endl;
   // Only on one shape: rectangle
-  Tensor<1, 3> rotation({1., 0.5, 0.});
+  Tensor<1, 3> rotation({-1., -0.5, -0.});
   Point<3>     translation({0.2, 0., 0.3});
   rectangle->set_orientation(rotation);
   rectangle->set_position(translation);

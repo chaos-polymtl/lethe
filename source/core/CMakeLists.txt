@@ -18,6 +18,7 @@ add_library(lethe-core
   sdirk.cc
   serial_solid.cc
   shape.cc
+  shape_parsing.cc
   simulation_control.cc
   solid_base.cc
   solid_objects_parameters.cc
@@ -56,6 +57,7 @@ add_library(lethe-core
   ../../include/core/sdirk.h
   ../../include/core/serial_solid.h
   ../../include/core/shape.h
+  ../../include/core/shape_parsing.h
   ../../include/core/simulation_control.h
   ../../include/core/solid_base.h
   ../../include/core/solid_objects_parameters.h

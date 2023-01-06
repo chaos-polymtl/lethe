@@ -15,6 +15,8 @@
  */
 #include <core/shape.h>
 
+#include <deal.II/grid/manifold_lib.h>
+
 template <int dim>
 double
 Shape<dim>::displaced_volume(const double /*fluid_density*/)
@@ -53,7 +55,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
       if (std::abs(theta[2]) > 1e-10)
         {
           Tensor<2, 2> rotation_matrix =
-            Physics::Transformations::Rotations::rotation_matrix_2d(theta[2]);
+            Physics::Transformations::Rotations::rotation_matrix_2d(-theta[2]);
 
           // Multiplication
           centralized_rotated.clear();
@@ -78,7 +80,7 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
               axis[i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
-                  axis, theta[i]);
+                  axis, -theta[i]);
 
               // Multiplication
               centralized_rotated.clear();
@@ -136,6 +138,13 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
 }
 
 template <int dim>
+std::shared_ptr<Manifold<dim - 1, dim>>
+Shape<dim>::get_shape_manifold()
+{
+  return std::make_shared<FlatManifold<dim - 1, dim>>();
+}
+
+template <int dim>
 std::shared_ptr<Shape<dim>>
 Sphere<dim>::static_copy() const
 {
@@ -158,6 +167,13 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
 #else
   return sphere_function->gradient(evaluation_point);
 #endif
+}
+
+template <int dim>
+std::shared_ptr<Manifold<dim - 1, dim>>
+Sphere<dim>::get_shape_manifold()
+{
+  return std::make_shared<SphericalManifold<dim - 1, dim>>(this->position);
 }
 
 template <int dim>
@@ -456,10 +472,50 @@ double
 CompositeShape<dim>::value(const Point<dim> &evaluation_point,
                            const unsigned int /*component*/) const
 {
-  double levelset = std::numeric_limits<double>::max();
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  // We align and center the evaluation point according to the shape referential
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  // The levelset value of all constituent shapes is computed
+  std::map<unsigned int, double> components_value;
+  for (auto const &[component_id, component] : constituents)
     {
-      levelset = std::min(elem->value(evaluation_point), levelset);
+      components_value[component_id] = component->value(centered_point);
+    }
+
+  // The boolean operations between the shapes are applied in order
+  // The last computed levelset value is considered to be the right value
+  double levelset = components_value[0];
+  for (auto const &[operation_id, op_triplet] : operations)
+    {
+      BooleanOperation operation;
+      unsigned int     first_id;
+      unsigned int     second_id;
+      std::tie(operation, first_id, second_id) = op_triplet;
+
+      double value_first_component, value_second_component;
+      value_first_component  = components_value.at(first_id);
+      value_second_component = components_value.at(second_id);
+      switch (operation)
+        {
+          case BooleanOperation::Union:
+            components_value[operation_id] =
+              std::min(value_first_component, value_second_component);
+            break;
+          case BooleanOperation::Difference:
+            // We substract the first component to the second
+            components_value[operation_id] =
+              std::max(-value_first_component, value_second_component);
+            break;
+          case BooleanOperation::Intersection:
+            components_value[operation_id] =
+              std::max(value_first_component, value_second_component);
+            break;
+          default:
+            throw std::logic_error(
+              "The BooleanOperation isn't supported. Either it is not supported "
+              "yet or it is simply not valid.");
+        }
+      levelset = components_value[operation_id];
     }
   return levelset;
 }
@@ -471,11 +527,45 @@ CompositeShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  double levelset = std::numeric_limits<double>::max();
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  // We align and center the evaluation point according to the shape referential
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  // The levelset value of all component shapes is computed
+  std::map<unsigned int, double> components_value;
+  for (auto const &[component_id, component] : constituents)
     {
-      levelset =
-        std::min(elem->value_with_cell_guess(evaluation_point, cell), levelset);
+      components_value[component_id] =
+        component->value_with_cell_guess(centered_point, cell);
+    }
+
+  // The boolean operations between the shapes are applied in order
+  // The last computed levelset value is considered to be the right value
+  double levelset = components_value[0];
+  for (auto const &[operation_id, op_triplet] : operations)
+    {
+      BooleanOperation operation;
+      unsigned int     first_id;
+      unsigned int     second_id;
+      std::tie(operation, first_id, second_id) = op_triplet;
+
+      double value_first_component, value_second_component;
+      value_first_component  = components_value.at(first_id);
+      value_second_component = components_value.at(second_id);
+      switch (operation)
+        {
+          case BooleanOperation::Union:
+            components_value[operation_id] =
+              std::min(value_first_component, value_second_component);
+            break;
+          case BooleanOperation::Difference:
+            components_value[operation_id] =
+              std::max(-value_first_component, value_second_component);
+            break;
+          default: // BooleanOperation::Intersection
+            components_value[operation_id] =
+              std::max(value_first_component, value_second_component);
+        }
+      levelset = components_value[operation_id];
     }
   return levelset;
 }
@@ -484,21 +574,9 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 CompositeShape<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<CompositeShape<dim>>(this->components);
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<CompositeShape<dim>>(
+    constituents, operations, this->position, this->orientation);
   return copy;
-}
-
-template <int dim>
-double
-CompositeShape<dim>::displaced_volume(const double fluid_density)
-{
-  double solid_volume = 0;
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
-    {
-      solid_volume += elem->displaced_volume(fluid_density);
-    }
-  return solid_volume;
 }
 
 template <int dim>
@@ -507,16 +585,16 @@ CompositeShape<dim>::update_precalculations(
   DoFHandler<dim> &             updated_dof_handler,
   std::shared_ptr<Mapping<dim>> mapping)
 {
-  for (const std::shared_ptr<Shape<dim>> &elem : components)
+  for (auto const &[component_id, component] : constituents)
     {
-      if (typeid(*elem) == typeid(RBFShape<dim>))
+      if (typeid(*component) == typeid(RBFShape<dim>))
         {
-          std::static_pointer_cast<RBFShape<dim>>(elem)->update_precalculations(
-            updated_dof_handler, mapping);
+          std::static_pointer_cast<RBFShape<dim>>(component)
+            ->update_precalculations(updated_dof_handler, mapping);
         }
-      else if (typeid(*elem) == typeid(CompositeShape<dim>))
+      else if (typeid(*component) == typeid(CompositeShape<dim>))
         {
-          std::static_pointer_cast<CompositeShape<dim>>(elem)
+          std::static_pointer_cast<CompositeShape<dim>>(component)
             ->update_precalculations(updated_dof_handler, mapping);
         }
     }
@@ -921,6 +999,348 @@ RBFShape<dim>::reset_iterable_nodes(
     iterable_nodes.swap(nodes_id);
 }
 
+template <int dim>
+double
+Cylinder<dim>::value(const Point<dim> &evaluation_point,
+                     const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+
+  double p_radius    = std::pow(centered_point[0] * centered_point[0] +
+                               centered_point[1] * centered_point[1],
+                             0.5);
+  double radius_diff = p_radius - radius;
+  double h_diff      = abs(centered_point[2]) - half_length;
+
+  if (radius_diff > 0 && h_diff > 0)
+    return std::pow(radius_diff * radius_diff + h_diff * h_diff, 0.5);
+  else if (radius_diff <= 0 && h_diff > 0)
+    return h_diff;
+  else if (radius_diff > 0 && h_diff <= 0)
+    return radius_diff;
+
+  return std::max(radius_diff, h_diff);
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+Cylinder<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<Cylinder<dim>>(
+    this->radius, this->half_length, this->position, this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+Cylinder<dim>::displaced_volume(const double /*fluid_density*/)
+{
+  using numbers::PI;
+  double solid_volume = PI * radius * radius * half_length * 2;
+
+  return solid_volume;
+}
+
+template <int dim>
+double
+CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
+                            const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+
+  // external cylinder
+  double level_set_of_cylinder_hallow = 0;
+  double p_radius      = std::pow(centered_point[0] * centered_point[0] +
+                               centered_point[1] * centered_point[1],
+                             0.5);
+  double radius_diff_o = p_radius - (radius + rectangular_base / 2);
+  double radius_diff_i = p_radius - (radius - rectangular_base / 2);
+  double h_diff_o      = abs(centered_point[2] - height / 2) - height / 2;
+
+  if (radius_diff_o > 0 && h_diff_o > 0)
+    level_set_of_cylinder_hallow =
+      std::pow(radius_diff_o * radius_diff_o + h_diff_o * h_diff_o, 0.5);
+  else if (radius_diff_o > 0 && h_diff_o <= 0)
+    level_set_of_cylinder_hallow = radius_diff_o;
+  else if (radius_diff_o <= 0 && radius_diff_i > 0 && h_diff_o > 0)
+    level_set_of_cylinder_hallow = h_diff_o;
+  else if (radius_diff_i <= 0 && h_diff_o > 0)
+    level_set_of_cylinder_hallow =
+      std::pow(radius_diff_i * radius_diff_i + h_diff_o * h_diff_o, 0.5);
+  else if (radius_diff_i <= 0 && h_diff_o <= 0)
+    level_set_of_cylinder_hallow = -radius_diff_i;
+  else
+    level_set_of_cylinder_hallow =
+      std::max(std::max(radius_diff_o, h_diff_o), -radius_diff_i);
+
+  return level_set_of_cylinder_hallow;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+CylindricalTube<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<CylindricalTube<dim>>(this->radius + rectangular_base / 2,
+                                           this->radius - rectangular_base / 2,
+                                           this->height,
+                                           this->position,
+                                           this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+CylindricalTube<dim>::displaced_volume(const double /*fluid_density*/)
+{
+  using numbers::PI;
+  double solid_volume = height * PI *
+                        ((this->radius + rectangular_base / 2) *
+                           (this->radius + rectangular_base / 2) -
+                         (this->radius - rectangular_base / 2) *
+                           (this->radius - rectangular_base / 2));
+
+  return solid_volume;
+}
+
+
+template <int dim>
+double
+CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
+                             const unsigned int /*component*/) const
+{
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+  // The evaluation proposed in this function is exact close to the helix but
+  // far away above or bellow the helix some error may happen since the wrong
+  // helix loop may be evaluated.
+
+  // Distance to the center of the helix
+  // First we find a good initial guess for the non linear resolution.
+  double phase = std::atan2(centered_point[1], centered_point[0]);
+  if (phase != phase)
+    phase = 0;
+  if (phase < 0)
+    phase = phase + 2 * numbers::PI;
+
+  // Some calculation to find a good initial guess
+  double nb_turns     = height / pitch;
+  double phase_at_top = (nb_turns - std::floor(nb_turns)) * 2 * numbers::PI;
+  double x            = centered_point[2] - phase * pitch / (2 * numbers::PI);
+
+  // Initialize the parametric variable t for the helix
+  double t               = 0;
+  double t_initial_guess = 0;
+
+  // We select two initial guess for which we do the full computation. Both
+  // point have the same phase as the point we are evaluating one is above on
+  // the helix the other bellow. We keep the closest one.
+  t_initial_guess = std::floor(x / pitch) * 2 * numbers::PI + phase;
+
+  // Solve the non-linear equation to find the point on the helix with the first
+  // guess
+  double level_set_tube = 0;
+  t                     = t_initial_guess;
+  double residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+                    (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+                    (pitch / (2 * numbers::PI) * t - centered_point[2]) *
+                      pitch / (2 * numbers::PI);
+
+  unsigned int i = 0;
+
+  // Newton iterations.
+  while (abs(residual) > 1e-8 && i < 20)
+    {
+      residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+                 (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+                 (pitch / (2 * numbers::PI) * t - centered_point[2]) * pitch /
+                   (2 * numbers::PI);
+      double dr_dt = centered_point[0] * cos(t) * radius +
+                     centered_point[1] * sin(t) * radius +
+                     (pitch / (2 * numbers::PI)) * (pitch / (2 * numbers::PI));
+      t = t - residual / dr_dt;
+      i += 1;
+    }
+  // Cap the value of the parametric variable t and find the point.
+  if (t > nb_turns * numbers::PI * 2)
+    {
+      t = nb_turns * numbers::PI * 2;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube    = (centered_point - point_on_helix).norm();
+    }
+  else if (t < 0)
+    {
+      t = 0;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+
+      level_set_tube = (centered_point - point_on_helix).norm();
+    }
+  else
+    {
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube = (centered_point - point_on_helix).norm() - radius_disk;
+    }
+
+  // repeat for second guess
+  double level_set_tube_2 = 0;
+  t                       = t_initial_guess + 2 * numbers::PI;
+  residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+             (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+             (pitch / (2 * numbers::PI) * t - centered_point[2]) * pitch /
+               (2 * numbers::PI);
+
+  i = 0;
+  while (abs(residual) > 1e-8 && i < 20)
+    {
+      residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +
+                 (radius * sin(t) - centered_point[1]) * cos(t) * radius +
+                 (pitch / (2 * numbers::PI) * t - centered_point[2]) * pitch /
+                   (2 * numbers::PI);
+      double dr_dt = centered_point[0] * cos(t) * radius +
+                     centered_point[1] * sin(t) * radius +
+                     (pitch / (2 * numbers::PI)) * (pitch / (2 * numbers::PI));
+      t = t - residual / dr_dt;
+      i += 1;
+    }
+
+  if (t > nb_turns * numbers::PI * 2)
+    {
+      t = nb_turns * numbers::PI * 2;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube_2  = (centered_point - point_on_helix).norm();
+    }
+  else if (t < 0)
+    {
+      t = 0;
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+
+      level_set_tube_2 = (centered_point - point_on_helix).norm();
+    }
+  else
+    {
+      Point<dim> point_on_helix;
+      point_on_helix[0] = radius * cos(t);
+      point_on_helix[1] = radius * sin(t);
+      point_on_helix[2] = t * pitch / (2 * numbers::PI);
+      level_set_tube_2 = (centered_point - point_on_helix).norm() - radius_disk;
+    }
+
+  // Keep the best guess
+  level_set_tube = std::min(level_set_tube, level_set_tube_2);
+
+  // Cap the helix with a plane at each end. Cap at the base.
+  Point<dim>     point_at_base;
+  Tensor<1, dim> vector_at_base;
+  point_at_base[0]  = radius;
+  point_at_base[1]  = 0;
+  point_at_base[2]  = 0;
+  vector_at_base[0] = 0;
+  vector_at_base[1] = -radius;
+  vector_at_base[2] = -pitch / (2 * numbers::PI);
+
+  double p_radius_cap_base =
+    ((centered_point - point_at_base) -
+     scalar_product((centered_point - point_at_base), vector_at_base) /
+       vector_at_base.norm_square() * vector_at_base)
+      .norm();
+  double radial_distance_cap_base = p_radius_cap_base - radius_disk;
+  double h_dist_from_cap_0 =
+    (scalar_product((centered_point - point_at_base), vector_at_base) /
+     vector_at_base.norm_square() * vector_at_base)
+      .norm();
+
+  double dist_from_cap = 0;
+  if (radial_distance_cap_base > 0)
+    dist_from_cap =
+      std::pow(h_dist_from_cap_0 * h_dist_from_cap_0 +
+                 radial_distance_cap_base * radial_distance_cap_base,
+               0.5);
+  else
+    dist_from_cap = h_dist_from_cap_0;
+
+  // Cap the helix with a plane at each end. The cap at the top.
+  Point<dim>     point_at_top;
+  Tensor<1, dim> vector_at_top;
+  point_at_top[0]  = std::cos(phase_at_top) * radius;
+  point_at_top[1]  = std::sin(phase_at_top) * radius;
+  point_at_top[2]  = height;
+  vector_at_top[0] = -point_at_top[1];
+  vector_at_top[1] = point_at_top[0];
+  vector_at_top[2] = pitch / (2 * numbers::PI);
+
+  double p_radius_cap_top =
+    ((centered_point - point_at_top) -
+     scalar_product((centered_point - point_at_top), vector_at_top) /
+       vector_at_top.norm_square() * vector_at_top)
+      .norm();
+  double radial_distance_cap_top = p_radius_cap_top - radius_disk;
+  double h_dist_from_cap_top =
+    (scalar_product((centered_point - point_at_top), vector_at_top) /
+     vector_at_top.norm_square() * vector_at_top)
+      .norm();
+
+  double dist_from_cap_top = 0;
+  if (radial_distance_cap_top > 0)
+    dist_from_cap_top =
+      std::pow(h_dist_from_cap_top * h_dist_from_cap_top +
+                 radial_distance_cap_top * radial_distance_cap_top,
+               0.5);
+  else
+    dist_from_cap_top = h_dist_from_cap_top;
+
+  // Do the union of the helix and the cap.
+  double level_set = 0;
+  if (level_set_tube > 0)
+    level_set =
+      std::min(std::min(level_set_tube, dist_from_cap), dist_from_cap_top);
+  else
+    level_set =
+      std::max(std::max(level_set_tube, -dist_from_cap_top), -dist_from_cap);
+
+  return level_set;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+CylindricalHelix<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<CylindricalHelix<dim>>(this->radius,
+                                            this->radius_disk,
+                                            this->height,
+                                            this->pitch,
+                                            this->position,
+                                            this->orientation);
+  return copy;
+}
+
+template <int dim>
+double
+CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
+{
+  using numbers::PI;
+  double solid_volume = 1;
+
+  return solid_volume;
+}
+
 template class Sphere<2>;
 template class Sphere<3>;
 template class Rectangle<2>;
@@ -929,6 +1349,9 @@ template class Ellipsoid<2>;
 template class Ellipsoid<3>;
 template class Torus<3>;
 template class Cone<3>;
+template class Cylinder<3>;
+template class CylindricalTube<3>;
+template class CylindricalHelix<3>;
 template class CutHollowSphere<3>;
 template class DeathStar<3>;
 template class CompositeShape<2>;
