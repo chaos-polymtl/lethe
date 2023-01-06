@@ -19,7 +19,7 @@ Files used in this example
 ----------------------------
 
 - Parameters file for the problem (H=20cm): ``examples/dem/3d-dam-break/granular-dam-break.prm``
-- Parameters file for the H=40cm bed: ``examples/dem/3d-dam-break/granular-dam-break.prm``
+- Parameters file for the H=40cm bed: ``examples/dem/3d-dam-break/granular-dam-break-H-40cm.prm``
 - GMSH geo file: ``examples/dem/3d-dam-break/square.geo``
 - GMSH mesh file: ``examples/dem/3d-dam-break/square.msh``
 
@@ -153,7 +153,7 @@ The sluice gate which prevents the particle from floating is made of a 3D surfac
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation runs for 2 seconds of real time. We output the simulation results ever 1k iterations.
+The simulation runs for 2 seconds of real time. We output the simulation results ever 500 iterations.
 
 .. code-block:: text
 
