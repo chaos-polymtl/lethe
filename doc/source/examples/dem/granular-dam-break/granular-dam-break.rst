@@ -153,7 +153,7 @@ The sluice gate which prevents the particle from floating is made of a 3D surfac
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation runs for 2 seconds of real time. We output the simulation results ever 500 iterations.
+The simulation runs for 2 seconds of real time. We output the simulation results every 500 iterations.
 
 .. code-block:: text
 
