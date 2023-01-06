@@ -1980,9 +1980,9 @@ namespace Parameters
       "type",
       "sphere",
       Patterns::Selection(
-        "sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star|rbf"),
+        "sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|composite"),
       "The type of shape considered."
-      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cut hollow sphere|death star|rbf>."
+      "Choices are <sphere|rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|composite>."
       "The parameter for a sphere is: radius. "
       "The parameters for a rectangle are, in order: x half length,"
       "y half length, z half length."
@@ -1992,11 +1992,19 @@ namespace Parameters
       "torus thickness radius. "
       "The parameters for a cone are, in order: tan(base angle),"
       " height. "
+      "The parameters for a cylinder are, in order: radius, half-length."
+      "It is aligned to the z axis by default."
+      "The parameters for a cylindrical tube are, in order: inside radius,"
+      "outside radius, half-length. It is aligned to the z axis by default."
+      "The parameters for a cylindrical helix are, in order: helix radius,"
+      "tube radius, helix total height, pitch (height between two consecutive "
+      "loops)."
       "The parameters for a cut hollow sphere are, in order: sphere radius,"
       "cut thickness, wall thickness. "
       "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers."
-      "The parameter for an rbf is the file name.");
+      "The parameter for an rbf is the file name."
+      "The parameter for a composite is the file name.");
     prm.declare_entry("shape arguments",
                       "1",
                       Patterns::Anything(),
@@ -2338,57 +2346,7 @@ namespace Parameters
 
           std::string shape_type          = prm.get("type");
           std::string shape_arguments_str = prm.get("shape arguments");
-          std::vector<std::string> shape_arguments_str_list(
-            Utilities::split_string_list(shape_arguments_str, ";"));
-          std::vector<double> shape_arguments;
-          if (shape_type == "rbf")
-            {
-              if (shape_arguments_str == "1") // Default case
-                {
-                  // Default weight, support radius, basis function, x, y
-                  shape_arguments = {2.0, 1.0, 2.0, 0.0, 0.0};
-                  if constexpr (dim == 3)
-                    // and z
-                    shape_arguments.insert(shape_arguments.end(), 0.0);
-                }
-              else
-                {
-                  // The following lines retrieve information regarding an RBF
-                  // with a given file name. Then, it converts the information
-                  // into one vector which is used to initialize the RBF shape.
-                  // All the information is concatenated into only one object so
-                  // that the usual initialization function can be called.
-                  std::string shape_name = shape_arguments_str_list[0];
-                  std::map<std::string, std::vector<double>> rbf_data;
-                  fill_vectors_from_file(rbf_data, shape_name, " ");
-                  size_t number_of_nodes = rbf_data["weight"].size();
-                  shape_arguments.reserve((dim + 3) * number_of_nodes);
-                  shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["weight"].begin(),
-                                         rbf_data["weight"].end());
-                  shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["support_radius"].begin(),
-                                         rbf_data["support_radius"].end());
-                  shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["basis_function"].begin(),
-                                         rbf_data["basis_function"].end());
-                  shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["node_x"].begin(),
-                                         rbf_data["node_x"].end());
-                  shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["node_y"].begin(),
-                                         rbf_data["node_y"].end());
-                  shape_arguments.insert(shape_arguments.end(),
-                                         rbf_data["node_z"].begin(),
-                                         rbf_data["node_z"].end());
-                }
-            }
-          else
-            {
-              shape_arguments =
-                Utilities::string_to_double(shape_arguments_str_list);
-            }
-          particles[i].initialize_shape(shape_type, shape_arguments);
+          particles[i].initialize_shape(shape_type, shape_arguments_str);
 
           particles[i].radius = particles[i].shape->effective_radius;
 
@@ -2409,91 +2367,6 @@ namespace Parameters
         }
       prm.leave_subsection();
     }
-  }
-
-  template <int dim>
-  void
-  IBParticles<dim>::initialize_shape(const unsigned int        i,
-                                     const std::string         type,
-                                     const std::vector<double> shape_arguments)
-  {
-    if (type == "sphere")
-      particles[i].shape =
-        std::make_shared<Sphere<dim>>(shape_arguments[0],
-                                      particles[i].position,
-                                      particles[i].orientation);
-    else if (type == "rectangle")
-      {
-        Tensor<1, dim> half_lengths;
-        for (unsigned int i = 0; i < dim; ++i)
-          {
-            half_lengths[i] = shape_arguments[i];
-          }
-        particles[i].shape =
-          std::make_shared<Rectangle<dim>>(half_lengths,
-                                           particles[i].position,
-                                           particles[i].orientation);
-      }
-    else if (type == "ellipsoid")
-      {
-        Tensor<1, dim> radii;
-        for (unsigned int i = 0; i < dim; ++i)
-          {
-            radii[i] = shape_arguments[i];
-          }
-        particles[i].shape =
-          std::make_shared<Ellipsoid<dim>>(radii,
-                                           particles[i].position,
-                                           particles[i].orientation);
-      }
-    else if (type == "torus")
-      {
-        if constexpr (dim == 3)
-
-          particles[i].shape =
-            std::make_shared<Torus<dim>>(shape_arguments[0],
-                                         shape_arguments[1],
-                                         particles[i].position,
-                                         particles[i].orientation);
-      }
-    else if (type == "cone")
-      {
-        if constexpr (dim == 3)
-          particles[i].shape =
-            std::make_shared<Cone<dim>>(shape_arguments[0],
-                                        shape_arguments[1],
-                                        particles[i].position,
-                                        particles[i].orientation);
-      }
-    else if (type == "cut hollow sphere")
-      {
-        if constexpr (dim == 3)
-          particles[i].shape =
-            std::make_shared<CutHollowSphere<dim>>(shape_arguments[0],
-                                                   shape_arguments[1],
-                                                   shape_arguments[2],
-                                                   particles[i].position,
-                                                   particles[i].orientation);
-      }
-    else if (type == "death star")
-      {
-        if constexpr (dim == 3)
-          particles[i].shape =
-            std::make_shared<DeathStar<dim>>(shape_arguments[0],
-                                             shape_arguments[1],
-                                             shape_arguments[2],
-                                             particles[i].position,
-                                             particles[i].orientation);
-      }
-    else if (type == "rbf")
-      {
-        particles[i].shape =
-          std::make_shared<RBFShape<dim>>(shape_arguments,
-                                          particles[i].position,
-                                          particles[i].orientation);
-      }
-    else
-      StandardExceptions::ExcNotImplemented();
   }
 
   void

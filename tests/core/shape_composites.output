@@ -1,0 +1,16 @@
+
+DEAL::Beginning
+DEAL::Testing value
+DEAL:: Union , SD = -0.515918
+DEAL:: Difference , SD = 0.515918
+DEAL:: Intersection , SD = 0.00000
+DEAL::OK
+DEAL::Testing copy and translation
+DEAL:: Position of original composite[0] = 0.00000
+DEAL:: Position of original composite[1] = 0.00000
+DEAL:: Position of original composite[2] = 0.00000
+DEAL:: Translation of copy composite
+DEAL:: Position of copy composite[0] = 0.200000
+DEAL:: Position of copy composite[1] = 0.00000
+DEAL:: Position of copy composite[2] = 0.300000
+DEAL::OK

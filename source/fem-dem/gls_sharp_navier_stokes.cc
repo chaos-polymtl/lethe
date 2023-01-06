@@ -712,6 +712,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // computational domain.
                   if (nb_dof_inside == 0)
                     {
+                      // Create a vector to approximate the normal of the cell
+                      // to orient the projection of the face.
+                      Tensor<1, dim> approximate_surface_cell_normal;
                       // Projects the face on the surface of the IB. This
                       // creates a surface cell where we can evaluate the
                       // solution. Define the triangulation of the surface cell.
@@ -721,6 +724,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           Point<dim> vertex_projection;
                           particles[p].closest_surface_point(
                             local_face->vertex(i), vertex_projection, cell);
+                          approximate_surface_cell_normal +=
+                            (local_face->vertex(i) - vertex_projection) /
+                            ((local_face->vertex(i) - vertex_projection)
+                               .norm() +
+                             DBL_MIN);
 
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)
@@ -731,11 +739,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // Create the connectivity of the vertices of the cell
                           local_face_cell_data[0].vertices[i] = i;
                         }
+                      approximate_surface_cell_normal =
+                        approximate_surface_cell_normal / vertices_per_face;
 
                       local_face_cell_data[0].material_id = 0;
 
-                      SphericalManifold<dim - 1, dim> sphere_manifold(
-                        particles[p].position);
                       local_face_projection_triangulation =
                         Triangulation<dim - 1, dim>();
                       // Create a dof handler that contains the triangulation of
@@ -748,7 +756,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       local_face_projection_triangulation.set_all_manifold_ids(
                         0);
                       local_face_projection_triangulation.set_manifold(
-                        0, sphere_manifold);
+                        0, *particles[p].shape->get_shape_manifold());
 
                       local_face_dof_handler.reinit(
                         local_face_projection_triangulation);
@@ -1040,8 +1048,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               // since we dont control the orientation of the
                               // cell.
                               normal_vector =
-                                (q_points[q] - particles[p].position) /
-                                (q_points[q] - particles[p].position).norm();
+                                fe_face_projection_values.normal_vector(q);
+                              if (scalar_product(
+                                    normal_vector,
+                                    approximate_surface_cell_normal) < 0)
+                                normal_vector = -normal_vector;
 
                               fluid_viscous_stress = 0;
                               fluid_pressure       = 0;
@@ -1086,6 +1097,24 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                 fe_face_projection_values.JxW(q);
 
                               auto force = viscous_force + pressure_force;
+
+                              if (force != force)
+                                {
+                                  // The force is nan; this happens when the
+                                  // face projection is a line. This generally
+                                  // happens when the surface on which the force
+                                  // is evaluated is perfectly flat and aligned
+                                  // with the mesh. Since the area associated
+                                  // with this face projection is zero, we set
+                                  // the local force contribution to zero.
+                                  force          = 0;
+                                  viscous_force  = 0;
+                                  pressure_force = 0;
+                                }
+                              if (force.norm() > 0)
+                                {
+                                  nb_evaluation += local_weight;
+                                }
 
                               if (force.norm() > 0)
                                 {
@@ -1193,7 +1222,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
       all_shapes.push_back(particle.shape);
     }
   std::shared_ptr<Shape<dim>> combined_shapes =
-    std::make_shared<CompositeShape<dim>>(all_shapes);
+    std::make_shared<CompositeShape<dim>>(all_shapes, Point<dim>(), Point<3>());
 
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);

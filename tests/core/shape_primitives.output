@@ -8,6 +8,9 @@ DEAL:: Torus , SD = 0.896586
 DEAL:: Cone , SD = 1.27456
 DEAL:: Cut Hollow Sphere , SD = 0.315918
 DEAL:: Death Star , SD = 1.27344
+DEAL:: Cylinder , SD = 0.00000
+DEAL:: Cylindrical Tube , SD = -0.280625
+DEAL:: Cylindrical Helix , SD = 0.202481
 DEAL::OK
 DEAL::Testing rotation and translation
 DEAL:: New distance for rectangle , SD = 0.141370

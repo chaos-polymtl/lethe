@@ -22,8 +22,11 @@
 #else
 #  include <deal.II/base/function_signed_distance.h>
 #endif
+
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/physics/transformations.h>
 
@@ -55,6 +58,9 @@ public:
     ellipsoid,
     torus,
     cone,
+    cylinder,
+    cylindrical_tube,
+    cylindrical_helix,
     cut_hollow_sphere,
     death_star,
     composite_shape,
@@ -117,6 +123,13 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int                                   component = 0);
 
+
+  /**
+   * @brief Return the manifold of the shape by default the manifold is always Flat.
+   */
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
+  get_shape_manifold();
+
   /**
    * @brief Return a pointer to a copy of the Shape
    */
@@ -130,7 +143,7 @@ public:
    * @param fluid_density The density of the fluid that is displaced
    */
   virtual double
-  displaced_volume(const double fluid_density) = 0;
+  displaced_volume(const double fluid_density);
 
   /**
    * @brief
@@ -139,9 +152,9 @@ public:
    * @param The new position the shape will be placed at
    */
   inline virtual void
-  set_position(const Point<dim> &position)
+  set_position(const Point<dim> &new_position)
   {
-    this->position = position;
+    position = new_position;
   }
 
   /**
@@ -151,9 +164,9 @@ public:
    * @param The new orientation the shape will be set at
    */
   inline virtual void
-  set_orientation(const Tensor<1, 3> &orientation)
+  set_orientation(const Tensor<1, 3> &new_orientation)
   {
-    this->orientation = orientation;
+    orientation = new_orientation;
   }
 
   /**
@@ -241,6 +254,12 @@ public:
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
+   */
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
+  get_shape_manifold() override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -603,31 +622,82 @@ private:
 };
 
 /**
- * @class Composite Shapes are currently used only to output the signed distance
- * of particles in the GLS Sharp Navier Stokes solver. The class was however
- * designed so that specific composite shapes could be defined through the
- * parameter file, although this functionality has not been implemented yet.
+ * @class This class was designed so that specific composite shapes could be
+ * defined through the parameter file. Boolean operations such as union,
+ * difference, and intersection are allowed.
  * @tparam dim Dimension of the shape
  */
 template <int dim>
 class CompositeShape : public Shape<dim>
 {
 public:
+  enum class BooleanOperation : int
+  {
+    Union,
+    Difference,
+    Intersection,
+  };
+
   /**
    * @brief Constructs an assembly of shapes into a composite shape
-   * @param components The shapes from which this composite sphere will be composed
+   * @param constituents The shapes from which this composite shape will be composed
+   * @param operations The list of operations to perform to construct the composite
    */
-  CompositeShape<dim>(std::vector<std::shared_ptr<Shape<dim>>> components)
-    : Shape<dim>(0.,
-                 components[0]->get_position(),
-                 components[0]->get_orientation())
-    , components(components)
+  CompositeShape<dim>(
+    std::map<unsigned int, std::shared_ptr<Shape<dim>>> constituents,
+    std::map<unsigned int,
+             std::tuple<BooleanOperation, unsigned int, unsigned int>>
+                        operations,
+    const Point<dim> &  position,
+    const Tensor<1, 3> &orientation)
+    : Shape<dim>(0., position, orientation)
+    , constituents(constituents)
+    , operations(operations)
   {
     // Calculation of the effective radius
-    for (const std::shared_ptr<Shape<dim>> &elem : components)
+    for (auto const &[component_id, component] : constituents)
       {
         this->effective_radius =
-          std::max(this->effective_radius, elem->effective_radius);
+          std::max(this->effective_radius, component->effective_radius);
+      }
+  }
+
+  /**
+   * @brief Constructs an assembly of shapes into a composite shape from a vector of shapes.
+   * This constructor is mainly used for outputting multiple shapes with a
+   * global levelset function defined as a union.
+   * @param constituents_vector The shapes from which this composite sphere will be composed
+   */
+  CompositeShape<dim>(
+    std::vector<std::shared_ptr<Shape<dim>>> constituents_vector,
+    const Point<dim> &                       position,
+    const Tensor<1, 3> &                     orientation)
+    : Shape<dim>(0., position, orientation)
+  {
+    size_t number_of_constituents = constituents_vector.size();
+
+    for (size_t i = 0; i < number_of_constituents; i++)
+      constituents[i] = constituents_vector[i];
+    if (number_of_constituents > 1)
+      {
+        // If there are at least two components, the first operation should
+        // always be a union of 0 and 1
+        operations[number_of_constituents] =
+          std::make_tuple(BooleanOperation::Union, 0, 1);
+        // We make the union until the before last component
+        for (size_t i = 1; i < number_of_constituents - 1; i++)
+          {
+            operations[i + number_of_constituents] =
+              std::make_tuple(BooleanOperation::Union,
+                              i + 1,
+                              i + number_of_constituents - 1);
+          }
+      }
+    // Calculation of the effective radius
+    for (auto const &[constituent_id, constituent] : constituents)
+      {
+        this->effective_radius =
+          std::max(this->effective_radius, constituent->effective_radius);
       }
   }
 
@@ -663,15 +733,6 @@ public:
   static_copy() const override;
 
   /**
-   * @brief
-   * Return the volume displaced by the solid
-   *
-   * @param fluid_density The density of the fluid that is displaced
-   */
-  double
-  displaced_volume(const double fluid_density) override;
-
-  /**
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
@@ -681,7 +742,17 @@ public:
                          std::shared_ptr<Mapping<dim>> mapping);
 
 private:
-  std::vector<std::shared_ptr<Shape<dim>>> components;
+  // The members of this class are all the constituent and operations that are
+  // to be performed to construct the composite shape
+  // This map link all primitive constituents of the composite shape to an id
+  std::map<unsigned int, std::shared_ptr<Shape<dim>>> constituents;
+  // This map links all operations between primitive constituents or
+  // intermediate constituents (resulting from each operation) to an id. The
+  // unsigned integers correspond to the first and second ids of the shapes used
+  // for an operation
+  std::map<unsigned int,
+           std::tuple<BooleanOperation, unsigned int, unsigned int>>
+    operations;
 };
 
 
@@ -1241,6 +1312,175 @@ public:
   std::vector<Point<dim>>       nodes_positions;
   std::vector<double>           support_radii;
   std::vector<RBFBasisFunction> basis_functions;
+};
+
+
+template <int dim>
+class Cylinder : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a cylinder aligned with the z axis
+   * @param radius the radius of the cylinder
+   * @param half_length the half-length of the cylinder
+   * @param position position of the barycenter of the cylinder
+   * @param orientation orientation of the cylinder
+   */
+  Cylinder<dim>(double              radius,
+                double              half_length,
+                const Point<dim> &  position,
+                const Tensor<1, 3> &orientation)
+    : Shape<dim>(radius, position, orientation)
+    , radius(radius)
+    , half_length(half_length)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double half_length;
+};
+
+template <int dim>
+class CylindricalTube : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a tube by boolean difference of two tubes aligned with
+   * the z axis when orientation is set to 0;0;0
+   * @param radius_inside the radius of the negative (inside) cylinder
+   * @param radius_outside the radius of the positive (outside) cylinder
+   * @param half_length the half-length of the cylinders
+   * @param position position of the barycenter of the cylinder
+   * @param orientation orientation of the cylinder
+   */
+  CylindricalTube<dim>(double              radius_inside,
+                       double              radius_outside,
+                       double              half_length,
+                       const Point<dim> &  position,
+                       const Tensor<1, 3> &orientation)
+    : Shape<dim>((radius_outside + radius_inside) / 2., position, orientation)
+    , radius((radius_outside + radius_inside) / 2.)
+    , height(half_length * 2.)
+    , rectangular_base(radius_outside - radius_inside)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double height;
+  double rectangular_base;
+};
+
+template <int dim>
+class CylindricalHelix : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructs a cylindrical helix by extruding a disk through a helicoidal path
+   * aligned with the z axis when orientation is set to 0;0;0
+   * @param radius_helix the radius of the helicoidal path
+   * @param radius_disk the radius of the disk that is extruded along the helicoidal
+   * path
+   * @param height the total height of the helicoidal path
+   * @param pitch the height difference between each helix loop around its axis
+   * @param position the position of the helix base
+   * @param orientation the orientation of the helix axis compared to the z axis
+   */
+  CylindricalHelix<dim>(double              radius_helix,
+                        double              radius_disk,
+                        double              height,
+                        double              pitch,
+                        const Point<dim> &  position,
+                        const Tensor<1, 3> &orientation)
+    : Shape<dim>(radius_disk, position, orientation)
+    , radius(radius_helix)
+    , height(height)
+    , pitch(pitch)
+    , radius_disk(radius_disk)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+private:
+  double radius;
+  double height;
+  double pitch;
+  double radius_disk;
 };
 
 #endif // lethe_shape_h
