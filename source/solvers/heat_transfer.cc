@@ -273,7 +273,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       this->nitsche_flux_table.add_value(
-        "bc_" + Utilities::int_to_string(i_solid, 1),
+        "solid_" + Utilities::int_to_string(i_solid, 1),
         heat_flux_on_nitsche_ib_vector[i_solid]);
     }
 }
@@ -1856,7 +1856,7 @@ HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
           domain_name + ".dat";
         std::ofstream output(filename.c_str());
 
-        this->convective_flux_table.write_text(output);
+        this->nitsche_flux_table.write_text(output);
       }
     }
 }
