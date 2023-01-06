@@ -213,7 +213,7 @@ Possibilities for extension
 - Change the height of the bed to 30cm or 50m and try to reproduce the other experiments of Evangelista et al.
 - Use smaller particles and reproduce the full experiment of Evagenlista et al.
 
-eference
+Reference
 ---------
 `[1] <https://www.researchgate.net/profile/Stefania-Evangelista/publication/268486214_Dam-break_dry_granular_flows_Experimental_and_numerical_analysis/links/54e2ff590cf2c3e7d2d523a6/Dam-break-dry-granular-flows-Experimental-and-numerical-analysis.pdf>`_ Evangelista, S, et al. "Dam-break dry granular flows: Experimental and numerical analysis." WSEAS Transactions on Environment and Development 10.41 (2014): 382-392.
  
