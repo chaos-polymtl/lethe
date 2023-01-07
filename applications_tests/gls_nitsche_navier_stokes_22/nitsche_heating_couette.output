@@ -3,12 +3,12 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      2
    Number of thermal degrees of freedom: 1089
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
-Thermal energy in entire_domain : 0
-Heat flux on nitsche immersed boundary : 
+Thermal energy in fluid : 0
+Heat flux at the nitsche immersed boundary : 
 	 Nitsche boundary 0 : 1000
 
 *****************************************************************
@@ -16,12 +16,12 @@ Steady iteration :        1/1
 *****************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.000255471
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : -0.973213
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
-Thermal energy in entire_domain : 1.48563
-Heat flux on nitsche immersed boundary : 
+Thermal energy in fluid : 1.48563
+Heat flux at the nitsche immersed boundary : 
 	 Nitsche boundary 0 : 0.973213
 cells error_velocity error_pressure 
  1024 0.000000e+00 - 0.000000e+00 - 
