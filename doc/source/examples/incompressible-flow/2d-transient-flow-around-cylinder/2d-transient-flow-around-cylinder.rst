@@ -46,7 +46,7 @@ This example uses a 2nd order backward differentiation (``method = bdf2``) for t
     subsection simulation control
       set method           = bdf2
       set output name      = cylinder-output
-      set output frequency = 1
+      set output frequency = 5
       set output path      = ./Re200/
       set time end         = 200.0
       set time step        = 0.05
