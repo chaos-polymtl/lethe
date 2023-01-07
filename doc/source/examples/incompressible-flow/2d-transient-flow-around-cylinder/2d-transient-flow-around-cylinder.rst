@@ -257,8 +257,8 @@ The obtained values of the drag and lift coefficients as well as the Strouhal nu
      - :math:`C_L`
      - :math:`S_t`
    * - Lethe example
-     - 1.392 :math:`\pm` 0.048
-     - -0.006 :math:`\pm` 0.072
+     - 1.396 :math:`\pm` 0.048
+     - -0.003 :math:`\pm` 0.072
      - 0.2
    * - Lethe Sharp `[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_
      - 1.395 :math:`\pm` 0.047

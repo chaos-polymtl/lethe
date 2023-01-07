@@ -6,17 +6,10 @@ import sys
 currentPath = sys.argv[1]
 
 filename = currentPath + '/force.00.dat'
+data=np.loadtxt(filename,skiprows=1)
 
-f = open(filename, 'r')
-
-lines = f.readlines()[2001:]
-
-data = np.empty((len(lines),4))
-for i in range(len(lines)):
-    data[i] = lines[i].split()
-
-CD = 2.0*data[:,1]
-CL = 2.0*data[:,2]
+CD = 2.0*data[2001:,1]
+CL = 2.0*data[2001:,2]
 
 averagedCD = np.mean(CD)
 averagedCL = np.mean(CL)
