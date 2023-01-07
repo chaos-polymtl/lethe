@@ -141,6 +141,19 @@ The Reynolds number must be high enough to capture a transient flow and study th
 
 .. code-block:: text
 
+  subsection physical properties
+    subsection fluid 0
+      set kinematic viscosity = 0.005
+    end
+  end
+
+Linear solver
+~~~~~~~~~~~~~~~~~~~
+
+For 2D problems, the AMG preconditioner is an adequate preconditioner. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
+
+.. code-block:: text
+
   subsection linear solver
     set verbosity                                 = verbose
     set method                                    = amg
@@ -151,17 +164,6 @@ The Reynolds number must be high enough to capture a transient flow and study th
     set amg preconditioner ilu relative tolerance = 1.00
   end
 
-Linear solver
-~~~~~~~~~~~~~~~~~~~
-
-For 2D problem such as this one, the AMG preconditioner from Trilinos is an ideal candidate. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
-.. code-block:: text
-
-    subsection physical properties
-      subsection fluid 0
-        set kinematic viscosity = 0.005
-      end
-    end
 
 Forces
 ~~~~~~
