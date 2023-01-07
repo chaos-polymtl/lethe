@@ -141,6 +141,22 @@ The Reynolds number must be high enough to capture a transient flow and study th
 
 .. code-block:: text
 
+  subsection linear solver
+    set verbosity                                 = verbose
+    set method                                    = amg
+    set relative residual                         = 1e-4
+    set minimum residual                          = 1e-8
+    set amg preconditioner ilu fill               = 0
+    set amg preconditioner ilu absolute tolerance = 1e-12
+    set amg preconditioner ilu relative tolerance = 1.00
+  end
+
+Linear solver
+~~~~~~~~~~~~~~~~~~~
+
+For 2D problem such as this one, the AMG preconditioner from Trilinos is an ideal candidate. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
+.. code-block:: text
+
     subsection physical properties
       subsection fluid 0
         set kinematic viscosity = 0.005
@@ -191,7 +207,7 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
 .. warning::
 
-  The estimated time to simulate 200 seconds is about 3 hours 45 minutes with 10 CPUs.
+  The estimated time to simulate 200 seconds is about 3 hours with 10 CPUs.
 
 Results
 -------
