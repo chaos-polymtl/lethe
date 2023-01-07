@@ -402,11 +402,7 @@ private:
                               const VectorType &current_solution_fd);
 
   /**
-   * Post-processing. Calculate the heat flux in the Nitsche immersed boundary
-   *
-   * @param i_solid identifier of the nitsche solid
-   *
-   * @return The heat flux (in W) on the nitsche solid identified by i_solid
+   * Post-processing. Calculate the heat flux in the Nitsche immersed boundary.
    *
    */
   void
@@ -455,6 +451,9 @@ private:
    * more information,
    * - a boolean: point_is_in_postprocessed_fluid, true if the quadrature point
    * is in the postprocessed_fluid (used for min_max_temperature calculation)
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
