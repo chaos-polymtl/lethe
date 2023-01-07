@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set output frequency        = 1
+  set output frequency        = 0
 end
 
 #---------------------------------------------------

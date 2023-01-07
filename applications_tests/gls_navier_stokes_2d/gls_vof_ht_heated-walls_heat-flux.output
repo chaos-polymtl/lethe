@@ -9,10 +9,10 @@ Temperature statistics on fluid_1 :
 	     Max : 3.94338
 	 Average : 0.151515
 	 Std-Dev : 0.69433
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 64
 	 boundary 1 : 0.64
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
 	 boundary 1 : 0
 Thermal energy in fluid_1 : 0.015625
@@ -27,10 +27,10 @@ Temperature statistics on fluid_1 :
 	     Max : 4.9604
 	 Average : 3.87484
 	 Std-Dev : 0.532331
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 2.39833
 	 boundary 1 : 0.0905848
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
 	 boundary 1 : 0
 Thermal energy in fluid_1 : 0.399593
@@ -46,10 +46,10 @@ Temperature statistics on fluid_1 :
 	     Max : 4.98783
 	 Average : 4.57062
 	 Std-Dev : 0.230306
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0.737056
 	 boundary 1 : -0.012363
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
 	 boundary 1 : 0
 Thermal energy in fluid_1 : 0.471345
@@ -65,10 +65,10 @@ Temperature statistics on fluid_1 :
 	     Max : 4.99373
 	 Average : 4.76612
 	 Std-Dev : 0.131429
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0.379891
 	 boundary 1 : -0.0720555
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
 	 boundary 1 : 0
 Thermal energy in fluid_1 : 0.491977
@@ -84,10 +84,10 @@ Temperature statistics on fluid_1 :
 	     Max : 4.99569
 	 Average : 4.83519
 	 Std-Dev : 0.0948586
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0.260893
 	 boundary 1 : -0.110035
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
 	 boundary 1 : 0
 Thermal energy in fluid_1 : 0.499108
@@ -103,10 +103,10 @@ Temperature statistics on fluid_1 :
 	     Max : 4.9965
 	 Average : 4.86434
 	 Std-Dev : 0.0789895
-Heat flux on heat transfer boundary conditions : 
+Total heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0.212121
 	 boundary 1 : -0.133064
-Convective flux on heat transfer boundary conditions : 
+Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
 	 boundary 1 : 0
 Thermal energy in fluid_1 : 0.502118

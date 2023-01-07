@@ -528,17 +528,11 @@ private:
   TableHandler statistics_table;
 
   // Post-processing table
-  // The heat flux table contains the total fluxes on a boundary: (-k grad T + u
-  // * rho * Cp) * n
+  // The heat flux table contains :
+  // - the total fluxes on a boundary: (-k grad T + u * rho * Cp) * n
+  // - the convective heat flux on a boundary: h(T-T_inf)
+  // - the total fluxes on the nitsche immersed boundaries (if active)
   TableHandler heat_flux_table;
-
-  // The convective flux table contains the convective heat flux on a boundary:
-  // h(T-T_inf)
-  TableHandler convective_flux_table;
-
-  // The Nitsche flux table contains the total fluxes on the nitsche immersed
-  // boundaries
-  TableHandler nitsche_flux_table;
 };
 
 
