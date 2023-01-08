@@ -52,7 +52,6 @@ This subsection controls the post-processing other than the forces and torque on
     set temperature statistics name      = temperature_statistics
     set calculate heat flux              = false
     set heat flux name                   = heat_flux
-    set convective flux name             = convective_flux
 
   end
  
@@ -109,35 +108,49 @@ This subsection controls the post-processing other than the forces and torque on
             0.0000 0.0000 3.9434  0.1515  0.6943 
             0.2000 2.5183 4.9390  3.3917  0.7229 
 
-* ``calculate heat flux``: controls if calculation of heat flux is enabled. If enabled, two quantities are postprocessed: 
-    * the total heat flux :math:`q_{tot}` for each :ref:`heat transfer bc` boundary condition. The total heat flux on a boundary :math:`\Gamma` is defined as:
+* ``calculate heat flux``: controls if calculation of heat flux is enabled. If enabled, these quantities are postprocessed: 
 
-    .. math:: 
+  .. warning::
 
-        q_{tot} = \int_\Gamma (\rho C_p \mathbf{u} T - k \nabla T) \cdot \mathbf{n}
+      Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
+  1. the total heat flux :math:`q_{tot}` for each :ref:`heat transfer bc` boundary condition. The total heat flux on a boundary :math:`\Gamma` is defined as:
 
-    The output table is appended with one column per boundary condition, named ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
+  .. math:: 
 
-    * the convective heat flux :math:`q_{conv}` for each :ref:`heat transfer bc` boundary condition. The convective heat flux on a boundary :math:`\Gamma` is defined as:
-
-    .. math:: 
-
-        q_{conv} = \int_\Gamma  h (T-T_\infty)
+      q_\text{tot} = \int_\Gamma (\rho C_p \mathbf{u} \mathbf{T} - k \nabla \mathbf{T}) \cdot \mathbf{n}
 
 
-    * the thermal energy (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
+  The output table is appended with one column per :ref:`heat transfer bc` boundary condition, named ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
 
-    .. warning::
+  2. the convective heat flux :math:`q_\text{conv}` for each :ref:`heat transfer bc` boundary condition. The convective heat flux on a boundary :math:`\Gamma` is defined as:
 
-        Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+  .. math:: 
 
-    * ``heat flux name``: output filename for temperature statistics calculations.
+      q_\text{conv} = \int_\Gamma  h (\mathbf{T}-\mathbf{T}_\infty)
+
+  The output table is appended with one column per :ref:`heat transfer bc` boundary condition, named ``bc_i`` where ``i`` is the index of the boundary in the parameter file.
+
+  3. the thermal energy (:math:`\mathbf{Q} = m c_p \mathbf{T}`) over the domain defined by ``postprocessed fluid``. 
+
+  4. if there is a :doc:`nitsche`, the total heat fluxes on each solid: :math:`q_\text{nitsche} = \beta_\text{heat} \left( \mathbf{T}_\text{nitsche} - \mathbf{T} \right)`
+
+  The output table is appended with one column per solid, named ``nitsche_solid_i`` where ``i`` is the index of the ``nitsche solid`` in the parameter file.
+
+  .. warning ::
+      
+      Do not forget to ``set enable heat boundary condition = true`` in the :doc:`nitsche` subsection of the ``.prm``.
+
+
+  * ``heat flux name``: output filename for heat flux calculations.
 
     .. admonition:: Example of heat flux table:
 
         .. code-block:: text
 
-             time   bc_0    bc_1       thermal_energy_fluid_1 
-            0.0000 64.0000  0.6400               0.0313 
-            0.2000  3.6963  0.0976               0.6965 
+		 time  total_flux_bc_0 convective_flux_bc_0 thermal_energy_fluid flux_nitsche_solid_0 
+		0.0000          0.0000               0.0000               0.0000            1000.0000 
+		1.0000         -0.9732               0.0000               1.4856               0.9732 
+
+
+        
