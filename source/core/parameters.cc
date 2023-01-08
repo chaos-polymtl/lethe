@@ -1130,6 +1130,11 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output for the convective flux");
 
+      prm.declare_entry("nitsche flux name",
+                        "nitsche_heat_flux",
+                        Patterns::FileName(),
+                        "File name output for the convective flux");
+
       prm.declare_entry("postprocessed fluid",
                         "both",
                         Patterns::Selection("fluid 0|fluid 1|both"),
@@ -1174,10 +1179,9 @@ namespace Parameters
       tracer_output_name          = prm.get("tracer statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
-      temperature_output_name     = prm.get("temperature statistics name");
-      calculate_heat_flux         = prm.get_bool("calculate heat flux");
-      heat_flux_output_name       = prm.get("heat flux name");
-      convective_flux_output_name = prm.get("convective flux name");
+      temperature_output_name = prm.get("temperature statistics name");
+      calculate_heat_flux     = prm.get_bool("calculate heat flux");
+      heat_flux_output_name   = prm.get("heat flux name");
 
 
       // Viscous dissipative fluid

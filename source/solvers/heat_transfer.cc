@@ -56,17 +56,17 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
     RequiresConstantViscosity("assemble_nitsche_heat_restriction"));
 
   // Evaluate fluid properties
-  auto density_model =
-    this->simulation_parameters.physical_properties_manager.get_density();
-  auto specific_heat_model =
-    this->simulation_parameters.physical_properties_manager.get_specific_heat();
-  auto conductivity_model =
-    this->simulation_parameters.physical_properties_manager
-      .get_thermal_conductivity();
-  std::map<field, double> field_values;
+  // auto density_model =
+  //  this->simulation_parameters.physical_properties_manager.get_density();
+  // auto specific_heat_model =
+  //  this->simulation_parameters.physical_properties_manager.get_specific_heat();
+  // auto conductivity_model =
+  //  this->simulation_parameters.physical_properties_manager
+  //    .get_thermal_conductivity();
+  // std::map<field, double> field_values;
 
-  double rho_cp = density_model->value(field_values) *
-                  specific_heat_model->value(field_values);
+  // double rho_cp = density_model->value(field_values) *
+  //                 specific_heat_model->value(field_values);
 
   auto solids = *this->multiphysics->get_solids(
     this->simulation_parameters.nitsche->number_solids);
@@ -104,17 +104,19 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
 
               const auto &cell = particle->get_surrounding_cell();
 
-              double h_cell = 0;
-              if (dim == 2)
-                h_cell =
-                  std::sqrt(4. * cell->measure() / M_PI) /
-                  this->simulation_parameters.fem_parameters.velocity_order;
-              else if (dim == 3)
-                h_cell =
-                  pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                  this->simulation_parameters.fem_parameters.velocity_order;
+              // double h_cell = 0;
+              // if (dim == 2)
+              //   h_cell =
+              //     std::sqrt(4. * cell->measure() / M_PI) /
+              //     this->simulation_parameters.fem_parameters.velocity_order;
+              // else if (dim == 3)
+              //   h_cell =
+              //     pow(6 * cell->measure() / M_PI, 1. / 3.) /
+              //     this->simulation_parameters.fem_parameters.velocity_order;
+              //  Penalty parameter is disabled for heat transfer from since we
+              //  don't necessarily want to strictly impose a Dirichlet BC
               const double penalty_parameter =
-                1. / std::pow(h_cell * h_cell, double(dim) / double(dim));
+                1.; /// std::pow(h_cell * h_cell, double(dim) / double(dim));
               const auto &dh_cell =
                 typename DoFHandler<dim>::cell_iterator(*cell,
                                                         &this->dof_handler);
@@ -124,18 +126,19 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
               Assert(pic.begin() == particle, ExcInternalError());
               for (const auto &p : pic)
                 {
-                  double      temperature = 0;
-                  const auto &ref_q       = p.get_reference_location();
-                  const auto &real_q      = p.get_location();
-                  const auto &JxW         = p.get_properties()[0];
+                  double      fluid_temperature = 0;
+                  const auto &ref_q             = p.get_reference_location();
+                  const auto &real_q            = p.get_location();
+                  const auto &JxW               = p.get_properties()[0];
 
                   for (unsigned int k = 0; k < dofs_per_cell; ++k)
                     {
-                      // Get the temperature at non-quadrature point (particle
-                      // in fluid)
+                      // Get the fluid temperature at non-quadrature point
+                      // (particle in fluid)
                       auto &evaluation_point = this->evaluation_point;
-                      temperature += evaluation_point[heat_dof_indices[k]] *
-                                     this->fe->shape_value(k, ref_q);
+                      fluid_temperature +=
+                        evaluation_point[heat_dof_indices[k]] *
+                        this->fe->shape_value(k, ref_q);
                     }
                   // Assemble the matrix or the rhs
                   for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -145,7 +148,7 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
                           for (unsigned int j = 0; j < dofs_per_cell; ++j)
                             {
                               local_matrix(i, j) +=
-                                rho_cp * penalty_parameter * beta *
+                                penalty_parameter * beta *
                                 this->fe->shape_value(i, ref_q) *
                                 this->fe->shape_value(j, ref_q) * JxW;
                             }
@@ -153,12 +156,10 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
                       else
                         {
                           // Regular residual
-                          local_rhs(i) +=
-                            -rho_cp * penalty_parameter * beta * temperature *
-                              this->fe->shape_value(i, ref_q) * JxW +
-                            rho_cp * penalty_parameter * beta *
-                              solid_temperature->value(real_q, 0) *
-                              this->fe->shape_value(i, ref_q) * JxW;
+                          local_rhs(i) += penalty_parameter * beta *
+                                          (solid_temperature->value(real_q, 0) -
+                                           fluid_temperature) *
+                                          this->fe->shape_value(i, ref_q) * JxW;
                         }
                     }
                 }
@@ -175,6 +176,106 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
           this->system_matrix.compress(VectorOperation::add);
           this->system_rhs.compress(VectorOperation::add);
         }
+    }
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
+{
+  auto solids = *this->multiphysics->get_solids(
+    this->simulation_parameters.nitsche->number_solids);
+  std::vector<double> heat_flux_on_nitsche_ib_vector(solids.size(), 0);
+
+  // Loops over solids
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      // Initialize the solid and its particles
+      std::shared_ptr<Particles::ParticleHandler<dim>> &solid_ph =
+        solids[i_solid]->get_solid_particle_handler();
+      double heat_flux_on_nitsche_bc = 0;
+
+      if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+            ->enable_heat_bc)
+        {
+          const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+
+          std::vector<types::global_dof_index> heat_dof_indices(dofs_per_cell);
+          FullMatrix<double>     local_matrix(dofs_per_cell, dofs_per_cell);
+          dealii::Vector<double> local_rhs(dofs_per_cell);
+
+          Function<dim> *solid_temperature =
+            solids[i_solid]->get_solid_temperature();
+
+          // Penalization terms
+          const double beta =
+            this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+              ->beta_heat;
+
+          // Loop over all local particles
+          auto particle = solid_ph->begin();
+          while (particle != solid_ph->end())
+            {
+              local_matrix = 0;
+              local_rhs    = 0;
+
+              const auto &cell = particle->get_surrounding_cell();
+
+              const auto &dh_cell =
+                typename DoFHandler<dim>::cell_iterator(*cell,
+                                                        &this->dof_handler);
+              dh_cell->get_dof_indices(heat_dof_indices);
+
+              const auto pic = solid_ph->particles_in_cell(cell);
+              Assert(pic.begin() == particle, ExcInternalError());
+              for (const auto &p : pic)
+                {
+                  double      fluid_temperature = 0;
+                  const auto &ref_q             = p.get_reference_location();
+                  const auto &real_q            = p.get_location();
+                  const auto &JxW               = p.get_properties()[0];
+
+                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                    {
+                      // Get the fluid temperature at non-quadrature point
+                      // (particle in fluid)
+                      fluid_temperature +=
+                        this->present_solution[heat_dof_indices[k]] *
+                        this->fe->shape_value(k, ref_q);
+                    }
+                  // Calculate heat flux on the Nitsche IB
+                  heat_flux_on_nitsche_bc +=
+                    beta *
+                    (solid_temperature->value(real_q, 0) - fluid_temperature) *
+                    JxW;
+                }
+              particle = pic.end();
+            }
+        }
+      heat_flux_on_nitsche_ib_vector[i_solid] =
+        Utilities::MPI::sum(heat_flux_on_nitsche_bc,
+                            triangulation->get_communicator());
+    }
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Heat flux at the nitsche immersed boundary : "
+                  << std::endl;
+      for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+        {
+          this->pcout << "\t Nitsche boundary " << i_solid << " : "
+                      << heat_flux_on_nitsche_ib_vector[i_solid] << std::endl;
+        }
+    }
+
+  // Filling table
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      this->heat_flux_table.add_value("flux_nitsche_solid_" +
+                                        Utilities::int_to_string(i_solid, 1),
+                                      heat_flux_on_nitsche_ib_vector[i_solid]);
     }
 }
 
@@ -641,7 +742,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.post_processing.postprocessed_fluid;
   // default: monophase simulations
-  std::string domain_name("entire_domain");
+  std::string domain_name("fluid");
   bool        gather_vof(false);
 
   if (this->simulation_parameters.physical_properties_manager
@@ -653,7 +754,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         {
           default:
             {
-              domain_name = "entire_domain";
+              domain_name = "fluid";
               break;
             }
           case Parameters::FluidIndicator::fluid0:
@@ -709,6 +810,9 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                               *multiphysics->get_solution(
                                                 PhysicsID::fluid_dynamics));
         }
+
+      if (this->simulation_parameters.nitsche->number_solids > 0)
+        postprocess_heat_flux_on_nitsche_ib();
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1446,8 +1550,9 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Heat flux on heat transfer boundary conditions : "
-                  << std::endl;
+      this->pcout
+        << "Total heat flux at the heat transfer boundary conditions : "
+        << std::endl;
       for (unsigned int i_bc = 0;
            i_bc < this->simulation_parameters.boundary_conditions_ht.size;
            ++i_bc)
@@ -1455,8 +1560,9 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                     << std::endl;
 
 
-      this->pcout << "Convective flux on heat transfer boundary conditions : "
-                  << std::endl;
+      this->pcout
+        << "Convective heat flux at the heat transfer boundary conditions : "
+        << std::endl;
       for (unsigned int i_bc = 0;
            i_bc < this->simulation_parameters.boundary_conditions_ht.size;
            ++i_bc)
@@ -1470,18 +1576,14 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   for (unsigned int i_bc = 0;
        i_bc < this->simulation_parameters.boundary_conditions_ht.size;
        ++i_bc)
-    this->heat_flux_table.add_value("bc_" + Utilities::int_to_string(i_bc, 1),
-                                    heat_flux_vector[i_bc]);
-
-
-  this->convective_flux_table.add_value(
-    "time", this->simulation_control->get_current_time());
-  for (unsigned int i_bc = 0;
-       i_bc < this->simulation_parameters.boundary_conditions_ht.size;
-       ++i_bc)
-    this->convective_flux_table.add_value("bc_" +
-                                            Utilities::int_to_string(i_bc, 1),
-                                          convective_flux_vector[i_bc]);
+    {
+      this->heat_flux_table.add_value("total_flux_bc_" +
+                                        Utilities::int_to_string(i_bc, 1),
+                                      heat_flux_vector[i_bc]);
+      this->heat_flux_table.add_value("convective_flux_bc_" +
+                                        Utilities::int_to_string(i_bc, 1),
+                                      convective_flux_vector[i_bc]);
+    }
 }
 
 template void
@@ -1725,25 +1827,13 @@ HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
 
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      {
-        std::string filename =
-          simulation_parameters.simulation_control.output_folder +
-          simulation_parameters.post_processing.heat_flux_output_name + "_" +
-          domain_name + ".dat";
-        std::ofstream output(filename.c_str());
+      std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing.heat_flux_output_name + "_" +
+        domain_name + ".dat";
+      std::ofstream output(filename.c_str());
 
-        this->heat_flux_table.write_text(output);
-      }
-
-      {
-        std::string filename =
-          simulation_parameters.simulation_control.output_folder +
-          simulation_parameters.post_processing.convective_flux_output_name +
-          "_" + domain_name + ".dat";
-        std::ofstream output(filename.c_str());
-
-        this->convective_flux_table.write_text(output);
-      }
+      this->heat_flux_table.write_text(output);
     }
 }
 

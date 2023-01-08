@@ -1,39 +1,29 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      0.2
+   Volume of triangulation:      2
    Number of thermal degrees of freedom: 1089
-Temperature statistics on fluid : 
-	     Min : 0
-	     Max : 3.94338
-	 Average : 0.09375
-	 Std-Dev : 0.511903
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 64
-	 boundary 1 : 12.8
+	 boundary 0 : 0
 Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
-	 boundary 1 : 0
-Thermal energy in fluid : 0.01875
+Thermal energy in fluid : 0
+Heat flux at the nitsche immersed boundary : 
+	 Nitsche boundary 0 : 1000
 
 *****************************************************************
 Steady iteration :        1/1
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 1.31683e-19
-Temperature statistics on fluid : 
-	     Min : 1.02642
-	     Max : 4.97358
-	 Average : 3
-	 Std-Dev : 1.1547
+L2 error temperature : 0.000255471
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 1.6
-	 boundary 1 : -1.6
+	 boundary 0 : -0.973213
 Convective heat flux at the heat transfer boundary conditions : 
 	 boundary 0 : 0
-	 boundary 1 : 0
-Thermal energy in fluid : 0.6
+Thermal energy in fluid : 1.48563
+Heat flux at the nitsche immersed boundary : 
+	 Nitsche boundary 0 : 0.973213
 cells error_velocity error_pressure 
  1024 0.000000e+00 - 0.000000e+00 - 
 cells error_temperature 
- 1024 1.316831e-19    - 
+ 1024 2.554706e-04    - 

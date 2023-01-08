@@ -8,7 +8,7 @@ subsection simulation control
   set time step               		= 1
   set number mesh adapt       		= 0
   set output name             		= conduction
-  set output frequency        		= 1
+  set output frequency        		= 0
 end
 
 #---------------------------------------------------

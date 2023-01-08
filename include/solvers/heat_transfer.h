@@ -402,6 +402,13 @@ private:
                               const VectorType &current_solution_fd);
 
   /**
+   * Post-processing. Calculate the heat flux in the Nitsche immersed boundary.
+   *
+   */
+  void
+  postprocess_heat_flux_on_nitsche_ib();
+
+  /**
    * Post-processing. Calculate the thermal energy (rho*Cp*T) in a fluid domain.
    *
    * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
@@ -444,6 +451,9 @@ private:
    * more information,
    * - a boolean: point_is_in_postprocessed_fluid, true if the quadrature point
    * is in the postprocessed_fluid (used for min_max_temperature calculation)
+   *
+   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
+   * VOF information
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
@@ -517,13 +527,11 @@ private:
   TableHandler statistics_table;
 
   // Post-processing table
-  // The heat flux table contains the total fluxes on a boundary: (-k grad T + u
-  // * rho * Cp) * n
+  // The heat flux table contains :
+  // - the total fluxes on a boundary: (-k grad T + u * rho * Cp) * n
+  // - the convective heat flux on a boundary: h(T-T_inf)
+  // - the total fluxes on the nitsche immersed boundaries (if active)
   TableHandler heat_flux_table;
-
-  // The convective flux table contains the convective heat flux on a boundary:
-  // h(T-T_inf)
-  TableHandler convective_flux_table;
 };
 
 
