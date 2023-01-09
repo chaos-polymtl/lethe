@@ -1,0 +1,143 @@
+# Listing of Parameters
+# ---------------------
+
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  		= steady
+  set output name             		= radation_free_surface
+  set output frequency        		= 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+subsection multiphysics
+  set heat transfer  		= true
+	set VOF               = true
+  set fluid dynamics    = false
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+    set temperature order         = 1
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = nodal
+    subsection uvwp
+        set Function expression 	= 0; 0; 0
+    end
+
+    subsection temperature
+        set Function expression 	= 700
+    end
+
+    subsection VOF
+        set Function expression = if (y>0.5, 0, 1)
+    end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions heat transfer
+  set number                  = 1
+  subsection bc 0
+    set id = 2
+        set type	      = temperature
+        set value	      = 700
+    end
+
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  set number of fluids = 2
+
+      subsection fluid 0
+            set density                 = 1
+            set kinematic viscosity     = 1
+            set thermal conductivity    = 1
+            set specific heat           = 1
+      end
+
+      subsection fluid 1
+            set density                 = 1
+            set kinematic viscosity     = 1
+            set thermal conductivity    = 1
+            set specific heat           = 1
+      end
+end
+
+#---------------------------------------------------
+# Laser parameters
+#---------------------------------------------------
+subsection laser parameters
+	set enable = true
+  set emissivity    = 0.6
+  set Tinf          = 293.0
+	set power 			  = 0
+	set start time 		= 0
+	set end time 			= 0
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+        set type = dealii
+        set grid type = subdivided_hyper_rectangle
+        set grid arguments 	= 1, 1024 : 0, 0 : 1, 1.0 : true
+        set initial refinement 	= 0
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+    set enable                = true
+    set verbosity             = verbose
+    subsection uvwp
+            set Function expression =  0 ; 0 ; 0
+    end
+    subsection VOF
+        set Function expression = if (y>0.5, 0, 1)
+    end
+    subsection temperature
+        set Function expression = if (y>0.5, 398.10141552,  -603.79716896*y+700)
+    end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 100
+  set verbosity               = quiet
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set verbosity               		           = quiet
+  set method                                 = gmres
+  set relative residual                      = 1e-3
+  set minimum residual                       = 1e-8
+  set ilu preconditioner fill                = 0
+  set ilu preconditioner absolute tolerance  = 1e-12
+  set ilu preconditioner relative tolerance  = 1.00
+end
