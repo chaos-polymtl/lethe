@@ -951,7 +951,7 @@ namespace Parameters
       beam_radius               = prm.get_double("beam radius");
       Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
       emissivity                = prm.get_double("emissivity");
-      Tinf = prm.get_double("Tinf");
+      Tinf                      = prm.get_double("Tinf");
 
 
       prm.enter_subsection("path");
