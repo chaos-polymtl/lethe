@@ -10,6 +10,7 @@ subsection simulation control
   set time end                = 0.125     # End time of simulatio
   set output name             = test # Prefix for VTU outputs
   set output frequency        = 0       # Frequency of simulation output
+  set log precision           = 4
 end
 #---------------------------------------------------
 # Physical Properties
@@ -149,7 +150,6 @@ end
 subsection non-linear solver
   set tolerance               = 1e-10
   set max iterations          = 20
-  set residual precision      = 15
   set verbosity               = quiet
   set step tolerance          = 0.99
   set force rhs calculation   = true
