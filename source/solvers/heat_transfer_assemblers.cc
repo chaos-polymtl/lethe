@@ -946,7 +946,6 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -1000,7 +999,6 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 

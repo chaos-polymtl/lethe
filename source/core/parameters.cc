@@ -951,8 +951,6 @@ namespace Parameters
       beam_radius               = prm.get_double("beam radius");
       Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
       emissivity                = prm.get_double("emissivity");
-      Assert(emissivity <= 1.0 && emissivity >= 0.0,
-             EmissivityError(emissivity));
       Tinf = prm.get_double("Tinf");
 
 
