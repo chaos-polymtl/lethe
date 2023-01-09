@@ -14,52 +14,52 @@ Initial refinement around IB particles - Step : 2 of 2
 *****************************************************************
 Transient iteration : 1        Time : 0.03125  Time step : 0.03125  CFL : 0       
 *****************************************************************
-particle 0 position 0.999953 0.998351
-particle 0 velocity -0.00149365 -0.0527786
+particle 0 position 1 0.9984
+particle 0 velocity -0.001494 -0.05278
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z    omega_z     f_x       v_x      p_x      f_y       v_y      p_y      f_xv      f_yv     f_xp      f_yp   
-0           0.0312 0.004928 0.000154 -0.056313 -0.001494 0.999953 1.862665 -0.052779 0.998351 -0.000849 0.114607 -0.055464 1.748058 
+particle_ID  time   T_z   omega_z   f_x     v_x    p_x    f_y     v_y    p_y    f_xv    f_yv   f_xp    f_yp  
+0           0.0312 0.0049 0.0002  -0.0563 -0.0015 1.0000 1.8627 -0.0528 0.9984 -0.0008 0.1146 -0.0555 1.7481 
 
 *****************************************************************
-Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.0117076
+Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.01171 
 *****************************************************************
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
-particle 0 position 0.999851 0.995231
-particle 0 velocity -0.00326869 -0.0998228
+particle 0 position 0.9999 0.9952
+particle 0 velocity -0.003269 -0.09982
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z    omega_z     f_x       v_x      p_x      f_y       v_y      p_y      f_xv      f_yv     f_xp      f_yp   
-0           0.0625 0.008777 0.000428 -0.066934 -0.003269 0.999851 2.078822 -0.099823 0.995231 -0.001446 0.203200 -0.065489 1.875622 
+particle_ID  time   T_z   omega_z   f_x     v_x    p_x    f_y     v_y    p_y    f_xv    f_yv   f_xp    f_yp  
+0           0.0625 0.0088 0.0004  -0.0669 -0.0033 0.9999 2.0788 -0.0998 0.9952 -0.0014 0.2032 -0.0655 1.8756 
 
 *****************************************************************
-Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.0221554
+Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.02216 
 *****************************************************************
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
-particle 0 position 0.999689 0.990746
-particle 0 velocity -0.00519388 -0.143521
+particle 0 position 0.9997 0.9907
+particle 0 velocity -0.005194 -0.1435
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z    omega_z     f_x       v_x      p_x      f_y       v_y      p_y      f_xv      f_yv     f_xp      f_yp   
-0           0.0938 0.011739 0.000795 -0.072602 -0.005194 0.999689 2.204976 -0.143521 0.990746 -0.001970 0.278096 -0.070632 1.926879 
+particle_ID  time   T_z   omega_z   f_x     v_x    p_x    f_y     v_y    p_y    f_xv    f_yv   f_xp    f_yp  
+0           0.0938 0.0117 0.0008  -0.0726 -0.0052 0.9997 2.2050 -0.1435 0.9907 -0.0020 0.2781 -0.0706 1.9269 
 
 *****************************************************************
-Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.0318706
+Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.03187 
 *****************************************************************
    Number of active cells:       457
    Number of degrees of freedom: 1524
    Volume of triangulation:      16
-particle 0 position 0.999462 0.984983
-particle 0 velocity -0.00725311 -0.184414
+particle 0 position 0.9995 0.985
+particle 0 velocity -0.007253 -0.1844
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_z    omega_z     f_x       v_x      p_x      f_y       v_y      p_y      f_xv      f_yv     f_xp      f_yp   
-0           0.1250 0.014023 0.001233 -0.077650 -0.007253 0.999462 2.310722 -0.184414 0.984983 -0.002510 0.343427 -0.075141 1.967296 
+particle_ID  time   T_z   omega_z   f_x     v_x    p_x    f_y     v_y    p_y    f_xv    f_yv   f_xp    f_yp  
+0           0.1250 0.0140 0.0012  -0.0776 -0.0073 0.9995 2.3107 -0.1844 0.9850 -0.0025 0.3434 -0.0751 1.9673 

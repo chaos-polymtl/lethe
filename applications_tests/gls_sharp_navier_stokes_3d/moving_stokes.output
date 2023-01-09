@@ -10,13 +10,13 @@ Initial refinement in box - Step  1 of 1
 *****************************************************************
 Transient iteration : 1        Time : 0.125    Time step : 0.125    CFL : 0       
 *****************************************************************
-div u : 1.09169e-12
-error at the weak BC : 0.000287978
-L2 error velocity : 0.00421553 L2 error pressure: 0.0205956
+div u : -3.448e-12
+error at the weak BC : 0.000288
+L2 error velocity : 0.004216 L2 error pressure: 0.0206
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time     T_x      T_y       T_z      f_x      f_y       f_z      f_xv     f_yv     f_zv      f_xp     f_yp     f_zp    
-0           0.1250 -0.000002 0.001180 -0.001179 1.009163 0.000029 -0.002711 0.685610 0.000029 -0.001017 0.323553 0.000000 -0.001694 
+particle_ID  time    T_x    T_y     T_z    f_x    f_y     f_z    f_xv   f_yv   f_zv    f_xp   f_yp   f_zp   
+0           0.1250 0.0000 0.0012 -0.0012 1.0092 0.0000 -0.0027 0.6856 0.0000 -0.0010 0.3236 0.0000 -0.0017 
  time  error_velocity error_pressure 
-0.1250 4.215526e-03   0.0206         
+0.1250 4.2155e-03     0.0206         
