@@ -920,14 +920,14 @@ HeatTransferAssemblerLaserVOF<dim>::assemble_rhs(
             {
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
-              // rhs for : alpha * eta * alpha * P / (pi * R^2 * mu) *
-              // exp(-eta * r^2 / R^2) * exp(-|z| / mu) where alpha, eta, alpha,
+              // rhs for : phase * eta * alpha * P / (pi * R^2 * mu) *
+              // exp(-eta * r^2 / R^2) * exp(-|z| / mu) where phase, eta, alpha,
               // P, R, mu, r and z denote the phase (from the VOF) concentration
               // factor, absorptivity, laser power, beam radius, penetration
               // depth, radial distance from the laser focal point, and axial
               // distance from the laser focal point, respectively. The phase
-              // alpha is used here so that the laser power is only applied in
-              // the metal phase (alpha=1.0).
+              // is used here so that the laser source is only applied in the
+              // metal (when phase is non-null).
 
               local_rhs(i) += phase_value_q * laser_heat_source * phi_T_i * JxW;
             }

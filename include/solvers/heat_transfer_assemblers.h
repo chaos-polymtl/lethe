@@ -321,7 +321,9 @@ protected:
  * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
  * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
  * laser melting AlSi10Mg using finite element analysis. Materials &
- * Design, 142, pp.319-328."
+ * Design, 142, pp.319-328." The laser heat source is only applied in the metal
+ * (when phase value is non-null) using the phase value alpha as a multiplying
+ * factor on the laser heat source.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -364,7 +366,13 @@ protected:
 /**
  * @brief Class that assembles the radiation sink for the heat
  * transfer solver at the meltpool free surface when VOF and the laser are
- * active.
+ * active. The phase gradient of the VOF solver is used to transform radiative
+ * boundary condition at meltpool free surface into a volumetric sink at the
+ * air/metal interface:
+ * "Tao Yu, Jidong Zhao,Semi-coupled resolved CFD–DEM simulation of powder-based
+ * selective laser melting for additive manufacturing, Computer Methods in
+ * Applied Mechanics and Engineering, Volume 377, 2021, 113707, ISSN 0045-7825,
+ * https://doi.org/10.1016/j.cma.2021.113707."
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
