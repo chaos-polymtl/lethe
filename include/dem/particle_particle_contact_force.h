@@ -122,9 +122,16 @@ public:
 };
 
 /**
- * Class that carry out the calculation of
+ * @brief Class that carries out the calculation of
  * particle-particle contact force including non-linear and linear contact
- * models
+ * models. Instead of using a inheritance hiearchy to distinguish between
+ * the contact model, the class is templated with the type of force model
+ * and rolling friction model. Consequently, the code for each
+ * combination of force model is generated at compile time.
+ *
+ * @tparam dim The dimension of the problem
+ * @tparam force_model The particle-particle contact force model
+ * @tparam rolling_friction_model The rolling resistance model used
  */
 template <
   int                                                       dim,
@@ -352,7 +359,7 @@ protected:
    * @param particle_one_force Force acting on particle one
    */
   inline void
-  apply_force_and_torque_on_ghost_particles(
+  apply_force_and_torque_on_single_local_particle(
     const Tensor<1, 3> &normal_force,
     const Tensor<1, 3> &tangential_force,
     const Tensor<1, 3> &particle_one_tangential_torque,

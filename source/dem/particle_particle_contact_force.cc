@@ -457,7 +457,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_on_ghost_particles(
+                  this->apply_force_and_torque_on_single_local_particle(
                     this->normal_force,
                     this->tangential_force,
                     this->particle_one_tangential_torque,
@@ -804,7 +804,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_on_ghost_particles(
+                  this->apply_force_and_torque_on_single_local_particle(
                     this->normal_force,
                     this->tangential_force,
                     this->particle_one_tangential_torque,
@@ -970,7 +970,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
 
                   // Apply the calculated forces and torques on the particle
                   // pair
-                  this->apply_force_and_torque_on_ghost_particles(
+                  this->apply_force_and_torque_on_single_local_particle(
                     this->normal_force,
                     this->tangential_force,
                     this->particle_two_tangential_torque,

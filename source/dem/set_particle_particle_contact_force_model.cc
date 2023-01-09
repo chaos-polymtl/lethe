@@ -51,7 +51,8 @@ set_particle_particle_contact_force_model(
               break;
             }
           default:
-            throw std::runtime_error("Invalid contact force model combination");
+            throw std::runtime_error(
+              "Invalid contact force model and rolling resistance method combination");
         }
     }
   else if (dem_parameters.model_parameters
@@ -97,7 +98,8 @@ set_particle_particle_contact_force_model(
               break;
             }
           default:
-            throw std::runtime_error("Invalid contact force model combination");
+            throw std::runtime_error(
+              "Invalid contact force model and rolling resistance method combination");
         }
     }
   else if (dem_parameters.model_parameters
@@ -143,7 +145,8 @@ set_particle_particle_contact_force_model(
               break;
             }
           default:
-            throw std::runtime_error("Invalid contact force model combination");
+            throw std::runtime_error(
+              "Invalid contact force model and rolling resistance method combination");
         }
     }
   else if (dem_parameters.model_parameters
@@ -188,7 +191,8 @@ set_particle_particle_contact_force_model(
               break;
             }
           default:
-            throw std::runtime_error("Invalid contact force model combination");
+            throw std::runtime_error(
+              "Invalid contact force model and rolling resistance method combination");
         }
     }
   else
