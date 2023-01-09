@@ -46,7 +46,7 @@ This example uses a 2nd order backward differentiation (``method = bdf2``) for t
     subsection simulation control
       set method           = bdf2
       set output name      = cylinder-output
-      set output frequency = 1
+      set output frequency = 5
       set output path      = ./Re200/
       set time end         = 200.0
       set time step        = 0.05
@@ -141,11 +141,29 @@ The Reynolds number must be high enough to capture a transient flow and study th
 
 .. code-block:: text
 
-    subsection physical properties
-      subsection fluid 0
-        set kinematic viscosity = 0.005
-      end
+  subsection physical properties
+    subsection fluid 0
+      set kinematic viscosity = 0.005
     end
+  end
+
+Linear solver
+~~~~~~~~~~~~~~~~~~~
+
+For 2D problems, the AMG preconditioner is an adequate preconditioner. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
+
+.. code-block:: text
+
+  subsection linear solver
+    set verbosity                                 = verbose
+    set method                                    = amg
+    set relative residual                         = 1e-4
+    set minimum residual                          = 1e-8
+    set amg preconditioner ilu fill               = 0
+    set amg preconditioner ilu absolute tolerance = 1e-12
+    set amg preconditioner ilu relative tolerance = 1.00
+  end
+
 
 Forces
 ~~~~~~
@@ -191,7 +209,7 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
 .. warning::
 
-  The estimated time to simulate 200 seconds is about 3 hours 45 minutes with 10 CPUs.
+  The estimated time to simulate 200 seconds is about 3 hours with 10 CPUs.
 
 Results
 -------
@@ -239,8 +257,8 @@ The obtained values of the drag and lift coefficients as well as the Strouhal nu
      - :math:`C_L`
      - :math:`S_t`
    * - Lethe example
-     - 1.392 :math:`\pm` 0.048
-     - -0.006 :math:`\pm` 0.072
+     - 1.396 :math:`\pm` 0.048
+     - -0.003 :math:`\pm` 0.072
      - 0.2
    * - Lethe Sharp `[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_
      - 1.395 :math:`\pm` 0.047
