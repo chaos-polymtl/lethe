@@ -291,11 +291,15 @@ HeatTransfer<dim>::setup_assemblers()
       if (this->simulation_parameters.multiphysics.VOF)
         {
           // Call for the specific assembler
+          // Assembler of the laser source term applied only in the metal
           this->assemblers.push_back(
             std::make_shared<HeatTransferAssemblerLaserVOF<dim>>(
               this->simulation_control,
               this->simulation_parameters.laser_parameters));
 
+          // Assembler of the radiation sink term applied only at the air/metal
+          // interface. The radiation term in that case id treated as a source
+          // term instead of a boundary terme.
           this->assemblers.push_back(
             std::make_shared<HeatTransferAssemblerRadiationVOF<dim>>(
               this->simulation_control,

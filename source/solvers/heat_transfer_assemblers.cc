@@ -764,8 +764,7 @@ HeatTransferAssemblerLaser<dim>::assemble_rhs(
                 (beam_radius * beam_radius)) *
             exp(-1.0 * laser_quadrature_point_distance_in_depth /
                 penetration_depth);
-
-         strong_residual[q] -= laser_heat_source;
+          strong_residual[q] -= laser_heat_source;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
@@ -902,9 +901,6 @@ HeatTransferAssemblerLaserVOF<dim>::assemble_rhs(
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
-          const Tensor<1, dim> phase_gradient_q =
-            scratch_data.phase_gradient_values[q];
-
           const double phase_value_q = scratch_data.phase_values[q];
 
           // Calculate the strong residual for GLS stabilization
@@ -918,25 +914,22 @@ HeatTransferAssemblerLaserVOF<dim>::assemble_rhs(
                 (beam_radius * beam_radius)) *
             exp(-1.0 * laser_quadrature_point_distance_in_depth /
                 penetration_depth);
-          strong_residual[q] -= phase_gradient_q.norm()*laser_heat_source;
-         // strong_residual[q] -= phase_value_q*phase_gradient_q.norm()*laser_heat_source;
-         strong_residual[q] -= phase_value_q*laser_heat_source;
+          strong_residual[q] -= phase_value_q * laser_heat_source;
 
           for (unsigned int i = 0; i < n_dofs; ++i)
             {
               const auto phi_T_i = scratch_data.phi_T[q][i];
 
-              // rhs for : eta * alpha * P / (pi * R^2 * mu) * exp(-eta * r^2 /
-              // R^2) * exp(-|z| / mu) where eta, alpha, P, R, mu, r and z
-              // denote concentration factor, absorptivity, laser power, beam
-              // radius, penetration depth, radial distance from the laser focal
-              // point, and axial distance from the laser focal point,
-              // respectively.
-              // local_rhs(i) += phase_gradient_q.norm()*laser_heat_source * phi_T_i * JxW;
+              // rhs for : alpha * eta * alpha * P / (pi * R^2 * mu) *
+              // exp(-eta * r^2 / R^2) * exp(-|z| / mu) where alpha, eta, alpha,
+              // P, R, mu, r and z denote the phase (from the VOF) concentration
+              // factor, absorptivity, laser power, beam radius, penetration
+              // depth, radial distance from the laser focal point, and axial
+              // distance from the laser focal point, respectively. The phase
+              // alpha is used here so that the laser power is only applied in
+              // the metal phase (alpha=1.0).
 
-             // local_rhs(i) += phase_value_q*phase_gradient_q.norm()*laser_heat_source * phi_T_i * JxW;
-             local_rhs(i) += phase_value_q*laser_heat_source * phi_T_i * JxW;
-
+              local_rhs(i) += phase_value_q * laser_heat_source * phi_T_i * JxW;
             }
 
         } // end loop on quadrature points
@@ -958,7 +951,7 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_matrix        = copy_data.local_matrix;
+  auto &local_matrix = copy_data.local_matrix;
 
   const double Stefan_Boltzmann_constant =
     laser_parameters->Stefan_Boltzmann_constant;
@@ -968,32 +961,35 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-
-      const double temperature =
-        scratch_data.present_temperature_values[q];
+      const double temperature = scratch_data.present_temperature_values[q];
 
       const Tensor<1, dim> phase_gradient_q =
         scratch_data.phase_gradient_values[q];
       // Store JxW in local variable for faster access
-      const double JxW = JxW_vec[q];
+      const double JxW = scratch_data.fe_values_T.JxW(q);
 
-      if (phase_gradient_q.norm() > 0)
+      for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          for (unsigned int i = 0; i < n_dofs; ++i)
+          const auto phi_T_i = scratch_data.phi_T[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto phi_T_i      = scratch_data.phi_T[q][i];
+              const auto phi_T_j = scratch_data.phi_T[q][j];
 
-              for (unsigned int j = 0; j < n_dofs; ++j)
-                {
-                  const auto phi_T_j      = scratch_data.phi_T[q][j];
-
-                  local_matrix(i, j) += phase_gradient_q.norm() * (4.0 * Stefan_Boltzmann_constant *
-                         emissivity * temperature * temperature * temperature) *
-                  phi_T_i * phi_T_j * JxW;
-                }
+              // Matrix coefficients for the linearised radiation sink term at
+              // the meltpool free surface: |grad alpha| * 4 * sigma * epsilon
+              // * T^3, where |grad alpha| is the phase gradient norm (which
+              // indicates an interface between the metal and air if non-null),
+              // sigma is the Stefan Boltzmann constant, epsilon is the
+              // emissivity of the free surface and T is the current
+              // temperature.
+              local_matrix(i, j) +=
+                phase_gradient_q.norm() *
+                (4.0 * Stefan_Boltzmann_constant * emissivity * temperature *
+                 temperature * temperature) *
+                phi_T_i * phi_T_j * JxW;
             }
         }
-
     } // end loop on quadrature points
 }
 
@@ -1009,36 +1005,40 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_rhs(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &local_rhs       = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
   const double Stefan_Boltzmann_constant =
     laser_parameters->Stefan_Boltzmann_constant;
 
   const double emissivity = laser_parameters->emissivity;
-  const double T_inf = 293.0;
+  const double T_inf      = laser_parameters->Tinf;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-
-      const double temperature =
-        scratch_data.present_temperature_values[q];
+      const double temperature = scratch_data.present_temperature_values[q];
 
       const Tensor<1, dim> phase_gradient_q =
         scratch_data.phase_gradient_values[q];
       // Store JxW in local variable for faster access
-      const double JxW = JxW_vec[q];
+      const double JxW = scratch_data.fe_values_T.JxW(q);
 
-      if (phase_gradient_q.norm() > 0)
+      for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          for (unsigned int i = 0; i < n_dofs; ++i)
-            {
-              const auto phi_T_i      = scratch_data.phi_T[q][i];
+          const auto phi_T_i = scratch_data.phi_T[q][i];
 
-              local_rhs(i) -= phase_gradient_q.norm() * Stefan_Boltzmann_constant *
-                     emissivity * (temperature * temperature * temperature * temperature - T_inf * T_inf * T_inf * T_inf)*phi_T_i *
-                     JxW;
-            }
+          // Rhs for the linearised radiation sink term at the meltpool free
+          // surface: |grad alpha|* sigma * epsilon * (T^3 - T_inf^3),
+          // where |grad alpha| is the phase gradient norm (which indicates an
+          // interface between the metal and air if non-null), sigma is the
+          // Stefan Boltzmann constant, epsilon is the emissivity of the free
+          // surface, T is the current temperature and T_inf is the reference
+          // (environment) temperature.
+          local_rhs(i) -=
+            phase_gradient_q.norm() * Stefan_Boltzmann_constant * emissivity *
+            (temperature * temperature * temperature * temperature -
+             T_inf * T_inf * T_inf * T_inf) *
+            phi_T_i * JxW;
         }
 
     } // end loop on quadrature points

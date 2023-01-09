@@ -538,8 +538,10 @@ namespace Parameters
     double start_time;
     double end_time;
 
+    // Parameters for the radiation term at the melt pool free surface
     double Stefan_Boltzmann_constant;
     double emissivity;
+    double Tinf;
 
     void
     declare_parameters(ParameterHandler &prm);

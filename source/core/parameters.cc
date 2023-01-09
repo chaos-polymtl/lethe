@@ -903,6 +903,11 @@ namespace Parameters
                         "0.6",
                         Patterns::Double(),
                         "Emissivity of the free surface");
+      prm.declare_entry(
+        "Tinf",
+        "0.0",
+        Patterns::Double(),
+        "Temperature (Double) of environment for radiation term at the melt pool free surface");
 
 
       prm.enter_subsection("path");
@@ -938,14 +943,17 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      activate_laser       = prm.get_bool("enable");
-      concentration_factor = prm.get_double("concentration factor");
-      laser_power          = prm.get_double("power");
-      laser_absorptivity   = prm.get_double("absorptivity");
-      penetration_depth    = prm.get_double("penetration depth");
-      beam_radius          = prm.get_double("beam radius");
+      activate_laser            = prm.get_bool("enable");
+      concentration_factor      = prm.get_double("concentration factor");
+      laser_power               = prm.get_double("power");
+      laser_absorptivity        = prm.get_double("absorptivity");
+      penetration_depth         = prm.get_double("penetration depth");
+      beam_radius               = prm.get_double("beam radius");
       Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
-      emissivity           = prm.get_double("emissivity");
+      emissivity                = prm.get_double("emissivity");
+      Assert(emissivity <= 1.0 && emissivity >= 0.0,
+             EmissivityError(emissivity));
+      Tinf = prm.get_double("Tinf");
 
 
       prm.enter_subsection("path");

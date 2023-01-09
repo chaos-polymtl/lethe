@@ -317,7 +317,7 @@ protected:
 
 /**
  * @brief Class that assembles the laser heat source for the heat
- * transfer solver when VOF is active. Exponentially decaying model is
+ * transfer solver when VOF is enabled. Exponentially decaying model is
  * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
  * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
  * laser melting AlSi10Mg using finite element analysis. Materials &
@@ -363,7 +363,8 @@ protected:
 
 /**
  * @brief Class that assembles the radiation sink for the heat
- * transfer solver when VOF is active.
+ * transfer solver at the meltpool free surface when VOF and the laser are
+ * active.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
