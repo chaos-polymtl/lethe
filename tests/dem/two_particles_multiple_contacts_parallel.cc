@@ -84,8 +84,8 @@ test()
     .rolling_friction_coefficient_particle[0]                       = 0.1;
   dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
   double neighborhood_threshold = 1.3 * particle_diameter;
-  dem_parameters.model_parameters.rolling_resistance_method = Parameters::
-    Lagrangian::ModelParameters::RollingResistanceMethod::constant_resistance;
+  dem_parameters.model_parameters.rolling_resistance_method =
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties());
@@ -112,7 +112,8 @@ test()
   ParticleParticleContactForce<
     dim,
     Parameters::Lagrangian::ParticleParticleContactForceModel::
-      hertz_mindlin_limit_overlap>
+      hertz_mindlin_limit_overlap,
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance>
                                 nonlinear_force_object(dem_parameters);
   VelocityVerletIntegrator<dim> integrator_object;
 
@@ -168,16 +169,8 @@ test()
   std::vector<double>       MOI;
 
   particle_handler.sort_particles_into_subdomains_and_cells();
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-  {
-    unsigned int max_particle_id = 0;
-    for (const auto &particle : particle_handler)
-      max_particle_id = std::max(max_particle_id, particle.get_id());
-    force.resize(max_particle_id + 1);
-  }
-#else
+
   force.resize(particle_handler.get_max_local_particle_index());
-#endif
   torque.resize(force.size());
   MOI.resize(force.size());
   for (unsigned i = 0; i < MOI.size(); ++i)

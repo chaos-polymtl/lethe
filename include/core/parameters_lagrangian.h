@@ -41,6 +41,13 @@ namespace Parameters
       hertz
     };
 
+    enum RollingResistanceMethod
+    {
+      no_resistance,
+      constant_resistance,
+      viscous_resistance
+    };
+
     struct LagrangianPhysicalProperties
     {
     public:
@@ -221,12 +228,7 @@ namespace Parameters
       } particle_wall_contact_force_method;
 
       // Rolling resistance torque method
-      enum class RollingResistanceMethod
-      {
-        no_resistance,
-        constant_resistance,
-        viscous_resistance
-      } rolling_resistance_method;
+      RollingResistanceMethod rolling_resistance_method;
 
       // Itegration method
       enum class IntegrationMethod

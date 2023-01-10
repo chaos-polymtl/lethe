@@ -23,14 +23,6 @@
 #ifndef rolling_resistance_torque_models_h
 #  define rolling_resistance_torque_models_h
 
-enum class RollingResistanceTorqueModel
-{
-  no_rolling_resistance,
-  constant_rolling_resistance,
-  viscous_rolling_resistance
-};
-
-
 /**
  * @brief
  */
