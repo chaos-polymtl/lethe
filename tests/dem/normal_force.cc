@@ -92,8 +92,8 @@ test()
     .rolling_friction_coefficient_particle[0]                         = 0.1;
   dem_parameters.lagrangian_physical_properties.rolling_friction_wall = 0.1;
   dem_parameters.lagrangian_physical_properties.density_particle[0]   = 7850;
-  dem_parameters.model_parameters.rolling_resistance_method = Parameters::
-    Lagrangian::ModelParameters::RollingResistanceMethod::constant_resistance;
+  dem_parameters.model_parameters.rolling_resistance_method =
+    Parameters::Lagrangian::RollingResistanceMethod::constant_resistance;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;

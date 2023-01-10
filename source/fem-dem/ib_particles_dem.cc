@@ -55,7 +55,8 @@ IBParticlesDEM<dim>::initialize(
   particle_particle_contact_force_object =
     std::make_shared<ParticleParticleContactForce<
       dim,
-      Parameters::Lagrangian::ParticleParticleContactForceModel::hertz>>(
+      Parameters::Lagrangian::ParticleParticleContactForceModel::hertz,
+      Parameters::Lagrangian::RollingResistanceMethod::no_resistance>>(
       dem_parameters);
   std::vector<types::boundary_id> boundary_index(0);
   particle_wall_contact_force_object =
