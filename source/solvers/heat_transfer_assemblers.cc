@@ -1106,9 +1106,9 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
   auto &local_matrix = copy_data.local_matrix;
 
   const double Stefan_Boltzmann_constant =
-    laser_parameters->Stefan_Boltzmann_constant;
+    laser_parameters->radiation.Stefan_Boltzmann_constant;
 
-  const double emissivity = laser_parameters->emissivity;
+  const double emissivity = laser_parameters->radiation.emissivity;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1159,10 +1159,10 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_rhs(
   auto &local_rhs = copy_data.local_rhs;
 
   const double Stefan_Boltzmann_constant =
-    laser_parameters->Stefan_Boltzmann_constant;
+    laser_parameters->radiation.Stefan_Boltzmann_constant;
 
-  const double emissivity = laser_parameters->emissivity;
-  const double T_inf      = laser_parameters->Tinf;
+  const double emissivity = laser_parameters->radiation.emissivity;
+  const double T_inf      = laser_parameters->radiation.Tinf;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)

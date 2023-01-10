@@ -461,7 +461,24 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Laser_FreeSurfaceRadiation - Defines the subparameters for
+   * the radiation sink at the meltpool free surface.
+   */
+  struct Laser_FreeSurfaceRadiation
+  {
+    bool enable_radiation;
 
+    // Parameters for the radiation term at the melt pool free surface
+    double Stefan_Boltzmann_constant;
+    double emissivity;
+    double Tinf;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
   /**
    * @brief Laser parameters - Defines the parameters for the
@@ -539,9 +556,10 @@ namespace Parameters
     double end_time;
 
     // Parameters for the radiation term at the melt pool free surface
-    double Stefan_Boltzmann_constant;
-    double emissivity;
-    double Tinf;
+    // double Stefan_Boltzmann_constant;
+    // double emissivity;
+    // double Tinf;
+    Laser_FreeSurfaceRadiation radiation;
 
     void
     declare_parameters(ParameterHandler &prm);

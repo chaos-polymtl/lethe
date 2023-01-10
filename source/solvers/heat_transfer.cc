@@ -300,10 +300,13 @@ HeatTransfer<dim>::setup_assemblers()
           // Assembler of the radiation sink term applied only at the air/metal
           // interface. The radiation term in that case is treated as a source
           // term instead of a boundary term.
-          this->assemblers.push_back(
-            std::make_shared<HeatTransferAssemblerRadiationVOF<dim>>(
+          if (this->simulation_parameters.laser_parameters->radiation.enable_radiation)
+            {
+              this->assemblers.push_back(
+                std::make_shared<HeatTransferAssemblerRadiationVOF<dim>>(
               this->simulation_control,
               this->simulation_parameters.laser_parameters));
+            }
         }
       else
         {
