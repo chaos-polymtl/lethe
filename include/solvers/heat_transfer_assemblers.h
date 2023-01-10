@@ -365,13 +365,13 @@ protected:
 
 /**
  * @brief Class that assembles the radiation sink for the heat
- * transfer solver at the meltpool free surface when VOF and the laser are
- * active. The phase gradient of the VOF solver is used to transform radiative
- * boundary condition at meltpool free surface into a volumetric sink at the
- * air/metal interface:
- * "Tao Yu, Jidong Zhao,Semi-coupled resolved CFD–DEM simulation of powder-based
- * selective laser melting for additive manufacturing, Computer Methods in
- * Applied Mechanics and Engineering, Volume 377, 2021, 113707, ISSN 0045-7825,
+ * transfer solver at the free surface (air/metal interface) when VOF and the
+ * laser are active. The phase gradient of the VOF solver is used to transform
+ * radiative boundary condition at free surface into a volumetric sink at the
+ * air/metal interface: "Tao Yu, Jidong Zhao,Semi-coupled resolved CFD–DEM
+ * simulation of powder-based selective laser melting for additive
+ * manufacturing, Computer Methods in Applied Mechanics and Engineering, Volume
+ * 377, 2021, 113707, ISSN 0045-7825,
  * https://doi.org/10.1016/j.cma.2021.113707."
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
@@ -379,10 +379,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerRadiationVOF : public HeatTransferAssemblerBase<dim>
+class HeatTransferAssemblerFreeSurfaceRadiationVOF
+  : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerRadiationVOF(
+  HeatTransferAssemblerFreeSurfaceRadiationVOF(
     std::shared_ptr<SimulationControl>      simulation_control,
     std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
     : HeatTransferAssemblerBase<dim>(simulation_control)

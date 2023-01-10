@@ -1094,7 +1094,7 @@ template class HeatTransferAssemblerLaserVOF<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
+HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
@@ -1129,10 +1129,11 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
               const auto phi_T_j = scratch_data.phi_T[q][j];
 
               // Matrix coefficients for the linearised radiation sink term at
-              // the meltpool free surface: |grad alpha| * 4 * sigma * epsilon
-              // * T^3, where |grad alpha| is the phase gradient norm (which
-              // indicates an interface between the metal and air if non-null),
-              // sigma is the Stefan Boltzmann constant, epsilon is the
+              // the free surface (air/metal interface): |grad alpha| * 4 *
+              // sigma
+              // * epsilon * T^3, where |grad alpha| is the phase gradient norm
+              // (which indicates an interface between the metal and air if non-
+              // null), sigma is the Stefan Boltzmann constant, epsilon is the
               // emissivity of the free surface and T is the current
               // temperature.
               local_matrix(i, j) +=
@@ -1147,7 +1148,7 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_matrix(
 
 template <int dim>
 void
-HeatTransferAssemblerRadiationVOF<dim>::assemble_rhs(
+HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
   HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData &   copy_data)
 {
@@ -1195,5 +1196,5 @@ HeatTransferAssemblerRadiationVOF<dim>::assemble_rhs(
     } // end loop on quadrature points
 }
 
-template class HeatTransferAssemblerRadiationVOF<2>;
-template class HeatTransferAssemblerRadiationVOF<3>;
+template class HeatTransferAssemblerFreeSurfaceRadiationVOF<2>;
+template class HeatTransferAssemblerFreeSurfaceRadiationVOF<3>;

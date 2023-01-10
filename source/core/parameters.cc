@@ -874,12 +874,13 @@ namespace Parameters
   void
   Laser_FreeSurfaceRadiation::declare_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("meltpool free surface radiation");
+    prm.enter_subsection("free surface radiation");
     {
-      prm.declare_entry("enable",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable radiation at the meltpool free surface <true|false>");
+      prm.declare_entry(
+        "enable",
+        "false",
+        Patterns::Bool(),
+        "Enable radiation at the free surface (air/metal interface) <true|false>");
       prm.declare_entry("Stefan-Boltzmann constant",
                         "0.000000056703",
                         Patterns::Double(),
@@ -887,11 +888,12 @@ namespace Parameters
       prm.declare_entry("emissivity",
                         "0.6",
                         Patterns::Double(),
-                        "Emissivity of the meltpool free surface");
-      prm.declare_entry("Tinf",
-                        "0.0",
-                        Patterns::Double(),
-                        "Temperature (Double) of environment for radiation term at the meltpool free surface");
+                        "Emissivity of the free surface (air/metal interface)");
+      prm.declare_entry(
+        "Tinf",
+        "0.0",
+        Patterns::Double(),
+        "Temperature (Double) of environment for radiation term at the free surface (air/metal interface)");
     }
     prm.leave_subsection();
   }
@@ -899,7 +901,7 @@ namespace Parameters
   void
   Laser_FreeSurfaceRadiation::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("meltpool free surface radiation");
+    prm.enter_subsection("free surface radiation");
     {
       enable_radiation          = prm.get_bool("enable");
       Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
@@ -945,7 +947,8 @@ namespace Parameters
       //   "Tinf",
       //   "0.0",
       //   Patterns::Double(),
-      //   "Temperature (Double) of environment for radiation term at the melt pool free surface");
+      //   "Temperature (Double) of environment for radiation term at the melt
+      //   pool free surface");
       radiation.declare_parameters(prm);
 
 
@@ -982,14 +985,14 @@ namespace Parameters
   {
     prm.enter_subsection("laser parameters");
     {
-      activate_laser            = prm.get_bool("enable");
-      concentration_factor      = prm.get_double("concentration factor");
-      laser_power               = prm.get_double("power");
-      laser_absorptivity        = prm.get_double("absorptivity");
-      penetration_depth         = prm.get_double("penetration depth");
-      beam_radius               = prm.get_double("beam radius");
-      // Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
-      // emissivity                = prm.get_double("emissivity");
+      activate_laser       = prm.get_bool("enable");
+      concentration_factor = prm.get_double("concentration factor");
+      laser_power          = prm.get_double("power");
+      laser_absorptivity   = prm.get_double("absorptivity");
+      penetration_depth    = prm.get_double("penetration depth");
+      beam_radius          = prm.get_double("beam radius");
+      // Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann
+      // constant"); emissivity                = prm.get_double("emissivity");
       // Tinf                      = prm.get_double("Tinf");
       radiation.parse_parameters(prm);
 

@@ -463,7 +463,7 @@ namespace Parameters
 
   /**
    * @brief Laser_FreeSurfaceRadiation - Defines the subparameters for
-   * the radiation sink at the meltpool free surface.
+   * the radiation sink at the free surface (air/metal interface).
    */
   struct Laser_FreeSurfaceRadiation
   {
