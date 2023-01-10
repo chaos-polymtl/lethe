@@ -86,8 +86,11 @@ end
 #---------------------------------------------------
 subsection laser parameters
 	set enable = true
-  set emissivity    = 0.6
-  set Tinf          = 293.0
+  subsection free surface radiation
+    set enable        = true
+    set emissivity    = 0.6
+    set Tinf          = 293.0
+  end
 	set power 			  = 0
 	set start time 		= 0
 	set end time 			= 0
