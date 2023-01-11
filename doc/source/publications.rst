@@ -9,19 +9,21 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 
 * `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", Journal of Non-Newtonian Fluid Mechanics, 311, 104951, 2023 <https://doi.org/10.1016/j.jnnfm.2022.104951>`_.
 
+* `T. El Geitani, S. Golshan, Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 0, null, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
+
 2022
 ----
 
-* `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_. 
+* `L. Barbeau, S. Étienne, C. Béguin, and B. Blais, "Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems", Computers & Fluids, 239, 105415, 2022 <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_.
 
 * `S. Golshan, P. Munch, R. Gassmoller, M. Kronbichler, and B. Blais, “Lethe-Dem: An open-source parallel discrete element solver with load balancing - computational particle mechanics”, Comp. Part. Mech., 2022 <https://link.springer.com/article/10.1007/s40571-022-00478-6>`_.
 
-* `S. Golshan and B. Blais, “Load-balancing strategies in discrete element method simulations”, Processes, 10, 1, 2022 <https://www.mdpi.com/2227-9717/10/1/79>`_. 
+* `S. Golshan and B. Blais, “Load-balancing strategies in discrete element method simulations”, Processes, 10, 1, 2022 <https://www.mdpi.com/2227-9717/10/1/79>`_.
 
 2020
 ----
 
-* `B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, and J. Chaouki, “Lethe: An open-source parallel high-order adaptative CFD solver for Incompressible flows”, SoftwareX, 12, 100579, 2020 <https://www.sciencedirect.com/science/article/pii/S2352711020302922?via%3Dihub>`_. 
+* `B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, and J. Chaouki, “Lethe: An open-source parallel high-order adaptative CFD solver for Incompressible flows”, SoftwareX, 12, 100579, 2020 <https://www.sciencedirect.com/science/article/pii/S2352711020302922?via%3Dihub>`_.
 
 Preprints
 ---------
