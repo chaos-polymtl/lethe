@@ -1905,7 +1905,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
 
   // Scheme and physical properties
   double viscosity = scratch_data.viscosity[0];
-  viscosity=1;
+  viscosity=0.2;
   // Loop and quadrature informations
   Tensor<2, dim> identity;
   for (unsigned int d = 0; d < dim; ++d)
@@ -1985,8 +1985,8 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
                                             JxW;
 
                                           local_matrix(i, j) +=
-                                            +beta_terms - 0*grad_phi_terms -
-                                            0*surface_stress_term;
+                                            +beta_terms - grad_phi_terms -
+                                            surface_stress_term;
                                         }
                                     }
                                 }
@@ -2010,7 +2010,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
 
   // Scheme and physical properties
   double viscosity = scratch_data.viscosity[0];
-  viscosity=1;
+  viscosity=0.2;
 
   // Loop and quadrature informations
   Tensor<2, dim> identity;
@@ -2090,8 +2090,8 @@ WeakDirichletBoundaryCondition<dim>::assemble_rhs(
                                      scratch_data.face_phi_u[f][q][i]) *
                                     JxW;
 
-                                  local_rhs(i) += -beta_terms + 0*grad_phi_terms +
-                                                  0*surface_stress_term;
+                                  local_rhs(i) += -beta_terms + grad_phi_terms +
+                                                  surface_stress_term;
                                 }
                             }
                         }
