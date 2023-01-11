@@ -8,6 +8,7 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 ----
 
 * `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", Journal of Non-Newtonian Fluid Mechanics, 311, 104951, 2023 <https://doi.org/10.1016/j.jnnfm.2022.104951>`_.
+
 * `T. El Geitani, S. Golshan, Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 0, null, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
 
 2022
