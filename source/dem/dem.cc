@@ -45,6 +45,9 @@
 
 #include <sys/stat.h>
 
+#include <algorithm>
+#include <numeric>
+
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -285,6 +288,77 @@ DEMSolver<dim>::cell_weight(
 }
 
 template <int dim>
+unsigned int
+DEMSolver<dim>::cell_weight_with_mobility_status(
+  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status,
+  const unsigned int &mobility_status) const
+{
+  // Assign no weight to cells we do not own.
+  if (!cell->is_locally_owned())
+    return 0;
+
+  // This determines how important particle work is compared to cell
+  // work (by default every cell has a weight of 1000).
+  // We set the weight per particle much higher to indicate that
+  // the particle load is the only one that is important to distribute
+  // in this example. The optimal value of this number depends on the
+  // application and can range from 0 (cheap particle operations,
+  // expensive cell operations) to much larger than 1000 (expensive
+  // particle operations, cheap cell operations, like in this case).
+  // This parameter will need to be tuned for the case of DEM.
+  const unsigned int particle_weight =
+    parameters.model_parameters.load_balance_particle_weight;
+
+  // Applied a factor on the particle weight regards the mobility status
+  // Factor of 1 when mobile cell
+  double alpha = 1.0;
+  if (mobility_status == disable_contact_object.active)
+    {
+      alpha = parameters.model_parameters.active_load_balancing_factor;
+    }
+  else if (mobility_status == disable_contact_object.inactive)
+    {
+      alpha = parameters.model_parameters.inactive_load_balancing_factor;
+    }
+
+  switch (status)
+    {
+      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+        {
+          const unsigned int n_particles_in_cell =
+            particle_handler.n_particles_in_cell(cell);
+          return alpha * n_particles_in_cell * particle_weight;
+          break;
+        }
+
+      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
+
+      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
+        {
+          unsigned int n_particles_in_cell = 0;
+
+          for (unsigned int child_index = 0;
+               child_index < GeometryInfo<dim>::max_children_per_cell;
+               ++child_index)
+            n_particles_in_cell += alpha * particle_handler.n_particles_in_cell(
+                                             cell->child(child_index));
+
+          return n_particles_in_cell * particle_weight;
+        }
+        break;
+
+      default:
+        Assert(false, ExcInternalError());
+        break;
+    }
+
+  return 0;
+}
+
+template <int dim>
 void
 DEMSolver<dim>::setup_background_dofs()
 {
@@ -297,6 +371,31 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
+  if (has_disabled_contacts)
+    {
+      std::vector<unsigned int> mobility_status_vector =
+        disable_contact_object.get_mobility_status_vector(
+          triangulation.n_active_cells());
+
+      // Clear and connect a new cell weight function
+      triangulation.signals.weight.disconnect_all_slots();
+
+      triangulation.signals.weight.connect(
+        [](const typename Triangulation<dim>::cell_iterator &,
+           const typename Triangulation<dim>::CellStatus) -> unsigned int {
+          return 1000;
+        });
+
+      triangulation.signals.weight.connect(
+        [&](const typename parallel::distributed::Triangulation<
+              dim>::cell_iterator &cell,
+            const typename parallel::distributed::Triangulation<dim>::CellStatus
+              status) -> unsigned int {
+          return this->cell_weight_with_mobility_status(
+            cell, status, mobility_status_vector[cell->active_cell_index()]);
+        });
+    }
+
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
@@ -401,23 +500,101 @@ DEMSolver<dim>::check_load_balance_dynamic()
         parameters.model_parameters.dynamic_load_balance_check_frequency ==
       0)
     {
-      unsigned int maximum_particle_number_on_proc = 0;
-      unsigned int minimum_particle_number_on_proc = 0;
-
-      maximum_particle_number_on_proc =
-        Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
-                            mpi_communicator);
-      minimum_particle_number_on_proc =
-        Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
-                            mpi_communicator);
-
-      if ((maximum_particle_number_on_proc - minimum_particle_number_on_proc) >
-            parameters.model_parameters.load_balance_threshold *
-              (particle_handler.n_global_particles() / n_mpi_processes) ||
-          checkpoint_step)
+      if (has_disabled_contacts)
         {
-          load_balance();
-          load_balance_step = true;
+          vector<double> process_to_load_weight(n_mpi_processes, 0.0);
+
+          const unsigned int particle_weight =
+            parameters.model_parameters.load_balance_particle_weight;
+
+          const std::vector<unsigned int> mobility_status_vector =
+            disable_contact_object.get_mobility_status_vector(
+              triangulation.n_active_cells());
+
+          for (const auto &cell : triangulation.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  process_to_load_weight[this_mpi_process] += 1000;
+                  const unsigned int mobility_status =
+                    mobility_status_vector[cell->active_cell_index()];
+                  const unsigned int n_particles_in_cell =
+                    particle_handler.n_particles_in_cell(cell);
+
+                  // Applied a factor on the particle weight regards the
+                  // mobility status Factor of 1 when mobile cell
+                  double alpha = 1.0;
+                  if (mobility_status == disable_contact_object.active)
+                    {
+                      alpha = parameters.model_parameters
+                                .active_load_balancing_factor;
+                    }
+                  else if (mobility_status == disable_contact_object.inactive)
+                    {
+                      alpha = parameters.model_parameters
+                                .inactive_load_balancing_factor;
+                    }
+
+                  process_to_load_weight[this_mpi_process] +=
+                    alpha * n_particles_in_cell * particle_weight;
+                }
+            }
+
+          // Exchange information
+          double maximum_load_on_proc = 0.0;
+          double minimum_load_on_proc = 0.0;
+          double total_load           = 0.0;
+
+          maximum_load_on_proc = Utilities::MPI::max(
+            *std::max_element(process_to_load_weight.begin(),
+                              process_to_load_weight.end()),
+            mpi_communicator);
+
+          minimum_load_on_proc = Utilities::MPI::min(
+            *std::min_element(process_to_load_weight.begin(),
+                              process_to_load_weight.end(),
+                              [](double a, double b) {
+                                return (a > 1e-8) ? (b > 1e-8 ? a < b : true) :
+                                                    false;
+                              }),
+            mpi_communicator);
+
+          total_load =
+            Utilities::MPI::sum(std::accumulate(process_to_load_weight.begin(),
+                                                process_to_load_weight.end(),
+                                                0.0),
+                                mpi_communicator);
+
+          if ((maximum_load_on_proc - minimum_load_on_proc) >
+                parameters.model_parameters.load_balance_threshold *
+                  (total_load / n_mpi_processes) ||
+              checkpoint_step)
+            {
+              load_balance();
+              load_balance_step = true;
+            }
+        }
+      else
+        {
+          unsigned int maximum_particle_number_on_proc = 0;
+          unsigned int minimum_particle_number_on_proc = 0;
+
+          maximum_particle_number_on_proc =
+            Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
+                                mpi_communicator);
+          minimum_particle_number_on_proc =
+            Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
+                                mpi_communicator);
+
+          if ((maximum_particle_number_on_proc -
+               minimum_particle_number_on_proc) >
+                parameters.model_parameters.load_balance_threshold *
+                  (particle_handler.n_global_particles() / n_mpi_processes) ||
+              checkpoint_step)
+            {
+              load_balance();
+              load_balance_step = true;
+            }
         }
     }
 
@@ -863,11 +1040,11 @@ DEMSolver<dim>::solve()
       if (simulation_control->is_verbose_iteration())
         {
           report_statistics();
-          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+/*          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             {
               std::cout << "time;" << simulation_control->get_current_time()
                         << ";" << clock.wall_time() << std::endl;
-            }
+            }*/
         }
 
       // Grid motion

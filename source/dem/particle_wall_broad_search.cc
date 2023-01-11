@@ -53,16 +53,13 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
               // particle_wall_contact_candidates vector. This vector is the
               // output of this function
 
-              std::tuple map_content =
-                std::make_tuple(particles_in_cell_iterator,
-                                boundary_cells_content.normal_vector,
-                                boundary_cells_content.point_on_face,
-                                boundary_cells_content.boundary_id,
-                                boundary_cells_content.global_face_id);
-
               particle_wall_contact_candidates[particles_in_cell_iterator
                                                  ->get_id()]
-                .insert({boundary_cells_content.global_face_id, map_content});
+                .emplace(boundary_cells_content.global_face_id,
+                         std::make_tuple(particles_in_cell_iterator,
+                                         boundary_cells_content.normal_vector,
+                                         boundary_cells_content.point_on_face,
+                                         boundary_cells_content.boundary_id));
             }
         }
     }

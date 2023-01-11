@@ -58,7 +58,7 @@ for (auto particle = particle_handler.begin();
         particle_properties[PropertiesIndex::v_x + d] =
           particle_properties[PropertiesIndex::v_x + d] +
           acceleration_deviation[d] * (0.4167 * dt);
-        particle_proExplicite Eulerperties[PropertiesIndex::acc_x + d] =
+        particle_properties[PropertiesIndex::acc_x + d] =
           particle_properties[PropertiesIndex::v_x + d] +
           acceleration_deviation[d];
         particle_properties[PropertiesIndex::acc_derivative_x + d] +=

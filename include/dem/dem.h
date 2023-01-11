@@ -102,6 +102,16 @@ private:
     const;
 
   /**
+   * TODO
+   */
+  unsigned int
+  cell_weight_with_mobility_status(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status,
+    const unsigned int &mobility_status) const;
+
+  /**
    * Finds contact search steps for constant contact search method
    */
   inline bool
@@ -220,7 +230,7 @@ private:
     const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * Sets the background degree of freedom used for paralle grid output
+   * Sets the background degree of freedom used for parallel grid output
    *
    */
   void

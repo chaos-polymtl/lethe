@@ -160,7 +160,7 @@ public:
   };
 
   std::vector<unsigned int>
-  get_mobility_status_post_processing(unsigned int n_active_cells)
+  get_mobility_status_vector(unsigned int n_active_cells)
   {
     std::vector<unsigned int> status(n_active_cells);
 

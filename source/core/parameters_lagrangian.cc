@@ -529,6 +529,18 @@ namespace Parameters
           "The minimal granular temperature where particle contacts are considered");
 
         prm.declare_entry(
+          "load balance active weight factor",
+          "1.0",
+          Patterns::Double(),
+          "The factor applied on the particle weight in load balancing if cell is active");
+
+        prm.declare_entry(
+          "load balance inactive weight factor",
+          "1.0",
+          Patterns::Double(),
+          "The factor applied on the particle weight in load balancing if cell is inactive");
+
+        prm.declare_entry(
           "solid fraction limit",
           "0.4",
           Patterns::Double(),
@@ -565,6 +577,10 @@ namespace Parameters
             load_balance_threshold = prm.get_double("load balance threshold");
             dynamic_load_balance_check_frequency =
               prm.get_integer("dynamic load balance check frequency");
+            active_load_balancing_factor =
+              prm.get_double("load balance active weight factor");
+            inactive_load_balancing_factor =
+              prm.get_double("load balance inactive weight factor");
           }
         else if (load_balance == "none")
           {

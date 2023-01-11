@@ -245,6 +245,8 @@ namespace Parameters
       bool   disabling_particle_contacts;
       double granular_temperature_limit;
       double solid_fraction_limit;
+      double active_load_balancing_factor;
+      double inactive_load_balancing_factor;
 
       static void
       declare_parameters(ParameterHandler &prm);
