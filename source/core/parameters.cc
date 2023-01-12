@@ -935,20 +935,6 @@ namespace Parameters
                         "0.0",
                         Patterns::Double(),
                         "Laser beam radius");
-      // prm.declare_entry("Stefan-Boltzmann constant",
-      //                   "0.000000056703",
-      //                   Patterns::Double(),
-      //                   "Stefan-Boltzmann constant");
-      // prm.declare_entry("emissivity",
-      //                   "0.6",
-      //                   Patterns::Double(),
-      //                   "Emissivity of the free surface");
-      // prm.declare_entry(
-      //   "Tinf",
-      //   "0.0",
-      //   Patterns::Double(),
-      //   "Temperature (Double) of environment for radiation term at the melt
-      //   pool free surface");
       radiation.declare_parameters(prm);
 
 
@@ -991,9 +977,6 @@ namespace Parameters
       laser_absorptivity   = prm.get_double("absorptivity");
       penetration_depth    = prm.get_double("penetration depth");
       beam_radius          = prm.get_double("beam radius");
-      // Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann
-      // constant"); emissivity                = prm.get_double("emissivity");
-      // Tinf                      = prm.get_double("Tinf");
       radiation.parse_parameters(prm);
 
       prm.enter_subsection("path");

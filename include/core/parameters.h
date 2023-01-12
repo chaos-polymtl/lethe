@@ -556,9 +556,6 @@ namespace Parameters
     double end_time;
 
     // Parameters for the radiation term at the melt pool free surface
-    // double Stefan_Boltzmann_constant;
-    // double emissivity;
-    // double Tinf;
     Laser_FreeSurfaceRadiation radiation;
 
     void
