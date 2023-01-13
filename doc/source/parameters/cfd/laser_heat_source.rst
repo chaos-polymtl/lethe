@@ -24,7 +24,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
           set enable                    = false
           set emissivity                = 0.6
           set Tinf                      = 0.0
-          set Stefan-Boltzmann constant = 0.000000056703
+          set Stefan-Boltzmann constant = 5.6703e-8
       end
 
    end

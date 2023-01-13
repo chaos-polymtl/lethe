@@ -345,7 +345,6 @@ public:
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
-
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
                   StabilizedMethodsCopyData &   copy_data) override;
@@ -395,7 +394,6 @@ public:
    * @param scratch_data (see base class)
    * @param copy_data (see base class)
    */
-
   virtual void
   assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
                   StabilizedMethodsCopyData &   copy_data) override;
