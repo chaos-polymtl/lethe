@@ -882,7 +882,7 @@ namespace Parameters
         Patterns::Bool(),
         "Enable radiation at the free surface (air/metal interface) <true|false>");
       prm.declare_entry("Stefan-Boltzmann constant",
-                        "0.000000056703",
+                        "5.6703e-8",
                         Patterns::Double(),
                         "Stefan-Boltzmann constant");
       prm.declare_entry("emissivity",
