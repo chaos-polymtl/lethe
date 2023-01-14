@@ -871,6 +871,46 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  void
+  Laser_FreeSurfaceRadiation::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("free surface radiation");
+    {
+      prm.declare_entry(
+        "enable",
+        "false",
+        Patterns::Bool(),
+        "Enable radiation at the free surface (air/metal interface) <true|false>");
+      prm.declare_entry("Stefan-Boltzmann constant",
+                        "5.6703e-8",
+                        Patterns::Double(),
+                        "Stefan-Boltzmann constant");
+      prm.declare_entry("emissivity",
+                        "0.6",
+                        Patterns::Double(),
+                        "Emissivity of the free surface (air/metal interface)");
+      prm.declare_entry(
+        "Tinf",
+        "0.0",
+        Patterns::Double(),
+        "Temperature (Double) of environment for radiation term at the free surface (air/metal interface)");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  Laser_FreeSurfaceRadiation::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("free surface radiation");
+    {
+      enable_radiation          = prm.get_bool("enable");
+      Stefan_Boltzmann_constant = prm.get_double("Stefan-Boltzmann constant");
+      emissivity                = prm.get_double("emissivity");
+      Tinf                      = prm.get_double("Tinf");
+    }
+    prm.leave_subsection();
+  }
+
   template <int dim>
   void
   Laser<dim>::declare_parameters(ParameterHandler &prm)
@@ -895,6 +935,7 @@ namespace Parameters
                         "0.0",
                         Patterns::Double(),
                         "Laser beam radius");
+      radiation.declare_parameters(prm);
 
 
       prm.enter_subsection("path");
@@ -936,6 +977,7 @@ namespace Parameters
       laser_absorptivity   = prm.get_double("absorptivity");
       penetration_depth    = prm.get_double("penetration depth");
       beam_radius          = prm.get_double("beam radius");
+      radiation.parse_parameters(prm);
 
       prm.enter_subsection("path");
       laser_scan_path->parse_parameters(prm);

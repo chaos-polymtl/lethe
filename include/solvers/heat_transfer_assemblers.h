@@ -315,5 +315,100 @@ protected:
   std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
 };
 
+/**
+ * @brief Class that assembles the laser heat source for the heat
+ * transfer solver when VOF is enabled. Exponentially decaying model is
+ * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
+ * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
+ * laser melting AlSi10Mg using finite element analysis. Materials &
+ * Design, 142, pp.319-328." The laser heat source is only applied in the metal
+ * (when phase value is non-null) using the phase value alpha as a multiplying
+ * factor on the laser heat source.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerLaserVOF : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerLaserVOF(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
+
+/**
+ * @brief Class that assembles the radiation sink for the heat
+ * transfer solver at the free surface (air/metal interface) when VOF and the
+ * laser are active. The phase gradient of the VOF solver is used to transform
+ * radiative boundary condition at free surface into a volumetric sink at the
+ * air/metal interface: "Tao Yu, Jidong Zhao,Semi-coupled resolved CFD–DEM
+ * simulation of powder-based selective laser melting for additive
+ * manufacturing, Computer Methods in Applied Mechanics and Engineering, Volume
+ * 377, 2021, 113707, ISSN 0045-7825,
+ * https://doi.org/10.1016/j.cma.2021.113707."
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class HeatTransferAssemblerFreeSurfaceRadiationVOF
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerFreeSurfaceRadiationVOF(
+    std::shared_ptr<SimulationControl>      simulation_control,
+    std::shared_ptr<Parameters::Laser<dim>> p_laser_parameters)
+    : HeatTransferAssemblerBase<dim>(simulation_control)
+    , laser_parameters(p_laser_parameters)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData &   copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData &   copy_data) override;
+
+protected:
+  std::shared_ptr<Parameters::Laser<dim>> laser_parameters;
+};
 
 #endif

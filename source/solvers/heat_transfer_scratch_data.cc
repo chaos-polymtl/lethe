@@ -89,7 +89,8 @@ HeatTransferScratchData<dim>::enable_vof(const FiniteElement<dim> &fe,
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values = std::vector<double>(this->n_q_points);
+  phase_values          = std::vector<double>(this->n_q_points);
+  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   specific_heat_0                  = std::vector<double>(n_q_points);
