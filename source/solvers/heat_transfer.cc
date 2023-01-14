@@ -288,10 +288,35 @@ HeatTransfer<dim>::setup_assemblers()
   // Laser heat source
   if (this->simulation_parameters.laser_parameters->activate_laser)
     {
-      this->assemblers.push_back(
-        std::make_shared<HeatTransferAssemblerLaser<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.laser_parameters));
+      if (this->simulation_parameters.multiphysics.VOF)
+        {
+          // Call for the specific assembler
+          // Assembler of the laser source term applied only to the metal phase
+          this->assemblers.push_back(
+            std::make_shared<HeatTransferAssemblerLaserVOF<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.laser_parameters));
+
+          // Assembler of the radiation sink term applied only at the air/metal
+          // interface. The radiation term in that case is treated as a source
+          // term instead of a boundary term.
+          if (this->simulation_parameters.laser_parameters->radiation
+                .enable_radiation)
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>>(
+                  this->simulation_control,
+                  this->simulation_parameters.laser_parameters));
+            }
+        }
+      else
+        {
+          this->assemblers.push_back(
+            std::make_shared<HeatTransferAssemblerLaser<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.laser_parameters));
+        }
     }
 
   // Robin boundary condition
