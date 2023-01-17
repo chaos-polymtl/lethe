@@ -1346,7 +1346,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
       i += 1;
     }
-  data_out.add_data_vector(cell_cuts, "cell cut");
+  data_out.add_data_vector(cell_cuts, "cell_cut");
 }
 
 template <int dim>
