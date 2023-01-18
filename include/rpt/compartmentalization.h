@@ -111,16 +111,16 @@ private:
    * physical property
    */
   void
-  write_file_compartments_first_field(Vector<double>     &compartments_final,
-                                      const double       &time,
+  write_file_compartments_first_field(Vector<double> &    compartments_final,
+                                      const double &      time,
                                       const unsigned int &step_number);
 
   /**
    * @brief Write the pvd file of the final set of compartments
    */
   void
-  write_ultimate_file(Vector<double>     &compartments_ultimate,
-                      const double       &time,
+  write_ultimate_file(Vector<double> &    compartments_ultimate,
+                      const double &      time,
                       const unsigned int &step_number);
 
 
