@@ -1,0 +1,2 @@
+nb_subdivision nb_adaptions radius_ratio base_function mesh_range  max_num_threads TOL    scaling  
+8              5             1            1            0.1         20              10e-20 0.001  
