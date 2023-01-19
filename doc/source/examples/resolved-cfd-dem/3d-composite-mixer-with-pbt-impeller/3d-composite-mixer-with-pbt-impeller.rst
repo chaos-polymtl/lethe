@@ -45,7 +45,10 @@ The shape is created in two steps inspired from the GMSH syntax.
 
 Shapes and boolean operations each have an ID, and boolean operations can reference previous operations to build upon them. 
 
-The ``impeller.composite`` file contains these instructions, explained in more detail in :doc:`../../../parameters/resolved-cfd-dem/resolved-cfd-dem`. :
+The ``impeller.composite`` file contains these instructions.
+
+.. warning:: 
+	The .composite file cannot contain comments at this point in time.
 
 .. code-block:: text
 
@@ -62,7 +65,13 @@ The ``impeller.composite`` file contains these instructions, explained in more d
   8; union     ; 7:3
   9; union     ; 8:4
   10; union    ; 9:5
+  
+Let go over each line:
 
+* `` shapes``
+ 
+
+For more detail othe the definition of the shape see: :doc:`../../../parameters/resolved-cfd-dem/resolved-cfd-dem`.
 
 Definition of the shape and its motion
 --------------------------------------

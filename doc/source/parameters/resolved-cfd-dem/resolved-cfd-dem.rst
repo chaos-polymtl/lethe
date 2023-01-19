@@ -209,7 +209,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     
     * Opencascade: *file name*.
 
-    The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. Here is the content of a file that defines a cylinder topped with a sphere:
+    The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these two boolean operations have been implemented. Here is the content of a file that defines a cylinder topped with a sphere:
 
     .. code-block:: text
 
@@ -219,6 +219,9 @@ The following parameter and subsection are all inside the subsection ``particle 
         operations
         2; union     ; 0:1
 
+.. warning:: 
+	Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the sign distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact sign distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
+	
     * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
     
     * Opencascade: *file name*; the OpenCascade shape allows the user to read  .step file, .iges file, .stl file. From these files, a sign distance function is calculated. Only the step file as a sign distance function at this point in time. Shapes defined by these files can significantly slow the simulation when they are in motion since the evaluation of the distance function of these shapes can be computationally intensive. 
