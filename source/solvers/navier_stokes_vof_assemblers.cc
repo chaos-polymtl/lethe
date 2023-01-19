@@ -527,11 +527,13 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
         scratch_data.filtered_phase_fraction_gradient_values[q];
+      const Tensor<1, dim> &phase_gradient_value =
+        scratch_data.phase_gradient_values[q];
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> tmp_STF =
         -2.0 * surface_tension_coef * curvature_value *
-        filtered_phase_fraction_gradient_value *
+        phase_gradient_value *
         (density_eq / (phase_0_density + phase_1_density));
 
       strong_residual[q] += tmp_STF;
@@ -594,13 +596,17 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
         scratch_data.filtered_phase_fraction_gradient_values[q];
+      const Tensor<1, dim> &phase_fraction_gradient_value =
+          scratch_data.phase_gradient_values[q];
 
-      const double phase_fraction_gradient_norm =
+      const double filtered_phase_fraction_gradient_norm =
         filtered_phase_fraction_gradient_value.norm();
+      const double phase_fraction_gradient_norm =
+          phase_fraction_gradient_value.norm();
 
       const Tensor<1, dim> normalized_filtered_phase_fraction_gradient =
         filtered_phase_fraction_gradient_value /
-        (phase_fraction_gradient_norm + DBL_MIN);
+        (filtered_phase_fraction_gradient_norm + DBL_MIN);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
