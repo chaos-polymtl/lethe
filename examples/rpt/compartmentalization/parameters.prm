@@ -3,12 +3,13 @@
 # --------------------------------------------------
 # CP Parameters
 #---------------------------------------------------
+
 subsection cp parameters
-  set subdivisions = 6
-  set radius = 1.5
-  set half length = 1.2
+  set subdivisions       = 6
+  set radius             = 1.5
+  set half length        = 1.2
   set initial refinement = 2
   set Tol electric field = 1e2
-  set Tol velocity = 2.3
-  set velocity = 4.1
+  set Tol velocity       = 2.3
+  set velocity           = 4.1
 end
