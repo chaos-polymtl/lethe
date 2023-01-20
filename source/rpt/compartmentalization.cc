@@ -21,11 +21,15 @@
 #include <vector>
 
 template <int dim>
-Compartmentalization<dim>::Compartmentalization()
+Compartmentalization<dim>::Compartmentalization(CPCalculatingParameters &CPparameters)
   : computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
   , mpi_communicator(MPI_COMM_WORLD)
   , triangulation(mpi_communicator)
-{}
+  , cp_parameters(CPparameters)
+{
+  std::cout << cp_parameters.cp_param.subdivisions << std::endl;
+  std::cout << cp_parameters.cp_param.CFD_input_velocity << std::endl;
+}
 
 template <int dim>
 void

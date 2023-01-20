@@ -38,6 +38,8 @@
 
 #include <deal.II/lac/vector.h>
 
+#include <rpt/parameters_cp.h>
+
 #include <map>
 #include <unordered_set>
 #include <vector>
@@ -51,7 +53,7 @@ public:
   /**
    * @brief Constructor for the Compartmentalization
    */
-  Compartmentalization<dim>();
+  Compartmentalization<dim>(CPCalculatingParameters &CPparameters);
 
   /**
    * @brief Set up grid and compartmentalize first based on electric values
@@ -153,6 +155,7 @@ private:
   PVDHandler                                grid_pvdhandler;
   MPI_Comm                                  mpi_communicator;
   parallel::distributed::Triangulation<dim> triangulation;
+  CPCalculatingParameters                   cp_parameters;
 };
 
 

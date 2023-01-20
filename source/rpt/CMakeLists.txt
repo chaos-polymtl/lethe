@@ -2,6 +2,7 @@ add_library(lethe-rpt
   # Sources
   compartmentalization.cc
   parameters_rpt.cc
+  parameters_cp.cc
   particle_detector_interactions.cc
   particle_visualization.cc
   rpt.cc
@@ -12,6 +13,7 @@ add_library(lethe-rpt
   ../../include/rpt/compartmentalization.h
   ../../include/rpt/detector.h
   ../../include/rpt/parameters_rpt.h
+  ../../include/rpt/parameters_cp.h
   ../../include/rpt/particle_detector_interactions.h
   ../../include/rpt/particle_visualization.h
   ../../include/rpt/radioactive_particle.h
