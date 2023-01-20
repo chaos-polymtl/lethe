@@ -17,6 +17,7 @@
 */
 
 #include <rpt/compartmentalization.h>
+#include <rpt/parameters_cp.h>
 
 #include <fstream>
 #include <iostream>
@@ -31,7 +32,21 @@ main(int argc, char *argv[])
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
 
-      Compartmentalization<3> compartmentalization;
+      if (argc !=2)
+      {
+        std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
+        std::exit(1);
+      }
+
+      ParameterHandler prm;
+      CPCalculatingParameters cp_param;
+      cp_param.declare(prm);
+
+      // Parse the file
+      prm.parse_input(argv[1]);
+      cp_param.parse(prm);
+
+      Compartmentalization<3> compartmentalization(cp_param);
       compartmentalization.test();
     }
   catch (std::exception &exc)
