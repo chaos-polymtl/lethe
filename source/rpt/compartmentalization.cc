@@ -21,7 +21,8 @@
 #include <vector>
 
 template <int dim>
-Compartmentalization<dim>::Compartmentalization(CPCalculatingParameters &CPparameters)
+Compartmentalization<dim>::Compartmentalization(
+  CPCalculatingParameters &CPparameters)
   : computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
   , mpi_communicator(MPI_COMM_WORLD)
   , triangulation(mpi_communicator)

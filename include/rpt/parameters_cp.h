@@ -40,13 +40,13 @@ namespace Parameters
 
   struct CPParameters
   {
-    int subdivisions;
-    double cylinder_radius;
-    double cylinder_half_length;
+    int          subdivisions;
+    double       cylinder_radius;
+    double       cylinder_half_length;
     unsigned int initial_refinement;
-    double electric_field_tolerance;
-    double velocity_tolerance;
-    double CFD_input_velocity;
+    double       electric_field_tolerance;
+    double       velocity_tolerance;
+    double       CFD_input_velocity;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -59,16 +59,16 @@ namespace Parameters
 class CPCalculatingParameters
 {
 public:
-    CPCalculatingParameters()
-    {}
+  CPCalculatingParameters()
+  {}
 
-    void
-    declare(ParameterHandler &prm);
+  void
+  declare(ParameterHandler &prm);
 
-    void 
-    parse(ParameterHandler &prm);
+  void
+  parse(ParameterHandler &prm);
 
-    Parameters::CPParameters cp_param;
+  Parameters::CPParameters cp_param;
 };
 
 #endif // lethe_cp_parameters_h

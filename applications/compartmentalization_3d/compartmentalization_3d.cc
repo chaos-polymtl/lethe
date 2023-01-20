@@ -32,13 +32,13 @@ main(int argc, char *argv[])
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
 
-      if (argc !=2)
-      {
-        std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-        std::exit(1);
-      }
+      if (argc != 2)
+        {
+          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
+          std::exit(1);
+        }
 
-      ParameterHandler prm;
+      ParameterHandler        prm;
       CPCalculatingParameters cp_param;
       cp_param.declare(prm);
 
