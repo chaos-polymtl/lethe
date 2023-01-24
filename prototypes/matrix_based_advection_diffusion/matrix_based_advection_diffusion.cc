@@ -17,6 +17,7 @@
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/tensor_function.h>
 #include <deal.II/base/timer.h>
 
 #include <deal.II/dofs/dof_accessor.h>
@@ -249,19 +250,20 @@ public:
 };
 
 template <int dim>
-class AdvectionField : public Function<dim>
+class AdvectionField : public TensorFunction<1, dim>
 {
 public:
-  virtual double
-  value(const Point<dim> &p, const unsigned int component = 0) const override
-  {
-    double value;
-    if (component == 0)
-      value = 0.0 * p[0];
-    else
-      value = 1.0 * p[1];
+  AdvectionField()
+    : TensorFunction<1, dim>()
+  {}
 
-    return value;
+  Tensor<1, dim>
+  value(const Point<dim> &p) const override
+  {
+    Tensor<1, dim> result;
+    result[0] = 0.0 * p[0];
+    result[1] = 1.0 * p[1];
+    return result;
   }
 };
 
@@ -585,11 +587,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   AdvectionField<dim>         advection_field;
-  std::vector<Vector<double>> advection_term_values(n_q_points);
-  std::vector<Tensor<1, dim>> advection_transport_vector;
-  // Tensor<1, dim> advection_transport;
-  // advection_transport[0] = 0;
-  // advection_transport[1] = 1;
+  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -603,8 +601,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
             source_term.value_list(fe_values.get_quadrature_points(),
                                    source_term_values);
 
-          advection_field.vector_value_list(fe_values.get_quadrature_points(),
-                                            advection_term_values);
+          advection_field.value_list(fe_values.get_quadrature_points(),
+                                     advection_term_values);
 
           fe_values.get_function_values(solution, newton_step_values);
           fe_values.get_function_gradients(solution, newton_step_gradients);
@@ -613,12 +611,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
             {
               const double nonlinearity = std::exp(newton_step_values[q]);
               const double dx           = fe_values.JxW(q);
-
-              for (int d = 0; d < dim; ++d)
-                {
-                  advection_transport_vector[q][d] =
-                    advection_term_values[q](0);
-                }
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -629,14 +621,14 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
                     cell_rhs(i) +=
                       (-parameters.kinematic_viscosity * grad_phi_i *
                          newton_step_gradients[q] -
-                       advection_transport_vector[q] *
-                         newton_step_gradients[q] * phi_i +
+                       advection_term_values[q] * newton_step_gradients[q] *
+                         phi_i +
                        phi_i * nonlinearity + phi_i * source_term_values[q]) *
                       dx;
                   else
                     cell_rhs(i) += (-parameters.kinematic_viscosity *
                                       grad_phi_i * newton_step_gradients[q] -
-                                    advection_transport_vector[q] *
+                                    advection_term_values[q] *
                                       newton_step_gradients[q] * phi_i +
                                     phi_i * nonlinearity) *
                                    dx;
@@ -678,11 +670,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   AdvectionField<dim>         advection_field;
-  std::vector<Vector<double>> advection_term_values(n_q_points);
-  std::vector<Tensor<1, dim>> advection_transport_vector;
-  // Tensor<1, dim> advection_transport;
-  // advection_transport[0] = 0;
-  // advection_transport[1] = 1;
+  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -694,19 +682,13 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
           fe_values.get_function_values(solution, newton_step_values);
 
-          advection_field.vector_value_list(fe_values.get_quadrature_points(),
-                                            advection_term_values);
+          advection_field.value_list(fe_values.get_quadrature_points(),
+                                     advection_term_values);
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               const double nonlinearity = std::exp(newton_step_values[q]);
               const double dx           = fe_values.JxW(q);
-
-              for (int d = 0; d < dim; ++d)
-                {
-                  advection_transport_vector[q][d] =
-                    advection_term_values[q](d);
-                }
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -722,7 +704,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                       cell_matrix(i, j) +=
                         (parameters.kinematic_viscosity * grad_phi_i *
                            grad_phi_j +
-                         advection_transport_vector[q] * grad_phi_j * phi_i -
+                         advection_term_values[q] * grad_phi_j * phi_i -
                          phi_i * nonlinearity * phi_j) *
                         dx;
                     }
@@ -763,11 +745,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
     triangulation.n_global_levels());
 
   AdvectionField<dim>         advection_field;
-  std::vector<Vector<double>> advection_term_values(n_q_points);
-  std::vector<Tensor<1, dim>> advection_transport_vector;
-  // Tensor<1, dim> advection_transport;
-  // advection_transport[0] = 0;
-  // advection_transport[1] = 1;
+  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
     {
@@ -791,18 +769,13 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
 
         fe_values.get_function_values(solution, newton_step_values);
 
-        advection_field.vector_value_list(fe_values.get_quadrature_points(),
-                                          advection_term_values);
+        advection_field.value_list(fe_values.get_quadrature_points(),
+                                   advection_term_values);
 
         for (unsigned int q = 0; q < n_q_points; ++q)
           {
             const double nonlinearity = std::exp(newton_step_values[q]);
             const double dx           = fe_values.JxW(q);
-
-            for (int d = 0; d < dim; ++d)
-              {
-                advection_transport_vector[q][d] = advection_term_values[q](0);
-              }
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
               {
@@ -818,7 +791,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
                     cell_matrix(i, j) +=
                       (parameters.kinematic_viscosity * grad_phi_i *
                          grad_phi_j +
-                       advection_transport_vector[q] * grad_phi_j * phi_i -
+                       advection_term_values[q] * grad_phi_j * phi_i -
                        phi_i * nonlinearity * phi_j) *
                       dx;
                   }
@@ -867,24 +840,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::cell_worker(
   fe_values.get_function_values(old_solution, newton_step_values);
 
   AdvectionField<dim>         advection_field;
-  std::vector<Vector<double>> advection_term_values(n_q_points);
-  std::vector<Tensor<1, dim>> advection_transport_vector;
-  // Tensor<1, dim> advection_transport;
-  // advection_transport[0] = 0;
-  // advection_transport[1] = 1;
+  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
-  advection_field.vector_value_list(fe_values.get_quadrature_points(),
-                                    advection_term_values);
+  advection_field.value_list(fe_values.get_quadrature_points(),
+                             advection_term_values);
 
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       const double nonlinearity = std::exp(newton_step_values[q]);
       const double dx           = fe_values.JxW(q);
-
-      for (int d = 0; d < dim; ++d)
-        {
-          advection_transport_vector[q][d] = advection_term_values[q](0);
-        }
 
       for (unsigned int i = 0; i < dofs_per_cell; i++)
         {
@@ -898,7 +862,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::cell_worker(
 
               copy_data.cell_matrix(i, j) +=
                 (parameters.kinematic_viscosity * grad_phi_i * grad_phi_j +
-                 advection_transport_vector[q] * grad_phi_j * phi_i -
+                 advection_term_values[q] * grad_phi_j * phi_i -
                  phi_i * nonlinearity * phi_j) *
                 dx;
             }
@@ -1019,11 +983,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   AdvectionField<dim>         advection_field;
-  std::vector<Vector<double>> advection_term_values(n_q_points);
-  std::vector<Tensor<1, dim>> advection_transport_vector;
-  // Tensor<1, dim> advection_transport;
-  // advection_transport[0] = 0;
-  // advection_transport[1] = 1;
+  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -1037,8 +997,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
             source_term.value_list(fe_values.get_quadrature_points(),
                                    source_term_values);
 
-          advection_field.vector_value_list(fe_values.get_quadrature_points(),
-                                            advection_term_values);
+          advection_field.value_list(fe_values.get_quadrature_points(),
+                                     advection_term_values);
 
           fe_values.get_function_values(local_evaluation_point, values);
           fe_values.get_function_gradients(local_evaluation_point, gradients);
@@ -1047,12 +1007,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
             {
               const double nonlinearity = std::exp(values[q]);
               const double dx           = fe_values.JxW(q);
-
-              for (int d = 0; d < dim; ++d)
-                {
-                  advection_transport_vector[q][d] =
-                    advection_term_values[q](0);
-                }
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -1063,14 +1017,14 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
                     cell_residual(i) +=
                       (parameters.kinematic_viscosity * grad_phi_i *
                          gradients[q] +
-                       advection_transport_vector[q] * gradients[q] * phi_i -
+                       advection_term_values[q] * gradients[q] * phi_i -
                        phi_i * nonlinearity - phi_i * source_term_values[q]) *
                       dx;
                   else
                     cell_residual(i) +=
                       (parameters.kinematic_viscosity * grad_phi_i *
                          gradients[q] +
-                       advection_transport_vector[q] * gradients[q] * phi_i -
+                       advection_term_values[q] * gradients[q] * phi_i -
                        phi_i * nonlinearity) *
                       dx;
                 }
@@ -1419,7 +1373,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
                   << dof_handler.n_dofs(level) << " DoFs" << std::endl;
         }
       pcout << std::endl;
-
 
       pcout << "Solve using Newton's method..." << std::endl;
       solve();
