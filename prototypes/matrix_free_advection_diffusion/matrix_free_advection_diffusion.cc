@@ -243,18 +243,21 @@ public:
 };
 
 template <int dim>
-class AdvectionField : public Function<dim>
+class AdvectionField : public TensorFunction<1, dim>
 {
 public:
-  virtual Tensor<1, dim>
-  gradient(const Point<dim> &p, const unsigned int = 0) const override
-  {
-    Tensor<1, dim> grad;
-    grad[0] = 0;
-    for (unsigned int i = 1; i < dim; ++i)
-      grad[i] = 1;
+  AdvectionField()
+    : TensorFunction<1, dim>()
+  {}
 
-    return grad;
+  Tensor<1, dim>
+  value(const Point<dim> &p) const override
+  {
+    (void)p;
+    Tensor<1, dim> result;
+    result[0] = 0.0;
+    result[1] = 1.0;
+    return result;
   }
 };
 
@@ -278,9 +281,6 @@ public:
   evaluate_newton_step(
     const LinearAlgebra::distributed::Vector<number> &newton_step);
 
-  void
-  evaluate_advection_field(const AdvectionField<dim> &advection_field);
-
   virtual void
   compute_diagonal() override;
 
@@ -300,14 +300,15 @@ private:
   local_compute_diagonal(FECellIntegrator &integrator) const;
 
   Table<2, VectorizedArray<number>> nonlinear_values;
-  Table<2, VectorizedArray<number>> advection_values;
 };
 
 
 template <int dim, int fe_degree, typename number>
 JacobianOperator<dim, fe_degree, number>::JacobianOperator()
   : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
-{}
+{
+  nonlinear_values.reinit(0, 0);
+}
 
 
 
@@ -346,28 +347,6 @@ JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::evaluate_advection_field(
-  const AdvectionField<dim> &advection_field)
-{
-  const unsigned int n_cells = this->data->n_cell_batches();
-  FECellIntegrator   phi(*this->data);
-
-  advection_values.reinit(n_cells, phi.n_q_points);
-
-  for (unsigned int cell = 0; cell < n_cells; ++cell)
-    {
-      phi.reinit(cell);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          advection_values(cell, q) = 
-            advection_field.gradient(phi.quadrature_point(q));
-        }
-    }
-}
-
-template <int dim, int fe_degree, typename number>
-void
 JacobianOperator<dim, fe_degree, number>::local_apply(
   const MatrixFree<dim, number> &                   data,
   LinearAlgebra::distributed::Vector<number> &      dst,
@@ -376,9 +355,8 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
 {
   FECellIntegrator phi(data);
 
-  Tensor<1, dim> advection_transport;
-  advection_transport[0] = 0;
-  advection_transport[1] = 1;
+  AdvectionField<dim> advection_field;
+  double              kinematic_viscosity = 1.0;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -393,10 +371,22 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
+          // Get advection field vector
+          Point<dim, VectorizedArray<number>> point_batch =
+            phi.quadrature_point(q);
+          Tensor<1, dim> advection_vector;
+          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+            {
+              Point<dim> single_point;
+              for (unsigned int d = 0; d < dim; ++d)
+                single_point[d] = point_batch[d][v];
+              advection_vector = advection_field.value(single_point);
+            }
+
           phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                             advection_transport * phi.get_gradient(q),
+                             advection_vector * phi.get_gradient(q),
                            q);
-          phi.submit_gradient(phi.get_gradient(q), q);
+          phi.submit_gradient(kinematic_viscosity * phi.get_gradient(q), q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -431,16 +421,26 @@ JacobianOperator<dim, fe_degree, number>::local_compute_diagonal(
 
   phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-  Tensor<1, dim> advection_transport;
-  advection_transport[0] = 0;
-  advection_transport[1] = 1;
+  AdvectionField<dim> advection_field;
+  double              kinematic_viscosity = 1.0;
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
+      // Get advection field vector
+      Point<dim, VectorizedArray<number>> point_batch = phi.quadrature_point(q);
+      Tensor<1, dim>                      advection_vector;
+      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+        {
+          Point<dim> single_point;
+          for (unsigned int d = 0; d < dim; ++d)
+            single_point[d] = point_batch[d][v];
+          advection_vector = advection_field.value(single_point);
+        }
+
       phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                         advection_transport * phi.get_gradient(q),
+                         advection_vector * phi.get_gradient(q),
                        q);
-      phi.submit_gradient(phi.get_gradient(q), q);
+      phi.submit_gradient(kinematic_viscosity * phi.get_gradient(q), q);
     }
 
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -728,10 +728,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 {
   FEEvaluation<dim, fe_degree, fe_degree + 1, 1, double> phi(data);
   SourceTerm<dim>                                        source_term_function;
-
-  Tensor<1, dim> advection_transport;
-  advection_transport[0] = 0;
-  advection_transport[1] = 1;
+  AdvectionField<dim>                                    advection_field;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -757,11 +754,26 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
                   source_value[v] = source_term_function.value(single_point);
                 }
             }
+
+          Point<dim, VectorizedArray<double>> point_batch =
+            phi.quadrature_point(q);
+
+          Tensor<1, dim> advection_vector;
+          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+            {
+              Point<dim> single_point;
+              for (unsigned int d = 0; d < dim; ++d)
+                single_point[d] = point_batch[d][v];
+              advection_vector = advection_field.value(single_point);
+            }
+
           phi.submit_value(-std::exp(phi.get_value(q)) +
-                             advection_transport * phi.get_gradient(q) -
+                             advection_vector * phi.get_gradient(q) -
                              source_value,
                            q);
-          phi.submit_gradient(parameters.kinematic_viscosity* phi.get_gradient(q), q);
+          phi.submit_gradient(parameters.kinematic_viscosity *
+                                phi.get_gradient(q),
+                              q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -842,7 +854,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
       mg_matrices[level].evaluate_newton_step(mg_solution[level]);
       mg_matrices[level].compute_diagonal();
-      mg_matrices[level].evaluate_advection_field(AdvectionField<dim>());
+      // mg_matrices[level].evaluate_advection_field(AdvectionField<dim>());
 
       smoother_data[level].preconditioner =
         mg_matrices[level].get_matrix_diagonal_inverse();
