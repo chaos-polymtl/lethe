@@ -260,9 +260,10 @@ public:
   Tensor<1, dim>
   value(const Point<dim> &p) const override
   {
+    (void)p;
     Tensor<1, dim> result;
-    result[0] = 0.0 * p[0];
-    result[1] = 1.0 * p[1];
+    result[0] = 0.0;
+    result[1] = 1.0;
     return result;
   }
 };
