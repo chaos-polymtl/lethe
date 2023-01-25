@@ -615,6 +615,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
   , max_cell_diameter(0.)
+  , TEST_UNSEEKED_LEVELS(2)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -648,6 +649,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   minimal_mesh_level     = std::numeric_limits<int>::max();
   highest_level_searched = -1;
   max_cell_diameter      = 0.;
+  TEST_UNSEEKED_LEVELS   = 2;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -838,7 +840,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
           {
             parent_found = true;
             temporary_iterable_nodes.swap(iterable_nodes);
-            iterable_nodes.swap(parent_iterator->second);
+            iterable_nodes.swap(*parent_iterator->second);
           }
       }
     catch (TriaAccessorExceptions::ExcCellHasNoParent())
@@ -848,7 +850,8 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     cell_diameter = cell->diameter();
   Point<dim> centered_support_point;
 
-  likely_nodes_map[cell].reserve(max_number_of_nodes);
+  likely_nodes_map[cell] = std::make_shared<std::vector<size_t>>();
+  likely_nodes_map[cell]->reserve(max_number_of_nodes);
   for (const auto &node_id : iterable_nodes)
     {
       centered_support_point = this->align_and_center(support_point);
@@ -858,16 +861,16 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // radius
       max_distance = max_cell_diameter + support_radii[node_id];
       if (distance < max_distance)
-        likely_nodes_map[cell].push_back(node_id);
+        likely_nodes_map[cell]->push_back(node_id);
     }
   max_number_of_nodes =
-    std::max(max_number_of_nodes, likely_nodes_map[cell].size());
+    std::max(max_number_of_nodes, likely_nodes_map[cell]->size());
   if (cell->level() > minimal_mesh_level)
     if (parent_found)
       {
         const auto cell_parent     = cell->parent();
         const auto parent_iterator = likely_nodes_map.find(cell_parent);
-        iterable_nodes.swap(parent_iterator->second);
+        iterable_nodes.swap(*parent_iterator->second);
         temporary_iterable_nodes.swap(iterable_nodes);
       }
 }
@@ -900,6 +903,19 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
+          // We first check if we are in the zone where we simply assume that
+          // children have the same likely nodes as their parents
+          if (level > maximal_level - 1 - TEST_UNSEEKED_LEVELS)
+            {
+              // std::cout<<level<<std::endl;
+              // std::cout<<maximal_level<<std::endl;
+
+              likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
+              break;
+            }
+
+
+
           if (level == maximal_level)
             if (!cell->is_locally_owned())
               break;
@@ -913,7 +929,8 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
         {
           auto cell = it->first;
           bool cell_still_needed =
-            cell->is_active() || (cell->level() > level - 1);
+            cell->is_active() ||
+            (cell->level() > level - 1 - TEST_UNSEEKED_LEVELS);
           if (!cell_still_needed || cell->is_artificial_on_level())
             {
               likely_nodes_map.erase(it++);
@@ -1014,7 +1031,7 @@ RBFShape<dim>::prepare_iterable_nodes(
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
-    iterable_nodes.swap(likely_nodes_map[cell]);
+    iterable_nodes.swap(*likely_nodes_map[cell]);
   else
     iterable_nodes.swap(nodes_id);
 }
@@ -1027,7 +1044,7 @@ RBFShape<dim>::reset_iterable_nodes(
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
-    iterable_nodes.swap(likely_nodes_map[cell]);
+    iterable_nodes.swap(*likely_nodes_map[cell]);
   else
     iterable_nodes.swap(nodes_id);
 }

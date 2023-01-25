@@ -1300,12 +1300,14 @@ private:
   std::shared_ptr<Rectangle<dim>> bounding_box;
   std::vector<size_t>             iterable_nodes;
 
-  std::map<const typename DoFHandler<dim>::cell_iterator, std::vector<size_t>>
+  std::map<const typename DoFHandler<dim>::cell_iterator,
+           std::shared_ptr<std::vector<size_t>>>
          likely_nodes_map;
   size_t max_number_of_nodes;
   int    minimal_mesh_level;
   int    highest_level_searched;
   double max_cell_diameter;
+  int    TEST_UNSEEKED_LEVELS;
 
 public:
   std::vector<size_t>           nodes_id;
