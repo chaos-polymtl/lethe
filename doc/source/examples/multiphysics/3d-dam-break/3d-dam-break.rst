@@ -20,7 +20,7 @@ Features
 Files used in this example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
-- Geometry file: ``examples/multiphysics/3d-dam-break/tank.geo``
+- Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
 - Python script for post-processing data: ``examples/multiphysics/3d-dam-break/3d-dam-break_postprocess.py``
 - Experimental data file: ``examples/multiphysics/3d-dam-break/experimental_data.txt``
 
