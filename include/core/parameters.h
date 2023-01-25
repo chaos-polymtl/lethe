@@ -366,10 +366,15 @@ namespace Parameters
     PhysicalProperties()
     {}
 
-    // Fluid objects for multiphasic simulations
+    // Fluid objects for multiphase simulations
     std::vector<Fluid>        fluids;
     unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
+
+    // Solid objects for conjugated simulations
+    std::vector<Fluid>        solids;
+    unsigned int              number_of_solids;
+    static const unsigned int max_solids = 1;
 
     void
     declare_parameters(ParameterHandler &prm);

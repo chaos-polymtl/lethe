@@ -90,6 +90,12 @@ public:
     return number_of_fluids;
   }
 
+  inline unsigned int
+  get_number_of_solids() const
+  {
+    return number_of_solids;
+  }
+
   // Getters for the physical property models
   std::shared_ptr<DensityModel>
   get_density(const unsigned int fluid_id = 0) const
@@ -218,6 +224,7 @@ private:
   bool constant_density;
 
   unsigned int number_of_fluids;
+  unsigned int number_of_solids;
 };
 
 #endif

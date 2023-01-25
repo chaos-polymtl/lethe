@@ -13,7 +13,7 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-#  set number of solids = 1
+  set number of solids = 1
   subsection fluid 0
     set kinematic viscosity            = 1.000
     set thermal conductivity           = 1
