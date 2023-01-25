@@ -903,9 +903,24 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           if (level == maximal_level)
             if (!cell->is_locally_owned())
               break;
-          determine_likely_nodes_for_one_cell(cell, cell->barycenter());
+          if (!cell->is_artificial_on_level())
+            determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
       highest_level_searched = level;
+
+      // We remove unnecessary cells
+      for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
+        {
+          auto cell = it->first;
+          bool cell_still_needed =
+            cell->is_active() || (cell->level() > level - 1);
+          if (!cell_still_needed || cell->is_artificial_on_level())
+            {
+              likely_nodes_map.erase(it++);
+            }
+          else
+            ++it;
+        }
     }
 }
 
