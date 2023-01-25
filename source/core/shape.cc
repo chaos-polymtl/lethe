@@ -614,7 +614,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , max_number_of_nodes(1)
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
-  , max_support_radius(0.)
   , max_cell_diameter(0.)
   , nodes_id(weights.size())
   , weights(weights)
@@ -625,8 +624,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
   initialize_bounding_box();
-  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
-    max_support_radius = std::max(max_support_radius, support_radii[n_i]);
   this->effective_radius = bounding_box->half_lengths.norm();
 }
 
@@ -650,14 +647,12 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   max_number_of_nodes    = 1;
   minimal_mesh_level     = std::numeric_limits<int>::max();
   highest_level_searched = -1;
-  max_support_radius     = 0.;
   max_cell_diameter      = 0.;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
       weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
       support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
-      max_support_radius   = std::max(max_support_radius, support_radii[n_i]);
       basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
         round(shape_arguments[2 * number_of_nodes + n_i]));
       nodes_positions[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
@@ -861,7 +856,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // We check if the distance is lower than 1 cell diagonal, since we
       // only check the distance with 1 support point, added to the support
       // radius
-      max_distance = max_cell_diameter + max_support_radius;
+      max_distance = max_cell_diameter + support_radii[node_id];
       if (distance < max_distance)
         likely_nodes_map[cell].push_back(node_id);
     }
