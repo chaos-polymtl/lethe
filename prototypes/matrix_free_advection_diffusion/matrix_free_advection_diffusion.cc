@@ -262,7 +262,7 @@ public:
 };
 
 template <int dim, int fe_degree, typename number>
-class JacobianOperator
+class AdvectionDiffusionOperator
   : public MatrixFreeOperators::Base<dim,
                                      LinearAlgebra::distributed::Vector<number>>
 {
@@ -272,7 +272,7 @@ public:
   using FECellIntegrator =
     FEEvaluation<dim, fe_degree, fe_degree + 1, 1, number>;
 
-  JacobianOperator();
+  AdvectionDiffusionOperator();
 
   virtual void
   clear() override;
@@ -304,7 +304,7 @@ private:
 
 
 template <int dim, int fe_degree, typename number>
-JacobianOperator<dim, fe_degree, number>::JacobianOperator()
+AdvectionDiffusionOperator<dim, fe_degree, number>::AdvectionDiffusionOperator()
   : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
 {
   nonlinear_values.reinit(0, 0);
@@ -314,7 +314,7 @@ JacobianOperator<dim, fe_degree, number>::JacobianOperator()
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::clear()
+AdvectionDiffusionOperator<dim, fe_degree, number>::clear()
 {
   nonlinear_values.reinit(0, 0);
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
@@ -324,7 +324,7 @@ JacobianOperator<dim, fe_degree, number>::clear()
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
+AdvectionDiffusionOperator<dim, fe_degree, number>::evaluate_newton_step(
   const LinearAlgebra::distributed::Vector<number> &newton_step)
 {
   const unsigned int n_cells = this->data->n_cell_batches();
@@ -347,7 +347,7 @@ JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::local_apply(
+AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
   const MatrixFree<dim, number> &                   data,
   LinearAlgebra::distributed::Vector<number> &      dst,
   const LinearAlgebra::distributed::Vector<number> &src,
@@ -399,18 +399,21 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::apply_add(
+AdvectionDiffusionOperator<dim, fe_degree, number>::apply_add(
   LinearAlgebra::distributed::Vector<number> &      dst,
   const LinearAlgebra::distributed::Vector<number> &src) const
 {
-  this->data->cell_loop(&JacobianOperator::local_apply, this, dst, src);
+  this->data->cell_loop(&AdvectionDiffusionOperator::local_apply,
+                        this,
+                        dst,
+                        src);
 }
 
 
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::local_compute_diagonal(
+AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute_diagonal(
   FECellIntegrator &phi) const
 {
   AssertDimension(nonlinear_values.size(0),
@@ -450,7 +453,7 @@ JacobianOperator<dim, fe_degree, number>::local_compute_diagonal(
 
 template <int dim, int fe_degree, typename number>
 void
-JacobianOperator<dim, fe_degree, number>::compute_diagonal()
+AdvectionDiffusionOperator<dim, fe_degree, number>::compute_diagonal()
 {
   this->inverse_diagonal_entries.reset(
     new DiagonalMatrix<LinearAlgebra::distributed::Vector<number>>());
@@ -458,10 +461,11 @@ JacobianOperator<dim, fe_degree, number>::compute_diagonal()
     this->inverse_diagonal_entries->get_vector();
   this->data->initialize_dof_vector(inverse_diagonal);
 
-  MatrixFreeTools::compute_diagonal(*this->data,
-                                    inverse_diagonal,
-                                    &JacobianOperator::local_compute_diagonal,
-                                    this);
+  MatrixFreeTools::compute_diagonal(
+    *this->data,
+    inverse_diagonal,
+    &AdvectionDiffusionOperator::local_compute_diagonal,
+    this);
 
   for (auto &diagonal_element : inverse_diagonal)
     {
@@ -531,10 +535,10 @@ private:
   FE_Q<dim>                 fe;
   DoFHandler<dim>           dof_handler;
   AffineConstraints<double> constraints;
-  using SystemMatrixType = JacobianOperator<dim, fe_degree, double>;
+  using SystemMatrixType = AdvectionDiffusionOperator<dim, fe_degree, double>;
   SystemMatrixType  system_matrix;
   MGConstrainedDoFs mg_constrained_dofs;
-  using LevelMatrixType = JacobianOperator<dim, fe_degree, float>;
+  using LevelMatrixType = AdvectionDiffusionOperator<dim, fe_degree, float>;
   MGLevelObject<LevelMatrixType>                           mg_matrices;
   MGLevelObject<LinearAlgebra::distributed::Vector<float>> mg_solution;
   MGTransferMatrixFree<dim, float>                         mg_transfer;
