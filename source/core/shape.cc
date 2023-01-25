@@ -614,6 +614,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , max_number_of_nodes(1)
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
+  , max_support_radius(0.)
+  , max_cell_diameter(0.)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -623,6 +625,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
   initialize_bounding_box();
+  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
+    max_support_radius = std::max(max_support_radius, support_radii[n_i]);
   this->effective_radius = bounding_box->half_lengths.norm();
 }
 
@@ -646,11 +650,14 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   max_number_of_nodes    = 1;
   minimal_mesh_level     = std::numeric_limits<int>::max();
   highest_level_searched = -1;
+  max_support_radius     = 0.;
+  max_cell_diameter      = 0.;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
       weights[n_i]         = shape_arguments[0 * number_of_nodes + n_i];
       support_radii[n_i]   = shape_arguments[1 * number_of_nodes + n_i];
+      max_support_radius   = std::max(max_support_radius, support_radii[n_i]);
       basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
         round(shape_arguments[2 * number_of_nodes + n_i]));
       nodes_positions[n_i][0] = shape_arguments[3 * number_of_nodes + n_i];
@@ -851,10 +858,10 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     {
       centered_support_point = this->align_and_center(support_point);
       distance = (centered_support_point - nodes_positions[node_id]).norm();
-      // We only check for one point, but we use the maximal distance
-      // from any point in the cell added to the support radius.
-      // This allows not to loop over many points.
-      max_distance = cell_diameter + support_radii[node_id];
+      // We check if the distance is lower than 1 cell diagonal, since we
+      // only check the distance with 1 support point, added to the support
+      // radius
+      max_distance = max_cell_diameter + max_support_radius;
       if (distance < max_distance)
         likely_nodes_map[cell].push_back(node_id);
     }
@@ -879,6 +886,21 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
 
   for (int level = highest_level_searched + 1; level < maximal_level; level++)
     {
+      double local_max_cell_diameter = 0.;
+
+      const auto &active_cell_iterator = dof_handler.active_cell_iterators();
+      for (const auto &cell : active_cell_iterator)
+        local_max_cell_diameter =
+          std::max(local_max_cell_diameter, cell->diameter());
+      const auto &prep_cell_iterator =
+        dof_handler.cell_iterators_on_level(level);
+      for (const auto &cell : prep_cell_iterator)
+        local_max_cell_diameter =
+          std::max(local_max_cell_diameter, cell->diameter());
+
+      const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+      Utilities::MPI::max(local_max_cell_diameter, mpi_communicator);
+      max_cell_diameter         = local_max_cell_diameter;
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
