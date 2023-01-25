@@ -882,7 +882,8 @@ void
 RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
                                       std::shared_ptr<Mapping<dim>> /*mapping*/)
 {
-  int maximal_level = dof_handler.get_triangulation().n_levels();
+  int            maximal_level    = dof_handler.get_triangulation().n_levels();
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
 
   for (int level = highest_level_searched + 1; level < maximal_level; level++)
     {
@@ -898,16 +899,16 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
         local_max_cell_diameter =
           std::max(local_max_cell_diameter, cell->diameter());
 
-      const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-      Utilities::MPI::max(local_max_cell_diameter, mpi_communicator);
-      max_cell_diameter         = local_max_cell_diameter;
+      max_cell_diameter =
+        Utilities::MPI::max(local_max_cell_diameter, mpi_communicator);
+
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           if (level == maximal_level)
             if (!cell->is_locally_owned())
               break;
-          determine_likely_nodes_for_one_cell(cell, cell->vertex(0));
+          determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
       highest_level_searched = level;
     }
