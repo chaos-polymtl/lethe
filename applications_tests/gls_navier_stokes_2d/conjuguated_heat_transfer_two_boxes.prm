@@ -20,12 +20,6 @@ subsection physical properties
   end
 end
 
-subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-
-end
-
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
@@ -38,8 +32,8 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = gmsh
-    set file name  = box.msh
-    set simplex = true
+    set file name            = ../box.msh
+    set simplex              = true
 end
 
 #---------------------------------------------------
