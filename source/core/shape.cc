@@ -615,7 +615,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
   , max_cell_diameter(0.)
-  , number_of_ignored_levels(1)
+  , number_of_ignored_levels(2)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -649,7 +649,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   minimal_mesh_level     = std::numeric_limits<int>::max();
   highest_level_searched = -1;
   max_cell_diameter      = 0.;
-  number_of_ignored_levels = 1;
+  number_of_ignored_levels = 2;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
