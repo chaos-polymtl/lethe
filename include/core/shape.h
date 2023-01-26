@@ -1307,7 +1307,7 @@ private:
   int    minimal_mesh_level;
   int    highest_level_searched;
   double max_cell_diameter;
-  int    TEST_UNSEEKED_LEVELS;
+  int    number_of_ignored_levels;
 
 public:
   std::vector<size_t>           nodes_id;

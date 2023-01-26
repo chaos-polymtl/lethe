@@ -615,7 +615,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
   , max_cell_diameter(0.)
-  , TEST_UNSEEKED_LEVELS(2)
+  , number_of_ignored_levels(1)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -649,7 +649,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   minimal_mesh_level     = std::numeric_limits<int>::max();
   highest_level_searched = -1;
   max_cell_diameter      = 0.;
-  TEST_UNSEEKED_LEVELS   = 2;
+  number_of_ignored_levels = 1;
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -900,25 +900,23 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
       max_cell_diameter =
         Utilities::MPI::max(local_max_cell_diameter, mpi_communicator);
 
+     // bool skip = (level > maximal_level - 1 - TEST_UNSEEKED_LEVELS);
+      //std::cout<<"level "<<level<< " is skipped : " << skip << std::endl;
+
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           // We first check if we are in the zone where we simply assume that
           // children have the same likely nodes as their parents
-          if (level > maximal_level - 1 - TEST_UNSEEKED_LEVELS)
+          if (level > maximal_level - 1 - number_of_ignored_levels)
             {
-              // std::cout<<level<<std::endl;
-              // std::cout<<maximal_level<<std::endl;
-
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
-              break;
+              continue;
             }
-
-
 
           if (level == maximal_level)
             if (!cell->is_locally_owned())
-              break;
+              continue;
           if (!cell->is_artificial_on_level())
             determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
@@ -930,7 +928,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           auto cell = it->first;
           bool cell_still_needed =
             cell->is_active() ||
-            (cell->level() > level - 1 - TEST_UNSEEKED_LEVELS);
+            (cell->level() > level - 1 - number_of_ignored_levels);
           if (!cell_still_needed || cell->is_artificial_on_level())
             {
               likely_nodes_map.erase(it++);
