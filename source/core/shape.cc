@@ -859,7 +859,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // We check if the distance is lower than 1 cell diagonal, since we
       // only check the distance with 1 support point, added to the support
       // radius
-      max_distance = 3.*max_cell_diameter + support_radii[node_id];
+      max_distance = max_cell_diameter + support_radii[node_id];
       if (distance < max_distance)
         likely_nodes_map[cell]->push_back(node_id);
     }
