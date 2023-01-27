@@ -17,7 +17,8 @@
 #include <core/thermal_conductivity_model.h>
 
 std::shared_ptr<ThermalConductivityModel>
-ThermalConductivityModel::model_cast(const Parameters::Material &fluid_properties)
+ThermalConductivityModel::model_cast(
+  const Parameters::Material &fluid_properties)
 {
   if (fluid_properties.thermal_conductivity_model ==
       Parameters::Material::ThermalConductivityModel::linear)
