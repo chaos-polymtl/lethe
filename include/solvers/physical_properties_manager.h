@@ -53,6 +53,11 @@ DeclException1(
  * This centralizes the place where the models are created.
  * The class can be constructed empty and initialized from parameters
  * or it can be constructed directly with a Parameters section.
+ * The architecture of the PhysicalPropertiesManager is made to ensure that it
+ * can store as many physical properties models as required. It first stores
+ * the physical properties of the fluids, which are always assumed to lie in
+ * material_id=0, and then stored the physical properties of the solid, which
+ * may be in cells for which material_id>0.
  *
  */
 
@@ -98,39 +103,45 @@ public:
 
   // Getters for the physical property models
   std::shared_ptr<DensityModel>
-  get_density(const unsigned int fluid_id = 0) const
+  get_density(const unsigned int fluid_id    = 0,
+              const unsigned int material_id = 0) const
   {
-    return density[fluid_id];
+    return density[calculate_global_id(fluid_id, material_id)];
   }
 
   std::shared_ptr<SpecificHeatModel>
-  get_specific_heat(const unsigned int fluid_id = 0) const
+  get_specific_heat(const unsigned int fluid_id    = 0,
+                    const unsigned int material_id = 0) const
   {
-    return specific_heat[fluid_id];
+    return specific_heat[calculate_global_id(fluid_id, material_id)];
   }
 
   std::shared_ptr<ThermalConductivityModel>
-  get_thermal_conductivity(const unsigned int fluid_id = 0) const
+  get_thermal_conductivity(const unsigned int fluid_id    = 0,
+                           const unsigned int material_id = 0) const
   {
-    return thermal_conductivity[fluid_id];
+    return thermal_conductivity[calculate_global_id(fluid_id, material_id)];
   }
 
   std::shared_ptr<RheologicalModel>
-  get_rheology(const unsigned int fluid_id = 0) const
+  get_rheology(const unsigned int fluid_id    = 0,
+               const unsigned int material_id = 0) const
   {
-    return rheology[fluid_id];
+    return rheology[calculate_global_id(fluid_id, material_id)];
   }
 
   std::shared_ptr<ThermalExpansionModel>
-  get_thermal_expansion(const unsigned int fluid_id = 0) const
+  get_thermal_expansion(const unsigned int fluid_id    = 0,
+                        const unsigned int material_id = 0) const
   {
-    return thermal_expansion[fluid_id];
+    return thermal_expansion[calculate_global_id(fluid_id, material_id)];
   }
 
   std::shared_ptr<TracerDiffusivityModel>
-  get_tracer_diffusivity(const unsigned int fluid_id = 0) const
+  get_tracer_diffusivity(const unsigned int fluid_id    = 0,
+                         const unsigned int material_id = 0) const
   {
-    return tracer_diffusivity[fluid_id];
+    return tracer_diffusivity[calculate_global_id(fluid_id, material_id)];
   }
 
   // Vector Getters for the physical property models
@@ -198,6 +209,23 @@ public:
 private:
   void
   establish_fields_required_by_model(PhysicalPropertyModel &model);
+
+  /** @brief Calculates the global id of the physical property. By default. Lethe stores all
+   *  the properties of the fluids, then the properties of the solid. Fluids
+   * need to have a material id of 0, then solids are consequential.
+   */
+  unsigned int
+  calculate_global_id(const unsigned int fluid_id,
+                      const unsigned int material_id) const
+  {
+    if (material_id < 1)
+      return fluid_id;
+    else
+      {
+        return number_of_fluids + material_id - 1;
+      }
+  }
+
 
 
   // Temporary scaling variables. This will be deprecated once the migration is

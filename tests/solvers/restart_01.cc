@@ -34,7 +34,7 @@ public:
 template <int dim>
 void
 ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
-                                    Vector<double> &  values) const
+                                    Vector<double>   &values) const
 {
   assert(dim == 2);
   const double a = M_PI;
@@ -58,7 +58,7 @@ public:
 template <int dim>
 void
 MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,
-                                          Vector<double> &  values) const
+                                          Vector<double>   &values) const
 {
   assert(dim == 2);
   const double a = M_PI;
@@ -106,6 +106,8 @@ RestartNavierStokes<dim>::run()
   physical_properties.fluids[0].rheological_model =
     Parameters::Material::RheologicalModel::newtonian;
   physical_properties.fluids[0].viscosity = 1;
+  physical_properties.number_of_solids    = 0;
+
 
   this->simulation_parameters.physical_properties_manager.initialize(
     physical_properties);
