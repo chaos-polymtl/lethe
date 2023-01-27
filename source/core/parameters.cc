@@ -270,7 +270,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -310,7 +310,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &   prm,
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -346,7 +346,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &   prm,
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -397,7 +397,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &   prm,
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
@@ -527,20 +527,26 @@ namespace Parameters
       // Multiphasic simulations parameters definition
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
-          fluids[i_fluid].declare_parameters(prm, i_fluid);
+          fluids[i_fluid].declare_parameters(prm, "fluid", i_fluid);
         }
 
       prm.declare_entry("number of solids",
                         "0",
                         Patterns::Integer(),
                         "Number of solids");
+
+      // Multiphasic simulations parameters definition
+      for (unsigned int i_solid = 0; i_solid < max_solids; ++i_solid)
+        {
+          solids[i_solid].declare_parameters(prm, "solid", i_solid);
+        }
     }
 
     prm.leave_subsection();
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -552,11 +558,15 @@ namespace Parameters
 
       for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
         {
-          fluids[i_fluid].parse_parameters(prm, i_fluid, dimensions);
+          fluids[i_fluid].parse_parameters(prm, "fluid", i_fluid, dimensions);
         }
 
       // Multiphase simulations parameters definition
       number_of_solids = prm.get_integer("number of solids");
+      for (unsigned int i_solid = 0; i_solid < number_of_solids; ++i_solid)
+        {
+          solids[i_solid].parse_parameters(prm, "solid", i_solid, dimensions);
+        }
       AssertThrow(number_of_solids <= max_solids,
                   NumberOfSolidsError(number_of_fluids));
     }
@@ -564,9 +574,12 @@ namespace Parameters
   }
 
   void
-  Fluid::declare_parameters(ParameterHandler &prm, unsigned int id)
+  Material::declare_parameters(ParameterHandler &prm,
+                               std::string       material_prefix,
+                               unsigned int      id)
   {
-    prm.enter_subsection("fluid " + Utilities::int_to_string(id, 1));
+    prm.enter_subsection(material_prefix + " " +
+                         Utilities::int_to_string(id, 1));
     {
       prm.declare_entry("density",
                         "1",
@@ -656,11 +669,13 @@ namespace Parameters
   }
 
   void
-  Fluid::parse_parameters(ParameterHandler &               prm,
-                          const unsigned int               id,
-                          const Parameters::Dimensionality dimensions)
+  Material::parse_parameters(ParameterHandler                &prm,
+                             std::string                      material_prefix,
+                             const unsigned int               id,
+                             const Parameters::Dimensionality dimensions)
   {
-    prm.enter_subsection("fluid " + Utilities::int_to_string(id, 1));
+    prm.enter_subsection(material_prefix + " " +
+                         Utilities::int_to_string(id, 1));
     {
       // String that will be used to parse the models
       std::string op;

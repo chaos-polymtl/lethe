@@ -37,11 +37,11 @@ test()
   physical_properties.number_of_fluids = 1;
   physical_properties.fluids.resize(1);
   physical_properties.fluids[0].density_model =
-    Parameters::Fluid::DensityModel::constant;
+    Parameters::Material::DensityModel::constant;
   physical_properties.fluids[0].specific_heat_model =
-    Parameters::Fluid::SpecificHeatModel::constant;
+    Parameters::Material::SpecificHeatModel::constant;
   physical_properties.fluids[0].thermal_conductivity_model =
-    Parameters::Fluid::ThermalConductivityModel::constant;
+    Parameters::Material::ThermalConductivityModel::constant;
 
   physical_properties.fluids[0].density              = 1;
   physical_properties.fluids[0].thermal_conductivity = 3;

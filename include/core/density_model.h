@@ -33,7 +33,7 @@ public:
    * @param physical_properties Parameters for a single fluid
    */
   static std::shared_ptr<DensityModel>
-  model_cast(const Parameters::Fluid &fluid_properties);
+  model_cast(const Parameters::Material &fluid_properties);
 };
 
 

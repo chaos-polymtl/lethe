@@ -1,20 +1,20 @@
 #include <core/rheological_model.h>
 
 std::shared_ptr<RheologicalModel>
-RheologicalModel::model_cast(const Parameters::Fluid &fluid_properties)
+RheologicalModel::model_cast(const Parameters::Material &fluid_properties)
 {
   if (fluid_properties.rheological_model ==
-      Parameters::Fluid::RheologicalModel::newtonian)
+      Parameters::Material::RheologicalModel::newtonian)
     return std::make_shared<Newtonian>(fluid_properties.viscosity);
   else if (fluid_properties.rheological_model ==
-           Parameters::Fluid::RheologicalModel::powerlaw)
+           Parameters::Material::RheologicalModel::powerlaw)
     return std::make_shared<PowerLaw>(
       fluid_properties.non_newtonian_parameters.powerlaw_parameters.K,
       fluid_properties.non_newtonian_parameters.powerlaw_parameters.n,
       fluid_properties.non_newtonian_parameters.powerlaw_parameters
         .shear_rate_min);
   else if (fluid_properties.rheological_model ==
-           Parameters::Fluid::RheologicalModel::carreau)
+           Parameters::Material::RheologicalModel::carreau)
     return std::make_shared<Carreau>(
       fluid_properties.non_newtonian_parameters.carreau_parameters.viscosity_0,
       fluid_properties.non_newtonian_parameters.carreau_parameters

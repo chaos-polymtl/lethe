@@ -281,18 +281,23 @@ namespace Parameters
 
 
   /**
-   * @brief Fluid - Class for fluid definition
+   * @brief Material - Class that defines the physical property of a material.
+   * Generally a material will be a fluid, but for conjugated heat transfer,
+   * this may also be a solid.
    */
-  class Fluid
+  class Material
   {
   public:
-    Fluid()
+    Material()
     {}
 
     void
-    declare_parameters(ParameterHandler &prm, unsigned int id);
+    declare_parameters(ParameterHandler &prm,
+                       std::string       material_prefix,
+                       unsigned int      id);
     void
-    parse_parameters(ParameterHandler &   prm,
+    parse_parameters(ParameterHandler    &prm,
+                     std::string          material_prefix,
                      const unsigned int   id,
                      const Dimensionality dimensions);
 
@@ -367,19 +372,19 @@ namespace Parameters
     {}
 
     // Fluid objects for multiphase simulations
-    std::vector<Fluid>        fluids;
+    std::vector<Material>     fluids;
     unsigned int              number_of_fluids;
     static const unsigned int max_fluids = 2;
 
     // Solid objects for conjugated simulations
-    std::vector<Fluid>        solids;
+    std::vector<Material>     solids;
     unsigned int              number_of_solids;
     static const unsigned int max_solids = 1;
 
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &   prm,
+    parse_parameters(ParameterHandler    &prm,
                      const Dimensionality dimensions = Dimensionality());
   };
 

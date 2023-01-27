@@ -45,7 +45,7 @@ public:
    * Newtonian flow
    */
   static std::shared_ptr<RheologicalModel>
-  model_cast(const Parameters::Fluid &fluid_properties);
+  model_cast(const Parameters::Material &fluid_properties);
 
   /**
    * @brief Returns the value of the n parameters of the model, is the model has one.

@@ -17,10 +17,10 @@
 #include <core/thermal_expansion_model.h>
 
 std::shared_ptr<ThermalExpansionModel>
-ThermalExpansionModel::model_cast(const Parameters::Fluid &fluid_properties)
+ThermalExpansionModel::model_cast(const Parameters::Material &fluid_properties)
 {
   if (fluid_properties.thermal_expansion_model ==
-      Parameters::Fluid::ThermalExpansionModel::phase_change)
+      Parameters::Material::ThermalExpansionModel::phase_change)
     return std::make_shared<ThermalExpansionPhaseChange>(
       fluid_properties.phase_change_parameters);
   else

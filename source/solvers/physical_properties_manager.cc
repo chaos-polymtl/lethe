@@ -59,7 +59,7 @@ PhysicalPropertiesManager::initialize(
       // This indicator is used elsewhere in the code to throw assertions
       // if non-constant density is not implemented in a post-processing utility
       if (physical_properties.fluids[f].density_model !=
-          Parameters::Fluid::DensityModel::constant)
+          Parameters::Material::DensityModel::constant)
         constant_density = false;
 
       specific_heat.push_back(
@@ -83,9 +83,9 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(*thermal_expansion[f]);
 
       if (physical_properties.fluids[f].rheological_model !=
-            Parameters::Fluid::RheologicalModel::newtonian &&
+            Parameters::Material::RheologicalModel::newtonian &&
           physical_properties.fluids[f].rheological_model !=
-            Parameters::Fluid::RheologicalModel::phase_change)
+            Parameters::Material::RheologicalModel::phase_change)
         non_newtonian_flow = true;
     }
 }
