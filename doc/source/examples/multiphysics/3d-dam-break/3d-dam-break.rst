@@ -2,7 +2,7 @@
 3D Dam Break With an Obstacle
 ===============================
 
-This example simulates a dam break experiment from the Maritime Research Institute Netherlands (MARIN) `<[1]_>`_.
+This example simulates a dam break experiment from the Maritime Research Institute Netherlands (MARIN) `[1] <https://www.spheric-sph.org/tests/test-02>`_.
 
 .. warning::
     This example displays the need for improvement of low-viscosity fluid flow simulation of the current numeric model. Further work will be done to improve this aspect of the model.
@@ -31,7 +31,7 @@ Files used in this example
 Description of the case
 -------------------------
 
-For this example, the fluids that will be simulated are water and air. Initially, the water will be resting on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0` s, the gate opens up instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{m}{s^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00` m. On all boundaries, ``slip`` conditions are applied. On the left side of the tank, a rectangular box-shaped obstacle is present (colored in grey in the figures).
+For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0` s, the gate is opened up instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{m}{s^2}`. The tank in which this experiment happened has the following dimensions: :math:`3.22 \times 1.00 \times 1.00` m. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
 
 
 Along the x-axis, the water height is measured at 4 different positions. These positions are represented by red crosses in the figure below.
@@ -42,7 +42,7 @@ Along the x-axis, the water height is measured at 4 different positions. These p
    :align: center
    :name: View from above at the initial state of the system
 
-   View from above of the initial state of the system
+   Initial state top view
 
 
 .. figure:: images/3d-dam-break-figure_side.png
@@ -50,7 +50,7 @@ Along the x-axis, the water height is measured at 4 different positions. These p
    :align: center
    :name: View from the side at the initial state of the system
 
-   View from the side of the initial state of the system
+   Initial state side view
 
 
 .. figure:: images/geo.png
@@ -58,7 +58,7 @@ Along the x-axis, the water height is measured at 4 different positions. These p
    :align: center
    :name: 3D View of the initial system
 
-   3D View of the initial system
+   Initial state in 3D
 
 
 -----------------
@@ -112,10 +112,10 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 Physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{kg}{m^3}` (air) and :math:`1000 \ \frac{kg}{m^3}` (water). However, the current numerical wasn't able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
+The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{kg}{m^3}` (air) and :math:`1000 \ \frac{kg}{m^3}` (water). However, the current numerical was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
 
 .. warning::
-    Altering the dynamic viscosities of the fluids will surely have an impact on the results. We will study this impact in the `<Results_>`_ section.
+    Altering the dynamic viscosities of the fluids will surely have an impact on the results. We will show this impact in the `<Results_>`_ section.
 
 .. code-block:: text
 
@@ -241,12 +241,12 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 Running the simulation
 -----------------------
 
-Call the gls_navier_stokes_3d by invoking:
+We call the gls_navier_stokes_3d by invoking:
 
 ``mpirun -np $number_of_CPU_cores gls_navier_stokes_3d 3d-dam-break.prm``
 
 .. warning::
-    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\approx` 15.5 hours on 40 processes (runned on the Béluga cluster).
+    Make sure to compile Lethe in `Release` mode and run in parallel using mpirun. This simulation took :math:`\approx` 15.5 hours on 40 processes (runned on the `Béluga <https://docs.alliancecan.ca/wiki/B%C3%A9luga/en>`_ cluster).
 
 .. _Results:
 
@@ -268,13 +268,12 @@ In the following figure, we compare the water height evolution at 4 the position
    :align: center
    :name: Comparison of the water height at different position in the tank with the experimental data of MARIN
 
-As we can see, the general evolution of the height seems to follow the experimentation results. However, on all 4 subplots, we notice that the height is overestimated. We also notice a slight shift to the right for :math:`H2`,  :math:`H3`, and :math:`H4` evolutions. These observations may be explained by the "highly viscous air" (fluid 0) that acts as an obstacle to the free flow of the water. Additionally, fluid 1 representing the water is 1000 times more viscous than regular water. With these results, we can see that the model needs to be improved to be able to simulate with accuracy low-viscosity fluids such as air.
+As we can see, the simulated general evolution of the height seems to follow the experimentation results. However, on all 4 subplots, we notice that the height is overestimated. We also notice a slight shift to the right for :math:`H2`,  :math:`H3`, and :math:`H4` evolutions. These observations may be explained by the "highly viscous air" (fluid 0) that acts as an obstacle to the free flow of the water. Additionally, fluid 1 representing the water is 1000 times more viscous than regular water. With these results, we can see that the model needs to be improved to be able to accurately simulate low-viscosity fluids such as air.
 
 
 -----------
 References
 -----------
 
-.. _[1]:
 
-[1] Issa, R., & Violeau, D. (2006). Test-case 2, 3D dambreaking, Release 1.1. ERCOFTAC, SPH European Research Interest Community SIG, Électricité de France, Laboratoire National d’Hydraulique et Environnement. https://www.spheric-sph.org/tests/test-02
+`[1] <https://www.spheric-sph.org/tests/test-02>`_ Issa, R., & Violeau, D. (2006). Test-case 2, 3D dambreaking, Release 1.1. ERCOFTAC, SPH European Research Interest Community SIG, Électricité de France, Laboratoire National d’Hydraulique et Environnement. 
