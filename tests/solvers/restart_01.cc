@@ -34,7 +34,7 @@ public:
 template <int dim>
 void
 ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
-                                    Vector<double>   &values) const
+                                    Vector<double> &  values) const
 {
   assert(dim == 2);
   const double a = M_PI;
@@ -58,7 +58,7 @@ public:
 template <int dim>
 void
 MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,
-                                          Vector<double>   &values) const
+                                          Vector<double> &  values) const
 {
   assert(dim == 2);
   const double a = M_PI;

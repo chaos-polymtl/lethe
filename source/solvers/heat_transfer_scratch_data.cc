@@ -178,7 +178,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
     {
       switch (properties_manager.get_number_of_fluids())
         {
-            case 1: {
+          case 1:
+            {
               const auto density_model = properties_manager.get_density();
               const auto specific_heat_model =
                 properties_manager.get_specific_heat();
@@ -252,7 +253,8 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                 this->grad_specific_heat_temperature_0[q],
                 this->grad_specific_heat_temperature_1[q]);
             }
-            case 2: {
+          case 2:
+            {
               const auto density_models =
                 properties_manager.get_density_vector();
               const auto specific_heat_models =
