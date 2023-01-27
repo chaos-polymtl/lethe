@@ -605,8 +605,9 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
                         const std::vector<double> &          weights,
                         const std::vector<Point<dim>> &      nodes,
-                        const Point<dim> &                   position,
-                        const Tensor<1, 3> &                 orientation)
+                        const unsigned int  levels_not_precalculated,
+                        const Point<dim> &  position,
+                        const Tensor<1, 3> &orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -615,7 +616,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
   , max_cell_diameter(0.)
-  , number_of_ignored_levels(2)
+  , levels_not_precalculated(levels_not_precalculated)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -637,19 +638,19 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
                orientation)
 // The effective radius is extracted at the proper index from shape_arguments
 {
-  number_of_nodes = shape_arguments.size() / (dim + 3);
+  number_of_nodes = (shape_arguments.size() - 1) / (dim + 3);
   weights.resize(number_of_nodes);
   support_radii.resize(number_of_nodes);
   basis_functions.resize(number_of_nodes);
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  iterable_nodes         = nodes_id;
-  max_number_of_nodes    = 1;
-  minimal_mesh_level     = std::numeric_limits<int>::max();
-  highest_level_searched = -1;
-  max_cell_diameter      = 0.;
-  number_of_ignored_levels = 2;
+  iterable_nodes           = nodes_id;
+  max_number_of_nodes      = 1;
+  minimal_mesh_level       = std::numeric_limits<int>::max();
+  highest_level_searched   = -1;
+  max_cell_diameter        = 0.;
+  levels_not_precalculated = std::round(shape_arguments.back());
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -778,6 +779,7 @@ RBFShape<dim>::static_copy() const
                                     this->basis_functions,
                                     this->weights,
                                     this->nodes_positions,
+                                    this->levels_not_precalculated,
                                     this->position,
                                     this->orientation);
   return copy;
@@ -900,15 +902,15 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
       max_cell_diameter =
         Utilities::MPI::max(local_max_cell_diameter, mpi_communicator);
 
-     // bool skip = (level > maximal_level - 1 - TEST_UNSEEKED_LEVELS);
-      //std::cout<<"level "<<level<< " is skipped : " << skip << std::endl;
+      // bool skip = (level > maximal_level - 1 - TEST_UNSEEKED_LEVELS);
+      // std::cout<<"level "<<level<< " is skipped : " << skip << std::endl;
 
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           // We first check if we are in the zone where we simply assume that
           // children have the same likely nodes as their parents
-          if (level > maximal_level - 1 - number_of_ignored_levels)
+          if (level > maximal_level - 1 - levels_not_precalculated)
             {
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
               continue;
@@ -928,7 +930,7 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
           auto cell = it->first;
           bool cell_still_needed =
             cell->is_active() ||
-            (cell->level() > level - 1 - number_of_ignored_levels);
+            (cell->level() > level - 1 - levels_not_precalculated);
           if (!cell_still_needed || cell->is_artificial_on_level())
             {
               likely_nodes_map.erase(it++);

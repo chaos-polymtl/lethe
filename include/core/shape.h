@@ -802,6 +802,7 @@ public:
    * @param basis_function the basis function that is used to parametrize the RBF object
    * @param weight the weighting associated to each node for the sum operation
    * @param nodes the center of each basis function
+   * @param levels_not_precalculated the number of mesh levels that work be precomputed, for memory purposes
    * @param position the location of the RBF shape
    * @param orientation the orientation of the shape in relation to each main
    * axis
@@ -810,6 +811,7 @@ public:
                 const std::vector<RBFBasisFunction> &basis_functions,
                 const std::vector<double> &          weights,
                 const std::vector<Point<dim>> &      nodes,
+                const unsigned int                   levels_not_precalculated,
                 const Point<dim> &                   position,
                 const Tensor<1, 3> &                 orientation);
 
@@ -1302,12 +1304,12 @@ private:
 
   std::map<const typename DoFHandler<dim>::cell_iterator,
            std::shared_ptr<std::vector<size_t>>>
-         likely_nodes_map;
-  size_t max_number_of_nodes;
-  int    minimal_mesh_level;
-  int    highest_level_searched;
-  double max_cell_diameter;
-  int    number_of_ignored_levels;
+               likely_nodes_map;
+  size_t       max_number_of_nodes;
+  int          minimal_mesh_level;
+  int          highest_level_searched;
+  double       max_cell_diameter;
+  unsigned int levels_not_precalculated;
 
 public:
   std::vector<size_t>           nodes_id;
