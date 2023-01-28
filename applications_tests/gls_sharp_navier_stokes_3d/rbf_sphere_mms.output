@@ -1,0 +1,67 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 500
+   Volume of triangulation:      8
+
+*****************************************************************
+Steady iteration :        1/3
+*****************************************************************
+Newton iteration: 0  - Residual:  0.67795
+  -Tolerance of iterative solver is : 0.00067795
+  -Iterative solver took : 4 steps
+		alpha =      1 res = 0.01309
+Newton iteration: 1  - Residual:  0.01309
+  -Tolerance of iterative solver is : 1.309e-05
+  -Iterative solver took : 5 steps
+		alpha =      1 res = 4.913e-06
+Newton iteration: 2  - Residual:  4.913e-06
+  -Tolerance of iterative solver is : 4.913e-09
+  -Iterative solver took : 5 steps
+		alpha =      1 res = 3.225e-09
+div u : 1.241e-08
+error at the weak BC : 0.3751
+L2 error velocity : 0.3046 L2 error pressure: 1.342
+
+*****************************************************************
+Steady iteration :        2/3
+*****************************************************************
+   Number of active cells:       512
+   Number of degrees of freedom: 2916
+   Volume of triangulation:      8
+Newton iteration: 0  - Residual:  2.406
+  -Tolerance of iterative solver is : 0.002406
+  -Iterative solver took : 5 steps
+		alpha =      1 res = 0.009708
+Newton iteration: 1  - Residual:  0.009708
+  -Tolerance of iterative solver is : 9.708e-06
+  -Iterative solver took : 6 steps
+		alpha =      1 res = 5.921e-06
+Newton iteration: 2  - Residual:  5.921e-06
+  -Tolerance of iterative solver is : 5.921e-09
+  -Iterative solver took : 7 steps
+		alpha =      1 res = 3.496e-09
+div u : -2.517e-10
+error at the weak BC : 0.1423
+L2 error velocity : 0.1033 L2 error pressure: 1.045
+
+*****************************************************************
+Steady iteration :        3/3
+*****************************************************************
+   Number of active cells:       4096
+   Number of degrees of freedom: 19652
+   Volume of triangulation:      8
+Newton iteration: 0  - Residual:  1.439
+  -Tolerance of iterative solver is : 0.001439
+  -Iterative solver took : 6 steps
+		alpha =      1 res = 0.001382
+Newton iteration: 1  - Residual:  0.001382
+  -Tolerance of iterative solver is : 1.382e-06
+  -Iterative solver took : 13 steps
+		alpha =      1 res = 8.426e-07
+div u : -1.159e-06
+error at the weak BC : 0.03942
+L2 error velocity : 0.04315 L2 error pressure: 0.4822
+cells  error_velocity    error_pressure
+   64 3.046489e-01    - 1.341779e+00    -
+  512 1.032901e-01 1.56 1.044571e+00 0.36
+ 4096 4.314692e-02 1.26 4.821661e-01 1.12
