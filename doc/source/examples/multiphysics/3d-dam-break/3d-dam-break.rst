@@ -31,7 +31,7 @@ Files used in this example
 Description of the case
 -------------------------
 
-For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0` s, the gate is opened up instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{m}{s^2}`. The tank in which this experiment happened has the following dimensions: :math:`3.22 \times 1.00 \times 1.00` m. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
+For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0` s, the gate is opened up instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happened has the following dimensions: :math:`3.22 \times 1.00 \times 1.00` m. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
 
 
 Along the x-axis, the water height is measured at 4 different positions. These positions are represented by red crosses in the figure below.
@@ -127,7 +127,7 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 Physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{kg}{m^3}` (air) and :math:`1000 \ \frac{kg}{m^3}` (water). However, the current numerical was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
+The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{kg}{m^3}` (air) and :math:`1000 \ \frac{kg}{m^3}` (water). However, the current numerical model was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
 
 .. warning::
     Altering the dynamic viscosities of the fluids will surely have an impact on the results. We will show this impact in the `<Results_>`_ section.
@@ -261,7 +261,7 @@ We call the gls_navier_stokes_3d by invoking:
 ``mpirun -np $number_of_CPU_cores gls_navier_stokes_3d 3d-dam-break.prm``
 
 .. warning::
-    Make sure to compile Lethe in `Release` mode and run in parallel using mpirun. This simulation took :math:`\approx` 15.5 hours on 40 processes (runned on the `Béluga <https://docs.alliancecan.ca/wiki/B%C3%A9luga/en>`_ cluster).
+    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. This simulation took :math:`\approx` 15.5 hours on 40 processes (runned on the `Béluga <https://docs.alliancecan.ca/wiki/B%C3%A9luga/en>`_ cluster).
 
 .. _Results:
 
