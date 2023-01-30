@@ -100,7 +100,7 @@ class lethe_pyvista_tools():
 
         print(f'Written .df_timestep from timestep = 0 to timestep = {len(self.list_vtu)-1}')
 
-    #Write modifications on each df to VTU file
+    #Write modifications on each df to VTU files
     def write_vtu(self):
 
         #Create list of time steps as strings
@@ -161,7 +161,10 @@ class lethe_pyvista_tools():
         #Time array
         t = self.time_list
 
-                #Create list of array names
+        #Create list of array names
+        #This step is necessary to allow the usage of
+        #the variables x, y, z, u, v, w, t, f_x, f_y, and f_z
+        #in the condition argument
         array_names = self.df_0.array_names
         array_names.append("x")
         array_names.append("y")
@@ -174,7 +177,13 @@ class lethe_pyvista_tools():
         array_names.append("f_z")
         array_names.append("t")
 
-        #Restart array if asked or array does not exist
+        #Restart array if asked or if array does not exist
+        #If the array is restarted or created, the standard_value will be
+        #assigned to the entire array.
+        #If restart_array is set to False and the array exists,
+        #The previous values in it will be preserved.
+        #This can be used to apply multiple conditions without affecting
+        #Previous modifications, for example. 
         if restart_array == True or new_array_name not in array_names:
             #Create array if does not exist
             new_array = np.repeat(standard_value, new_array_len)
@@ -222,7 +231,9 @@ class lethe_pyvista_tools():
                         exec(f"global {name}; {name} = self.df_{reference_time_step}[name]")
                         new_variables.add(name)
         
-        #If results vary with time:
+        #If results vary with time,
+        #the condition and array_values will be applied
+        #to all time steps
         if time_dependent:
             ("Creating time-dependent array:")
             pbar = tqdm(total = len(self.time_list), desc = f"Looping through time-steps")
@@ -272,7 +283,12 @@ class lethe_pyvista_tools():
                 exec(f"self.df_{i}[new_array_name] = new_array")
                 pbar.update(1)
 
-        #If not time dependent
+        #If not time dependent, the condition and array_values will be applied
+        #at the reference_time_step.
+        #This is very useful if you want to track a group of particles in a
+        #DEM simulation. The value of 1 can be assigned to this group of particles
+        #according to a given condition (position, for example) while 0 can be given to the others,
+        #This way, the groups of particles will be colored in the reference_time_step and will keep this color regardless of time.
         else:
             print(f"Creating array based on time-step number: {reference_time_step}")
             print(f"Corresponding time: {self.time_list[reference_time_step]}")
