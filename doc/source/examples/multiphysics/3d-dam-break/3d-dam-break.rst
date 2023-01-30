@@ -114,6 +114,7 @@ Multiphysics
 The ``multiphysics`` subsection enables to turn on `(true)`
 and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 Note that the fluid dynamics are solved by default.
+
 .. code-block:: text
 
     #---------------------------------------------------
