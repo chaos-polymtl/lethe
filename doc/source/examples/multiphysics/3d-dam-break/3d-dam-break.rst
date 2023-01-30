@@ -36,30 +36,45 @@ For this example, the simulated fluids are water and air. Initially, the water i
 
 Along the x-axis, the water height is measured at 4 different positions. These positions are represented by red crosses in the figure below.
 
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/3d-dam-break-figure.png                                                                       |
+|     :alt: View from above the tank. Initially, the water is at rest on the right side of the tank. The            |
+|      water column is 1.228 m long. 0.6635 m from the left edge, there is a rectangular box-shaped obstacle.       |
+|      This obstacle is 1.1675 m away from the resting water. The water height is measured along the x-axis         |
+|      at respectively 0.496 m, 0.992 m, 1.488 m, and 2.632 m from the left side of the tank.                       |
+|     :align: center                                                                                                |
+|     :name: Initial state top view                                                                                 |
+|                                                                                                                   |
+|     Initial state top view                                                                                        |
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
 
-.. figure:: images/3d-dam-break-figure.png
-   :alt: View from above the tank. Initially, the water is at rest on the right side of the tank. The water column is 1.228 m long. 0.6635 m from the left edge, there is a rectangular box-shaped obstacle. This obstacle is 1.1675 m away from the resting water. The water height is measured along the x-axis at respectively 0.496 m, 0.992 m, 1.488 m, and 2.632 m from the left side of the tank.
-   :align: center
-   :name: View from above at the initial state of the system
+|
 
-   Initial state top view
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/3d-dam-break-figure_side.png                                                                  |
+|     :alt: View from the side of the tank. Initially, the water is at rest on the right side of the tank.          |
+|      The water column is 1.228 m long, and 0.55 m in height. 0.6635 m from the left edge, there is a rectangular  |
+|      box-shaped obstacle. This obstacle is 1.1675 m away from the resting water. The water height is measured     |
+|      along the x-axis at respectively 0.496 m, 0.992 m, 1.488 m, and 2.632 m from the left side of the tank.      |
+|     :align: center                                                                                                |
+|     :name: Initial state side view                                                                                |
+|                                                                                                                   |
+|     Initial state side view                                                                                       |
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
 
+|
 
-.. figure:: images/3d-dam-break-figure_side.png
-   :alt: View from the side of the tank. Initially, the water is at rest on the right side of the tank. The water column is 1.228 m long, and 0.55 m in height. 0.6635 m from the left edge, there is a rectangular box-shaped obstacle. This obstacle is 1.1675 m away from the resting water. The water height is measured along the x-axis at respectively 0.496 m, 0.992 m, 1.488 m, and 2.632 m from the left side of the tank.
-   :align: center
-   :name: View from the side at the initial state of the system
-
-   Initial state side view
-
-
-.. figure:: images/geo.png
-   :alt: 3D view of the initial system
-   :align: center
-   :name: 3D View of the initial system
-
-   Initial state in 3D
-
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/geo.png                                                                                       |
+|     :alt: 3D view of the initial system                                                                           |
+|     :align: center                                                                                                |
+|     :name: Initial state in 3D                                                                                    |
+|                                                                                                                   |
+|     Initial state in 3D                                                                                           |
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
 
 -----------------
 Parameter file
@@ -263,10 +278,20 @@ The following video shows the results of the simulation:
 
 In the following figure, we compare the water height evolution at 4 the positions mentioned in the `<Description of the case_>`_ section with the experimental results obtained from MARIN (available `here <https://www.spheric-sph.org/tests/test-02>`_):
 
-.. figure:: images/H1_to_H4_evolution.png
-   :alt: In this figure, the water height evolutions are compared with the experimental results of MARIN. In the top left corner, we compare the evolution of the water height at 0.496 m away from the left side of the tank. In the top right corner, we compare the evolution of the water height at 0.992 m away from the left side of the tank. In the bottom left corner, we compare the evolution of the water height at 1.488 m away from the left side of the tank. In the bottom right corner, we compare the evolution of the water height at 1.638 m away from the left side of the tank.
-   :align: center
-   :name: Comparison of the water height at different position in the tank with the experimental data of MARIN
++-------------------------------------------------------------------------------------------------------------------+
+|  .. figure:: images/H1_to_H4_evolution.png                                                                        |
+|     :alt: In this figure, the water height evolutions are compared with the experimental results of MARIN.        |
+|      In the top left corner, we compare the evolution of the water height at 0.496 m away from the left side of   |
+|      the tank. In the top right corner, we compare the evolution of the water height at 0.992 m away from the     |
+|      left side of the tank. In the bottom left corner, we compare the evolution of the water height at 1.488 m    |
+|      away from the left side of the tank. In the bottom right corner, we compare the evolution of the water       |
+|      height at 1.638 m away from the left side of the tank.                                                       |
+|     :align: center                                                                                                |
+|     :name: Comparison of the water height at different position in the tank with the experimental data of MARIN   |
+|                                                                                                                   |
+|     Comparison of the water height evolution                                                                      |
+|                                                                                                                   |
++-------------------------------------------------------------------------------------------------------------------+
 
 As we can see, the simulated general evolution of the height seems to follow the experimentation results. However, on all 4 subplots, we notice that the height is overestimated. We also notice a slight shift to the right for :math:`H2`,  :math:`H3`, and :math:`H4` evolutions. These observations may be explained by the "highly viscous air" (fluid 0) that acts as an obstacle to the free flow of the water. Additionally, fluid 1 representing the water is 1000 times more viscous than regular water. With these results, we can see that the model needs to be improved to be able to accurately simulate low-viscosity fluids such as air.
 
