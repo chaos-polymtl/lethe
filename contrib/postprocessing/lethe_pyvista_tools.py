@@ -9,7 +9,7 @@ import pyvista as pv
 from tqdm import tqdm
 
 #Define class:
-class Lethe_pyvista_tools():
+class lethe_pyvista_tools():
 
     def __init__(self, case_path, prm_file_name):
 

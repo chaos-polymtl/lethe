@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.append("../../../contrib/postprocessing/")
-from Lethe_pyvista_tools import *
+from lethe_pyvista_tools import *
 
 #############################################################################
 
@@ -30,7 +30,7 @@ prm_file_name = sys.argv[2]
 save_path = simulation_path
 
 # Create the particle object
-particle = Lethe_pyvista_tools(simulation_path, prm_file_name)
+particle = lethe_pyvista_tools(simulation_path, prm_file_name)
 
 # Get the pvd name
 pvd_name = particle.prm_dict["output name"]

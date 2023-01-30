@@ -1,20 +1,20 @@
-#To use the Lethe_pyvista_tools, you need to have python 3
+#To use the lethe_pyvista_tools, you need to have python 3
 #installed in your computer
 
-#The modules necessary to run Lethe pyvista tools are:
+#The modules necessary to run lethe pyvista tools are:
 #Pandas: pip install pandas
 #PyVista: pip install pyvista
 
-#To use Lethe_pyvista_tools, put the "Lethe_pyvista_tools.py" file inside
+#To use lethe_pyvista_tools, put the "lethe_pyvista_tools.py" file inside
 #The same directory as your python script and procceed as follows
 
-#This line imports all Lethe_pyvista_tools functionalities
-from Lethe_pyvista_tools import *
+#This line imports all lethe_pyvista_tools functionalities
+from lethe_pyvista_tools import *
 
 #This script prints out the content of your prm file as dictionary
-#To run Lethe_pyvista_tools you need to specify the path to your
+#To run lethe_pyvista_tools you need to specify the path to your
 #case and the name of the .prm file
-example = Lethe_pyvista_tools('PATH TO YOUR CASE', 'NAME_OF_YOUR_PARAMETERS_FILE.prm')
+example = lethe_pyvista_tools('PATH TO YOUR CASE', 'NAME_OF_YOUR_PARAMETERS_FILE.prm')
 
 print('This is the dictionary of your .prm file:')
 print(example.prm_dict)
