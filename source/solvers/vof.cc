@@ -945,6 +945,16 @@ void
 VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector &solution)
 {
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data =
+    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
+                        *this->fe,
+                        *this->cell_quadrature,
+                        *this->mapping,
+                        dof_handler_fd->get_fe());
+
   // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
@@ -1002,6 +1012,12 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
             filtered_phase_fraction_gradient_cell->index(),
             &this->dof_handler);
 
+          scratch_data.reinit(cell,
+                    this->evaluation_point,
+                    this->previous_solutions,
+                    this->solution_stages);
+          const double       h          = scratch_data.cell_size;
+
           fe_values_phase_fraction.reinit(cell);
           fe_values_filtered_phase_fraction_gradient.reinit(
             filtered_phase_fraction_gradient_cell);
@@ -1041,7 +1057,7 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
                       local_matrix_filtered_phase_fraction_gradient(i, j) +=
                         (phi_filtered_phase_fraction_gradient[j] *
                            phi_filtered_phase_fraction_gradient[i] +
-                         phase_fraction_gradient_filter_value *
+                         h * h * phase_fraction_gradient_filter_value *
                            scalar_product(
                              phi_filtered_phase_fraction_gradient_gradient[i],
                              phi_filtered_phase_fraction_gradient_gradient
@@ -1134,6 +1150,16 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector
     &present_filtered_phase_fraction_gradient_solution)
 {
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data =
+    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
+                        *this->fe,
+                        *this->cell_quadrature,
+                        *this->mapping,
+                        dof_handler_fd->get_fe());
+
   // Get fe values of phase fraction gradient (pfg) and curvature
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
                                     *this->fe_curvature,
@@ -1185,6 +1211,12 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
               curvature_cell->index(),
               &this->filtered_phase_fraction_gradient_dof_handler);
 
+          scratch_data.reinit(curvature_cell,
+                    this->evaluation_point,
+                    this->previous_solutions,
+                    this->solution_stages);
+          const double       h          = scratch_data.cell_size;
+
           fe_values_filtered_phase_fraction_gradient.reinit(
             filtered_phase_fraction_gradient_cell);
           fe_values_curvature.reinit(curvature_cell);
@@ -1221,7 +1253,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                         {
                           local_matrix_curvature(i, j) +=
                             (phi_curvature[j] * phi_curvature[i] +
-                             curvature_filter_value *
+                             h * h * curvature_filter_value *
                                scalar_product(phi_curvature_gradient[i],
                                               phi_curvature_gradient[j])) *
                             fe_values_curvature.JxW(q);

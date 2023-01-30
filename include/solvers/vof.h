@@ -88,7 +88,7 @@ public:
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         fe_filtered_phase_fraction_gradient =
           std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
-        fe_curvature = std::make_shared<FE_Q<dim>>(1);
+        fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
         filtered_phase_fraction_gradient_mapping =
           std::make_shared<MappingQ<dim>>(
             fe_filtered_phase_fraction_gradient->degree,
