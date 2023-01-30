@@ -9,13 +9,6 @@ subsection mesh adaptation
   set type = uniform
 end
 
-subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0; 0
-    end
-end
-
 subsection FEM
   set velocity order = 1
   set pressure order = 1
@@ -149,4 +142,12 @@ subsection analytical solution
     set Function constants  = r=0.5, a=3.141592653589793238
     set Function expression = (-r + (x^2 + y^2 + z^2)^0.5>0)?((-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)^2*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)):0;(-r + (x^2 + y^2 + z^2)^0.5>0)?((-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)^2*sin(pi*z)*cos(pi*x)*cos(pi*z)):0;(-r + (x^2 + y^2 + z^2)^0.5>0)?(-2*(-r + (x^2 + y^2 + z^2)^0.5)*sin(pi*x)*sin(pi*y)*sin(pi*z)^2*cos(pi*x)*cos(pi*y)):0;(-r + (x^2 + y^2 + z^2)^0.5>0)?(sin(pi*x) + sin(pi*y) + sin(pi*z)):0
   end
+end
+
+subsection non-linear solver
+  set verbosity = quiet
+end
+
+subsection linear solver
+  set verbosity = quiet
 end
