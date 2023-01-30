@@ -1,0 +1,154 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = bdf1
+  set time step               = 0.05
+  set adapt                   = true
+  set max cfl                 = 1000
+  set time end                = 100
+  set output frequency        = 1
+  set output name             = out
+  set output path             = ./output/
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+  set number of solids = 1
+  subsection fluid 0
+    set kinematic viscosity            = 1e-3
+    set specific heat                  = 4180
+    set density                        = 1000
+    set thermal conductivity           = 0.6
+  end
+
+    subsection solid 0
+    set thermal conductivity           = 400
+    set specific heat                  = 385
+    set density                        = 8960
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+    set temperature order         = 1
+
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+subsection multiphysics
+   set heat transfer = true
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+    set type    = none
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = gmsh
+    set file name  = concentric_cylinders.msh
+end
+
+#---------------------------------------------------
+# initial conditions
+#---------------------------------------------------
+subsection initial conditions
+  subsection temperature
+    set Function expression = 50
+  end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 3
+    subsection bc 0
+        set type              = noslip
+        set id                = 0
+    end
+    subsection bc 1
+        set type              = function
+        set id                = 1
+        subsection u
+            set Function expression = 0
+        end
+        subsection v
+            set Function expression = 0
+        end
+        subsection w
+            set Function expression = 0.1
+        end
+    end
+    subsection bc 2
+        set type              = function
+        set id                = 4
+        subsection u
+            set Function expression = 0
+        end
+        subsection v
+            set Function expression = 0
+        end
+        subsection w
+            set Function expression = -0.1
+        end
+    end
+
+end
+
+
+subsection boundary conditions heat transfer
+  set number                  = 2
+    subsection bc 0
+        set id = 1
+        set type              = temperature
+	      set value             = 0
+    end
+
+    subsection bc 1
+        set id = 3
+        set type              = temperature
+	      set value             = 100
+    end
+end
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 10
+  set verbosity               = verbose
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set method                                       = gmres
+  set relative residual                            = 1e-3
+  set minimum residual                             = 1e-9
+  set ilu preconditioner fill                = 0
+  set ilu preconditioner absolute tolerance  = 1e-10
+  set ilu preconditioner relative tolerance  = 1.00
+  set verbosity               = extra verbose
+  set max krylov vectors      = 200
+  set max iters         = 5000
+end
