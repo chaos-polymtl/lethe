@@ -52,7 +52,7 @@ example.array_modifier()
 #reference_array_name = "ID" -> array to be used as reference to create or modify the other. All arrays will be sorted and written according to this one.
 #new_array_name = "new_array" -> name of the new array. If there is an array with the same name, it will be rewritten according to the other arguments.
 #restart_array = False -> if True, zeroes the entire array before modifying it. If you want to modify part of the array keeping the rest intact, set it to False
-#condition = "" -> takes a string and uses it in an if condition to modify the array. Variables accepted include x, y, z, t, and any other array. It also accepts a combination of them, such as: "x*y**2 + t > 2"
+#condition = "" -> takes a string and uses it in an if condition to modify the array. Variables accepted include x, y, z, u, v, w, t, and any other array. It also accepts a combination of them, such as: "x*w**2 + t > 2"
 #array_values = 0 -> new values to the array. This argument accepts a single value (which will be repeated to all data respecting the given condition), an numpy array or python list (with the same len of all other arrays), or a string such as "2*x + t" (working just like the condition argument)
 #standard_value = 0 -> if restart array is True, the standard_value will be the one plugged to the entire array before modifying it.
 #reference_time_step = 0 -> reference time step to which the modification will be applied. The others will follow this given one
