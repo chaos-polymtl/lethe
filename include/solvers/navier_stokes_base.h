@@ -190,8 +190,7 @@ protected:
             multiphysics->postprocess(true);
           }
         ref_iter++;
-      }
-    while (
+    } while (
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
@@ -353,7 +352,15 @@ protected:
   check_existance_of_bc(BoundaryConditions::BoundaryType bc);
 
   /**
-   * @brief Turn material_id=1 to a solid block by injecting it into the constraints
+   * @brief Turns regions of the mesh where the material_id=1 to a solid block by injecting it into the constraints
+   * This is achieved by imposing $\mathbf{u}=0$ within the cells which have a
+   * material_id=1. In addition, solid cells which are not connected to the
+   * fluid by any means also get a pressure dirichlet boundary condition which
+   * fixes the pressure to 0. This ensures that the linear system is well-posed.
+   * Right now, this routine only supports the usage of 1 solid domain, but
+   * eventually it could be extended to more than one. By default, the fluid
+   * domain is assumed to have a material_id=0 and the rest of the domains have
+   * a material_id>0.
    */
   void
   establish_solid_domain(bool non_zero_constraints);

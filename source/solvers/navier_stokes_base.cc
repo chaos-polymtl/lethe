@@ -894,7 +894,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -1573,7 +1573,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
         {
           cell->get_dof_indices(local_dof_indices);
           // If the material_id is 1, the region is a solid region
-          if (cell->material_id() == 1)
+          if (cell->material_id() > 0)
             {
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
@@ -1593,8 +1593,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                     }
                 }
             }
-          else // if (cell->material_id() == 0 &&
-               //     (cell->is_locally_owned() || cell->is_ghost()))
+          else
             {
               // Cell is a fluid cell and as such all the DOFs are connected to
               // fluid
@@ -1619,7 +1618,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
         {
           cell->get_dof_indices(local_dof_indices);
           // If the material_id is 1, the region is a solid region
-          if (cell->material_id() == 1)
+          if (cell->material_id() > 0)
             {
               bool connected_to_fluid = false;
               // First check if cell is connected to a fluid cell
@@ -1806,7 +1805,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           1, DataComponentInterpretation::component_is_scalar);
 
       std::vector<std::string> qcriterion_name = {"qcriterion"};
-      const DoFHandler<dim> &  dof_handler_qcriterion =
+      const DoFHandler<dim>   &dof_handler_qcriterion =
         qcriterion_smoothing.get_dof_handler();
       data_out.add_data_vector(dof_handler_qcriterion,
                                qcriterion_field,
