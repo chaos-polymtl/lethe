@@ -615,7 +615,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , max_number_of_nodes(1)
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
-  , max_cell_diameter(0.)
   , levels_not_precalculated(levels_not_precalculated)
   , nodes_id(weights.size())
   , weights(weights)
@@ -649,7 +648,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   max_number_of_nodes      = 1;
   minimal_mesh_level       = std::numeric_limits<int>::max();
   highest_level_searched   = -1;
-  max_cell_diameter        = 0.;
   levels_not_precalculated = std::round(shape_arguments.back());
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
@@ -861,7 +859,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // We check if the distance is lower than 1 cell diagonal, since we
       // only check the distance with 1 support point, added to the support
       // radius
-      max_distance = max_cell_diameter + support_radii[node_id];
+      max_distance = cell_diameter + support_radii[node_id];
       if (distance < max_distance)
         likely_nodes_map[cell]->push_back(node_id);
     }
@@ -882,29 +880,10 @@ void
 RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
                                       std::shared_ptr<Mapping<dim>> /*mapping*/)
 {
-  int            maximal_level    = dof_handler.get_triangulation().n_levels();
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  int maximal_level = dof_handler.get_triangulation().n_levels();
 
   for (int level = highest_level_searched + 1; level < maximal_level; level++)
     {
-      double local_max_cell_diameter = 0.;
-
-      const auto &active_cell_iterator = dof_handler.active_cell_iterators();
-      for (const auto &cell : active_cell_iterator)
-        local_max_cell_diameter =
-          std::max(local_max_cell_diameter, cell->diameter());
-      const auto &prep_cell_iterator =
-        dof_handler.cell_iterators_on_level(level);
-      for (const auto &cell : prep_cell_iterator)
-        local_max_cell_diameter =
-          std::max(local_max_cell_diameter, cell->diameter());
-
-      max_cell_diameter =
-        Utilities::MPI::max(local_max_cell_diameter, mpi_communicator);
-
-      // bool skip = (level > maximal_level - 1 - TEST_UNSEEKED_LEVELS);
-      // std::cout<<"level "<<level<< " is skipped : " << skip << std::endl;
-
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {

@@ -1308,7 +1308,6 @@ private:
   size_t       max_number_of_nodes;
   int          minimal_mesh_level;
   int          highest_level_searched;
-  double       max_cell_diameter;
   unsigned int levels_not_precalculated;
 
 public:
