@@ -945,7 +945,6 @@ void
 VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector &solution)
 {
-
   // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
@@ -1009,13 +1008,18 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
           fe_values_filtered_phase_fraction_gradient.reinit(
             filtered_phase_fraction_gradient_cell);
 
-          auto &fe_filtered_phase_fraction            = fe_values_filtered_phase_fraction_gradient.get_fe();
+          auto &fe_filtered_phase_fraction =
+            fe_values_filtered_phase_fraction_gradient.get_fe();
 
           if (dim == 2)
-            h = std::sqrt(4. * filtered_phase_fraction_gradient_cell->measure() / M_PI) / fe_filtered_phase_fraction.degree;
-          else if (dim == 3)
             h =
-              pow(6 * filtered_phase_fraction_gradient_cell->measure() / M_PI, 1. / 3.) / fe_filtered_phase_fraction.degree;
+              std::sqrt(4. * filtered_phase_fraction_gradient_cell->measure() /
+                        M_PI) /
+              fe_filtered_phase_fraction.degree;
+          else if (dim == 3)
+            h = pow(6 * filtered_phase_fraction_gradient_cell->measure() / M_PI,
+                    1. / 3.) /
+                fe_filtered_phase_fraction.degree;
 
 
           local_matrix_filtered_phase_fraction_gradient = 0;
@@ -1146,7 +1150,6 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector
     &present_filtered_phase_fraction_gradient_solution)
 {
-
   // Get fe values of phase fraction gradient (pfg) and curvature
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
                                     *this->fe_curvature,
@@ -1185,7 +1188,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
       .curvature_filter_value;
 
   double h;
-  
+
   for (const auto &curvature_cell :
        this->curvature_dof_handler.active_cell_iterators())
     {
@@ -1207,13 +1210,14 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
           local_matrix_curvature = 0;
           local_rhs_curvature    = 0;
 
-          auto &fe_curvature          = fe_values_curvature.get_fe();
+          auto &fe_curvature = fe_values_curvature.get_fe();
 
           if (dim == 2)
-            h = std::sqrt(4. * curvature_cell->measure() / M_PI) / fe_curvature.degree;
+            h = std::sqrt(4. * curvature_cell->measure() / M_PI) /
+                fe_curvature.degree;
           else if (dim == 3)
-            h =
-              pow(6 * curvature_cell->measure() / M_PI, 1. / 3.) / fe_curvature.degree;
+            h = pow(6 * curvature_cell->measure() / M_PI, 1. / 3.) /
+                fe_curvature.degree;
 
           // Get pfg values, curvature values and gradients
           fe_values_filtered_phase_fraction_gradient[pfg].get_function_values(
