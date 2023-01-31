@@ -894,7 +894,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -1569,97 +1569,98 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      // if (cell->is_locally_owned())
-      {
-        cell->get_dof_indices(local_dof_indices);
-        // If the material_id is 1, the region is a solid region
-        if (cell->material_id() == 1)
-          {
-            for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-              {
-                const unsigned int component =
-                  this->fe->system_to_component_index(i).first;
-                if (component < dim)
-                  {
-                    if (non_zero_constraints)
-                      {
-                        this->nonzero_constraints.add_line(
-                          local_dof_indices[i]);
-                        this->nonzero_constraints.set_inhomogeneity(
-                          local_dof_indices[i], 0);
-                      }
-                    else
-                      this->zero_constraints.add_line(local_dof_indices[i]);
-                  }
-              }
-          }
-        else
-          {
-            // Cell is a fluid cell and as such all the DOFs are connected to
-            // fluid
-            for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-              {
-                const unsigned int component =
-                  this->fe->system_to_component_index(i).first;
-                if (component == dim)
-                  {
-                    dof_is_connected_to_fluid.insert(local_dof_indices[i]);
-                  }
-              }
-          }
-      }
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          // If the material_id is 1, the region is a solid region
+          if (cell->material_id() == 1)
+            {
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  const unsigned int component =
+                    this->fe->system_to_component_index(i).first;
+                  if (component < dim)
+                    {
+                      if (non_zero_constraints)
+                        {
+                          this->nonzero_constraints.add_line(
+                            local_dof_indices[i]);
+                          this->nonzero_constraints.set_inhomogeneity(
+                            local_dof_indices[i], 0);
+                        }
+                      else
+                        this->zero_constraints.add_line(local_dof_indices[i]);
+                    }
+                }
+            }
+          else // if (cell->material_id() == 0 &&
+               //     (cell->is_locally_owned() || cell->is_ghost()))
+            {
+              // Cell is a fluid cell and as such all the DOFs are connected to
+              // fluid
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  const unsigned int component =
+                    this->fe->system_to_component_index(i).first;
+                  if (component == dim)
+                    {
+                      dof_is_connected_to_fluid.insert(local_dof_indices[i]);
+                    }
+                }
+            }
+        }
     }
 
   // All pressure DOFs which are not connected to a fluid cell are set to
   // dirichlet BC
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      // if (cell->is_locally_owned())
-      {
-        cell->get_dof_indices(local_dof_indices);
-        // If the material_id is 1, the region is a solid region
-        if (cell->material_id() == 1)
-          {
-            bool connected_to_fluid = false;
-            // First check if cell is connected to a fluid cell
-            for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-              {
-                auto search =
-                  dof_is_connected_to_fluid.find(local_dof_indices[i]);
-                if (search != dof_is_connected_to_fluid.end())
-                  connected_to_fluid = true;
-              }
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          // If the material_id is 1, the region is a solid region
+          if (cell->material_id() == 1)
+            {
+              bool connected_to_fluid = false;
+              // First check if cell is connected to a fluid cell
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  auto search =
+                    dof_is_connected_to_fluid.find(local_dof_indices[i]);
+                  if (search != dof_is_connected_to_fluid.end())
+                    connected_to_fluid = true;
+                }
 
-            if (!connected_to_fluid)
-              {
-                for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-                  {
-                    const unsigned int component =
-                      this->fe->system_to_component_index(i).first;
-                    if (component == dim)
-                      {
-                        auto search =
-                          dof_is_connected_to_fluid.find(local_dof_indices[i]);
-                        if (search != dof_is_connected_to_fluid.end())
-                          {
-                            if (non_zero_constraints)
-                              {
-                                this->nonzero_constraints.add_line(
-                                  local_dof_indices[i]);
-                                this->nonzero_constraints.set_inhomogeneity(
-                                  local_dof_indices[i], 0);
-                              }
-                            else
-                              {
-                                this->zero_constraints.add_line(
-                                  local_dof_indices[i]);
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
+              if (!connected_to_fluid)
+                {
+                  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                    {
+                      const unsigned int component =
+                        this->fe->system_to_component_index(i).first;
+                      if (component == dim)
+                        {
+                          auto search = dof_is_connected_to_fluid.find(
+                            local_dof_indices[i]);
+                          if (search != dof_is_connected_to_fluid.end())
+                            {
+                              if (non_zero_constraints)
+                                {
+                                  this->nonzero_constraints.add_line(
+                                    local_dof_indices[i]);
+                                  this->nonzero_constraints.set_inhomogeneity(
+                                    local_dof_indices[i], 0);
+                                }
+                              else
+                                {
+                                  this->zero_constraints.add_line(
+                                    local_dof_indices[i]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1805,7 +1806,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           1, DataComponentInterpretation::component_is_scalar);
 
       std::vector<std::string> qcriterion_name = {"qcriterion"};
-      const DoFHandler<dim> &  dof_handler_qcriterion =
+      const DoFHandler<dim>   &dof_handler_qcriterion =
         qcriterion_smoothing.get_dof_handler();
       data_out.add_data_vector(dof_handler_qcriterion,
                                qcriterion_field,
