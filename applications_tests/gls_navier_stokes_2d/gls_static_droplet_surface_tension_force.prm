@@ -24,8 +24,8 @@ subsection VOF
   subsection surface tension force
       set enable = true
       set surface tension coefficient = 0.023
-      set phase fraction gradient filter = 0.000001
-      set curvature filter		= 0.000001
+      set phase fraction gradient filter = 4
+      set curvature filter		= 1
       set output auxiliary fields = true
   end
 end

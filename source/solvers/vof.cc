@@ -945,15 +945,6 @@ void
 VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector &solution)
 {
-  const DoFHandler<dim> *dof_handler_fd =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-  auto scratch_data =
-    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
-                        *this->fe,
-                        *this->cell_quadrature,
-                        *this->mapping,
-                        dof_handler_fd->get_fe());
 
   // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
@@ -995,6 +986,8 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   system_rhs_filtered_phase_fraction_gradient    = 0;
   system_matrix_filtered_phase_fraction_gradient = 0;
 
+  double h;
+
   const double phase_fraction_gradient_filter_value =
     this->simulation_parameters.multiphysics.vof_parameters
       .surface_tension_force.phase_fraction_gradient_filter_value;
@@ -1012,15 +1005,18 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
             filtered_phase_fraction_gradient_cell->index(),
             &this->dof_handler);
 
-          scratch_data.reinit(cell,
-                    this->evaluation_point,
-                    this->previous_solutions,
-                    this->solution_stages);
-          const double       h          = scratch_data.cell_size;
-
           fe_values_phase_fraction.reinit(cell);
           fe_values_filtered_phase_fraction_gradient.reinit(
             filtered_phase_fraction_gradient_cell);
+
+          auto &fe_filtered_phase_fraction            = fe_values_filtered_phase_fraction_gradient.get_fe();
+
+          if (dim == 2)
+            h = std::sqrt(4. * filtered_phase_fraction_gradient_cell->measure() / M_PI) / fe_filtered_phase_fraction.degree;
+          else if (dim == 3)
+            h =
+              pow(6 * filtered_phase_fraction_gradient_cell->measure() / M_PI, 1. / 3.) / fe_filtered_phase_fraction.degree;
+
 
           local_matrix_filtered_phase_fraction_gradient = 0;
           local_rhs_filtered_phase_fraction_gradient    = 0;
@@ -1150,15 +1146,6 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   TrilinosWrappers::MPI::Vector
     &present_filtered_phase_fraction_gradient_solution)
 {
-  const DoFHandler<dim> *dof_handler_fd =
-    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-
-  auto scratch_data =
-    VOFScratchData<dim>(this->simulation_parameters.physical_properties_manager,
-                        *this->fe,
-                        *this->cell_quadrature,
-                        *this->mapping,
-                        dof_handler_fd->get_fe());
 
   // Get fe values of phase fraction gradient (pfg) and curvature
   FEValues<dim> fe_values_curvature(*this->curvature_mapping,
@@ -1197,6 +1184,8 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
     simulation_parameters.multiphysics.vof_parameters.surface_tension_force
       .curvature_filter_value;
 
+  double h;
+  
   for (const auto &curvature_cell :
        this->curvature_dof_handler.active_cell_iterators())
     {
@@ -1211,18 +1200,20 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
               curvature_cell->index(),
               &this->filtered_phase_fraction_gradient_dof_handler);
 
-          scratch_data.reinit(curvature_cell,
-                    this->evaluation_point,
-                    this->previous_solutions,
-                    this->solution_stages);
-          const double       h          = scratch_data.cell_size;
-
           fe_values_filtered_phase_fraction_gradient.reinit(
             filtered_phase_fraction_gradient_cell);
           fe_values_curvature.reinit(curvature_cell);
 
           local_matrix_curvature = 0;
           local_rhs_curvature    = 0;
+
+          auto &fe_curvature          = fe_values_curvature.get_fe();
+
+          if (dim == 2)
+            h = std::sqrt(4. * curvature_cell->measure() / M_PI) / fe_curvature.degree;
+          else if (dim == 3)
+            h =
+              pow(6 * curvature_cell->measure() / M_PI, 1. / 3.) / fe_curvature.degree;
 
           // Get pfg values, curvature values and gradients
           fe_values_filtered_phase_fraction_gradient[pfg].get_function_values(
