@@ -151,6 +151,9 @@ namespace Parameters
       // Insertion frequency
       int insertion_frequency;
 
+      // Axis order
+      unsigned int axis_0, axis_1, axis_2;
+
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
       double x_min, y_min, z_min, x_max, y_max, z_max;
 
