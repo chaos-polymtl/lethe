@@ -140,7 +140,7 @@ NonUniformInsertion<dim>::insert(
 }
 
 // This function creates a vector of random doubles using the input paramteres
-// in the paramter handler
+// in the parameter handler
 template <int dim>
 void
 NonUniformInsertion<dim>::create_random_number_container(
@@ -169,25 +169,26 @@ void NonUniformInsertion<2>::find_insertion_location_nonuniform(
   insertion_index.resize(2);
 
   unsigned int axis_0, axis_1;
-  int          number_of_particles_0, number_of_particles_1;
+  int          number_of_particles_0;
 
+  // First direction (axis) to have particles inserted
   axis_0                  = insertion_information.axis_0;
   number_of_particles_0   = this->number_of_particles_directions[axis_0];
   insertion_index[axis_0] = id % number_of_particles_0;
   insertion_location[axis_0] =
-    this->axis_0_min + ((insertion_index[axis_0] + 0.5) *
-                          insertion_information.distance_threshold -
-                        random_number1) *
-                         this->maximum_diameter;
+    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
+                                insertion_information.distance_threshold -
+                              random_number1) *
+                               this->maximum_diameter;
 
-  axis_1                = insertion_information.axis_1;
-  number_of_particles_1 = this->number_of_particles_directions[axis_1];
-  insertion_location[1] =
-    this->axis_1_min + ((insertion_index[axis_1] + 0.5) *
-                          insertion_information.distance_threshold -
-                        random_number2) *
-                         this->maximum_diameter;
-  insertion_index[1] = (int)id / number_of_particles_1;
+  // Second direction (axis) to have particles inserted
+  axis_1                  = insertion_information.axis_1;
+  insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
+  insertion_location[axis_1] =
+    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
+                                insertion_information.distance_threshold -
+                              random_number2) *
+                               this->maximum_diameter;
 }
 
 template <>
@@ -209,30 +210,32 @@ void NonUniformInsertion<3>::find_insertion_location_nonuniform(
   number_of_particles_0   = this->number_of_particles_directions[axis_0];
   insertion_index[axis_0] = id % number_of_particles_0;
   insertion_location[axis_0] =
-    this->axis_0_min + ((insertion_index[axis_0] + 0.5) *
-                          insertion_information.distance_threshold -
-                        random_number1) *
-                         this->maximum_diameter;
+    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
+                                insertion_information.distance_threshold -
+                              random_number1) *
+                               this->maximum_diameter;
 
+  // Second direction (axis) to have particles inserted
   axis_1                = insertion_information.axis_1;
   number_of_particles_1 = this->number_of_particles_directions[axis_1];
   insertion_index[axis_1] =
-    (int)(id % (number_of_particles_0 * number_of_particles_1)) /
+    static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
     (number_of_particles_0);
   insertion_location[axis_1] =
-    this->axis_1_min + ((insertion_index[axis_1] + 0.5) *
-                          insertion_information.distance_threshold -
-                        random_number2) *
-                         this->maximum_diameter;
+    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
+                                insertion_information.distance_threshold -
+                              random_number2) *
+                               this->maximum_diameter;
 
+  // Third direction (axis) to have particles inserted
   axis_2 = insertion_information.axis_2;
   insertion_index[axis_2] =
-    (int)id / (number_of_particles_0 * number_of_particles_1);
+    static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
   insertion_location[axis_2] =
-    this->axis_2_min + ((insertion_index[axis_2] + 0.5) *
-                          insertion_information.distance_threshold -
-                        random_number1) *
-                         this->maximum_diameter;
+    this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
+                                insertion_information.distance_threshold -
+                              random_number1) *
+                               this->maximum_diameter;
 }
 
 template class NonUniformInsertion<2>;
