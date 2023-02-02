@@ -150,7 +150,7 @@ void UniformInsertion<2>::find_insertion_location_uniform(
 
   // Second direction (axis) to have particles inserted
   axis_1                  = insertion_information.axis_1;
-  insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
+  insertion_index[axis_1] = static_cast<int>(id) / number_of_particles_0;
   insertion_location[axis_1] =
     this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
                               insertion_information.distance_threshold) *
@@ -192,7 +192,15 @@ void UniformInsertion<3>::find_insertion_location_uniform(
   // Third direction (axis) to have particles inserted
   axis_2 = insertion_information.axis_2;
   insertion_index[axis_2] =
-    static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
+    static_cast<int>(id) / (number_of_particles_0 * number_of_particles_1);
+
+  // Adding an extra distance to even rows of insertion
+  if (insertion_index[2] % 2 == 0)
+    {
+      insertion_location[0] += this->maximum_diameter * 0.5;
+      insertion_location[1] += this->maximum_diameter * 0.5;
+    }
+
   insertion_location[axis_2] =
     this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
                               insertion_information.distance_threshold) *

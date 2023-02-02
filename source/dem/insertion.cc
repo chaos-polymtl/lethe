@@ -134,7 +134,6 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;
 
-
   // Checking if the insertion directions are valid (no repetition)
   int axis_sum = 0;
   if constexpr (dim == 2)
