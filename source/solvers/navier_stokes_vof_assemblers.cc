@@ -525,8 +525,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
 
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
-      const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
-        scratch_data.filtered_phase_fraction_gradient_values[q];
       const Tensor<1, dim> &phase_gradient_value =
         scratch_data.phase_gradient_values[q];
       const double JxW_value = JxW[q];
@@ -618,7 +616,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
         (temperature_gradient - normalized_filtered_phase_fraction_gradient *
                                   (normalized_filtered_phase_fraction_gradient *
                                    temperature_gradient)) *
-        phase_fraction_gradient_norm *
+        filtered_phase_fraction_gradient_norm *
         (density_eq / (phase_0_density + phase_1_density));
 
       strong_residual[q] += marangoni_effect;
