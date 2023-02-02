@@ -534,7 +534,7 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
   }
   prm.leave_subsection();
-};
+}
 
 void
 Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
@@ -554,4 +554,4 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
     beta = prm.get_double("beta");
   }
   prm.leave_subsection();
-};
+}
