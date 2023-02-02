@@ -29,6 +29,11 @@ Particle insertion information is defined in this section. This information incl
   set insertion box maximum y                   = 0.05
   set insertion box maximum z                   = 0.07
 
+  # Directions of insertion (0: x, 1: y, 2: z)
+  set insertion first direction                 = 0
+  set insertion second direction                = 1
+  set insertion third direction                 = 2
+
   # Initial conditions at insertion
   set velocity x = 0.0
   set velocity y = 0.0
@@ -65,6 +70,8 @@ Particle insertion information is defined in this section. This information incl
 
 .. note::
     We recommend that the defined insertion box have at least a distance of :math:`{d^{max}_p}` (maximum diameter of particles) from the triangulation boundaries. Otherwise, particles may have an overlap with the triangulation walls in the insertion.
+
+* The ``insertion first direction``, ``insertion second direction``, and ``insertion third direction`` parameters define the directions of insertion. For example, if ``insertion first direction`` = 0, ``insertion second direction`` = 1, and ``insertion third direction`` = 2, the particles are inserted in priority in the x, in y, and then in z directions This is the default configuration. This is useful to specify the insertion directions to cover a specific area of the insertion box with the first and second direction parameters.
 
 * The ``velocity x``, ``velocity y``, and ``velocity z`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions, respectively.
 
