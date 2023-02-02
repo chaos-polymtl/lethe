@@ -593,13 +593,9 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
       // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
         scratch_data.filtered_phase_fraction_gradient_values[q];
-      const Tensor<1, dim> &phase_fraction_gradient_value =
-        scratch_data.phase_gradient_values[q];
 
       const double filtered_phase_fraction_gradient_norm =
         filtered_phase_fraction_gradient_value.norm();
-      const double phase_fraction_gradient_norm =
-        phase_fraction_gradient_value.norm();
 
       const Tensor<1, dim> normalized_filtered_phase_fraction_gradient =
         filtered_phase_fraction_gradient_value /
