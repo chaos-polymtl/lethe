@@ -987,9 +987,9 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
 
   double h;
 
-  const double phase_fraction_gradient_filter_value =
+  const double phase_fraction_gradient_filter_factor =
     this->simulation_parameters.multiphysics.vof_parameters
-      .surface_tension_force.phase_fraction_gradient_filter_value;
+      .surface_tension_force.phase_fraction_gradient_filter_factor;
 
   for (const auto &filtered_phase_fraction_gradient_cell :
        this->filtered_phase_fraction_gradient_dof_handler
@@ -1057,7 +1057,7 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
                       local_matrix_filtered_phase_fraction_gradient(i, j) +=
                         (phi_filtered_phase_fraction_gradient[j] *
                            phi_filtered_phase_fraction_gradient[i] +
-                         h * h * phase_fraction_gradient_filter_value *
+                         h * h * phase_fraction_gradient_filter_factor *
                            scalar_product(
                              phi_filtered_phase_fraction_gradient_gradient[i],
                              phi_filtered_phase_fraction_gradient_gradient
@@ -1183,9 +1183,9 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   system_rhs_curvature    = 0;
   system_matrix_curvature = 0;
 
-  double curvature_filter_value =
+  double curvature_filter_factor =
     simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-      .curvature_filter_value;
+      .curvature_filter_factor;
 
   double h;
 
@@ -1248,7 +1248,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                         {
                           local_matrix_curvature(i, j) +=
                             (phi_curvature[j] * phi_curvature[i] +
-                             h * h * curvature_filter_value *
+                             h * h * curvature_filter_factor *
                                scalar_product(phi_curvature_gradient[i],
                                               phi_curvature_gradient[j])) *
                             fe_values_curvature.JxW(q);

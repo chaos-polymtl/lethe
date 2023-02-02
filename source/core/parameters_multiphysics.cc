@@ -441,16 +441,16 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
                       "Output the phase fraction gradient and curvature");
 
     prm.declare_entry(
-      "phase fraction gradient filter",
-      "0.5",
+      "phase fraction gradient filter factor",
+      "4",
       Patterns::Double(),
-      "The filter value for phase fraction gradient calculations to damp high-frequency errors");
+      "Factor applied to the filter for phase fraction gradient calculations to damp high-frequency errors");
 
     prm.declare_entry(
-      "curvature filter",
-      "0.5",
+      "curvature filter factor",
+      "1",
       Patterns::Double(),
-      "The filter value for curvature calculations to damp high-frequency errors");
+      "Factor applied to the filter for curvature calculations to damp high-frequency errors");
 
     prm.declare_entry(
       "verbosity",
@@ -484,9 +484,9 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
     enable = prm.get_bool("enable");
     // Surface tension coefficient
     surface_tension_coef = prm.get_double("surface tension coefficient");
-    phase_fraction_gradient_filter_value =
-      prm.get_double("phase fraction gradient filter");
-    curvature_filter_value = prm.get_double("curvature filter");
+    phase_fraction_gradient_filter_factor =
+      prm.get_double("phase fraction gradient filter factor");
+    curvature_filter_factor = prm.get_double("curvature filter factor");
 
     output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
 
