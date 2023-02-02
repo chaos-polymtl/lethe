@@ -64,6 +64,13 @@ The default values of the VOF parameters are given in the text box below.
 			end
 		end
 
+		subsection phase filtration
+			set type            = none
+
+			# parameter for the tanh filter
+			set beta            = 10
+		end
+
 	end
 
 .. warning::
@@ -264,6 +271,20 @@ The default values of the VOF parameters are given in the text box below.
 .. seealso::
 
   The surface tension force is used in the :doc:`../../examples/multiphysics/rising-bubble/rising-bubble` example.
+
+
+* ``subsection phase filtration``: This subsection defines the filter applied to the phase fraction. This affects the definition of the interface.
+
+  * ``type``: defines the filter type, either ``none`` or ``tanh``
+
+    * ``set type = none``: the phase fraction is not filtered
+    * ``set type = tanh``: the following filter function is applied to the phase fraction in order to get a better definition of the interface between the fluids
+
+    .. math::
+        \phi_f = 0.5 \tanh[\beta(\phi-0.5)] + 0.5
+
+  * ``beta``: value of the :math:`\beta` parameter of the ``tanh`` filter
+
 
 
 .. _improve wetting:
