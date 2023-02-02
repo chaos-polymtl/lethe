@@ -134,6 +134,29 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;
 
+
+  // Checking if the insertion directions are valid (no repetition)
+  int axis_sum = 0;
+  if constexpr (dim == 2)
+    {
+      axis_sum = insertion_information.axis_0 + insertion_information.axis_1;
+
+      AssertThrow(
+        axis_sum == 1,
+        ExcMessage("Invalid insertion directions: 2 directions are the same "));
+    }
+  if constexpr (dim == 3)
+    {
+      axis_sum = insertion_information.axis_0 + insertion_information.axis_1 +
+                 insertion_information.axis_2;
+
+      AssertThrow(
+        axis_sum == 3,
+        ExcMessage(
+          "Invalid insertion directions: at least 2 directions are the same "));
+    }
+
+
   // This variable is used for calculation of the maximum number of particles
   // that can fit in the chosen insertion box
   int maximum_particle_number = 1;
