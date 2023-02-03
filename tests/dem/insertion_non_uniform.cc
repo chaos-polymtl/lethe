@@ -62,6 +62,9 @@ test()
   dem_parameters.insertion_info.x_max                                = 0.05;
   dem_parameters.insertion_info.y_max                                = 0.05;
   dem_parameters.insertion_info.z_max                                = 0.05;
+  dem_parameters.insertion_info.axis_0                               = 0;
+  dem_parameters.insertion_info.axis_1                               = 1;
+  dem_parameters.insertion_info.axis_2                               = 2;
   dem_parameters.insertion_info.inserted_this_step                   = 10;
   dem_parameters.insertion_info.distance_threshold                   = 2;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
