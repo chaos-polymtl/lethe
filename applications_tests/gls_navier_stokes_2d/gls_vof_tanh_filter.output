@@ -3,6 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 198
    Volume of triangulation:      100
    Number of VOF degrees of freedom: 66
+Filtered phase values:
 0.999665
 0.999665
 0.999665
@@ -79,6 +80,7 @@ Transient iteration : 1        Time : 0.05     Time step : 0.05     CFL : 0
   -Iterative solver took : 4 steps
   -Tolerance of iterative solver is : 1e-05
   -Iterative solver took : 4 steps
+Filtered phase values:
 0.999665
 0.999665
 0.999665
@@ -155,6 +157,7 @@ Transient iteration : 2        Time : 0.1      Time step : 0.05     CFL : 0.0034
   -Iterative solver took : 3 steps
   -Tolerance of iterative solver is : 1e-05
   -Iterative solver took : 4 steps
+Filtered phase values:
 0.999663
 0.999667
 0.999664

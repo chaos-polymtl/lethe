@@ -66,6 +66,7 @@ The default values of the VOF parameters are given in the text box below.
 
 		subsection phase filtration
 			set type            = none
+			set verbosity 		= quiet
 
 			# parameter for the tanh filter
 			set beta            = 10
@@ -284,7 +285,7 @@ The default values of the VOF parameters are given in the text box below.
         \phi_f = 0.5 \tanh[\beta(\phi-0.5)] + 0.5
 
   * ``beta``: value of the :math:`\beta` parameter of the ``tanh`` filter
-
+  * ``verbosity``: enables the display of filtered phase fraction values. Choices are ``quiet`` (no output) and ``verbose`` (displays values)
 
 
 .. _improve wetting:

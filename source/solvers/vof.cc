@@ -2378,6 +2378,7 @@ VolumeOfFluid<dim>::apply_phase_filter()
   if (this->simulation_parameters.multiphysics.vof_parameters.phase_filter
         .verbosity == Parameters::Verbosity::verbose)
     {
+      this->pcout << "Filtered phase values: " << std::endl;
       for (const double filtered_phase : filtered_solution)
         {
           this->pcout << filtered_phase << std::endl;
