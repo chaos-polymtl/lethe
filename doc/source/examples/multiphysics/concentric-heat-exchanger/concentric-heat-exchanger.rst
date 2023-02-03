@@ -36,7 +36,7 @@ We will compare the results we obtain with the CFD simulations with results that
 
 The analytical solution for the temperature in the liquid is given by:
 
-Lethe uses a specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by `Blais & Ilinca (2018)`_. It is also described in the :doc:`../../../parameters/cfd/physical_properties` section of the documentation.
+Lethe has the capability to solve 
 
 
 --------------
