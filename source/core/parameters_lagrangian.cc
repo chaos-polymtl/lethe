@@ -270,7 +270,21 @@ namespace Parameters
         prm.declare_entry("insertion frequency",
                           "1",
                           Patterns::Integer(),
-                          "Insertion frequncy");
+                          "Insertion frequency");
+
+        prm.declare_entry("insertion first direction",
+                          "0",
+                          Patterns::Integer(),
+                          "First direction of particle insertion");
+        prm.declare_entry("insertion second direction",
+                          "1",
+                          Patterns::Integer(),
+                          "Second direction of particle insertion");
+        prm.declare_entry("insertion third direction",
+                          "2",
+                          Patterns::Integer(),
+                          "Third direction of particle insertion");
+
         prm.declare_entry("insertion box minimum x",
                           "1",
                           Patterns::Double(),
@@ -368,6 +382,9 @@ namespace Parameters
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
+        axis_0              = prm.get_integer("insertion first direction");
+        axis_1              = prm.get_integer("insertion second direction");
+        axis_2              = prm.get_integer("insertion third direction");
         x_min               = prm.get_double("insertion box minimum x");
         y_min               = prm.get_double("insertion box minimum y");
         z_min               = prm.get_double("insertion box minimum z");
