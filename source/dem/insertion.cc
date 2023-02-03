@@ -134,24 +134,74 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;
 
+  // Checking if the insertion directions are valid (no repetition)
+  int axis_sum = 0;
+  if constexpr (dim == 2)
+    {
+      axis_sum = insertion_information.axis_0 + insertion_information.axis_1;
+
+      AssertThrow(
+        axis_sum == 1,
+        ExcMessage("Invalid insertion directions: 2 directions are the same "));
+    }
+  if constexpr (dim == 3)
+    {
+      axis_sum = insertion_information.axis_0 + insertion_information.axis_1 +
+                 insertion_information.axis_2;
+
+      AssertThrow(
+        axis_sum == 3,
+        ExcMessage(
+          "Invalid insertion directions: at least 2 directions are the same "));
+    }
+
+
   // This variable is used for calculation of the maximum number of particles
   // that can fit in the chosen insertion box
-  int maximum_particle_number;
+  int maximum_particle_number = 1;
 
-  // distance_threshold shows the ratio of the distance between the centers of
-  // two adjacent particles to the diameter of particles
-  maximum_particle_number =
-    int((insertion_information.x_max - insertion_information.x_min) /
-        (insertion_information.distance_threshold * this->maximum_diameter)) *
-    int((insertion_information.y_max - insertion_information.y_min) /
-        (insertion_information.distance_threshold * this->maximum_diameter));
-  if (dim == 3)
+  number_of_particles_directions.resize(dim);
+  axis_min.resize(dim);
+  axis_max.resize(dim);
+
+  std::vector<unsigned int> axis_list = {insertion_information.axis_0,
+                                         insertion_information.axis_1};
+
+  if constexpr (dim == 3)
     {
-      maximum_particle_number =
-        maximum_particle_number *
-        int(
-          (insertion_information.z_max - insertion_information.z_min) /
-          (insertion_information.distance_threshold * this->maximum_diameter));
+      axis_list.push_back(insertion_information.axis_2);
+    };
+
+  // Assigning the minimum and maximum positions of the insertion box in respect
+  // to the axis order
+  for (unsigned int axis : axis_list)
+    {
+      switch (axis)
+        {
+          case 0:
+            axis_min[0] = insertion_information.x_min;
+            axis_max[0] = insertion_information.x_max;
+            break;
+          case 1:
+            axis_min[1] = insertion_information.y_min;
+            axis_max[1] = insertion_information.y_max;
+            break;
+          case 2:
+            axis_min[2] = insertion_information.z_min;
+            axis_max[2] = insertion_information.z_max;
+            break;
+          default:
+            AssertThrow(false,
+                        ExcMessage("Insertion direction must be 0, 1 or 2"));
+        }
+
+      // Assign max number of particles according to the direction and calculate
+      // the total max number (maximum_particle_number = max_x * max_y * max_z)
+      int number_of_particles = static_cast<int>(
+        (axis_max[axis] - axis_min[axis]) /
+        (insertion_information.distance_threshold * this->maximum_diameter));
+      number_of_particles_directions[axis] = number_of_particles;
+      maximum_particle_number *= number_of_particles;
     }
 
   // If the inserted number of particles at this step exceeds the maximum
@@ -169,22 +219,6 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   else
     {
       inserted_this_step = insertion_information.inserted_this_step;
-    }
-
-  // number_of_particles_x_direction, number_of_particles_y_direction and
-  // number_of_particles_z_direction are the results of discretization of the
-  // insertion domain in x, y and z directions
-  number_of_particles_x_direction =
-    int((insertion_information.x_max - insertion_information.x_min) /
-        (insertion_information.distance_threshold * this->maximum_diameter));
-  number_of_particles_y_direction =
-    int((insertion_information.y_max - insertion_information.y_min) /
-        (insertion_information.distance_threshold * this->maximum_diameter));
-  if (dim == 3)
-    {
-      number_of_particles_z_direction = int(
-        (insertion_information.z_max - insertion_information.z_min) /
-        (insertion_information.distance_threshold * this->maximum_diameter));
     }
 }
 
