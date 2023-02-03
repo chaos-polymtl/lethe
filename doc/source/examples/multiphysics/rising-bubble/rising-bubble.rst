@@ -136,7 +136,7 @@ where :math:`k` is the filtered curvature, and :math:`\eta_k = \beta h^2` is the
 
 .. tip::
 
-  Phase fraction gradient filter value (:math:`\eta_n = \alpha h^2`) and curvature filter value (:math:`\eta_k = \beta h^2`) must be small values larger than 0. The values of :math:`\alpha` and :math:`\beta` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``  in the parameter file.
+  The phase fraction gradient filter value (:math:`\eta_n = \alpha h^2`) and curvature filter value (:math:`\eta_k = \beta h^2`) must be small values larger than 0. The values of :math:`\alpha` and :math:`\beta` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``  in the parameter file.
   We recommend the following procedure to choose a proper value for these parameters:
 
   1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
@@ -148,24 +148,24 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 
 .. code-block:: text
 
-	#---------------------------------------------------
-	# VOF
-	#---------------------------------------------------
-    subsection VOF
-      subsection interface sharpening
-        set enable              = true
-        set threshold           = 0.5
-        set interface sharpness	= 1.4
-        set frequency           = 50
-      end
-      subsection surface tension force
-        set enable                                = true
-        set surface tension coefficient           = 24.5
-        set phase fraction gradient filter factor = 4
-        set curvature filter factor               = 1
-        set output auxiliary fields               = true
-      end
+  #---------------------------------------------------
+  # VOF
+  #---------------------------------------------------
+  subsection VOF
+    subsection interface sharpening
+      set enable              = true
+      set threshold           = 0.5
+      set interface sharpness	= 1.4
+      set frequency           = 50
     end
+    subsection surface tension force
+      set enable                                = true
+      set surface tension coefficient           = 24.5
+      set phase fraction gradient filter factor = 4
+      set curvature filter factor               = 1
+      set output auxiliary fields               = true
+    end
+  end
 
 .. warning:: 
      If the interface sharpening is not enabled, the interface between phases will become blurry (due to artificial diffusion). 
