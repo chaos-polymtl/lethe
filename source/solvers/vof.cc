@@ -2374,6 +2374,15 @@ VolumeOfFluid<dim>::apply_phase_filter()
     {
       filtered_solution[p] = filter->filter_phase(unfiltered_solution_owned[p]);
     }
+
+  if (this->simulation_parameters.multiphysics.vof_parameters.phase_filter
+        .verbosity == Parameters::Verbosity::verbose)
+    {
+      for (const double filtered_phase : filtered_solution)
+        {
+          this->pcout << filtered_phase << std::endl;
+        }
+    }
 }
 
 template class VolumeOfFluid<2>;

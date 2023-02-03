@@ -191,6 +191,9 @@ namespace Parameters
     // $$\beta$$ value for the tanh filter
     double beta;
 
+    // Type of verbosity for the phase filter
+    Parameters::Verbosity verbosity;
+
     void
     declare_parameters(ParameterHandler &prm);
     void

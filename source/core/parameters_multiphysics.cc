@@ -532,6 +532,11 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
       "beta, a thinner and 'sharper/pixelated' interface will be seen.");
+    prm.declare_entry("verbosity",
+                      "quiet",
+                      Patterns::Selection("quiet|verbose|extra verbose"),
+                      "States whether the filtered data should be printed "
+                      "Choices are <quiet|verbose|extra verbose>.");
   }
   prm.leave_subsection();
 }
@@ -541,6 +546,7 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("phase filtration");
   {
+    // filter type
     const std::string t = prm.get("type");
     if (t == "none")
       type = Parameters::FilterType::none;
@@ -552,6 +558,17 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
 
     // beta
     beta = prm.get_double("beta");
+
+    // Verbosity
+    const std::string filter_v = prm.get("verbosity");
+    if (filter_v == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (filter_v == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else if (filter_v == "extra verbose")
+      verbosity = Parameters::Verbosity::extra_verbose;
+    else
+      throw(std::logic_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }
