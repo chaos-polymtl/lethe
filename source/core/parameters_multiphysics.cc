@@ -536,7 +536,7 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
                       "quiet",
                       Patterns::Selection("quiet|verbose|extra verbose"),
                       "States whether the filtered data should be printed "
-                      "Choices are <quiet|verbose|extra verbose>.");
+                      "Choices are <quiet|verbose>.");
   }
   prm.leave_subsection();
 }
@@ -565,8 +565,6 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
       verbosity = Parameters::Verbosity::verbose;
     else if (filter_v == "quiet")
       verbosity = Parameters::Verbosity::quiet;
-    else if (filter_v == "extra verbose")
-      verbosity = Parameters::Verbosity::extra_verbose;
     else
       throw(std::logic_error("Invalid verbosity level"));
   }

@@ -66,7 +66,7 @@ The default values of the VOF parameters are given in the text box below.
 
 		subsection phase filtration
 			set type            = none
-			set verbosity 		= quiet
+			set verbosity   = quiet
 
 			# parameter for the tanh filter
 			set beta            = 10
