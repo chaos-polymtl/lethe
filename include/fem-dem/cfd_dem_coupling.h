@@ -243,6 +243,7 @@ private:
   BoundaryCellsInformation<dim> boundary_cell_object;
 
   DisableParticleContact<dim> disable_contact_object;
+  bool                        has_disabled_contacts;
 
   DEM::DEMProperties<dim> properties_class;
 

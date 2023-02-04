@@ -1040,11 +1040,6 @@ DEMSolver<dim>::solve()
       if (simulation_control->is_verbose_iteration())
         {
           report_statistics();
-/*          if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            {
-              std::cout << "time;" << simulation_control->get_current_time()
-                        << ";" << clock.wall_time() << std::endl;
-            }*/
         }
 
       // Grid motion
