@@ -5,6 +5,7 @@
 
 #include <solvers/vof.h>
 #include <solvers/vof_assemblers.h>
+#include <solvers/vof_filter.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/work_stream.h>
@@ -251,6 +252,13 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
+
+  // Filter phase fraction
+  apply_phase_filter();
+  data_out.add_data_vector(this->dof_handler,
+                           this->filtered_solution,
+                           "filtered_phase");
+
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
   if (vof_parameters.peeling_wetting.enable_peeling ||
@@ -2346,6 +2354,37 @@ VolumeOfFluid<dim>::change_cell_phase(
     }
 }
 
+template <int dim>
+void
+VolumeOfFluid<dim>::apply_phase_filter()
+{
+  // Initializations
+  auto mpi_communicator = this->triangulation->get_communicator();
+  TrilinosWrappers::MPI::Vector unfiltered_solution_owned(
+    this->locally_owned_dofs, mpi_communicator);
+  unfiltered_solution_owned = this->present_solution;
+  filtered_solution.reinit(this->present_solution);
+
+  // Create filter object
+  filter = VolumeOfFluidFilterBase::model_cast(
+    this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+
+  // Apply filter to solution
+  for (unsigned int p = 0; p < filtered_solution.size(); p++)
+    {
+      filtered_solution[p] = filter->filter_phase(unfiltered_solution_owned[p]);
+    }
+
+  if (this->simulation_parameters.multiphysics.vof_parameters.phase_filter
+        .verbosity == Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Filtered phase values: " << std::endl;
+      for (const double filtered_phase : filtered_solution)
+        {
+          this->pcout << filtered_phase << std::endl;
+        }
+    }
+}
 
 template class VolumeOfFluid<2>;
 template class VolumeOfFluid<3>;

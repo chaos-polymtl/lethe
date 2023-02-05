@@ -23,6 +23,7 @@
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/vof_assemblers.h>
+#include <solvers/vof_filter.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -642,6 +643,13 @@ private:
   void
   solve_curvature();
 
+  /**
+   * @brief Applies filter on phase fraction values.
+   */
+  void
+  apply_phase_filter();
+
+
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *     multiphysics;
@@ -679,6 +687,7 @@ private:
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
   TrilinosWrappers::MPI::Vector  solution_pw;
+  TrilinosWrappers::MPI::Vector  filtered_solution;
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
@@ -744,6 +753,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
+
+  // Phase fraction filter
+  std::shared_ptr<VolumeOfFluidFilterBase> filter;
 };
 
 

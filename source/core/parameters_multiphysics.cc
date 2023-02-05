@@ -118,6 +118,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm)
     sharpening.declare_parameters(prm);
     peeling_wetting.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
+    phase_filter.declare_parameters(prm);
 
     prm.declare_entry("viscous dissipative fluid",
                       "fluid 1",
@@ -144,6 +145,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
     sharpening.parse_parameters(prm);
     peeling_wetting.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
+    phase_filter.parse_parameters(prm);
 
     // Viscous dissipative fluid
     const std::string op = prm.get("viscous dissipative fluid");
@@ -504,6 +506,67 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
       surface_tension_gradient = prm.get_double("surface tension gradient");
     }
     prm.leave_subsection();
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase filtration");
+  {
+    prm.declare_entry(
+      "type",
+      "none",
+      Patterns::Selection("none|tanh"),
+      "VOF phase filtration type, "
+      "if <none> is selected, the phase won't be filtered"
+      "if <tanh> is selected, the filtered phase will be a result of the "
+      "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "
+      "where \\beta is a parameter influencing the interface thickness that "
+      "must be defined");
+    prm.declare_entry(
+      "beta",
+      "10",
+      Patterns::Double(),
+      "This parameter appears in the tanh filter function. It influence "
+      "the thickness and the shape of the interface. For higher values of "
+      "beta, a thinner and 'sharper/pixelated' interface will be seen.");
+    prm.declare_entry("verbosity",
+                      "quiet",
+                      Patterns::Selection("quiet|verbose|extra verbose"),
+                      "States whether the filtered data should be printed "
+                      "Choices are <quiet|verbose>.");
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("phase filtration");
+  {
+    // filter type
+    const std::string t = prm.get("type");
+    if (t == "none")
+      type = Parameters::FilterType::none;
+    else if (t == "tanh")
+      type = Parameters::FilterType::tanh;
+    else
+      throw(std::logic_error(
+        "Error, invalid filter type. Choices are 'none' or 'tanh'"));
+
+    // beta
+    beta = prm.get_double("beta");
+
+    // Verbosity
+    const std::string filter_v = prm.get("verbosity");
+    if (filter_v == "verbose")
+      verbosity = Parameters::Verbosity::verbose;
+    else if (filter_v == "quiet")
+      verbosity = Parameters::Verbosity::quiet;
+    else
+      throw(std::logic_error("Invalid verbosity level"));
   }
   prm.leave_subsection();
 }
