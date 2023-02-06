@@ -155,7 +155,7 @@ The interface sharpening method and its parameters are explained in the :doc:`..
     subsection interface sharpening
       set enable              = true
       set threshold           = 0.5
-      set interface sharpness	= 1.4
+      set interface sharpness = 1.4
       set frequency           = 50
     end
     subsection surface tension force
