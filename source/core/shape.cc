@@ -18,10 +18,14 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 #include <deal.II/grid/manifold_lib.h>
-#include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
-
 #include <cfloat>
+
+#ifdef DEAL_II_WITH_OPENCASCADE
+  #include <BRepBuilderAPI_MakeVertex.hxx>
+  #include <BRepExtrema_DistShapeShape.hxx>
+#endif
+
+
 
 
 template <int dim>
