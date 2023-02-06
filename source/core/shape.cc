@@ -479,7 +479,7 @@ else{
     return this->value_cache[point_in_string];
   }
 #else
-  return Tensor<1,dim>();
+  return 0;
 #endif
 
 }
