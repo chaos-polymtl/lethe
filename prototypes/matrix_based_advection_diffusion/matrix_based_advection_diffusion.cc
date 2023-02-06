@@ -45,8 +45,6 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-#include <deal.II/meshworker/mesh_loop.h>
-
 #include <deal.II/multigrid/mg_coarse.h>
 #include <deal.II/multigrid/mg_constrained_dofs.h>
 #include <deal.II/multigrid/mg_matrix.h>
@@ -90,15 +88,22 @@ struct Settings
     mms
   };
 
+  enum ProblemType
+  {
+    boundary_layer,
+    double_glazing
+  };
+
   PreconditionerType preconditioner;
   GeometryType       geometry;
   SourceTermType     source_term;
+  ProblemType        problem_type;
 
   int          dimension;
   unsigned int element_order;
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
-  double       kinematic_viscosity;
+  double       peclet_number;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -130,10 +135,7 @@ Settings::try_parse(const std::string &prm_filename)
                     "1",
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
-  prm.declare_entry("kinematic viscosity",
-                    "1",
-                    Patterns::Double(),
-                    "Kinematic viscosity");
+  prm.declare_entry("peclet number", "10", Patterns::Double(), "Peclet number");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -154,6 +156,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "zero",
                     Patterns::Selection("zero|mms"),
                     "Source term <zero|mms>");
+  prm.declare_entry("problem type",
+                    "boundary layer",
+                    Patterns::Selection("boundary layer|double glazing"),
+                    "Problem type <boundary layer|double glazing>");
 
   if (prm_filename.size() == 0)
     {
@@ -201,14 +207,21 @@ Settings::try_parse(const std::string &prm_filename)
   else
     AssertThrow(false, ExcNotImplemented());
 
-  this->dimension           = prm.get_integer("dim");
-  this->element_order       = prm.get_integer("element order");
-  this->number_of_cycles    = prm.get_integer("number of cycles");
-  this->initial_refinement  = prm.get_integer("initial refinement");
-  this->kinematic_viscosity = prm.get_double("kinematic viscosity");
-  this->output              = prm.get_bool("output");
-  this->output_name         = prm.get("output name");
-  this->output_path         = prm.get("output path");
+  if (prm.get("problem type") == "boundary layer")
+    this->problem_type = boundary_layer;
+  else if (prm.get("problem type") == "double glazing")
+    this->problem_type = double_glazing;
+  else
+    AssertThrow(false, ExcNotImplemented());
+
+  this->dimension          = prm.get_integer("dim");
+  this->element_order      = prm.get_integer("element order");
+  this->number_of_cycles   = prm.get_integer("number of cycles");
+  this->initial_refinement = prm.get_integer("initial refinement");
+  this->peclet_number      = prm.get_double("peclet number");
+  this->output             = prm.get_bool("output");
+  this->output_name        = prm.get("output name");
+  this->output_path        = prm.get("output path");
 
 
   return true;
@@ -250,6 +263,26 @@ public:
 };
 
 template <int dim>
+class AnalyticalSolution : public Function<dim>
+{
+public:
+  AnalyticalSolution(double peclet_number)
+    : peclet(peclet_number)
+  {}
+
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
+  {
+    double eps = 1 / peclet;
+    return p[0] * ((1 - std::exp((p[1] - 1) / eps)) / (1 - std::exp(-2 / eps)));
+  }
+
+private:
+  double peclet;
+};
+
+template <int dim>
 class AdvectionField : public TensorFunction<1, dim>
 {
 public:
@@ -262,52 +295,31 @@ public:
   {
     (void)p;
     Tensor<1, dim> result;
-    result[0] = 0.0;
-    result[1] = 1.0;
+    result[0] = 2 * p[1] * (1 - p[0] * p[0]);
+    result[1] = -2 * p[0] * (1 - p[1] * p[1]);
+    ;
+    if (dim == 3)
+      {
+        result[2] = 1.0;
+      }
+    // result[0] = 0;
+    // result[1] = 1;
     return result;
   }
 };
 
 template <int dim>
-struct ScratchData
+class BoundaryFunction : public Function<dim>
 {
-  ScratchData(const Mapping<dim> &      mapping,
-              const FiniteElement<dim> &fe,
-              const unsigned int        quadrature_degree,
-              const UpdateFlags         update_flags)
-    : fe_values(mapping, fe, QGauss<dim>(quadrature_degree), update_flags)
-  {}
-
-  ScratchData(const ScratchData<dim> &scratch_data)
-    : fe_values(scratch_data.fe_values.get_mapping(),
-                scratch_data.fe_values.get_fe(),
-                scratch_data.fe_values.get_quadrature(),
-                scratch_data.fe_values.get_update_flags())
-  {}
-
-  FEValues<dim>       fe_values;
-  std::vector<double> old_solution_values;
-};
-
-struct CopyData
-{
-  unsigned int                         level;
-  FullMatrix<double>                   cell_matrix;
-  Vector<double>                       cell_rhs;
-  std::vector<types::global_dof_index> local_dof_indices;
-
-  template <class Iterator>
-  void
-  reinit(const Iterator &cell, unsigned int dofs_per_cell)
+public:
+  virtual double
+  value(const Point<dim> &p,
+        const unsigned int /* component */ = 0) const override
   {
-    cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
-    cell_rhs.reinit(dofs_per_cell);
-
-    local_dof_indices.resize(dofs_per_cell);
-    cell->get_active_or_mg_dof_indices(local_dof_indices);
-    level = cell->level();
+    return p[0];
   }
 };
+
 
 template <int dim, int fe_degree>
 class MatrixBasedAdvectionDiffusion
@@ -336,15 +348,6 @@ private:
 
   void
   assemble_gmg();
-
-  template <class Iterator>
-  void
-  cell_worker(const Iterator &  cell,
-              ScratchData<dim> &scratch_data,
-              CopyData &        copy_data);
-
-  void
-  assemble_gmg_meshworker();
 
   double
   compute_residual(const double alpha);
@@ -443,7 +446,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
           break;
         }
         case Settings::hypercube: {
-          GridGenerator::hyper_cube(triangulation, -1.0, 1.0);
+          GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
           break;
         }
     }
@@ -475,10 +478,48 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
   constraints.clear();
   constraints.reinit(locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-  VectorTools::interpolate_boundary_values(dof_handler,
-                                           0,
-                                           Functions::ZeroFunction<dim>(),
-                                           constraints);
+
+  if (parameters.problem_type == Settings::boundary_layer)
+    {
+      // Left wall
+      VectorTools::interpolate_boundary_values(
+        dof_handler, 0, Functions::ConstantFunction<dim>(-1.0), constraints);
+      // Right wall
+      VectorTools::interpolate_boundary_values(
+        dof_handler, 1, Functions::ConstantFunction<dim>(1.0), constraints);
+      // Top wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
+      // Bottom wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               2,
+                                               BoundaryFunction<dim>(),
+                                               constraints);
+    }
+  else if (parameters.problem_type == Settings::double_glazing)
+    {
+      // Left wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
+      // Right wall
+      VectorTools::interpolate_boundary_values(
+        dof_handler, 1, Functions::ConstantFunction<dim>(1.0), constraints);
+      // Top wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
+      // Bottom wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               2,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
+    }
+
   constraints.close();
 
   DynamicSparsityPattern dsp(locally_relevant_dofs);
@@ -610,7 +651,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              const double nonlinearity = std::exp(newton_step_values[q]);
+              const double nonlinearity = 0.0;
               const double dx           = fe_values.JxW(q);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -620,15 +661,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
                   if (parameters.source_term == Settings::mms)
                     cell_rhs(i) +=
-                      (-parameters.kinematic_viscosity * grad_phi_i *
+                      (-1 / parameters.peclet_number * grad_phi_i *
                          newton_step_gradients[q] -
                        advection_term_values[q] * newton_step_gradients[q] *
                          phi_i +
                        phi_i * nonlinearity + phi_i * source_term_values[q]) *
                       dx;
                   else
-                    cell_rhs(i) += (-parameters.kinematic_viscosity *
-                                      grad_phi_i * newton_step_gradients[q] -
+                    cell_rhs(i) += (-1 / parameters.peclet_number * grad_phi_i *
+                                      newton_step_gradients[q] -
                                     advection_term_values[q] *
                                       newton_step_gradients[q] * phi_i +
                                     phi_i * nonlinearity) *
@@ -688,7 +729,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              const double nonlinearity = std::exp(newton_step_values[q]);
+              const double nonlinearity = 0.0;
               const double dx           = fe_values.JxW(q);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -703,7 +744,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                         fe_values.shape_grad(j, q);
 
                       cell_matrix(i, j) +=
-                        (parameters.kinematic_viscosity * grad_phi_i *
+                        (1 / parameters.peclet_number * grad_phi_i *
                            grad_phi_j +
                          advection_term_values[q] * grad_phi_j * phi_i -
                          phi_i * nonlinearity * phi_j) *
@@ -775,7 +816,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
 
         for (unsigned int q = 0; q < n_q_points; ++q)
           {
-            const double nonlinearity = std::exp(newton_step_values[q]);
+            const double nonlinearity = 0.0;
             const double dx           = fe_values.JxW(q);
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -790,8 +831,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
                       fe_values.shape_grad(j, q);
 
                     cell_matrix(i, j) +=
-                      (parameters.kinematic_viscosity * grad_phi_i *
-                         grad_phi_j +
+                      (1 / parameters.peclet_number * grad_phi_i * grad_phi_j +
                        advection_term_values[q] * grad_phi_j * phi_i -
                        phi_i * nonlinearity * phi_j) *
                       dx;
@@ -818,120 +858,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
       mg_matrix[i].compress(VectorOperation::add);
       mg_interface_in[i].compress(VectorOperation::add);
     }
-}
-
-template <int dim, int fe_degree>
-template <class Iterator>
-void
-MatrixBasedAdvectionDiffusion<dim, fe_degree>::cell_worker(
-  const Iterator &  cell,
-  ScratchData<dim> &scratch_data,
-  CopyData &        copy_data)
-{
-  FEValues<dim> &fe_values = scratch_data.fe_values;
-  fe_values.reinit(cell);
-
-  const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
-  copy_data.reinit(cell, dofs_per_cell);
-
-  std::vector<double> newton_step_values(n_q_points);
-  VectorType          old_solution = solution;
-  fe_values.get_function_values(old_solution, newton_step_values);
-
-  AdvectionField<dim>         advection_field;
-  std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
-
-  advection_field.value_list(fe_values.get_quadrature_points(),
-                             advection_term_values);
-
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    {
-      const double nonlinearity = std::exp(newton_step_values[q]);
-      const double dx           = fe_values.JxW(q);
-
-      for (unsigned int i = 0; i < dofs_per_cell; i++)
-        {
-          const double         phi_i      = fe_values.shape_value(i, q);
-          const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
-
-          for (unsigned int j = 0; j < dofs_per_cell; ++j)
-            {
-              const double         phi_j      = fe_values.shape_value(j, q);
-              const Tensor<1, dim> grad_phi_j = fe_values.shape_grad(j, q);
-
-              copy_data.cell_matrix(i, j) +=
-                (parameters.kinematic_viscosity * grad_phi_i * grad_phi_j +
-                 advection_term_values[q] * grad_phi_j * phi_i -
-                 phi_i * nonlinearity * phi_j) *
-                dx;
-            }
-        }
-    }
-}
-
-template <int dim, int fe_degree>
-void
-MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg_meshworker()
-{
-  std::vector<AffineConstraints<double>> boundary_constraints(
-    triangulation.n_global_levels());
-
-  for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
-    {
-      const IndexSet dof_set =
-        DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
-      boundary_constraints[level].reinit(dof_set);
-      boundary_constraints[level].add_lines(
-        mg_constrained_dofs.get_refinement_edge_indices(level));
-      boundary_constraints[level].add_lines(
-        mg_constrained_dofs.get_boundary_indices(level));
-
-      boundary_constraints[level].close();
-    }
-  auto cell_worker =
-    [&](const typename DoFHandler<dim>::level_cell_iterator &cell,
-        ScratchData<dim> &                                   scratch_data,
-        CopyData &                                           copy_data) {
-      this->cell_worker(cell, scratch_data, copy_data);
-    };
-
-  auto copier = [&](const CopyData &cd) {
-    boundary_constraints[cd.level].distribute_local_to_global(
-      cd.cell_matrix, cd.local_dof_indices, mg_matrix[cd.level]);
-
-    const unsigned int dofs_per_cell = cd.local_dof_indices.size();
-    for (unsigned int i = 0; i < dofs_per_cell; ++i)
-      for (unsigned int j = 0; j < dofs_per_cell; ++j)
-        if (mg_constrained_dofs.is_interface_matrix_entry(
-              cd.level, cd.local_dof_indices[i], cd.local_dof_indices[j]))
-          {
-            mg_interface_in[cd.level].add(cd.local_dof_indices[i],
-                                          cd.local_dof_indices[j],
-                                          cd.cell_matrix(i, j));
-          }
-  };
-
-  using CellFilter =
-    FilteredIterator<typename DoFHandler<dim>::level_cell_iterator>;
-  const unsigned int n_gauss_points = fe_degree + 1;
-
-  ScratchData<dim> scratch_data(mapping,
-                                fe,
-                                n_gauss_points,
-                                update_values | update_gradients |
-                                  update_JxW_values | update_quadrature_points);
-
-  MeshWorker::mesh_loop(CellFilter(IteratorFilters::LocallyOwnedLevelCell(),
-                                   dof_handler.begin_mg()),
-                        CellFilter(IteratorFilters::LocallyOwnedLevelCell(),
-                                   dof_handler.end_mg()),
-                        cell_worker,
-                        copier,
-                        scratch_data,
-                        CopyData(),
-                        MeshWorker::assemble_own_cells);
 }
 
 template <int dim, int fe_degree>
@@ -1006,7 +932,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              const double nonlinearity = std::exp(values[q]);
+              const double nonlinearity = 0.0;
               const double dx           = fe_values.JxW(q);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -1016,14 +942,14 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
                   if (parameters.source_term == Settings::mms)
                     cell_residual(i) +=
-                      (parameters.kinematic_viscosity * grad_phi_i *
+                      (1 / parameters.peclet_number * grad_phi_i *
                          gradients[q] +
                        advection_term_values[q] * gradients[q] * phi_i -
                        phi_i * nonlinearity - phi_i * source_term_values[q]) *
                       dx;
                   else
                     cell_residual(i) +=
-                      (parameters.kinematic_viscosity * grad_phi_i *
+                      (1 / parameters.peclet_number * grad_phi_i *
                          gradients[q] +
                        advection_term_values[q] * gradients[q] * phi_i -
                        phi_i * nonlinearity) *
@@ -1080,8 +1006,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           mg_transfer.copy_to_mg(dof_handler, mg_solution, solution);
 
           assemble_gmg();
-          // Second option: uncomment to use the meshworker
-          // assemble_gmg_meshworker();
 
           SolverControl        coarse_solver_control(1000, 1e-12, false, false);
           SolverCG<VectorType> coarse_solver(coarse_solver_control);
@@ -1236,7 +1160,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
   VectorTools::integrate_difference(mapping,
                                     dof_handler,
                                     solution,
-                                    MMSSolution<dim>(),
+                                    AnalyticalSolution<dim>(
+                                      parameters.peclet_number),
                                     error_per_cell,
                                     QGauss<dim>(fe.degree + 1),
                                     VectorTools::L2_norm);
@@ -1321,6 +1246,13 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
     std::string CYCLES_header =
       "Total number of cycles: " + std::to_string(parameters.number_of_cycles);
+    std::string PECLET_header =
+      "Peclet number: " + std::to_string(parameters.peclet_number);
+    std::string PROBLEM_TYPE_header = "";
+    if (parameters.problem_type == Settings::boundary_layer)
+      PROBLEM_TYPE_header = "Test problem: boundary layer";
+    else if (parameters.problem_type == Settings::double_glazing)
+      PROBLEM_TYPE_header = "Test problem: double glazing";
 
     pcout << std::string(80, '=') << std::endl;
     pcout << DAT_header << std::endl;
@@ -1334,6 +1266,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
     pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
     pcout << CYCLES_header << std::endl;
+    pcout << PECLET_header << std::endl;
+    pcout << PROBLEM_TYPE_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }
@@ -1395,7 +1329,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       pcout << "  H1 seminorm: " << norm << std::endl;
       pcout << std::endl;
 
-      if (parameters.source_term == Settings::mms)
+      if (parameters.problem_type == Settings::boundary_layer)
         {
           pcout << "  L2 norm: " << compute_l2_error() << std::endl;
         }
