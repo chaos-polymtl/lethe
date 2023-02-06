@@ -159,6 +159,21 @@ IBParticle<dim>::clear_shape_cache(){
   this->shape->clear_cache();
 }
 
+
+template <int dim>
+void
+IBParticle<dim>::initialize_shape(const std::string         type,
+                                  const std::vector<double> shape_arguments)
+{
+  particle_type = type;
+  shape = ShapeGenerator::initialize_shape_from_vector(type,
+                                                       shape_arguments,
+                                                       position,
+                                                       orientation);
+}
+
+
+
 template <int dim>
 void
 IBParticle<dim>::initialize_shape(const std::string type,

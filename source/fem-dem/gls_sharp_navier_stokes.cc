@@ -37,8 +37,6 @@
 
 #include <deal.II/lac/full_matrix.h>
 
-#include <deal.II/opencascade/manifold_lib.h>
-#include <deal.II/opencascade/utilities.h>
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -1148,7 +1146,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             {
                               // Evaluate the total surface
                               // Redefined the normal at the quadrature point
-                              // since we dont control the orientation of the
+                              // since we don't control the orientation of the
                               // cell.
                               normal_vector =
                                 fe_face_projection_values.normal_vector(q);

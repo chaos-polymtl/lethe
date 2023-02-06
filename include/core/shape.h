@@ -20,8 +20,11 @@
 #include <deal.II/base/function.h>
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
-#include <deal.II/opencascade/manifold_lib.h>
-#include <deal.II/opencascade/utilities.h>
+
+#ifdef DEAL_II_WITH_OPENCASCADE
+  #include <deal.II/opencascade/manifold_lib.h>
+  #include <deal.II/opencascade/utilities.h>
+#endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
 #else
@@ -839,10 +842,11 @@ public:
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
   {
+
     std::vector<std::string> shape_arguments_str_list(
       Utilities::split_string_list(file_name, ";"));
     local_file_name=shape_arguments_str_list[0];
-
+#ifdef DEAL_II_WITH_OPENCASCADE
     if (shape_arguments_str_list.size()>1)
       {
         this->effective_radius = Utilities::string_to_double(
@@ -878,6 +882,7 @@ public:
       shape, compounds, compsolids, solids, shells, wires);
     if(shells.size()>0)
       distancetool_shell = BRepExtrema_DistShapeShape(shells[0], vertex);
+#endif
   }
 
   /**
@@ -941,7 +946,9 @@ public:
 
 
 private:
+
   std::string local_file_name;
+#ifdef  DEAL_II_WITH_OPENCASCADE
   TopoDS_Shape                  shape;
   std::vector<TopoDS_Compound>  compounds;
   std::vector<TopoDS_CompSolid> compsolids;
@@ -952,6 +959,7 @@ private:
   TopoDS_Vertex                 vertex;
   BRepExtrema_DistShapeShape    distancetool;
   BRepExtrema_DistShapeShape    distancetool_shell;
+#endif
 };
 
 

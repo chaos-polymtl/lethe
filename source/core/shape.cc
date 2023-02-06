@@ -332,10 +332,6 @@ Tensor<1, dim>
 Sphere<dim>::gradient(const Point<dim> &evaluation_point,
                       const unsigned int /*component*/) const
 {
-  auto point_in_string=this->point_to_string(evaluation_point);
-  auto iterator=this->gradient_cache.find(point_in_string);
-  if (iterator == this->gradient_cache.end() )
-    {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
       const Tensor<1, dim> center_to_point = evaluation_point - this->position;
       const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
@@ -343,7 +339,6 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
 #else
       return sphere_function->gradient(evaluation_point);
 #endif
-    }
 }
 
 template <int dim>
@@ -387,6 +382,7 @@ double
 OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
                       const unsigned int /*component*/) const
 {
+#ifdef DEAL_II_WITH_OPENCASCADE
   Point<dim>    centered_point = this->align_and_center(evaluation_point);
   Point<dim>    projected_point;
   auto          pt     = OpenCASCADE::point(centered_point);
@@ -406,14 +402,18 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       projected_point[2] = pt_on_surface.Z();
     }
   return (evaluation_point - projected_point).norm();
+#else
+  return 0;
+#endif
 }
 template <int dim>
 double
 OpenCascadeShape<dim>::value_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component*/)
 {
+#ifdef DEAL_II_WITH_OPENCASCADE
   auto point_in_string=this->point_to_string(evaluation_point);
   auto iterator=this->value_cache.find(point_in_string);
 
@@ -474,6 +474,9 @@ if (iterator == this->value_cache.end() )
 else{
     return this->value_cache[point_in_string];
   }
+#else
+  return Tensor<1,dim>();
+#endif
 
 }
 
@@ -493,6 +496,7 @@ Tensor<1, dim>
 OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
                          const unsigned int /*component*/) const
 {
+#ifdef DEAL_II_WITH_OPENCASCADE
   Point<dim>    centered_point = this->align_and_center(evaluation_point);
   Point<dim>    projected_point;
   auto          pt     = OpenCASCADE::point(centered_point);
@@ -513,6 +517,9 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
     }
 
   return projected_point;
+#else
+  return Point<dim>();
+#endif
 }
 
 
@@ -520,9 +527,10 @@ template <int dim>
 Tensor<1, dim>
 OpenCascadeShape<dim>::gradient_with_cell_guess(
   const Point<dim>                                    &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component*/)
 {
+#ifdef DEAL_II_WITH_OPENCASCADE
   auto point_in_string=this->point_to_string(evaluation_point);
   auto iterator=this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end() )
@@ -573,6 +581,9 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
   else{
       return this->gradient_cache[point_in_string];
     }
+#else
+  return Tensor<1,dim>();
+#endif
 }
 
 
@@ -582,6 +593,7 @@ void
 OpenCascadeShape<dim>::closest_surface_point(const Point<dim>                                    &p,
 Point<dim>                                          &closest_point)
 {
+#ifdef DEAL_II_WITH_OPENCASCADE
   Point<dim>    centered_point = this->align_and_center(p);
   Point<dim>    projected_point;
   auto          pt     = OpenCASCADE::point(centered_point);
@@ -602,6 +614,9 @@ Point<dim>                                          &closest_point)
     }
 
   closest_point= projected_point;
+#else
+  closest_point= Point<dim>();
+#endif
 }
 
 
@@ -610,9 +625,9 @@ void
 OpenCascadeShape<dim>::closest_surface_point(
   const Point<dim>                                    &p,
   Point<dim>                                          &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
+  const typename DoFHandler<dim>::active_cell_iterator &/*cell_guess*/)
 {
-
+#ifdef DEAL_II_WITH_OPENCASCADE
   auto point_in_string=this->point_to_string(p);
   auto iterator=this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end() )
@@ -663,12 +678,15 @@ OpenCascadeShape<dim>::closest_surface_point(
   else{
       closest_point=this->gradient_cache[point_in_string];
     }
+#else
+  closest_point= Point<dim>();
+#endif
 }
 
 
 template <int dim>
 double
-OpenCascadeShape<dim>::displaced_volume(const double fluid_density)
+OpenCascadeShape<dim>::displaced_volume(const double /*fluid_density*/)
 {
   return 1;
 }

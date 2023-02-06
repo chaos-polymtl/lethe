@@ -73,6 +73,15 @@ public:
   }
 
   /**
+   * @brief Returns the viscosity scale. This is used to get the viscosity scale in the problem when it's not constant. This is useful for weak boundary conditions.
+   */
+  virtual double
+  get_viscosity_scale() const
+  {
+    return 1.0;
+  }
+
+  /**
    * @brief Sets a new viscosity value, if the models has one.
    */
   virtual void
@@ -146,6 +155,12 @@ public:
 
   double
   get_viscosity() const
+  {
+    return viscosity;
+  }
+
+  double
+  get_viscosity_scale() const
   {
     return viscosity;
   }
@@ -238,6 +253,14 @@ public:
   get_viscosity() const
   {
     return K;
+  }
+
+  double
+  get_viscosity_scale() const
+  {
+    return 1 > shear_rate_min ?
+             K * std::pow(1, n - 1) :
+             K * std::pow(shear_rate_min, n - 1);
   }
 
   void
@@ -351,6 +374,15 @@ public:
   get_viscosity() const
   {
     return viscosity_0;
+  }
+
+  double
+  get_viscosity_scale() const
+  {
+    return viscosity_inf +
+           (viscosity_0 - viscosity_inf) *
+             std::pow(1.0 + std::pow(1 * lambda, a),
+                      (n - 1) / a);
   }
 
   void

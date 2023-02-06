@@ -908,6 +908,7 @@ public:
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
   std::vector<double>                  viscosity;
+  double                               viscosity_scale;
   std::vector<double>                  thermal_expansion;
   std::vector<double>                  grad_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;
