@@ -24,6 +24,8 @@
 #ifdef DEAL_II_WITH_OPENCASCADE
   #include <deal.II/opencascade/manifold_lib.h>
   #include <deal.II/opencascade/utilities.h>
+  #include <BRepBuilderAPI_MakeVertex.hxx>
+  #include <BRepExtrema_DistShapeShape.hxx>
 #endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -40,8 +42,7 @@
 
 #include <deal.II/physics/transformations.h>
 
-#include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
+
 
 #include <cfloat>
 #include <memory>
