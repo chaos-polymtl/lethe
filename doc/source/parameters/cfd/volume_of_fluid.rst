@@ -314,6 +314,6 @@ Choosing values for the surface tension force filters
 The following procedure is recommended to choose proper values for the ``phase fraction gradient filter factor`` and ``curvature filter factor``:
 
 1. Use ``set output auxiliary fields = true`` to write filtered phase fraction gradient and filtered curvature fields.
-2. Choose a small value, still larger than :math:`0`, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
+2. Choose a value close to 1, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
 3. Run the simulation and check whether the filtered phase fraction gradient field is smooth and without oscillation.
 4.  If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
