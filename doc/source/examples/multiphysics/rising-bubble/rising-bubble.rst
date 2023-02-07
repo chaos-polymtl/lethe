@@ -140,7 +140,7 @@ where :math:`k` is the filtered curvature, and :math:`\eta_k = \beta h^2` is the
   We recommend the following procedure to choose a proper value for these parameters:
 
   1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
-  2. Choose a small value, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
+  2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
   3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
   4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
