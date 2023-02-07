@@ -616,6 +616,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
   , levels_not_precalculated(levels_not_precalculated)
+  , maximal_support_radius(0.)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -624,6 +625,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
 {
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
+  maximal_support_radius =
+    *std::max_element(std::begin(support_radii), std::end(support_radii));
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
 }
@@ -649,6 +652,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   minimal_mesh_level       = std::numeric_limits<int>::max();
   highest_level_searched   = -1;
   levels_not_precalculated = std::round(shape_arguments.back());
+  maximal_support_radius =
+    *std::max_element(std::begin(support_radii), std::end(support_radii));
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -697,8 +702,10 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double bounding_box_distance = bounding_box->value(centered_point);
-  double value                 = std::max(bounding_box_distance, 0.0);
+  double value              = 0.;
+  double bounding_box_value = bounding_box->value(centered_point);
+  if (bounding_box_value > 0.)
+    value = bounding_box_value + maximal_support_radius;
 
   double normalized_distance, basis;
 
@@ -723,8 +730,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
 
   double         bounding_box_distance = bounding_box->value(centered_point);
   Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
-  if (bounding_box_distance >
-      *std::max_element(support_radii.begin(), support_radii.end()))
+  if (bounding_box_distance > maximal_support_radius)
     return bounding_box_gradient;
 
   double     distance, normalized_distance;
@@ -811,7 +817,8 @@ RBFShape<dim>::initialize_bounding_box()
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
-      half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
+      half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]) +
+                        maximal_support_radius;
     }
   bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
                                                   bounding_box_center,
@@ -880,7 +887,7 @@ void
 RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
                                       std::shared_ptr<Mapping<dim>> /*mapping*/)
 {
-  int maximal_level = dof_handler.get_triangulation().n_levels();
+  const int maximal_level = dof_handler.get_triangulation().n_levels();
 
   for (int level = highest_level_searched + 1; level < maximal_level; level++)
     {

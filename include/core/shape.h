@@ -1304,11 +1304,12 @@ private:
 
   std::map<const typename DoFHandler<dim>::cell_iterator,
            std::shared_ptr<std::vector<size_t>>>
-               likely_nodes_map;
-  size_t       max_number_of_nodes;
-  int          minimal_mesh_level;
-  int          highest_level_searched;
-  unsigned int levels_not_precalculated;
+         likely_nodes_map;
+  size_t max_number_of_nodes;
+  int    minimal_mesh_level;
+  int    highest_level_searched;
+  int    levels_not_precalculated;
+  double maximal_support_radius;
 
 public:
   std::vector<size_t>           nodes_id;
