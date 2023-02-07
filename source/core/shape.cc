@@ -311,9 +311,6 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
       const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
       return grad;
 #else
-  const Tensor<1, dim> center_to_point = evaluation_point - this->position;
-  const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
-  return grad;
       return sphere_function->gradient(evaluation_point);
 #endif
 }
@@ -379,7 +376,7 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       projected_point[2] = pt_on_surface.Z();
     }
   // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-  // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
+  // By default, step file format will define a solid. This is necessary to sign the distance function evaluation.
   if (distancetool.InnerSolution())
     {
       // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
@@ -452,7 +449,7 @@ if (iterator == this->value_cache.end() )
         projected_point[2] = pt_on_surface.Z();
       }
     // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-    // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
+    // By default, step file format will define a solid. This is necessary to sign the distance function evaluation.
     if (distancetool.InnerSolution())
       {
         // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
@@ -539,7 +536,7 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
       projected_point[2] = pt_on_surface.Z();
     }
   // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-  // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
+  // By default,  step file format will define a solid. This is necessary to sign the distance function evaluation.
   if (distancetool.InnerSolution())
     {
       // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
@@ -618,7 +615,7 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
         projected_point[2] = pt_on_surface.Z();
       }
       // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-      // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
+      // By default, step file format will define a solid. This is necessary to sign the distance function evaluation.
       if (distancetool.InnerSolution())
       {
         // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.

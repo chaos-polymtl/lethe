@@ -2257,6 +2257,11 @@ namespace Parameters
         "1",
         Patterns::Double(),
         "The wall restitution coefficient if IB particles are in contact with it");
+      prm.declare_entry(
+        "enable extra verbose output",
+        "false",
+        Patterns::Bool(),
+        "This parameter enable the output of more information related to the particles in the vtu file.");
 
 
       prm.enter_subsection("gravity");
@@ -2306,6 +2311,7 @@ namespace Parameters
         throw(std::logic_error(
           "Error, the parameter 'contact search radius factor' cannot be < 1."));
 
+      enable_extra_verbose_output =prm.get_bool("enable extra verbose output");
       contact_search_frequency = prm.get_integer("contact search frequency");
 
       load_particles_from_file = prm.get_bool("load particles from file");

@@ -1074,6 +1074,7 @@ namespace Parameters
     int                          contact_search_frequency;
     bool                         load_particles_from_file;
     std::string                  particles_file;
+    bool                         enable_extra_verbose_output;
 
     std::shared_ptr<Functions::ParsedFunction<dim>> f_gravity;
 
