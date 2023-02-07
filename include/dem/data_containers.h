@@ -16,6 +16,8 @@
  *
  */
 
+#include <core/unordered_dense.h>
+
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/particle_particle_contact_info.h>
 #include <dem/particle_point_line_contact_info_struct.h>
@@ -158,7 +160,7 @@ namespace DEM
       particle_wall_in_contact;
 
     // <particle id, <particle id, particle-particle info>>
-    typedef std::unordered_map<
+    typedef ankerl::unordered_dense::map<
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info<dim>>>
