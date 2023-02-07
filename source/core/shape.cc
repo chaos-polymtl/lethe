@@ -227,36 +227,6 @@ Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
 }
 
 
-/*template <int dim>
-double
-Shape<dim>::value_with_cell_guess(
-  const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator ,
-  const unsigned int )
-{
-  auto point_in_string=this->point_to_string(evaluation_point);
-  auto iterator=this->value_cache.find(point_in_string);
-  if (iterator == this->value_cache.end() )
-    {
-      double value=this->value(evaluation_point);
-      this->value_cache[point_in_string]=value;
-      return value;
-    }
-  else{
-      return this->value_cache[point_in_string];
-    }
-}
-
-template <int dim>
-Tensor<1, dim>
-Shape<dim>::gradient_with_cell_guess(
-  const Point<dim> &evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator ,
-  const unsigned int)
-{
-  return this->gradient(evaluation_point);
-}*/
-
 template <int dim>
 void
 Shape<dim>::closest_surface_point(
@@ -341,6 +311,9 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
       const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
       return grad;
 #else
+  const Tensor<1, dim> center_to_point = evaluation_point - this->position;
+  const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
+  return grad;
       return sphere_function->gradient(evaluation_point);
 #endif
 }
@@ -405,7 +378,40 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
-  return (evaluation_point - projected_point).norm();
+  // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
+  // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
+  if (distancetool.InnerSolution())
+    {
+      // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
+      // This is why we need to evaluate the distance of the point with the shell of the shape.
+      if(shells.size()>0)
+        {
+          BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
+          distancetool_shell.LoadS2(vertex);
+          distancetool_shell.Perform();
+          pt_on_surface = distancetool_shell.PointOnShape1(1);
+          if (dim == 2)
+            {
+              projected_point[0] = pt_on_surface.X();
+              projected_point[1] = pt_on_surface.Y();
+            }
+          if (dim == 3)
+            {
+              projected_point[0] = pt_on_surface.X();
+              projected_point[1] = pt_on_surface.Y();
+              projected_point[2] = pt_on_surface.Z();
+            }
+        }
+      // Rotate the solution found to the global reference frame.
+      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+      return -(rotate_in_globalpoint-evaluation_point).norm();
+    }
+  else
+    {
+      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+      return (rotate_in_globalpoint-evaluation_point).norm();
+    }
+
 #else
   return 0;
 #endif
@@ -423,13 +429,16 @@ OpenCascadeShape<dim>::value_with_cell_guess(
 
 if (iterator == this->value_cache.end() )
   {
+    // Transform the point a OpenCascade point
     Point<dim> centered_point = this->align_and_center(evaluation_point);
     Point<dim> projected_point;
     vertex_position = OpenCASCADE::point(centered_point);
+    // Perform the evaluation
     vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
     distancetool.LoadS2(vertex);
     distancetool.Perform();
 
+    // Convert OpenCascade solution point to dealii Point.
     gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
     if (dim == 2)
       {
@@ -442,8 +451,12 @@ if (iterator == this->value_cache.end() )
         projected_point[1] = pt_on_surface.Y();
         projected_point[2] = pt_on_surface.Z();
       }
+    // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
+    // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
     if (distancetool.InnerSolution())
       {
+        // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
+        // This is why we need to evaluate the distance of the point with the shell of the shape.
         if(shells.size()>0)
             {
               distancetool_shell.LoadS2(vertex);
@@ -461,9 +474,10 @@ if (iterator == this->value_cache.end() )
                   projected_point[2] = pt_on_surface.Z();
                 }
             }
+        // Rotate the solution found to the global reference frame and cache the solution.
         this->value_cache[point_in_string]= -(centered_point - projected_point).norm();
         auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-        this->gradient_cache[point_in_string]=rotate_in_globalpoint;
+        this->gradient_cache[point_in_string]=(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
         return -(centered_point - projected_point).norm();
 
       }
@@ -471,7 +485,7 @@ if (iterator == this->value_cache.end() )
       {
         this->value_cache[point_in_string]= (centered_point - projected_point).norm();
         auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-        this->gradient_cache[point_in_string]=rotate_in_globalpoint;
+        this->gradient_cache[point_in_string]=-(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
         return (centered_point - projected_point).norm();
       }
   }
@@ -503,11 +517,16 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
 #ifdef DEAL_II_WITH_OPENCASCADE
   Point<dim>    centered_point = this->align_and_center(evaluation_point);
   Point<dim>    projected_point;
+
+  // Transform the point a OpenCascade point
   auto          pt     = OpenCASCADE::point(centered_point);
   TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
+  // Perform the evaluation
   BRepExtrema_DistShapeShape distancetool(shape, vertex);
   distancetool.Perform();
   gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+
+  // Convert OpenCascade solution point to dealii Point.
   if (dim == 2)
     {
       projected_point[0] = pt_on_surface.X();
@@ -519,9 +538,41 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
       projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
-
-  return projected_point;
+  // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
+  // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
+  if (distancetool.InnerSolution())
+    {
+      // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
+      // This is why we need to evaluate the distance of the point with the shell of the shape.
+      if(shells.size()>0)
+      {
+        BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
+        distancetool_shell.LoadS2(vertex);
+        distancetool_shell.Perform();
+        pt_on_surface = distancetool_shell.PointOnShape1(1);
+        if (dim == 2)
+            {
+              projected_point[0] = pt_on_surface.X();
+              projected_point[1] = pt_on_surface.Y();
+            }
+        if (dim == 3)
+            {
+              projected_point[0] = pt_on_surface.X();
+              projected_point[1] = pt_on_surface.Y();
+              projected_point[2] = pt_on_surface.Z();
+            }
+      }
+      // Rotate the solution found to the global reference frame.
+      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+      return (rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+    }
+  else
+    {
+      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+      return -(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+    }
 #else
+  // Empty return if LEthe is not compile wiith OpenCascade
   return Point<dim>();
 #endif
 }
@@ -535,17 +586,25 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
+  // This function is identical to the Gradient function but has the possibility to use the cache of the shape.
+
+  // First step is to convert the point into a string.
   auto point_in_string=this->point_to_string(evaluation_point);
+  // We check the unordered map
   auto iterator=this->gradient_cache.find(point_in_string);
+  // If we did not find the solution in the map we perform the calculation.
   if (iterator == this->gradient_cache.end() )
     {
+      // Transform the point a OpenCascade point
       Point<dim> centered_point = this->align_and_center(evaluation_point);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
+      // Perform the evaluation
       vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
       distancetool.LoadS2(vertex);
       distancetool.Perform();
 
+      // Convert OpenCascade solution point to dealii Point.
       gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
       if (dim == 2)
       {
@@ -558,9 +617,13 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
         projected_point[1] = pt_on_surface.Y();
         projected_point[2] = pt_on_surface.Z();
       }
+      // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
+      // By default, most step file format will define a solid. This is necessary to sign the distance function evaluation.
       if (distancetool.InnerSolution())
       {
-        if (shells.size() > 0)
+        // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
+        // This is why we need to evaluate the distance of the point with the shell of the shape.
+        if(shells.size()>0)
             {
               distancetool_shell.LoadS2(vertex);
               distancetool_shell.Perform();
@@ -577,113 +640,26 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
                   projected_point[2] = pt_on_surface.Z();
                 }
             }
+        // Rotate the solution found to the global reference frame and cache the solution.
+        this->value_cache[point_in_string]= -(centered_point - projected_point).norm();
+        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+        this->gradient_cache[point_in_string]=(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+        return (rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
       }
-      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-      this->gradient_cache[point_in_string]=rotate_in_globalpoint;
-      return rotate_in_globalpoint;
+      else
+      {
+        this->value_cache[point_in_string]= (centered_point - projected_point).norm();
+        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
+        this->gradient_cache[point_in_string]=-(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+        return -(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+      }
     }
   else{
+      // If we are here it is that this point was already evaluated and the previous evaluation was cache.
       return this->gradient_cache[point_in_string];
     }
 #else
   return Tensor<1,dim>();
-#endif
-}
-
-
-
-template <int dim>
-void
-OpenCascadeShape<dim>::closest_surface_point(const Point<dim>                                    &p,
-Point<dim>                                          &closest_point)
-{
-#ifdef DEAL_II_WITH_OPENCASCADE
-  Point<dim>    centered_point = this->align_and_center(p);
-  Point<dim>    projected_point;
-  auto          pt     = OpenCASCADE::point(centered_point);
-  TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
-  BRepExtrema_DistShapeShape distancetool(shape, vertex);
-  distancetool.Perform();
-  gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
-  if (dim == 2)
-    {
-      projected_point[0] = pt_on_surface.X();
-      projected_point[1] = pt_on_surface.Y();
-    }
-  if (dim == 3)
-    {
-      projected_point[0] = pt_on_surface.X();
-      projected_point[1] = pt_on_surface.Y();
-      projected_point[2] = pt_on_surface.Z();
-    }
-
-  closest_point= projected_point;
-#else
-  closest_point= Point<dim>();
-#endif
-}
-
-
-template <int dim>
-void
-OpenCascadeShape<dim>::closest_surface_point(
-  const Point<dim>                                    &p,
-  Point<dim>                                          &closest_point,
-  const typename DoFHandler<dim>::active_cell_iterator &/*cell_guess*/)
-{
-#ifdef DEAL_II_WITH_OPENCASCADE
-  auto point_in_string=this->point_to_string(p);
-  auto iterator=this->gradient_cache.find(point_in_string);
-  if (iterator == this->gradient_cache.end() )
-    {
-      Point<dim> centered_point = this->align_and_center(p);
-      Point<dim> projected_point;
-      vertex_position = OpenCASCADE::point(centered_point);
-      vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
-      distancetool.LoadS2(vertex);
-      distancetool.Perform();
-
-      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
-      if (dim == 2)
-        {
-          projected_point[0] = pt_on_surface.X();
-          projected_point[1] = pt_on_surface.Y();
-        }
-      if (dim == 3)
-        {
-          projected_point[0] = pt_on_surface.X();
-          projected_point[1] = pt_on_surface.Y();
-          projected_point[2] = pt_on_surface.Z();
-        }
-      if (distancetool.InnerSolution())
-        {
-          if (shells.size() > 0)
-            {
-              distancetool_shell.LoadS2(vertex);
-              distancetool_shell.Perform();
-              pt_on_surface = distancetool_shell.PointOnShape1(1);
-              if (dim == 2)
-                {
-                  projected_point[0] = pt_on_surface.X();
-                  projected_point[1] = pt_on_surface.Y();
-                }
-              if (dim == 3)
-                {
-                  projected_point[0] = pt_on_surface.X();
-                  projected_point[1] = pt_on_surface.Y();
-                  projected_point[2] = pt_on_surface.Z();
-                }
-            }
-        }
-      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-      this->gradient_cache[point_in_string]=rotate_in_globalpoint;
-      closest_point=rotate_in_globalpoint;
-    }
-  else{
-      closest_point=this->gradient_cache[point_in_string];
-    }
-#else
-  closest_point= Point<dim>();
 #endif
 }
 

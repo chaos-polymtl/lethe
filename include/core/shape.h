@@ -79,7 +79,7 @@ public:
     death_star,
     composite_shape,
     rbf_shape,
-    step_sharp,
+    opencascade_sharp,
   } type;
 
   /**
@@ -231,7 +231,7 @@ public:
 
   /**
    * @brief
-   * Returns the orientation of the shape
+   * Clear the cache of the shape
    *
    */
   virtual void
@@ -266,6 +266,12 @@ public:
   Point<dim>
   reverse_align_and_center(const Point<dim> &evaluation_point) const;
 
+  /**
+   * @brief
+   * This function returns a point in a string of text. This is used in the cache of the shape.
+   *
+   * @param evaluation_point is the point that is transformed in its text form.
+   */
   std::string
   point_to_string(const Point<dim> &evaluation_point) const;
   // Effective radius used for crown refinement
@@ -273,7 +279,6 @@ public:
 
   // String that contains additional information on the shape
   std::string additional_info_on_shape;
-
 
 protected:
   // Position of the center of the Shape. It doesn't always correspond to the
@@ -283,9 +288,9 @@ protected:
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
 
+  // The cache of the evaluation of the shape. This is used to avoid costly reevaluation of the shape.
   std::unordered_map<std::string,double> value_cache;
   std::unordered_map<std::string,Tensor<1,dim>> gradient_cache;
-
 };
 
 
@@ -843,22 +848,26 @@ public:
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
   {
-
+//read the shape file name and check if a effective radius as been gi file name.
     std::vector<std::string> shape_arguments_str_list(
       Utilities::split_string_list(file_name, ";"));
     local_file_name=shape_arguments_str_list[0];
 #ifdef DEAL_II_WITH_OPENCASCADE
+    // set the new effective radius if it was given with the file name.
     if (shape_arguments_str_list.size()>1)
       {
         this->effective_radius = Utilities::string_to_double(
           shape_arguments_str_list[1]);
       }
+
+    // Checks the file name extension to identify which type of OpenCascade shape we are working with.
     std::size_t found_step   = local_file_name.find(".step");
     std::size_t found_step_2 = local_file_name.find(".stp");
     std::size_t found_igs    = local_file_name.find(".iges");
     std::size_t found_igs_2  = local_file_name.find(".igs");
     std::size_t found_stl    = local_file_name.find(".stl");
 
+    // load the shape with the appropriate tool.
     if (found_step != std::string::npos || found_step_2 != std::string::npos)
       {
         shape = OpenCASCADE::read_STEP(local_file_name);
@@ -874,13 +883,13 @@ public:
         shape = OpenCASCADE::read_STL(local_file_name);
         this->additional_info_on_shape="stl";
       }
-
-
+    // Initialize some variables and the OpenCascade distance tool.
     vertex_position = OpenCASCADE::point(Point<dim>());
     vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
     distancetool    = BRepExtrema_DistShapeShape(shape, vertex);
     OpenCASCADE::extract_compound_shapes(
       shape, compounds, compsolids, solids, shells, wires);
+    // Check if the shape has a shell. If it has a shell, we initialize a distance tool with just the shell.
     if(shells.size()>0)
       distancetool_shell = BRepExtrema_DistShapeShape(shells[0], vertex);
 #endif
@@ -922,15 +931,6 @@ public:
     const Point<dim>                                    &evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int component = 0) override;
-
-  void
-  closest_surface_point(
-    const Point<dim>                                     &p,
-    Point<dim>                                           &closest_point,
-    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) override;
-  void
-  closest_surface_point(const Point<dim> &p,
-                        Point<dim>       &closest_point) override;
 
 
   /**
