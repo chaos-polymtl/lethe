@@ -96,7 +96,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   std::map<types::global_dof_index, Point<dim>> support_points;
 
-  // A vector of the unordered map. Each map stores if a point is inside or outside of a given particle.
+  // A vector of the unordered map. Each map stores if a point is inside or
+  // outside of a given particle.
   std::vector<std::unordered_map<types::global_dof_index, bool>>
     inside_outside_support_point_vector(particles.size());
   DoFTools::map_dofs_to_support_points(*this->mapping,
@@ -104,12 +105,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
-  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
@@ -131,8 +132,11 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              // Particles define from an stl or en iges dont have a sign distance function. To identify cell that are cut an special algorithm is required.
-              // For this type of particle, no cell are identify as being inside the particle. This means that the fluid is always solved inside the particle.
+              // Particles define from an stl or en iges dont have a sign
+              // distance function. To identify cell that are cut an special
+              // algorithm is required. For this type of particle, no cell are
+              // identify as being inside the particle. This means that the
+              // fluid is always solved inside the particle.
               if (particles[p].shape->additional_info_on_shape == "stl" ||
                   particles[p].shape->additional_info_on_shape == "iges")
                 {
@@ -154,7 +158,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       // the cell is not cut by the boundary.
                       if (0 == this->fe->system_to_component_index(j).first)
                         {
-                          // Check if we already have check this point in a previous cell. If we did we use the results that we have previously obtained.
+                          // Check if we already have check this point in a
+                          // previous cell. If we did we use the results that we
+                          // have previously obtained.
                           auto iterator =
                             inside_outside_support_point_vector[p].find(
                               local_dof_indices[j]);
@@ -192,7 +198,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       // inside the particle. Otherwise the particle is cut.
                       if (nb_dof_inside == dofs_per_cell_local_v_x)
                         {
-                          //  We register only the particle with the lowest id as the particle in which this cell is embedded if the cell is in multiple particles.
+                          //  We register only the particle with the lowest id
+                          //  as the particle in which this cell is embedded if
+                          //  the cell is in multiple particles.
                           if (number_of_particles_cutting_this_cell == 0)
                             {
                               cell_is_cut                      = false;
@@ -231,8 +239,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
             }
 
           cut_cells_map[cell]    = {cell_is_cut,
-                                    particle_id_which_cuts_this_cell,
-                                    number_of_particles_cutting_this_cell};
+                                 particle_id_which_cuts_this_cell,
+                                 number_of_particles_cutting_this_cell};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
         }
@@ -243,12 +251,14 @@ template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::map<types::global_dof_index, Point<dim>>        &support_points,
+  std::map<types::global_dof_index, Point<dim>> &       support_points,
   unsigned int                                          p)
 {
-  // This function aims at defining if a cell is cut when the level set used to define the particle is not signed.
-  // This function works by analyzing the location of the projection of the support point and the cell centroid on the particle's surface.
-  // If the projected point at the surface of the particle is inside the cell then the cell is cut.
+  // This function aims at defining if a cell is cut when the level set used to
+  // define the particle is not signed. This function works by analyzing the
+  // location of the projection of the support point and the cell centroid on
+  // the particle's surface. If the projected point at the surface of the
+  // particle is inside the cell then the cell is cut.
 
   // First step define useful variables.
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -273,7 +283,8 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(
     }
   else
     {
-      // If the projection of the centroid is not inside the cell we also check for each dof support point of the cell.
+      // If the projection of the centroid is not inside the cell we also check
+      // for each dof support point of the cell.
       for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
           // Only check for the support point of the velocity in x.
@@ -821,7 +832,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // solution. Define the triangulation of the surface cell.
                       for (unsigned int i = 0; i < vertices_per_face; ++i)
                         {
-
                           Point<dim> vertex_projection;
                           particles[p].closest_surface_point(
                             local_face->vertex(i), vertex_projection, cell);
@@ -869,7 +879,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // IB stencil to extrapolate the fluid stress tensor.
 
                       std::vector<Tensor<2, dim>>
-                        local_face_viscous_stress_tensor(dofs_per_face);
+                                                  local_face_viscous_stress_tensor(dofs_per_face);
                       std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;
@@ -1332,11 +1342,13 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
 
-  //If the enable extra verbose output is activated we add an output field to the results where we identify which particle cuts each cell of the domain.
-  if(this->simulation_parameters.particlesParameters->enable_extra_verbose_output)
+  // If the enable extra verbose output is activated we add an output field to
+  // the results where we identify which particle cuts each cell of the domain.
+  if (this->simulation_parameters.particlesParameters
+        ->enable_extra_verbose_output)
     {
       // Define cell iterator
-      const auto  &cell_iterator = this->dof_handler.active_cell_iterators();
+      const auto & cell_iterator = this->dof_handler.active_cell_iterators();
       unsigned int i             = 0;
       for (const auto &cell : cell_iterator)
         {
@@ -3223,8 +3235,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3314,8 +3326,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 

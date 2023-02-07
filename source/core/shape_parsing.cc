@@ -318,8 +318,9 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
       else
         throw std::invalid_argument(file_name);
     }
-  else if (type == "opencascade"){
-      shape         = std::make_shared<OpenCascadeShape<dim>>(file_name,
+  else if (type == "opencascade")
+    {
+      shape = std::make_shared<OpenCascadeShape<dim>>(file_name,
                                                       position,
                                                       orientation);
     }

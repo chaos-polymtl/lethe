@@ -155,7 +155,8 @@ IBParticle<dim>::get_properties()
 }
 template <int dim>
 void
-IBParticle<dim>::clear_shape_cache(){
+IBParticle<dim>::clear_shape_cache()
+{
   this->shape->clear_cache();
 }
 
@@ -166,7 +167,7 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                   const std::vector<double> shape_arguments)
 {
   particle_type = type;
-  shape = ShapeGenerator::initialize_shape_from_vector(type,
+  shape         = ShapeGenerator::initialize_shape_from_vector(type,
                                                        shape_arguments,
                                                        position,
                                                        orientation);
@@ -180,7 +181,7 @@ IBParticle<dim>::initialize_shape(const std::string type,
                                   const std::string raw_arguments)
 {
   particle_type = type;
-  shape = ShapeGenerator::initialize_shape(type,
+  shape         = ShapeGenerator::initialize_shape(type,
                                            raw_arguments,
                                            position,
                                            orientation);
@@ -189,28 +190,28 @@ IBParticle<dim>::initialize_shape(const std::string type,
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(
-  const Point<dim>                                    &p,
-  Point<dim>                                          &closest_point,
+  const Point<dim> &                                    p,
+  Point<dim> &                                          closest_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  shape->closest_surface_point(p,closest_point,cell_guess);
+  shape->closest_surface_point(p, closest_point, cell_guess);
 }
 
 
 template <int dim>
 void
 IBParticle<dim>::closest_surface_point(const Point<dim> &p,
-                                       Point<dim>       &closest_point)
+                                       Point<dim> &      closest_point)
 {
-  shape->closest_surface_point(p,closest_point);
+  shape->closest_surface_point(p, closest_point);
 }
 
 template <int dim>
 bool
 IBParticle<dim>::is_inside_crown(
-  const Point<dim>                                    &evaluation_point,
-  const double                                         outer_radius,
-  const double                                         inside_radius,
+  const Point<dim> &                                    evaluation_point,
+  const double                                          outer_radius,
+  const double                                          inside_radius,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   const double radius = shape->effective_radius;

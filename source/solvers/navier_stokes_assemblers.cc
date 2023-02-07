@@ -1565,8 +1565,8 @@ LaplaceAssembly<dim>::assemble_matrix(
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
-  const double h = scratch_data.cell_size;
-  const double viscosity = scratch_data.viscosity_scale;
+  const double       h          = scratch_data.cell_size;
+  const double       viscosity  = scratch_data.viscosity_scale;
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
@@ -1596,12 +1596,12 @@ LaplaceAssembly<dim>::assemble_matrix(
               // better that way for the problem scaling and it doesn't affect
               // the end result for our purposes
               // Laplacian on the velocity terms
-              double local_matrix_ij =viscosity *
-                                       scalar_product(grad_phi_u_j, grad_phi_u_i);
+              double local_matrix_ij =
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i);
 
               // Laplacian on the pressure terms
-              local_matrix_ij += 1 / viscosity * h *
-                                                    scalar_product(grad_phi_p_j, grad_phi_p_i);
+              local_matrix_ij +=
+                1 / viscosity * h * scalar_product(grad_phi_p_j, grad_phi_p_i);
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -1626,9 +1626,9 @@ LaplaceAssembly<dim>::assemble_rhs(
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
-  const double h = scratch_data.cell_size;
-  auto &local_rhs = copy_data.local_rhs;
-  const double viscosity = scratch_data.viscosity_scale;
+  const double       h          = scratch_data.cell_size;
+  auto &             local_rhs  = copy_data.local_rhs;
+  const double       viscosity  = scratch_data.viscosity_scale;
 
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
@@ -1659,8 +1659,8 @@ LaplaceAssembly<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Laplacian on the velocity terms
-          local_rhs_i += -viscosity *
-                         scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
+          local_rhs_i +=
+            -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
 
 
           // Laplacian on the pressure terms

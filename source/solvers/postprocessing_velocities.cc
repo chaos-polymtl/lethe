@@ -65,7 +65,6 @@ AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
       reynolds_normal_stresses.equ(inv_range_time,
                                    sum_reynolds_normal_stress_dt);
       reynolds_shear_stresses.equ(inv_range_time, sum_reynolds_shear_stress_dt);
-
     }
 }
 

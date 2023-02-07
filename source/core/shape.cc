@@ -14,17 +14,19 @@
  * ---------------------------------------------------------------------
  */
 #include <core/shape.h>
+
 #include <deal.II/grid/manifold.h>
+#include <deal.II/grid/manifold_lib.h>
+
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
-#include <deal.II/grid/manifold_lib.h>
+
 #include <cfloat>
 
 #ifdef DEAL_II_WITH_OPENCASCADE
-  #include <BRepBuilderAPI_MakeVertex.hxx>
-  #include <BRepExtrema_DistShapeShape.hxx>
+#  include <BRepBuilderAPI_MakeVertex.hxx>
+#  include <BRepExtrema_DistShapeShape.hxx>
 #endif
-
 
 
 
@@ -142,7 +144,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
   // each rotation around one axis The centralized rotated point is the result
   // of each rotation, and it is initialized in case no rotation is performed
   Point<dim> centralized_point;
-  centralized_point              = evaluation_point ;
+  centralized_point              = evaluation_point;
   Point<dim> centralized_rotated = centralized_point;
 
   // Selection of the first axis around which to rotate:
@@ -173,16 +175,15 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
     }
   else // (dim == 3)
     {
-      for (unsigned int i = 0; i < dim;
-           ++i)
+      for (unsigned int i = 0; i < dim; ++i)
         {
-          if (std::abs(theta[2-i]) > 1e-10)
+          if (std::abs(theta[2 - i]) > 1e-10)
             {
               Tensor<1, 3> axis;
-              axis[2-i] = 1.0;
+              axis[2 - i] = 1.0;
               Tensor<2, 3> rotation_matrix =
                 Physics::Transformations::Rotations::rotation_matrix_3d(
-                  axis, theta[2-i]);
+                  axis, theta[2 - i]);
 
               // Multiplication
               centralized_rotated.clear();
@@ -207,22 +208,25 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
 }
 
 template <int dim>
-std::shared_ptr< Manifold<dim-1,dim>>
+std::shared_ptr<Manifold<dim - 1, dim>>
 Shape<dim>::get_shape_manifold()
 {
-    return std::make_shared<FlatManifold<dim-1,dim>>();
+  return std::make_shared<FlatManifold<dim - 1, dim>>();
 }
 
 template <int dim>
 std::string
 Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
 {
-
-  std::string point_in_string="";
-  for(unsigned int d=0;d<dim;++d){
-      point_in_string = point_in_string+";"+std::to_string(std::round(evaluation_point[d]*1e8)/1e8);
+  std::string point_in_string = "";
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      point_in_string =
+        point_in_string + ";" +
+        std::to_string(std::round(evaluation_point[d] * 1e8) / 1e8);
     }
-  //std::cout<<"point to string of p"<< evaluation_point<<"in string"<<point_in_string<<std::endl;
+  // std::cout<<"point to string of p"<< evaluation_point<<"in
+  // string"<<point_in_string<<std::endl;
   return point_in_string;
 }
 
@@ -230,8 +234,8 @@ Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
 template <int dim>
 void
 Shape<dim>::closest_surface_point(
-  const Point<dim>                                     &p,
-  Point<dim>                                           &closest_point,
+  const Point<dim> &                                    p,
+  Point<dim> &                                          closest_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   Tensor<1, dim> actual_gradient;
@@ -246,7 +250,7 @@ Shape<dim>::closest_surface_point(
 template <int dim>
 void
 Shape<dim>::closest_surface_point(const Point<dim> &p,
-                                  Point<dim>       &closest_point)
+                                  Point<dim> &      closest_point)
 {
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
@@ -282,9 +286,9 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
                    const unsigned int /*component*/) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      return evaluation_point.distance(this->position) - this->effective_radius;
+  return evaluation_point.distance(this->position) - this->effective_radius;
 #else
-      return sphere_function->value(evaluation_point);
+  return sphere_function->value(evaluation_point);
 #endif
 }
 
@@ -307,11 +311,11 @@ Sphere<dim>::gradient(const Point<dim> &evaluation_point,
                       const unsigned int /*component*/) const
 {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
-      const Tensor<1, dim> center_to_point = evaluation_point - this->position;
-      const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
-      return grad;
+  const Tensor<1, dim> center_to_point = evaluation_point - this->position;
+  const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
+  return grad;
 #else
-      return sphere_function->gradient(evaluation_point);
+  return sphere_function->gradient(evaluation_point);
 #endif
 }
 
@@ -354,7 +358,7 @@ Sphere<dim>::set_position(const Point<dim> &position)
 template <int dim>
 double
 OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
-                      const unsigned int /*component*/) const
+                             const unsigned int /*component*/) const
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
   Point<dim>    centered_point = this->align_and_center(evaluation_point);
@@ -375,13 +379,15 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
-  // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-  // By default, step file format will define a solid. This is necessary to sign the distance function evaluation.
+  // Check the evaluation point is inside the shape (This check can return true
+  // only if the shape is a solid). By default, step file format will define a
+  // solid. This is necessary to sign the distance function evaluation.
   if (distancetool.InnerSolution())
     {
-      // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
-      // This is why we need to evaluate the distance of the point with the shell of the shape.
-      if(shells.size()>0)
+      // If the evaluation point is inside the shape and the shape is a solid,
+      // the distance to the shape will be 0. This is why we need to evaluate
+      // the distance of the point with the shell of the shape.
+      if (shells.size() > 0)
         {
           BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
           distancetool_shell.LoadS2(vertex);
@@ -400,13 +406,15 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
             }
         }
       // Rotate the solution found to the global reference frame.
-      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-      return -(rotate_in_globalpoint-evaluation_point).norm();
+      auto rotate_in_globalpoint =
+        this->reverse_align_and_center(projected_point);
+      return -(rotate_in_globalpoint - evaluation_point).norm();
     }
   else
     {
-      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-      return (rotate_in_globalpoint-evaluation_point).norm();
+      auto rotate_in_globalpoint =
+        this->reverse_align_and_center(projected_point);
+      return (rotate_in_globalpoint - evaluation_point).norm();
     }
 
 #else
@@ -416,45 +424,48 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 OpenCascadeShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
-  auto point_in_string=this->point_to_string(evaluation_point);
-  auto iterator=this->value_cache.find(point_in_string);
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
 
-if (iterator == this->value_cache.end() )
-  {
-    // Transform the point a OpenCascade point
-    Point<dim> centered_point = this->align_and_center(evaluation_point);
-    Point<dim> projected_point;
-    vertex_position = OpenCASCADE::point(centered_point);
-    // Perform the evaluation
-    vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
-    distancetool.LoadS2(vertex);
-    distancetool.Perform();
+  if (iterator == this->value_cache.end())
+    {
+      // Transform the point a OpenCascade point
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      Point<dim> projected_point;
+      vertex_position = OpenCASCADE::point(centered_point);
+      // Perform the evaluation
+      vertex = BRepBuilderAPI_MakeVertex(vertex_position);
+      distancetool.LoadS2(vertex);
+      distancetool.Perform();
 
-    // Convert OpenCascade solution point to dealii Point.
-    gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
-    if (dim == 2)
-      {
-        projected_point[0] = pt_on_surface.X();
-        projected_point[1] = pt_on_surface.Y();
-      }
-    if (dim == 3)
-      {
-        projected_point[0] = pt_on_surface.X();
-        projected_point[1] = pt_on_surface.Y();
-        projected_point[2] = pt_on_surface.Z();
-      }
-    // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-    // By default, step file format will define a solid. This is necessary to sign the distance function evaluation.
-    if (distancetool.InnerSolution())
-      {
-        // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
-        // This is why we need to evaluate the distance of the point with the shell of the shape.
-        if(shells.size()>0)
+      // Convert OpenCascade solution point to dealii Point.
+      gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
+      if (dim == 2)
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+        }
+      if (dim == 3)
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+          projected_point[2] = pt_on_surface.Z();
+        }
+      // Check the evaluation point is inside the shape (This check can return
+      // true only if the shape is a solid). By default, step file format will
+      // define a solid. This is necessary to sign the distance function
+      // evaluation.
+      if (distancetool.InnerSolution())
+        {
+          // If the evaluation point is inside the shape and the shape is a
+          // solid, the distance to the shape will be 0. This is why we need to
+          // evaluate the distance of the point with the shell of the shape.
+          if (shells.size() > 0)
             {
               distancetool_shell.LoadS2(vertex);
               distancetool_shell.Perform();
@@ -471,28 +482,36 @@ if (iterator == this->value_cache.end() )
                   projected_point[2] = pt_on_surface.Z();
                 }
             }
-        // Rotate the solution found to the global reference frame and cache the solution.
-        this->value_cache[point_in_string]= -(centered_point - projected_point).norm();
-        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-        this->gradient_cache[point_in_string]=(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
-        return -(centered_point - projected_point).norm();
-
-      }
-    else
-      {
-        this->value_cache[point_in_string]= (centered_point - projected_point).norm();
-        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-        this->gradient_cache[point_in_string]=-(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
-        return (centered_point - projected_point).norm();
-      }
-  }
-else{
-    return this->value_cache[point_in_string];
-  }
+          // Rotate the solution found to the global reference frame and cache
+          // the solution.
+          this->value_cache[point_in_string] =
+            -(centered_point - projected_point).norm();
+          auto rotate_in_globalpoint =
+            this->reverse_align_and_center(projected_point);
+          this->gradient_cache[point_in_string] =
+            (rotate_in_globalpoint - evaluation_point) /
+            (rotate_in_globalpoint - evaluation_point).norm();
+          return -(centered_point - projected_point).norm();
+        }
+      else
+        {
+          this->value_cache[point_in_string] =
+            (centered_point - projected_point).norm();
+          auto rotate_in_globalpoint =
+            this->reverse_align_and_center(projected_point);
+          this->gradient_cache[point_in_string] =
+            -(rotate_in_globalpoint - evaluation_point) /
+            (rotate_in_globalpoint - evaluation_point).norm();
+          return (centered_point - projected_point).norm();
+        }
+    }
+  else
+    {
+      return this->value_cache[point_in_string];
+    }
 #else
   return 0;
 #endif
-
 }
 
 template <int dim>
@@ -501,19 +520,19 @@ OpenCascadeShape<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
     std::make_shared<OpenCascadeShape<dim>>(local_file_name,
-                                  this->position,
-                                  this->orientation);
+                                            this->position,
+                                            this->orientation);
   return copy;
 }
 
 template <int dim>
 Tensor<1, dim>
 OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
-                         const unsigned int /*component*/) const
+                                const unsigned int /*component*/) const
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
-  Point<dim>    centered_point = this->align_and_center(evaluation_point);
-  Point<dim>    projected_point;
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  Point<dim> projected_point;
 
   // Transform the point a OpenCascade point
   auto          pt     = OpenCASCADE::point(centered_point);
@@ -535,38 +554,44 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
       projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
-  // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-  // By default,  step file format will define a solid. This is necessary to sign the distance function evaluation.
+  // Check the evaluation point is inside the shape (This check can return true
+  // only if the shape is a solid). By default,  step file format will define a
+  // solid. This is necessary to sign the distance function evaluation.
   if (distancetool.InnerSolution())
     {
-      // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
-      // This is why we need to evaluate the distance of the point with the shell of the shape.
-      if(shells.size()>0)
-      {
-        BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
-        distancetool_shell.LoadS2(vertex);
-        distancetool_shell.Perform();
-        pt_on_surface = distancetool_shell.PointOnShape1(1);
-        if (dim == 2)
+      // If the evaluation point is inside the shape and the shape is a solid,
+      // the distance to the shape will be 0. This is why we need to evaluate
+      // the distance of the point with the shell of the shape.
+      if (shells.size() > 0)
+        {
+          BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
+          distancetool_shell.LoadS2(vertex);
+          distancetool_shell.Perform();
+          pt_on_surface = distancetool_shell.PointOnShape1(1);
+          if (dim == 2)
             {
               projected_point[0] = pt_on_surface.X();
               projected_point[1] = pt_on_surface.Y();
             }
-        if (dim == 3)
+          if (dim == 3)
             {
               projected_point[0] = pt_on_surface.X();
               projected_point[1] = pt_on_surface.Y();
               projected_point[2] = pt_on_surface.Z();
             }
-      }
+        }
       // Rotate the solution found to the global reference frame.
-      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-      return (rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+      auto rotate_in_globalpoint =
+        this->reverse_align_and_center(projected_point);
+      return (rotate_in_globalpoint - evaluation_point) /
+             (rotate_in_globalpoint - evaluation_point).norm();
     }
   else
     {
-      auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-      return -(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
+      auto rotate_in_globalpoint =
+        this->reverse_align_and_center(projected_point);
+      return -(rotate_in_globalpoint - evaluation_point) /
+             (rotate_in_globalpoint - evaluation_point).norm();
     }
 #else
   // Empty return if LEthe is not compile wiith OpenCascade
@@ -578,49 +603,53 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
 template <int dim>
 Tensor<1, dim>
 OpenCascadeShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component*/)
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
-  // This function is identical to the Gradient function but has the possibility to use the cache of the shape.
+  // This function is identical to the Gradient function but has the possibility
+  // to use the cache of the shape.
 
   // First step is to convert the point into a string.
-  auto point_in_string=this->point_to_string(evaluation_point);
+  auto point_in_string = this->point_to_string(evaluation_point);
   // We check the unordered map
-  auto iterator=this->gradient_cache.find(point_in_string);
+  auto iterator = this->gradient_cache.find(point_in_string);
   // If we did not find the solution in the map we perform the calculation.
-  if (iterator == this->gradient_cache.end() )
+  if (iterator == this->gradient_cache.end())
     {
       // Transform the point a OpenCascade point
       Point<dim> centered_point = this->align_and_center(evaluation_point);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
       // Perform the evaluation
-      vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
+      vertex = BRepBuilderAPI_MakeVertex(vertex_position);
       distancetool.LoadS2(vertex);
       distancetool.Perform();
 
       // Convert OpenCascade solution point to dealii Point.
       gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
       if (dim == 2)
-      {
-        projected_point[0] = pt_on_surface.X();
-        projected_point[1] = pt_on_surface.Y();
-      }
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+        }
       if (dim == 3)
-      {
-        projected_point[0] = pt_on_surface.X();
-        projected_point[1] = pt_on_surface.Y();
-        projected_point[2] = pt_on_surface.Z();
-      }
-      // Check the evaluation point is inside the shape (This check can return true only if the shape is a solid).
-      // By default, step file format will define a solid. This is necessary to sign the distance function evaluation.
+        {
+          projected_point[0] = pt_on_surface.X();
+          projected_point[1] = pt_on_surface.Y();
+          projected_point[2] = pt_on_surface.Z();
+        }
+      // Check the evaluation point is inside the shape (This check can return
+      // true only if the shape is a solid). By default, step file format will
+      // define a solid. This is necessary to sign the distance function
+      // evaluation.
       if (distancetool.InnerSolution())
-      {
-        // If the evaluation point is inside the shape and the shape is a solid, the distance to the shape will be 0.
-        // This is why we need to evaluate the distance of the point with the shell of the shape.
-        if(shells.size()>0)
+        {
+          // If the evaluation point is inside the shape and the shape is a
+          // solid, the distance to the shape will be 0. This is why we need to
+          // evaluate the distance of the point with the shell of the shape.
+          if (shells.size() > 0)
             {
               distancetool_shell.LoadS2(vertex);
               distancetool_shell.Perform();
@@ -637,26 +666,39 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
                   projected_point[2] = pt_on_surface.Z();
                 }
             }
-        // Rotate the solution found to the global reference frame and cache the solution.
-        this->value_cache[point_in_string]= -(centered_point - projected_point).norm();
-        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-        this->gradient_cache[point_in_string]=(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
-        return (rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
-      }
+          // Rotate the solution found to the global reference frame and cache
+          // the solution.
+          this->value_cache[point_in_string] =
+            -(centered_point - projected_point).norm();
+          auto rotate_in_globalpoint =
+            this->reverse_align_and_center(projected_point);
+          this->gradient_cache[point_in_string] =
+            (rotate_in_globalpoint - evaluation_point) /
+            (rotate_in_globalpoint - evaluation_point).norm();
+          return (rotate_in_globalpoint - evaluation_point) /
+                 (rotate_in_globalpoint - evaluation_point).norm();
+        }
       else
-      {
-        this->value_cache[point_in_string]= (centered_point - projected_point).norm();
-        auto rotate_in_globalpoint=this->reverse_align_and_center(projected_point);
-        this->gradient_cache[point_in_string]=-(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
-        return -(rotate_in_globalpoint-evaluation_point)/(rotate_in_globalpoint-evaluation_point).norm();
-      }
+        {
+          this->value_cache[point_in_string] =
+            (centered_point - projected_point).norm();
+          auto rotate_in_globalpoint =
+            this->reverse_align_and_center(projected_point);
+          this->gradient_cache[point_in_string] =
+            -(rotate_in_globalpoint - evaluation_point) /
+            (rotate_in_globalpoint - evaluation_point).norm();
+          return -(rotate_in_globalpoint - evaluation_point) /
+                 (rotate_in_globalpoint - evaluation_point).norm();
+        }
     }
-  else{
-      // If we are here it is that this point was already evaluated and the previous evaluation was cache.
+  else
+    {
+      // If we are here it is that this point was already evaluated and the
+      // previous evaluation was cache.
       return this->gradient_cache[point_in_string];
     }
 #else
-  return Tensor<1,dim>();
+  return Tensor<1, dim>();
 #endif
 }
 
@@ -995,7 +1037,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 CompositeShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
@@ -1075,12 +1117,12 @@ CompositeShape<dim>::update_precalculations(
 }
 
 template <int dim>
-RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
+RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
-                        const std::vector<double>           &weights,
-                        const std::vector<Point<dim>>       &nodes,
-                        const Point<dim>                    &position,
-                        const Tensor<1, 3>                  &orientation)
+                        const std::vector<double> &          weights,
+                        const std::vector<Point<dim>> &      nodes,
+                        const Point<dim> &                   position,
+                        const Tensor<1, 3> &                 orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -1106,8 +1148,8 @@ RBFShape<dim>::RBFShape(const std::vector<double>           &support_radii,
 
 template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
-                        const Point<dim>          &position,
-                        const Tensor<1, 3>        &orientation)
+                        const Point<dim> &         position,
+                        const Tensor<1, 3> &       orientation)
   : Shape<dim>(shape_arguments[shape_arguments.size() / (dim + 3)],
                position,
                orientation)
@@ -1150,22 +1192,23 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 template <int dim>
 double
 RBFShape<dim>::value_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  auto point_in_string=this->point_to_string(evaluation_point);
-  auto iterator=this->value_cache.find(point_in_string);
-  if (iterator == this->value_cache.end() )
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end())
     {
-      //std::cout<<"hi value "<<std::endl;
+      // std::cout<<"hi value "<<std::endl;
       prepare_iterable_nodes(cell);
       double value = this->value(evaluation_point);
       reset_iterable_nodes(cell);
-      this->value_cache[point_in_string]=value;
+      this->value_cache[point_in_string] = value;
       return value;
     }
-  else{
+  else
+    {
       return this->value_cache[point_in_string];
     }
 }
@@ -1173,22 +1216,23 @@ RBFShape<dim>::value_with_cell_guess(
 template <int dim>
 Tensor<1, dim>
 RBFShape<dim>::gradient_with_cell_guess(
-  const Point<dim>                                    &evaluation_point,
+  const Point<dim> &                                   evaluation_point,
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  auto point_in_string=this->point_to_string(evaluation_point);
-  auto iterator=this->gradient_cache.find(point_in_string);
-  if (iterator == this->gradient_cache.end() )
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end())
     {
-      //std::cout<<"hi gradient"<<std::endl;
+      // std::cout<<"hi gradient"<<std::endl;
       prepare_iterable_nodes(cell);
       Tensor<1, dim> gradient = this->gradient(evaluation_point);
       reset_iterable_nodes(cell);
-      this->gradient_cache[point_in_string]=gradient;
+      this->gradient_cache[point_in_string] = gradient;
       return gradient;
     }
-  else{
+  else
+    {
       return this->gradient_cache[point_in_string];
     }
 }
@@ -1198,9 +1242,9 @@ double
 RBFShape<dim>::value(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
-  Point<dim> centered_point = evaluation_point;
-  double bounding_box_distance = bounding_box->value(centered_point);
-  double value                 = std::max(bounding_box_distance, 0.0);
+  Point<dim> centered_point        = evaluation_point;
+  double     bounding_box_distance = bounding_box->value(centered_point);
+  double     value                 = std::max(bounding_box_distance, 0.0);
 
   double value              = 0.;
   double bounding_box_value = bounding_box->value(centered_point);
@@ -1208,13 +1252,14 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
     return bounding_box_value + bounding_box->half_lengths.norm();
 
   double normalized_distance, basis;
-  
+
 
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (const size_t &node_id : iterable_nodes)
     {
-      normalized_distance = (centered_point - rotated_nodes_positions[node_id]).norm() /
-                            support_radii[node_id];
+      normalized_distance =
+        (centered_point - rotated_nodes_positions[node_id]).norm() /
+        support_radii[node_id];
       basis =
         evaluate_basis_function(basis_functions[node_id], normalized_distance);
       value += basis * weights[node_id];
@@ -1227,7 +1272,7 @@ Tensor<1, dim>
 RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
                         const unsigned int /*component*/) const
 {
-  Point<dim> centered_point = evaluation_point;
+  Point<dim>     centered_point        = evaluation_point;
   double         bounding_box_distance = bounding_box->value(centered_point);
   Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
   if (bounding_box_distance > 0.)
@@ -1249,7 +1294,8 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
       for (const size_t &node_id : iterable_nodes)
         {
           // Calculation of the dr/dx
-          relative_position   = (centered_point - rotated_nodes_positions[node_id]);
+          relative_position =
+            (centered_point - rotated_nodes_positions[node_id]);
           distance            = (relative_position).norm();
           normalized_distance = distance / support_radii[node_id];
           if (distance > 0.0)
@@ -1360,8 +1406,9 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     {
       // We only check for one support point, but we use a high security
       // factor. This allows not to loop over all support points.
-      centered_support_point =support_point;
-      distance = (centered_support_point - rotated_nodes_positions[node_id]).norm();
+      centered_support_point = support_point;
+      distance =
+        (centered_support_point - rotated_nodes_positions[node_id]).norm();
       // We check if the distance is lower than 1 cell diagonal, since we
       // only check the distance with 1 support point, added to the support
       // radius
@@ -1379,7 +1426,6 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
         iterable_nodes.swap(parent_iterator->second);
         temporary_iterable_nodes.swap(iterable_nodes);
       }
-
 }
 
 template <int dim>
@@ -1454,9 +1500,10 @@ RBFShape<dim>::rotate_nodes()
 {
   rotated_nodes_positions.clear();
   rotated_nodes_positions.resize(nodes_positions.size());
-  for (unsigned int i =0; i<nodes_positions.size();++i)
+  for (unsigned int i = 0; i < nodes_positions.size(); ++i)
     {
-      rotated_nodes_positions[i]=this->reverse_align_and_center(nodes_positions[i]);
+      rotated_nodes_positions[i] =
+        this->reverse_align_and_center(nodes_positions[i]);
     }
 }
 
