@@ -162,8 +162,8 @@ namespace DEM
     // <particle id, <particle id, particle-particle info>>
     typedef ankerl::unordered_dense::map<
       types::particle_index,
-      std::unordered_map<types::particle_index,
-                         particle_particle_contact_info<dim>>>
+      ankerl::unordered_dense::map<types::particle_index,
+                                   particle_particle_contact_info<dim>>>
       adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>
