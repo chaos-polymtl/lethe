@@ -5,6 +5,7 @@
 
 #include <solvers/vof.h>
 #include <solvers/vof_assemblers.h>
+#include <solvers/vof_filter.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/work_stream.h>
@@ -251,6 +252,13 @@ void
 VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
+
+  // Filter phase fraction
+  apply_phase_filter();
+  data_out.add_data_vector(this->dof_handler,
+                           this->filtered_solution,
+                           "filtered_phase");
+
   auto vof_parameters = this->simulation_parameters.multiphysics.vof_parameters;
 
   if (vof_parameters.peeling_wetting.enable_peeling ||
@@ -977,9 +985,11 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
   system_rhs_filtered_phase_fraction_gradient    = 0;
   system_matrix_filtered_phase_fraction_gradient = 0;
 
-  const double phase_fraction_gradient_filter_value =
+  double h;
+
+  const double phase_fraction_gradient_filter_factor =
     this->simulation_parameters.multiphysics.vof_parameters
-      .surface_tension_force.phase_fraction_gradient_filter_value;
+      .surface_tension_force.phase_fraction_gradient_filter_factor;
 
   for (const auto &filtered_phase_fraction_gradient_cell :
        this->filtered_phase_fraction_gradient_dof_handler
@@ -997,6 +1007,20 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
           fe_values_phase_fraction.reinit(cell);
           fe_values_filtered_phase_fraction_gradient.reinit(
             filtered_phase_fraction_gradient_cell);
+
+          auto &fe_filtered_phase_fraction =
+            fe_values_filtered_phase_fraction_gradient.get_fe();
+
+          if (dim == 2)
+            h =
+              std::sqrt(4. * filtered_phase_fraction_gradient_cell->measure() /
+                        M_PI) /
+              fe_filtered_phase_fraction.degree;
+          else if (dim == 3)
+            h = pow(6 * filtered_phase_fraction_gradient_cell->measure() / M_PI,
+                    1. / 3.) /
+                fe_filtered_phase_fraction.degree;
+
 
           local_matrix_filtered_phase_fraction_gradient = 0;
           local_rhs_filtered_phase_fraction_gradient    = 0;
@@ -1033,7 +1057,7 @@ VolumeOfFluid<dim>::assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
                       local_matrix_filtered_phase_fraction_gradient(i, j) +=
                         (phi_filtered_phase_fraction_gradient[j] *
                            phi_filtered_phase_fraction_gradient[i] +
-                         phase_fraction_gradient_filter_value *
+                         h * h * phase_fraction_gradient_filter_factor *
                            scalar_product(
                              phi_filtered_phase_fraction_gradient_gradient[i],
                              phi_filtered_phase_fraction_gradient_gradient
@@ -1159,9 +1183,11 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   system_rhs_curvature    = 0;
   system_matrix_curvature = 0;
 
-  double curvature_filter_value =
+  double curvature_filter_factor =
     simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-      .curvature_filter_value;
+      .curvature_filter_factor;
+
+  double h;
 
   for (const auto &curvature_cell :
        this->curvature_dof_handler.active_cell_iterators())
@@ -1183,6 +1209,15 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
 
           local_matrix_curvature = 0;
           local_rhs_curvature    = 0;
+
+          auto &fe_curvature = fe_values_curvature.get_fe();
+
+          if (dim == 2)
+            h = std::sqrt(4. * curvature_cell->measure() / M_PI) /
+                fe_curvature.degree;
+          else if (dim == 3)
+            h = pow(6 * curvature_cell->measure() / M_PI, 1. / 3.) /
+                fe_curvature.degree;
 
           // Get pfg values, curvature values and gradients
           fe_values_filtered_phase_fraction_gradient[pfg].get_function_values(
@@ -1213,7 +1248,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                         {
                           local_matrix_curvature(i, j) +=
                             (phi_curvature[j] * phi_curvature[i] +
-                             curvature_filter_value *
+                             h * h * curvature_filter_factor *
                                scalar_product(phi_curvature_gradient[i],
                                               phi_curvature_gradient[j])) *
                             fe_values_curvature.JxW(q);
@@ -2346,6 +2381,37 @@ VolumeOfFluid<dim>::change_cell_phase(
     }
 }
 
+template <int dim>
+void
+VolumeOfFluid<dim>::apply_phase_filter()
+{
+  // Initializations
+  auto mpi_communicator = this->triangulation->get_communicator();
+  TrilinosWrappers::MPI::Vector unfiltered_solution_owned(
+    this->locally_owned_dofs, mpi_communicator);
+  unfiltered_solution_owned = this->present_solution;
+  filtered_solution.reinit(this->present_solution);
+
+  // Create filter object
+  filter = VolumeOfFluidFilterBase::model_cast(
+    this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+
+  // Apply filter to solution
+  for (unsigned int p = 0; p < filtered_solution.size(); p++)
+    {
+      filtered_solution[p] = filter->filter_phase(unfiltered_solution_owned[p]);
+    }
+
+  if (this->simulation_parameters.multiphysics.vof_parameters.phase_filter
+        .verbosity == Parameters::Verbosity::verbose)
+    {
+      this->pcout << "Filtered phase values: " << std::endl;
+      for (const double filtered_phase : filtered_solution)
+        {
+          this->pcout << filtered_phase << std::endl;
+        }
+    }
+}
 
 template class VolumeOfFluid<2>;
 template class VolumeOfFluid<3>;

@@ -125,10 +125,13 @@ protected:
   // particles
   unsigned int inserted_this_step;
 
-  //  Number of insertion points in the x, y and z directions, respectively
-  unsigned int number_of_particles_x_direction;
-  unsigned int number_of_particles_y_direction;
-  unsigned int number_of_particles_z_direction;
+  // Number of insertion points in the x, y and z directions
+  std::vector<int> number_of_particles_directions;
+
+  // Minimum and maximum number of inserted particles based on the insertion box
+  // size and the direction order (it means that axis 0 is not necessarily x
+  // etc...) It depends of the order of the insertion direction.
+  std::vector<double> axis_min, axis_max;
 
   // Maximum particle diameter
   double maximum_diameter;

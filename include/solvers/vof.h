@@ -23,6 +23,7 @@
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/vof_assemblers.h>
+#include <solvers/vof_filter.h>
 #include <solvers/vof_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
@@ -73,7 +74,8 @@ public:
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        fe              = std::make_shared<FE_SimplexP<dim>>(1);
+        fe = std::make_shared<FE_SimplexP<dim>>(
+          simulation_parameters.fem_parameters.VOF_order);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
@@ -82,12 +84,13 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe      = std::make_shared<FE_Q<dim>>(1);
+        fe = std::make_shared<FE_Q<dim>>(
+          simulation_parameters.fem_parameters.VOF_order);
         mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         fe_filtered_phase_fraction_gradient =
           std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
-        fe_curvature = std::make_shared<FE_Q<dim>>(1);
+        fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
         filtered_phase_fraction_gradient_mapping =
           std::make_shared<MappingQ<dim>>(
             fe_filtered_phase_fraction_gradient->degree,
@@ -642,6 +645,13 @@ private:
   void
   solve_curvature();
 
+  /**
+   * @brief Applies filter on phase fraction values.
+   */
+  void
+  apply_phase_filter();
+
+
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *     multiphysics;
@@ -679,6 +689,7 @@ private:
   AffineConstraints<double>      zero_constraints;
   TrilinosWrappers::SparseMatrix system_matrix;
   TrilinosWrappers::MPI::Vector  solution_pw;
+  TrilinosWrappers::MPI::Vector  filtered_solution;
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
@@ -744,6 +755,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;
+
+  // Phase fraction filter
+  std::shared_ptr<VolumeOfFluidFilterBase> filter;
 };
 
 

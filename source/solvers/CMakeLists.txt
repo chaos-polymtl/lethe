@@ -26,6 +26,7 @@ add_library(lethe-solvers
   tracer_scratch_data.cc
   vof.cc
   vof_assemblers.cc
+  vof_filter.cc
   vof_scratch_data.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
@@ -57,6 +58,7 @@ add_library(lethe-solvers
   ../../include/solvers/tracer_scratch_data.h
   ../../include/solvers/vof.h
   ../../include/solvers/vof_assemblers.h
+  ../../include/solvers/vof_filter.h
   ../../include/solvers/vof_scratch_data.h)
 
 deal_ii_setup_target(lethe-solvers)

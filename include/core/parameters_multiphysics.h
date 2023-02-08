@@ -46,6 +46,16 @@ namespace Parameters
     adaptative
   };
 
+  /** @brief Class to account for different phase fraction filtering types:
+   * - none: no filter wil be applied on the calculated phase fraction
+   * - tanh: the tanh filter function will be applied to the phase fraction,
+   * a $$\beta$$ parameter influencing the interface definition must be defined
+   */
+  enum class FilterType
+  {
+    none,
+    tanh
+  };
 
 
   /**
@@ -149,8 +159,8 @@ namespace Parameters
     // This will be moved to the property manager in another PR.
     double surface_tension_coef;
 
-    double phase_fraction_gradient_filter_value;
-    double curvature_filter_value;
+    double phase_fraction_gradient_filter_factor;
+    double curvature_filter_factor;
 
     bool output_vof_auxiliary_fields;
 
@@ -171,6 +181,27 @@ namespace Parameters
   };
 
   /**
+   * @brief VOF_PhaseFilter - Defines the parameters for the phase filtration
+   */
+  struct VOF_PhaseFilter
+  {
+    // Type of filter
+    Parameters::FilterType type;
+
+    // $$\beta$$ value for the tanh filter
+    double beta;
+
+    // Type of verbosity for the phase filter
+    Parameters::Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+  /**
    * @brief VOF - Defines the parameters for free surface simulations
    * using the VOF method.
    * Has to be declared before member creation in Multiphysics structure.
@@ -181,6 +212,7 @@ namespace Parameters
     Parameters::VOF_InterfaceSharpening sharpening;
     Parameters::VOF_PeelingWetting      peeling_wetting;
     Parameters::VOF_SurfaceTensionForce surface_tension_force;
+    Parameters::VOF_PhaseFilter         phase_filter;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

@@ -136,17 +136,25 @@ void UniformInsertion<2>::find_insertion_location_uniform(
   std::vector<int> insertion_index;
   insertion_index.resize(2);
 
-  insertion_index[0] = id % this->number_of_particles_x_direction;
-  insertion_index[1] = (int)id / this->number_of_particles_x_direction;
+  unsigned int axis_0, axis_1;
+  int          number_of_particles_0;
 
-  insertion_location[0] =
-    insertion_information.x_min +
-    ((insertion_index[0] + 0.5) * insertion_information.distance_threshold) *
-      this->maximum_diameter;
-  insertion_location[1] =
-    insertion_information.y_min +
-    +((insertion_index[1] + 0.5) * insertion_information.distance_threshold) *
-      this->maximum_diameter;
+  // First direction (axis) to have particles inserted
+  axis_0                  = insertion_information.axis_0;
+  number_of_particles_0   = this->number_of_particles_directions[axis_0];
+  insertion_index[axis_0] = id % number_of_particles_0;
+  insertion_location[axis_0] =
+    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
+                              insertion_information.distance_threshold) *
+                               this->maximum_diameter;
+
+  // Second direction (axis) to have particles inserted
+  axis_1                  = insertion_information.axis_1;
+  insertion_index[axis_1] = static_cast<int>(id) / number_of_particles_0;
+  insertion_location[axis_1] =
+    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
+                              insertion_information.distance_threshold) *
+                               this->maximum_diameter;
 }
 
 template <>
@@ -158,21 +166,33 @@ void UniformInsertion<3>::find_insertion_location_uniform(
   std::vector<int> insertion_index;
   insertion_index.resize(3);
 
-  insertion_index[0] = id % this->number_of_particles_x_direction;
-  insertion_index[1] = (int)(id % (this->number_of_particles_x_direction *
-                                   this->number_of_particles_y_direction)) /
-                       (this->number_of_particles_x_direction);
-  insertion_index[2] = (int)id / (this->number_of_particles_x_direction *
-                                  this->number_of_particles_y_direction);
+  unsigned int axis_0, axis_1, axis_2;
+  int          number_of_particles_0, number_of_particles_1;
 
-  insertion_location[0] =
-    insertion_information.x_min +
-    ((insertion_index[0] + 0.5) * insertion_information.distance_threshold) *
-      this->maximum_diameter;
-  insertion_location[1] =
-    insertion_information.y_min +
-    +((insertion_index[1] + 0.5) * insertion_information.distance_threshold) *
-      this->maximum_diameter;
+  // First direction (axis) to have particles inserted
+  axis_0                  = insertion_information.axis_0;
+  number_of_particles_0   = this->number_of_particles_directions[axis_0];
+  insertion_index[axis_0] = id % number_of_particles_0;
+  insertion_location[axis_0] =
+    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
+                              insertion_information.distance_threshold) *
+                               this->maximum_diameter;
+
+  // Second direction (axis) to have particles inserted
+  axis_1                = insertion_information.axis_1;
+  number_of_particles_1 = this->number_of_particles_directions[axis_1];
+  insertion_index[axis_1] =
+    static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
+    (number_of_particles_0);
+  insertion_location[axis_1] =
+    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
+                              insertion_information.distance_threshold) *
+                               this->maximum_diameter;
+
+  // Third direction (axis) to have particles inserted
+  axis_2 = insertion_information.axis_2;
+  insertion_index[axis_2] =
+    static_cast<int>(id) / (number_of_particles_0 * number_of_particles_1);
 
   // Adding an extra distance to even rows of insertion
   if (insertion_index[2] % 2 == 0)
@@ -181,10 +201,10 @@ void UniformInsertion<3>::find_insertion_location_uniform(
       insertion_location[1] += this->maximum_diameter * 0.5;
     }
 
-  insertion_location[2] =
-    insertion_information.z_min +
-    +((insertion_index[2] + 0.5) * insertion_information.distance_threshold) *
-      this->maximum_diameter;
+  insertion_location[axis_2] =
+    this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
+                              insertion_information.distance_threshold) *
+                               this->maximum_diameter;
 }
 
 template class UniformInsertion<2>;

@@ -4,14 +4,12 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set time end         = 3
-  set time step        = 0.001
-  set adapt            = true
-  set max cfl          = 0.4
-  set output name      = rising-bubble
-  set output frequency = 20
-  set output path      = ./output/
+  set method                  = bdf1
+  set number mesh adapt       = 0
+  set time end                = 0.1
+  set time step               = 0.05
+  set output name             = vof_tanh_filter
+  set output frequency        = 1
 end
 
 #---------------------------------------------------
@@ -27,19 +25,10 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection interface sharpening
-    set enable              = true
-    set threshold           = 0.5
-    set interface sharpness = 1.4
-    set frequency           = 10
-    set type                = constant
-  end
-  subsection surface tension force
-    set enable                                = true
-    set surface tension coefficient           = 24.5
-    set phase fraction gradient filter factor = 4
-    set curvature filter factor               = 1
-    set output auxiliary fields               = true
+  subsection phase filtration
+    set type            = tanh
+    set beta            = 8
+    set verbosity       = verbose
   end
 end
 
@@ -53,7 +42,7 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection VOF
-    set Function expression = if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
+    set Function expression = if (x<4 & y<5 , 1, 0)
   end
 end
 
@@ -64,7 +53,7 @@ end
 subsection source term
   set enable = true
   subsection xyz
-    set Function expression = 0; -0.98; 0
+    set Function expression = 0;-1.0; 0
   end
 end
 
@@ -75,11 +64,11 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-    set density             = 1000
-    set kinematic viscosity = 0.01
+    set density             = 0.02
+    set kinematic viscosity = 0.1
   end
   subsection fluid 1
-    set density             = 100
+    set density             = 0.9982
     set kinematic viscosity = 0.01
   end
 end
@@ -91,8 +80,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
-  set initial refinement = 6
+  set grid arguments     = 5, 10 : 0, 0 : 10, 10 : true
 end
 
 #---------------------------------------------------
@@ -100,15 +88,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = kelly
-  set variable                 = phase
-  set fraction type            = fraction
-  set max refinement level     = 8
-  set min refinement level     = 6
-  set frequency                = 1
-  set fraction refinement      = 0.97
-  set fraction coarsening      = 0.02
-  set initial refinement steps = 3
+  set type = none
 end
 
 #---------------------------------------------------
@@ -127,19 +107,19 @@ subsection boundary conditions
   set number = 4
   subsection bc 0
     set id   = 0
-    set type = noslip
+    set type = slip
   end
   subsection bc 1
     set id   = 1
-    set type = noslip
+    set type = slip
   end
   subsection bc 2
     set id   = 2
-    set type = noslip
+    set type = slip
   end
   subsection bc 3
     set id   = 3
-    set type = noslip
+    set type = slip
   end
 end
 
@@ -157,9 +137,9 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-6
+  set tolerance      = 1e-4
   set max iterations = 20
-  set verbosity      = verbose
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
@@ -169,10 +149,10 @@ end
 subsection linear solver
   set verbosity                             = verbose
   set method                                = gmres
-  set max iters                             = 8000
+  set max iters                             = 1000
   set relative residual                     = 1e-3
-  set minimum residual                      = 1e-6
-  set ilu preconditioner fill               = 1
+  set minimum residual                      = 1e-5
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 200
