@@ -103,53 +103,69 @@ In Lethe, the surface tension force (:math:`{\bf{F_{\sigma}}}`) is calculated us
 
 .. math::
 
-    {\bf{F_{\sigma}}} = 2 \frac{\rho}{\rho_0 + \rho_1} \sigma k {\bf{\psi}}
+    {\bf{F_{\sigma}}} = 2 \frac{\rho}{\rho_0 + \rho_1} \sigma k \nabla {\phi}
 
-where :math:`\sigma`, :math:`k` and :math:`\bf{\psi}` denote respectively the surface tension coefficient, the filtered curvature and the filtered phase fraction gradient. :math:`\rho`, :math:`\rho_1`, and :math:`\rho_2` are the density of the flow, the density of phase 0, and the density of phase 1, respectively.
+where :math:`\sigma`, :math:`k` and :math:`\nabla {\phi}` denote respectively the surface tension coefficient, the filtered curvature and the phase fraction gradient. :math:`\rho`, :math:`\rho_1`, and :math:`\rho_2` are the density of the flow, the density of phase 0, and the density of phase 1, respectively.
 
+The curvature :math:`k` is computed according to:
+
+.. math::
+
+    k = - \nabla \cdot \bf{n}
+
+where :math:`\bf{n}` is the unit normal vector of the free surface. The latter is obtained with:
+
+.. math::
+
+    \bf{n} = \frac{\nabla \phi}{|\phi|}
+
+When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using L2-projections.
 The following equations calculate the filtered phase fraction gradient and filtered curvature, respectively.
 
 .. math:: 
 
     \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
-.. math:: 
+where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, :math:`\eta_n = \alpha h^2` is the phase fraction gradient filter value with :math:`h` denoting the cell size, and :math:`\phi` is the phase fraction.
+
+.. math::
 
     \int_\Omega \left( v k + \eta_k \nabla v \cdot \nabla k \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
-where :math:`v`, :math:`\bf{\psi}`, :math:`\eta_n \geq 0`, :math:`\phi`, :math:`k`, and :math:`\eta_k \geq 0` denote a test function, filtered phase fraction gradient, phase fraction gradient filter value, phase fraction, filtered curvature, and curvature filter value, respectively.
+where :math:`k` is the filtered curvature, and :math:`\eta_k = \beta h^2` is the curvature filter value, and :math:`v` is a test function.
 
 .. tip::
 
-  Phase fraction gradient filter value (:math:`\eta_n`) and curvature filter value (:math:`\eta_k`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters: 
+  The phase fraction gradient filter value (:math:`\eta_n = \alpha h^2`) and curvature filter value (:math:`\eta_k = \beta h^2`) must be small values larger than 0. The values of :math:`\alpha` and :math:`\beta` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``  in the parameter file.
+  We recommend the following procedure to choose a proper value for these parameters:
 
   1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
-  2. Choose a small value for :math:`\eta = h/10`, where :math:`h` is the smallest mesh size. 
+  2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
   3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
-  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\eta` to a larger value (:math:`\eta = h/5`, for example), and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
+  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
 
 The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example:
 
 .. code-block:: text
 
-	#---------------------------------------------------
-	# VOF
-	#---------------------------------------------------
-    subsection VOF
-      subsection interface sharpening
-        set enable              = true
-        set threshold           = 0.5
-        set interface sharpness	= 1.4
-        set frequency           = 50
-      end
-      subsection surface tension force
-        set enable                         = true
-        set surface tension coefficient    = 24.5
-        set phase fraction gradient filter = 0.0005
-        set curvature filter               = 0.0005
-        set output auxiliary fields        = true
-      end
+  #---------------------------------------------------
+  # VOF
+  #---------------------------------------------------
+  subsection VOF
+    subsection interface sharpening
+      set enable              = true
+      set threshold           = 0.5
+      set interface sharpness = 1.4
+      set frequency           = 50
     end
+    subsection surface tension force
+      set enable                                = true
+      set surface tension coefficient           = 24.5
+      set phase fraction gradient filter factor = 4
+      set curvature filter factor               = 1
+      set output auxiliary fields               = true
+    end
+  end
 
 .. warning:: 
      If the interface sharpening is not enabled, the interface between phases will become blurry (due to artificial diffusion). 

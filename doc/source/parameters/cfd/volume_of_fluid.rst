@@ -53,10 +53,10 @@ The default values of the VOF parameters are given in the text box below.
 		subsection surface tension force
 			set enable 	= false
 			set verbosity 	= quiet
-			set output auxiliary fields 	   = false
-			set surface tension coefficient    = 0.0
-			set phase fraction gradient filter = 0.5
-			set curvature filter 		   = 0.5	
+			set output auxiliary fields 	          = false
+			set surface tension coefficient           = 0.0
+			set phase fraction gradient filter factor = 4
+			set curvature filter factor 		  = 1
             
 			subsection marangoni effect
 				set enable = false
@@ -97,7 +97,7 @@ The default values of the VOF parameters are given in the text box below.
 * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. Increase ``diffusivity`` to :ref:`improve wetting`.
 
 
-  * ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
+* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
   * ``enable``: controls if interface sharpening is enabled.
   * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
@@ -245,23 +245,23 @@ The default values of the VOF parameters are given in the text box below.
 
     where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
 
-  * ``phase fraction gradient filter``: value used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
+  * ``phase fraction gradient filter factor``: value of the factor :math:`\alpha` applied in the filter :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
 
     .. math::
         \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
-    where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, :math:`\eta_n \geq 0` is the ``phase fraction gradient filter`` value, and :math:`\phi` is the phase fraction.
+    where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, and :math:`\phi` is the phase fraction.
 
   .. tip::
 
-    The ``phase fraction gradient filter`` must be a small value larger than 0. Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
+    Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
 
-  * ``curvature filter``: value used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature (:math:`k`), following the equation:
+  * ``curvature filter factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_k = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature (:math:`k`), following the equation:
 
     .. math:: 
         \int_\Omega \left( v k + \eta_k \nabla v \cdot \nabla k \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
-    where :math:`v` is a test function, :math:`k` is the filtered curvature, :math:`\eta_k` is the ``curvature filter`` value, and :math:`\bf{\psi}` is the filtered phase fraction gradient. 
+    where :math:`v` is a test function, :math:`k` is the filtered curvature, and :math:`\bf{\psi}` is the filtered phase fraction gradient.
 
   .. tip::
 
@@ -311,10 +311,9 @@ In the framework of incompressible fluids, a layer of the lowest density fluid (
 Choosing values for the surface tension force filters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The following procedure is recommended to choose proper values for the ``phase fraction gradient filter`` and ``curvature filter``: 
+The following procedure is recommended to choose proper values for the ``phase fraction gradient filter factor`` and ``curvature filter factor``:
 
-1. Use ``set output auxiliary fields = true``.
-2. Choose a small value, still larger than :math:`0`, for example :math:`h/10` with :math:`h` the smallest mesh size.
+1. Use ``set output auxiliary fields = true`` to write filtered phase fraction gradient and filtered curvature fields.
+2. Choose a value close to 1, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
 3. Run the simulation and check whether the filtered phase fraction gradient field is smooth and without oscillation.
-4. If the filtered field (``phase fraction gradient`` or ``curvature``) shows oscillations, increase the value, for example :math:`h/5`, and repeat this process until reaching a smooth filtered field without oscillations.
-
+4.  If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
