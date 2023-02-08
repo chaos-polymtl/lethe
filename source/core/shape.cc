@@ -218,7 +218,6 @@ template <int dim>
 std::string
 Shape<dim>::point_to_string(const Point<dim> &evaluation_point) const
 {
-
   // This function transforms a point into a string.
   // The point precision is conserve up to a precision of 1e-12.
   std::string point_in_string = "";
