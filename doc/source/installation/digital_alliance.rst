@@ -34,7 +34,7 @@ Installing deal.II
 On Niagara, Beluga, Narval, Graham or Cedar
 ----------------------------------------------
 
-All operations can be performed on login nodes.
+All operations must be performed on login nodes.
 
 .. warning::
  If on **Niagara**, this additional module is needed beforehand: ``module load CCEnv``.
@@ -45,6 +45,7 @@ Load ``Trilinos``, ``Parmetis`` and ``P4est``, and their prerequisite modules:
   :class: copy-button
 
   module load StdEnv/2020
+  module load cmake/3.23.1
   module load gcc/9.3.0
   module load openmpi/4.0.3
   module load trilinos/13.0.1
@@ -75,9 +76,6 @@ and:
   make -j8 install
 
 The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task.
-
-.. note::
- If ``make install`` triggers an error, run the command ``which trilinos``. If it returns ``/usr/bin/which: no trilinos in``, try removing the deal.II build folder, recreating it and explicitly specify libraries' paths on the ``cmake``.
 
 ================================
 Installing Lethe
@@ -168,7 +166,8 @@ In the nano terminal, copy-paste (with ``Ctrl+Shift+V``):
   :class: copy-button
 
   module load CCEnv #if on Niagara
-  module load nixpkgs/16.09
+  module load StdEnv/2020
+  module load cmake/3.23.1
   module load gcc/9.3.0
   module load openmpi/4.0.3
   module load trilinos/13.0.1
