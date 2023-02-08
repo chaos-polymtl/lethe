@@ -6,12 +6,12 @@ subsection simulation control
 end
 
 subsection mesh adaptation
-  set type = kelly
-  set variable                 = pressure
-  set fraction coarsening      = 0.0
-  set fraction refinement      = 0.3
-  set min refinement level     = 0
-  set max refinement level     = 10
+  set type                 = kelly
+  set variable             = pressure
+  set fraction coarsening  = 0.0
+  set fraction refinement  = 0.3
+  set min refinement level = 0
+  set max refinement level = 10
 end
 
 subsection FEM
