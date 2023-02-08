@@ -29,7 +29,10 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
 #include <ankerl/unordered_dense.h>
+#pragma GCC diagnostic pop
 
 #include <iostream>
 #include <unordered_map>
