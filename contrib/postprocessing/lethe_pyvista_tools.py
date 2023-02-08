@@ -3,8 +3,8 @@
 #############################################################################
 
 #Import modules
+import os
 import numpy as np
-import pandas as pd
 import pyvista as pv
 from tqdm import tqdm
 
@@ -66,15 +66,20 @@ class lethe_pyvista_tools():
 
         self.pvd_name = pvd_name
         #Read name of files in .pvd file
-        files = pd.read_csv(f'{self.path_output}{pvd_name}',sep='"',skiprows=6, usecols=[1, 5], names = ['time', 'vtu'])
+        #files = pd.read_csv(f'{self.path_output}{pvd_name}',sep='"',skiprows=6, usecols=[1, 5], names = ['time', 'vtu'])
         #clean data from NaN's
-        files = files.dropna()
+        #files = files.dropna()
+        
+        reader = pv.get_reader(f"{self.path_output}/{pvd_name}")
         #Create a list of time-steps
-        self.time_list = files['time'].tolist()
+        self.time_list = reader.time_values
         #Create a list of all files' names
-        self.list_pvtu = files['vtu'].tolist()
-        #Format files' names
-        self.list_vtu = [i.replace('.pvtu', '.0000.vtu') for i in self.list_pvtu]
+        start_of_file_name = 'file="'
+        end_of_file_name = '"/>'
+        with open(f'{self.path_output}/{self.pvd_name}') as pvd_in:
+            self.list_vtu = [x[x.find(start_of_file_name)+len(start_of_file_name):x.rfind(end_of_file_name)] for x in pvd_in if("pvtu" in x)]
+        
+        self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
 
         if last == None:
             self.list_vtu = self.list_vtu[first::interval]
@@ -105,7 +110,6 @@ class lethe_pyvista_tools():
 
         #Create list of time steps as strings
         time_list_str = [str(i) for i in self.time_list]
-        time_list_str = [i.replace(".0", "") for i in time_list_str]
 
         #Write modified PVD to match new VTU files
         with open(f'{self.path_output}/{self.pvd_name}') as pvd_in:
@@ -190,8 +194,8 @@ class lethe_pyvista_tools():
             print(f"Creating array '{new_array_name}' with standard_value {standard_value}")
 
             #Push array to all pyvista arrays
-            pbar = tqdm(total = len(self.time_list), desc = f"Creating array: {new_array_name}")
-            for i in range(len(self.time_list)):
+            pbar = tqdm(total = len(self.list_vtu), desc = f"Creating array: {new_array_name}")
+            for i in range(len(self.list_vtu)):
                 exec(f'self.df_{i}[new_array_name] = new_array')
                 pbar.update(1)
 
