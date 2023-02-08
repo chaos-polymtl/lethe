@@ -15,6 +15,7 @@ file(COPY rbf_test_shape.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/flow_aro
 file(COPY helix_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/cavatappi_composite_test.${_build_type}")
 file(COPY spooky_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/spooky_composite_test.${_build_type}")
 file(COPY rbf_sphere.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbf_sphere_mms.${_build_type}")
+file(COPY rbf_sphere_adaptive.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbf_sphere_mms_adaptive.${_build_type}")
 
 deal_ii_pickup_tests()
 
