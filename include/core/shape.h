@@ -1308,6 +1308,11 @@ private:
   size_t max_number_of_nodes;
   int    minimal_mesh_level;
   int    highest_level_searched;
+  // levels_not_precalculated is used in order to not precompute and store the
+  // likely RBF nodes for the finer levels of cells in the grid. Setting this
+  // parameter is a tradeoff between having faster distance evaluations and
+  // reducing the memory footprint: increasing levels_not_precalculated
+  // increases evaluation time.
   int    levels_not_precalculated;
   double maximal_support_radius;
 

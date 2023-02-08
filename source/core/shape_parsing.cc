@@ -155,7 +155,11 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
           // that the usual initialization function can be called.
           std::map<std::string, std::vector<double>> rbf_data;
 
-
+          // This step is used to parse an optional argument in the
+          // file_name. If the shape argument is <filename>;<number of levels
+          // not precalculated>, then it is parsed. Otherwise, if the shape
+          // argument is only <filename>, then the default value of number of
+          // levels not precalculated (=0) is assumed.
           std::vector<std::string> list_of_words_base =
             Utilities::split_string_list(file_name, ";");
           std::vector<std::string> list_of_words_clean;

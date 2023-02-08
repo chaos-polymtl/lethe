@@ -214,7 +214,7 @@ The following parameter and subsection are all inside the subsection ``particle 
         operations
         2; union     ; 0:1
 
-    * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
+    * RBF: *file name*; the effective radius is the norm of the half-length of a bounding box around the object. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of fourteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node. An alternative syntax is *file name;number of levels not precalculated*: it allows to decrease the memory footprint at the cost of computational speed.
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 
