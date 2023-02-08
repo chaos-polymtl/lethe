@@ -616,7 +616,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , minimal_mesh_level(std::numeric_limits<int>::max())
   , highest_level_searched(-1)
   , levels_not_precalculated(levels_not_precalculated)
-  , maximal_support_radius(0.)
+  , maximal_support_radius(
+      *std::max_element(std::begin(support_radii), std::end(support_radii)))
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -625,8 +626,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
 {
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
-  maximal_support_radius =
-    *std::max_element(std::begin(support_radii), std::end(support_radii));
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
 }
