@@ -74,7 +74,8 @@ public:
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        fe              = std::make_shared<FE_SimplexP<dim>>(1);
+        fe = std::make_shared<FE_SimplexP<dim>>(
+          simulation_parameters.fem_parameters.VOF_order);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
@@ -83,12 +84,13 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        fe      = std::make_shared<FE_Q<dim>>(1);
+        fe = std::make_shared<FE_Q<dim>>(
+          simulation_parameters.fem_parameters.VOF_order);
         mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         fe_filtered_phase_fraction_gradient =
           std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
-        fe_curvature = std::make_shared<FE_Q<dim>>(1);
+        fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
         filtered_phase_fraction_gradient_mapping =
           std::make_shared<MappingQ<dim>>(
             fe_filtered_phase_fraction_gradient->degree,
