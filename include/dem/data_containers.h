@@ -16,8 +16,6 @@
  *
  */
 
-#include <core/unordered_dense.h>
-
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/particle_particle_contact_info.h>
 #include <dem/particle_point_line_contact_info_struct.h>
@@ -30,6 +28,8 @@
 #include <deal.II/particles/particle_iterator.h>
 
 #include <boost/range/adaptor/map.hpp>
+
+#include <ankerl/unordered_dense.h>
 
 #include <iostream>
 #include <unordered_map>
