@@ -87,3 +87,5 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
 
     * ``boundary layer thickness`` (:math:`d_w`) is the parameter applied to the ``partial slip`` boundary condition. It is used to estimate the tangential shear stress :math:`\tau_t = -\mu \frac{u}{d_w}`. For very high ``boundary layer thicknes``, the boundary layer should behave exactly like the ``slip`` condition.
 
+.. caution::
+	While using ``gls_sharp_navier_stokes_2d`` and ``gls_sharp_navier_stokes_2d`` solvers, it is wise to assign a weak type of boundary (``outlet``, ``partial slip``, or ``function weak``) to at least one boundary. The presence of particle(s) has a non-null contribution to the divergence of the problem, making it much harder for the linear solver to converge unless it is given some flexibility through of boundaries.
