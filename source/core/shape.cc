@@ -639,6 +639,14 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
                orientation)
 // The effective radius is extracted at the proper index from shape_arguments
 {
+  // When constructing the RBF from a single vector of doubles, the vector is
+  // composed of these vectors and scalars, in this order: weights(vector),
+  // support_radii(vector), basis_functions(vector), nodes_positions_x(vector),
+  // nodes_positions_y(vector), nodes_positions_z(vector),
+  // number_of_levels_not_precalculated(scalar). As such, the number of elements
+  // in the shape_arguments vector is: number_of_nodes * 6 + 1. In dimension 2,
+  // the number of elements in the shape_arguments vector is: number_of_nodes *
+  // 5 + 1.
   number_of_nodes = (shape_arguments.size() - 1) / (dim + 3);
   weights.resize(number_of_nodes);
   support_radii.resize(number_of_nodes);
@@ -893,17 +901,22 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
-          // We first check if we are in the zone where we simply assume that
-          // children have the same likely nodes as their parents
+          // We first check if we are in the hierarchy levels where we simply
+          // assume that children have the same likely nodes as their parents.
           if (level > maximal_level - 1 - levels_not_precalculated)
             {
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
               continue;
             }
-
+          // If the precalculations have reached the finest level, then the cell
+          // precalculation only has to be done for cells that are locally
+          // owned.
           if (level == maximal_level)
             if (!cell->is_locally_owned())
               continue;
+          // In the same way, the cell precalculation only has to be done on
+          // cells that aren't artificial (in other words, locally owned or
+          // ghost cells)
           if (!cell->is_artificial_on_level())
             determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
@@ -913,6 +926,11 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
       for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
         {
           auto cell = it->first;
+          // Cells are unnecessary if they are artificial (which should not
+          // happen because of previous checks), or if their level is at least
+          // as high as the levels that will not be precalculated. In that case,
+          // the cell's entry needs to be kept in memory because it will be used
+          // as is for its children cells (by shared pointer).
           bool cell_still_needed =
             cell->is_active() ||
             (cell->level() > level - 1 - levels_not_precalculated);
