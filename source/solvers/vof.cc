@@ -928,7 +928,7 @@ void
 VolumeOfFluid<dim>::find_filtered_initial_condition()
 {
   assemble_filtered_initial_condition(present_solution);
-  solve_filtered_initial_condition();
+  solve_filtered_initial_condition(present_solution);
 }
 
 template <int dim>
@@ -960,7 +960,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
                                          update_values | update_JxW_values | update_gradients);
 
   const unsigned int dofs_per_cell =
-    this->fe_filtered_phase_fraction->dofs_per_cell;
+    this->fe->dofs_per_cell;
 
   const unsigned int n_q_points = this->cell_quadrature->size();
   FullMatrix<double> local_matrix_phase_fraction(
@@ -969,6 +969,8 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   std::vector<double> phi_phase_fraction(
+    dofs_per_cell);
+  std::vector<Tensor<1, dim>> phi_phase_fraction_gradient(
     dofs_per_cell);
 
   std::vector<double> phase_values(n_q_points);
@@ -992,16 +994,16 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
         {
           fe_values_phase_fraction.reinit(cell);
 
-          cell_volume = cell->measure()
+          cell_volume = cell->measure();
           if (dim == 2)
             h =
               std::sqrt(4. * cell_volume /
                         M_PI) /
-              fe_values_phase_fraction.degree;
+              fe->degree;
           else if (dim == 3)
             h = pow(6 * cell_volume / M_PI,
                     1. / 3.) /
-                fe_values_phase_fraction.degree;
+                fe->degree;
 
           local_matrix_phase_fraction = 0;
           local_rhs_phase_fraction    = 0;
@@ -1010,7 +1012,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
           fe_values_phase_fraction.get_function_values(
             solution, phase_values);
 
-          double color_function;
+          double color_function = 0.0;
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               color_function += phase_values[q]*fe_values_phase_fraction.JxW(q);
@@ -1023,7 +1025,9 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
                   phi_phase_fraction[k] =
-                    fe_values_phase_fraction.value(k, q);
+                    fe_values_phase_fraction.shape_value(k, q);
+                  phi_phase_fraction_gradient[k] =
+                    fe_values_phase_fraction.shape_grad(k, q);
                 }
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -1034,7 +1038,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
                       local_matrix_phase_fraction(i, j) +=
                         (phi_phase_fraction[j] *
                            phi_phase_fraction[i] +
-                         h * h * phase_fraction_gradient_filter_factor *
+                         h * h *
                            scalar_product(
                              phi_phase_fraction_gradient[i],
                              phi_phase_fraction_gradient
@@ -1044,7 +1048,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
 
                   // rhs
                   local_rhs_phase_fraction(i) +=
-                    phi_phase_fraction *
+                    phi_phase_fraction[i] *
                     color_function *
                     fe_values_phase_fraction.JxW(q);
                 }
@@ -1052,8 +1056,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
 
           cell->get_dof_indices(
             local_dof_indices);
-          filtered_phase_fraction_constraints
-            .distribute_local_to_global(
+            this->nonzero_constraints.distribute_local_to_global(
               local_matrix_phase_fraction,
               local_rhs_phase_fraction,
               local_dof_indices,
@@ -1068,18 +1071,15 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_filtered_phase_fraction()
+VolumeOfFluid<dim>::solve_filtered_initial_condition(TrilinosWrappers::MPI::Vector &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
 
   TrilinosWrappers::MPI::Vector
-    completely_distributed_filtered_phase_fraction_solution(
-      this->locally_owned_dofs_filtered_phase_fraction,
+    completely_distributed_phase_fraction_solution(
+      this->locally_owned_dofs,
       triangulation->get_communicator());
-
-  completely_distributed_filtered_phase_fraction_solution =
-    present_filtered_phase_fraction_solution;
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,
@@ -1101,11 +1101,11 @@ VolumeOfFluid<dim>::solve_filtered_phase_fraction()
 
   ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  ilu_preconditioner->initialize(system_matrix_filtered_phase_fraction,
+  ilu_preconditioner->initialize(system_matrix_phase_fraction,
                                  preconditionerOptions);
-  solver.solve(system_matrix_filtered_phase_fraction,
-               completely_distributed_filtered_phase_fraction_solution,
-               system_rhs_filtered_phase_fraction,
+  solver.solve(system_matrix_phase_fraction,
+               completely_distributed_phase_fraction_solution,
+               system_rhs_phase_fraction,
                *ilu_preconditioner);
 
   if (this->simulation_parameters.multiphysics.vof_parameters
@@ -1115,10 +1115,9 @@ VolumeOfFluid<dim>::solve_filtered_phase_fraction()
                   << solver_control.last_step() << " steps " << std::endl;
     }
 
-  filtered_phase_fraction_constraints.distribute(
-    completely_distributed_filtered_phase_fraction_solution);
-  present_filtered_phase_fraction_solution =
-    completely_distributed_filtered_phase_fraction_solution;
+  this->nonzero_constraints.distribute(
+    completely_distributed_phase_fraction_solution);
+  solution = completely_distributed_phase_fraction_solution;
 }
 
 template <int dim>
@@ -1876,6 +1875,8 @@ VolumeOfFluid<dim>::set_initial_conditions()
                            this->newton_update);
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
+
+  find_filtered_initial_condition();
 
   percolate_time_vectors();
 }

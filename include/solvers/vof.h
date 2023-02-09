@@ -591,6 +591,12 @@ private:
                     const bool                     sharpen_previous_solutions);
 
   /**
+   * @brief Carries out finding the filtered phase fraction.
+   */
+  void
+  find_filtered_initial_condition();
+
+  /**
    * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
    * fraction is used in find_filtered_interface_curvature to find interface
    * curvature (k).
@@ -603,6 +609,21 @@ private:
    */
   void
   find_filtered_interface_curvature();
+
+  /**
+   * @brief Assembles the matrix and rhs for calculation of filtered phase fraction using a L2-projection.
+   *
+   * @param solution VOF solution (phase fraction)
+   */
+  void
+  assemble_filtered_initial_condition(
+    TrilinosWrappers::MPI::Vector &solution);
+
+  /**
+   * @brief Solves filtered phase fraction system.
+   */
+  void
+  solve_filtered_initial_condition(TrilinosWrappers::MPI::Vector &solution);
 
   /**
    * @brief Assembles the matrix and rhs for calculation of filtered phase gradient (fpg).
