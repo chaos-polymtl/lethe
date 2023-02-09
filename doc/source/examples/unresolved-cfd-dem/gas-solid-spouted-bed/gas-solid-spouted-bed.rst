@@ -339,7 +339,7 @@ We also enable grad-div stabilization in order to improve local mass conservatio
       set shear force                   = true
       set pressure force                = true
       set saffman lift force            = false
-      set drag model                    = gidaspow
+      set drag model                    = rong
       set post processing               = true
       set coupling frequency            = 100
       set implicit stabilization        = false
