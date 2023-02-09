@@ -862,7 +862,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     {
       centered_support_point = this->align_and_center(support_point);
       distance = (centered_support_point - nodes_positions[node_id]).norm();
-      // We check if the distance is lower than 1 cell diagonal, since we
+      // We check if the distance is lower than a cell diagonal length, since we
       // only check the distance with 1 support point, added to the support
       // radius
       max_distance = cell_diameter + support_radii[node_id];
