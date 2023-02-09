@@ -32,6 +32,7 @@
 #include <core/thermal_conductivity_model.h>
 
 #include <solvers/multiphysics_interface.h>
+#include <solvers/vof_filter.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -148,7 +149,8 @@ public:
     if (sd.gather_vof)
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
-                 sd.fe_values_vof->get_mapping());
+                 sd.fe_values_vof->get_mapping(),
+                 sd.filter);
   }
 
 
@@ -333,13 +335,34 @@ public:
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly.
    *
-   * @param mapping Mapping used for the Navier-Stokes problem assembly.
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   *
+   * @param phase_filter_parameters Parameters for phase fraction filtering.
    */
 
   void
-  enable_vof(const FiniteElement<dim> &fe,
-             const Quadrature<dim> &   quadrature,
-             const Mapping<dim> &      mapping);
+  enable_vof(const FiniteElement<dim> &         fe,
+             const Quadrature<dim> &            quadrature,
+             const Mapping<dim> &               mapping,
+             const Parameters::VOF_PhaseFilter &phase_filter_parameters);
+
+  /**
+   * @brief enable_vof Enables the collection of the VOF data by the scratch - function overload used in the copy constructor of HeatTransferScratchData
+   *
+   * @param fe FiniteElement associated with the VOF.
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   *
+   * @param filter Filter that is applied on the phase fraction
+   */
+
+  void
+  enable_vof(const FiniteElement<dim> &                      fe,
+             const Quadrature<dim> &                         quadrature,
+             const Mapping<dim> &                            mapping,
+             const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
 
   /** @brief Reinitialize the content of the scratch for VOF.
    *
@@ -447,7 +470,8 @@ public:
   std::vector<double>         phase_values;
   std::vector<Tensor<1, dim>> phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  std::shared_ptr<FEValues<dim>>           fe_values_vof;
+  std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
 
   /**
    * Scratch component for the Navier-Stokes component
