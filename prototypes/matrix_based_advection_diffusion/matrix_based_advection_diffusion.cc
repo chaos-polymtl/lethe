@@ -228,23 +228,6 @@ Settings::try_parse(const std::string &prm_filename)
 }
 
 template <int dim>
-class MMSSolution : public Function<dim>
-{
-public:
-  virtual double
-  value(const Point<dim> &p,
-        const unsigned int /* component */ = 0) const override
-  {
-    double val = 1.0;
-    for (unsigned int d = 0; d < dim; ++d)
-      {
-        val *= std::sin(numbers::PI * p[d]);
-      }
-    return val;
-  }
-};
-
-template <int dim>
 class SourceTerm : public Function<dim>
 {
 public:
@@ -266,28 +249,35 @@ template <int dim>
 class AnalyticalSolution : public Function<dim>
 {
 public:
-  AnalyticalSolution(double peclet_number)
-    : peclet(peclet_number)
+  AnalyticalSolution(double peclet)
+    : Pe(peclet)
   {}
 
   virtual double
   value(const Point<dim> &p,
         const unsigned int /* component */ = 0) const override
   {
-    double eps = 1 / peclet;
-    return p[0] * ((1 - std::exp((p[1] - 1) / eps)) / (1 - std::exp(-2 / eps)));
+    if (dim == 2)
+      {
+        // Boundary layer case
+        double eps = 1 / Pe;
+        return p[0] *
+               ((1 - std::exp((p[1] - 1) / eps)) / (1 - std::exp(-2 / eps)));
+      }
+    return 0;
   }
 
 private:
-  double peclet;
+  double Pe;
 };
 
 template <int dim>
 class AdvectionField : public TensorFunction<1, dim>
 {
 public:
-  AdvectionField()
+  AdvectionField(const Settings::ProblemType &test_case)
     : TensorFunction<1, dim>()
+    , test_case(test_case)
   {}
 
   Tensor<1, dim>
@@ -295,17 +285,35 @@ public:
   {
     (void)p;
     Tensor<1, dim> result;
-    result[0] = 2 * p[1] * (1 - p[0] * p[0]);
-    result[1] = -2 * p[0] * (1 - p[1] * p[1]);
-    ;
-    if (dim == 3)
+    if (dim == 2)
       {
-        result[2] = 1.0;
+        if (test_case == Settings::boundary_layer)
+          {
+            result[0] = 0.0;
+            result[1] = 1.0;
+          }
+        else if (test_case == Settings::double_glazing)
+          {
+            result[0] = 2 * p[1] * (1 - p[0] * p[0]);
+            result[1] = -2 * p[0] * (1 - p[1] * p[1]);
+          }
+        else
+          {
+            result[0] = 1.0;
+            result[1] = 0.0;
+          }
       }
-    // result[0] = 0;
-    // result[1] = 1;
+    else if (dim == 3)
+      {
+        result[0] = 1.0;
+        result[1] = 0.0;
+        result[2] = 0.0;
+      }
     return result;
   }
+
+private:
+  Settings::ProblemType test_case;
 };
 
 template <int dim>
@@ -481,12 +489,17 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
 
   if (parameters.problem_type == Settings::boundary_layer)
     {
+      // Create zero BCs for the delta.
       // Left wall
-      VectorTools::interpolate_boundary_values(
-        dof_handler, 0, Functions::ConstantFunction<dim>(-1.0), constraints);
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(
-        dof_handler, 1, Functions::ConstantFunction<dim>(1.0), constraints);
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
       // Top wall
       VectorTools::interpolate_boundary_values(dof_handler,
                                                3,
@@ -495,8 +508,43 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
       // Bottom wall
       VectorTools::interpolate_boundary_values(dof_handler,
                                                2,
-                                               BoundaryFunction<dim>(),
+                                               Functions::ZeroFunction<dim>(),
                                                constraints);
+
+      // Set boundary values for the initial newton iteration
+      std::map<types::global_dof_index, double> boundary_values_left_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ConstantFunction<dim>(
+                                                 -1.0),
+                                               boundary_values_left_wall);
+      for (auto &boundary_value : boundary_values_left_wall)
+        solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_right_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.0),
+                                               boundary_values_right_wall);
+      for (auto &boundary_value : boundary_values_right_wall)
+        solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_top_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_top_wall);
+      for (auto &boundary_value : boundary_values_top_wall)
+        solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               2,
+                                               BoundaryFunction<dim>(),
+                                               boundary_values_bottom_wall);
+      for (auto &boundary_value : boundary_values_bottom_wall)
+        solution(boundary_value.first) = boundary_value.second;
     }
   else if (parameters.problem_type == Settings::double_glazing)
     {
@@ -506,8 +554,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                Functions::ZeroFunction<dim>(),
                                                constraints);
       // Right wall
-      VectorTools::interpolate_boundary_values(
-        dof_handler, 1, Functions::ConstantFunction<dim>(1.0), constraints);
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
       // Top wall
       VectorTools::interpolate_boundary_values(dof_handler,
                                                3,
@@ -518,6 +568,40 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                2,
                                                Functions::ZeroFunction<dim>(),
                                                constraints);
+
+      // Set boundary values for the initial newton iteration
+      std::map<types::global_dof_index, double> boundary_values_left_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_left_wall);
+      for (auto &boundary_value : boundary_values_left_wall)
+        solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_right_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.0),
+                                               boundary_values_right_wall);
+      for (auto &boundary_value : boundary_values_right_wall)
+        solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_top_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_top_wall);
+      for (auto &boundary_value : boundary_values_top_wall)
+        solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               2,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_bottom_wall);
+      for (auto &boundary_value : boundary_values_bottom_wall)
+        solution(boundary_value.first) = boundary_value.second;
     }
 
   constraints.close();
@@ -628,7 +712,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  AdvectionField<dim>         advection_field;
+  AdvectionField<dim>         advection_field(parameters.problem_type);
   std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -711,7 +795,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  AdvectionField<dim>         advection_field;
+  AdvectionField<dim>         advection_field(parameters.problem_type);
   std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -786,7 +870,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
   std::vector<AffineConstraints<double>> boundary_constraints(
     triangulation.n_global_levels());
 
-  AdvectionField<dim>         advection_field;
+  AdvectionField<dim>         advection_field(parameters.problem_type);
   std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
@@ -909,7 +993,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  AdvectionField<dim>         advection_field;
+  AdvectionField<dim>         advection_field(parameters.problem_type);
   std::vector<Tensor<1, dim>> advection_term_values(n_q_points);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1197,12 +1281,20 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::output_results(
   DataOutBase::VtkFlags flags;
   flags.compression_level = DataOutBase::VtkFlags::best_speed;
   data_out.set_flags(flags);
-  data_out.write_vtu_with_pvtu_record(parameters.output_path,
-                                      parameters.output_name +
-                                        std::to_string(dim) + "d",
-                                      cycle,
-                                      MPI_COMM_WORLD,
-                                      3);
+
+  std::string test_case = "";
+  if (parameters.problem_type == Settings::boundary_layer)
+    test_case = "_boundary_layer";
+  else if (parameters.problem_type == Settings::double_glazing)
+    test_case = "_double_glazing";
+
+  data_out.write_vtu_with_pvtu_record(
+    parameters.output_path,
+    parameters.output_name + std::to_string(dim) + "d_Pe" +
+      std::to_string(parameters.peclet_number) + test_case,
+    cycle,
+    MPI_COMM_WORLD,
+    3);
 }
 
 template <int dim, int fe_degree>
