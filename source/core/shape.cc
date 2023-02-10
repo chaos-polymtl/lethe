@@ -894,6 +894,8 @@ void
 RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
                                       std::shared_ptr<Mapping<dim>> /*mapping*/)
 {
+  likely_nodes_map.clear();
+  highest_level_searched  = -1;
   const int maximal_level = dof_handler.get_triangulation().n_levels();
 
   for (int level = highest_level_searched + 1; level < maximal_level; level++)
