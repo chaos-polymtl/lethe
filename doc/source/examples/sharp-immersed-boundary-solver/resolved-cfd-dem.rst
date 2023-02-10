@@ -1,14 +1,12 @@
-******************************************
+--------------------------------
 Resolved CFD-DEM Examples
-******************************************
+--------------------------------
 
 .. toctree::
     :maxdepth: 1
     :glob:
-    :numbered:
+    :titlesonly:
 
     cylinder-with-sharp-interface/cylinder-with-sharp-interface
     sedimentation-1-particle/sedimentation-1-particle
     sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface
-    3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller
-    3d-rbf-mixer-with-pbt-impeller/3d-rbf-mixer-with-pbt-impeller

@@ -11,5 +11,5 @@ Examples
     multiphysics/multiphysics
     dem/dem
     unresolved-cfd-dem/unresolved-cfd-dem
-    resolved-cfd-dem/resolved-cfd-dem
+    sharp-immersed-boundary-solver/sharp-immersed-boundary-solver
     rpt/rpt
