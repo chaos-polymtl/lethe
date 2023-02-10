@@ -117,7 +117,7 @@ Boundary conditions
 -----------------------
 
 Because the particles defined for the sharp solver are not divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
-beta factor (Nitsche penalization). Two aspects need special consideration:
+Two aspects need special consideration:
 
 1. ``function weak`` is a variation of ``function``. It is used to weakly imposed a Dirichlet boundary condition, and it is necessary when using ``gls_sharp_navier_stokes_3d``.
 2. ``beta`` has to be defined. It is a Nitsche penalization parameter that enforces more strongly the boundary condition when it increases (see :doc:`../../../parameters/cfd/nitsche`).
