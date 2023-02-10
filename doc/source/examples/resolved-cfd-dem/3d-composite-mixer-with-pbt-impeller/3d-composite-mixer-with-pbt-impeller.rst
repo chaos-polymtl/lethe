@@ -18,7 +18,6 @@ Features
 - Transient problem
 - Rotating complex solid, defined as a composite shape, modeled with sharp immersed boundary
 
-
 :raw-html:`<br />`
 
 Files used in this example
@@ -26,7 +25,6 @@ Files used in this example
 
 * Parameter file: ``/examples/resolved-cfd-dem/3d-composite-mixer-with-pbt-impeller/mixer.prm``
 * Composite geometry file: ``/examples/resolved-cfd-dem/3d-composite-mixer-with-pbt-impeller/impeller.composite``
-
 
 :raw-html:`<br />`
 
@@ -68,10 +66,17 @@ The ``impeller.composite`` file contains these instructions.
   
 Let go over each line:
 
-* `` shapes``
- 
+* ``shapes``: introduces the shapes section.
+* ``0; cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0``: defines a cylinder, with ID equal to 0. Its radius is 0.025 and its half-length 0.375. Its z position is 0.125 and its orientation is default.
+* The next shapes are defined in a similar fashion, and are assigned IDs 1, 2, 3, 4, and 5.
+* ``operations``: introduces the operations section.
+* ``6; union     ; 0:1``: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.
+* The next operations build iteratively on this intermediate shape.
+* The result of the last defined operation is considered as the final shape to be used for simulation, regardless of its ID number.
 
-For more detail othe the definition of the shape see: :doc:`../../../parameters/resolved-cfd-dem/resolved-cfd-dem`.
+
+
+For more detail on the the definition of the shape see: :doc:`../../../parameters/resolved-cfd-dem/resolved-cfd-dem`.
 
 Definition of the shape and its motion
 --------------------------------------
