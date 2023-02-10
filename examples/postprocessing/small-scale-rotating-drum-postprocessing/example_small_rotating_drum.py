@@ -25,8 +25,6 @@ condition = "(y**2 + z**2)**(1/2) > 0.025"
 
 particles.array_modifier(new_array_name = "particle_color", condition = condition, array_values = 1, restart_array = True, write_new_vtu = False)
 
-print(particles.df_0.array_names)
-
 condition = "(y**2 + z**2)**(1/2) > 0.04"
 
 particles.array_modifier(new_array_name = "particle_color", condition = condition, array_values = 2, restart_array = False, write_new_vtu = True)

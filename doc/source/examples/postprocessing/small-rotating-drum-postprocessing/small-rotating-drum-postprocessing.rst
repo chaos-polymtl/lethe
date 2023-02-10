@@ -88,7 +88,7 @@ Next, we read the results into Python:
 
 In the present case, since we want to use data after the full packing of particles only (after the 40th time-step), the parameter ``first`` is set to ``40``.
 
- 
+The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time-step to the object ``particles``. Each time-step corresponds to a PyVista dataset, . adds each time-step dataset to the object ``particles``. To access the datase
 
 
 Results
@@ -98,7 +98,8 @@ The following movie displays the rolling regime inside the rotating drum obtaine
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/watch?v=qxO4MD_zg2w&ab_channel=LetheCFD" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/qxO4MD_zg2w" title="Rotating drum - mixing study" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 
 Possibilities for extension
 ----------------------------
