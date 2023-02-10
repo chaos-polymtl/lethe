@@ -13,3 +13,4 @@ Examples
     unresolved-cfd-dem/unresolved-cfd-dem
     resolved-cfd-dem/resolved-cfd-dem
     rpt/rpt
+    postprocessing/postprocessing
