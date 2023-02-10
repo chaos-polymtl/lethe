@@ -553,9 +553,11 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
     {
       const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(dof_handler_vof->get_fe(),
-                              *this->cell_quadrature,
-                              *this->mapping);
+      scratch_data.enable_vof(
+        dof_handler_vof->get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -728,9 +730,11 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
     {
       const DoFHandler<dim> *dof_handler_vof =
         this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(dof_handler_vof->get_fe(),
-                              *this->cell_quadrature,
-                              *this->mapping);
+      scratch_data.enable_vof(
+        dof_handler_vof->get_fe(),
+        *this->cell_quadrature,
+        *this->mapping,
+        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
