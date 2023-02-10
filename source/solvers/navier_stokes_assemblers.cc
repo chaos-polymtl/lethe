@@ -1657,11 +1657,11 @@ LaplaceAssembly<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Laplacian on the velocity terms
-          local_rhs_i += scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
+          local_rhs_i += -scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
 
 
           // Laplacian on the pressure terms
-          local_rhs_i += scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
+          local_rhs_i += -scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
           local_rhs(i) += local_rhs_i;
         }
