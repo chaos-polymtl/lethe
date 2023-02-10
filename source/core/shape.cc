@@ -1224,7 +1224,6 @@ RBFShape<dim>::gradient_with_cell_guess(
   auto iterator        = this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end())
     {
-      // std::cout<<"hi gradient"<<std::endl;
       prepare_iterable_nodes(cell);
       Tensor<1, dim> gradient = this->gradient(evaluation_point);
       reset_iterable_nodes(cell);
