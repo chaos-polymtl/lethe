@@ -48,6 +48,18 @@ class DisableParticleContact
 public:
   DisableParticleContact<dim>();
 
+  /**
+   * Mobility status flag used to identify the status at nodes and the status
+   * of the cell
+   * inactive: movement of particles is negligible in the cell, particles won't
+   *           be in the contact candidates list
+   * active:   movement of particles is negligible, but there's at least one
+   * neighbor cell that is flag mobile, meaning that particles need to be in
+   * contact candidates lists mobile:   movement of particles is significant or
+   * there is at least one neighbor cell that is mobile by criteria, particles
+   * need to be in contact candidates lists empty:    cell is empty, only useful
+   * for mobility at nodes
+   */
   enum mobility_status
   {
     inactive,
@@ -57,34 +69,62 @@ public:
     n_mobility_status
   };
 
+  /**
+   * Carries out the identification of the mobility status of each cell thought
+   * processing at nodes.
+   *
+   * 4 checks (search loops) are done is order:
+   * 1. Check if the cell is empty (n_particle = 0), if so, nodes and cells are
+   * flagged as empty mobility status
+   * 2. Check if the cell is mobile by criterion (n_particle > 0, average
+   * granular temperature > threshold, solid fraction < limit, as one empty node
+   * from previous check), if so, nodes and cells are flagged as mobile mobility
+   * status
+   * 3. Check if the cell is mobile by neighbor (at least a node is flagged as
+   * mobile from previous check), if so, cells are flagged as mobile status and
+   * nodes that are not mobile are flagged as active
+   * 4. Check if the cell is active (at least a node is flagged as active from
+   * previous check), if so, cells are flagged as active status
+   *
+   * The remaining cells are flagged as inactive by default (vector is
+   * initialized with 0)
+   *
+   * @param background_dh The dof handler of the background grid
+   * @param particle_handler The particle handler that contains all the particles
+   * @param mpi_communicator The MPI communicator
+   */
   void
   identify_mobility_status(
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    const DoFHandler<dim> &                          background_dh,
-    const Particles::ParticleHandler<dim> &          particle_handler,
-    MPI_Comm                                         mpi_communicator);
+    const DoFHandler<dim> &                background_dh,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    MPI_Comm                               mpi_communicator);
 
   /**
-   * Carries out the calculation of the granular temperature in each local cell.
-   * These values are summed up during the post-processing steps (imposed by
-   * post-processing frequency), and finally divided by the sampling counter to
-   * calculate time-averaged granular temperature distribution.
+   * Carries out the calculation of the granular temperature and solid
+   * fraction approximation in each local cell. Those values are a criteria
+   * for cell mobility
    *
-   * @param triangulation Triangulation
-   * @param particle_handler Particle handler
+   * @param triangulation The triangulation
+   * @param particle_handler The particle handler that contains all the particles
    */
   void
   calculate_average_granular_temperature(
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler);
+    const DoFHandler<dim> &                background_dh,
+    const Particles::ParticleHandler<dim> &particle_handler);
 
-
+  /**
+   * Find the mobility status of a cell
+   *
+   * @param cell The iterator of the cell that needs mobility evaluation
+   */
   inline unsigned int
   check_cell_mobility(
     const typename Triangulation<dim>::active_cell_iterator &cell) const
   {
-    unsigned int status = mobility_status::mobile;
-    auto         cell_iterator_from_mobile_container =
+    unsigned int status;
+    // Check if the cell is in the mobile status set
+    status = mobility_status::mobile;
+    auto cell_iterator_from_mobile_container =
       status_to_cell[status].find(cell);
 
     if (cell_iterator_from_mobile_container != status_to_cell[status].end())
@@ -92,6 +132,7 @@ public:
         return status;
       }
 
+    // Check if the cell is in the active status set
     status = mobility_status::active;
     auto cell_iterator_from_active_container =
       status_to_cell[status].find(cell);
@@ -101,78 +142,30 @@ public:
         return status;
       }
 
+    // If not mobile or active, cell is inactive
     return mobility_status::inactive;
   }
 
-  void
-  print_cell_mobility_info(
-    const Particles::ParticleHandler<dim> &particle_handler,
-    double                                 time)
-  {
-    int num   = 0;
-    int total = 0;
-
-    if (!status_to_cell[mobility_status::inactive].empty())
-      {
-        for (auto &cell : status_to_cell[mobility_status::inactive])
-          {
-            const unsigned int n_particles_in_cell =
-              particle_handler.n_particles_in_cell(cell);
-
-            if (n_particles_in_cell > 0)
-              {
-                num++;
-                total++;
-              }
-          }
-      }
-
-    for (auto &status_set : {status_to_cell[mobility_status::active],
-                             status_to_cell[mobility_status::mobile],
-                             status_to_cell[mobility_status::empty]})
-      {
-        if (!status_set.empty())
-          {
-            for (auto &cell : status_set)
-              {
-                const unsigned int n_particles_in_cell =
-                  particle_handler.n_particles_in_cell(cell);
-
-                if (n_particles_in_cell > 0)
-                  {
-                    total++;
-                  }
-              }
-          }
-      }
-
-    unsigned int all_num   = Utilities::MPI::sum(num, MPI_COMM_WORLD);
-    unsigned int all_total = Utilities::MPI::sum(total, MPI_COMM_WORLD);
-
-    if (all_total > 0)
-      {
-        if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-          {
-            std::cout << "info;" << time << ";" << all_num << ";" << all_total
-                      << std::endl;
-          }
-      }
-  };
-
+  /**
+   * Convert the vector of mobility status set to a vector of mobility status
+   * with cell id order
+   * status_to_cell is a vector of 3 sets of cell iterator (inactive, active,
+   * mobile), it can't be used as is in the pvd post-processing, it needs to be
+   * converted to a vector of mobility status by active cell index
+   *
+   * @param n_active_cells The number of active cells in the triangulation
+   */
   std::vector<unsigned int>
   get_mobility_status_vector(unsigned int n_active_cells)
   {
     std::vector<unsigned int> status(n_active_cells);
 
-    // Loop over all set with different mobility status
-    for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status;
+    // Loop over all set with different mobility status (except empty)
+    for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
          i_set++)
       {
         for (auto &cell : status_to_cell[i_set])
-          {
-            unsigned int cell_id = cell->active_cell_index();
-            status[cell_id]      = i_set;
-          }
+          status[cell->active_cell_index()] = i_set;
       }
 
     return status;
@@ -214,8 +207,9 @@ private:
   std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell;
   Vector<double>                                                solid_fractions;
 
-  Vector<double>                          granular_temperature_average;
-  LinearAlgebra::distributed::Vector<int> mobility_at_nodes;
+  Vector<double> granular_temperature_average;
+  std::set<typename DoFHandler<dim>::active_cell_iterator> active_ghost_cells;
+  LinearAlgebra::distributed::Vector<int>                  mobility_at_nodes;
 
   double granular_temperature_limit;
   double solid_fraction_limit;

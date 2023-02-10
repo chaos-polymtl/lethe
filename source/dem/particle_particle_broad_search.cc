@@ -159,29 +159,28 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
        cell_neighbor_list_iterator != cells_local_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
-      // The main cell
+      // The main cell & its mobility status
       auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
-
-      // If main cell has status "inactive", skip to next cell
       unsigned int main_cell_mobility_status =
         disable_particle_contact_object.check_cell_mobility(
           *cell_neighbor_iterator);
-      if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
-        {
-          continue;
-        }
 
-      // Particles in the main cell
+      // If main cell has status "inactive", skip to next main cell
+      if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
+        continue;
+
+      // Get particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_main_cell =
           particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
-      const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
-
       // Check to see if the main cell has any particles
+      const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
       if (particles_exist_in_main_cell)
         {
-          // Executed if particles in mobile cells only
+          // Store other particles in the main cell as contact candidates if
+          // main cell is mobile only (this is equivalent to when disabling
+          // particle contacts feature is not enabled)
           if (main_cell_mobility_status == DisableParticleContact<dim>::mobile)
             {
               // Find local-local collision pairs in the main cell, 1st particle
@@ -203,28 +202,26 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
           for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
                ++cell_neighbor_iterator)
             {
+              // Get mobility status of current neighbor cell
               unsigned int neighbor_cell_mobility_status =
                 disable_particle_contact_object.check_cell_mobility(
                   *cell_neighbor_iterator);
 
-              // No storing of particles if main cell is active but neighbor is
-              // not mobile only store (mobile, mobile) or (mobile, active) or
-              // (active, mobile)
+              // No storing of particles as candidate if main cell is active
+              // but neighbor is active or inactive. Particle collisions between
+              // particles in 2 actives cells or with particles in inactive
+              // cells are irrelevant.
+              // In this case, we skip this neighbor cell.
               if (main_cell_mobility_status ==
                     DisableParticleContact<dim>::active &&
                   neighbor_cell_mobility_status !=
                     DisableParticleContact<dim>::mobile)
-                {
-                  continue;
-                }
+                continue;
 
-              // Defining iterator on local particles in the neighbor cell
+              // Store particles in the neighbor cell as contact candidates
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_neighbor_cell =
                   particle_handler.particles_in_cell(*cell_neighbor_iterator);
-
-              // Capturing particle pairs, the first particle in the main
-              // cell and the second particle in the neighbor cells
               for (auto particle_in_main_cell = particles_in_main_cell.begin();
                    particle_in_main_cell != particles_in_main_cell.end();
                    ++particle_in_main_cell)
@@ -246,25 +243,23 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
        cell_neighbor_list_iterator != cells_ghost_neighbor_list.end();
        ++cell_neighbor_list_iterator)
     {
-      // The main cell
+      // The main cell & its mobility status
       auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
-
-      // If main cell has status "inactive", skip to next cell
       unsigned int main_cell_mobility_status =
         disable_particle_contact_object.check_cell_mobility(
           *cell_neighbor_iterator);
+
+      // If main cell has status "inactive", skip to next cell
       if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
-        {
-          continue;
-        }
+        continue;
 
       // Particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_main_cell =
           particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
+      // Check to see if the main cell has any particles
       const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
-
       if (particles_exist_in_main_cell)
         {
           // Going through ghost neighbor cells of the main cell
@@ -277,16 +272,13 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_contact_pairs(
                 disable_particle_contact_object.check_cell_mobility(
                   *cell_neighbor_iterator);
 
-              // No storing of particles if main cell is active but neighbor is
-              // not mobile only store (mobile, mobile) or (mobile, active) or
-              // (active, mobile)
+              // No storing of particles as candidate if main cell is active
+              // but neighbor is active or inactive.
               if (main_cell_mobility_status ==
                     DisableParticleContact<dim>::active &&
                   neighbor_cell_mobility_status !=
                     DisableParticleContact<dim>::mobile)
-                {
-                  continue;
-                }
+                continue;
 
               // Defining iterator on ghost particles in the neighbor cells
               typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -518,27 +510,24 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
        cells_local_periodic_neighbor_list.end();
        ++cell_periodic_neighbor_list_iterator)
     {
-      // The main cell on periodic boundary 0
+      // The main cell on periodic boundary 0 & its mobility status
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
-
-      // If main cell has status "inactive", skip to next cell
       unsigned int main_cell_mobility_status =
         disable_particle_contact_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
+
+      // If main cell has status "inactive", skip to next cell
       if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
-        {
-          continue;
-        }
+        continue;
 
       // Particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_main_cell =
           particle_handler.particles_in_cell(*cell_periodic_neighbor_iterator);
 
-      const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
-
       // Check to see if the main cell has any particles
+      const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
       if (particles_exist_in_main_cell)
         {
           // Going through periodic neighbor cells on the periodic boundary 1
@@ -553,15 +542,12 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                   *cell_periodic_neighbor_iterator);
 
               // No storing of particles if main cell is active but neighbor is
-              // not mobile only store (mobile, mobile) or (mobile, active) or
-              // (active, mobile)
+              // not mobile
               if (main_cell_mobility_status ==
                     DisableParticleContact<dim>::active &&
                   neighbor_cell_mobility_status !=
                     DisableParticleContact<dim>::mobile)
-                {
-                  continue;
-                }
+                continue;
 
               // Defining iterator on local particles in the periodic neighbor
               // cell
@@ -595,18 +581,16 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
        cells_ghost_periodic_neighbor_list.end();
        ++cell_periodic_neighbor_list_iterator)
     {
-      // The main cell
+      // The main cell & its mobility status
       auto cell_periodic_neighbor_iterator =
         cell_periodic_neighbor_list_iterator->begin();
-
-      // If main cell has status "inactive", skip to next cell
       unsigned int main_cell_mobility_status =
         disable_particle_contact_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
+
+      // If main cell has status "inactive", skip to next cell
       if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
-        {
-          continue;
-        }
+        continue;
 
       // Particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -614,7 +598,6 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
           particle_handler.particles_in_cell(*cell_periodic_neighbor_iterator);
 
       const bool particles_exist_in_main_cell = !particles_in_main_cell.empty();
-
       if (particles_exist_in_main_cell)
         {
           // Going through ghost neighbor cells of the main cell
@@ -629,15 +612,12 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                   *cell_periodic_neighbor_iterator);
 
               // No storing of particles if main cell is active but neighbor is
-              // not mobile only store (mobile, mobile) or (mobile, active) or
-              // (active, mobile)
+              // not mobile
               if (main_cell_mobility_status ==
                     DisableParticleContact<dim>::active &&
                   neighbor_cell_mobility_status !=
                     DisableParticleContact<dim>::mobile)
-                {
-                  continue;
-                }
+                continue;
 
               // Defining iterator on ghost particles in the neighbor cells
               typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -677,9 +657,7 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
         disable_particle_contact_object.check_cell_mobility(
           *cell_periodic_neighbor_iterator);
       if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
-        {
-          continue;
-        }
+        continue;
 
       // Particles in the main cell
       typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -702,15 +680,12 @@ ParticleParticleBroadSearch<dim>::find_particle_particle_periodic_contact_pairs(
                   *cell_periodic_neighbor_iterator);
 
               // No storing of particles if main cell is active but neighbor is
-              // not mobile only store (mobile, mobile) or (mobile, active) or
-              // (active, mobile)
+              // not mobile
               if (main_cell_mobility_status ==
                     DisableParticleContact<dim>::active &&
                   neighbor_cell_mobility_status !=
                     DisableParticleContact<dim>::mobile)
-                {
-                  continue;
-                }
+                continue;
 
               // Defining iterator on local particles in the neighbor cells
               typename Particles::ParticleHandler<dim>::particle_iterator_range

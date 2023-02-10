@@ -44,7 +44,6 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <unordered_set>
@@ -319,7 +318,6 @@ private:
   // Storage of statistics about time and contact lists
   statistics contact_list;
   statistics simulation_time;
-  Timer      clock;
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
@@ -327,7 +325,6 @@ private:
   // Dynamic disabling of particle contacts in cells object
   DisableParticleContact<dim> disable_contact_object;
   bool                        has_disabled_contacts;
-  bool                        print_mobility_info = false;
 };
 
 #endif

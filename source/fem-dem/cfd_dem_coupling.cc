@@ -873,11 +873,9 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       if (has_disabled_contacts && !this->simulation_control->is_at_start())
         {
           // Compute cell mobility for all cells
-          const auto parallel_triangulation =
-            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-              &*this->triangulation);
+          disable_contact_object.calculate_average_granular_temperature(
+            this->void_fraction_dof_handler, this->particle_handler);
           disable_contact_object.identify_mobility_status(
-            *parallel_triangulation,
             this->void_fraction_dof_handler,
             this->particle_handler,
             this->mpi_communicator);

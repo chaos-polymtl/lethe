@@ -45,9 +45,6 @@
 
 #include <sys/stat.h>
 
-#include <algorithm>
-#include <numeric>
-
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -502,8 +499,12 @@ DEMSolver<dim>::check_load_balance_dynamic()
     {
       if (has_disabled_contacts)
         {
+          // Process to accumulate the load of each process regards the number
+          // of cells and particles with their selected weight and with a factor
+          // related to the mobility status of the cells
           vector<double> process_to_load_weight(n_mpi_processes, 0.0);
 
+          // Get the particle weight
           const unsigned int particle_weight =
             parameters.model_parameters.load_balance_particle_weight;
 
@@ -515,14 +516,19 @@ DEMSolver<dim>::check_load_balance_dynamic()
             {
               if (cell->is_locally_owned())
                 {
+                  // Apply a weight of 1000 to the cell (default value)
                   process_to_load_weight[this_mpi_process] += 1000;
+
+                  // Get the mobility status of the cell & the number of
+                  // particles
                   const unsigned int mobility_status =
                     mobility_status_vector[cell->active_cell_index()];
                   const unsigned int n_particles_in_cell =
                     particle_handler.n_particles_in_cell(cell);
 
-                  // Applied a factor on the particle weight regards the
-                  // mobility status Factor of 1 when mobile cell
+                  // Apply a factor on the particle weight regards the
+                  // mobility status. alpha = 1 by default for mobile cell, but
+                  // is modified if cell is active or inactive
                   double alpha = 1.0;
                   if (mobility_status == disable_contact_object.active)
                     {
@@ -535,6 +541,8 @@ DEMSolver<dim>::check_load_balance_dynamic()
                                 .inactive_load_balancing_factor;
                     }
 
+                  // Add the particle weight time the number of particles in the
+                  // cell to the processor load
                   process_to_load_weight[this_mpi_process] +=
                     alpha * n_particles_in_cell * particle_weight;
                 }
@@ -550,6 +558,13 @@ DEMSolver<dim>::check_load_balance_dynamic()
                               process_to_load_weight.end()),
             mpi_communicator);
 
+          // Find the minimum load on a process
+          // First it finds the minimum load on a process, but since values in
+          // the vector that are not on this process are 0.0, it looks for
+          // values > 1e-8. After that, it finds the minimum load of all the
+          // process
+          // TODO : check if min(process_to_load_weight[this process]) is not
+          // better, same for max
           minimum_load_on_proc = Utilities::MPI::min(
             *std::min_element(process_to_load_weight.begin(),
                               process_to_load_weight.end(),
@@ -559,6 +574,7 @@ DEMSolver<dim>::check_load_balance_dynamic()
                               }),
             mpi_communicator);
 
+          // Get the total load
           total_load =
             Utilities::MPI::sum(std::accumulate(process_to_load_weight.begin(),
                                                 process_to_load_weight.end(),
@@ -586,6 +602,8 @@ DEMSolver<dim>::check_load_balance_dynamic()
             Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
                                 mpi_communicator);
 
+          // Execute load balancing if difference of load between processors is
+          // larger than threshold of the load per processor
           if ((maximum_particle_number_on_proc -
                minimum_particle_number_on_proc) >
                 parameters.model_parameters.load_balance_threshold *
@@ -1038,9 +1056,7 @@ DEMSolver<dim>::solve()
     {
       simulation_control->print_progression(pcout);
       if (simulation_control->is_verbose_iteration())
-        {
-          report_statistics();
-        }
+        report_statistics();
 
       // Grid motion
       if (parameters.grid_motion.motion_type !=
@@ -1075,16 +1091,11 @@ DEMSolver<dim>::solve()
           if (has_disabled_contacts && !simulation_control->is_at_start())
             {
               // Compute cell mobility for all cells
-              disable_contact_object.identify_mobility_status(triangulation,
-                                                              background_dh,
+              disable_contact_object.calculate_average_granular_temperature(
+                background_dh, particle_handler);
+              disable_contact_object.identify_mobility_status(background_dh,
                                                               particle_handler,
                                                               mpi_communicator);
-
-              if (print_mobility_info)
-                {
-                  disable_contact_object.print_cell_mobility_info(
-                    particle_handler, simulation_control->get_current_time());
-                }
             }
 
           displacement.resize(particle_handler.get_max_local_particle_index());

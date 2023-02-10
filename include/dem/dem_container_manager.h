@@ -143,6 +143,7 @@ public:
    *
    * @param particle_handler The particle handler of particles in the broad
    * search
+   * @param disable_particle_contact_object An object that handle all
    * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    */
 

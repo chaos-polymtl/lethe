@@ -71,7 +71,7 @@ public:
    * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
    * candidate particle-particle collision pairs. These collision pairs will be
    * used in the fine search to investigate if they are in contact or not.
-   *  * This version of the function is used when disabling particle contacts
+   * This version of the function is used when disabling particle contacts
    * regards mobility is enable.
    *
    * @param particle_handler The particle handler of particles in the broad
@@ -79,6 +79,8 @@ public:
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair candidates with other
    * containers with neighbors lists
+   * @param disable_particle_contact_object The object that contains the
+   * information about the mobility status of cells
    */
 
   void
@@ -86,8 +88,6 @@ public:
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     DEMContainerManager<dim> &               container_manager,
     const DisableParticleContact<dim> &      disable_particle_contact_object);
-
-
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -110,12 +110,16 @@ public:
    * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
    * candidate particle-particle collision pairs. These collision pairs will be
    * used in the fine search to investigate if they are in contact or not.
+   * This version of the function is used when disabling particle contacts
+   * regards mobility is enable.
    *
    * @param particle_handler The particle handler of particles in the broad
    * search
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
+   * @param disable_particle_contact_object The object that contains the
+   * information about the mobility status of cells
    */
 
   void
