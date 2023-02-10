@@ -54,7 +54,7 @@ for i in range(0, len(list_vtu)):
 
     #find average 'y' by averaging minimum and maximum y of the bubble
     points_y = pd.DataFrame(df.points[:, 1])
-    phase  = pd.DataFrame(df['phase'])
+    phase  = pd.DataFrame(df['filtered_phase'])
     
     y_max = max(points_y[phase[0] > phase_limit].values)[0]
     y_min = min(points_y[phase[0] > phase_limit].values)[0]

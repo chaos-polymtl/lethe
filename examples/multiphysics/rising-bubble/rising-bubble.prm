@@ -8,7 +8,7 @@ subsection simulation control
   set time end         = 3
   set time step        = 0.001
   set adapt            = true
-  set max cfl          = 0.4
+  set max cfl          = 0.8
   set output name      = rising-bubble
   set output frequency = 20
   set output path      = ./output/
@@ -31,7 +31,7 @@ subsection VOF
     set enable              = true
     set threshold           = 0.5
     set interface sharpness = 1.4
-    set frequency           = 10
+    set frequency           = 100
     set type                = constant
   end
   subsection surface tension force
@@ -41,6 +41,14 @@ subsection VOF
     set curvature filter factor               = 1
     set output auxiliary fields               = true
   end
+
+  subsection phase filtration
+                set type            = tanh
+                set verbosity   = quiet
+
+                # parameter for the tanh filter
+                set beta            = 20
+        end
 end
 
 #---------------------------------------------------
@@ -92,7 +100,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
-  set initial refinement = 6
+  set initial refinement = 7
 end
 
 #---------------------------------------------------
@@ -103,12 +111,12 @@ subsection mesh adaptation
   set type                     = kelly
   set variable                 = phase
   set fraction type            = fraction
-  set max refinement level     = 8
-  set min refinement level     = 6
+  set max refinement level     = 9
+  set min refinement level     = 7
   set frequency                = 1
-  set fraction refinement      = 0.97
-  set fraction coarsening      = 0.02
-  set initial refinement steps = 3
+  set fraction refinement      = 0.999
+  set fraction coarsening      = 0.001
+  set initial refinement steps = 4
 end
 
 #---------------------------------------------------
@@ -157,7 +165,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-6
+  set tolerance      = 1e-5
   set max iterations = 20
   set verbosity      = verbose
 end
@@ -171,8 +179,8 @@ subsection linear solver
   set method                                = gmres
   set max iters                             = 8000
   set relative residual                     = 1e-3
-  set minimum residual                      = 1e-6
-  set ilu preconditioner fill               = 1
+  set minimum residual                      = 1e-7
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 200
