@@ -63,13 +63,13 @@ class lethe_pyvista_tools():
 
         self.pvd_name = pvd_name
         #Read name of files in .pvd file        
-        reader = pv.get_reader(f"{self.path_output}/{pvd_name}")
+        self.pvd_data = pv.get_reader(f"{self.path_output}/{pvd_name}")
 
-        #Create a list of time-steps
-        self.time_list = reader.time_values
+        #Create a list of times
+        self.time_list = self.pvd_data.time_values
 
         #Create a list of all files' names
-        self.list_vtu = [reader.datasets[x].path for x in range(len(reader.datasets))]
+        self.list_vtu = [self.pvd_data.datasets[x].path for x in range(len(self.pvd_data.datasets))]
         self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
 
         if last == None:
@@ -87,6 +87,8 @@ class lethe_pyvista_tools():
 
         #Create list of results
         self.df = []
+
+        print(self.df)
 
         #Read VTU data
         N_vtu = len(self.list_vtu)
@@ -128,7 +130,7 @@ class lethe_pyvista_tools():
         pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
         for i in range(len(self.df)):
             #Write modified VTU file
-            self.df[i].save(f'{self.path_output}/mod_{self.list_vtu[i]}
+            self.df[i].save(f'{self.path_output}/mod_{self.list_vtu[i]}')
 
             pbar.update(1)
         print("Modified .vtu and .pvd files with prefix mod_ successfully written")

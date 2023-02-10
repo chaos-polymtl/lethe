@@ -1,12 +1,12 @@
 
 ==========================================
-Small scale rotating drum
+Small scale rotating drum post-processing
 ==========================================
 
 This is an example of how to post-process results obtained in the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_. 
 
 .. important::
-  This example uses data from the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
+  This example uses the DEM files of the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
 
 .. warning::
   For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, and `tqdm <https://tqdm.github.io/>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal.
@@ -30,7 +30,9 @@ Files used in this example
 Description of the case
 -----------------------
 
-This example post-processes Lethe-DEM data using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_. First, we follow the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_ to obtain the DEM files.
+In this example, we illustrate the mixing inside a rotating drum by coloring the particles at the first time-step according to their radial position. To do so, we post-process Lethe-DEM data using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_
+
+The DEM files used in this example are obtained following the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
 
 .. note::
   It is not necessary to use all mentioned tools, but they are used in this example to show different possibilities of data access according to user's need.
@@ -88,13 +90,42 @@ Next, we read the results into Python:
 
 In the present case, since we want to use data after the full packing of particles only (after the 40th time-step), the parameter ``first`` is set to ``40``.
 
-The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time-step to the object ``particles``. Each time-step corresponds to a PyVista dataset, . adds each time-step dataset to the object ``particles``. To access the datase
+The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time-step to the object ``particles``. Each time-step corresponds to a `PyVista dataset <https://docs.pyvista.org/user-guide/vtk_to_pyvista.html#>`_, and can be accessed using ``particles.df[$TIME-step_NUMBER]``.
 
+.. note:: 
+  
+  Since we set ``first = 40``, ``particles.df[0]`` corresponds to the dataset of the 40th time-step of the simulation.
+
+
+Creation of a new array
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+To color the particles according to their position, we use the function ``array_modifier``, which takes the following arguments:
+
+- ``reference_array_name``: Name of the array used to sort the data. By default: ``"ID"``
+- ``array_name``: Name of the new array. If there is an array with the same name, it will be rewritten according to the other arguments. By default: ``"new_array"``
+- ``restart_array``: If ``True``, zeroes the entire array before modifying it. If one wants to modify part of the array keeping the rest intact, it must be set as ``False``. By default: ``False``
+- ``condition``: Takes a string and uses it in an if condition to modify the array. Variables accepted include ``x``, ``y``, ``z``, ``u``, ``v``, ``w``, ``t``, and any other array (``ID`` for example). It also accepts a combination of them, such as ``"x*w**2 + t > 2 and ID > 0"``. By default: ``""``
+- ``array_values``: New values to the array. This argument accepts a single value (which will be repeated to all data respecting the given ``condition``), a `NumPy <https://numpy.org/>`_ array, or `Python list <https://docs.python.org/3/tutorial/datastructures.html>`_ (with the same length (``len``) of all other arrays in ``particles.df``), or a string such as ``"2*x + t"`` (working just like the ``condition`` argument). By default: ``0``
+- ``standard_value``: If ``restart array = True`` or the array is a completely new array, the ``standard_value`` will be plugged to the entire array before modifying it. By default: ``0``
+- ``time_dependent``: ``array_modifier`` can be time dependent or not. If set ``True``, ``condition`` will be tested to each of the time-steps, while if it is ``False``, it will be applied using the ``reference_time_step`` instead, and the modification will be just replicated to the other time-steps. By default: ``False``
+- ``reference_time_step``: Reference time-step to which the modification will be applied. If ``time_dependent = False``, the result of the modificaition applied to ``reference_time_step`` will be simply replicated to the others. By default: ``0``
+
+The following block of code creates an array named ``particle_color`` using the ``array_modifier`` function, assigning ``1`` to all particles with radial position :math:`> 0.025`:
+
+.. code-block::
+  
+  condition = "(y**2 + z**2)**(1/2) > 0.025"
+  particles.array_modifier(array_name = "particle_color", condition = condition, array_values = 1)
+
+Since the rotating drum is placed along the :math:`x` axis, we use :math:`\sqrt{y^2 + z^2}` to assess the radial position of particles.
+
+To create an additional layer of particles with different colors, we use the same function again with a different condition.
 
 Results
 ---------
 
-The following movie displays the rolling regime inside the rotating drum obtained with a rotational velocity of 1 rad/s. 
+
 
 .. raw:: html
 
@@ -104,8 +135,10 @@ The following movie displays the rolling regime inside the rotating drum obtaine
 Possibilities for extension
 ----------------------------
 
-- Use two types of particles with different radius to prove the Brazil-Nut effect.
-- Perform an unresolved CFD-DEM simulation for wet granular flows to see the impact of the hydrodynamics of the fluid over the particles dynamics.
+- Give a different ``condition`` to create the ``particle_color`` array
+- Use the ``lethe_pyvista_tools`` for a different problem, modifying the ``condition`` accordingly
+- Use the tools in the `PyVista oficial repository <https://docs.pyvista.org>`_ to create screenshots, movies, and plots with the data.
+- Change the rotation velocity and track the mixing of the three layers of particles
 
 
  

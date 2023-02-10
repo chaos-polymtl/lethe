@@ -77,7 +77,7 @@ rate = []
 # Loop through all results
 for i in range(len(particle.list_vtu)):
     # Store results in 'df'
-    exec(f'df = particle.df_{i}')
+    df = particle.df[i]
 
     # Select the data (if particle is completely under hopper outlet)
     vertical_position = df.points[:, normal_vect]

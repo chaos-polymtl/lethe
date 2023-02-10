@@ -58,27 +58,18 @@ class lethe_pyvista_tools():
         #Define path where vtu files are
         self.path_output = self.path_case + self.prm_dict['output path'].replace('.', '')
 
-    def reader(self, i = 0):
-        exec(f'self.df_{i} = pv.read(f\'{self.path_output}/{self.list_vtu[i]}\')')
-
     #Read fluid or particle information from vtu files
     def read_lethe_to_pyvista(self, pvd_name, first = 0, last = None, interval = 1):
 
         self.pvd_name = pvd_name
-        #Read name of files in .pvd file
-        #files = pd.read_csv(f'{self.path_output}{pvd_name}',sep='"',skiprows=6, usecols=[1, 5], names = ['time', 'vtu'])
-        #clean data from NaN's
-        #files = files.dropna()
-        
+        #Read name of files in .pvd file        
         reader = pv.get_reader(f"{self.path_output}/{pvd_name}")
+
         #Create a list of time-steps
         self.time_list = reader.time_values
+
         #Create a list of all files' names
-        start_of_file_name = 'file="'
-        end_of_file_name = '"/>'
-        with open(f'{self.path_output}/{self.pvd_name}') as pvd_in:
-            self.list_vtu = [x[x.find(start_of_file_name)+len(start_of_file_name):x.rfind(end_of_file_name)] for x in pvd_in if("pvtu" in x)]
-        
+        self.list_vtu = [reader.datasets[x].path for x in range(len(reader.datasets))]
         self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
 
         if last == None:
@@ -94,19 +85,21 @@ class lethe_pyvista_tools():
             self.interval = interval
             self.last = last
 
+        #Create empty list to store results
+        self.df = []
+
         #Read VTU data
         N_vtu = len(self.list_vtu)
         pbar = tqdm(total = N_vtu, desc="Reading VTU files")
         for i in range(len(self.list_vtu)):
-            #Read DF from VTU files
-            self.reader(i)
-            #exec(self.df_{i})
+            #Read dataframes from VTU files into df
+            self.df.append(pv.read(f"{self.path_output}/{self.list_vtu[i]}"))
             pbar.update(1)
 
-        print(f'Written .df_timestep from timestep = 0 to timestep = {len(self.list_vtu)-1}')
+        print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
 
     #Write modifications on each df to VTU files
-    def write_vtu(self):
+    def write_vtu(self, prefix = "mod_"):
 
         #Create list of time steps as strings
         time_list_str = [str(i) for i in self.time_list]
@@ -121,37 +114,36 @@ class lethe_pyvista_tools():
                         for timestep in time_list_str:
                             if timestep in line:
                                 line = line.replace('.pvtu', '.0000.vtu')
-                                line = line.replace('file="', 'file="mod_')
+                                line = line.replace('file="', f'file="{prefix}')
                                 pvd_out.write(line)
                                 time_list_str.remove(timestep)
                     
                     #Write config lines
                     else:
                         line = line.replace('.pvtu', '.0000.vtu')
-                        line = line.replace('file="', 'file="mod_')
+                        line = line.replace('file="', f'file="{prefix}')
                         pvd_out.write(line)
 
-        N_vtu = len(self.list_vtu)
+        N_vtu = len(self.df)
         pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
-        for i in range(len(self.list_vtu)):
+        for i in range(len(self.df)):
             #Write modified VTU file
-            exec(f"self.df_{i}.save(f\'{self.path_output}/mod_{self.list_vtu[i]}\')")
-
+            self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
             pbar.update(1)
-        print("Modified .vtu and .pvd files with prefix mod_ successfully written")
+        print(f"Modified .vtu and .pvd files with prefix {prefix} successfully written")
 
     #Sort all data given reference array 
     def sort_by_array(self, reference_array_name):
         
         pbar = tqdm(total = len(self.time_list), desc = f"Sorting dataframe by {reference_array_name}")
         for i in range(len(self.time_list)):
-            exec(f"self.df_{i}.points = self.df_{i}.points[self.df_{i}[reference_array_name].argsort()]")
-            for name in self.df_0.array_names:
-                exec(f"self.df_{i}[name] = self.df_{i}[name][self.df_{i}[reference_array_name].argsort()]")
+            self.df[i].points = self.df[i].points[self.df[i][reference_array_name].argsort()]
+            for name in self.df[0].array_names:
+                self.df[i][name] = self.df[i][name][self.df[i][reference_array_name].argsort()]
             pbar.update(1)
 
     #Creates or modifies array
-    def array_modifier(self, reference_array_name = "ID", new_array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False, write_new_vtu = True):
+    def array_modifier(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
 
         print("Generating array based on condition and array_value")
 
@@ -160,7 +152,7 @@ class lethe_pyvista_tools():
         self.sort_by_array(reference_array_name)
 
         #Length of the new array
-        exec(f'global new_array_len; new_array_len = len(self.df_{reference_time_step}[reference_array_name])')
+        global array_len; array_len = len(self.df[reference_time_step][reference_array_name])
 
         #Time array
         t = self.time_list
@@ -169,7 +161,7 @@ class lethe_pyvista_tools():
         #This step is necessary to allow the usage of
         #the variables x, y, z, u, v, w, t, f_x, f_y, and f_z
         #in the condition argument
-        array_names = self.df_0.array_names
+        array_names = self.df[0].array_names
         array_names.append("x")
         array_names.append("y")
         array_names.append("z")
@@ -188,21 +180,21 @@ class lethe_pyvista_tools():
         #The previous values in it will be preserved.
         #This can be used to apply multiple conditions without affecting
         #Previous modifications, for example. 
-        if restart_array == True or new_array_name not in array_names:
+        if restart_array == True or array_name not in array_names:
             #Create array if does not exist
             new_array = np.repeat(standard_value, new_array_len)
-            print(f"Creating array '{new_array_name}' with standard_value {standard_value}")
+            print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
             #Push array to all pyvista arrays
-            pbar = tqdm(total = len(self.list_vtu), desc = f"Creating array: {new_array_name}")
+            pbar = tqdm(total = len(self.list_vtu), desc = f"Creating array: {array_name}")
             for i in range(len(self.list_vtu)):
-                exec(f'self.df_{i}[new_array_name] = new_array')
+                self.df[i][array_name] = new_array
                 pbar.update(1)
 
         else:
             #Reading array from reference timestep
             print("Reading previous array")
-            new_array = eval(f'self.df_{reference_time_step}[new_array_name]')
+            new_array = self.df[reference_time_step][array_name]
 
 
         #Create a list of array names that are used either in
@@ -219,8 +211,8 @@ class lethe_pyvista_tools():
                 #If one of the variables used in "condition"
                 #is a pyvista array, create a list with the
                 #name of the variable for further manipulation
-                if name in self.df_0.array_names:
-                    exec(f"global {name}; {name} = self.df_{reference_time_step}[name]")
+                if name in self.df[0].array_names:
+                    exec(f"global {name}; {name} = self.df[reference_time_step][name]")
                     new_variables.add(name)
         
         if type(array_values) == type(str()):
@@ -231,8 +223,8 @@ class lethe_pyvista_tools():
                     #If one of the variable used in "array_value"
                     #is a pyvista array, create a list with the
                     #name of the variable for further manipulation
-                    if name in self.df_0.array_names:
-                        exec(f"global {name}; {name} = self.df_{reference_time_step}[name]")
+                    if name in self.df[0].array_names:
+                        exec(f"global {name}; {name} = self.df[reference_time_step][name]")
                         new_variables.add(name)
         
         #If results vary with time,
@@ -243,35 +235,35 @@ class lethe_pyvista_tools():
             pbar = tqdm(total = len(self.time_list), desc = f"Looping through time-steps")
             for i in range(len(self.time_list)):
                 #Assign velocities and positions to variables using the ith time step
-                exec(f'global x; x = self.df_{i}.points[:, 0]')
-                exec(f'global y; y = self.df_{i}.points[:, 1]')
-                exec(f'global z; z = self.df_{i}.points[:, 2]')
+                exec(f"global x; x = self.df[i].points[:, 0]")
+                exec(f'global y; y = self.df[i].points[:, 1]')
+                exec(f'global z; z = self.df[i].points[:, 2]')
 
                 
                 #In case velocity is written with caps V or v
-                if "velocity" in self.df_0.array_names:
-                    exec(f'global u; u = self.df_{i}["velocity"][:, 0]')
-                    exec(f'global v; v = self.df_{i}["velocity"][:, 1]')
-                    exec(f'global w; w = self.df_{i}["velocity"][:, 2]')
+                if "velocity" in self.df[0].array_names:
+                    exec(f'global u; u = self.df[i]["velocity"][:, 0]')
+                    exec(f'global v; v = self.df[i]["velocity"][:, 1]')
+                    exec(f'global w; w = self.df[i]["velocity"][:, 2]')
 
                 
-                elif "Velocity" in self.df_0.array_names:
-                    exec(f'global u; u = self.df_{i}["Velocity"][:, 0]')
-                    exec(f'global v; v = self.df_{i}["Velocity"][:, 1]')
-                    exec(f'global w; w = self.df_{i}["Velocity"][:, 2]')
+                elif "Velocity" in self.df[0].array_names:
+                    exec(f'global u; u = self.df[i]["Velocity"][:, 0]')
+                    exec(f'global v; v = self.df[i]["Velocity"][:, 1]')
+                    exec(f'global w; w = self.df[i]["Velocity"][:, 2]')
 
                 #In case of FemForce
-                if "FemForce" in self.df_0.array_names:
-                    exec(f'global f_x; f_x = self.df_{i}["FemForce"][:, 0]')
-                    exec(f'global f_y; f_y = self.df_{i}["FemForce"][:, 1]')
-                    exec(f'global f_z; f_z = self.df_{i}["FemForce"][:, 2]')
+                if "FemForce" in self.df[0].array_names:
+                    exec(f'global f_x; f_x = self.df[i]["FemForce"][:, 0]')
+                    exec(f'global f_y; f_y = self.df[i]["FemForce"][:, 1]')
+                    exec(f'global f_z; f_z = self.df[i]["FemForce"][:, 2]')
 
                 #Update lists used either in "condition" or "array_value":
                 for variable in new_variables:
-                    exec(f"{variable} = self.df_{i}[variable]")
+                    exec(f"{variable} = self.df[i][variable]")
 
                 #Reading array from reference timestep
-                new_array = eval(f'self.df_{i}[new_array_name]')
+                new_array = self.df[i][array_name]
 
                 #Fill new_array with array_value
                 for k in range(new_array_len):
@@ -284,7 +276,7 @@ class lethe_pyvista_tools():
                             new_array[k] = eval(array_values)
                 
                 #Assign new_array to pyvista dataframe
-                exec(f"self.df_{i}[new_array_name] = new_array")
+                self.df[i][array_name] = new_array
                 pbar.update(1)
 
         #If not time dependent, the condition and array_values will be applied
@@ -297,31 +289,31 @@ class lethe_pyvista_tools():
             print(f"Creating array based on time-step number: {reference_time_step}")
             print(f"Corresponding time: {self.time_list[reference_time_step]}")
             #Assign velocities and positions to variables using reference_time_step
-            exec(f'global x; x = self.df_{reference_time_step}.points[:, 0]')
-            exec(f'global y; y = self.df_{reference_time_step}.points[:, 1]')
-            exec(f'global z; z = self.df_{reference_time_step}.points[:, 2]')
+            exec(f'global x; x = self.df[reference_time_step].points[:, 0]')
+            exec(f'global y; y = self.df[reference_time_step].points[:, 1]')
+            exec(f'global z; z = self.df[reference_time_step].points[:, 2]')
 
             
             #In case velocity is written with caps V or v
-            if "velocity" in self.df_0.array_names:
-                exec(f'global u; u = self.df_{reference_time_step}["velocity"][:, 0]')
-                exec(f'global v; v = self.df_{reference_time_step}["velocity"][:, 1]')
-                exec(f'global w; w = self.df_{reference_time_step}["velocity"][:, 2]')
+            if "velocity" in self.df[0].array_names:
+                exec(f'global u; u = self.df[reference_time_step]["velocity"][:, 0]')
+                exec(f'global v; v = self.df[reference_time_step]["velocity"][:, 1]')
+                exec(f'global w; w = self.df[reference_time_step]["velocity"][:, 2]')
 
             
-            elif "Velocity" in self.df_0.array_names:
-                exec(f'global u; u = self.df_{reference_time_step}["Velocity"][:, 0]')
-                exec(f'global v; v = self.df_{reference_time_step}["Velocity"][:, 1]')
-                exec(f'global w; w = self.df_{reference_time_step}["Velocity"][:, 2]')
+            elif "Velocity" in self.df[0].array_names:
+                exec(f'global u; u = self.df[reference_time_step]["Velocity"][:, 0]')
+                exec(f'global v; v = self.df[reference_time_step]["Velocity"][:, 1]')
+                exec(f'global w; w = self.df[reference_time_step]["Velocity"][:, 2]')
 
             #In case of FemForce
-            if "FemForce" in self.df_0.array_names:
-                exec(f'global f_x; f_x = self.df_{reference_time_step}["FemForce"][:, 0]')
-                exec(f'global f_y; f_y = self.df_{reference_time_step}["FemForce"][:, 1]')
-                exec(f'global f_z; f_z = self.df_{reference_time_step}["FemForce"][:, 2]')
+            if "FemForce" in self.df[0].array_names:
+                exec(f'global f_x; f_x = self.df[reference_time_step]["FemForce"][:, 0]')
+                exec(f'global f_y; f_y = self.df[reference_time_step]["FemForce"][:, 1]')
+                exec(f'global f_z; f_z = self.df[reference_time_step]["FemForce"][:, 2]')
 
             #Fill new_array with array_value
-            pbar = tqdm(total = new_array_len, desc = f"Creating new array named: {new_array_name}")
+            pbar = tqdm(total = new_array_len, desc = f"Creating new array named: {array_name}")
             for k in range(new_array_len):
                 if eval(condition):
                     if type (array_values) == type(int(1)):
@@ -333,18 +325,16 @@ class lethe_pyvista_tools():
                 pbar.update(1)
 
             #Assign new_array to pyvista dataframe
-            exec(f"self.df_{reference_time_step}[new_array_name] = new_array")
+            self.df[reference_time_step][array_name] = new_array
             
             #Use the same values for all time steps
             #Note that "reference_array_name" is used as criterium here
             #for sorting purposes, and that it can be changed
             #according to the user by changin the parameter "reference_array_name"
             #to any other array name in the original pyvista arrays
-            #(self.df_0.array_names, for example)
-            pbar = tqdm(total = len(self.time_list), desc = f"Assigning {new_array_name} to dataframes")
+            #(self.df[0].array_names, for example)
+            pbar = tqdm(total = len(self.time_list), desc = f"Assigning {array_name} to dataframes")
             for i in range(len(self.time_list)):
-                exec(f"self.df_{i}[new_array_name] = self.df_{reference_time_step}[new_array_name]")
+                self.df[i][array_name] = self.df[reference_time_step][array_name]
                 pbar.update(1)
     
-        if write_new_vtu:
-            self.write_vtu()
