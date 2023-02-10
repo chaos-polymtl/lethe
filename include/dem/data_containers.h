@@ -29,6 +29,11 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-braces"
+#include <ankerl/unordered_dense.h>
+#pragma GCC diagnostic pop
+
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -158,7 +163,7 @@ namespace DEM
       particle_wall_in_contact;
 
     // <particle id, <particle id, particle-particle info>>
-    typedef std::unordered_map<
+    typedef ankerl::unordered_dense::map<
       types::particle_index,
       std::unordered_map<types::particle_index,
                          particle_particle_contact_info<dim>>>
