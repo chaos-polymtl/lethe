@@ -5,10 +5,6 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set time step               = 0.005
-  set adapt                   = true
-  set max cfl                 = 100
-  set time end                = 100
   set output frequency        = 1
   set output name             = out
   set output path             = ./output/
@@ -62,7 +58,6 @@ end
 #---------------------------------------------------
 subsection post-processing
     set verbosity = verbose
-    set calculate temperature statistics = true
     set calculate heat flux = true
 end
 
