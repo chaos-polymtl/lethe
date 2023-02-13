@@ -292,7 +292,7 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
     void
-    parse_parameters(ParameterHandler &   prm,
+    parse_parameters(ParameterHandler    &prm,
                      const unsigned int   id,
                      const Dimensionality dimensions);
 
@@ -374,7 +374,7 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &   prm,
+    parse_parameters(ParameterHandler    &prm,
                      const Dimensionality dimensions = Dimensionality());
   };
 
@@ -637,6 +637,12 @@ namespace Parameters
 
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
+
+    // Enable heat flux calculation
+    bool calculate_vof_barycenter;
+
+    // Prefix for the total heat flux output
+    std::string barycenter_output_name;
 
     // Enable smoothing postprocessed vectors and scalars
     bool smoothed_output_fields;

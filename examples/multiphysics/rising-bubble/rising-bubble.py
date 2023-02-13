@@ -6,77 +6,16 @@ Postprocessing code for rising-bubble example
 #############################################################################
 
 '''Importing Libraries'''
-from math import pi
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import pyvista as pv
-
-import glob
-
-import os
 import sys
+import matplotlib.pyplot as plt
 #############################################################################
 
 #Take case path as argument and store it
-output_path = sys.argv[1]
-
-# Read the pvd file to extract the times
-reader = pv.get_reader("output/rising-bubble.pvd")
-# Get active times
-time_list = reader.time_values
+filename = sys.argv[1]
+t,x,y,vx,vy=np.loadtxt(filename,skiprows=1,unpack=True)
 
 
-
-#Define list of VTU files
-list_vtu = os.listdir(output_path)
-list_vtu = [x for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
-
-# Sort VTU files to ensure they are in the same order as the time step
-list_vtu = sorted(list_vtu)
-
-#Set phase_limit to search for maximum x
-phase_limit = 0.5
-
-#Create lists to fill with average y, dy, dt and bubble rise velocity
-y_list = []
-y_diff_list = []
-t_diff_list = []
-bubble_rise_vel = []
-
-#Read vtu data
-for i in range(0, len(list_vtu)):
-    #Read DF from VTK files
-    exec(f'df_{i} = pv.read(f\'{output_path}/{list_vtu[i]}\')')
-
-    #Select a data to apply the slice   
-    exec(f'df = df_{i}')
-
-    #find average 'y' by averaging minimum and maximum y of the bubble
-    points_y = pd.DataFrame(df.points[:, 1])
-    phase  = pd.DataFrame(df['filtered_phase'])
-    
-    y_max = max(points_y[phase[0] > phase_limit].values)[0]
-    y_min = min(points_y[phase[0] > phase_limit].values)[0]
-    y_mean = (y_min + y_max) * 0.5
-    y_list.append(y_mean)
-       
-
-# This array could be smoothed to obtain a better velocity field
-smoothed_y= np.array(y_list)
-
-#Calculate bubble rise velocity
-length = len(smoothed_y)
-bubble_rise_vel = [None] * length
-for i in range(length):
-    if i == 0 :
-        bubble_rise_vel[i] = (smoothed_y[1] - smoothed_y[0]) / (time_list[1]-time_list[0])
-    elif i == (length-1) :
-        bubble_rise_vel[i] = (smoothed_y[-1] -  smoothed_y[-2]) / (time_list[-1]-time_list[-2])
-    else :
-        dt_0 = time_list[i]-time_list[i-1]
-        dt_1 = time_list[i+1]-time_list[i]
-        bubble_rise_vel[i] = (smoothed_y[i+1] - (dt_0/dt_1)*smoothed_y[i-1] - (1-dt_0/dt_1)*smoothed_y[i]) / (dt_1*(1+dt_0/dt_1))
 
 
 #Data from Zahedi, Kronbichler and Kreiss (2012)
@@ -87,7 +26,7 @@ y_vel = [0.004 ,0.017 ,0.029 ,0.041 ,0.053 ,0.066 ,0.081 ,0.095 ,0.109 ,0.122 ,0
 
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
-ax0.plot(time_list, smoothed_y, '-ok', label="Simulation")
+ax0.plot(t, y, '-k', label="Simulation")
 ax0.plot(x_ref, y_ref, 'ro',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax0.set_ylabel(r'Bubble center height')
 ax0.set_xlabel(r'$t$')
@@ -97,7 +36,7 @@ plt.show()
 
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
-ax1.plot(time_list, bubble_rise_vel , '-ok', label="Simulation")
+ax1.plot(t, vy , '-k', label="Simulation")
 ax1.plot(x_vel, y_vel, 'ro',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax1.set_ylabel(r'Rise velocity')
 ax1.set_xlabel(r'$t$')

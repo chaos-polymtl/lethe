@@ -31,7 +31,7 @@ subsection VOF
     set enable              = true
     set threshold           = 0.5
     set interface sharpness = 1.4
-    set frequency           = 100
+    set frequency           = 25
     set type                = constant
   end
   subsection surface tension force
@@ -47,7 +47,7 @@ subsection VOF
                 set verbosity   = quiet
 
                 # parameter for the tanh filter
-                set beta            = 20
+                set beta            = 10
         end
 end
 
@@ -93,6 +93,15 @@ subsection physical properties
 end
 
 #---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                   = quiet
+  set calculate VOF barycenter    = true
+end
+
+#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
@@ -100,7 +109,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
-  set initial refinement = 7
+  set initial refinement = 6
 end
 
 #---------------------------------------------------
@@ -112,11 +121,11 @@ subsection mesh adaptation
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 9
-  set min refinement level     = 7
+  set min refinement level     = 6
   set frequency                = 1
   set fraction refinement      = 0.999
   set fraction coarsening      = 0.001
-  set initial refinement steps = 4
+  set initial refinement steps = 6
 end
 
 #---------------------------------------------------
@@ -135,11 +144,11 @@ subsection boundary conditions
   set number = 4
   subsection bc 0
     set id   = 0
-    set type = noslip
+    set type = slip
   end
   subsection bc 1
     set id   = 1
-    set type = noslip
+    set type = slip
   end
   subsection bc 2
     set id   = 2
@@ -165,7 +174,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-5
+  set tolerance      = 1e-2
   set max iterations = 20
   set verbosity      = verbose
 end
@@ -178,9 +187,9 @@ subsection linear solver
   set verbosity                             = verbose
   set method                                = gmres
   set max iters                             = 8000
-  set relative residual                     = 1e-3
+  set relative residual                     = 1e-4
   set minimum residual                      = 1e-7
-  set ilu preconditioner fill               = 0
+  set ilu preconditioner fill               = 1
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 200

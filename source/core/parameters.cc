@@ -265,7 +265,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -305,7 +305,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &   prm,
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -341,7 +341,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &   prm,
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -392,7 +392,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &   prm,
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
@@ -527,7 +527,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -638,7 +638,7 @@ namespace Parameters
   }
 
   void
-  Fluid::parse_parameters(ParameterHandler &               prm,
+  Fluid::parse_parameters(ParameterHandler                &prm,
                           const unsigned int               id,
                           const Parameters::Dimensionality dimensions)
   {
@@ -1187,6 +1187,18 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable smoothing postprocessed vectors and scalars.");
+
+      prm.declare_entry(
+        "calculate VOF barycenter",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the barycenter location and velocity of the monitored fluid in VOF simulations.");
+
+      prm.declare_entry(
+        "vof barycenter name",
+        "vof_barycenter_information",
+        Patterns::FileName(),
+        "File name output for the barycenter information in VOF simulations");
     }
     prm.leave_subsection();
   }
@@ -1221,9 +1233,11 @@ namespace Parameters
       tracer_output_name          = prm.get("tracer statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
-      temperature_output_name = prm.get("temperature statistics name");
-      calculate_heat_flux     = prm.get_bool("calculate heat flux");
-      heat_flux_output_name   = prm.get("heat flux name");
+      temperature_output_name  = prm.get("temperature statistics name");
+      calculate_heat_flux      = prm.get_bool("calculate heat flux");
+      heat_flux_output_name    = prm.get("heat flux name");
+      calculate_vof_barycenter = prm.get_bool("calculate VOF barycenter");
+      barycenter_output_name   = prm.get("vof barycenter name");
 
 
       // Viscous dissipative fluid

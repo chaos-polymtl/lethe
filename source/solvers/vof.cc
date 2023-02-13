@@ -100,8 +100,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim> &                                 scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  VOFScratchData<dim>                                  &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -191,8 +191,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim> &                                 scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+  VOFScratchData<dim>                                  &scratch_data,
+  StabilizedMethodsCopyData                            &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -338,6 +338,115 @@ VolumeOfFluid<dim>::calculate_L2_error()
 }
 
 template <int dim>
+template <typename VectorType>
+std::pair<Tensor<1, dim>, Tensor<1, dim>>
+VolumeOfFluid<dim>::calculate_barycenter(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const VectorType                    &solution_fd)
+{
+  const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+
+  FEValues<dim> fe_values_vof(*this->mapping,
+                              *this->fe,
+                              *this->cell_quadrature,
+                              update_values | update_quadrature_points |
+                                update_JxW_values);
+
+  std::shared_ptr<VolumeOfFluidFilterBase> filter =
+    VolumeOfFluidFilterBase::model_cast(
+      this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  FEValues<dim> fe_values_fd(*this->mapping,
+                             dof_handler_fd->get_fe(),
+                             *this->cell_quadrature,
+                             update_values);
+
+  const unsigned int          n_q_points = this->cell_quadrature->size();
+  std::vector<double>         phase_values(n_q_points);
+  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
+  std::vector<Point<dim>>     quadrature_locations(n_q_points);
+
+  const FEValuesExtractors::Vector velocity(0);
+
+  Tensor<1, dim> barycenter_location;
+  Tensor<1, dim> barycenter_velocity;
+  double         volume = 0;
+
+
+  std::map<field, std::vector<double>> fields;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_vof.reinit(cell);
+          quadrature_locations = fe_values_vof.get_quadrature_points();
+          fe_values_vof.get_function_values(solution, phase_values);
+
+          // Get fluid dynamics active cell iterator
+          typename DoFHandler<dim>::active_cell_iterator cell_fd(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_fd);
+
+          fe_values_fd.reinit(cell_fd);
+          fe_values_fd[velocity].get_function_values(solution_fd,
+                                                     velocity_values);
+
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              const double JxW = fe_values_vof.JxW(q);
+              const double filtered_phase_value =
+                filter->filter_phase(phase_values[q]);
+
+              volume += (filtered_phase_value)*JxW;
+              barycenter_location +=
+                (filtered_phase_value)*quadrature_locations[q] * JxW;
+              barycenter_velocity +=
+                (filtered_phase_value)*velocity_values[q] * JxW;
+            }
+        }
+    }
+
+  volume = Utilities::MPI::sum(volume, mpi_communicator);
+  barycenter_location =
+    Utilities::MPI::sum(barycenter_location, mpi_communicator) / volume;
+  barycenter_velocity =
+    Utilities::MPI::sum(barycenter_velocity, mpi_communicator) / volume;
+
+  return std::pair<Tensor<1, dim>, Tensor<1, dim>>(barycenter_location,
+                                                   barycenter_velocity);
+}
+
+template std::pair<Tensor<1, 2>, Tensor<1, 2>>
+VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+
+
+template std::pair<Tensor<1, 3>, Tensor<1, 3>>
+VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
+  const TrilinosWrappers::MPI::Vector &solution,
+  const TrilinosWrappers::MPI::Vector &current_solution_fd);
+
+template std::pair<Tensor<1, 2>, Tensor<1, 2>>
+VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
+  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+
+
+template std::pair<Tensor<1, 3>, Tensor<1, 3>>
+VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
+  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
+
+
+template <int dim>
 void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
   const TrilinosWrappers::MPI::Vector &solution,
@@ -379,16 +488,14 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
             {
               switch (monitored_fluid)
                 {
-                  case Parameters::FluidIndicator::fluid0:
-                    {
+                    case Parameters::FluidIndicator::fluid0: {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
                       this->mass_monitored +=
                         this->volume_monitored * density_0[q];
                       break;
                     }
-                  case Parameters::FluidIndicator::fluid1:
-                    {
+                    case Parameters::FluidIndicator::fluid1: {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * phase_values[q];
                       this->mass_monitored +=
@@ -409,12 +516,13 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
     Utilities::MPI::sum(this->mass_monitored, mpi_communicator);
 }
 
+
 template <int dim>
 template <typename VectorType>
 double
 VolumeOfFluid<dim>::find_monitored_fluid_avg_pressure(
   const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType &                   current_solution_fd,
+  const VectorType                    &current_solution_fd,
   const Parameters::FluidIndicator     monitored_fluid)
 {
   QGauss<dim>    quadrature_formula(this->cell_quadrature->size());
@@ -499,14 +607,14 @@ VolumeOfFluid<3>::find_monitored_fluid_avg_pressure<
 template double
 VolumeOfFluid<2>::find_monitored_fluid_avg_pressure<
   TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
+  const TrilinosWrappers::MPI::Vector      &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd,
   const Parameters::FluidIndicator          monitored_fluid);
 
 template double
 VolumeOfFluid<3>::find_monitored_fluid_avg_pressure<
   TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector &     solution,
+  const TrilinosWrappers::MPI::Vector      &solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd,
   const Parameters::FluidIndicator          monitored_fluid);
 
@@ -556,6 +664,10 @@ template <int dim>
 void
 VolumeOfFluid<dim>::postprocess(bool first_iteration)
 {
+  auto         mpi_communicator = this->triangulation->get_communicator();
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+
   if (simulation_parameters.analytical_solution->calculate_error() &&
       !first_iteration)
     {
@@ -591,9 +703,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       if (first_iteration)
         this->mass_first_iteration = this->mass_monitored;
 
-      auto         mpi_communicator = this->triangulation->get_communicator();
-      unsigned int this_mpi_process(
-        Utilities::MPI::this_mpi_process(mpi_communicator));
+
 
       if (this_mpi_process == 0)
         {
@@ -659,12 +769,116 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
           this->table_monitoring_vof.add_value("sharpening_threshold",
                                                this->sharpening_threshold);
 
-          // Save table to .dat
-          std::string filename =
-            this->simulation_parameters.simulation_control.output_folder +
-            "VOF_monitoring_" + fluid_id + ".dat";
-          std::ofstream output(filename.c_str());
-          this->table_monitoring_vof.write_text(output);
+          if (this->simulation_control->get_step_number() %
+              this->simulation_parameters.post_processing.output_frequency)
+            {
+              // Save table to .dat
+              std::string filename =
+                this->simulation_parameters.simulation_control.output_folder +
+                "VOF_monitoring_" + fluid_id + ".dat";
+              std::ofstream output(filename.c_str());
+              this->table_monitoring_vof.write_text(output);
+            }
+        }
+    }
+
+  if (this->simulation_parameters.post_processing.calculate_vof_barycenter)
+    {
+      // Calculate volume and mass (this->mass_monitored)
+      std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
+
+      // Parse fluid present solution to apply_peeling_wetting method
+      if (multiphysics->fluid_dynamics_is_block())
+        {
+          position_and_velocity =
+            calculate_barycenter(this->present_solution,
+                                 *multiphysics->get_block_solution(
+                                   PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          position_and_velocity =
+            calculate_barycenter(this->present_solution,
+                                 *multiphysics->get_solution(
+                                   PhysicsID::fluid_dynamics));
+        }
+      if (this_mpi_process == 0)
+        {
+          if (simulation_parameters.post_processing.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              std::cout << std::endl;
+              std::string independent_column_names = "time";
+
+              std::vector<std::string> dependent_column_names;
+              dependent_column_names.push_back("x_vof");
+              dependent_column_names.push_back("y_vof");
+              if (dim == 3)
+                dependent_column_names.push_back("z_vof");
+              dependent_column_names.push_back("vx_vof");
+              dependent_column_names.push_back("vy_vof");
+              if (dim == 3)
+                dependent_column_names.push_back("vz_vof");
+
+              std::vector<Tensor<1, dim>> position_and_velocity_vector;
+              position_and_velocity_vector.push_back(
+                position_and_velocity.first);
+              position_and_velocity_vector.push_back(
+                position_and_velocity.second);
+
+              std::vector<double> time(
+                this->simulation_control->get_current_time());
+
+              TableHandler table = make_table_scalars_tensors(
+                time,
+                independent_column_names,
+                position_and_velocity_vector,
+                dependent_column_names,
+                this->simulation_parameters.simulation_control.log_precision);
+
+              std::cout << "+------------------------------------------+"
+                        << std::endl;
+              std::cout << "|  VOF Barycenter                          |"
+                        << std::endl;
+              std::cout << "+------------------------------------------+"
+                        << std::endl;
+              table.write_text(std::cout);
+            }
+
+          this->table_barycenter.add_value(
+            "time", simulation_control->get_current_time());
+
+          this->table_barycenter.add_value("x_vof",
+                                           position_and_velocity.first[0]);
+          this->table_barycenter.add_value("y_vof",
+                                           position_and_velocity.first[1]);
+          if constexpr (dim == 3)
+            this->table_barycenter.add_value("z_vof",
+                                             position_and_velocity.first[2]);
+
+          this->table_barycenter.add_value("vx_vof",
+                                           position_and_velocity.second[0]);
+          this->table_barycenter.add_value("vy_vof",
+                                           position_and_velocity.second[1]);
+          if constexpr (dim == 3)
+            this->table_barycenter.add_value("vz_vof",
+                                             position_and_velocity.second[2]);
+
+
+          if (this->simulation_control->get_step_number() %
+                this->simulation_parameters.post_processing.output_frequency ==
+              0)
+            {
+              // Save table to .dat
+              std::string filename =
+                this->simulation_parameters.simulation_control.output_folder +
+                this->simulation_parameters.post_processing
+                  .barycenter_output_name +
+                ".dat";
+              std::ofstream output(filename.c_str());
+              this->table_barycenter.write_text(output);
+              output.close();
+            }
         }
     }
 }
@@ -803,9 +1017,8 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           st_min             = st_avg;
           mass_deviation_min = mass_deviation_avg;
         }
-    }
-  while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
-         nb_search_ite < max_iterations);
+  } while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
+           nb_search_ite < max_iterations);
 
   // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is
@@ -2523,9 +2736,9 @@ VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
 template <int dim>
 void
 VolumeOfFluid<dim>::change_cell_phase(
-  const PhaseChange &                         type,
-  const double &                              new_phase,
-  TrilinosWrappers::MPI::Vector &             solution_pw,
+  const PhaseChange                          &type,
+  const double                               &new_phase,
+  TrilinosWrappers::MPI::Vector              &solution_pw,
   const std::vector<types::global_dof_index> &dof_indices_vof)
 {
   if (type == PhaseChange::wetting)
@@ -2554,9 +2767,9 @@ VolumeOfFluid<dim>::apply_phase_filter()
 {
   // Initializations
   auto mpi_communicator = this->triangulation->get_communicator();
-  TrilinosWrappers::MPI::Vector unfiltered_solution_owned(
+  TrilinosWrappers::MPI::Vector filtered_solution_owned(
     this->locally_owned_dofs, mpi_communicator);
-  unfiltered_solution_owned = this->present_solution;
+  filtered_solution_owned = this->present_solution;
   filtered_solution.reinit(this->present_solution);
 
   // Create filter object
@@ -2564,10 +2777,12 @@ VolumeOfFluid<dim>::apply_phase_filter()
     this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
 
   // Apply filter to solution
-  for (unsigned int p = 0; p < filtered_solution.size(); p++)
+  for (auto p : this->locally_owned_dofs)
     {
-      filtered_solution[p] = filter->filter_phase(unfiltered_solution_owned[p]);
+      filtered_solution_owned[p] =
+        filter->filter_phase(filtered_solution_owned[p]);
     }
+  filtered_solution = filtered_solution_owned;
 
   if (this->simulation_parameters.multiphysics.vof_parameters.phase_filter
         .verbosity == Parameters::Verbosity::verbose)
