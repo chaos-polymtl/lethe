@@ -1565,8 +1565,6 @@ LaplaceAssembly<dim>::assemble_matrix(
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
-  const double       h          = scratch_data.cell_size;
-  const double       viscosity  = scratch_data.viscosity_scale;
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
@@ -1625,7 +1623,6 @@ LaplaceAssembly<dim>::assemble_rhs(
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
-  const double       h          = scratch_data.cell_size;
   auto &             local_rhs  = copy_data.local_rhs;
 
   // Time steps and inverse time steps which is used for stabilization constant
