@@ -220,7 +220,7 @@ public:
 
   /**
    * @brief
-   * Returns the default manifold of the shape if not redefine it is a flat
+   * Returns the default manifold of the shape. If not redefined, it is a flat
    * manifold.
    */
   virtual std::shared_ptr<Manifold<dim - 1, dim>>
@@ -254,7 +254,7 @@ public:
 
   /**
    * @brief
-   * This function applied the inverse rotation of align_and_center
+   * This function applies the inverse operation of align_and_center
    *
    * Returns the centered and aligned point used on the levelset evaluation in
    * the global reference frame.
@@ -270,7 +270,7 @@ public:
    * This function returns a point in a string of text. This is used in the
    * cache of the shape.
    *
-   * @param evaluation_point is the point that is transformed in its text form.
+   * @param evaluation_point is the point that is transformed to its text form.
    */
   std::string
   point_to_string(const Point<dim> &evaluation_point) const;
@@ -838,10 +838,10 @@ class OpenCascadeShape : public Shape<dim>
 {
 public:
   /**
-   * @brief Constructor for a sphere
-   * @param radius The sphere radius
-   * @param position The sphere center
-   * @param orientation The sphere orientation
+   * @brief Constructor for an OpenCascade shape
+   * @param file_name The name of the file describing the shape
+   * @param position The shape center
+   * @param orientation The shape orientation
    */
   OpenCascadeShape<dim>(std::string         file_name,
                         const Point<dim> &  position,
@@ -922,19 +922,19 @@ public:
   static_copy() const override;
 
   /**
-   * @brief Return the analytical gradient of the distance
+   * @brief Return the gradient of the distance
    * @param evaluation_point The point at which the function will be evaluated
    * @param component Not applicable
    */
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
+           
   Tensor<1, dim>
   gradient_with_cell_guess(
     const Point<dim> &                                   evaluation_point,
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int component = 0) override;
-
 
   /**
    * @brief
@@ -947,7 +947,6 @@ public:
 
   void
   set_position(const Point<dim> &position) override;
-
 
 private:
   std::string local_file_name;
@@ -1053,7 +1052,6 @@ public:
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
-
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid

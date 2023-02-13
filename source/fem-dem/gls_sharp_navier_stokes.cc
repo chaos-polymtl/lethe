@@ -132,10 +132,10 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              // Particles define from an stl or en iges dont have a sign
-              // distance function. To identify cell that are cut an special
+              // Particles defined from a stl or an iges don't have a signed
+              // distance function. To identify cells that are cut a special
               // algorithm is required. For this type of particle, no cell are
-              // identify as being inside the particle. This means that the
+              // identified as being inside the particle. This means that the
               // fluid is always solved inside the particle.
               if (particles[p].shape->additional_info_on_shape == "stl" ||
                   particles[p].shape->additional_info_on_shape == "iges")
@@ -158,7 +158,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       // the cell is not cut by the boundary.
                       if (0 == this->fe->system_to_component_index(j).first)
                         {
-                          // Check if we already have check this point in a
+                          // Check if we already have checked this point in a
                           // previous cell. If we did we use the results that we
                           // have previously obtained.
                           auto iterator =

@@ -2261,7 +2261,7 @@ namespace Parameters
         "enable extra verbose output",
         "false",
         Patterns::Bool(),
-        "This parameter enable the output of more information related to the particles in the vtu file.");
+        "This parameter enables the output of more information related to the particles in the vtu file.");
 
 
       prm.enter_subsection("gravity");
