@@ -292,7 +292,7 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
     void
-    parse_parameters(ParameterHandler    &prm,
+    parse_parameters(ParameterHandler &   prm,
                      const unsigned int   id,
                      const Dimensionality dimensions);
 
@@ -374,7 +374,7 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler    &prm,
+    parse_parameters(ParameterHandler &   prm,
                      const Dimensionality dimensions = Dimensionality());
   };
 

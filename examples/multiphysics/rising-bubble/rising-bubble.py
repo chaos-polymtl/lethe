@@ -15,9 +15,6 @@ import matplotlib.pyplot as plt
 filename = sys.argv[1]
 t,x,y,vx,vy=np.loadtxt(filename,skiprows=1,unpack=True)
 
-
-
-
 #Data from Zahedi, Kronbichler and Kreiss (2012)
 x_ref = [0.047, 0.139, 0.232 ,0.324 ,0.416 ,0.508 ,0.601 ,0.693 ,0.785 ,0.878 ,0.97 ,1.062 ,1.154 ,1.247 ,1.339 ,1.431 ,1.524 ,1.616 ,1.708 ,1.8 ,1.893 ,1.985 ,2.077 ,2.17 ,2.262 ,2.354 ,2.446 ,2.539 ,2.631 ,2.723 ,2.816 ,2.908 ,2.979]
 y_ref = [0.501 ,0.505 ,0.513 ,0.525 ,0.54 ,0.557 ,0.576 ,0.597 ,0.618 ,0.641 ,0.663 ,0.685 ,0.707 ,0.729 ,0.75 ,0.77 ,0.791 ,0.811 ,0.83 ,0.849 ,0.868 ,0.886 ,0.904 ,0.922 ,0.94 ,0.958 ,0.976 ,0.993 ,1.011 ,1.029 ,1.047 ,1.064 ,1.078]
@@ -26,7 +23,7 @@ y_vel = [0.004 ,0.017 ,0.029 ,0.041 ,0.053 ,0.066 ,0.081 ,0.095 ,0.109 ,0.122 ,0
 
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
-ax0.plot(t, y, '-k', label="Simulation")
+ax0.plot(t, y, '-k', lw=2, label="Lethe")
 ax0.plot(x_ref, y_ref, 'ro',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax0.set_ylabel(r'Bubble center height')
 ax0.set_xlabel(r'$t$')
@@ -36,7 +33,7 @@ plt.show()
 
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
-ax1.plot(t, vy , '-k', label="Simulation")
+ax1.plot(t, vy , '-k', lw=2, label="Lethe")
 ax1.plot(x_vel, y_vel, 'ro',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax1.set_ylabel(r'Rise velocity')
 ax1.set_xlabel(r'$t$')
