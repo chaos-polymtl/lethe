@@ -1195,7 +1195,7 @@ namespace Parameters
         "Enable calculation of the barycenter location and velocity of the monitored fluid in VOF simulations.");
 
       prm.declare_entry(
-        "vof barycenter name",
+        "VOF barycenter name",
         "vof_barycenter_information",
         Patterns::FileName(),
         "File name output for the barycenter information in VOF simulations");
@@ -1237,7 +1237,7 @@ namespace Parameters
       calculate_heat_flux      = prm.get_bool("calculate heat flux");
       heat_flux_output_name    = prm.get("heat flux name");
       calculate_vof_barycenter = prm.get_bool("calculate VOF barycenter");
-      barycenter_output_name   = prm.get("vof barycenter name");
+      barycenter_output_name   = prm.get("VOF barycenter name");
 
 
       // Viscous dissipative fluid

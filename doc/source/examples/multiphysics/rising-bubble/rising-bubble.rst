@@ -11,16 +11,17 @@ This example simulates a `two-dimensional rising bubble`_.
 Features
 ----------------------------------
 - Solver: ``gls_navier_stokes_2d`` 
-- Two phase flow handled by the Volume of fluids (VOF) approach, with a phase fraction limiter, phase sharpening, and surface tension force
+- Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
-- The use of a python script for post-processing data
+- Post-processing of a fluid barycentric coordinate and velocity
 
 
 ---------------------------
 Files used in this example
 ---------------------------
-``examples/multiphysics/rising-bubble/``
+Parameter file: ``examples/multiphysics/rising-bubble/rising_bubble.prm``
+Python file to generate plot: ``examples/multiphysics/rising-bubble/rising_bubble.py``
 
 
 -----------------------------
@@ -62,14 +63,14 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
       set time end         = 3
       set time step        = 0.001
       set adapt            = true
-      set max cfl          = 0.4
+      set max cfl          = 0.8
       set output name      = rising-bubble
       set output frequency = 20
       set output path      = ./output/
     end
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
+and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``phase filtration``, ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
 
 
 .. code-block:: text
@@ -142,9 +143,9 @@ where :math:`k` is the filtered curvature, and :math:`\eta_k = \beta h^2` is the
   1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
   2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
   3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
-  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations.
+  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
 
-The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example:
+The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example. We also enable phase filtration. This filter the phase field use for the calculation of the physical property by stiffening the value of the phase fraction. We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` documentation for more explanation on the phase filtration.
 
 .. code-block:: text
 
@@ -155,9 +156,16 @@ The interface sharpening method and its parameters are explained in the :doc:`..
     subsection interface sharpening
       set enable              = true
       set threshold           = 0.5
-      set interface sharpness = 1.4
-      set frequency           = 50
+      set interface sharpness = 1.5
+      set frequency           = 25
     end
+
+    subsection phase filtration
+      set type      = tanh
+      set verbosity = quiet
+      set beta = 10
+    end
+
     subsection surface tension force
       set enable                                = true
       set surface tension coefficient           = 24.5
@@ -254,12 +262,29 @@ To capture the bubble adequately, we set ``initial refinement steps = 3`` so tha
       set type                     = kelly
       set variable                 = phase
       set fraction type            = fraction
-      set max refinement level     = 8
+      set max refinement level     = 9
       set min refinement level     = 6
       set frequency                = 1
-      set fraction refinement      = 0.97
-      set fraction coarsening      = 0.02
-      set initial refinement steps = 3
+      set fraction refinement      = 0.999
+      set fraction coarsening      = 0.001
+      set initial refinement steps = 5
+    end
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Post-processing: Fluid barycenter position and velocity
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``vof_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
+
+.. code-block:: text
+
+    #---------------------------------------------------
+    # Post-processing
+    #---------------------------------------------------
+
+    subsection post-processing
+      set verbosity                = quiet
+      set calculate VOF barycenter = true
     end
 
 
@@ -291,27 +316,25 @@ The following image shows the shape and dimensions of the bubble after 3 seconds
     :align: center
     :width: 400
 
-A python post-processing code `(rising-bubble.py)` 
-is added to the example folder to post-process the results.
-Run ``python3 ./rising-bubble.py ./output`` to execute this 
-post-processing code, where ``./output`` is the directory that 
-contains the simulation results. In post-processing, the maximum and minimum axial positions of the light phase (bubble) are tracked to monitor the location of the center of the bubble as a function of time. Then, the bubble rise velocity is calculated as the derivation of the bubble axial position. These results are compared with the simulations of Zahedi, Kronbichler, and Kreiss [`2 <https://doi.org/10.1002/fld.2643>`_]. The following images show the results of these comparisons. The oscillations in the bubble rise velocity are attributed to the different methods used for finding the centroid of the bubble, numerical derivation, and smoothing of the bubble location and rise velocity.
+A python post-processing code `(rising-bubble.py)` is added to the example folder to post-process the data files generated by the barycenter post-processing.
+Run ``python3 ./rising-bubble.py ./output/vof_barycenter_information.dat`` to execute this post-processing code, where ``./output`` is the directory that 
+contains the simulation results. The results for the barycenter position and velocity of the bubble are compared with the simulations of Zahedi, Kronbichler, and Kreiss [`2 <https://doi.org/10.1002/fld.2643>`_]. The following images show the results of these comparisons. The agreement between the two simulation is remarkable considering the coarse mesh used within this example.
 
 .. image:: images/ymean-t.png
     :alt: ymean_t
     :align: center
-    :width: 400
+    :width: 500
 
 .. image:: images/bubble-rise-velocity.png
     :alt: bubble_rise_velocity
     :align: center
-    :width: 400
+    :width: 500
 
 Animation of the rising bubble example:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/h5aRpA4chXE" frameborder="0" allowfullscreen></iframe>
+    <iframe width="800" height="450" src="https://www.youtube.com/embed/PnzoVz8NZyE"  frameborder="0" allowfullscreen></iframe>
 
 
 -----------

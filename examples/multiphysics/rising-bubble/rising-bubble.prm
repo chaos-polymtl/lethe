@@ -30,10 +30,16 @@ subsection VOF
   subsection interface sharpening
     set enable              = true
     set threshold           = 0.5
-    set interface sharpness = 1.4
+    set interface sharpness = 1.5
     set frequency           = 25
-    set type                = constant
   end
+
+  subsection phase filtration
+    set type      = tanh
+    set verbosity = quiet
+    set beta = 10
+  end
+
   subsection surface tension force
     set enable                                = true
     set surface tension coefficient           = 24.5
@@ -41,14 +47,6 @@ subsection VOF
     set curvature filter factor               = 1
     set output auxiliary fields               = true
   end
-
-  subsection phase filtration
-                set type            = tanh
-                set verbosity   = quiet
-
-                # parameter for the tanh filter
-                set beta            = 10
-        end
 end
 
 #---------------------------------------------------
@@ -97,8 +95,8 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                   = quiet
-  set calculate VOF barycenter    = true
+  set verbosity                = quiet
+  set calculate VOF barycenter = true
 end
 
 #---------------------------------------------------
@@ -125,7 +123,7 @@ subsection mesh adaptation
   set frequency                = 1
   set fraction refinement      = 0.999
   set fraction coarsening      = 0.001
-  set initial refinement steps = 6
+  set initial refinement steps = 5
 end
 
 #---------------------------------------------------
