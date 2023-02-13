@@ -65,7 +65,7 @@ The default values of the VOF parameters are given in the text box below.
     end
 
     subsection mass conservation
-      set conservative fluid  = both
+      set conservative fluid    = both
       set monitoring 		= false
       set monitored fluid 	= fluid 1
 
