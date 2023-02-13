@@ -188,8 +188,7 @@ public:
 
 
   /**
-   * @brief
-   * Clear the cache of the shape
+   * @brief Clear the cache used to evaluate the value and vector defining the sign distance function of the shape
    */
   void
   clear_shape_cache();
@@ -368,8 +367,6 @@ public:
   // Location of the pressure reference point relative to the center of the
   // particle. This point is used to define a constant on the pressure.
   Point<dim> pressure_location;
-
-  std::string particle_type;
 };
 
 #endif

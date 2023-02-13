@@ -166,8 +166,7 @@ void
 IBParticle<dim>::initialize_shape(const std::string         type,
                                   const std::vector<double> shape_arguments)
 {
-  particle_type = type;
-  shape         = ShapeGenerator::initialize_shape_from_vector(type,
+  shape = ShapeGenerator::initialize_shape_from_vector(type,
                                                        shape_arguments,
                                                        position,
                                                        orientation);
@@ -180,8 +179,7 @@ void
 IBParticle<dim>::initialize_shape(const std::string type,
                                   const std::string raw_arguments)
 {
-  particle_type = type;
-  shape         = ShapeGenerator::initialize_shape(type,
+  shape = ShapeGenerator::initialize_shape(type,
                                            raw_arguments,
                                            position,
                                            orientation);

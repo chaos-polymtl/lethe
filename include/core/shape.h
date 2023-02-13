@@ -259,7 +259,7 @@ public:
    * Returns the centered and aligned point used on the levelset evaluation in
    * the global reference frame.
    *
-   * @param evaluation_point The point that will be recentered and realigned
+   * @param evaluation_point The point that will be centered and aligned in the global reference frame.
    * @return The aligned and centered point
    */
   Point<dim>
@@ -848,8 +848,8 @@ public:
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
   {
-    // read the shape file name and check if a effective radius as been gi file
-    // name.
+    // First, we read the shape file name and check if an effective radius as
+    // been given in addition to the file name
     std::vector<std::string> shape_arguments_str_list(
       Utilities::split_string_list(file_name, ";"));
     local_file_name = shape_arguments_str_list[0];
@@ -929,7 +929,7 @@ public:
   Tensor<1, dim>
   gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
-           
+
   Tensor<1, dim>
   gradient_with_cell_guess(
     const Point<dim> &                                   evaluation_point,
@@ -949,18 +949,29 @@ public:
   set_position(const Point<dim> &position) override;
 
 private:
+  // Keep in memory the file name of the shape.
   std::string local_file_name;
 #ifdef DEAL_II_WITH_OPENCASCADE
-  TopoDS_Shape                  shape;
+  // The shape define by the opencascade file.
+  TopoDS_Shape shape;
+
+  // We split the shape into its components we store them in these containers.
   std::vector<TopoDS_Compound>  compounds;
   std::vector<TopoDS_CompSolid> compsolids;
   std::vector<TopoDS_Solid>     solids;
   std::vector<TopoDS_Shell>     shells;
   std::vector<TopoDS_Wire>      wires;
-  gp_Pnt                        vertex_position;
-  TopoDS_Vertex                 vertex;
-  BRepExtrema_DistShapeShape    distancetool;
-  BRepExtrema_DistShapeShape    distancetool_shell;
+
+  // The point at which we are going to evaluate the shape.
+  gp_Pnt vertex_position;
+
+  // The shape object equivalent to the point used in the distance evaluation
+  // (vertex)
+  TopoDS_Vertex vertex;
+
+  // The tool used for the distance evaluation.
+  BRepExtrema_DistShapeShape distancetool;
+  BRepExtrema_DistShapeShape distancetool_shell;
 #endif
 };
 

@@ -18,12 +18,12 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
-#include <deal.II/opencascade/manifold_lib.h>
-#include <deal.II/opencascade/utilities.h>
-
 #include <cfloat>
 
 #ifdef DEAL_II_WITH_OPENCASCADE
+#  include <deal.II/opencascade/manifold_lib.h>
+#  include <deal.II/opencascade/utilities.h>
+
 #  include <BRepBuilderAPI_MakeVertex.hxx>
 #  include <BRepExtrema_DistShapeShape.hxx>
 #endif
@@ -53,7 +53,6 @@ Shape<dim>::align_and_center(const Point<dim> &evaluation_point) const
   // Translation and rotation to standard position and orientation for
   // distance calculations
   Point<dim> center_of_rotation = position;
-
   Point<dim> rotated_point;
   Point<dim> translated_point;
 
@@ -132,7 +131,6 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
   // Translation and rotation to standard position and orientation for
   // distance calculations
   Point<dim> center_of_rotation = position;
-
   Point<dim> rotated_point;
   Point<dim> translated_point;
 
@@ -150,8 +148,6 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
   // Selection of the first axis around which to rotate:
   // x -> 0, y -> 1, z -> 2
   // In 2D, only rotation around the z axis is possible
-
-
 
   if constexpr (dim == 2)
     {
@@ -1200,7 +1196,6 @@ RBFShape<dim>::value_with_cell_guess(
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())
     {
-      // std::cout<<"hi value "<<std::endl;
       prepare_iterable_nodes(cell);
       double value = this->value(evaluation_point);
       reset_iterable_nodes(cell);
@@ -1241,9 +1236,8 @@ double
 RBFShape<dim>::value(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
-  Point<dim> centered_point        = evaluation_point;
-  double     bounding_box_distance = bounding_box->value(centered_point);
-  double     value                 = std::max(bounding_box_distance, 0.0);
+  double bounding_box_distance = bounding_box->value(evaluation_point);
+  double value                 = std::max(bounding_box_distance, 0.0);
 
   double value              = 0.;
   double bounding_box_value = bounding_box->value(centered_point);
@@ -1257,7 +1251,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   for (const size_t &node_id : iterable_nodes)
     {
       normalized_distance =
-        (centered_point - rotated_nodes_positions[node_id]).norm() /
+        (evaluation_point - rotated_nodes_positions[node_id]).norm() /
         support_radii[node_id];
       basis =
         evaluate_basis_function(basis_functions[node_id], normalized_distance);
@@ -1294,7 +1288,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         {
           // Calculation of the dr/dx
           relative_position =
-            (centered_point - rotated_nodes_positions[node_id]);
+            (evaluation_point - rotated_nodes_positions[node_id]);
           distance            = (relative_position).norm();
           normalized_distance = distance / support_radii[node_id];
           if (distance > 0.0)
@@ -1405,9 +1399,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
     {
       // We only check for one support point, but we use a high security
       // factor. This allows not to loop over all support points.
-      centered_support_point = support_point;
-      distance =
-        (centered_support_point - rotated_nodes_positions[node_id]).norm();
+      distance = (support_point - rotated_nodes_positions[node_id]).norm();
       // We check if the distance is lower than 1 cell diagonal, since we
       // only check the distance with 1 support point, added to the support
       // radius
