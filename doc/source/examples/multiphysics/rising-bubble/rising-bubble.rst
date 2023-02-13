@@ -334,8 +334,7 @@ Animation of the rising bubble example:
 
 .. raw:: html
 
-    <iframe width="800" height="450" src="https://www.youtube.com/embed/PnzoVz8NZyE"  frameborder="0" allowfullscreen></iframe>
-
+    <iframe width="800" height="450" src="https://www.youtube.com/embed/eIbDitoYsEA"  frameborder="0" allowfullscreen></iframe>
 
 -----------
 References
