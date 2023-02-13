@@ -17,40 +17,40 @@ The default values of the VOF parameters are given in the text box below.
   subsection VOF	
 
     subsection interface sharpening
-      set enable 	= false
-      set frequency   = 10			
-      set interface sharpness    = 2
+      set enable                  = false
+      set frequency               = 10			
+      set interface sharpness     = 2
 
-      set type 	= constant
+      set type                    = constant
 
       # parameter for constant sharpening
-      set threshold   = 0.5
+      set threshold               = 0.5
 
       # parameters for adaptative sharpening
       set threshold max deviation = 0.20
-      set max iterations = 20
+      set max iterations          = 20
 
-      set verbosity 	= quiet
+      set verbosity               = quiet
     end
 
     subsection phase filtration
       set type            = none
-      set verbosity   = quiet
+      set verbosity       = quiet
 
       # parameter for the tanh filter
       set beta            = 10
     end
 
     subsection surface tension force
-      set enable 	= false
-      set verbosity 	= quiet
-      set output auxiliary fields 	          = false
+      set enable                                = false
+      set verbosity                             = quiet
+      set output auxiliary fields               = false
       set surface tension coefficient           = 0.0
       set phase fraction gradient filter factor = 4
-      set curvature filter factor 		  = 1
+      set curvature filter factor               = 1
             
       subsection marangoni effect
-        set enable = false
+        set enable                   = false
         set surface tension gradient = 0.0
       end
     end
