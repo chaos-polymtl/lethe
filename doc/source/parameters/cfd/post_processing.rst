@@ -153,11 +153,11 @@ This subsection controls the post-processing other than the forces and torque on
 
     .. math:: 
 
-        \mathbf{x_b} = \frac{\int_{\Omega} \psi \mathrm{d}\Omega }{\int_{\Omega} 1 \mathrm{d}\Omega}
+        \mathbf{x_b} = \frac{\int_{\Omega} \psi \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
     
     .. math:: 
 
-        \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} 1 \mathrm{d}\Omega}
+        \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
     where :math:`\psi` is the filtered phase indicator.
 
