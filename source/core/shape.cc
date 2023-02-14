@@ -612,11 +612,11 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , iterable_nodes(weights.size())
   , likely_nodes_map()
   , max_number_of_nodes(1)
+  , position_precalculated(position)
+  , orientation_precalculated(orientation)
   , levels_not_precalculated(levels_not_precalculated)
   , maximal_support_radius(
       *std::max_element(std::begin(support_radii), std::end(support_radii)))
-  , position_precalculated(position)
-  , orientation_precalculated(orientation)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -1040,12 +1040,10 @@ bool
 RBFShape<dim>::has_shape_moved()
 {
   if ((this->position - position_precalculated).norm() > 1e-12)
-    {
-      if ((this->orientation - orientation_precalculated).norm() > 1e-12)
-        return true;
-    }
-  else
-    return false;
+    return true;
+  if ((this->orientation - orientation_precalculated).norm() > 1e-12)
+    return true;
+  return false;
 }
 
 
