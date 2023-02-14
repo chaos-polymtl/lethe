@@ -626,7 +626,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
   initialize_bounding_box();
-  this->effective_radius = bounding_box->half_lengths.norm();
+  this->effective_radius =
+    (bounding_box->half_lengths - Point<dim>(maximal_support_radius)).norm();
 }
 
 template <int dim>
@@ -672,7 +673,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
       nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
     }
   initialize_bounding_box();
-  this->effective_radius = bounding_box->half_lengths.norm();
+  this->effective_radius =
+    (bounding_box->half_lengths - Point<dim>(maximal_support_radius)).norm();
 }
 
 template <int dim>
