@@ -22,6 +22,7 @@
 #include <core/rheological_model.h>
 
 #include <solvers/physical_properties_manager.h>
+#include <solvers/vof_filter.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -74,7 +75,7 @@ public:
    * @brief Constructor. The constructor creates the fe_values that will be used
    * to fill the member variables of the scratch. It also allocated the
    * necessary memory for all member variables. However, it does not do any
-   * evalution, since this needs to be done at the cell level.
+   * evaluation, since this needs to be done at the cell level.
    *
    * @param fe The FESystem used to solve the Navier-Stokes equations
    *
@@ -156,7 +157,8 @@ public:
     if (sd.gather_vof)
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
-                 sd.fe_values_vof->get_mapping());
+                 sd.fe_values_vof->get_mapping(),
+                 sd.filter);
     if (sd.gather_filtered_phase_fraction_gradient)
       enable_filtered_phase_fraction_gradient(
         sd.fe_values_filtered_phase_fraction_gradient->get_fe(),
@@ -192,7 +194,7 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content ofthe solutions, previous solutions and
+   * Using the FeValues and the content of the solutions, previous solutions and
    * solutions stages, fills all of the class member of the scratch
    *
    * @param cell The cell over which the assembly is being carried.
@@ -456,12 +458,33 @@ public:
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
+   *
+   * @param phase_filter_parameters Parameters for phase fraction filtering
    */
 
   void
-  enable_vof(const FiniteElement<dim> &fe,
-             const Quadrature<dim> &   quadrature,
-             const Mapping<dim> &      mapping);
+  enable_vof(const FiniteElement<dim> &         fe,
+             const Quadrature<dim> &            quadrature,
+             const Mapping<dim> &               mapping,
+             const Parameters::VOF_PhaseFilter &phase_filter_parameters);
+
+  /**
+   * @brief enable_vof Enables the collection of the VOF data by the scratch - function overload used in the copy constructor of NavierStokesScratchData
+   *
+   * @param fe FiniteElement associated with the VOF.
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   *
+   * @param filter Filter that is applied on the phase fraction
+   */
+
+  void
+  enable_vof(const FiniteElement<dim> &                      fe,
+             const Quadrature<dim> &                         quadrature,
+             const Mapping<dim> &                            mapping,
+             const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
 
   void
   enable_filtered_phase_fraction_gradient(
@@ -946,7 +969,8 @@ public:
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  std::shared_ptr<FEValues<dim>>           fe_values_vof;
+  std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
 
   bool                           gather_filtered_phase_fraction_gradient;
   bool                           gather_curvature;
