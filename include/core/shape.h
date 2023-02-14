@@ -738,8 +738,7 @@ public:
    * @param updated_dof_handler the reference to the new dof_handler
    */
   void
-  update_precalculations(DoFHandler<dim> &             updated_dof_handler,
-                         std::shared_ptr<Mapping<dim>> mapping);
+  update_precalculations(DoFHandler<dim> &updated_dof_handler);
 
 private:
   // The members of this class are all the constituent and operations that are
@@ -945,11 +944,9 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param dof_handler the reference to the new dof_handler
-   * @param mapping the mapping associated to the triangulation
    */
   void
-  update_precalculations(DoFHandler<dim> &dof_handler,
-                         std::shared_ptr<Mapping<dim>> /*mapping*/);
+  update_precalculations(DoFHandler<dim> &dof_handler);
 
   /**
    * @brief Compact Wendland C2 function defined from 0 to 1.
@@ -1282,6 +1279,12 @@ public:
   }
 
   /**
+   * @brief Checks if the particle moved since the last precalculations
+   */
+  bool
+  has_shape_moved();
+
+  /**
    * @brief Checks if possible nodes affecting the current cell have been identified, and returns the proper vector to use for iteration
    * @param cell A likely one where the evaluation point is located
    */
@@ -1304,8 +1307,11 @@ private:
 
   std::map<const typename DoFHandler<dim>::cell_iterator,
            std::shared_ptr<std::vector<size_t>>>
-         likely_nodes_map;
-  size_t max_number_of_nodes;
+                   likely_nodes_map;
+  size_t           max_number_of_nodes;
+  DoFHandler<dim> *dof_handler;
+  Point<dim>       position_precalculated;
+  Tensor<1, 3>     orientation_precalculated;
 
   // levels_not_precalculated is used in order to not precompute and store the
   // likely RBF nodes for the finer levels of cells in the grid. Setting this

@@ -3791,7 +3791,7 @@ GLSSharpNavierStokesSolver<dim>::update_precalculations_for_ib()
                        "update_precalculations_shape_distance");
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
-      particles[p_i].update_precalculations(this->dof_handler, this->mapping);
+      particles[p_i].update_precalculations(this->dof_handler);
     }
 }
 

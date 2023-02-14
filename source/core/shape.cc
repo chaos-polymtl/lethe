@@ -582,20 +582,19 @@ CompositeShape<dim>::static_copy() const
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &             updated_dof_handler,
-  std::shared_ptr<Mapping<dim>> mapping)
+  DoFHandler<dim> &updated_dof_handler)
 {
   for (auto const &[component_id, component] : constituents)
     {
       if (typeid(*component) == typeid(RBFShape<dim>))
         {
           std::static_pointer_cast<RBFShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler, mapping);
+            ->update_precalculations(updated_dof_handler);
         }
       else if (typeid(*component) == typeid(CompositeShape<dim>))
         {
           std::static_pointer_cast<CompositeShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler, mapping);
+            ->update_precalculations(updated_dof_handler);
         }
     }
 }
@@ -616,6 +615,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , levels_not_precalculated(levels_not_precalculated)
   , maximal_support_radius(
       *std::max_element(std::begin(support_radii), std::end(support_radii)))
+  , position_precalculated(position)
+  , orientation_precalculated(orientation)
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -652,9 +653,11 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  iterable_nodes           = nodes_id;
-  max_number_of_nodes      = 1;
-  levels_not_precalculated = std::round(shape_arguments.back());
+  iterable_nodes            = nodes_id;
+  max_number_of_nodes       = 1;
+  position_precalculated    = Point<dim>(this->position);
+  orientation_precalculated = Tensor<1, 3>(this->orientation);
+  levels_not_precalculated  = std::round(shape_arguments.back());
   maximal_support_radius =
     *std::max_element(std::begin(support_radii), std::end(support_radii));
 
@@ -679,6 +682,8 @@ RBFShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  if (has_shape_moved())
+    update_precalculations(*this->dof_handler);
   prepare_iterable_nodes(cell);
   double value = this->value(evaluation_point);
   reset_iterable_nodes(cell);
@@ -692,6 +697,8 @@ RBFShape<dim>::gradient_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  if (has_shape_moved())
+    update_precalculations(*this->dof_handler);
   prepare_iterable_nodes(cell);
   Tensor<1, dim> gradient = this->gradient(evaluation_point);
   reset_iterable_nodes(cell);
@@ -885,13 +892,13 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
-                                      std::shared_ptr<Mapping<dim>> /*mapping*/)
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler)
 {
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
   // reset does not have a significant impact of global computational cost.
   likely_nodes_map.clear();
+  this->dof_handler = &dof_handler;
 
   const int maximal_level = dof_handler.get_triangulation().n_levels();
   for (int level = 0; level < maximal_level + 1; level++)
@@ -939,6 +946,8 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
             ++it;
         }
     }
+  position_precalculated    = Point<dim>(this->position);
+  orientation_precalculated = Tensor<1, 3>(this->orientation);
 }
 
 
@@ -1022,6 +1031,21 @@ RBFShape<dim>::evaluate_basis_function_derivative(
         return RBFShape<dim>::linear_derivative(distance);
     }
 }
+
+
+template <int dim>
+bool
+RBFShape<dim>::has_shape_moved()
+{
+  if ((this->position - position_precalculated).norm() > 1e-12)
+    {
+      if ((this->orientation - orientation_precalculated).norm() > 1e-12)
+        return true;
+    }
+  else
+    return false;
+}
+
 
 template <int dim>
 void

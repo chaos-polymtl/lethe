@@ -247,18 +247,17 @@ IBParticle<dim>::set_orientation(const Tensor<1, 3> new_orientation)
 
 template <int dim>
 void
-IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler,
-                                        std::shared_ptr<Mapping<dim>> mapping)
+IBParticle<dim>::update_precalculations(DoFHandler<dim> &updated_dof_handler)
 {
   if (typeid(*shape) == typeid(RBFShape<dim>))
     {
       std::static_pointer_cast<RBFShape<dim>>(shape)->update_precalculations(
-        updated_dof_handler, mapping);
+        updated_dof_handler);
     }
   else if (typeid(*shape) == typeid(CompositeShape<dim>))
     {
       std::static_pointer_cast<CompositeShape<dim>>(shape)
-        ->update_precalculations(updated_dof_handler, mapping);
+        ->update_precalculations(updated_dof_handler);
     }
 }
 
