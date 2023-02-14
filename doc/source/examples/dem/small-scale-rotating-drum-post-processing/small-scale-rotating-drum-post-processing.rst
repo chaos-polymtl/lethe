@@ -122,15 +122,89 @@ Since the rotating drum is placed along the :math:`x` axis, we use :math:`\sqrt{
 
 To create an additional layer of particles with different colors, we use the same function again with a different condition.
 
+.. code-block::
+
+  condition = "(y**2 + z**2)**(1/2) > 0.04"
+  particles.array_modifier(array_name = "particle_color", condition = condition, array_values = 2, restart_array = False)
+
+This time, we set ``restart_array = False`` to guarantee it is not going to affect the previous modification to the array.
+
+.. Note:: 
+  If we applied the second condition first, since conditions would overlap, intead of 3 layers of particles we would have only two.
+
+
+Visualizing the results
+-------------------------
+
+We have two visualization options. One would be the `PyVista visualization tools <https://docs.pyvista.org/api/plotting/index.html>`_, such as `PyVista Plotter <https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.html#pyvista.Plotter>`_. The other option is to use `ParaView <https://www.paraview.org/>`_.
+
+
+PyVista visualization
+~~~~~~~~~~~~~~~~~~~~~~
+
+To visualize particle data using PyVista, first we need to create a single particle with diameter 1 and a given angular resolution:
+
+.. code-block::
+  
+  sphere = pv.Sphere(theta_resolution=50, phi_resolution=50)
+
+The next step is to use this object as base to represent all particles:
+
+.. code-block::
+  
+  particle_glyph = particles.df[0].glyph(scale='Diameter', geom = sphere)
+
+Here, we are using the first time-step of the data (``particles.df[0]``) as example.
+
+Now that particles are created, we can visualize them:
+
+.. code-block::
+  
+  plt = pv.Plotter()
+  plt.add_mesh(particle_glyph, scalars = "particle_color")
+  plt.show()
+
+This will open one iteractive window such as this one:
+
+.. image:: images/pyvista_window.png
+    :alt: PyVista visualization window
+    :align: center
+
+.. tip:: 
+  It is possible to `create movies with PyVista <https://docs.pyvista.org/api/plotting/_autosummary/pyvista.BasePlotter.open_movie.html#open-movie>`_ looping through time-steps.
+
+
+ParaView visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First, we need to save the new data with the modifications. To do so, we can use the following:
+
+.. code-block::
+  
+  particles.write_vtu(prefix = "mod_")
+
+This will save all data in the output folder of the simulation. All files will have a ``prefix`` and can be opened in ParaView just like any other Lethe simulation.
+
+.. image:: images/paraview_window.png
+    :alt: ParaView
+    :align: center
+
+ 
+
+.. image:: images/paraview_window_zoom.png
+    :alt: ParaView zoom in
+    :align: center
+
 Results
 ---------
 
-
+Following we present one video of the full simulation with particles colored by their initial position.
 
 .. raw:: html
 
   <iframe width="560" height="315" src="https://www.youtube.com/embed/qxO4MD_zg2w" title="Rotating drum - mixing study" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+The simulation results show that the layers in red and green, that is, particles close to the walls, tend to mix faster than the ones in the center.
 
 Possibilities for extension
 ----------------------------

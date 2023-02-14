@@ -182,7 +182,7 @@ class lethe_pyvista_tools():
         #Previous modifications, for example. 
         if restart_array == True or array_name not in array_names:
             #Create array if does not exist
-            new_array = np.repeat(standard_value, new_array_len)
+            new_array = np.repeat(standard_value, array_len)
             print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
             #Push array to all pyvista arrays
@@ -266,7 +266,7 @@ class lethe_pyvista_tools():
                 new_array = self.df[i][array_name]
 
                 #Fill new_array with array_value
-                for k in range(new_array_len):
+                for k in range(array_len):
                     if eval(condition):
                         if type (array_values) == type(int(1)):
                             new_array[k] = array_values
@@ -313,8 +313,8 @@ class lethe_pyvista_tools():
                 exec(f'global f_z; f_z = self.df[reference_time_step]["FemForce"][:, 2]')
 
             #Fill new_array with array_value
-            pbar = tqdm(total = new_array_len, desc = f"Creating new array named: {array_name}")
-            for k in range(new_array_len):
+            pbar = tqdm(total = array_len, desc = f"Creating new array named: {array_name}")
+            for k in range(array_len):
                 if eval(condition):
                     if type (array_values) == type(int(1)):
                         new_array[k] = array_values
