@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       512
    Number of degrees of freedom: 867
-   Volume of triangulation:      2
+   Volume of triangulation:      1
    Number of tracer degrees of freedom: 289
 
 *****************************************************************
