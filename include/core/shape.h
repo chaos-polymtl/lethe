@@ -869,7 +869,7 @@ public:
     std::size_t found_igs_2  = local_file_name.find(".igs");
     std::size_t found_stl    = local_file_name.find(".stl");
 
-    // load the shape with the appropriate tool.
+    // Load the shape with the appropriate tool.
     if (found_step != std::string::npos || found_step_2 != std::string::npos)
       {
         shape = OpenCASCADE::read_STEP(local_file_name);

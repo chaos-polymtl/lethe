@@ -1345,7 +1345,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   // If the enable extra verbose output is activated we add an output field to
   // the results where we identify which particle cuts each cell of the domain.
   if (this->simulation_parameters.particlesParameters
-        ->enable_extra_verbose_output)
+        ->enable_extra_sharp_interface_vtu_output_field)
     {
       // Define cell iterator
       const auto & cell_iterator = this->dof_handler.active_cell_iterators();
