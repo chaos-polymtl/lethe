@@ -63,14 +63,20 @@ class lethe_pyvista_tools():
 
         self.pvd_name = pvd_name
         #Read name of files in .pvd file        
-        reader = pv.get_reader(f"{self.path_output}/{pvd_name}")
+        reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
+
+        #Create list of pvd datasets
+        self.pvd_datasets = reader.datasets
 
         #Create a list of time-steps
         self.time_list = reader.time_values
 
         #Create a list of all files' names
-        self.list_vtu = [reader.datasets[x].path for x in range(len(reader.datasets))]
+        self.list_vtu = [self.pvd_datasets[x].path for x in range(len(self.pvd_datasets))]
         self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
+
+        #Remove repeated
+        self.list_vtu = list(set(self.list_vtu))
 
         if last == None:
             self.list_vtu = self.list_vtu[first::interval]
@@ -101,35 +107,40 @@ class lethe_pyvista_tools():
     #Write modifications on each df to VTU files
     def write_vtu(self, prefix = "mod_"):
 
-        #Create list of time steps as strings
-        time_list_str = [str(i) for i in self.time_list]
+        #List of paths among read data
+        read_files_path_list = [self.pvd_datasets[x].path for x in range(len(self.pvd_datasets))]
 
         #Write modified PVD to match new VTU files
         with open(f'{self.path_output}/{self.pvd_name}') as pvd_in:
             with open(f'{self.path_output}/mod_{self.pvd_name}', 'w') as pvd_out:
                 for line in pvd_in:
-                    #If line refers to vtu file
-                    if "DataSet" in line:
-                        #Check if timestep is within time_list of the read data
-                        for timestep in time_list_str:
-                            if timestep in line:
+                    
+                    #If line refers to a dataset
+                    if "vtu" in line:
+
+                        #For all read files
+                        for path in read_files_path_list:
+
+                            #If line matches one of the files
+                            if path in line:
                                 line = line.replace('.pvtu', '.0000.vtu')
                                 line = line.replace('file="', f'file="{prefix}')
                                 pvd_out.write(line)
-                                time_list_str.remove(timestep)
+                                read_files_path_list.remove(path)
+                                pass
                     
                     #Write config lines
                     else:
-                        line = line.replace('.pvtu', '.0000.vtu')
-                        line = line.replace('file="', f'file="{prefix}')
                         pvd_out.write(line)
-
+        
+        #Write modified VTU file
         N_vtu = len(self.df)
         pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
         for i in range(len(self.df)):
-            #Write modified VTU file
             self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
             pbar.update(1)
+
+
         print(f"Modified .vtu and .pvd files with prefix {prefix} successfully written")
 
     #Sort all data given reference array 
@@ -186,8 +197,8 @@ class lethe_pyvista_tools():
             print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
             #Push array to all pyvista arrays
-            pbar = tqdm(total = len(self.list_vtu), desc = f"Creating array: {array_name}")
-            for i in range(len(self.list_vtu)):
+            pbar = tqdm(total = len(self.df), desc = f"Creating array: {array_name}")
+            for i in range(len(self.df)):
                 self.df[i][array_name] = new_array
                 pbar.update(1)
 
@@ -233,7 +244,7 @@ class lethe_pyvista_tools():
         if time_dependent:
             ("Creating time-dependent array:")
             pbar = tqdm(total = len(self.time_list), desc = f"Looping through time-steps")
-            for i in range(len(self.time_list)):
+            for i in range(len(self.df)):
                 #Assign velocities and positions to variables using the ith time step
                 exec(f"global x; x = self.df[i].points[:, 0]")
                 exec(f'global y; y = self.df[i].points[:, 1]')
@@ -333,8 +344,8 @@ class lethe_pyvista_tools():
             #according to the user by changin the parameter "reference_array_name"
             #to any other array name in the original pyvista arrays
             #(self.df[0].array_names, for example)
-            pbar = tqdm(total = len(self.time_list), desc = f"Assigning {array_name} to dataframes")
-            for i in range(len(self.time_list)):
+            pbar = tqdm(total = len(self.df), desc = f"Assigning {array_name} to dataframes")
+            for i in range(len(self.df)):
                 self.df[i][array_name] = self.df[reference_time_step][array_name]
                 pbar.update(1)
     
