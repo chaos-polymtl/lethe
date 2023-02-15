@@ -2686,7 +2686,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       if (((component_i < dim) || use_ib_for_pressure) &&
                           this->locally_owned_dofs.is_element(
                             global_index_overwrite) &&
-                          ib_done[global_index_overwrite].first == false)
+                          (this->zero_constraints.is_constrained(
+                             local_dof_indices[i]) ||
+                           this->nonzero_constraints.is_constrained(
+                             local_dof_indices[i])) == false)
                         {
                           // We are working on the velocity of the cell cut
                           // loops on the dof that are for vx or vy separately
@@ -2981,60 +2984,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 sum_line;
                         }
 
-
-                      // If the DOFs is hanging put back the equations of the
-                      // hanging nodes
-                      if (this->zero_constraints.is_constrained(
-                            local_dof_indices[i]) &&
-                          this->locally_owned_dofs.is_element(
-                            global_index_overwrite))
-                        {
-                          // Clear the line if there is something on it
-                          this->system_matrix.clear_row(global_index_overwrite);
-                          // Get the constraint equations
-                          auto local_entries =
-                            *this->zero_constraints.get_constraint_entries(
-                              local_dof_indices[i]);
-
-                          double interpolation = 0;
-                          // Write the equation
-                          for (unsigned int j = 0; j < local_entries.size();
-                               ++j)
-                            {
-                              unsigned int col     = local_entries[j].first;
-                              double       entries = local_entries[j].second;
-
-                              interpolation +=
-                                this->evaluation_point(col) * entries;
-                              try
-                                {
-                                  this->system_matrix.add(local_dof_indices[i],
-                                                          col,
-                                                          entries * sum_line);
-                                }
-                              catch (...)
-                                {
-                                  //  If we are here, an error happens when
-                                  //  trying to fill the line in the matrix.
-                                  // For example, this can occur if a particle
-                                  // is close to a wall and we are trying to
-                                  // impose the equation on a DOF that as a
-                                  // boundary condition applied to it. As such,
-                                  // we discard these errors.
-                                }
-                            }
-                          this->system_matrix.add(local_dof_indices[i],
-                                                  local_dof_indices[i],
-                                                  sum_line);
-                          // Write the RHS
-                          this->system_rhs(local_dof_indices[i]) =
-                            -this->evaluation_point(local_dof_indices[i]) *
-                              sum_line +
-                            interpolation * sum_line +
-                            this->zero_constraints.get_inhomogeneity(
-                              local_dof_indices[i]) *
-                              sum_line;
-                        }
 
                       if (component_i == dim &&
                           this->locally_owned_dofs.is_element(

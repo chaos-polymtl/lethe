@@ -238,9 +238,18 @@ Shape<dim>::closest_surface_point(
   double         distance_from_surface;
   actual_gradient       = this->gradient_with_cell_guess(p, cell_guess);
   distance_from_surface = this->value_with_cell_guess(p, cell_guess);
-
-  closest_point =
-    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+  // Check if the gradient is well defined. If the point is on the surface, the
+  // gradient can be badly defined for some shapes. We return the point directly
+  // in these cases since it would be on the surface.
+  if (actual_gradient.norm() > 1e-16)
+    {
+      closest_point =
+        p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+    }
+  else
+    {
+      closest_point = p;
+    }
 }
 
 template <int dim>
@@ -252,8 +261,19 @@ Shape<dim>::closest_surface_point(const Point<dim> &p,
   double         distance_from_surface;
   actual_gradient       = this->gradient(p);
   distance_from_surface = this->value(p);
-  closest_point =
-    p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+
+  // Check if the gradient is well defined. If the point is on the surface, the
+  // gradient can be badly defined for some shapes. We return the point directly
+  // in these cases since it would be on the surface.
+  if (actual_gradient.norm() > 1e-16)
+    {
+      closest_point =
+        p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
+    }
+  else
+    {
+      closest_point = p;
+    }
 }
 
 template <int dim>
