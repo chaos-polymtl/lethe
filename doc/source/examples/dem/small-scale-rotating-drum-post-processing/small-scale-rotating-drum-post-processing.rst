@@ -35,7 +35,7 @@ In this example, we illustrate the mixing inside a rotating drum by coloring the
 The DEM files used in this example are obtained following the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
 
 .. note::
-  It is not necessary to use all mentioned tools, but they are used in this example to show different possibilities of data access according to user's need.
+  It is not necessary to use all mentioned tools, but they are used in this example to show different ways to process the data according to user's need.
 
 
 Python code
