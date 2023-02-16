@@ -2,7 +2,7 @@
 
 Tools to help with simulations post-processing using pyvista.
 
-To use it, download the ```lethe_pyvista_tools.py``` and paste it inside the same directory as your post-processing python file, following the example:
+To use it, copy ```lethe_pyvista_tools.py``` and paste it inside the same directory as your post-processing Python file, following the example:
 
 ```
 Folder

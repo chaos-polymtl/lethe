@@ -5,7 +5,10 @@
 # Pandas: pip install pandas
 # PyVista: pip install pyvista
 
-# To use lethe_pyvista_tools, append the path to the /contrib/postprocessing
+# To use lethe_pyvista_tools, add /contrib/postprocessing to your PythonPATH 
+# adding 
+# ``export PYTHONPATH="${PYTHONPATH}:$LETHE_PATH/contrib/postprocessing"``
+# to your ~/.bashrc, or append the path to the /contrib/postprocessing
 # folder in Lethe to sys 
 import sys
 
@@ -13,7 +16,7 @@ import sys
 path_to_module = '$LETHE_PATH/contrib/postprocessing/'
 sys.path.append(path_to_module)
 
-# or put the "lethe_pyvista_tools.py" file inside
+# or even put the "lethe_pyvista_tools.py" file inside
 # the same directory as your python script and procceed as follows
 
 # This line imports all lethe_pyvista_tools functionalities
