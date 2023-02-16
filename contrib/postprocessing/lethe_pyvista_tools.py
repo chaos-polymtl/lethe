@@ -155,7 +155,7 @@ class lethe_pyvista_tools():
             pbar.update(1)
 
     # Creates or modifies array
-def array_modifier(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
+    def array_modifier(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
 
         print("Generating array based on condition and array_value")
 
