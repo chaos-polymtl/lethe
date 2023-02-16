@@ -626,8 +626,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
   iterable_nodes = nodes_id;
   initialize_bounding_box();
-  this->effective_radius =
-    (bounding_box->half_lengths - Point<dim>(maximal_support_radius)).norm();
+  this->effective_radius = bounding_box->half_lengths.norm();
 }
 
 template <int dim>
@@ -673,8 +672,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
       nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
     }
   initialize_bounding_box();
-  this->effective_radius =
-    (bounding_box->half_lengths - Point<dim>(maximal_support_radius)).norm();
+  this->effective_radius = bounding_box->half_lengths.norm();
 }
 
 template <int dim>
@@ -717,7 +715,7 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value              = 0.;
   double bounding_box_value = bounding_box->value(centered_point);
   if (bounding_box_value > 0.)
-    value = bounding_box_value + maximal_support_radius;
+    return bounding_box_value + bounding_box->half_lengths.norm();
 
   double normalized_distance, basis;
 
@@ -742,7 +740,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
 
   double         bounding_box_distance = bounding_box->value(centered_point);
   Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
-  if (bounding_box_distance > maximal_support_radius)
+  if (bounding_box_distance > 0.)
     return bounding_box_gradient;
 
   double     distance, normalized_distance;
@@ -829,8 +827,7 @@ RBFShape<dim>::initialize_bounding_box()
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
-      half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]) +
-                        maximal_support_radius;
+      half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
     }
   bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
                                                   bounding_box_center,
