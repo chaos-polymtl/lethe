@@ -616,8 +616,7 @@ private:
    * @param solution VOF solution (phase fraction)
    */
   void
-  assemble_projection_phase_fraction(
-    TrilinosWrappers::MPI::Vector &solution);
+  assemble_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
 
   /**
    * @brief Solves smooth phase fraction system.

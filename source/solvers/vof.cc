@@ -957,21 +957,18 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
                                          *this->cell_quadrature,
-                                         update_values | update_JxW_values | update_gradients);
+                                         update_values | update_JxW_values |
+                                           update_gradients);
 
-  const unsigned int dofs_per_cell =
-    this->fe->dofs_per_cell;
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   const unsigned int n_q_points = this->cell_quadrature->size();
-  FullMatrix<double> local_matrix_phase_fraction(
-    dofs_per_cell, dofs_per_cell);
-  Vector<double> local_rhs_phase_fraction(dofs_per_cell);
+  FullMatrix<double> local_matrix_phase_fraction(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_phase_fraction(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  std::vector<double> phi_phase_fraction(
-    dofs_per_cell);
-  std::vector<Tensor<1, dim>> phi_phase_fraction_gradient(
-    dofs_per_cell);
+  std::vector<double>         phi_phase_fraction(dofs_per_cell);
+  std::vector<Tensor<1, dim>> phi_phase_fraction_gradient(dofs_per_cell);
 
   std::vector<double> phase_values(n_q_points);
 
@@ -983,11 +980,10 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
   double cell_volume;
 
   const double phase_fraction_filter_factor =
-    this->simulation_parameters.initial_condition->projection_step_diffusion_factor;
+    this->simulation_parameters.initial_condition
+      ->projection_step_diffusion_factor;
 
-  for (const auto &cell :
-       this->dof_handler
-         .active_cell_iterators())
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -995,26 +991,21 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
 
           cell_volume = cell->measure();
           if (dim == 2)
-            h =
-              std::sqrt(4. * cell_volume /
-                        M_PI) /
-              fe->degree;
+            h = std::sqrt(4. * cell_volume / M_PI) / fe->degree;
           else if (dim == 3)
-            h = pow(6 * cell_volume / M_PI,
-                    1. / 3.) /
-                fe->degree;
+            h = pow(6 * cell_volume / M_PI, 1. / 3.) / fe->degree;
 
           local_matrix_phase_fraction = 0;
           local_rhs_phase_fraction    = 0;
 
           // Get phase fraction values
-          fe_values_phase_fraction.get_function_values(
-            solution, phase_values);
+          fe_values_phase_fraction.get_function_values(solution, phase_values);
 
           double color_function = 0.0;
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              color_function += phase_values[q]*fe_values_phase_fraction.JxW(q);
+              color_function +=
+                phase_values[q] * fe_values_phase_fraction.JxW(q);
             }
 
           color_function /= cell_volume;
@@ -1035,32 +1026,27 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
                       local_matrix_phase_fraction(i, j) +=
-                        (phi_phase_fraction[j] *
-                           phi_phase_fraction[i] +
+                        (phi_phase_fraction[j] * phi_phase_fraction[i] +
                          phase_fraction_filter_factor * h * h *
-                           scalar_product(
-                             phi_phase_fraction_gradient[i],
-                             phi_phase_fraction_gradient
-                               [j])) *
+                           scalar_product(phi_phase_fraction_gradient[i],
+                                          phi_phase_fraction_gradient[j])) *
                         fe_values_phase_fraction.JxW(q);
                     }
 
                   // rhs
                   local_rhs_phase_fraction(i) +=
-                    phi_phase_fraction[i] *
-                    color_function *
+                    phi_phase_fraction[i] * color_function *
                     fe_values_phase_fraction.JxW(q);
                 }
             }
 
-          cell->get_dof_indices(
-            local_dof_indices);
-            this->nonzero_constraints.distribute_local_to_global(
-              local_matrix_phase_fraction,
-              local_rhs_phase_fraction,
-              local_dof_indices,
-              system_matrix_phase_fraction,
-              system_rhs_phase_fraction);
+          cell->get_dof_indices(local_dof_indices);
+          this->nonzero_constraints.distribute_local_to_global(
+            local_matrix_phase_fraction,
+            local_rhs_phase_fraction,
+            local_dof_indices,
+            system_matrix_phase_fraction,
+            system_rhs_phase_fraction);
         }
     }
   system_matrix_phase_fraction.compress(VectorOperation::add);
@@ -1070,15 +1056,14 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution)
+VolumeOfFluid<dim>::solve_projection_phase_fraction(
+  TrilinosWrappers::MPI::Vector &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
 
-  TrilinosWrappers::MPI::Vector
-    completely_distributed_phase_fraction_solution(
-      this->locally_owned_dofs,
-      triangulation->get_communicator());
+  TrilinosWrappers::MPI::Vector completely_distributed_phase_fraction_solution(
+    this->locally_owned_dofs, triangulation->get_communicator());
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,

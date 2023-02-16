@@ -419,49 +419,49 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         std::make_shared<BuoyancyAssembly<dim>>(this->simulation_control));
     }
 
-    if (this->simulation_parameters.multiphysics.VOF)
-      {
-        // Time-stepping schemes
-        if (is_bdf(this->simulation_control->get_assembly_method()))
-          {
-            this->assemblers.push_back(
-              std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
-                this->simulation_control));
-          }
+  if (this->simulation_parameters.multiphysics.VOF)
+    {
+      // Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
+              this->simulation_control));
+        }
 
-        // Surface tension force (STF)
-        if (this->simulation_parameters.multiphysics.vof_parameters
-              .surface_tension_force.enable)
-          {
-            this->assemblers.push_back(
-              std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
-                this->simulation_control, this->simulation_parameters));
+      // Surface tension force (STF)
+      if (this->simulation_parameters.multiphysics.vof_parameters
+            .surface_tension_force.enable)
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
+              this->simulation_control, this->simulation_parameters));
 
-            if (this->simulation_parameters.multiphysics.vof_parameters
-                  .surface_tension_force.enable_marangoni_effect)
-              this->assemblers.push_back(
-                std::make_shared<GLSNavierStokesVOFAssemblerMarangoni<dim>>(
-                  this->simulation_control,
-                  this->simulation_parameters.multiphysics.vof_parameters
-                    .surface_tension_force));
-          }
+          if (this->simulation_parameters.multiphysics.vof_parameters
+                .surface_tension_force.enable_marangoni_effect)
+            this->assemblers.push_back(
+              std::make_shared<GLSNavierStokesVOFAssemblerMarangoni<dim>>(
+                this->simulation_control,
+                this->simulation_parameters.multiphysics.vof_parameters
+                  .surface_tension_force));
+        }
 
-        if (this->simulation_parameters.physical_properties_manager
-              .is_non_newtonian())
-          {
-            // Core assembler with Non newtonian viscosity
-            this->assemblers.push_back(
-              std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
-                this->simulation_control, this->simulation_parameters));
-          }
-        else
-          {
-            // Core assembler
-            this->assemblers.push_back(
-              std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-                this->simulation_control, this->simulation_parameters));
-          }
-      }
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+    }
   else
     {
       // Time-stepping schemes

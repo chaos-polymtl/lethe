@@ -99,8 +99,9 @@ namespace Parameters
 
     // VOF
     Functions::ParsedFunction<dim> VOF;
-    // Bool to apply a Galerkin projection (with a diffusion term) to the VOF intinitial condition
-    bool enable_projection_step;
+    // Bool to apply a Galerkin projection (with a diffusion term) to the VOF
+    // intinitial condition
+    bool   enable_projection_step;
     double projection_step_diffusion_factor;
 
     // Non-Newtonian
@@ -151,11 +152,16 @@ namespace Parameters
       VOF.declare_parameters(prm);
       prm.set("Function expression", "0");
       prm.enter_subsection("projection step");
-      prm.declare_entry("enable","false",Patterns::Bool(),"Apply a projection step with diffusion to smooth the VOF initial condition");
-      prm.declare_entry("diffusion factor",
-                        "1",
-                        Patterns::Double(),
-                        "Factor applied to the diffusion term in the projection step");
+      prm.declare_entry(
+        "enable",
+        "false",
+        Patterns::Bool(),
+        "Apply a projection step with diffusion to smooth the VOF initial condition");
+      prm.declare_entry(
+        "diffusion factor",
+        "1",
+        Patterns::Double(),
+        "Factor applied to the diffusion term in the projection step");
       prm.leave_subsection();
       prm.leave_subsection();
 
@@ -198,7 +204,7 @@ namespace Parameters
         VOF.parse_parameters(prm);
         prm.enter_subsection("projection step");
         {
-          enable_projection_step = prm.get_bool("enable");
+          enable_projection_step           = prm.get_bool("enable");
           projection_step_diffusion_factor = prm.get_double("diffusion factor");
         }
         prm.leave_subsection();
