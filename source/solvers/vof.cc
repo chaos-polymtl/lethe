@@ -953,7 +953,7 @@ void
 VolumeOfFluid<dim>::assemble_projection_phase_fraction(
   TrilinosWrappers::MPI::Vector &solution)
 {
-  // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
+  // Get fe values of VOF phase fraction
   FEValues<dim> fe_values_phase_fraction(*this->mapping,
                                          *this->fe,
                                          *this->cell_quadrature,
