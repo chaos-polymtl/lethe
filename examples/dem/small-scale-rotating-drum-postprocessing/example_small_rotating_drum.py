@@ -15,23 +15,23 @@ from lethe_pyvista_tools import *
 particles = lethe_pyvista_tools(".", "small-rotating-drum-dem.prm")
 
 #Read files and store data to object named "particles"
-#The packing of particles is finished after 40th time step
-#So, it is important to set first to 40
-particles.read_lethe_to_pyvista("out.pvd", first = 40)
+particles.read_lethe_to_pyvista("out.pvd")
 
 
 #State condition for particle_color array creation
 condition = "(y**2 + z**2)**(1/2) > 0.025"
 
 #Create array named particle_color and give the value of 1 to all particles within the given condition
-particles.array_modifier(array_name = "particle_color", condition = condition, array_values = 1, restart_array = True)
+#The packing of particles is finished after 40th time step
+#So, it is important to set reference_time_step to 40
+particles.array_modifier(array_name = "particle_color", condition = condition, array_values = 1, restart_array = True, reference_time_step = 40)
 
 
 #State a second condition to modify particle_color
 condition = "(y**2 + z**2)**(1/2) > 0.04"
 
 #Modify the array to give the value of 2 to all particles withing the new condition
-particles.array_modifier(array_name = "particle_color", condition = condition, array_values = 2, restart_array = False)
+particles.array_modifier(array_name = "particle_color", condition = condition, array_values = 2, restart_array = False, reference_time_step = 40)
 
 
 #VISUALIZE DATA USING PYVISTA:

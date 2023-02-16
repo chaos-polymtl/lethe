@@ -20,10 +20,9 @@ class lethe_pyvista_tools():
         # Create dictionary
         self.prm_dict = {}
 
-
         # Use .prm path as argument
         with open(self.path_case + '/' + self.prm_file) as file:
-            # Loop trhough lines in .prm
+            # Loop through lines in .prm
             for line in file:
                 # If the line has 'subsection' in it (and it is not commented)
                 if 'subsection' in line and not '#' in line:
@@ -160,9 +159,6 @@ class lethe_pyvista_tools():
         print(f"Sort array by {reference_array_name}")
         self.sort_by_array(reference_array_name)
 
-        # Length of the new array
-        global array_len; array_len = len(self.df[reference_time_step][reference_array_name])
-
         # Time array
         t = self.time_list
 
@@ -191,13 +187,13 @@ class lethe_pyvista_tools():
         # Previous modifications, for example. 
         if restart_array == True or array_name not in array_names:
             # Create array if does not exist
-            new_array = np.repeat(standard_value, array_len)
+            new_array = np.repeat(standard_value, len(self.df[reference_time_step][reference_array_name]))
             print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
             # Push array to all pyvista arrays
             pbar = tqdm(total = len(self.df), desc = f"Creating array: {array_name}")
             for i in range(len(self.df)):
-                self.df[i][array_name] = new_array
+                self.df[i][array_name] = np.repeat(standard_value, len(self.df[i][reference_array_name]))
                 pbar.update(1)
 
         else:
@@ -276,7 +272,7 @@ class lethe_pyvista_tools():
                 new_array = self.df[i][array_name]
 
                 # Fill new_array with array_value
-                for k in range(array_len):
+                for k in range(len(new_array)):
                     if eval(condition):
                         if type (array_values) == type(int(1)):
                             new_array[k] = array_values
@@ -327,8 +323,8 @@ class lethe_pyvista_tools():
                 exec(f'global f_z; f_z = self.df[reference_time_step]["FemForce"][:, 2]')
 
             # Fill new_array with array_value
-            pbar = tqdm(total = array_len, desc = f"Creating new array named: {array_name}")
-            for k in range(array_len):
+            pbar = tqdm(total = len(new_array), desc = f"Creating new array named: {array_name}")
+            for k in range(len(new_array)):
                 if eval(condition):
                     if type (array_values) == type(int(1)):
                         new_array[k] = array_values
@@ -350,6 +346,14 @@ class lethe_pyvista_tools():
             # (self.df[0].array_names, for example)
             pbar = tqdm(total = len(self.df), desc = f"Assigning {array_name} to dataframes")
             for i in range(len(self.df)):
-                self.df[i][array_name] = self.df[reference_time_step][array_name]
+                if len(self.df[i][array_name]) > len(self.df[reference_time_step][array_name]):
+                    new_array = np.append(self.df[reference_time_step][array_name], self.df[i][array_name][len(self.df[reference_time_step][array_name]):])
+                    self.df[i][array_name] = new_array
+                elif len(self.df[i][array_name]) < len(self.df[reference_time_step][array_name]):
+                    new_array = self.df[reference_time_step][array_name][:len(self.df[i][reference_array_name])]
+                    self.df[i][array_name] = new_array
+                else:
+                    self.df[i][array_name] = self.df[reference_time_step][array_name]
+
                 pbar.update(1)
     
