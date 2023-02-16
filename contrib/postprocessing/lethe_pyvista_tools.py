@@ -374,6 +374,11 @@ class lethe_pyvista_tools():
             # Assign new_array to pyvista dataframe
             self.df[reference_time_step][array_name] = new_array
 
+            # Create dictionary (map) based on reference_array
+            reference_time_step_dict = dict(zip(self.df[reference_time_step][reference_array_name], self.df[reference_time_step][array_name]))
+            
+            key_list = self.df[reference_time_step][reference_array_name]
+
             # Use the same values for all time steps
             # Note that "reference_array_name" is used as criterium here
             # for sorting purposes, and that it can be changed
@@ -383,12 +388,14 @@ class lethe_pyvista_tools():
             # (self.df[0].array_names, for example)
             pbar = tqdm(total = len(self.df), desc = f"Assigning {array_name} to dataframes")
             for i in range(len(self.df)):
-                
-                indices = []
-                for j in range(len(self.df[i][reference_array_name])):
-                    indices.append(np.where(self.df[i][reference_array_name][j] == self.df[reference_time_step][reference_array_name])[0])
 
-                self.df[i][array_name] = self.df[reference_time_step][array_name][indices]
+                # Find elements in common in current and reference arrays
+                keys, indices, _ = np.intersect1d(self.df[i][reference_array_name], key_list, assume_unique = True, return_indices = True)
+
+                # Assign values
+                for j in range(len(indices)):
+                    self.df[i][array_name][indices[j]] = reference_time_step_dict.get(keys[j])
+                        
 
                 pbar.update(1)
     
