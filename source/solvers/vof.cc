@@ -925,10 +925,10 @@ VolumeOfFluid<dim>::sharpen_interface(TrilinosWrappers::MPI::Vector &solution,
 
 template <int dim>
 void
-VolumeOfFluid<dim>::find_filtered_initial_condition()
+VolumeOfFluid<dim>::smooth_phase_fraction()
 {
-  assemble_filtered_initial_condition(present_solution);
-  solve_filtered_initial_condition(present_solution);
+  assemble_projection_phase_fraction(present_solution);
+  solve_projection_phase_fraction(present_solution);
 }
 
 template <int dim>
@@ -950,7 +950,7 @@ VolumeOfFluid<dim>::find_filtered_interface_curvature()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_filtered_initial_condition(
+VolumeOfFluid<dim>::assemble_projection_phase_fraction(
   TrilinosWrappers::MPI::Vector &solution)
 {
   // Get fe values of VOF phase fraction and phase fraction gradient (pfg)
@@ -983,8 +983,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
   double cell_volume;
 
   const double phase_fraction_filter_factor =
-    this->simulation_parameters.multiphysics.vof_parameters
-      .surface_tension_force.phase_fraction_gradient_filter_factor;
+    this->simulation_parameters.initial_condition->projection_step_diffusion_factor;
 
   for (const auto &cell :
        this->dof_handler
@@ -1038,7 +1037,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
                       local_matrix_phase_fraction(i, j) +=
                         (phi_phase_fraction[j] *
                            phi_phase_fraction[i] +
-                         h * h *
+                         phase_fraction_filter_factor * h * h *
                            scalar_product(
                              phi_phase_fraction_gradient[i],
                              phi_phase_fraction_gradient
@@ -1071,7 +1070,7 @@ VolumeOfFluid<dim>::assemble_filtered_initial_condition(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_filtered_initial_condition(TrilinosWrappers::MPI::Vector &solution)
+VolumeOfFluid<dim>::solve_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
@@ -1876,7 +1875,8 @@ VolumeOfFluid<dim>::set_initial_conditions()
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
 
-  find_filtered_initial_condition();
+  if (simulation_parameters.initial_condition->enable_projection_step)
+    smooth_phase_fraction();
 
   percolate_time_vectors();
 }
