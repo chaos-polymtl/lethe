@@ -154,7 +154,7 @@ class lethe_pyvista_tools():
     def array_modifier(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
         '''
         Parameters are:
-        
+
         reference_array_name = "ID"        -> array to be used as reference to
         create or modify the other. All arrays will be sorted and written according 
         to this one.
@@ -361,7 +361,7 @@ class lethe_pyvista_tools():
                 exec(f'global f_z; f_z = self.df[reference_time_step]["FemForce"][:, 2]')
 
             # Fill new_array with array_value
-            pbar = tqdm(total = len(new_array), desc = f"Creating new array named: {array_name}")
+            print(f"Creating new array named: {array_name}")
             for k in range(len(new_array)):
                 if eval(condition):
                     if type (array_values) == type(int(1)):
@@ -370,7 +370,6 @@ class lethe_pyvista_tools():
                         new_array[k] = array_values[k]
                     else:
                         new_array[k] = eval(array_values)
-                pbar.update(1)
 
             # Assign new_array to pyvista dataframe
             self.df[reference_time_step][array_name] = new_array
@@ -385,19 +384,26 @@ class lethe_pyvista_tools():
             pbar = tqdm(total = len(self.df), desc = f"Assigning {array_name} to dataframes")
             for i in range(len(self.df)):
                 
-                # In case the receiving array is larger than the reference one
-                # use previous values to complete it
-                if len(self.df[i][array_name]) > len(self.df[reference_time_step][array_name]):
-                    new_array = np.append(self.df[reference_time_step][array_name], self.df[i][array_name][len(self.df[reference_time_step][array_name]):])
-                    self.df[i][array_name] = new_array
-
-                # In case the receiving array is smaller than the reference one
-                # use the reference one in the region where it matches
-                elif len(self.df[i][array_name]) < len(self.df[reference_time_step][array_name]):
-                    new_array = self.df[reference_time_step][array_name][:len(self.df[i][reference_array_name])]
-                    self.df[i][array_name] = new_array
-                else:
+                # If reference array match, there is no need in searching for
+                # matching particles, so the modified array will be the same
+                # for the ith and the reference time-step
+                if self.df[i][reference_array_name] == self.df[reference_time_step][reference_array_name]:
+                    
                     self.df[i][array_name] = self.df[reference_time_step][array_name]
+
+                # However, if arrays do not match, the particles' indices are
+                # searched and stored in a list of indices. Then the values are
+                # assinged to the ith df in the correct order
+
+                #It is important to use the exceptions here for performance
+                # purposes. In case dfs do not match, the operation takes way
+                # longer due to the second loop using the np.where() function.
+                else:
+                    indices = []
+                    for j in range(len(self.df[i][reference_array_name])):
+                        indices.append(np.where(self.df[i][reference_array_name][j] == self.df[reference_time_step][reference_array_name])[0])
+
+                    self.df[i][array_name] = self.df[reference_time_step][array_name][indices]
 
                 pbar.update(1)
     
