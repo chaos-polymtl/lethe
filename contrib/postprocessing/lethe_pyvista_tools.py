@@ -384,26 +384,11 @@ class lethe_pyvista_tools():
             pbar = tqdm(total = len(self.df), desc = f"Assigning {array_name} to dataframes")
             for i in range(len(self.df)):
                 
-                # If reference array match, there is no need in searching for
-                # matching particles, so the modified array will be the same
-                # for the ith and the reference time-step
-                if self.df[i][reference_array_name] == self.df[reference_time_step][reference_array_name]:
-                    
-                    self.df[i][array_name] = self.df[reference_time_step][array_name]
+                indices = []
+                for j in range(len(self.df[i][reference_array_name])):
+                    indices.append(np.where(self.df[i][reference_array_name][j] == self.df[reference_time_step][reference_array_name])[0])
 
-                # However, if arrays do not match, the particles' indices are
-                # searched and stored in a list of indices. Then the values are
-                # assinged to the ith df in the correct order
-
-                #It is important to use the exceptions here for performance
-                # purposes. In case dfs do not match, the operation takes way
-                # longer due to the second loop using the np.where() function.
-                else:
-                    indices = []
-                    for j in range(len(self.df[i][reference_array_name])):
-                        indices.append(np.where(self.df[i][reference_array_name][j] == self.df[reference_time_step][reference_array_name])[0])
-
-                    self.df[i][array_name] = self.df[reference_time_step][array_name][indices]
+                self.df[i][array_name] = self.df[reference_time_step][array_name][indices]
 
                 pbar.update(1)
     
