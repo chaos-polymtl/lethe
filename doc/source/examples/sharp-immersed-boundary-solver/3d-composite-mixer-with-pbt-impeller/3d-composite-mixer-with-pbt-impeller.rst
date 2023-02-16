@@ -23,8 +23,8 @@ Features
 Files used in this example
 ----------------------------
 
-* Parameter file: ``/examples/resolved-cfd-dem/3d-composite-mixer-with-pbt-impeller/mixer.prm``
-* Composite geometry file: ``/examples/resolved-cfd-dem/3d-composite-mixer-with-pbt-impeller/impeller.composite``
+* Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/mixer.prm``
+* Composite geometry file: ``/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/impeller.composite``
 
 :raw-html:`<br />`
 

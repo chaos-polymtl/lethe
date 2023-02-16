@@ -206,9 +206,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*.
 
     * Composite: *file name*.
-    
-    * Opencascade: *file name*.
-
+   
     The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these two boolean operations have been implemented. Here is the content of a file that defines a cylinder topped with a sphere:
 
     .. code-block:: text
