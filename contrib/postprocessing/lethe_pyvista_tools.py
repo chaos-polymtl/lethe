@@ -76,9 +76,6 @@ class lethe_pyvista_tools():
         self.list_vtu = [self.pvd_datasets[x].path for x in range(len(self.pvd_datasets))]
         self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
 
-        # Remove repeated
-        self.list_vtu = list(set(self.list_vtu))
-
         if last == None:
             self.list_vtu = self.list_vtu[first::interval]
             self.time_list = self.time_list[first::interval]
