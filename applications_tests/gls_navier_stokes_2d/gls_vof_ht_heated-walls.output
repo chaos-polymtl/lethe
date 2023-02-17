@@ -16,28 +16,28 @@ L2 error phase : 0.00208465
 Transient iteration : 2        Time : 0.4      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.0934076
+L2 error temperature : 0.0934075
 L2 error phase : 0.00208505
 
 *****************************************************************
 Transient iteration : 3        Time : 0.6      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.0223098
+L2 error temperature : 0.0223097
 L2 error phase : 0.00208424
 
 *****************************************************************
 Transient iteration : 4        Time : 0.8      Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.00467604
+L2 error temperature : 0.00467602
 L2 error phase : 0.00208425
 
 *****************************************************************
 Transient iteration : 5        Time : 1        Time step : 0.2      CFL : 0       
 *****************************************************************
 L2 error velocity : 0
-L2 error temperature : 0.000923592
+L2 error temperature : 0.00092359
 L2 error phase : 0.00208425
  time  error_velocity error_pressure 
 0.2000 0.000000e+00   0.0000         
@@ -47,10 +47,10 @@ L2 error phase : 0.00208425
 1.0000 0.000000e+00   0.0000         
 cells error_temperature 
 1024  4.131917e-01      
-1024  9.340761e-02      
-1024  2.230979e-02      
-1024  4.676037e-03      
-1024  9.235920e-04      
+1024  9.340749e-02      
+1024  2.230974e-02      
+1024  4.676022e-03      
+1024  9.235898e-04      
  time  error_phase  
 0.2000 2.084655e-03 
 0.4000 2.085054e-03 
