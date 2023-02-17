@@ -1192,7 +1192,7 @@ namespace Parameters
         "calculate VOF barycenter",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the barycenter location and velocity of the monitored fluid in VOF simulations.");
+        "Enable calculation of the barycenter location and velocity of the fluid 1 in VOF simulations.");
 
       prm.declare_entry(
         "VOF barycenter name",

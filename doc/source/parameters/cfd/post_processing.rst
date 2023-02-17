@@ -151,15 +151,15 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity. This is used to identify the center of fluid 1 in VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
-    .. math:: 
+  .. math::
 
-        \mathbf{x_b} = \frac{\int_{\Omega} \psi \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
-    
-    .. math:: 
+      \mathbf{x_b} = \frac{\int_{\Omega} \psi \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
-        \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+  .. math::
 
-    where :math:`\psi` is the filtered phase indicator.
+      \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+
+  where :math:`\psi` is the filtered phase indicator.
 
 
 * ``temperature statistics name``: output filename for temperature statistics calculations.

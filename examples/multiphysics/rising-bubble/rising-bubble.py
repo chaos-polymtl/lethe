@@ -41,7 +41,7 @@ ax0.plot(t, y, '-k', lw=2, label="Lethe")
 ax0.plot(x_ref_ZKR, y_ref_ZKR, 'o',label="Reference - Zahedi, Kronbichler and Kreiss (2012)")
 ax0.plot(x_ref_H, y_ref_H, 's',alpha=0.8,label="Reference - Hysing et al. (2009)")
 
-ax0.set_ylabel(r'Bubble center height')
+ax0.set_ylabel(r'Bubble barycenter height')
 ax0.set_xlabel(r'$t$')
 ax0.legend(loc="upper left")
 fig0.savefig(f'./ymean-t.png')

@@ -163,7 +163,7 @@ The interface sharpening method and its parameters are explained in the :doc:`..
     subsection phase filtration
       set type      = tanh
       set verbosity = quiet
-      set beta = 10
+      set beta      = 10
     end
 
     subsection surface tension force
@@ -309,7 +309,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results
 -------
 
-The following image shows the shape and dimensions of the bubble after 3 seconds of simulation, and compares it with results of [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_, `2 <https://doi.org/10.1002/fld.2643>`_, `3 <https://doi.org/10.1002/fld.1934>`_ ].
+The following image shows the shape and dimensions of the bubble after 3 seconds of simulation, and compares it with results of [`2 <https://doi.org/10.1002/fld.2643>`_, `3 <https://doi.org/10.1002/fld.1934>`_ ].
 
 .. image:: images/bubble.png
     :alt: bubble

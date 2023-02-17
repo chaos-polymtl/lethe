@@ -789,7 +789,6 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       // Calculate volume and mass (this->mass_monitored)
       std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
 
-      // Parse fluid present solution to apply_peeling_wetting method
       if (multiphysics->fluid_dynamics_is_block())
         {
           position_and_velocity =
