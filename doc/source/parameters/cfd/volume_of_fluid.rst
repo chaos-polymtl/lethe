@@ -7,7 +7,7 @@ In this method, the two fluids considered are given index of :math:`0` and :math
 
 .. note::
 
-  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the VOF initial conditions and Physical properties - :ref:`two phase simulations` for the definition of the physical properties of both fluids.  Do not forget to ``set VOF = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the VOF initial conditions and :ref:`Physical properties - Two phase simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set VOF = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
 
 The default values of the VOF parameters are given in the text box below.
@@ -146,9 +146,6 @@ The default values of the VOF parameters are given in the text box below.
 
     where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, and :math:`\phi` is the phase fraction.
 
-  .. tip::
-
-    Use the procedure suggested in: :ref:`choosing values for the surface tension force filters`.
 
   * ``curvature filter factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_k = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature (:math:`k`), following the equation:
 
