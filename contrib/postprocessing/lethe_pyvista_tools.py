@@ -392,7 +392,7 @@ class lethe_pyvista_tools():
 
                 # Find elements in common in current and reference arrays
                 keys, indices, _ = np.intersect1d(self.df[i][reference_array_name], key_list, assume_unique = True, return_indices = True)
-                self.df[i][array_name] = itemgetter(*keys)(reference_time_step_dict)
+                self.df[i][array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
 
                 pbar.update(1)
     
