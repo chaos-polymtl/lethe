@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pyvista as pv
 from tqdm import tqdm
+from operator import itemgetter
 
 # Define class:
 class lethe_pyvista_tools():
@@ -391,10 +392,7 @@ class lethe_pyvista_tools():
 
                 # Find elements in common in current and reference arrays
                 keys, indices, _ = np.intersect1d(self.df[i][reference_array_name], key_list, assume_unique = True, return_indices = True)
-
-                # Assign values
-                for j in range(len(indices)):
-                    self.df[i][array_name][indices[j]] = reference_time_step_dict.get(keys[j])
+                self.df[i][array_name] = itemgetter(*keys)(reference_time_step_dict)
                         
 
                 pbar.update(1)
