@@ -429,22 +429,6 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control));
         }
 
-      if (this->simulation_parameters.physical_properties_manager
-            .is_non_newtonian())
-        {
-          // Core assembler with Non newtonian viscosity
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
-              this->simulation_control, this->simulation_parameters));
-        }
-      else
-        {
-          // Core assembler
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-              this->simulation_control, this->simulation_parameters));
-        }
-
       // Surface tension force (STF)
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -460,6 +444,22 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
                 this->simulation_control,
                 this->simulation_parameters.multiphysics.vof_parameters
                   .surface_tension_force));
+        }
+
+      if (this->simulation_parameters.physical_properties_manager
+            .is_non_newtonian())
+        {
+          // Core assembler with Non newtonian viscosity
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
         }
     }
   else
