@@ -591,6 +591,12 @@ private:
                     const bool                     sharpen_previous_solutions);
 
   /**
+   * @brief Carries out the smoothing phase fraction with a projection step (to avoid a staircase interface).
+   */
+  void
+  smooth_phase_fraction();
+
+  /**
    * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
    * fraction is used in find_filtered_interface_curvature to find interface
    * curvature (k).
@@ -603,6 +609,21 @@ private:
    */
   void
   find_filtered_interface_curvature();
+
+  /**
+   * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.
+   *
+   * @param solution VOF solution (phase fraction)
+   */
+  void
+  assemble_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
+
+  /**
+   * @brief Solves smooth phase fraction system.
+   * @param solution VOF solution (phase fraction)
+   */
+  void
+  solve_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
 
   /**
    * @brief Assembles the matrix and rhs for calculation of filtered phase gradient (fpg).

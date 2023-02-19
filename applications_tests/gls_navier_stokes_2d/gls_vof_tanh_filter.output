@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 198
    Volume of triangulation:      100
    Number of VOF degrees of freedom: 66
-Filtered phase values:
+Filtered phase values: 
 0.999665
 0.999665
 0.999665
@@ -72,15 +72,9 @@ Filtered phase values:
 0.00033535
 
 *****************************************************************
-Transient iteration : 1        Time : 0.05     Time step : 0.05     CFL : 0
+Transient iteration : 1        Time : 0.05     Time step : 0.05     CFL : 0       
 *****************************************************************
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 0 steps
-  -Tolerance of iterative solver is : 0.00402676
-  -Iterative solver took : 4 steps
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 4 steps
-Filtered phase values:
+Filtered phase values: 
 0.999665
 0.999665
 0.999665
@@ -149,20 +143,14 @@ Filtered phase values:
 0.00033535
 
 *****************************************************************
-Transient iteration : 2        Time : 0.1      Time step : 0.05     CFL : 0.00164189
+Transient iteration : 2        Time : 0.1      Time step : 0.05     CFL : 0.00164191
 *****************************************************************
-  -Tolerance of iterative solver is : 6.37983e-05
-  -Iterative solver took : 1 steps
-  -Tolerance of iterative solver is : 0.00335568
-  -Iterative solver took : 3 steps
-  -Tolerance of iterative solver is : 1e-05
-  -Iterative solver took : 4 steps
-Filtered phase values:
+Filtered phase values: 
 0.999663
 0.999667
 0.999664
 0.999666
-0.000340697
+0.000340696
 0.999664
 0.000335285
 0.999664
@@ -178,9 +166,9 @@ Filtered phase values:
 0.999657
 0.000335345
 0.000335369
-0.000335332
+0.000335331
 0.999656
-0.000335149
+0.00033515
 0.000335404
 0.000335335
 0.000335146
@@ -188,15 +176,15 @@ Filtered phase values:
 0.000335341
 0.000335359
 0.000335358
-0.000326623
+0.00032663
 0.000335312
-0.000329149
-0.000336351
-0.000335081
+0.000329154
+0.00033635
+0.000335082
 0.000335427
-0.000337726
+0.000337725
 0.00033536
-0.000337031
+0.00033703
 0.000335083
 0.000335422
 0.00033533
