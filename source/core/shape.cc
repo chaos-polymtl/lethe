@@ -377,6 +377,11 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
                              const unsigned int /*component*/) const
 {
 #ifdef DEAL_II_WITH_OPENCASCADE
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator != this->value_cache.end())
+    return iterator->second;
+
   Point<dim>    centered_point = this->align_and_center(evaluation_point);
   Point<dim>    projected_point;
   auto          pt     = OpenCASCADE::point(centered_point);
@@ -1256,6 +1261,11 @@ double
 RBFShape<dim>::value(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator != this->value_cache.end())
+    return iterator->second;
+
   double bounding_box_distance = bounding_box->value(evaluation_point);
   double value                 = std::max(bounding_box_distance, 0.0);
 
