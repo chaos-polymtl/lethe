@@ -493,9 +493,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
-  const double phase_0_density = scratch_data.density_0[0];
-  const double phase_1_density = scratch_data.density_1[0];
-
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -508,9 +505,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Gather density
-      double density_eq = scratch_data.density[q];
-
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &phase_gradient_value =
@@ -518,8 +512,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> tmp_STF =
-        -2.0 * surface_tension_coef * curvature_value * phase_gradient_value *
-        (density_eq / (phase_0_density + phase_1_density));
+        -surface_tension_coef * curvature_value * phase_gradient_value;
 
       strong_residual[q] += tmp_STF;
 

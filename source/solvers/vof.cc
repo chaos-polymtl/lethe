@@ -1617,29 +1617,31 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                   phi_curvature_gradient[k] =
                     fe_values_curvature.shape_grad(k, q);
                 }
+
+              // Calculate phase gradient norm and add a tolerance to it to
+              // prevent illegal divisions
+              const double filtered_phase_fraction_gradient_norm =
+                filtered_phase_fraction_gradient_values[q].norm() + 1e-12;
+
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  if (filtered_phase_fraction_gradient_values[q].norm() >
-                      std::numeric_limits<double>::min())
+                  // Matrix assembly
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
-                      // Matrix assembly
-                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                        {
-                          local_matrix_curvature(i, j) +=
-                            (phi_curvature[j] * phi_curvature[i] +
-                             h * h * curvature_filter_factor *
-                               scalar_product(phi_curvature_gradient[i],
-                                              phi_curvature_gradient[j])) *
-                            fe_values_curvature.JxW(q);
-                        }
-                      // rhs
-
-                      local_rhs_curvature(i) +=
-                        phi_curvature_gradient[i] *
-                        (filtered_phase_fraction_gradient_values[q] /
-                         filtered_phase_fraction_gradient_values[q].norm()) *
+                      local_matrix_curvature(i, j) +=
+                        (phi_curvature[j] * phi_curvature[i] +
+                         h * h * curvature_filter_factor *
+                           scalar_product(phi_curvature_gradient[i],
+                                          phi_curvature_gradient[j])) *
                         fe_values_curvature.JxW(q);
                     }
+                  // rhs
+
+                  local_rhs_curvature(i) +=
+                    phi_curvature_gradient[i] *
+                    (filtered_phase_fraction_gradient_values[q] /
+                     filtered_phase_fraction_gradient_norm) *
+                    fe_values_curvature.JxW(q);
                 }
             }
 

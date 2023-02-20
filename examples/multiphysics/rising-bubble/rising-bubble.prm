@@ -31,7 +31,7 @@ subsection VOF
     set enable              = true
     set threshold           = 0.5
     set interface sharpness = 1.5
-    set frequency           = 25
+    set frequency           = 50
   end
 
   subsection phase filtration
@@ -60,6 +60,11 @@ subsection initial conditions
   end
   subsection VOF
     set Function expression = if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
+
+    subsection projection step
+      set enable           = true
+      set diffusion factor = 1
+    end
   end
 end
 
@@ -172,7 +177,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-2
+  set tolerance      = 1e-5
   set max iterations = 20
   set verbosity      = verbose
 end
