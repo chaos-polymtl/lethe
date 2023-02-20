@@ -582,19 +582,22 @@ CompositeShape<dim>::static_copy() const
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &updated_dof_handler)
+  DoFHandler<dim> &  updated_dof_handler,
+  const unsigned int levels_not_precalculated)
 {
   for (auto const &[component_id, component] : constituents)
     {
       if (typeid(*component) == typeid(RBFShape<dim>))
         {
           std::static_pointer_cast<RBFShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler);
+            ->update_precalculations(updated_dof_handler,
+                                     levels_not_precalculated);
         }
       else if (typeid(*component) == typeid(CompositeShape<dim>))
         {
           std::static_pointer_cast<CompositeShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler);
+            ->update_precalculations(updated_dof_handler,
+                                     levels_not_precalculated);
         }
     }
 }
@@ -604,9 +607,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
                         const std::vector<double> &          weights,
                         const std::vector<Point<dim>> &      nodes,
-                        const unsigned int  levels_not_precalculated,
-                        const Point<dim> &  position,
-                        const Tensor<1, 3> &orientation)
+                        const Point<dim> &                   position,
+                        const Tensor<1, 3> &                 orientation)
   : Shape<dim>(support_radii[0], position, orientation)
   , number_of_nodes(weights.size())
   , iterable_nodes(weights.size())
@@ -614,7 +616,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , max_number_of_nodes(1)
   , position_precalculated(position)
   , orientation_precalculated(orientation)
-  , levels_not_precalculated(levels_not_precalculated)
+  , levels_not_precalculated(0)
   , maximal_support_radius(
       *std::max_element(std::begin(support_radii), std::end(support_radii)))
   , nodes_id(weights.size())
@@ -639,14 +641,10 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
 // The effective radius is extracted at the proper index from shape_arguments
 {
   // When constructing the RBF from a single vector of doubles, the vector is
-  // composed of these vectors and scalars, in this order: weights(vector),
+  // composed of these vectors, in this order: weights(vector),
   // support_radii(vector), basis_functions(vector), nodes_positions_x(vector),
-  // nodes_positions_y(vector), nodes_positions_z(vector),
-  // number_of_levels_not_precalculated(scalar). As such, the number of elements
-  // in the shape_arguments vector is: number_of_nodes * 6 + 1. In dimension 2,
-  // the number of elements in the shape_arguments vector is: number_of_nodes *
-  // 5 + 1.
-  number_of_nodes = (shape_arguments.size() - 1) / (dim + 3);
+  // nodes_positions_y(vector), nodes_positions_z(vector).
+  number_of_nodes = shape_arguments.size() / (dim + 3);
   weights.resize(number_of_nodes);
   support_radii.resize(number_of_nodes);
   basis_functions.resize(number_of_nodes);
@@ -657,7 +655,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   max_number_of_nodes       = 1;
   position_precalculated    = Point<dim>(this->position);
   orientation_precalculated = Tensor<1, 3>(this->orientation);
-  levels_not_precalculated  = std::round(shape_arguments.back());
+  levels_not_precalculated  = 0;
   maximal_support_radius =
     *std::max_element(std::begin(support_radii), std::end(support_radii));
 
@@ -683,7 +681,7 @@ RBFShape<dim>::value_with_cell_guess(
   const unsigned int /*component*/)
 {
   if (has_shape_moved())
-    update_precalculations(*this->dof_handler);
+    update_precalculations(*this->dof_handler, this->levels_not_precalculated);
   prepare_iterable_nodes(cell);
   double value = this->value(evaluation_point);
   reset_iterable_nodes(cell);
@@ -698,7 +696,7 @@ RBFShape<dim>::gradient_with_cell_guess(
   const unsigned int /*component*/)
 {
   if (has_shape_moved())
-    update_precalculations(*this->dof_handler);
+    update_precalculations(*this->dof_handler, this->levels_not_precalculated);
   prepare_iterable_nodes(cell);
   Tensor<1, dim> gradient = this->gradient(evaluation_point);
   reset_iterable_nodes(cell);
@@ -793,7 +791,6 @@ RBFShape<dim>::static_copy() const
                                     this->basis_functions,
                                     this->weights,
                                     this->nodes_positions,
-                                    this->levels_not_precalculated,
                                     this->position,
                                     this->orientation);
   return copy;
@@ -891,23 +888,26 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler)
+RBFShape<dim>::update_precalculations(
+  DoFHandler<dim> &  dof_handler,
+  const unsigned int levels_not_precalculated)
 {
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
   // reset does not have a significant impact of global computational cost.
   likely_nodes_map.clear();
-  this->dof_handler = &dof_handler;
+  this->dof_handler              = &dof_handler;
+  this->levels_not_precalculated = levels_not_precalculated;
 
-  const int maximal_level = dof_handler.get_triangulation().n_levels();
-  for (int level = 0; level < maximal_level + 1; level++)
+  const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
+  for (unsigned int level = 0; level < maximal_level; level++)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           // We first check if we are in the hierarchy levels where we simply
           // assume that children have the same likely nodes as their parents.
-          if (level > maximal_level - 1 - levels_not_precalculated)
+          if (level + 1 + levels_not_precalculated > maximal_level)
             {
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
               continue;
@@ -934,9 +934,10 @@ RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler)
           // as high as the levels that will not be precalculated. In that case,
           // the cell's entry needs to be kept in memory because it will be used
           // as is for its children cells (by shared pointer).
-          bool cell_still_needed =
+          const unsigned int cell_level = cell->level();
+          bool               cell_still_needed =
             cell->is_active() ||
-            (cell->level() > level - 1 - levels_not_precalculated);
+            (cell_level + 1 + levels_not_precalculated > level);
           if (!cell_still_needed || cell->is_artificial_on_level())
             {
               likely_nodes_map.erase(it++);

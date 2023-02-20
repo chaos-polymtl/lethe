@@ -154,29 +154,7 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
           // All the information is concatenated into only one object so
           // that the usual initialization function can be called.
           std::map<std::string, std::vector<double>> rbf_data;
-
-          // This step is used to parse an optional argument in the
-          // file_name. If the shape argument is <filename>;<number of levels
-          // not precalculated>, then it is parsed. Otherwise, if the shape
-          // argument is only <filename>, then the default value of number of
-          // levels not precalculated (=0) is assumed.
-          std::vector<std::string> list_of_words_base =
-            Utilities::split_string_list(file_name, ";");
-          std::vector<std::string> list_of_words_clean;
-          for (unsigned int j = 0; j < list_of_words_base.size(); ++j)
-            {
-              if (list_of_words_base[j] != "")
-                {
-                  list_of_words_clean.push_back(list_of_words_base[j]);
-                }
-            }
-          std::string true_file_name           = list_of_words_clean[0];
-          double      levels_not_precalculated = 0.;
-          if (list_of_words_clean.size() > 1)
-            levels_not_precalculated =
-              Utilities::string_to_double(list_of_words_clean[1]);
-
-          fill_vectors_from_file(rbf_data, true_file_name, " ");
+          fill_vectors_from_file(rbf_data, file_name, " ");
           size_t number_of_nodes = rbf_data["weight"].size();
           shape_arguments.reserve((dim + 3) * number_of_nodes);
           shape_arguments.insert(shape_arguments.end(),
@@ -197,7 +175,6 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
           shape_arguments.insert(shape_arguments.end(),
                                  rbf_data["node_z"].begin(),
                                  rbf_data["node_z"].end());
-          shape_arguments.push_back(levels_not_precalculated);
         }
       else
         {
