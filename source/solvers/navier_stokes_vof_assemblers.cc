@@ -10,11 +10,11 @@
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -198,11 +198,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -354,11 +354,11 @@ template class GLSNavierStokesVOFAssemblerCore<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -377,8 +377,6 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
-  std::vector<double> densities(number_of_previous_solutions(method) + 1);
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -386,24 +384,18 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
 
-
-      densities[0] = scratch_data.density[q];
-
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        {
-          densities[p + 1] = scratch_data.previous_density[p][q];
-        }
+      const double density = scratch_data.density[q];
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          strong_residual[q] += densities[p] * bdf_coefs[p] * velocity[p];
+          strong_residual[q] += density * bdf_coefs[p] * velocity[p];
         }
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           strong_jacobian[q][j] +=
-            densities[0] * bdf_coefs[0] * scratch_data.phi_u[q][j];
+            density * bdf_coefs[0] * scratch_data.phi_u[q][j];
         }
 
 
@@ -415,7 +407,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=
-                phi_u_j * phi_u_i * densities[0] * bdf_coefs[0] * JxW[q];
+                phi_u_j * phi_u_i * density * bdf_coefs[0] * JxW[q];
             }
         }
     }
@@ -424,11 +416,11 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -446,8 +438,6 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
-  std::vector<double> densities(number_of_previous_solutions(method) + 1);
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -455,19 +445,12 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
 
-
-
-      densities[0] = scratch_data.density[q];
-
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        {
-          densities[p + 1] = scratch_data.previous_density[p][q];
-        }
+      const double density = scratch_data.density[q];
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          strong_residual[q] += (densities[p] * bdf_coefs[p] * velocity[p]);
+          strong_residual[q] += (density * bdf_coefs[p] * velocity[p]);
         }
 
 
@@ -478,8 +461,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
           for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
                ++p)
             {
-              local_rhs_i -=
-                densities[p] * bdf_coefs[p] * (velocity[p] * phi_u_i);
+              local_rhs_i -= density * bdf_coefs[p] * (velocity[p] * phi_u_i);
             }
           local_rhs(i) += local_rhs_i * JxW[q];
         }
@@ -500,7 +482,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Surface tension coefficient
@@ -515,7 +497,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   const double phase_1_density = scratch_data.density_1[0];
 
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -530,7 +512,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       double density_eq = scratch_data.density[q];
 
       // Gather pfg and curvature values
-      const double &        curvature_value = scratch_data.curvature_values[q];
+      const double         &curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &phase_gradient_value =
         scratch_data.phase_gradient_values[q];
       const double JxW_value = JxW[q];
@@ -566,7 +548,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Surface tension gradient
@@ -582,7 +564,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   const double phase_1_density = scratch_data.density_1[0];
 
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -641,11 +623,11 @@ template class GLSNavierStokesVOFAssemblerMarangoni<3>;
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -869,11 +851,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
 template <int dim>
 void
 GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
-  NavierStokesScratchData<dim> &        scratch_data,
+  NavierStokesScratchData<dim>         &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
