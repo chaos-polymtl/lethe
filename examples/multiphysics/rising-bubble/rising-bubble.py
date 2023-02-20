@@ -9,10 +9,13 @@ Postprocessing code for rising-bubble example
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+import pyvista as pv
+import os
 #############################################################################
 
 #Take case path as argument and store it
-filename = sys.argv[1]
+output_dir = sys.argv[1]
+filename = output_dir + "/vof_barycenter_information.dat"
 t,x,y,vx,vy=np.loadtxt(filename,skiprows=1,unpack=True)
 
 #Data from Zahedi, Kronbichler and Kreiss (2012)
@@ -28,13 +31,6 @@ x_vel_H = [0.24535, 0.49537, 0.74679   ,0.99191   ,1.2424,   1.49542   ,1.74728 
 y_vel_H = [0.114461, 0.196094, 0.23631, 0.241153, 0.231292, 0.218334, 0.206795, 0.197974, 0.193075, 0.191356, 0.192096]
 
 
-
-
-
-
-
-
-
 fig0 = plt.figure()
 ax0 = fig0.add_subplot(111)
 ax0.plot(t, y, '-k', lw=2, label="Lethe")
@@ -44,7 +40,7 @@ ax0.plot(x_ref_H, y_ref_H, 's',alpha=0.8,label="Reference - Hysing et al. (2009)
 ax0.set_ylabel(r'Bubble barycenter height')
 ax0.set_xlabel(r'$t$')
 ax0.legend(loc="upper left")
-fig0.savefig(f'./ymean-t.png')
+fig0.savefig(f'./ymean-t.png',dpi=300)
 plt.show()
 
 fig1 = plt.figure()
@@ -57,5 +53,33 @@ ax1.set_ylabel(r'Rise velocity')
 ax1.set_xlabel(r'$t$')
 ax1.legend(loc="upper left")
 ax1.legend(loc=4)
-fig1.savefig(f'./bubble-rise-velocity.png')
+fig1.savefig(f'./bubble-rise-velocity.png',dpi=300)
 plt.show()
+
+
+# Make the plot of the contour of the bubble
+list_vtu = os.listdir(output_dir)
+list_vtu = [(output_dir+"/"+x) for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
+latest_file = max(list_vtu, key=os.path.getctime)
+print("Opening file: ", latest_file)
+sim = pv.read(latest_file)
+sim.set_active_scalars("filtered_phase")
+
+contour_val = np.array([0.5])
+contours = sim.contour(contour_val)
+x, y = contours.points[:, 0], contours.points[:, 1]
+
+fig3 = plt.figure()
+ax3 = fig3.add_subplot(111)
+
+ax3.scatter(x, y, s=2, marker=".")
+ax3.grid( which='major', color='grey', linestyle='--')
+ax3.set_xlim([0.1,0.9])
+ax3.set_ylim([0.8,1.4])
+fig3.savefig("bubble_contour.png",dpi=300)
+plt.show()
+
+#pl = pv.Plotter()
+#pl.add_mesh(sim, opacity=0.1)
+#pl.add_mesh(contours, color="white", line_width=5)
+#pl.show()

@@ -126,8 +126,8 @@ subsection mesh adaptation
   set max refinement level     = 9
   set min refinement level     = 6
   set frequency                = 1
-  set fraction refinement      = 0.999
-  set fraction coarsening      = 0.001
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
   set initial refinement steps = 5
 end
 
