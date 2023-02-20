@@ -1267,6 +1267,9 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
     return iterator->second;
 
   double bounding_box_distance = bounding_box->value(evaluation_point);
+  if(bounding_box_distance>=0)
+    return bounding_box_distance+this->effective_radius;
+
   double value                 = std::max(bounding_box_distance, 0.0);
 
   double value              = 0.;
@@ -1455,6 +1458,7 @@ RBFShape<dim>::update_precalculations(
   DoFHandler<dim> &  dof_handler,
   const unsigned int levels_not_precalculated)
 {
+  likely_nodes_map.clear();
   rotate_nodes();
   int maximal_level = dof_handler.get_triangulation().n_levels();
   // We first reset the mapping, since the grid partitioning may change between
