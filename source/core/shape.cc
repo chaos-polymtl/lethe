@@ -25,6 +25,7 @@
 #  include <deal.II/opencascade/utilities.h>
 
 #  include <BRepBuilderAPI_MakeVertex.hxx>
+#  include <BRepClass3d_SolidClassifier.hxx>
 #  include <BRepExtrema_DistShapeShape.hxx>
 #endif
 
@@ -400,32 +401,19 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
+
+  BRepClass3d_SolidClassifier point_classifier(shape,
+                                               vertex_position,
+                                               shape_tol);
+  TopAbs_State                point_state = point_classifier.State();
   // Check the evaluation point is inside the shape (This check can return true
   // only if the shape is a solid). By default, step file format will define a
   // solid. This is necessary to sign the distance function evaluation.
-  if (distancetool.InnerSolution())
+  if (point_state == TopAbs_State::TopAbs_IN)
     {
       // If the evaluation point is inside the shape and the shape is a solid,
       // the distance to the shape will be 0. This is why we need to evaluate
       // the distance of the point with the shell of the shape.
-      if (shells.size() > 0)
-        {
-          BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
-          distancetool_shell.LoadS2(vertex);
-          distancetool_shell.Perform();
-          pt_on_surface = distancetool_shell.PointOnShape1(1);
-          if (dim == 2)
-            {
-              projected_point[0] = pt_on_surface.X();
-              projected_point[1] = pt_on_surface.Y();
-            }
-          if (dim == 3)
-            {
-              projected_point[0] = pt_on_surface.X();
-              projected_point[1] = pt_on_surface.Y();
-              projected_point[2] = pt_on_surface.Z();
-            }
-        }
       // Rotate the solution found to the global reference frame.
       auto rotate_in_globalpoint =
         this->reverse_align_and_center(projected_point);
@@ -477,32 +465,18 @@ OpenCascadeShape<dim>::value_with_cell_guess(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
+
+      point_classifier.Perform(vertex_position, shape_tol);
+      TopAbs_State point_state = point_classifier.State();
       // Check the evaluation point is inside the shape (This check can return
       // true only if the shape is a solid). By default, step file format will
       // define a solid. This is necessary to sign the distance function
       // evaluation.
-      if (distancetool.InnerSolution())
+      if (point_state == TopAbs_State::TopAbs_IN)
         {
           // If the evaluation point is inside the shape and the shape is a
           // solid, the distance to the shape will be 0. This is why we need to
           // evaluate the distance of the point with the shell of the shape.
-          if (shells.size() > 0)
-            {
-              distancetool_shell.LoadS2(vertex);
-              distancetool_shell.Perform();
-              pt_on_surface = distancetool_shell.PointOnShape1(1);
-              if (dim == 2)
-                {
-                  projected_point[0] = pt_on_surface.X();
-                  projected_point[1] = pt_on_surface.Y();
-                }
-              if (dim == 3)
-                {
-                  projected_point[0] = pt_on_surface.X();
-                  projected_point[1] = pt_on_surface.Y();
-                  projected_point[2] = pt_on_surface.Z();
-                }
-            }
           // Rotate the solution found to the global reference frame and cache
           // the solution.
           this->value_cache[point_in_string] =
@@ -575,32 +549,18 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
       projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
+  BRepClass3d_SolidClassifier point_classifier(shape,
+                                               vertex_position,
+                                               shape_tol);
+  TopAbs_State                point_state = point_classifier.State();
   // Check the evaluation point is inside the shape (This check can return true
-  // only if the shape is a solid). By default,  step file format will define a
+  // only if the shape is a solid). By default, step file format will define a
   // solid. This is necessary to sign the distance function evaluation.
-  if (distancetool.InnerSolution())
+  if (point_state == TopAbs_State::TopAbs_IN)
     {
       // If the evaluation point is inside the shape and the shape is a solid,
       // the distance to the shape will be 0. This is why we need to evaluate
       // the distance of the point with the shell of the shape.
-      if (shells.size() > 0)
-        {
-          BRepExtrema_DistShapeShape distancetool_shell(shape, vertex);
-          distancetool_shell.LoadS2(vertex);
-          distancetool_shell.Perform();
-          pt_on_surface = distancetool_shell.PointOnShape1(1);
-          if (dim == 2)
-            {
-              projected_point[0] = pt_on_surface.X();
-              projected_point[1] = pt_on_surface.Y();
-            }
-          if (dim == 3)
-            {
-              projected_point[0] = pt_on_surface.X();
-              projected_point[1] = pt_on_surface.Y();
-              projected_point[2] = pt_on_surface.Z();
-            }
-        }
       // Rotate the solution found to the global reference frame.
       auto rotate_in_globalpoint =
         this->reverse_align_and_center(projected_point);
@@ -661,32 +621,14 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
           projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
+      point_classifier.Perform(vertex_position, shape_tol);
+      TopAbs_State point_state = point_classifier.State();
       // Check the evaluation point is inside the shape (This check can return
       // true only if the shape is a solid). By default, step file format will
       // define a solid. This is necessary to sign the distance function
       // evaluation.
-      if (distancetool.InnerSolution())
+      if (point_state == TopAbs_State::TopAbs_IN)
         {
-          // If the evaluation point is inside the shape and the shape is a
-          // solid, the distance to the shape will be 0. This is why we need to
-          // evaluate the distance of the point with the shell of the shape.
-          if (shells.size() > 0)
-            {
-              distancetool_shell.LoadS2(vertex);
-              distancetool_shell.Perform();
-              pt_on_surface = distancetool_shell.PointOnShape1(1);
-              if (dim == 2)
-                {
-                  projected_point[0] = pt_on_surface.X();
-                  projected_point[1] = pt_on_surface.Y();
-                }
-              if (dim == 3)
-                {
-                  projected_point[0] = pt_on_surface.X();
-                  projected_point[1] = pt_on_surface.Y();
-                  projected_point[2] = pt_on_surface.Z();
-                }
-            }
           // Rotate the solution found to the global reference frame and cache
           // the solution.
           this->value_cache[point_in_string] =
@@ -1267,10 +1209,10 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
     return iterator->second;
 
   double bounding_box_distance = bounding_box->value(evaluation_point);
-  if(bounding_box_distance>=0)
-    return bounding_box_distance+this->effective_radius;
+  if (bounding_box_distance >= 0)
+    return bounding_box_distance + this->effective_radius;
 
-  double value                 = std::max(bounding_box_distance, 0.0);
+  double value = std::max(bounding_box_distance, 0.0);
 
   double value              = 0.;
   double bounding_box_value = bounding_box->value(centered_point);

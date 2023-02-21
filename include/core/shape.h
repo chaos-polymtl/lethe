@@ -27,7 +27,10 @@
 #  include <deal.II/opencascade/utilities.h>
 
 #  include <BRepBuilderAPI_MakeVertex.hxx>
+#  include <BRepClass3d_SolidClassifier.hxx>
 #  include <BRepExtrema_DistShapeShape.hxx>
+#  include <BRepGProp.hxx>
+#  include <GProp_GProps.hxx>
 #endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
@@ -848,19 +851,9 @@ public:
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
   {
-    // First, we read the shape file name and check if an effective radius as
-    // been given in addition to the file name
-    std::vector<std::string> shape_arguments_str_list(
-      Utilities::split_string_list(file_name, ";"));
-    local_file_name = shape_arguments_str_list[0];
+    // First, we read the shape file name
+    local_file_name = file_name;
 #ifdef DEAL_II_WITH_OPENCASCADE
-    // set the new effective radius if it was given with the file name.
-    if (shape_arguments_str_list.size() > 1)
-      {
-        this->effective_radius =
-          Utilities::string_to_double(shape_arguments_str_list[1]);
-      }
-
     // Checks the file name extension to identify which type of OpenCascade
     // shape we are working with.
     std::size_t found_step   = local_file_name.find(".step");
@@ -885,16 +878,45 @@ public:
         shape                          = OpenCASCADE::read_STL(local_file_name);
         this->additional_info_on_shape = "stl";
       }
+
+    // used this local variable as the shape tolerance in the calculations.
+    shape_tol = OpenCASCADE::get_shape_tolerance(shape);
+    /*ShapeFix_ShapeTolerance::SetTolerance(shape,shape_tol);*/
+
     // Initialize some variables and the OpenCascade distance tool.
+    OpenCASCADE::extract_compound_shapes(
+      shape, compounds, compsolids, solids, shells, wires);
     vertex_position = OpenCASCADE::point(Point<dim>());
     vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
     distancetool    = BRepExtrema_DistShapeShape(shape, vertex);
-    OpenCASCADE::extract_compound_shapes(
-      shape, compounds, compsolids, solids, shells, wires);
+
     // Check if the shape has a shell. If it has a shell, we initialize a
     // distance tool with just the shell.
     if (shells.size() > 0)
-      distancetool_shell = BRepExtrema_DistShapeShape(shells[0], vertex);
+      {
+        if (shells.size() > 1)
+          {
+            std::cout
+              << "Warning!: The shape has more than one shell. Only the first shell is used in the calculation.";
+          }
+        distancetool = BRepExtrema_DistShapeShape(shells[0], vertex);
+        point_classifier.Load(shape);
+      }
+    else
+      {
+        distancetool = BRepExtrema_DistShapeShape(shape, vertex);
+        point_classifier.Load(shape);
+      }
+
+    // Define the effective radius as the raidus of the sphere with the same
+    // volume as the shape.
+    GProp_GProps System;
+    BRepGProp::LinearProperties(shape, System);
+    BRepGProp::SurfaceProperties(shape, System);
+    BRepGProp::VolumeProperties(shape, System);
+    this->effective_radius =
+      std::pow(System.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
+
 #endif
   }
 
@@ -970,8 +992,10 @@ private:
   TopoDS_Vertex vertex;
 
   // The tool used for the distance evaluation.
-  BRepExtrema_DistShapeShape distancetool;
-  BRepExtrema_DistShapeShape distancetool_shell;
+  BRepClass3d_SolidClassifier point_classifier;
+  BRepExtrema_DistShapeShape  distancetool;
+  BRepExtrema_DistShapeShape  distancetool_shell;
+  double                      shape_tol;
 #endif
 };
 

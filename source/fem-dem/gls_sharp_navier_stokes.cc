@@ -137,8 +137,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
               // algorithm is required. For this type of particle, no cell are
               // identified as being inside the particle. This means that the
               // fluid is always solved inside the particle.
-              if (particles[p].shape->additional_info_on_shape == "stl" ||
-                  particles[p].shape->additional_info_on_shape == "iges")
+              if (particles[p].shape->additional_info_on_shape == "iges")
                 {
                   cell_is_cut =
                     cell_cut_by_p_exception(cell, support_points, p);
