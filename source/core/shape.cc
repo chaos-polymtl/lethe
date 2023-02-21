@@ -1159,6 +1159,10 @@ RBFShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  double bounding_box_distance = bounding_box->value(evaluation_point);
+  if (bounding_box_distance >= 0)
+    return bounding_box_distance + this->effective_radius;
+
   auto point_in_string = this->point_to_string(evaluation_point);
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())
@@ -1182,6 +1186,12 @@ RBFShape<dim>::gradient_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  Point<dim>     centered_point        = evaluation_point;
+  double         bounding_box_distance = bounding_box->value(centered_point);
+  Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
+  if (bounding_box_distance > 0.)
+    return bounding_box_gradient;
+
   auto point_in_string = this->point_to_string(evaluation_point);
   auto iterator        = this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end())
@@ -1203,24 +1213,17 @@ double
 RBFShape<dim>::value(const Point<dim> &evaluation_point,
                      const unsigned int /*component*/) const
 {
+  double bounding_box_distance = bounding_box->value(evaluation_point);
+  if (bounding_box_distance >= 0)
+    return bounding_box_distance + this->effective_radius;
+
   auto point_in_string = this->point_to_string(evaluation_point);
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator != this->value_cache.end())
     return iterator->second;
 
-  double bounding_box_distance = bounding_box->value(evaluation_point);
-  if (bounding_box_distance >= 0)
-    return bounding_box_distance + this->effective_radius;
-
   double value = std::max(bounding_box_distance, 0.0);
-
-  double value              = 0.;
-  double bounding_box_value = bounding_box->value(centered_point);
-  if (bounding_box_value > 0.)
-    return bounding_box_value + bounding_box->half_lengths.norm();
-
   double normalized_distance, basis;
-
 
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
   for (const size_t &node_id : iterable_nodes)
@@ -1383,15 +1386,15 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
         likely_nodes_map[cell]->push_back(node_id);
     }
   max_number_of_nodes =
-    std::max(max_number_of_nodes, likely_nodes_map[cell].size());
-  if (cell->level() > minimal_mesh_level)
-    if (parent_found)
-      {
-        const auto cell_parent     = cell->parent();
-        const auto parent_iterator = likely_nodes_map.find(cell_parent);
-        iterable_nodes.swap(parent_iterator->second);
-        temporary_iterable_nodes.swap(iterable_nodes);
-      }
+    std::max(max_number_of_nodes, likely_nodes_map[cell]->size());
+
+  if (parent_found)
+    {
+      const auto cell_parent     = cell->parent();
+      const auto parent_iterator = likely_nodes_map.find(cell_parent);
+      iterable_nodes.swap(*parent_iterator->second);
+      temporary_iterable_nodes.swap(iterable_nodes);
+    }
 }
 
 template <int dim>
@@ -1402,7 +1405,6 @@ RBFShape<dim>::update_precalculations(
 {
   likely_nodes_map.clear();
   rotate_nodes();
-  int maximal_level = dof_handler.get_triangulation().n_levels();
   // We first reset the mapping, since the grid partitioning may change between
   // calls of this function. The precalculation cost is low enough that this
   // reset does not have a significant impact of global computational cost.

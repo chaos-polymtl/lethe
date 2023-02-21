@@ -2076,7 +2076,9 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           if (particles[p].position != particles[p].previous_positions[0] ||
               particles[p].orientation != particles[p].previous_orientation[0])
-            particles[p].clear_shape_cache();
+            {
+              particles[p].clear_shape_cache();
+            }
 
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
@@ -4003,7 +4005,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-
+          update_precalculations_for_ib();
           if (all_spheres)
             optimized_generate_cut_cells_map();
           else
@@ -4029,7 +4031,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
             optimized_generate_cut_cells_map();
           else
             generate_cut_cells_map();
-
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,

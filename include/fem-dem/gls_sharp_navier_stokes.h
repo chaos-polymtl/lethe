@@ -166,6 +166,7 @@ private:
       {
         force_on_ib();
         integrate_particles();
+        update_precalculations_for_ib();
         if (all_spheres)
           optimized_generate_cut_cells_map();
         else
