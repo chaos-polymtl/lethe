@@ -15,6 +15,7 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
         set ib force output file                    = ib_force
         set ib particles pvd file                   = ib_particles_data
         set initial refinement                      = 0
+        set levels not precalculated                = 0
         set refine mesh inside radius factor        = 0.5
         set refine mesh outside radius factor       = 1.5
         set integrate motion                        = false
@@ -104,6 +105,8 @@ To sharpen the immersed boundary of each particle, a layer of cells around the i
 	This near-particle zone will be systematically refined at each refinement step until reaching the ``max refinement level`` parameter (:doc:`../cfd/mesh_adaptation_control`).
 
 * The ``initial refinement`` parameter controls the number of refinement cycles in the near-particle refinement zone around every particle before the simulation starts.
+
+* The ``levels not precalculated`` parameter controls the number of layers of the hierarchical grid used by Lethe that are ignored by precalculations. It allows to reduce the memory footprint at the cost of an increased computing time. At the moment, this is used only for RBF shapes. The value should be increased when the RBF contains a lot of nodes and/or the grid is extremely fine.
 
 * The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles remain static.  If ``ìntegrate motion=true`` the position and the velocity will be defined by the particles' position and velocity function.
 
@@ -214,7 +217,7 @@ The following parameter and subsection are all inside the subsection ``particle 
         operations
         2; union     ; 0:1
 
-    * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
+    * RBF: *file name*; the effective radius is the half-diagonal of the object's bounding box. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of fourteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 

@@ -1,0 +1,28 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       64
+   Number of degrees of freedom: 500
+   Volume of triangulation:      8
+Initial refinement around IB particles - Step : 1 of 1
+   Number of active cells:       288
+   Number of degrees of freedom: 1876
+   Volume of triangulation:      8
+
+*****************************************************************
+Steady iteration :        1/2
+*****************************************************************
+div u : 3.25896e-08
+error at the weak BC : 0.136194
+L2 error velocity : 0.263298 L2 error pressure: 1.5724
+
+*****************************************************************
+Steady iteration :        2/2
+*****************************************************************
+   Number of active cells:       1044
+   Number of degrees of freedom: 6044
+   Volume of triangulation:      8
+div u : -0.0316945
+error at the weak BC : 0.145648
+L2 error velocity : 0.102613 L2 error pressure: 1.18318
+cells  error_velocity    error_pressure
+  288 2.632979e-01    - 1.572396e+00    -
+ 1044 1.026130e-01 1.36 1.183184e+00 0.41

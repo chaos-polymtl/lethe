@@ -1051,6 +1051,7 @@ namespace Parameters
     unsigned int                 nb;
     unsigned int                 order;
     unsigned int                 initial_refinement;
+    unsigned int                 levels_not_precalculated;
     double                       inside_radius;
     double                       outside_radius;
     std::vector<IBParticle<dim>> particles;
