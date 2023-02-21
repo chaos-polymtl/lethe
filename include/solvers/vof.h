@@ -184,6 +184,20 @@ public:
                             const Parameters::FluidIndicator monitored_fluid);
 
   /**
+   * @brief Calculates the barycenter of the fluid and its velocity
+   *
+   * @param solution VOF solution
+   *
+   * @param solution Fluid dynamics solution
+   *
+   */
+  template <typename VectorType>
+  std::pair<Tensor<1, dim>, Tensor<1, dim>>
+  calculate_barycenter(const TrilinosWrappers::MPI::Vector &solution,
+                       const VectorType &current_solution_fd);
+
+
+  /**
    * @brief Calculate the average pressure value of the monitored fluid. Used for
    * the wetting mechanism.
    *
@@ -773,6 +787,9 @@ private:
   double       mass_monitored;
   double       mass_first_iteration;
   double       sharpening_threshold;
+
+  // Barycenter analysis
+  TableHandler table_barycenter;
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<VOFAssemblerBase<dim>>> assemblers;

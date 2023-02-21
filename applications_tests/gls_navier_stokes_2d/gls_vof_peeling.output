@@ -12,7 +12,7 @@ Peeling/wetting correction at step 1
   -number of peeled cells: 0
 
 *****************************************************************
-Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 0.385154
+Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 0.344522
 *****************************************************************
 Peeling/wetting correction at step 2
   -number of wet cells: 0

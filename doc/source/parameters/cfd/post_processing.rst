@@ -30,8 +30,8 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate enstrophy         = false
     set enstrophy name              = enstrophy
   
-      # Others
-      set smoothed output fields    = false
+    # Others
+    set smoothed output fields    = false
 
     #---------------------------------------------------
     # Physical properties post-processing
@@ -52,6 +52,10 @@ This subsection controls the post-processing other than the forces and torque on
     set temperature statistics name      = temperature_statistics
     set calculate heat flux              = false
     set heat flux name                   = heat_flux
+
+    # VOF postprocessing
+    set calculate VOF barycenter         = false
+    set VOF barycenter name              = vof_barycenter_information
 
   end
  
@@ -94,9 +98,6 @@ This subsection controls the post-processing other than the forces and torque on
         The output files will have a suffix depending on the ``postprocessed fluid``: ``fluid_0``, ``fluid_1`` and ``all_domain``.
 
 * ``calculate temperature statistics``: controls if calculation of temperature statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
-    .. warning::
-
-        Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
     * ``temperature statistics name``: output filename for temperature statistics calculations.
 
@@ -109,10 +110,6 @@ This subsection controls the post-processing other than the forces and torque on
             0.2000 2.5183 4.9390  3.3917  0.7229 
 
 * ``calculate heat flux``: controls if calculation of heat flux is enabled. If enabled, these quantities are postprocessed: 
-
-  .. warning::
-
-      Do not forget to ``set heat transfer = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
   1. the total heat flux :math:`q_{tot}` for each :ref:`heat transfer bc` boundary condition. The total heat flux on a boundary :math:`\Gamma` is defined as:
 
@@ -151,6 +148,29 @@ This subsection controls the post-processing other than the forces and torque on
 		 time  total_flux_bc_0 convective_flux_bc_0 thermal_energy_fluid flux_nitsche_solid_0 
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
+
+* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+
+  .. math::
+
+      \mathbf{x_b} = \frac{\int_{\Omega} \psi \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+
+  .. math::
+
+      \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
+
+  where :math:`\psi` is the filtered phase indicator.
+
+
+* ``temperature statistics name``: output filename for temperature statistics calculations.
+
+    .. admonition:: Example of temperature statistics table:
+
+        .. code-block:: text
+
+             time  min    max    average std-dev 
+            0.0000 0.0000 3.9434  0.1515  0.6943 
+            0.2000 2.5183 4.9390  3.3917  0.7229 
 
 
         
