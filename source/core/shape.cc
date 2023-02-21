@@ -140,7 +140,7 @@ Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
   Tensor<1, 3> theta = orientation;
 
   // The centralized point is the one to be rotated, and it is updated after
-  // each rotation around one axis The centralized rotated point is the result
+  // each rotation around one axis. The centralized rotated point is the result
   // of each rotation, and it is initialized in case no rotation is performed
   Point<dim> centralized_point;
   centralized_point              = evaluation_point;

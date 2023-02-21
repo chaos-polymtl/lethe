@@ -80,7 +80,7 @@ public:
     death_star,
     composite_shape,
     rbf_shape,
-    opencascade_sharp,
+    opencascade_shape,
   } type;
 
   /**
@@ -277,6 +277,7 @@ public:
    */
   std::string
   point_to_string(const Point<dim> &evaluation_point) const;
+  
   // Effective radius used for crown refinement
   double effective_radius;
 

@@ -370,7 +370,7 @@ private:
    * DOFs of the cell for later use. This function is built to handle special
    * cases where the level set is always positive.
    *
-   * @param cell , the cell that we verify whether it is cut or not.
+   * @param cell, the cell that we verify whether it is cut or not.
    *
    * @param local_dof_indices, a container for the local dof indices used during the function call.
    *

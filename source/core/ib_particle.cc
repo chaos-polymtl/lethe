@@ -160,7 +160,6 @@ IBParticle<dim>::clear_shape_cache()
   this->shape->clear_cache();
 }
 
-
 template <int dim>
 void
 IBParticle<dim>::initialize_shape(const std::string         type,
@@ -171,8 +170,6 @@ IBParticle<dim>::initialize_shape(const std::string         type,
                                                        position,
                                                        orientation);
 }
-
-
 
 template <int dim>
 void
@@ -194,7 +191,6 @@ IBParticle<dim>::closest_surface_point(
 {
   shape->closest_surface_point(p, closest_point, cell_guess);
 }
-
 
 template <int dim>
 void

@@ -259,7 +259,7 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(
   // the particle's surface. If the projected point at the surface of the
   // particle is inside the cell then the cell is cut.
 
-  // First step define useful variables.
+  // First step: define useful variables.
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   cell->get_dof_indices(local_dof_indices);
@@ -854,7 +854,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                         approximate_surface_cell_normal / vertices_per_face;
 
                       local_face_cell_data[0].material_id = 0;
-
 
                       local_face_projection_triangulation =
                         Triangulation<dim - 1, dim>();
