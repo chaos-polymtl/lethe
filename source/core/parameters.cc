@@ -1187,6 +1187,18 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable smoothing postprocessed vectors and scalars.");
+
+      prm.declare_entry(
+        "calculate VOF barycenter",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the barycenter location and velocity of the fluid 1 in VOF simulations.");
+
+      prm.declare_entry(
+        "VOF barycenter name",
+        "vof_barycenter_information",
+        Patterns::FileName(),
+        "File name output for the barycenter information in VOF simulations");
     }
     prm.leave_subsection();
   }
@@ -1221,9 +1233,11 @@ namespace Parameters
       tracer_output_name          = prm.get("tracer statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
-      temperature_output_name = prm.get("temperature statistics name");
-      calculate_heat_flux     = prm.get_bool("calculate heat flux");
-      heat_flux_output_name   = prm.get("heat flux name");
+      temperature_output_name  = prm.get("temperature statistics name");
+      calculate_heat_flux      = prm.get_bool("calculate heat flux");
+      heat_flux_output_name    = prm.get("heat flux name");
+      calculate_vof_barycenter = prm.get_bool("calculate VOF barycenter");
+      barycenter_output_name   = prm.get("VOF barycenter name");
 
 
       // Viscous dissipative fluid

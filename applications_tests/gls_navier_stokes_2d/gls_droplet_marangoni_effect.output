@@ -8,31 +8,31 @@ Enstrophy  : 0
 Kinetic energy : 0
 
 *****************************************************************
-Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0
+Transient iteration : 1        Time : 0.001    Time step : 0.001    CFL : 0       
 *****************************************************************
-Enstrophy  : 0.435946
-Kinetic energy : 1.60093e-05
+Enstrophy  : 0.426913
+Kinetic energy : 1.59884e-05
 
 *****************************************************************
-Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.00809705
+Transient iteration : 2        Time : 0.002    Time step : 0.001    CFL : 0.00808115
 *****************************************************************
-Enstrophy  : 24.7457
-Kinetic energy : 0.000534365
+Enstrophy  : 25.8474
+Kinetic energy : 0.000540122
 
 *****************************************************************
-Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.0804539
+Transient iteration : 3        Time : 0.003    Time step : 0.001    CFL : 0.0812002
 *****************************************************************
-Enstrophy  : 99.6665
-Kinetic energy : 0.00227588
+Enstrophy  : 105.223
+Kinetic energy : 0.00230164
 
 *****************************************************************
-Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.157577
+Transient iteration : 4        Time : 0.004    Time step : 0.001    CFL : 0.15992 
 *****************************************************************
-Enstrophy  : 210.456
-Kinetic energy : 0.00506648
+Enstrophy  : 223.229
+Kinetic energy : 0.00511074
 
 *****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.221752
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.224564
 *****************************************************************
-Enstrophy  : 339.68
-Kinetic energy : 0.00852055
+Enstrophy  : 360.617
+Kinetic energy : 0.00855407
