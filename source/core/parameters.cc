@@ -2130,6 +2130,13 @@ namespace Parameters
         Patterns::Integer(),
         "Number of particles reprensented by IB max number of particles = 10 ");
       prm.declare_entry(
+        "levels not precalculated",
+        "0",
+        Patterns::Integer(),
+        "Number of levels that are ignored in precalculations. Setting this "
+        "parameter higher allows for a lower memory footprint at the cost of"
+        " higher computing time.");
+      prm.declare_entry(
         "refine mesh inside radius factor",
         "0.5",
         Patterns::Double(),
@@ -2282,9 +2289,10 @@ namespace Parameters
     using numbers::PI;
     prm.enter_subsection("particles");
     {
-      nb                 = prm.get_integer("number of particles");
-      order              = prm.get_integer("stencil order");
-      initial_refinement = prm.get_integer("initial refinement");
+      nb                       = prm.get_integer("number of particles");
+      order                    = prm.get_integer("stencil order");
+      initial_refinement       = prm.get_integer("initial refinement");
+      levels_not_precalculated = prm.get_integer("levels not precalculated");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       calculate_force_ib = prm.get_bool("calculate force");

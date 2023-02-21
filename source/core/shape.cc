@@ -582,20 +582,22 @@ CompositeShape<dim>::static_copy() const
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &             updated_dof_handler,
-  std::shared_ptr<Mapping<dim>> mapping)
+  DoFHandler<dim> &  updated_dof_handler,
+  const unsigned int levels_not_precalculated)
 {
   for (auto const &[component_id, component] : constituents)
     {
       if (typeid(*component) == typeid(RBFShape<dim>))
         {
           std::static_pointer_cast<RBFShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler, mapping);
+            ->update_precalculations(updated_dof_handler,
+                                     levels_not_precalculated);
         }
       else if (typeid(*component) == typeid(CompositeShape<dim>))
         {
           std::static_pointer_cast<CompositeShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler, mapping);
+            ->update_precalculations(updated_dof_handler,
+                                     levels_not_precalculated);
         }
     }
 }
@@ -612,8 +614,11 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , iterable_nodes(weights.size())
   , likely_nodes_map()
   , max_number_of_nodes(1)
-  , minimal_mesh_level(std::numeric_limits<int>::max())
-  , highest_level_searched(-1)
+  , position_precalculated(position)
+  , orientation_precalculated(orientation)
+  , levels_not_precalculated(0)
+  , maximal_support_radius(
+      *std::max_element(std::begin(support_radii), std::end(support_radii)))
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -635,6 +640,10 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
                orientation)
 // The effective radius is extracted at the proper index from shape_arguments
 {
+  // When constructing the RBF from a single vector of doubles, the vector is
+  // composed of these vectors, in this order: weights(vector),
+  // support_radii(vector), basis_functions(vector), nodes_positions_x(vector),
+  // nodes_positions_y(vector), nodes_positions_z(vector).
   number_of_nodes = shape_arguments.size() / (dim + 3);
   weights.resize(number_of_nodes);
   support_radii.resize(number_of_nodes);
@@ -642,10 +651,13 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(number_of_nodes);
   std::iota(std::begin(nodes_id), std::end(nodes_id), 0);
-  iterable_nodes         = nodes_id;
-  max_number_of_nodes    = 1;
-  minimal_mesh_level     = std::numeric_limits<int>::max();
-  highest_level_searched = -1;
+  iterable_nodes            = nodes_id;
+  max_number_of_nodes       = 1;
+  position_precalculated    = Point<dim>(this->position);
+  orientation_precalculated = Tensor<1, 3>(this->orientation);
+  levels_not_precalculated  = 0;
+  maximal_support_radius =
+    *std::max_element(std::begin(support_radii), std::end(support_radii));
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -668,6 +680,8 @@ RBFShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  if (has_shape_moved())
+    update_precalculations(*this->dof_handler, this->levels_not_precalculated);
   prepare_iterable_nodes(cell);
   double value = this->value(evaluation_point);
   reset_iterable_nodes(cell);
@@ -681,6 +695,8 @@ RBFShape<dim>::gradient_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
+  if (has_shape_moved())
+    update_precalculations(*this->dof_handler, this->levels_not_precalculated);
   prepare_iterable_nodes(cell);
   Tensor<1, dim> gradient = this->gradient(evaluation_point);
   reset_iterable_nodes(cell);
@@ -694,8 +710,10 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double bounding_box_distance = bounding_box->value(centered_point);
-  double value                 = std::max(bounding_box_distance, 0.0);
+  double value              = 0.;
+  double bounding_box_value = bounding_box->value(centered_point);
+  if (bounding_box_value > 0.)
+    return bounding_box_value + bounding_box->half_lengths.norm();
 
   double normalized_distance, basis;
 
@@ -720,8 +738,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
 
   double         bounding_box_distance = bounding_box->value(centered_point);
   Tensor<1, dim> bounding_box_gradient = bounding_box->gradient(centered_point);
-  if (bounding_box_distance >
-      *std::max_element(support_radii.begin(), support_radii.end()))
+  if (bounding_box_distance > 0.)
     return bounding_box_gradient;
 
   double     distance, normalized_distance;
@@ -824,10 +841,9 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   if (likely_nodes_map.find(cell) != likely_nodes_map.end())
     return;
 
-  bool parent_found  = false;
-  minimal_mesh_level = std::min(minimal_mesh_level, cell->level());
+  bool                parent_found = false;
   std::vector<size_t> temporary_iterable_nodes;
-  if (cell->level() > minimal_mesh_level)
+  if (cell->level() > 0)
     try
       {
         const auto cell_parent     = cell->parent();
@@ -836,7 +852,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
           {
             parent_found = true;
             temporary_iterable_nodes.swap(iterable_nodes);
-            iterable_nodes.swap(parent_iterator->second);
+            iterable_nodes.swap(*parent_iterator->second);
           }
       }
     catch (TriaAccessorExceptions::ExcCellHasNoParent())
@@ -846,49 +862,92 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     cell_diameter = cell->diameter();
   Point<dim> centered_support_point;
 
-  likely_nodes_map[cell].reserve(max_number_of_nodes);
+  likely_nodes_map[cell] = std::make_shared<std::vector<size_t>>();
+  likely_nodes_map[cell]->reserve(max_number_of_nodes);
   for (const auto &node_id : iterable_nodes)
     {
       centered_support_point = this->align_and_center(support_point);
       distance = (centered_support_point - nodes_positions[node_id]).norm();
-      // We only check for one point, but we use the maximal distance
-      // from any point in the cell added to the support radius.
-      // This allows not to loop over many points.
+      // We check if the distance is lower than a cell diagonal length, since we
+      // only check the distance with 1 support point, added to the support
+      // radius
       max_distance = cell_diameter + support_radii[node_id];
       if (distance < max_distance)
-        likely_nodes_map[cell].push_back(node_id);
+        likely_nodes_map[cell]->push_back(node_id);
     }
   max_number_of_nodes =
-    std::max(max_number_of_nodes, likely_nodes_map[cell].size());
-  if (cell->level() > minimal_mesh_level)
-    if (parent_found)
-      {
-        const auto cell_parent     = cell->parent();
-        const auto parent_iterator = likely_nodes_map.find(cell_parent);
-        iterable_nodes.swap(parent_iterator->second);
-        temporary_iterable_nodes.swap(iterable_nodes);
-      }
+    std::max(max_number_of_nodes, likely_nodes_map[cell]->size());
+  if (parent_found)
+    {
+      const auto cell_parent     = cell->parent();
+      const auto parent_iterator = likely_nodes_map.find(cell_parent);
+      iterable_nodes.swap(*parent_iterator->second);
+      temporary_iterable_nodes.swap(iterable_nodes);
+    }
 }
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
-                                      std::shared_ptr<Mapping<dim>> /*mapping*/)
+RBFShape<dim>::update_precalculations(
+  DoFHandler<dim> &  dof_handler,
+  const unsigned int levels_not_precalculated)
 {
-  int maximal_level = dof_handler.get_triangulation().n_levels();
+  // We first reset the mapping, since the grid partitioning may change between
+  // calls of this function. The precalculation cost is low enough that this
+  // reset does not have a significant impact of global computational cost.
+  likely_nodes_map.clear();
+  this->dof_handler              = &dof_handler;
+  this->levels_not_precalculated = levels_not_precalculated;
 
-  for (int level = highest_level_searched + 1; level < maximal_level; level++)
+  const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
+  for (unsigned int level = 0; level < maximal_level; level++)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
+          // We first check if we are in the hierarchy levels where we simply
+          // assume that children have the same likely nodes as their parents.
+          if (level + 1 + levels_not_precalculated > maximal_level)
+            {
+              likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
+              continue;
+            }
+          // If the precalculations have reached the finest level, then the cell
+          // precalculation only has to be done for cells that are locally
+          // owned.
           if (level == maximal_level)
             if (!cell->is_locally_owned())
-              break;
-          determine_likely_nodes_for_one_cell(cell, cell->vertex(0));
+              continue;
+          // In the same way, the cell precalculation only has to be done on
+          // cells that aren't artificial (in other words, locally owned or
+          // ghost cells)
+          if (!cell->is_artificial_on_level())
+            determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
-      highest_level_searched = level;
+
+      // We remove unnecessary cells
+      for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
+        {
+          auto cell = it->first;
+          // Cells are unnecessary if they are artificial (which should not
+          // happen because of previous checks), or if their level is at least
+          // as high as the levels that will not be precalculated. In that case,
+          // the cell's entry needs to be kept in memory because it will be used
+          // as is for its children cells (by shared pointer).
+          const unsigned int cell_level = cell->level();
+          bool               cell_still_needed =
+            cell->is_active() ||
+            (cell_level + 1 + levels_not_precalculated > level);
+          if (!cell_still_needed || cell->is_artificial_on_level())
+            {
+              likely_nodes_map.erase(it++);
+            }
+          else
+            ++it;
+        }
     }
+  position_precalculated    = Point<dim>(this->position);
+  orientation_precalculated = Tensor<1, 3>(this->orientation);
 }
 
 
@@ -973,6 +1032,19 @@ RBFShape<dim>::evaluate_basis_function_derivative(
     }
 }
 
+
+template <int dim>
+bool
+RBFShape<dim>::has_shape_moved()
+{
+  if ((this->position - position_precalculated).norm() > 1e-12)
+    return true;
+  if ((this->orientation - orientation_precalculated).norm() > 1e-12)
+    return true;
+  return false;
+}
+
+
 template <int dim>
 void
 RBFShape<dim>::prepare_iterable_nodes(
@@ -981,7 +1053,7 @@ RBFShape<dim>::prepare_iterable_nodes(
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
-    iterable_nodes.swap(likely_nodes_map[cell]);
+    iterable_nodes.swap(*likely_nodes_map[cell]);
   else
     iterable_nodes.swap(nodes_id);
 }
@@ -994,7 +1066,7 @@ RBFShape<dim>::reset_iterable_nodes(
   // Here we check if the likely nodes have been identified
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
-    iterable_nodes.swap(likely_nodes_map[cell]);
+    iterable_nodes.swap(*likely_nodes_map[cell]);
   else
     iterable_nodes.swap(nodes_id);
 }
