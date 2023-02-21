@@ -1327,17 +1327,18 @@ RBFShape<dim>::initialize_bounding_box()
       for (size_t i = 0; i < number_of_nodes; i++)
         {
           low_bounding_point[d] =
-            std::min(low_bounding_point[d], rotated_nodes_positions[i][d]);
+            std::min(low_bounding_point[d], nodes_positions[i][d]);
           high_bounding_point[d] =
-            std::max(high_bounding_point[d], rotated_nodes_positions[i][d]);
+            std::max(high_bounding_point[d], nodes_positions[i][d]);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
       half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
     }
-  bounding_box = std::make_shared<Rectangle<dim>>(half_lengths,
-                                                  bounding_box_center,
-                                                  Tensor<1, 3>());
+  bounding_box = std::make_shared<Rectangle<dim>>(
+    half_lengths,
+    this->position + this->reverse_align_and_center(bounding_box_center),
+    this->orientation);
 }
 
 template <int dim>

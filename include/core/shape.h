@@ -277,11 +277,13 @@ public:
    */
   std::string
   point_to_string(const Point<dim> &evaluation_point) const;
-  
+
   // Effective radius used for crown refinement
   double effective_radius;
 
-  // String that contains additional information on the shape
+  // The string contains additional information on the shape. This may refer to
+  // the file type used to define the shape or any other information relative to
+  // how the shape was defined.
   std::string additional_info_on_shape;
 
 protected:
@@ -857,27 +859,30 @@ public:
 #ifdef DEAL_II_WITH_OPENCASCADE
     // Checks the file name extension to identify which type of OpenCascade
     // shape we are working with.
-    std::size_t found_step   = local_file_name.find(".step");
-    std::size_t found_step_2 = local_file_name.find(".stp");
-    std::size_t found_igs    = local_file_name.find(".iges");
-    std::size_t found_igs_2  = local_file_name.find(".igs");
-    std::size_t found_stl    = local_file_name.find(".stl");
+    std::vector<std::string> file_name_and_extension(
+      Utilities::split_string_list(local_file_name, "."));
 
     // Load the shape with the appropriate tool.
-    if (found_step != std::string::npos || found_step_2 != std::string::npos)
+    if (file_name_and_extension[1] == "step" ||
+        file_name_and_extension[1] == "stp")
       {
         shape = OpenCASCADE::read_STEP(local_file_name);
         this->additional_info_on_shape = "step";
       }
-    if (found_igs != std::string::npos || found_igs_2 != std::string::npos)
+    else if (file_name_and_extension[1] == "iges" ||
+             file_name_and_extension[1] == "igs")
       {
         shape = OpenCASCADE::read_IGES(local_file_name);
         this->additional_info_on_shape = "iges";
       }
-    if (found_stl != std::string::npos)
+    else if (file_name_and_extension[1] == "stl")
       {
         shape                          = OpenCASCADE::read_STL(local_file_name);
         this->additional_info_on_shape = "stl";
+      }
+    else
+      {
+        throw "Wrong file extension for an opencascade shape. The possible file type are: step, stp, iges, igs, stl.";
       }
 
     // used this local variable as the shape tolerance in the calculations.
@@ -925,13 +930,21 @@ public:
    * @brief Return the evaluation of the signed distance function of this solid
    * at the given point evaluation point.
    *
-   * @param evaluation_point The point at which the function will be evaluated
+   * @param evaluation_point The point at which the function will be evaluate.
    * @param component Not applicable
    */
   double
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point. Use
+   * @param component Not applicable
+   */
   double
   value_with_cell_guess(
     const Point<dim> &                                   evaluation_point,
@@ -945,7 +958,7 @@ public:
   static_copy() const override;
 
   /**
-   * @brief Return the gradient of the distance
+   * @brief Return the gradient of the distance function
    * @param evaluation_point The point at which the function will be evaluated
    * @param component Not applicable
    */
@@ -953,6 +966,12 @@ public:
   gradient(const Point<dim> & evaluation_point,
            const unsigned int component = 0) const override;
 
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component Not applicable
+   */
   Tensor<1, dim>
   gradient_with_cell_guess(
     const Point<dim> &                                   evaluation_point,
@@ -1197,8 +1216,6 @@ public:
 
   /**
    * @brief Rotate RBF nodes in the global reference frame.
-   * @param dof_handler the reference to the new dof_handler
-   * @param mapping the mapping associated to the triangulation
    */
   void
   rotate_nodes();

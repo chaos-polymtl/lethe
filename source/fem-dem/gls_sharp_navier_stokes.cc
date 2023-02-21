@@ -265,13 +265,8 @@ GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_exception(
   cell->get_dof_indices(local_dof_indices);
   bool               cell_is_cut       = false;
   const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
-  Point<dim>         centroid_of_cell;
-  for (unsigned int i = 0; i < vertices_per_cell; ++i)
-    {
-      centroid_of_cell += cell->vertex(i);
-    }
-  centroid_of_cell = centroid_of_cell / vertices_per_cell;
-  Point<dim> projected_point;
+  Point<dim>         centroid_of_cell  = cell->barycenter();
+  Point<dim>         projected_point;
   particles[p].closest_surface_point(centroid_of_cell, projected_point, cell);
 
   // Check the centroid of the cell first.
