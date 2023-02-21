@@ -1,14 +1,14 @@
 SetFactory("Built-in");
 
-lc = 0.5;
-lf = 0.5;
-le = 0.5;
+lc = 0.25;
+lf = 0.25;
+le = 0.25;
 
 RO=2;
-RI=5;
-RE=7.5;
-L=200;
-nl=75;
+RI=3;
+RE=5;
+L=1000;
+nl=200;
 
 Point(0) = {0, 0, 0, lc};
 Point(1) = {RO, 0, 0, lc};

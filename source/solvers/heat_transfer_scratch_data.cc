@@ -81,9 +81,9 @@ HeatTransferScratchData<dim>::allocate()
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &         fe,
-  const Quadrature<dim> &            quadrature,
-  const Mapping<dim> &               mapping,
+  const FiniteElement<dim>          &fe,
+  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                &mapping,
   const Parameters::VOF_PhaseFilter &phase_filter_parameters)
 {
   gather_vof    = true;
@@ -114,9 +114,9 @@ HeatTransferScratchData<dim>::enable_vof(
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &                      fe,
-  const Quadrature<dim> &                         quadrature,
-  const Mapping<dim> &                            mapping,
+  const FiniteElement<dim>                       &fe,
+  const Quadrature<dim>                          &quadrature,
+  const Mapping<dim>                             &mapping,
   const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
 {
   gather_vof    = true;
@@ -178,8 +178,7 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
     {
       switch (properties_manager.get_number_of_fluids())
         {
-          case 1:
-            {
+            case 1: {
               const auto density_model = properties_manager.get_density();
               const auto specific_heat_model =
                 properties_manager.get_specific_heat();
@@ -195,66 +194,9 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                                                        thermal_conductivity);
               rheology_model->vector_value(fields, viscosity);
 
-          break;
-        }
-      case 2:
-        {
-          const auto density_models = properties_manager.get_density_vector();
-          const auto specific_heat_models =
-            properties_manager.get_specific_heat_vector();
-          const auto thermal_conductivity_models =
-            properties_manager.get_thermal_conductivity_vector();
-          const auto rheology_models = properties_manager.get_rheology_vector();
-
-          density_models[0]->vector_value(fields, density_0);
-          specific_heat_models[0]->vector_value(fields, specific_heat_0);
-          thermal_conductivity_models[0]->vector_value(fields,
-                                                       thermal_conductivity_0);
-          rheology_models[0]->vector_value(fields, viscosity_0);
-          specific_heat_models[0]->vector_jacobian(
-            fields, field::temperature, grad_specific_heat_temperature_0);
-
-
-          density_models[1]->vector_value(fields, density_1);
-          specific_heat_models[1]->vector_value(fields, specific_heat_1);
-          thermal_conductivity_models[1]->vector_value(fields,
-                                                       thermal_conductivity_1);
-          rheology_models[1]->vector_value(fields, viscosity_1);
-          specific_heat_models[1]->vector_jacobian(
-            fields, field::temperature, grad_specific_heat_temperature_1);
-
-          // Blend the physical properties using the VOF field
-          for (unsigned int q = 0; q < this->n_q_points; ++q)
-            {
-              density[q] = calculate_point_property(filter->filter_phase(
-                                                      this->phase_values[q]),
-                                                    this->density_0[q],
-                                                    this->density_1[q]);
-
-              specific_heat[q] =
-                calculate_point_property(filter->filter_phase(
-                                           this->phase_values[q]),
-                                         this->specific_heat_0[q],
-                                         this->specific_heat_1[q]);
-
-              thermal_conductivity[q] =
-                calculate_point_property(filter->filter_phase(
-                                           this->phase_values[q]),
-                                         this->thermal_conductivity_0[q],
-                                         this->thermal_conductivity_1[q]);
-
-              viscosity[q] = calculate_point_property(filter->filter_phase(
-                                                        this->phase_values[q]),
-                                                      this->viscosity_0[q],
-                                                      this->viscosity_1[q]);
-
-              grad_specific_heat_temperature[q] = calculate_point_property(
-                filter->filter_phase(this->phase_values[q]),
-                this->grad_specific_heat_temperature_0[q],
-                this->grad_specific_heat_temperature_1[q]);
+              break;
             }
-          case 2:
-            {
+            case 2: {
               const auto density_models =
                 properties_manager.get_density_vector();
               const auto specific_heat_models =
@@ -284,31 +226,37 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  density[q] = calculate_point_property(this->phase_values[q],
-                                                        this->density_0[q],
-                                                        this->density_1[q]);
+                  density[q] =
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
+                                             this->density_0[q],
+                                             this->density_1[q]);
 
                   specific_heat[q] =
-                    calculate_point_property(this->phase_values[q],
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
                                              this->specific_heat_0[q],
                                              this->specific_heat_1[q]);
 
                   thermal_conductivity[q] =
-                    calculate_point_property(this->phase_values[q],
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
                                              this->thermal_conductivity_0[q],
                                              this->thermal_conductivity_1[q]);
 
-                  viscosity[q] = calculate_point_property(this->phase_values[q],
-                                                          this->viscosity_0[q],
-                                                          this->viscosity_1[q]);
+                  viscosity[q] =
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
+                                             this->viscosity_0[q],
+                                             this->viscosity_1[q]);
 
                   grad_specific_heat_temperature[q] = calculate_point_property(
-                    this->phase_values[q],
+                    filter->filter_phase(this->phase_values[q]),
                     this->grad_specific_heat_temperature_0[q],
                     this->grad_specific_heat_temperature_1[q]);
                 }
-              break;
             }
+            break;
           default:
             throw std::runtime_error("Unsupported number of fluids (>2)");
         }

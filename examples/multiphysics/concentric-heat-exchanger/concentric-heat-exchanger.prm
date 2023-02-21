@@ -17,15 +17,15 @@ subsection physical properties
   set number of solids = 1
   subsection fluid 0
     set kinematic viscosity            = 1 #1e-6
-    set specific heat                  = 1 #14180
-    set density                        = 1 #11000
-    set thermal conductivity           = 1.44e-1 #10.6
+    set specific heat                  = 0.4180 #14180
+    set density                        = 1000 #11000
+    set thermal conductivity           = 10e-3 #0.598e-2 #10.6
   end
 
     subsection solid 0
-    set thermal conductivity           = 4
-    set specific heat                  = 1
-    set density                        = 1
+    set thermal conductivity           = 45e-3
+    set specific heat                  = 0.05
+    set density                        = 8000
   end
 end
 
@@ -97,7 +97,7 @@ subsection boundary conditions
             set Function expression = 0
         end
         subsection w
-            set Function expression = 10
+            set Function expression = 1
         end
     end
     subsection bc 2
@@ -110,7 +110,7 @@ subsection boundary conditions
             set Function expression = 0
         end
         subsection w
-            set Function expression = -2
+            set Function expression = -0.2
         end
     end
 

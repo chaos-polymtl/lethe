@@ -147,7 +147,7 @@ Next, we define the physical properties for both the solid and the fluid. It is 
     subsection physical properties
       subsection fluid 0
         set kinematic viscosity            = 1 #1e-6
-        set specific heat                  = 1 #14180
+        set specific heat                  = 4180
         set density                        = 1 #11000
         set thermal conductivity           = 1.44e-1 #10.6
       end
