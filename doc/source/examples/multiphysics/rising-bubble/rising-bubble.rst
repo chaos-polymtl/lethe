@@ -253,7 +253,7 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
     end
     
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
-defined for ``phase``. ``min refinement level`` and ``max refinement level`` are 6 and 9, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (0.999) and moderate ``fraction coarsening`` (0.001).
+defined for ``phase``. ``min refinement level`` and ``max refinement level`` are 6 and 9, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (0.99) and moderate ``fraction coarsening`` (0.01).
 To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
 
 .. code-block:: text
@@ -346,4 +346,4 @@ References
 
 `[2] <https://doi.org/10.1002/fld.2643>`_ Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.
 
-`[3 ] <https://doi.org/10.1002/fld.1934>`_ Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.
+`[3] <https://doi.org/10.1002/fld.1934>`_ Hysing, S., Turek, S., Kuzmin, D., Parolini, N., Burman, E., Ganesan, S., & Tobiska, L. (2009). Quantitative benchmark computations of two‐dimensional bubble dynamics. International Journal for Numerical Methods in Fluids, 60(11), 1259-1288.

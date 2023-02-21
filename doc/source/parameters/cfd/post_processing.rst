@@ -149,7 +149,7 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity. This is used to identify the center of fluid 1 in VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate VOF barycenter``: calculates the barycenter of fluid 1 and its velocity VOF simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
 

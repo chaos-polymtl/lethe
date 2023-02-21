@@ -638,10 +638,10 @@ namespace Parameters
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
-    // Enable heat flux calculation
+    // Enable barycenter calculation for fluid 1 in VOF simulations
     bool calculate_vof_barycenter;
 
-    // Prefix for the total heat flux output
+    // Prefix for the barycenter output
     std::string barycenter_output_name;
 
     // Enable smoothing postprocessed vectors and scalars

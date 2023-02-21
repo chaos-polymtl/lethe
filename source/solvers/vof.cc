@@ -397,7 +397,6 @@ VolumeOfFluid<dim>::calculate_barycenter(
           fe_values_fd[velocity].get_function_values(solution_fd,
                                                      velocity_values);
 
-
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               const double JxW = fe_values_vof.JxW(q);
@@ -517,7 +516,6 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
   this->mass_monitored =
     Utilities::MPI::sum(this->mass_monitored, mpi_communicator);
 }
-
 
 template <int dim>
 template <typename VectorType>

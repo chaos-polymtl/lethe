@@ -78,8 +78,3 @@ ax3.set_xlim([0.1,0.9])
 ax3.set_ylim([0.8,1.4])
 fig3.savefig("bubble_contour.png",dpi=300)
 plt.show()
-
-#pl = pv.Plotter()
-#pl.add_mesh(sim, opacity=0.1)
-#pl.add_mesh(contours, color="white", line_width=5)
-#pl.show()

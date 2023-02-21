@@ -190,8 +190,6 @@ public:
    *
    * @param solution Fluid dynamics solution
    *
-   * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
-   * the phase of interest.
    */
   template <typename VectorType>
   std::pair<Tensor<1, dim>, Tensor<1, dim>>
