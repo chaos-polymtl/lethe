@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.append("../../../contrib/postprocessing/")
-from Lethe_pyvista_tools import *
+from lethe_pyvista_tools import *
 
 #############################################################################
 
@@ -30,7 +30,7 @@ prm_file_name = sys.argv[2]
 save_path = simulation_path
 
 # Create the particle object
-particle = Lethe_pyvista_tools(simulation_path, prm_file_name)
+particle = lethe_pyvista_tools(simulation_path, prm_file_name)
 
 # Get the pvd name
 pvd_name = particle.prm_dict["output name"]
@@ -77,7 +77,7 @@ rate = []
 # Loop through all results
 for i in range(len(particle.list_vtu)):
     # Store results in 'df'
-    exec(f'df = particle.df_{i}')
+    df = particle.df[i]
 
     # Select the data (if particle is completely under hopper outlet)
     vertical_position = df.points[:, normal_vect]
