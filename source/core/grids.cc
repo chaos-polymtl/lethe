@@ -59,10 +59,6 @@ attach_grid_to_triangulation(
           std::ifstream input_file(mesh_parameters.file_name);
           grid_in.read_msh(input_file);
         }
-      if (mesh_parameters.remove_manifold_after_initialization)
-        throw std::runtime_error(
-          "Unsupported option: the manifold cannot be removed for gmsh type "
-          "grids.");
     }
   // Dealii grids
   else if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
@@ -103,12 +99,6 @@ attach_grid_to_triangulation(
               TriangulationDescription::Settings::
                 construct_multigrid_hierarchy);
           triangulation.create_triangulation(construction_data);
-
-          if (mesh_parameters.remove_manifold_after_initialization)
-            throw std::runtime_error(
-              "Unsupported option: the manifold cannot be removed for simplex"
-              " type grids. This option is not implemented since grid"
-              " refinement is not possible for simplex grids.");
         }
       else
         {
@@ -305,6 +295,15 @@ attach_grid_to_triangulation(
   if (mesh_parameters.rotate)
     throw std::runtime_error(
       "Main grid cannot be rotated: the solid mesh must be rotated instead. The grid will not be rotated.");
+
+  // We ensure that the parameter combinations is possible regarding the removal
+  // of manifolds after initial refinements
+  if (mesh_parameters.remove_manifold_after_initialization)
+    if (mesh_parameters.simplex ||
+        mesh_parameters.type != Parameters::Mesh::Type::dealii)
+      throw std::runtime_error(
+        "Unsupported - the manifold removal is only possible and coherent in "
+        "the case of hex/quad grids defined by dealii.");
 }
 
 
