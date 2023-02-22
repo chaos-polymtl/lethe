@@ -40,7 +40,7 @@ public:
     for (unsigned int p = 0; p < input_data.solution_gradients.size(); ++p)
       {
         AssertDimension(computed_quantities[p].size(), dim);
-        if (dim == 3)
+        if constexpr (dim == 3)
           {
             computed_quantities[p](0) =
               (input_data.solution_gradients[p][2][1] -
@@ -52,7 +52,7 @@ public:
               (input_data.solution_gradients[p][1][0] -
                input_data.solution_gradients[p][0][1]);
           }
-        else
+        if constexpr (dim == 2)
           {
             computed_quantities[p][0] =
               (input_data.solution_gradients[p][1][0] -
@@ -112,6 +112,36 @@ public:
   }
 };
 
+/**
+ * @brief DivergencePostprocessor Post-processor class used to calculate
+ * the divergence of the velocity field within the domain. The divergence is
+ * defined as $\nabla \cdot \mathbf{u}$.
+ */
+template <int dim>
+class DivergencePostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  DivergencePostprocessor()
+    : DataPostprocessorScalar<dim>("velocity_divergence", update_gradients)
+  {}
+  virtual void
+  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
+                        std::vector<Vector<double>> &computed_quantities) const
+  {
+    AssertDimension(input_data.solution_gradients.size(),
+                    computed_quantities.size());
+    for (unsigned int p = 0; p < input_data.solution_gradients.size(); ++p)
+      {
+        double velocity_divergence = 0;
+        for (int d = 0; d < dim; ++d)
+          {
+            velocity_divergence += input_data.solution_gradients[p][d][d];
+          }
+        computed_quantities[p] = velocity_divergence;
+      }
+  }
+};
+
 
 /**
  * @brief Calculates the velocity in the Eulerian frame of reference
@@ -151,7 +181,7 @@ public:
           velocity = velocity + omega_z * (-1.) *
                                   cross_product_2d(inputs.evaluation_points[q]);
 
-        if (dim == 3)
+        if constexpr (dim == 3)
           {
             velocity[2] = inputs.solution_values[q][2];
             velocity =
