@@ -20,8 +20,8 @@ Features
 Files used in this example
 ----------------------------
 
-- Parameters file for particle insertion: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/packing-rotating-drum.prm``
-- Parameters file for drum rotation: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/small-rotating-drum-dem.prm``
+- Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
+- Parameters file for drum rotation: ``/examples/dem/3d-small-scale-rotating-drum/small-rotating-drum-dem.prm``
 - Python module for Lethe data post-processing: ``/contrib/postprocessing/lethe_pyvista_tools.py``
 - Python script using module for rotating drum post-processing: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
 
@@ -92,7 +92,10 @@ The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time
 
 .. note:: 
   
-  If we set ``first = 2``, ``particles.df[0]`` corresponds to the dataset of the 2nd time-step of the simulation.
+  If we set ``first = 2``, ``particles.df[0]`` corresponds to the dataset of the 2nd output time-step. In all situations from now on, everytime we refer to a time-step, it will correspond to a dataset.
+
+.. important::
+  Since this is a post-processing module, we can only have access to data that was previously output. If one needs more time resolution than the data in hand, the simulation must be `reran with a smaller time-step <../../../parameters/dem/simulation_control>`_
 
 
 Creation of a new array
@@ -100,14 +103,19 @@ Creation of a new array
 
 To color the particles according to their position, we use the function ``array_modifier``, which takes the following arguments:
 
-- ``reference_array_name``: Name of the array used to sort the data. By default: ``"ID"``
+- ``reference_array_name``: Name of the array used to sort the data and identify the particles at all time-steps. Other arrays, such as ``Type`` or any other array, can be used for this. By default: ``"ID"``
 - ``array_name``: Name of the new array. If there is an array with the same name, it will be rewritten according to the other arguments. By default: ``"new_array"``
-- ``restart_array``: If ``True``, zeroes the entire array before modifying it. If one wants to modify part of the array keeping the rest intact, it must be set as ``False``. By default: ``False``
+- ``restart_array``: If ``True``, gives ``standard_value`` to the entire array before applying the modifications to it. If one wants to modify part of the array keeping the rest intact, it must be set as ``False``. By default: ``False``
 - ``condition``: Takes a string and uses it in an if condition to modify the array. Variables accepted include ``x``, ``y``, ``z``, ``u``, ``v``, ``w``, ``t``, and any other array (``ID`` for example). It also accepts a combination of them, such as ``"x*w**2 + t > 2 and ID > 0"``. By default: ``""``
 - ``array_values``: New values to the array. This argument accepts a single value (which will be repeated to all data respecting the given ``condition``), a `NumPy <https://numpy.org/>`_ array, or `Python list <https://docs.python.org/3/tutorial/datastructures.html>`_ (with the same length (``len``) of all other arrays in ``particles.df``), or a string such as ``"2*x + t"`` (working just like the ``condition`` argument). By default: ``0``
 - ``standard_value``: If ``restart array = True`` or the array is a completely new array, the ``standard_value`` will be plugged to the entire array before modifying it. By default: ``0``
 - ``time_dependent``: ``array_modifier`` can be time dependent or not. If set ``True``, ``condition`` will be tested to each of the time-steps, while if it is ``False``, it will be applied using the ``reference_time_step`` instead, and the modification will be just replicated to the other time-steps. By default: ``False``
 - ``reference_time_step``: Reference time-step to which the modification will be applied. If ``time_dependent = False``, the result of the modificaition applied to ``reference_time_step`` will be simply replicated to the others. By default: ``0``
+
+.. important::
+
+  As explained in the previous subsection, ``reference_time_step`` only refers to time-steps that were read into the code using ``read_lethe_to_pyvista``.
+
 
 The following block of code creates an array named ``particle_color`` using the ``array_modifier`` function, assigning ``1`` to all particles with radial position :math:`> 0.025` at the end of the packing (40th time-step):
 
@@ -209,7 +217,7 @@ Possibilities for extension
 
 - Give a different ``condition`` to create the ``particle_color`` array
 - Use the ``lethe_pyvista_tools`` for a different problem, modifying the ``condition`` accordingly
-- Use the tools in the `PyVista oficial repository <https://docs.pyvista.org>`_ to create screenshots, movies, and plots with the data.
+- Use the tools in the `PyVista official repository <https://docs.pyvista.org>`_ to create screenshots, movies, and plots with the data.
 - Change the rotation velocity and track the mixing of the three layers of particles
 
 
