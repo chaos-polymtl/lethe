@@ -10,6 +10,8 @@ Cp = 4180
 rho = 1000
 k_fluid=0.6
 k_solid=398
+mu_fluid=1e-6
+Pr=6.9
 
 T_hi=100
 T_ci=0
@@ -31,8 +33,14 @@ print("Respective flow rates are (Q_in): ", Q_in, " (Q_out): ", Q_out )
 
 # Calculate h coefficient. Assume uniform q'' (Nu_d=4.36)
 
-h_in  = k_fluid *4.36 / 2 / R_in
-h_out = k_fluid *4.36 / 2 / R_out
+Re_in = rho * u_in * 2 * R_in / mu_fluid
+Re_out = rho * u_out * 2 * (R_out-R_ext) / mu_fluid
+
+Nu_in = 1.86 * (Re_in * Pr /L * 2 * R_in)**0.33
+Nu_out = 1.86 * (Re_in * Pr /L * 2 * (R_out-R_ext))**0.33
+
+h_in  = k_fluid *Nu_in / 2 / R_in
+h_out = k_fluid *Nu_out / 2 / R_out
 
 # Calculate conductivity coefficient
 h_tube =  k_solid  / np.log(R_ext/R_in) / R_in
