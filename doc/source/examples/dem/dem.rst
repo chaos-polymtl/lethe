@@ -13,6 +13,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     packing-in-circle/packing-in-circle
     packing-in-ball/packing-in-ball
     small-scale-rotating-drum/small-scale-rotating-drum
+    small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing
     rotating-drum/rotating-drum
     rotating-drum-with-post-processing/rotating-drum-with-post-processing
     rotation-of-box/rotation-of-box
