@@ -21,6 +21,10 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # Indicates that the mesh is a simplex mesh
     set simplex     = false
 
+    # Indicates if the manifold should be removed after initial refinements
+    set remove manifold after initialization = false
+  end
+
 * The following choices for the mesh type are available:
     * ``gmsh``: if this type is chosen, a ``.msh`` file generated from GMSH can be used. In this case, the grid file name must be specified in the ``file name`` variable.
     * ``dealii``: if this type is chosen, the deal.II grid generator class can be used. For additional documentation on these grids, you can consult the deal.II documentation for the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . The type of grid is specified by the ``grid type`` parameter and the arguments used for grid generation by the ``grid arguments`` parameter. 
@@ -39,3 +43,5 @@ This subsection provides information of the simulation geometry and its mesh. Th
 * The initial refinement number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.
 
 * `simplex`. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.
+
+* `remove manifold after initialization`. Indicates if the manifold should be removed (reset to flat) after initial refinements. This option is useful when having a constant domain boundary is important, for example when flow in a adaptively refined pipe is considered.
