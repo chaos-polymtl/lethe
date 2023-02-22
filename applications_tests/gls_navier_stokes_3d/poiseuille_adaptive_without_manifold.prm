@@ -1,0 +1,67 @@
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 2
+  set output name       = output
+  set output frequency  = 0
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1
+  end
+end
+
+subsection mesh
+  set type                                 = dealii
+  set grid type                            = subdivided_cylinder
+  set grid arguments                       = 3: 0.5 : 1
+  set initial refinement                   = 1
+  set remove manifold after initialization = true
+end
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 1-(y*y+z*z)/(0.5*0.5)
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+end
+
+subsection forces
+  set verbosity = verbose
+end
+
+subsection mesh adaptation
+  set type                = kelly
+  set variable            = velocity
+  set fraction type       = fraction
+  set fraction refinement = 0.3
+  set fraction coarsening = 0.1
+end
+
+subsection non-linear solver
+  set verbosity = quiet
+end
+
+subsection linear solver
+  set verbosity = quiet
+end
+
