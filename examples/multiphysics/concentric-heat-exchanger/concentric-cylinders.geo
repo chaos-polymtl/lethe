@@ -1,14 +1,14 @@
 SetFactory("Built-in");
 
-lc = 0.25;
-lf = 0.25;
-le = 0.25;
+lc = 0.1;
+lf = 0.1;
+le = 0.1;
 
-RO=2;
-RI=3;
-RE=5;
-L=1000;
-nl=200;
+RO=1.;
+RI=2.;
+RE=3.;
+L=50;
+nl=50;
 
 Point(0) = {0, 0, 0, lc};
 Point(1) = {RO, 0, 0, lc};
@@ -72,11 +72,11 @@ Extrude {0, 0, L} {
 //
 Physical Volume(0) = {1, 3};
 Physical Volume(1) = {2};
-Physical Surface(0) = {105,109,113,117};
-Physical Surface(1) = {1};
-Physical Surface(2) = {34};
-Physical Surface(3) = {3};
-Physical Surface(4) = {118};
+Physical Surface(4) = {2,76,105,109,113,117};
+Physical Surface(0) = {1};
+Physical Surface(1) = {34};
+Physical Surface(2) = {3};
+Physical Surface(3) = {118};
 
 
 

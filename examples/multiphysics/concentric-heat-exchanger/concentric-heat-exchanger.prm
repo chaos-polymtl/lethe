@@ -17,15 +17,15 @@ subsection physical properties
   set number of solids = 1
   subsection fluid 0
     set kinematic viscosity            = 1 #1e-6
-    set specific heat                  = 0.4180 #14180
-    set density                        = 1000 #11000
-    set thermal conductivity           = 10e-3 #0.598e-2 #10.6
+    set specific heat                  = 4180e6 # 1 #4180e6 #14180
+    set density                        = 1000e-9 # 1 #1000e-9 #11000
+    set thermal conductivity           = 0.60e3 # 0.14558 #0.607e3 #0.598e-2 #10.6
   end
 
     subsection solid 0
-    set thermal conductivity           = 45e-3
-    set specific heat                  = 0.05
-    set density                        = 8000
+    set thermal conductivity           = 398e3   # 115.37 #398e3
+    set specific heat                  = 385e6   # 1 #385e6
+    set density                        = 8960e-9 # 1#15.37
   end
 end
 
@@ -74,7 +74,7 @@ end
 #---------------------------------------------------
 subsection initial conditions
   subsection temperature
-    set Function expression = 50
+    set Function expression = 0
   end
 end
 
@@ -83,13 +83,23 @@ end
 #---------------------------------------------------
 subsection boundary conditions
   set number                  = 3
+
     subsection bc 0
-        set type              = noslip
+        set type              = function
         set id                = 0
+        subsection u
+            set Function expression = 0
+        end
+        subsection v
+            set Function expression = 0
+        end
+        subsection w
+            set Function expression = 10
+        end
     end
     subsection bc 1
         set type              = function
-        set id                = 1
+        set id                = 3
         subsection u
             set Function expression = 0
         end
@@ -97,47 +107,48 @@ subsection boundary conditions
             set Function expression = 0
         end
         subsection w
-            set Function expression = 1
+            set Function expression = -4
         end
     end
+
     subsection bc 2
-        set type              = function
+        set type              = noslip
         set id                = 4
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = -0.2
-        end
     end
 
 end
 
 
 subsection boundary conditions heat transfer
-  set number                  = 4
+  set number                  = 5
     subsection bc 0
-        set id = 1
-        set type              = temperature
-	      set value             = 0
-    end
-
-    subsection bc 1
-        set id = 4
+        set id = 0
         set type              = temperature
 	      set value             = 100
     end
+
+    subsection bc 1
+        set id = 1
+        set type              = noflux
+    end
+
     subsection bc 2
         set id = 2
         set type              = noflux
     end
+
     subsection bc 3
         set id = 3
+        set type              = temperature
+	      set value             = 0
+    end
+
+    subsection bc 4
+        set id = 4
         set type              = noflux
     end
+
+
 end
 
 
@@ -145,7 +156,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set tolerance               = 1e-4
+  set tolerance               = 1e-3
   set max iterations          = 6
   set verbosity               = verbose
 end
@@ -155,12 +166,12 @@ end
 #---------------------------------------------------
 subsection linear solver
   set method                                       = gmres
-  set relative residual                            = 1e-4
+  set relative residual                            = 1e-3
   set minimum residual                             = 1e-5
   set ilu preconditioner fill                = 1
-  set ilu preconditioner absolute tolerance  = 1e-9
+  set ilu preconditioner absolute tolerance  = 1e-7
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               = verbose
-  set max krylov vectors      = 500
-  set max iters         = 5000
+  set max krylov vectors      = 1000
+  set max iters         = 2000
 end
