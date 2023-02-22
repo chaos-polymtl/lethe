@@ -237,12 +237,12 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
-   * @param mapping the mapping representing the dofs in the elements to obtain
-   * the support points of each cell
+   * @param levels_not_precalculated the number of finer levels that won't be
+   * precalculated
    */
   void
-  update_precalculations(DoFHandler<dim> &             updated_dof_handler,
-                         std::shared_ptr<Mapping<dim>> mapping);
+  update_precalculations(DoFHandler<dim> &  updated_dof_handler,
+                         const unsigned int levels_not_precalculated);
 
 
   // This class defines values related to a particle used in the sharp interface

@@ -152,6 +152,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const auto &grad_shear_rate_j =
+                grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j = scratch_data.phi_p[q][j];
 
@@ -159,7 +161,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
               double local_matrix_ij =
                 dynamic_viscosity_eq *
-                  scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                  scalar_product(grad_shear_rate_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j;
@@ -256,6 +258,11 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
 
+
+      // Calculate shear rate
+      const Tensor<2, dim> shear_rate =
+        velocity_gradient + transpose(velocity_gradient);
+
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];
       const Tensor<1, dim> pressure_gradient =
@@ -310,8 +317,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
           // Navier-Stokes Residual
           // Momentum
           local_rhs(i) +=
-            (-dynamic_viscosity_eq *
-               scalar_product(velocity_gradient, grad_phi_u_i) -
+            (-dynamic_viscosity_eq * scalar_product(shear_rate, grad_phi_u_i) -
              density_eq * velocity_gradient * velocity * phi_u_i +
              pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
@@ -371,8 +377,6 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
-  std::vector<double> densities(number_of_previous_solutions(method) + 1);
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -380,24 +384,18 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
 
-
-      densities[0] = scratch_data.density[q];
-
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        {
-          densities[p + 1] = scratch_data.previous_density[p][q];
-        }
+      const double density = scratch_data.density[q];
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          strong_residual[q] += densities[p] * bdf_coefs[p] * velocity[p];
+          strong_residual[q] += density * bdf_coefs[p] * velocity[p];
         }
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
           strong_jacobian[q][j] +=
-            densities[0] * bdf_coefs[0] * scratch_data.phi_u[q][j];
+            density * bdf_coefs[0] * scratch_data.phi_u[q][j];
         }
 
 
@@ -409,7 +407,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
               const Tensor<1, dim> &phi_u_j = scratch_data.phi_u[q][j];
 
               local_matrix(i, j) +=
-                phi_u_j * phi_u_i * densities[0] * bdf_coefs[0] * JxW[q];
+                phi_u_j * phi_u_i * density * bdf_coefs[0] * JxW[q];
             }
         }
     }
@@ -440,8 +438,6 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   std::vector<Tensor<1, dim>> velocity(1 +
                                        number_of_previous_solutions(method));
 
-  std::vector<double> densities(number_of_previous_solutions(method) + 1);
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -449,19 +445,12 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
 
-
-
-      densities[0] = scratch_data.density[q];
-
-      for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        {
-          densities[p + 1] = scratch_data.previous_density[p][q];
-        }
+      const double density = scratch_data.density[q];
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
         {
-          strong_residual[q] += (densities[p] * bdf_coefs[p] * velocity[p]);
+          strong_residual[q] += (density * bdf_coefs[p] * velocity[p]);
         }
 
 
@@ -472,8 +461,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
           for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
                ++p)
             {
-              local_rhs_i -=
-                densities[p] * bdf_coefs[p] * (velocity[p] * phi_u_i);
+              local_rhs_i -= density * bdf_coefs[p] * (velocity[p] * phi_u_i);
             }
           local_rhs(i) += local_rhs_i * JxW[q];
         }
@@ -505,9 +493,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
-  const double phase_0_density = scratch_data.density_0[0];
-  const double phase_1_density = scratch_data.density_1[0];
-
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -520,9 +505,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Gather density
-      double density_eq = scratch_data.density[q];
-
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &phase_gradient_value =
@@ -530,8 +512,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> tmp_STF =
-        -2.0 * surface_tension_coef * curvature_value * phase_gradient_value *
-        (density_eq / (phase_0_density + phase_1_density));
+        -surface_tension_coef * curvature_value * phase_gradient_value;
 
       strong_residual[q] += tmp_STF;
 

@@ -638,6 +638,12 @@ namespace Parameters
     // Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
+    // Enable barycenter calculation for fluid 1 in VOF simulations
+    bool calculate_vof_barycenter;
+
+    // Prefix for the barycenter output
+    std::string barycenter_output_name;
+
     // Enable smoothing postprocessed vectors and scalars
     bool smoothed_output_fields;
 
@@ -1045,6 +1051,7 @@ namespace Parameters
     unsigned int                 nb;
     unsigned int                 order;
     unsigned int                 initial_refinement;
+    unsigned int                 levels_not_precalculated;
     double                       inside_radius;
     double                       outside_radius;
     std::vector<IBParticle<dim>> particles;
