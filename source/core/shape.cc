@@ -907,7 +907,7 @@ RBFShape<dim>::update_precalculations(
         {
           // We first check if we are in the hierarchy levels where we simply
           // assume that children have the same likely nodes as their parents.
-          if (level + 1 + levels_not_precalculated > maximal_level)
+          if (level + 1 + levels_not_precalculated > maximal_level && level > 0)
             {
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
               continue;
