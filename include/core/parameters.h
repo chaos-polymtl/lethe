@@ -864,6 +864,11 @@ namespace Parameters
     // Allowing the use of a simplex mesh
     bool simplex;
 
+    // Allows to fix the domain boundary after initial refinement cycles. This
+    // is useful, for example, when a cylindrical domain is adaptively refined
+    // but the section should remain constant to preserve continuity.
+    bool remove_manifold_after_initialization;
+
     // Target size when automatically refining initial mesh
     double target_size;
 

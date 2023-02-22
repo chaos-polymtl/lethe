@@ -102,10 +102,30 @@ attach_grid_to_triangulation(
         }
       else
         {
-          GridGenerator::generate_from_name_and_arguments(
-            triangulation,
-            mesh_parameters.grid_type,
-            mesh_parameters.grid_arguments);
+          if (mesh_parameters.remove_manifold_after_initialization)
+            {
+              Triangulation<dim, spacedim> temporary_quad_triangulation;
+              GridGenerator::generate_from_name_and_arguments(
+                temporary_quad_triangulation,
+                mesh_parameters.grid_type,
+                mesh_parameters.grid_arguments);
+
+              // initial refinement
+              const unsigned int initial_refinement =
+                mesh_parameters.initial_refinement;
+              temporary_quad_triangulation.refine_global(initial_refinement);
+
+              // flatten the triangulation
+              GridGenerator::flatten_triangulation(temporary_quad_triangulation,
+                                                   triangulation);
+            }
+          else
+            {
+              GridGenerator::generate_from_name_and_arguments(
+                triangulation,
+                mesh_parameters.grid_type,
+                mesh_parameters.grid_arguments);
+            }
         }
     }
   // Customizable cylinder mesh
@@ -339,8 +359,15 @@ read_mesh_and_manifolds(
         }
       else if (!restart)
         {
-          const int initial_refinement = mesh_parameters.initial_refinement;
-          triangulation.refine_global(initial_refinement);
+          if (!mesh_parameters.remove_manifold_after_initialization)
+            {
+              const int initial_refinement = mesh_parameters.initial_refinement;
+              triangulation.refine_global(initial_refinement);
+            }
+          else
+            {
+              // Refinement was already performed during initialization
+            }
         }
     }
 }

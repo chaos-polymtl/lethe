@@ -1432,6 +1432,15 @@ namespace Parameters
         "Indicates that the mesh used is a mesh made of only simplex elements.");
 
       prm.declare_entry(
+        "remove manifold after initialization",
+        "false",
+        Patterns::Bool(),
+        "Indicates if the manifold should be removed (reset to flat) after "
+        "initial refinements. This option is useful when having a constant "
+        "domain boundary is important, for example when flow in a adaptively "
+        "refined pipe is considered.");
+
+      prm.declare_entry(
         "check diamond cells",
         "false",
         Patterns::Bool(),
@@ -1530,7 +1539,9 @@ namespace Parameters
 
       refine_until_target_size = prm.get_bool("enable target size");
       simplex                  = prm.get_bool("simplex");
-      check_for_diamond_cells  = prm.get_bool("check diamond cells");
+      remove_manifold_after_initialization =
+        prm.get_bool("remove manifold after initialization");
+      check_for_diamond_cells = prm.get_bool("check diamond cells");
       expand_particle_wall_contact_search =
         prm.get_bool("expand particle-wall contact search");
       target_size = prm.get_double("target size");
