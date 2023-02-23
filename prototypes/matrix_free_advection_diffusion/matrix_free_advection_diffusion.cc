@@ -133,10 +133,6 @@ Settings::try_parse(const std::string &prm_filename)
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
   prm.declare_entry("peclet number", "10", Patterns::Double(), "Peclet number");
-  prm.declare_entry("kinematic viscosity",
-                    "1",
-                    Patterns::Double(),
-                    "Kinematic viscosity");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -692,6 +688,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
 
   constraints.clear();
   constraints.reinit(locally_relevant_dofs);
+
+  // Set homogeneous constraints for the matrix-free operator
   if (parameters.problem_type == Settings::boundary_layer)
     {
       // Create zero BCs for the delta.
@@ -715,49 +713,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                2,
                                                Functions::ZeroFunction<dim>(),
                                                constraints);
-
-      // Set boundary values for the initial newton iteration
-      std::map<types::global_dof_index, double> boundary_values_left_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               0,
-                                               Functions::ConstantFunction<dim>(
-                                                 -1.0),
-                                               boundary_values_left_wall);
-      // solution.update_ghost_values();
-      // for (auto &boundary_value : boundary_values_left_wall)
-      //   solution(boundary_value.first) = boundary_value.second;
-      // solution.zero_out_ghost_values();
-
-      std::map<types::global_dof_index, double> boundary_values_right_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               1,
-                                               Functions::ConstantFunction<dim>(
-                                                 1.0),
-                                               boundary_values_right_wall);
-      // solution.update_ghost_values();
-      // for (auto &boundary_value : boundary_values_right_wall)
-      //   solution(boundary_value.first) = boundary_value.second;
-      // solution.zero_out_ghost_values();
-
-      std::map<types::global_dof_index, double> boundary_values_top_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               3,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_top_wall);
-      // solution.update_ghost_values();
-      // for (auto &boundary_value : boundary_values_top_wall)
-      //   solution(boundary_value.first) = boundary_value.second;
-      // solution.zero_out_ghost_values();
-
-      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               2,
-                                               BoundaryFunction<dim>(),
-                                               boundary_values_bottom_wall);
-      // solution.update_ghost_values();
-      // for (auto &boundary_value : boundary_values_bottom_wall)
-      //   solution(boundary_value.first) = boundary_value.second;
-      // solution.zero_out_ghost_values();
     }
   else if (parameters.problem_type == Settings::double_glazing)
     {
@@ -781,40 +736,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                2,
                                                Functions::ZeroFunction<dim>(),
                                                constraints);
-
-      // Set boundary values for the initial newton iteration
-      std::map<types::global_dof_index, double> boundary_values_left_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               0,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_left_wall);
-      for (auto &boundary_value : boundary_values_left_wall)
-        solution(boundary_value.first) = boundary_value.second;
-
-      std::map<types::global_dof_index, double> boundary_values_right_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               1,
-                                               Functions::ConstantFunction<dim>(
-                                                 1.0),
-                                               boundary_values_right_wall);
-      for (auto &boundary_value : boundary_values_right_wall)
-        solution(boundary_value.first) = boundary_value.second;
-
-      std::map<types::global_dof_index, double> boundary_values_top_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               3,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_top_wall);
-      for (auto &boundary_value : boundary_values_top_wall)
-        solution(boundary_value.first) = boundary_value.second;
-
-      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               2,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values_bottom_wall);
-      for (auto &boundary_value : boundary_values_bottom_wall)
-        solution(boundary_value.first) = boundary_value.second;
     }
   constraints.close();
 
@@ -838,6 +759,97 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
   system_matrix.initialize_dof_vector(solution);
   system_matrix.initialize_dof_vector(newton_update);
   system_matrix.initialize_dof_vector(system_rhs);
+
+  // Change values of initial newton iteration
+  if (parameters.problem_type == Settings::boundary_layer)
+    {
+      // Set boundary values for the initial newton iteration
+      std::map<types::global_dof_index, double> boundary_values_left_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ConstantFunction<dim>(
+                                                 -1.0),
+                                               boundary_values_left_wall);
+
+      for (auto &boundary_value : boundary_values_left_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_right_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.0),
+                                               boundary_values_right_wall);
+
+      for (auto &boundary_value : boundary_values_right_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_top_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_top_wall);
+
+      for (auto &boundary_value : boundary_values_top_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               2,
+                                               BoundaryFunction<dim>(),
+                                               boundary_values_bottom_wall);
+
+      for (auto &boundary_value : boundary_values_bottom_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+    }
+  else if (parameters.problem_type == Settings::double_glazing)
+    {
+      // Set boundary values for the initial newton iteration
+      std::map<types::global_dof_index, double> boundary_values_left_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_left_wall);
+
+      for (auto &boundary_value : boundary_values_left_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_right_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.0),
+                                               boundary_values_right_wall);
+
+      for (auto &boundary_value : boundary_values_right_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_top_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_top_wall);
+
+      for (auto &boundary_value : boundary_values_top_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_bottom_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               2,
+                                               Functions::ZeroFunction<dim>(),
+                                               boundary_values_bottom_wall);
+
+      for (auto &boundary_value : boundary_values_bottom_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+    }
 }
 
 template <int dim, int fe_degree>
@@ -1295,6 +1307,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
     pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
     pcout << CYCLES_header << std::endl;
+    pcout << PECLET_header << std::endl;
+    pcout << PROBLEM_TYPE_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }
