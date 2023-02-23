@@ -894,7 +894,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -1555,6 +1555,8 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   bool non_zero_constraints)
 {
+  // If there are no solid regions, there is no work to be done and we can
+  // return
   if (simulation_parameters.physical_properties_manager
         .get_number_of_solids() == 0)
     return;
@@ -1562,11 +1564,15 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  std::set<types::global_dof_index> dof_is_connected_to_fluid;
-
+  // We will need to identify which pressure degrees of freedom are connected to
+  // fluid region For these we won't establish a zero pressure equation.
+  std::set<types::global_dof_index>  dof_is_connected_to_fluid;
   std::set<types::global_cell_index> cell_is_connected_to_fluid;
 
-
+  // Loop through all cells to identify which cells are solid. This first step
+  // is used to 1) constraint the velocity degree of freedom to be zero in the
+  // solid region and 2) to identify which pressure degrees of freedom are
+  // connected to fluid cells
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
@@ -1805,7 +1811,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           1, DataComponentInterpretation::component_is_scalar);
 
       std::vector<std::string> qcriterion_name = {"qcriterion"};
-      const DoFHandler<dim> &  dof_handler_qcriterion =
+      const DoFHandler<dim>   &dof_handler_qcriterion =
         qcriterion_smoothing.get_dof_handler();
       data_out.add_data_vector(dof_handler_qcriterion,
                                qcriterion_field,

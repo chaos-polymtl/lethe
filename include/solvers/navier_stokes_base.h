@@ -190,8 +190,7 @@ protected:
             multiphysics->postprocess(true);
           }
         ref_iter++;
-      }
-    while (
+    } while (
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
@@ -362,6 +361,10 @@ protected:
    * eventually it could be extended to more than one. By default, the fluid
    * domain is assumed to have a material_id=0 and the rest of the domains have
    * a material_id>0.
+   *
+   * @param non_zero_constraints If this parameter is true, it indicates that it is the non_zero constraints
+   * which are being constrainted for the solid domain. If this is set to
+   * false, the zero constraints are constrained in the solid domain
    */
   void
   establish_solid_domain(bool non_zero_constraints);
