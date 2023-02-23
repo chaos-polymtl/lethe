@@ -104,6 +104,7 @@ struct Settings
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
   double       peclet_number;
+  bool         stabilization;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -136,6 +137,10 @@ Settings::try_parse(const std::string &prm_filename)
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
   prm.declare_entry("peclet number", "10", Patterns::Double(), "Peclet number");
+  prm.declare_entry("stabilization",
+                    "false",
+                    Patterns::Bool(),
+                    "Enable stabilization <true|false>");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -219,6 +224,7 @@ Settings::try_parse(const std::string &prm_filename)
   this->number_of_cycles   = prm.get_integer("number of cycles");
   this->initial_refinement = prm.get_integer("initial refinement");
   this->peclet_number      = prm.get_double("peclet number");
+  this->stabilization      = prm.get_bool("stabilization");
   this->output             = prm.get_bool("output");
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
@@ -783,8 +789,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
   FEValues<dim> fe_values(fe,
                           quadrature_formula,
-                          update_values | update_gradients | update_JxW_values |
-                            update_quadrature_points);
+                          update_values | update_gradients | update_hessians |
+                            update_JxW_values | update_quadrature_points);
 
   const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
   const unsigned int n_q_points    = fe_values.n_quadrature_points;
@@ -833,6 +839,25 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                          advection_term_values[q] * grad_phi_j * phi_i -
                          phi_i * nonlinearity * phi_j) *
                         dx;
+
+                      if (parameters.stabilization)
+                        {
+                          double h   = cell->measure();
+                          double tau = std::pow(
+                            std::pow(4 / (parameters.peclet_number * h * h),
+                                     2) +
+                              std::pow(2 * advection_term_values[q].norm() / h,
+                                       2),
+                            -0.5);
+                          auto shape_hessian_j = fe_values.shape_hessian(j, q);
+                          auto shape_laplacian_j = trace(shape_hessian_j);
+                          cell_matrix(i, j) +=
+                            ((-1 / parameters.peclet_number *
+                              shape_laplacian_j) +
+                             (advection_term_values[q] * grad_phi_j)) *
+                            (tau * (advection_term_values[q] * grad_phi_i)) *
+                            dx;
+                        }
                     }
                 }
             }
