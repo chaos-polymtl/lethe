@@ -372,9 +372,9 @@ private:
    *
    * @param cell, the cell that we verify whether it is cut or not.
    *
-   * @param local_dof_indices, a container for the local dof indices used during the function call.
-   *
    * @param support_points, a mapping of support points for the DOFs.
+   *
+   * @param p, the particle index of the particle use in the check
    *
    */
   bool

@@ -1335,10 +1335,11 @@ RBFShape<dim>::initialize_bounding_box()
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
       half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
     }
-  bounding_box = std::make_shared<Rectangle<dim>>(
-    half_lengths,
-    this->position + this->reverse_align_and_center(bounding_box_center),
-    this->orientation);
+  bounding_box =
+    std::make_shared<Rectangle<dim>>(half_lengths,
+                                     this->reverse_align_and_center(
+                                       bounding_box_center),
+                                     this->orientation);
 }
 
 template <int dim>
