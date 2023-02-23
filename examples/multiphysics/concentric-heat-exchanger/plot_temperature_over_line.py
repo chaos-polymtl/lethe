@@ -36,10 +36,9 @@ a = [0.5, 0, 0]
 b = [0.5, 0, 50]
 sampled_data_mid=sim.sample_over_line(a, b, resolution=1000)
 
-# Get u component of the velocity from sampled data
+# Extract temperature along sampled lines
 z_c = sampled_data_center["Distance"]
 T_c = sampled_data_center["temperature"][:]
-
 
 z_p = sampled_data_periphery["Distance"]
 T_p = sampled_data_periphery["temperature"][:]
@@ -49,11 +48,12 @@ T_m = sampled_data_mid["temperature"][:]
 
 plt.plot(z_c,T_c,label="Center of channel")
 plt.plot(z_m,T_m,label="Half radius of channel")
-
 plt.plot(z_p,T_p,label="Inner wall")
 plt.plot([50],[25.25],'ko',label="NTU approach with correlations")
+
 plt.xlabel("z [mm]")
-plt.ylabel("Temperature [$^\circ$Celsius]")
+plt.ylabel("Temperature [$^\circ$C]")
 plt.legend()
 
+plt.savefig("temperature_along_line.png",dpi=200)
 plt.show()
