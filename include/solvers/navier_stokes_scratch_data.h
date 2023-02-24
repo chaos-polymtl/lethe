@@ -761,34 +761,33 @@ public:
         average_particle_velocity / number_of_particles;
 
     // Relative velocity and particle Reynolds
-    {
-      unsigned int particle_no                 = 0;
-      average_fluid_particle_relative_velocity = 0;
+    unsigned int particle_no                 = 0;
+    average_fluid_particle_relative_velocity = 0;
+    double viscosity = properties_manager.get_viscosity_scale();
 
-      for (auto &particle : pic)
-        {
-          auto particle_properties = particle.get_properties();
-          fluid_particle_relative_velocity_at_particle_location[particle_no] =
-            fluid_velocity_at_particle_location[particle_no] -
-            particle_velocity[particle_no];
-          average_fluid_particle_relative_velocity +=
-            fluid_particle_relative_velocity_at_particle_location[particle_no];
+    for (auto &particle : pic)
+      {
+        auto particle_properties = particle.get_properties();
+        fluid_particle_relative_velocity_at_particle_location[particle_no] =
+          fluid_velocity_at_particle_location[particle_no] -
+          particle_velocity[particle_no];
+        average_fluid_particle_relative_velocity +=
+          fluid_particle_relative_velocity_at_particle_location[particle_no];
 
-          Re_particle[particle_no] =
-            1e-3 +
-            cell_void_fraction[particle_no] *
-              fluid_particle_relative_velocity_at_particle_location[particle_no]
-                .norm() *
-              particle_properties[DEM::PropertiesIndex::dp] /
-              (properties_manager.viscosity_scale + DBL_MIN);
-          particle_no++;
-        }
-      if (particle_no > 0)
-        {
-          average_fluid_particle_relative_velocity =
-            average_fluid_particle_relative_velocity / particle_no;
-        }
-    }
+        Re_particle[particle_no] =
+          1e-3 +
+          cell_void_fraction[particle_no] *
+            fluid_particle_relative_velocity_at_particle_location[particle_no]
+              .norm() *
+            particle_properties[DEM::PropertiesIndex::dp] /
+            (viscosity + DBL_MIN);
+        particle_no++;
+      }
+    if (particle_no > 0)
+      {
+        average_fluid_particle_relative_velocity =
+          average_fluid_particle_relative_velocity / particle_no;
+      }
 
     // If there are no particles in the cell,there is no need to try and gather
     // the rest of the information

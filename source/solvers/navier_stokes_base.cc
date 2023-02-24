@@ -894,7 +894,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto                            &present_solution = this->present_solution;
+  auto &                           present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -1292,7 +1292,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         {
           this->pcout << "Pressure drop: "
                       << this->simulation_parameters.physical_properties_manager
-                             .density_scale *
+                             .get_density_scale() *
                            pressure_drop
                       << " Pa" << std::endl;
         }
@@ -1553,7 +1553,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
-  bool non_zero_constraints)
+  const bool non_zero_constraints)
 {
   // If there are no solid regions, there is no work to be done and we can
   // return
@@ -1578,7 +1578,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          // If the material_id is 1, the region is a solid region
+          // If the material_id is 1, the region is a solid region. Constraint
+          // the velocity DOF to be zero.
           if (cell->material_id() > 0)
             {
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
@@ -1601,8 +1602,9 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
             }
           else
             {
-              // Cell is a fluid cell and as such all the DOFs are connected to
-              // fluid
+              // Cell is a fluid cell and as such all the pressure DOFS of that
+              // cell are connected to the fluid. This will be used later on to
+              // identify which pressure cells
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
                   const unsigned int component =
@@ -1617,17 +1619,18 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
     }
 
   // All pressure DOFs which are not connected to a fluid cell are set to
-  // dirichlet BC
+  // dirichlet BC to ensure that the system matrix has adequate conditioning
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           cell->get_dof_indices(local_dof_indices);
-          // If the material_id is 1, the region is a solid region
+          // If the material_id is >0, the region is a solid region
           if (cell->material_id() > 0)
             {
               bool connected_to_fluid = false;
-              // First check if cell is connected to a fluid cell
+              // First check if cell is connected to a fluid cell by checking if
+              // one of the DOF of the cell is connected to a fluid cell
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
                   auto search =
@@ -1636,12 +1639,17 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                     connected_to_fluid = true;
                 }
 
+              // All of the pressure DOFS with the cell are not connected to the
+              // fluid. Consequently we fix a Dirichlet boundary condition on
+              // pressure on these dofs.
               if (!connected_to_fluid)
                 {
                   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                     {
                       const unsigned int component =
                         this->fe->system_to_component_index(i).first;
+
+                      // Only pressure DOFs have an additional Dirichlet BC
                       if (component == dim)
                         {
                           auto search = dof_is_connected_to_fluid.find(
@@ -1811,7 +1819,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           1, DataComponentInterpretation::component_is_scalar);
 
       std::vector<std::string> qcriterion_name = {"qcriterion"};
-      const DoFHandler<dim>   &dof_handler_qcriterion =
+      const DoFHandler<dim> &  dof_handler_qcriterion =
         qcriterion_smoothing.get_dof_handler();
       data_out.add_data_vector(dof_handler_qcriterion,
                                qcriterion_field,

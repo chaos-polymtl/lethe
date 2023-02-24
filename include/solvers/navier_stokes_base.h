@@ -190,7 +190,8 @@ protected:
             multiphysics->postprocess(true);
           }
         ref_iter++;
-    } while (
+      }
+    while (
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);
@@ -367,7 +368,7 @@ protected:
    * false, the zero constraints are constrained in the solid domain
    */
   void
-  establish_solid_domain(bool non_zero_constraints);
+  establish_solid_domain(const bool non_zero_constraints);
 
   /**
    * @brief write_checkpoint

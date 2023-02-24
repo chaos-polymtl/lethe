@@ -181,6 +181,19 @@ public:
     return tracer_diffusivity;
   }
 
+  double
+  get_viscosity_scale() const
+  {
+    return viscosity_scale;
+  }
+
+  double
+  get_density_scale() const
+  {
+    return density_scale;
+  }
+
+
   void
   set_rheology(std::shared_ptr<RheologicalModel> p_rheology,
                const unsigned int                fluid_id = 0)
@@ -213,6 +226,10 @@ private:
   /** @brief Calculates the global id of the physical property. By default. Lethe stores all
    *  the properties of the fluids, then the properties of the solid. Fluids
    * need to have a material id of 0, then solids are consequential.
+   *
+   * @param fluid_id the id of the fluid (0 for single phase simulations, 0 or 1 for VOF simulations)
+   *
+   * @param material_id the material id of the cell. Cells with material_id=0 are fluid cells (0 or 1) and cells with material_id>0 are solid cells
    */
   unsigned int
   calculate_global_id(const unsigned int fluid_id,
@@ -227,16 +244,8 @@ private:
   }
 
 
-
-  // Temporary scaling variables. This will be deprecated once the migration is
-  // well finished.
 public:
-  // Viscosity and density scaling used for some post-processing capabilities.
-  double viscosity_scale;
-  double density_scale;
-
   bool is_initialized;
-
 
 private:
   std::vector<std::shared_ptr<DensityModel>>             density;
@@ -250,6 +259,11 @@ private:
 
   bool non_newtonian_flow;
   bool constant_density;
+
+  // Temporary scaling variable are overly used right now. They will eventually
+  // be deprecated for the majority of places they are used.
+  double viscosity_scale;
+  double density_scale;
 
   unsigned int number_of_fluids;
   unsigned int number_of_solids;

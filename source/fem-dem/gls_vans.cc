@@ -1667,7 +1667,7 @@ GLSVANSSolver<dim>::post_processing()
       this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
       this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
     this->cfd_dem_simulation_parameters.cfd_parameters
-      .physical_properties_manager.density_scale;
+      .physical_properties_manager.get_density_scale();
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"
