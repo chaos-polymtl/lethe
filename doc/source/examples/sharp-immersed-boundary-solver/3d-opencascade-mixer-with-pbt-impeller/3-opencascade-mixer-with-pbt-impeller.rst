@@ -1,9 +1,9 @@
 .. role:: raw-html(raw)
     :format: html
 
-=====================================================================================
+=======================================================================================
 3D Mixer with pitched-blade turbine impeller using OpenCascade Sharp-immersed boundary
-=====================================================================================
+=======================================================================================
 
 The mixing of stirred-tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with a OpenCasacade shape from a step file.
 

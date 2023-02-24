@@ -76,7 +76,7 @@ Let go over each line:
 
 
 
-For more detail on the the definition of the shape see: :doc:`../../../parameters/resolved-cfd-dem/resolved-cfd-dem`.
+For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
 
 Definition of the shape and its motion
 --------------------------------------
@@ -111,7 +111,6 @@ The section defining each parameter for the particles has certains requirements:
     end
   end
 
-Additionnal information on the ``particles`` parameters can be found on :doc:`../../../parameters/resolved-cfd-dem/resolved-cfd-dem`.
 
 Boundary conditions
 -----------------------
