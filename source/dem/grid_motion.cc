@@ -32,7 +32,8 @@ GridMotion<dim, spacedim>::GridMotion(
 }
 
 template <>
-void GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
+void
+GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 {
   throw ExcImpossibleInDim(1);
   // TODO We need to add this function to GridTools for dim=1
@@ -40,13 +41,15 @@ void GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 }
 
 template <>
-void GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
+void
+GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
 {
   GridTools::rotate(rotation_angle, triangulation);
 }
 
 template <>
-void GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
+void
+GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 {
   Tensor<1, 3> axis({0, 0, 0});
   axis[rotation_axis] = 1;
@@ -54,7 +57,8 @@ void GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 }
 
 template <>
-void GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
+void
+GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
 {
   Tensor<1, 3> axis({0, 0, 0});
   axis[rotation_axis] = 1;
@@ -73,9 +77,7 @@ template <int dim, int spacedim>
 void
 GridMotion<dim, spacedim>::
   update_boundary_points_and_normal_vectors_in_contact_list(
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info<spacedim>>>
+    typename DEM::dem_data_structures<spacedim>::particle_wall_in_contact
       &particle_wall_pairs_in_contact,
     const typename DEM::dem_data_structures<
       spacedim>::boundary_points_and_normal_vectors
