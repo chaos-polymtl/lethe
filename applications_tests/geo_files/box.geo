@@ -1,3 +1,7 @@
+// Box geometry with two physical volumes
+// This is a primitive geometry which is used for the application test
+// that use the solid region mechanism (e.g. conjugate heat transfer)
+
 H=0.1;
 H2=0.2;
 L=1;
@@ -19,19 +23,11 @@ Line(4)={1,4};
 Line(5)={3,5};
 Line(6)={5,6};
 Line(7)={6,4};
-//#Transfinite Line {1,3} = Ceil(nl) Using Progression 1;
-//#Transfinite Line {2,4} = Ceil(nh) Using Progression 1;
 Line Loop(1) = {1,2,-3,-4};
 Plane Surface(1) = {1} ;
 
 Line Loop(2) = {3,5,6,7};
 Plane Surface(2) = {2} ;
-
-
-
-
-//#Transfinite Surface {1};
-//#Recombine Surface{0:1};
 
 Physical Surface(0) = {1};
 Physical Surface(1) = {2};
