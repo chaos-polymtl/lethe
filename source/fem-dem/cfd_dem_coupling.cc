@@ -133,6 +133,7 @@ template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
   , has_periodic_boundaries(false)
+  , has_disabled_contacts(false)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {}
@@ -798,7 +799,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
   // time
-
   if (this->simulation_control->get_step_number() == 0)
     {
       integrator_object->integrate_half_step_location(

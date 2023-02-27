@@ -89,7 +89,7 @@ FlowControl<dim>::calculate_beta(const std::pair<double, double> &flow_rate,
       // Standard flow controller.
       // Calculate the new beta to control the flow.
       beta_n1 =
-        beta_n - (flow_rate_0 - 2 * flow_rate_n + flow_rate_1n) / (area * dt);
+        0.75 * beta_n - (flow_rate_0 - 2 * flow_rate_n + flow_rate_1n) / (area * dt);
 
       // If desired flow rate is reached, new beta only maintains the force to
       // keep the flow at the desired value. Is so, if calculated beta is
