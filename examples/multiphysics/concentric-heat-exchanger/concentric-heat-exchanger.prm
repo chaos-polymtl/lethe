@@ -3,75 +3,82 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output frequency        = 1
-  set output name             = out
-  set output path             = ./output/
+  set method           = steady
+  set output frequency = 1
+  set output name      = out
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of solids = 1
   subsection fluid 0
-    set kinematic viscosity            = 1
-    set specific heat                  = 4180e6
-    set density                        = 1000e-9
-    set thermal conductivity           = 0.60e3
+    set kinematic viscosity  = 1
+    set specific heat        = 4180e6
+    set density              = 1000e-9
+    set thermal conductivity = 0.60e3
   end
 
-    subsection solid 0
-    set thermal conductivity           = 398e3 
-    set specific heat                  = 385e6
-    set density                        = 8960e-9
+  subsection solid 0
+    set thermal conductivity = 398e3
+    set specific heat        = 385e6
+    set density              = 8960e-9
   end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-    set temperature order         = 2
 
+subsection FEM
+  set velocity order    = 1
+  set pressure order    = 1
+  set temperature order = 2
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-   set heat transfer = true
+  set heat transfer = true
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = iteration
+  set type = iteration
 end
 
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
+
 subsection post-processing
-    set verbosity = verbose
-    set calculate heat flux = true
+  set verbosity           = verbose
+  set calculate heat flux = true
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = gmsh
-    set file name            = concentric-cylinders.msh
+  set type      = gmsh
+  set file name = concentric-cylinders.msh
 end
 
 #---------------------------------------------------
 # initial conditions
 #---------------------------------------------------
+
 subsection initial conditions
   subsection temperature
     set Function expression = 0
@@ -81,97 +88,95 @@ end
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 3
+  set number = 3
 
-    subsection bc 0
-        set type              = function
-        set id                = 0
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 10
-        end
+  subsection bc 0
+    set type = function
+    set id   = 0
+    subsection u
+      set Function expression = 0
     end
-    subsection bc 1
-        set type              = function
-        set id                = 3
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = -4
-        end
+    subsection v
+      set Function expression = 0
     end
+    subsection w
+      set Function expression = 10
+    end
+  end
+  subsection bc 1
+    set type = function
+    set id   = 3
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = -4
+    end
+  end
 
-    subsection bc 2
-        set type              = noslip
-        set id                = 4
-    end
-
+  subsection bc 2
+    set type = noslip
+    set id   = 4
+  end
 end
-
 
 subsection boundary conditions heat transfer
-  set number                  = 5
-    subsection bc 0
-        set id = 0
-        set type              = temperature
-	      set value             = 100
-    end
+  set number = 5
+  subsection bc 0
+    set id    = 0
+    set type  = temperature
+    set value = 100
+  end
 
-    subsection bc 1
-        set id = 1
-        set type              = noflux
-    end
+  subsection bc 1
+    set id   = 1
+    set type = noflux
+  end
 
-    subsection bc 2
-        set id = 2
-        set type              = noflux
-    end
+  subsection bc 2
+    set id   = 2
+    set type = noflux
+  end
 
-    subsection bc 3
-        set id = 3
-        set type              = temperature
-	      set value             = 0
-    end
+  subsection bc 3
+    set id    = 3
+    set type  = temperature
+    set value = 0
+  end
 
-    subsection bc 4
-        set id = 4
-        set type              = noflux
-    end
-
-
+  subsection bc 4
+    set id   = 4
+    set type = noflux
+  end
 end
-
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-3
-  set max iterations          = 6
-  set verbosity               = verbose
+  set tolerance      = 1e-3
+  set max iterations = 6
+  set verbosity      = verbose
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                       = gmres
-  set relative residual                            = 1e-3
-  set minimum residual                             = 1e-5
-  set ilu preconditioner fill                = 1
-  set ilu preconditioner absolute tolerance  = 1e-7
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = verbose
-  set max krylov vectors      = 1000
-  set max iters         = 2000
+  set method                                = gmres
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-5
+  set ilu preconditioner fill               = 1
+  set ilu preconditioner absolute tolerance = 1e-7
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = verbose
+  set max krylov vectors                    = 1000
+  set max iters                             = 2000
 end

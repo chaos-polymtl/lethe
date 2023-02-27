@@ -1,3 +1,7 @@
+// Generates the hexahedral mesh for the flow within the concentric heat exchanger example
+// This is achieved by generating 3 concentric circles in 2D, meshing them and extruding the resulting mesh 
+// Two physical volumes are used. Volume 0 indicates the fluid, whereas Volume 1 indicates the solid
+
 SetFactory("Built-in");
 
 lc = 0.1;
@@ -55,21 +59,6 @@ Extrude {0, 0, L} {
   Surface{1,2,3}; Layers{nl}; Recombine;
 }
 
-
-// Reconstruction
-//Physical Line(1)={1};
-//Physical Line(2)={2};
-//Physical Line(3)={3,6,9};
-//Physical Line(4)={10};
-//Physical Line(5)={8};
-//Physical Line(6)={15,16};
-//Physical Line(7)={18,19};
-//Physical Line(8)={14,11,17};
-//
-//Recombine Surface{1,2,3,4,5,6};
-//
-
-//
 Physical Volume(0) = {1, 3};
 Physical Volume(1) = {2};
 Physical Surface(4) = {2,76,105,109,113,117};
