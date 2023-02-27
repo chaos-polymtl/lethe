@@ -114,7 +114,7 @@ The next step is establishing the boundary conditions for the fluid flow. We spe
     
     end
 
-On the heat transfer side, we apply temperature boundary conditions at both inlet to impose the cold and the hot temperatures of the fluid. We explicitely specify ``noflux`` boundary conditions on both outlets to ensure that the heat flux through them will be calculated within the post-processing section of the code.
+On the heat transfer side, we apply temperature boundary conditions at both inlets to impose the cold and the hot temperatures of the fluid. We explicitly specify ``noflux`` boundary conditions on both outlets to ensure that the heat flux through them will be calculated within the post-processing section of the code.
 
 .. code-block:: text
 
@@ -149,32 +149,30 @@ On the heat transfer side, we apply temperature boundary conditions at both inle
             set id = 4
             set type              = noflux
         end
-    
-    
     end
 
 
-Next, we define the physical properties for both the solid and the fluid. It is important to explicitely indicate the number of solids, otherwise the solid region will not be detected by Lethe. We consider the physical properties of copper for the solid and water for the fluid. The exponent that arise results from the change of units for length from meter to millimeter. 
+Next, we define the physical properties for both the solid and the fluid. It is important to explicitly indicate the number of solids, otherwise, the solid region will not be detected by Lethe. We consider the physical properties of copper for the solid and water for the fluid. The exponent that arises results from the change of units for length from meter to millimeter. 
 
 .. code-block:: text
 
    subsection physical properties
      set number of solids = 1
      subsection fluid 0
-       set kinematic viscosity            = 1 #1e-6
-       set specific heat                  = 4180e6 # 1 #4180e6 #14180
-       set density                        = 1000e-9 # 1 #1000e-9 #11000
-       set thermal conductivity           = 0.60e3 # 0.14558 #0.607e3 #0.598e-2 #10.6
+       set kinematic viscosity            = 1
+       set specific heat                  = 4180e6
+       set density                        = 1000e-9
+       set thermal conductivity           = 0.60e3
      end
    
        subsection solid 0
-       set thermal conductivity           = 398e3   # 115.37 #398e3
-       set specific heat                  = 385e6   # 1 #385e6
-       set density                        = 8960e-9 # 1#15.37
+       set thermal conductivity           = 398e3
+       set specific heat                  = 385e6
+       set density                        = 8960e-9
      end
    end
 
-To enable a more complete analysis of the case, we enable the heat flux post-processing. This will calculate the total heat flux on every boundary of the domain and enable us to characterize the energy coming in and out of every inlets and oulets.
+To enable a more complete analysis of the case, we enable the heat flux post-processing. This will calculate the total heat flux on every boundary of the domain and enable us to characterize the energy coming in and out of every inlets and outlets.
 
 .. code-block:: text
 
