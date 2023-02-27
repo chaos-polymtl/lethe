@@ -17,8 +17,8 @@
 #include <core/tracer_diffusivity_model.h>
 
 std::shared_ptr<TracerDiffusivityModel>
-TracerDiffusivityModel::model_cast(const Parameters::Material &fluid_properties)
+TracerDiffusivityModel::model_cast(const Parameters::Material &material_properties)
 {
   return std::make_shared<ConstantTracerDiffusivity>(
-    fluid_properties.tracer_diffusivity);
+    material_properties.tracer_diffusivity);
 }
