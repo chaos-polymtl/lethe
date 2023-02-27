@@ -28,7 +28,7 @@ Heat exchangers are common unit operations used in many types of industries to t
     :align: center
     :width: 300
 
-We consider copper concentric tubes with radii of :math:`R_0=1\text{mm} ,R_1=2\text{mm},R_2=3\text{mm}` in which water circulates. We consider a counter-current flow with an inner tube velocity of :math:`u_i=10\text{mm/s}` and a outer tube velocity of :math:`u_o=-4\text{mm/s}`. The inlet temperature within the inner tube is :math:`100^\circ C` and it is :math:`0^\circ C` in the outer tube. We do not formulate the problem in SI units, but instead we express the fundamental length in mm. This ensures that most variables of interest are close to unit value and this leads to a system matrix which has improved conditioning.
+We consider copper concentric tubes with radii of :math:`R_0=1\text{mm} ,R_1=2\text{mm},R_2=3\text{mm}` in which water circulates. We consider a counter-current flow with an inner tube velocity of :math:`u_i=10\text{mm/s}` and a outer tube velocity of :math:`u_o=-4\text{mm/s}`. The inlet temperature within the inner tube is :math:`100^\circ C` and it is :math:`0^\circ C` in the outer tube. We do not formulate the problem in SI units, but instead we express the fundamental length in mm. This ensures that most variables of interest are close to unit value and this leads to a system matrix with an improved condition number.
 
 
 We will compare the results we obtain with the CFD simulations with results obtained using the Nuber of Transfer Unit (NTU) approach (see [1]). Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:
@@ -172,7 +172,7 @@ Next, we define the physical properties for both the solid and the fluid. It is 
      end
    end
 
-To enable a more complete analysis of the case, we enable the heat flux post-processing. This will calculate the total heat flux on every boundary of the domain and enable us to characterize the energy coming in and out of every inlets and outlets.
+To enable a more complete analysis of the case, we enable the heat flux post-processing. This will calculate the total heat flux on every boundary of the domain and enable us to characterize the energy coming in and out of every inlet and outlet.
 
 .. code-block:: text
 
