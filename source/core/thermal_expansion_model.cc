@@ -17,13 +17,14 @@
 #include <core/thermal_expansion_model.h>
 
 std::shared_ptr<ThermalExpansionModel>
-ThermalExpansionModel::model_cast(const Parameters::Material &fluid_properties)
+ThermalExpansionModel::model_cast(
+  const Parameters::Material &material_properties)
 {
-  if (fluid_properties.thermal_expansion_model ==
+  if (material_properties.thermal_expansion_model ==
       Parameters::Material::ThermalExpansionModel::phase_change)
     return std::make_shared<ThermalExpansionPhaseChange>(
-      fluid_properties.phase_change_parameters);
+      material_properties.phase_change_parameters);
   else
     return std::make_shared<ConstantThermalExpansion>(
-      fluid_properties.thermal_expansion);
+      material_properties.thermal_expansion);
 }

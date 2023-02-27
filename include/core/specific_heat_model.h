@@ -40,7 +40,7 @@ public:
    * @param physical_properties Parameters for a single fluid
    */
   static std::shared_ptr<SpecificHeatModel>
-  model_cast(const Parameters::Material &fluid_properties);
+  model_cast(const Parameters::Material &material_properties);
 };
 
 
