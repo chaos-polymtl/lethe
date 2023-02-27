@@ -1,8 +1,8 @@
 ***********************************************
-Resolved CFD-DEM
+Sharp-Immersed-Boundary-Solver
 ***********************************************
 
-This subsection contains the parameters related to the resolved CFD-DEM around particles using a **sharp interface immersed boundary** (IB) **method**. This part of the parameter file concerns the usage of ``gls_sharp_navier_stokes_2d`` or ``gls_sharp_navier_stokes_3d``. These solvers can also be used to simulate the flow around static particles. In that case, using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
+This subsection contains the parameters related to the sharp immersed boundary solver using a **sharp interface immersed boundary** (IB) **method**. This part of the parameter file concerns the usage of ``gls_sharp_navier_stokes_2d`` or ``gls_sharp_navier_stokes_3d``. These solvers can simulate the flow around static or moving objects (with a predetermined trajectory). The solver can also simulate the coupled flow around spherical particles (Resolved CFD-DEM). Using this solver eliminates the need to define a conformal mesh for the fluid between the particles.
 
 .. code-block:: text
 
@@ -24,21 +24,22 @@ This subsection contains the parameters related to the resolved CFD-DEM around p
         set alpha                                   = 1
         set contact search radius factor            = 3
         set contact search frequency		    = 1
+        set enable extra sharp interface vtu output field	= false
 
         subsection gravity
             set Function expression =0;0;0
         end
 
-        set wall friction coefficient               = 0
-        set wall poisson ratio                      = 0.3
-        set wall restitution coefficient            = 1
-        set wall rolling friction coefficient       = 0
-        set wall youngs modulus                     = 100000000
-        set enable lubrication force		    = true
-        set lubrication range max		    = 2
-        set lubrication range min		    = 0.1
-		set load particles from file		    = false
-		set particles file		    = particles
+        set wall friction coefficient               		= 0
+        set wall poisson ratio                      		= 0.3
+        set wall restitution coefficient            		= 1
+        set wall rolling friction coefficient       		= 0
+        set wall youngs modulus                     		= 100000000
+        set enable lubrication force		    		= true
+        set lubrication range max		    		= 2
+        set lubrication range min		    		= 0.1
+	set load particles from file		    		= false
+	set particles file		    			= particles
 
         subsection particle info 0
             set density    = 1
@@ -125,6 +126,8 @@ To sharpen the immersed boundary of each particle, a layer of cells around the i
 	If ``contact search radius factor`` :math:`\leq 1`, an error is thrown.
 
 * The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, that is, the contact search list is updated at each time-step.
+
+* The ``enable extra sharp interface vtu output field`` when set this parameter is set to true it enable the output of additional value field in the vtu file produce by the simulation. Currently these additional output field consiste of: The cell id that cut a specific cell (cell_cut). 
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
@@ -222,7 +225,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 	
     * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
     
-    * Opencascade: *file name*; the OpenCascade shape allows the user to read  .step file, .iges file, .stl file. From these files, a sign distance function is calculated. Only the step file as a sign distance function at this point in time. Shapes defined by these files can significantly slow the simulation when they are in motion since the evaluation of the distance function of these shapes can be computationally intensive. 
+    * Opencascade: *file name*; the OpenCascade shape allows the user to read  .step file, .iges file, .stl file. From these files, a sign distance function is calculated. The .step file and the .stl file have a sign distance function. The .iges file has only a positive sign function assigned to them. Shapes defined by these files can significantly slow the simulation when they are in motion since the evaluation of the distance function of these shapes can be computationally intensive. 
 
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
