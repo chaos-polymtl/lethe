@@ -16,16 +16,16 @@ end
 subsection physical properties
   set number of solids = 1
   subsection fluid 0
-    set kinematic viscosity            = 1 #1e-6
-    set specific heat                  = 4180e6 # 1 #4180e6 #14180
-    set density                        = 1000e-9 # 1 #1000e-9 #11000
-    set thermal conductivity           = 0.60e3 # 0.14558 #0.607e3 #0.598e-2 #10.6
+    set kinematic viscosity            = 1
+    set specific heat                  = 4180e6
+    set density                        = 1000e-9
+    set thermal conductivity           = 0.60e3
   end
 
     subsection solid 0
-    set thermal conductivity           = 398e3   # 115.37 #398e3
-    set specific heat                  = 385e6   # 1 #385e6
-    set density                        = 8960e-9 # 1#15.37
+    set thermal conductivity           = 398e3 
+    set specific heat                  = 385e6
+    set density                        = 8960e-9
   end
 end
 

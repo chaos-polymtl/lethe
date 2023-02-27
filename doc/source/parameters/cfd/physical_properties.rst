@@ -35,7 +35,7 @@ Physical Properties
     set number of solids	= 0
   end
  
-* The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `two phase simulations`_ 
+* The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `two phase simulations`_ .
 
 * The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `Rheological models`_ .
 
@@ -114,8 +114,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 Conjugate heat transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0``
- will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physcal properties of the solid region are set in an identical fashion as those of the fluid. 
+Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physcal properties of the solid region are set in an identical fashion as those of the fluid. 
 
  .. warning::
   This is an experimental feature. It has not been tested on a large range of application cases. 

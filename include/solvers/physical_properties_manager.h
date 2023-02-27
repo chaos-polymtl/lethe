@@ -56,7 +56,7 @@ DeclException1(
  * The architecture of the PhysicalPropertiesManager is made to ensure that it
  * can store as many physical properties models as required. It first stores
  * the physical properties of the fluids, which are always assumed to lie in
- * material_id=0, and then stored the physical properties of the solid, which
+ * material_id=0, and then stores the physical properties of the solid, which
  * may be in cells for which material_id>0.
  *
  */

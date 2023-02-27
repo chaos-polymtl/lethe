@@ -216,7 +216,6 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
               specific_heat_models[0]->vector_jacobian(
                 fields, field::temperature, grad_specific_heat_temperature_0);
 
-
               density_models[1]->vector_value(fields, density_1);
               specific_heat_models[1]->vector_value(fields, specific_heat_1);
               thermal_conductivity_models[1]->vector_value(
