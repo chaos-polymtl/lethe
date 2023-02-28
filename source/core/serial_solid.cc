@@ -109,8 +109,8 @@ std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
             typename Triangulation<dim, spacedim>::active_cell_iterator>>
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
-  const parallel::distributed::Triangulation<spacedim> &background_tr,
-  const std::shared_ptr<Triangulation<dim, spacedim>> & solid_tr)
+  const parallel::TriangulationBase<spacedim>         &background_tr,
+  const std::shared_ptr<Triangulation<dim, spacedim>> &solid_tr)
 {
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
@@ -552,7 +552,8 @@ SerialSolid<dim, spacedim>::write_output_results(
 }
 
 template <int dim, int spacedim>
-void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
+void
+SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 {
   // SolutionTransfer<dim, Vector<double>, spacedim> system_trans_vectors(
   //   this->displacement_dh);
@@ -571,7 +572,8 @@ void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 }
 
 template <int dim, int spacedim>
-void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
+void
+SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 {
   // Setup an un-refined triangulation before loading
   // setup_triangulation(true);
