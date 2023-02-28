@@ -30,7 +30,7 @@ public:
    * @brief Instantiates and returns a pointer to a TracerDiffusivityModel object by casting it to
    * the proper child class
    *
-   * @param physical_properties Parameters for a single fluid
+   * @param material_properties Parameters for a material
    */
   static std::shared_ptr<TracerDiffusivityModel>
   model_cast(const Parameters::Material &material_properties);

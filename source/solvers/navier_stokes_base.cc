@@ -1667,8 +1667,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                                   local_dof_indices[i]);
                             }
 
-                          // For the GD-family of solvers, we have two index set.
-                          // One fore velocities and one for pressure.
+                          // For the GD-family of solvers, we have two index
+                          // set. One fore velocities and one for pressure.
                           if constexpr (std::is_same_v<DofsType,
                                                        std::vector<IndexSet>>)
                             {

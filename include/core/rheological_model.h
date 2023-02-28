@@ -40,7 +40,7 @@ public:
    * @brief Instanciates and returns a pointer to a RheologicalModel object by casting it to
    * the proper child class
    *
-   * @param physical_properties Parsed physical properties that will provide
+   * @param material_properties Parsed physical properties that will provide
    * either the model rheological model being used or say it is a
    * Newtonian flow
    */
@@ -145,13 +145,13 @@ public:
   }
 
   double
-  get_viscosity() const
+  get_viscosity() const override
   {
     return viscosity;
   }
 
   void
-  set_viscosity(const double &p_viscosity)
+  set_viscosity(const double &p_viscosity) override
   {
     viscosity = p_viscosity;
   }
@@ -223,25 +223,25 @@ public:
     std::vector<double> &jacobian_vector) override;
 
   double
-  get_n() const
+  get_n() const override
   {
     return n;
   }
 
   void
-  set_n(const double &p_n)
+  set_n(const double &p_n) override
   {
     n = p_n;
   }
 
   double
-  get_viscosity() const
+  get_viscosity() const override
   {
     return K;
   }
 
   void
-  set_viscosity(const double &p_viscosity)
+  set_viscosity(const double &p_viscosity) override
   {
     K = p_viscosity;
   }
@@ -336,25 +336,25 @@ public:
     std::vector<double> &jacobian_vector) override;
 
   double
-  get_n() const
+  get_n() const override
   {
     return n;
   }
 
   void
-  set_n(const double &p_n)
+  set_n(const double &p_n) override
   {
     n = p_n;
   }
 
   double
-  get_viscosity() const
+  get_viscosity() const override
   {
     return viscosity_0;
   }
 
   void
-  set_viscosity(const double &p_viscosity)
+  set_viscosity(const double &p_viscosity) override
   {
     viscosity_0 = p_viscosity;
   }
