@@ -2,18 +2,18 @@
 Concentric heat exchanger
 ====================================
 
-This example simulates an heat exchanger which is made of two concentric pipes in which a hot and a cold fluid circulate in counterflow. We simulate the fluid flow within two fluid regions as well as the heat transfer within the entire domain (solid and fluid). This example illustrates the conjugate heat transfer capabilities of Lethe.
+This example simulates a heat exchanger which is made of two concentric pipes in which a hot and a cold fluid circulate in counterflow. We simulate the fluid flow within two fluid regions as well as the heat transfer within the entire domain (solid and fluid). This example illustrates the conjugate heat transfer capabilities of Lethe.
 
 ----------------------------------
 Features
 ----------------------------------
 - Solver: ``gls_navier_stokes_3d`` 
-- Heat transfer pĥysics
+- Heat transfer physics
 - Conjugated heat transfer
 
 Files used in this example
 ---------------------------
-- Prm file: ``examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.prm``
+- Parameter file: ``examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.prm``
 - GMSH file: ``examples/multiphysics/concentric-heat-exchanger/concentric-cylinders.geo``
 - Correlation calculation: ``examples/multiphysics/concentric-heat-exchanger/correlation_calculation.py``
 - Plot generator: ``examples/multiphysics/concentric-heat-exchanger/plot_temperature_over_line.py.``
@@ -23,19 +23,19 @@ Description of the case
 
 Heat exchangers are common unit operations used in many types of industries to transfer energy from one fluid to another. In this case, we simulate the most simple heat exchanger geometry, which is a concentric tube in which the hot fluid circulates within the inner tube, and a cold fluid circulates within the outer tube. We model the full heat transfer by simulating the motion of the fluid in both regions and the heat transfer within the entire domain. 
 
- .. image:: images/schematic.png
+.. image:: images/schematic.png
     :alt: problem_illustration
     :align: center
     :width: 300
 
-We consider copper concentric tubes with radii of :math:`R_0=1\text{mm} ,R_1=2\text{mm},R_2=3\text{mm}` in which water circulates. We consider a counter-current flow with an inner tube velocity of :math:`u_i=10\text{mm/s}` and a outer tube velocity of :math:`u_o=-4\text{mm/s}`. The inlet temperature within the inner tube is :math:`100^\circ C` and it is :math:`0^\circ C` in the outer tube. We do not formulate the problem in SI units, but instead we express the fundamental length in mm. This ensures that most variables of interest are close to unit value and this leads to a system matrix with an improved condition number.
+We consider copper concentric tubes with radii of :math:`R_0=1\text{mm} ,R_1=2\text{mm},R_2=3\text{mm}` in which water circulates. We consider a counter-current flow with an inner tube velocity of :math:`u_i=10\text{mm/s}` and an outer tube velocity of :math:`u_o=-4\text{mm/s}`. The inlet temperature within the inner tube is :math:`100^\circ C` and it is :math:`0^\circ C` in the outer tube. We do not formulate the problem in SI units, but instead we express the fundamental length in mm. This ensures that most variables of interest are close to unit value and this leads to a system matrix with an improved condition number.
 
 
-We will compare the results we obtain with the CFD simulations with results obtained using the Nuber of Transfer Unit (NTU) approach (see [1]). Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:
+We will compare the results we obtain with the CFD simulations with results obtained using the Number of Transfer Unit (NTU) approach (see [1]). Since the flow within both pipes is not developed, the Nusselt number in the inner pipe can be estimated as:
 
 .. math::
 
-    \bar{Nu}_D = 1.86 + \left(\frac{Re_D Pr D}{L}\right)^{1/3}
+    \overline{Nu}_D = 1.86 + \left(\frac{Re_D Pr D}{L}\right)^{1/3}
 
 Using the NTU approach, the thermal effectiveness can be calculated and, from it, the outlet temperature is estimated to be  :math:`25.3^\circ C`. A python file (``correlation_calculation.py``) is added to the example and contains all calculation procedures.
 
@@ -204,12 +204,12 @@ Results
 -------
 
 
-The following image shows the temperature profile along the length of the inner tube for three radial positions: center(:math:`r=0mm`), half radius (:math:`r=0.5mm`) and inner wall (:math:`r=1mm`). We see that the temperature at the center of the tube takes a certain length before it starts decreasing. This is due to the poor heat transfer within the liquid. The black circle indicates the outlet temperature calculated from the NTU approach using correlation. We see that this temperature is well within the envelope of the temperature profile obtained at the outlet. 
+The following image shows the temperature profile along the length of the inner tube for three radial positions: center(:math:`r=0mm`), half radius (:math:`r=0.5mm`) and inner wall (:math:`r=1mm`). We see that the temperature at the center of the tube takes a certain length before it starts decreasing. This is due to the poor heat transfer within the liquid. The black circle indicates the outlet temperature calculated from the NTU approach using the correlation. We see that this temperature is well within the envelope of the temperature profile obtained at the outlet. 
 
- .. image:: images/temperature_along_line.png
+.. image:: images/temperature_along_line.png
     :alt: problem_illustration
     :align: center
-    :width: 300
+    :width: 500
 
 Using paraview, the velocity and temperature profiles can be explored in depth.
 
