@@ -37,7 +37,6 @@
 
 #include <deal.II/lac/full_matrix.h>
 
-
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(

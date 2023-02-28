@@ -153,6 +153,7 @@ IBParticle<dim>::get_properties()
 
   return properties;
 }
+
 template <int dim>
 void
 IBParticle<dim>::clear_shape_cache()

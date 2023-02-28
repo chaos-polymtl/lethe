@@ -374,7 +374,7 @@ private:
    *
    * @param support_points, a mapping of support points for the DOFs.
    *
-   * @param p, the particle index of the particle use in the check
+   * @param p, the particle index of the particle used in the check
    *
    */
   bool

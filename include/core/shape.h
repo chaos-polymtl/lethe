@@ -887,7 +887,6 @@ public:
 
     // used this local variable as the shape tolerance in the calculations.
     shape_tol = OpenCASCADE::get_shape_tolerance(shape);
-    /*ShapeFix_ShapeTolerance::SetTolerance(shape,shape_tol);*/
 
     // Initialize some variables and the OpenCascade distance tool.
     OpenCASCADE::extract_compound_shapes(
@@ -916,7 +915,7 @@ public:
 
     // Define the effective radius as the raidus of the sphere with the same
     // volume as the shape.
-    GProp_GProps System;
+    GProp_GProps system;
     BRepGProp::LinearProperties(shape, System);
     BRepGProp::SurfaceProperties(shape, System);
     BRepGProp::VolumeProperties(shape, System);

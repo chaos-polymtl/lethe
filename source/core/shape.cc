@@ -38,6 +38,7 @@ Shape<dim>::displaced_volume(const double /*fluid_density*/)
   StandardExceptions::ExcNotImplemented();
   return 1.0;
 }
+
 template <int dim>
 void
 Shape<dim>::clear_cache()
@@ -45,7 +46,6 @@ Shape<dim>::clear_cache()
   value_cache.clear();
   gradient_cache.clear();
 }
-
 
 template <int dim>
 Point<dim>
@@ -242,16 +242,9 @@ Shape<dim>::closest_surface_point(
   // Check if the gradient is well defined. If the point is on the surface, the
   // gradient can be badly defined for some shapes. We return the point directly
   // in these cases since it would be on the surface.
-  if (actual_gradient.norm() > 1e-16)
-    {
-      closest_point =
-        p - (actual_gradient / actual_gradient.norm()) * distance_from_surface;
-    }
-  else
-    {
-      closest_point = p;
-    }
-}
+    closest_point =
+        p - (actual_gradient / (actual_gradient.norm() + 1e-16) * distance_from_surface;
+
 
 template <int dim>
 void
@@ -308,7 +301,6 @@ Sphere<dim>::value(const Point<dim> &evaluation_point,
   return sphere_function->value(evaluation_point);
 #endif
 }
-
 
 
 template <int dim>
@@ -390,15 +382,10 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
   BRepExtrema_DistShapeShape distancetool(shape, vertex);
   distancetool.Perform();
   gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
-  if (dim == 2)
-    {
-      projected_point[0] = pt_on_surface.X();
-      projected_point[1] = pt_on_surface.Y();
-    }
+  projected_point[0] = pt_on_surface.X();
+  projected_point[1] = pt_on_surface.Y();
   if (dim == 3)
     {
-      projected_point[0] = pt_on_surface.X();
-      projected_point[1] = pt_on_surface.Y();
       projected_point[2] = pt_on_surface.Z();
     }
 
@@ -406,7 +393,7 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
                                                vertex_position,
                                                shape_tol);
   TopAbs_State                point_state = point_classifier.State();
-  // Check the evaluation point is inside the shape (This check can return true
+  // Check if the evaluation point is inside the shape (This check can return true
   // only if the shape is a solid). By default, step file format will define a
   // solid. This is necessary to sign the distance function evaluation.
   if (point_state == TopAbs_State::TopAbs_IN)
@@ -443,7 +430,7 @@ OpenCascadeShape<dim>::value_with_cell_guess(
 
   if (iterator == this->value_cache.end())
     {
-      // Transform the point a OpenCascade point
+      // Transform the point to an OpenCascade point
       Point<dim> centered_point = this->align_and_center(evaluation_point);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
@@ -454,21 +441,16 @@ OpenCascadeShape<dim>::value_with_cell_guess(
 
       // Convert OpenCascade solution point to dealii Point.
       gp_Pnt pt_on_surface = distancetool.PointOnShape1(1);
-      if (dim == 2)
-        {
-          projected_point[0] = pt_on_surface.X();
-          projected_point[1] = pt_on_surface.Y();
-        }
+      projected_point[0] = pt_on_surface.X();
+      projected_point[1] = pt_on_surface.Y();
       if (dim == 3)
         {
-          projected_point[0] = pt_on_surface.X();
-          projected_point[1] = pt_on_surface.Y();
           projected_point[2] = pt_on_surface.Z();
         }
 
       point_classifier.Perform(vertex_position, shape_tol);
       TopAbs_State point_state = point_classifier.State();
-      // Check the evaluation point is inside the shape (This check can return
+      // Check if the evaluation point is inside the shape (This check can return
       // true only if the shape is a solid). By default, step file format will
       // define a solid. This is necessary to sign the distance function
       // evaluation.
@@ -485,7 +467,7 @@ OpenCascadeShape<dim>::value_with_cell_guess(
             this->reverse_align_and_center(projected_point);
           this->gradient_cache[point_in_string] =
             (rotate_in_globalpoint - evaluation_point) /
-            (rotate_in_globalpoint - evaluation_point).norm();
+            ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
           return -(centered_point - projected_point).norm();
         }
       else
@@ -529,7 +511,7 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
   Point<dim> centered_point = this->align_and_center(evaluation_point);
   Point<dim> projected_point;
 
-  // Transform the point a OpenCascade point
+  // Transform the point to an OpenCascade point
   auto          pt     = OpenCASCADE::point(centered_point);
   TopoDS_Vertex vertex = BRepBuilderAPI_MakeVertex(pt);
   // Perform the evaluation
@@ -565,17 +547,17 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
       auto rotate_in_globalpoint =
         this->reverse_align_and_center(projected_point);
       return (rotate_in_globalpoint - evaluation_point) /
-             (rotate_in_globalpoint - evaluation_point).norm();
+             ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
     }
   else
     {
       auto rotate_in_globalpoint =
         this->reverse_align_and_center(projected_point);
       return -(rotate_in_globalpoint - evaluation_point) /
-             (rotate_in_globalpoint - evaluation_point).norm();
+              ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
     }
 #else
-  // Empty return if LEthe is not compile wiith OpenCascade
+  // Empty return if Lethe is not compile with OpenCascade
   return Point<dim>();
 #endif
 }
@@ -599,7 +581,7 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
   // If we did not find the solution in the map we perform the calculation.
   if (iterator == this->gradient_cache.end())
     {
-      // Transform the point a OpenCascade point
+      // Transform the point to an OpenCascade point
       Point<dim> centered_point = this->align_and_center(evaluation_point);
       Point<dim> projected_point;
       vertex_position = OpenCASCADE::point(centered_point);
@@ -637,9 +619,8 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
             this->reverse_align_and_center(projected_point);
           this->gradient_cache[point_in_string] =
             (rotate_in_globalpoint - evaluation_point) /
-            (rotate_in_globalpoint - evaluation_point).norm();
-          return (rotate_in_globalpoint - evaluation_point) /
-                 (rotate_in_globalpoint - evaluation_point).norm();
+             ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+          return this->gradient_cache[point_in_string];
         }
       else
         {
@@ -649,9 +630,8 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
             this->reverse_align_and_center(projected_point);
           this->gradient_cache[point_in_string] =
             -(rotate_in_globalpoint - evaluation_point) /
-            (rotate_in_globalpoint - evaluation_point).norm();
-          return -(rotate_in_globalpoint - evaluation_point) /
-                 (rotate_in_globalpoint - evaluation_point).norm();
+            ((rotate_in_globalpoint - evaluation_point).norm() + 1.0e-16);
+          return this->gradient_cache[point_in_string];
         }
     }
   else
@@ -1940,7 +1920,6 @@ CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
 
   return solid_volume;
 }
-
 
 template class Sphere<2>;
 template class Sphere<3>;
