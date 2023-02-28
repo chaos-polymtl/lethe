@@ -916,11 +916,11 @@ public:
     // Define the effective radius as the raidus of the sphere with the same
     // volume as the shape.
     GProp_GProps system;
-    BRepGProp::LinearProperties(shape, System);
-    BRepGProp::SurfaceProperties(shape, System);
-    BRepGProp::VolumeProperties(shape, System);
+    BRepGProp::LinearProperties(shape, system);
+    BRepGProp::SurfaceProperties(shape, system);
+    BRepGProp::VolumeProperties(shape, system);
     this->effective_radius =
-      std::pow(System.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
+      std::pow(system.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
 
 #endif
   }
@@ -986,6 +986,12 @@ public:
   double
   displaced_volume(const double fluid_density) override;
 
+  /**
+   * @brief
+   * Sets a new position for the shape
+   *
+   * @param The new position the shape will be placed at
+   */
   void
   set_position(const Point<dim> &position) override;
 
@@ -1006,8 +1012,7 @@ private:
   // The point at which we are going to evaluate the shape.
   gp_Pnt vertex_position;
 
-  // The shape object equivalent to the point used in the distance evaluation
-  // (vertex)
+  // The shape object (vertex) used in the distance evaluation.
   TopoDS_Vertex vertex;
 
   // The tool used for the distance evaluation.
