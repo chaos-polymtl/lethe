@@ -54,7 +54,6 @@
 
 #include <sys/stat.h>
 
-
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -1290,7 +1289,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         {
           this->pcout << "Pressure drop: "
                       << this->simulation_parameters.physical_properties_manager
-                             .density_scale *
+                             .get_density_scale() *
                            pressure_drop
                       << " Pa" << std::endl;
         }
@@ -1546,6 +1545,165 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
 
   multiphysics->read_checkpoint();
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
+  const bool non_zero_constraints)
+{
+  // If there are no solid regions, there is no work to be done and we can
+  // return
+  if (simulation_parameters.physical_properties_manager
+        .get_number_of_solids() == 0)
+    return;
+
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  // We will need to identify which pressure degrees of freedom are connected to
+  // fluid region For these we won't establish a zero pressure equation.
+  std::unordered_set<types::global_dof_index>  dof_is_connected_to_fluid;
+  std::unordered_set<types::global_cell_index> cell_is_connected_to_fluid;
+
+  // Loop through all cells to identify which cells are solid. This first step
+  // is used to 1) constraint the velocity degree of freedom to be zero in the
+  // solid region and 2) to identify which pressure degrees of freedom are
+  // connected to fluid cells
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          // If the material_id is 1, the region is a solid region. Constraint
+          // the velocity DOF to be zero.
+          if (cell->material_id() > 0)
+            {
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  const unsigned int component =
+                    this->fe->system_to_component_index(i).first;
+                  if (component < dim)
+                    {
+                      // We apply a constraint to all DOFS in the solid region,
+                      // whether they are locally owned or not.
+                      if (non_zero_constraints)
+                        {
+                          this->nonzero_constraints.add_line(
+                            local_dof_indices[i]);
+                          this->nonzero_constraints.set_inhomogeneity(
+                            local_dof_indices[i], 0);
+                        }
+                      else
+                        this->zero_constraints.add_line(local_dof_indices[i]);
+                    }
+                }
+            }
+          else
+            {
+              // Cell is a fluid cell and as such all the pressure DOFS of that
+              // cell are connected to the fluid. This will be used later on to
+              // identify which pressure cells
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  const unsigned int component =
+                    this->fe->system_to_component_index(i).first;
+                  if (component == dim)
+                    {
+                      dof_is_connected_to_fluid.insert(local_dof_indices[i]);
+                    }
+                }
+            }
+        }
+    }
+
+  // All pressure DOFs which are not connected to a fluid cell are constrained
+  // to ensure that the system matrix has adequate conditioning
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          // If the material_id is >0, the region is a solid region
+          if (cell->material_id() > 0)
+            {
+              bool connected_to_fluid = false;
+              // First check if cell is connected to a fluid cell by checking if
+              // one of the DOF of the cell is connected to a fluid cell
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  auto search =
+                    dof_is_connected_to_fluid.find(local_dof_indices[i]);
+                  if (search != dof_is_connected_to_fluid.end())
+                    connected_to_fluid = true;
+                }
+
+              // All of the pressure DOFS with the cell are not connected to the
+              // fluid. Consequently we fix a constraint for the
+              // pressure on these dofs.
+              if (!connected_to_fluid)
+                {
+                  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                    {
+                      const unsigned int component =
+                        this->fe->system_to_component_index(i).first;
+
+                      // Only pressure DOFs have an additional Dirichlet
+                      // condition
+                      if (component == dim)
+                        {
+                          // We only apply the constraint on the locally owned
+                          // pressure DOFs since we have no way of verifying if
+                          // the locally relevant DOFs are connected to a fluid
+                          // cell
+
+                          bool dof_is_locally_owned = false;
+                          // For the GLS-family of solvers, we only have a
+                          // single index set
+                          if constexpr (std::is_same_v<DofsType, IndexSet>)
+                            {
+                              dof_is_locally_owned =
+                                locally_owned_dofs.is_element(
+                                  local_dof_indices[i]);
+                            }
+
+                          // For the GD-family of solvers, we have two index
+                          // set. One fore velocities and one for pressure.
+                          if constexpr (std::is_same_v<DofsType,
+                                                       std::vector<IndexSet>>)
+                            {
+                              dof_is_locally_owned =
+                                locally_owned_dofs[1].is_element(
+                                  local_dof_indices[i]);
+                            }
+
+                          if (dof_is_locally_owned)
+                            {
+                              auto search = dof_is_connected_to_fluid.find(
+                                local_dof_indices[i]);
+                              if (search != dof_is_connected_to_fluid.end())
+                                {
+                                  if (non_zero_constraints)
+                                    {
+                                      this->nonzero_constraints.add_line(
+                                        local_dof_indices[i]);
+                                      this->nonzero_constraints
+                                        .set_inhomogeneity(local_dof_indices[i],
+                                                           0);
+                                    }
+                                  else
+                                    {
+                                      this->zero_constraints.add_line(
+                                        local_dof_indices[i]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>

@@ -174,89 +174,111 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
       set_field_vector(field::shear_rate, shear_rate_values, this->fields);
     }
 
-
-  switch (properties_manager.get_number_of_fluids())
+  if (material_id < 1 || properties_manager.get_number_of_solids() < 1)
     {
-      case 1:
+      switch (properties_manager.get_number_of_fluids())
         {
-          const auto density_model = properties_manager.get_density();
-          const auto specific_heat_model =
-            properties_manager.get_specific_heat();
-          const auto thermal_conductivity_model =
-            properties_manager.get_thermal_conductivity();
-          const auto rheology_model = properties_manager.get_rheology();
-
-          density_model->vector_value(fields, density);
-          specific_heat_model->vector_value(fields, specific_heat);
-          specific_heat_model->vector_jacobian(fields,
-                                               field::temperature,
-                                               grad_specific_heat_temperature);
-          thermal_conductivity_model->vector_value(fields,
-                                                   thermal_conductivity);
-          rheology_model->vector_value(fields, viscosity);
-
-          break;
-        }
-      case 2:
-        {
-          const auto density_models = properties_manager.get_density_vector();
-          const auto specific_heat_models =
-            properties_manager.get_specific_heat_vector();
-          const auto thermal_conductivity_models =
-            properties_manager.get_thermal_conductivity_vector();
-          const auto rheology_models = properties_manager.get_rheology_vector();
-
-          density_models[0]->vector_value(fields, density_0);
-          specific_heat_models[0]->vector_value(fields, specific_heat_0);
-          thermal_conductivity_models[0]->vector_value(fields,
-                                                       thermal_conductivity_0);
-          rheology_models[0]->vector_value(fields, viscosity_0);
-          specific_heat_models[0]->vector_jacobian(
-            fields, field::temperature, grad_specific_heat_temperature_0);
-
-
-          density_models[1]->vector_value(fields, density_1);
-          specific_heat_models[1]->vector_value(fields, specific_heat_1);
-          thermal_conductivity_models[1]->vector_value(fields,
-                                                       thermal_conductivity_1);
-          rheology_models[1]->vector_value(fields, viscosity_1);
-          specific_heat_models[1]->vector_jacobian(
-            fields, field::temperature, grad_specific_heat_temperature_1);
-
-          // Blend the physical properties using the VOF field
-          for (unsigned int q = 0; q < this->n_q_points; ++q)
+          case 1:
             {
-              density[q] = calculate_point_property(filter->filter_phase(
-                                                      this->phase_values[q]),
-                                                    this->density_0[q],
-                                                    this->density_1[q]);
+              const auto density_model = properties_manager.get_density();
+              const auto specific_heat_model =
+                properties_manager.get_specific_heat();
+              const auto thermal_conductivity_model =
+                properties_manager.get_thermal_conductivity();
+              const auto rheology_model = properties_manager.get_rheology();
 
-              specific_heat[q] =
-                calculate_point_property(filter->filter_phase(
-                                           this->phase_values[q]),
-                                         this->specific_heat_0[q],
-                                         this->specific_heat_1[q]);
+              density_model->vector_value(fields, density);
+              specific_heat_model->vector_value(fields, specific_heat);
+              specific_heat_model->vector_jacobian(
+                fields, field::temperature, grad_specific_heat_temperature);
+              thermal_conductivity_model->vector_value(fields,
+                                                       thermal_conductivity);
+              rheology_model->vector_value(fields, viscosity);
 
-              thermal_conductivity[q] =
-                calculate_point_property(filter->filter_phase(
-                                           this->phase_values[q]),
-                                         this->thermal_conductivity_0[q],
-                                         this->thermal_conductivity_1[q]);
-
-              viscosity[q] = calculate_point_property(filter->filter_phase(
-                                                        this->phase_values[q]),
-                                                      this->viscosity_0[q],
-                                                      this->viscosity_1[q]);
-
-              grad_specific_heat_temperature[q] = calculate_point_property(
-                filter->filter_phase(this->phase_values[q]),
-                this->grad_specific_heat_temperature_0[q],
-                this->grad_specific_heat_temperature_1[q]);
+              break;
             }
-          break;
+          case 2:
+            {
+              const auto density_models =
+                properties_manager.get_density_vector();
+              const auto specific_heat_models =
+                properties_manager.get_specific_heat_vector();
+              const auto thermal_conductivity_models =
+                properties_manager.get_thermal_conductivity_vector();
+              const auto rheology_models =
+                properties_manager.get_rheology_vector();
+
+              density_models[0]->vector_value(fields, density_0);
+              specific_heat_models[0]->vector_value(fields, specific_heat_0);
+              thermal_conductivity_models[0]->vector_value(
+                fields, thermal_conductivity_0);
+              rheology_models[0]->vector_value(fields, viscosity_0);
+              specific_heat_models[0]->vector_jacobian(
+                fields, field::temperature, grad_specific_heat_temperature_0);
+
+              density_models[1]->vector_value(fields, density_1);
+              specific_heat_models[1]->vector_value(fields, specific_heat_1);
+              thermal_conductivity_models[1]->vector_value(
+                fields, thermal_conductivity_1);
+              rheology_models[1]->vector_value(fields, viscosity_1);
+              specific_heat_models[1]->vector_jacobian(
+                fields, field::temperature, grad_specific_heat_temperature_1);
+
+              // Blend the physical properties using the VOF field
+              for (unsigned int q = 0; q < this->n_q_points; ++q)
+                {
+                  density[q] =
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
+                                             this->density_0[q],
+                                             this->density_1[q]);
+
+                  specific_heat[q] =
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
+                                             this->specific_heat_0[q],
+                                             this->specific_heat_1[q]);
+
+                  thermal_conductivity[q] =
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
+                                             this->thermal_conductivity_0[q],
+                                             this->thermal_conductivity_1[q]);
+
+                  viscosity[q] =
+                    calculate_point_property(filter->filter_phase(
+                                               this->phase_values[q]),
+                                             this->viscosity_0[q],
+                                             this->viscosity_1[q]);
+
+                  grad_specific_heat_temperature[q] = calculate_point_property(
+                    filter->filter_phase(this->phase_values[q]),
+                    this->grad_specific_heat_temperature_0[q],
+                    this->grad_specific_heat_temperature_1[q]);
+                }
+            }
+            break;
+          default:
+            throw std::runtime_error("Unsupported number of fluids (>2)");
         }
-      default:
-        throw std::runtime_error("Unsupported number of fluids (>2)");
+    }
+  else
+    {
+      const auto density_model = properties_manager.get_density(0, material_id);
+      const auto specific_heat_model =
+        properties_manager.get_specific_heat(0, material_id);
+      const auto thermal_conductivity_model =
+        properties_manager.get_thermal_conductivity(0, material_id);
+      const auto rheology_model =
+        properties_manager.get_rheology(0, material_id);
+
+      density_model->vector_value(fields, density);
+      specific_heat_model->vector_value(fields, specific_heat);
+      specific_heat_model->vector_jacobian(fields,
+                                           field::temperature,
+                                           grad_specific_heat_temperature);
+      thermal_conductivity_model->vector_value(fields, thermal_conductivity);
+      rheology_model->vector_value(fields, viscosity);
     }
 }
 

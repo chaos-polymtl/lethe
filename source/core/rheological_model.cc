@@ -1,32 +1,33 @@
 #include <core/rheological_model.h>
 
 std::shared_ptr<RheologicalModel>
-RheologicalModel::model_cast(const Parameters::Fluid &fluid_properties)
+RheologicalModel::model_cast(const Parameters::Material &material_properties)
 {
-  if (fluid_properties.rheological_model ==
-      Parameters::Fluid::RheologicalModel::newtonian)
-    return std::make_shared<Newtonian>(fluid_properties.viscosity);
-  else if (fluid_properties.rheological_model ==
-           Parameters::Fluid::RheologicalModel::powerlaw)
+  if (material_properties.rheological_model ==
+      Parameters::Material::RheologicalModel::newtonian)
+    return std::make_shared<Newtonian>(material_properties.viscosity);
+  else if (material_properties.rheological_model ==
+           Parameters::Material::RheologicalModel::powerlaw)
     return std::make_shared<PowerLaw>(
-      fluid_properties.non_newtonian_parameters.powerlaw_parameters.K,
-      fluid_properties.non_newtonian_parameters.powerlaw_parameters.n,
-      fluid_properties.non_newtonian_parameters.powerlaw_parameters
+      material_properties.non_newtonian_parameters.powerlaw_parameters.K,
+      material_properties.non_newtonian_parameters.powerlaw_parameters.n,
+      material_properties.non_newtonian_parameters.powerlaw_parameters
         .shear_rate_min);
-  else if (fluid_properties.rheological_model ==
-           Parameters::Fluid::RheologicalModel::carreau)
+  else if (material_properties.rheological_model ==
+           Parameters::Material::RheologicalModel::carreau)
     return std::make_shared<Carreau>(
-      fluid_properties.non_newtonian_parameters.carreau_parameters.viscosity_0,
-      fluid_properties.non_newtonian_parameters.carreau_parameters
+      material_properties.non_newtonian_parameters.carreau_parameters
+        .viscosity_0,
+      material_properties.non_newtonian_parameters.carreau_parameters
         .viscosity_inf,
-      fluid_properties.non_newtonian_parameters.carreau_parameters.lambda,
-      fluid_properties.non_newtonian_parameters.carreau_parameters.a,
-      fluid_properties.non_newtonian_parameters.carreau_parameters.n);
+      material_properties.non_newtonian_parameters.carreau_parameters.lambda,
+      material_properties.non_newtonian_parameters.carreau_parameters.a,
+      material_properties.non_newtonian_parameters.carreau_parameters.n);
 
   else // (fluid_properties.rheological_model ==
        //    Parameters::Fluid::RheologicalModel::phase_change)
     return std::make_shared<PhaseChangeRheology>(
-      fluid_properties.phase_change_parameters);
+      material_properties.phase_change_parameters);
 }
 
 double

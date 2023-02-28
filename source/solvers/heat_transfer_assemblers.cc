@@ -66,11 +66,17 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // of the time-step
       const double tau =
         is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * alpha / (h * h), 2)) :
-          1. /
-            std::sqrt(std::pow(sdt, 2) + std::pow(2. * rho_cp * u_mag / h, 2) +
-                      9 * std::pow(4 * alpha / (h * h), 2));
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2));
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian_vec[q][j] +=
+            rho_cp * velocity * scratch_data.grad_phi_T[q][j] -
+            thermal_conductivity[q] * scratch_data.laplacian_phi_T[q][j];
+        }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -157,11 +163,10 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       // of the time-step
       const double tau =
         is_steady(method) ?
-          1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
+          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * alpha / (h * h), 2)) :
-          1. /
-            std::sqrt(std::pow(sdt, 2) + std::pow(2. * rho_cp * u_mag / h, 2) +
-                      9 * std::pow(4 * alpha / (h * h), 2));
+          1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                         9 * std::pow(4 * alpha / (h * h), 2));
 
       // Calculate the strong residual for GLS stabilization
       strong_residual_vec[q] +=

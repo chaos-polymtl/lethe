@@ -93,7 +93,7 @@ public:
   value(const std::map<field, double> &fields_value) = 0;
 
   /**
-   * @brief vector_value Calculates the values of a physical property for
+   * @brief vector_value Calculates the values of a physical property for multiple points
    * @param field_vectors
    */
   virtual void

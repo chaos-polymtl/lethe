@@ -101,11 +101,13 @@ RestartNavierStokes<dim>::run()
   this->exact_solution   = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;
   Parameters::PhysicalProperties physical_properties;
-  physical_properties.fluids.push_back(Parameters::Fluid());
+  physical_properties.fluids.push_back(Parameters::Material());
   physical_properties.number_of_fluids = 1;
   physical_properties.fluids[0].rheological_model =
-    Parameters::Fluid::RheologicalModel::newtonian;
+    Parameters::Material::RheologicalModel::newtonian;
   physical_properties.fluids[0].viscosity = 1;
+  physical_properties.number_of_solids    = 0;
+
 
   this->simulation_parameters.physical_properties_manager.initialize(
     physical_properties);

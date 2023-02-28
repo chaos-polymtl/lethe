@@ -35,6 +35,8 @@ PhysicalPropertiesManager::initialize(
   is_initialized = true;
 
   number_of_fluids = physical_properties.number_of_fluids;
+  number_of_solids = physical_properties.number_of_solids;
+
 
   viscosity_scale = physical_properties.fluids[0].viscosity;
   density_scale   = physical_properties.fluids[0].density;
@@ -57,7 +59,7 @@ PhysicalPropertiesManager::initialize(
       // This indicator is used elsewhere in the code to throw assertions
       // if non-constant density is not implemented in a post-processing utility
       if (physical_properties.fluids[f].density_model !=
-          Parameters::Fluid::DensityModel::constant)
+          Parameters::Material::DensityModel::constant)
         constant_density = false;
 
       specific_heat.push_back(
@@ -81,9 +83,44 @@ PhysicalPropertiesManager::initialize(
       establish_fields_required_by_model(*thermal_expansion[f]);
 
       if (physical_properties.fluids[f].rheological_model !=
-            Parameters::Fluid::RheologicalModel::newtonian &&
+            Parameters::Material::RheologicalModel::newtonian &&
           physical_properties.fluids[f].rheological_model !=
-            Parameters::Fluid::RheologicalModel::phase_change)
+            Parameters::Material::RheologicalModel::phase_change)
         non_newtonian_flow = true;
+    }
+
+  // For each solid, append the physical properties
+  for (unsigned int s = 0; s < number_of_solids; ++s)
+    {
+      density.push_back(
+        DensityModel::model_cast(physical_properties.solids[s]));
+      establish_fields_required_by_model(*density[s]);
+
+      // Store an indicator for the density to indicate if it is not constant
+      // This indicator is used elsewhere in the code to throw assertions
+      // if non-constant density is not implemented in a post-processing utility
+      if (physical_properties.fluids[s].density_model !=
+          Parameters::Material::DensityModel::constant)
+        constant_density = false;
+
+      specific_heat.push_back(
+        SpecificHeatModel::model_cast(physical_properties.solids[s]));
+      establish_fields_required_by_model(*specific_heat[s]);
+
+      thermal_conductivity.push_back(
+        ThermalConductivityModel::model_cast(physical_properties.solids[s]));
+      establish_fields_required_by_model(*thermal_conductivity[s]);
+
+      rheology.push_back(
+        RheologicalModel::model_cast(physical_properties.solids[s]));
+      this->establish_fields_required_by_model(*rheology[s]);
+
+      tracer_diffusivity.push_back(
+        TracerDiffusivityModel::model_cast(physical_properties.solids[s]));
+      establish_fields_required_by_model(*tracer_diffusivity[s]);
+
+      thermal_expansion.push_back(
+        ThermalExpansionModel::model_cast(physical_properties.solids[s]));
+      establish_fields_required_by_model(*thermal_expansion[s]);
     }
 }

@@ -16,6 +16,11 @@ DeclException1(NumberOfFluidsError,
                << "Number of fluids: " << arg1
                << " is not 1 (single phase simulation) or 2 (VOF simulation)");
 
+DeclException1(NumberOfSolidsError,
+               int,
+               << "Number of solids: " << arg1
+               << " is larger than 1. This is currently not supported.");
+
 DeclException1(
   TwoDimensionalLaserError,
   unsigned int,
@@ -509,6 +514,8 @@ namespace Parameters
   {
     fluids.resize(max_fluids);
     number_of_fluids = 1;
+    solids.resize(max_solids);
+    number_of_solids = 0;
 
     prm.enter_subsection("physical properties");
     {
@@ -517,12 +524,24 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-      // Multiphasic simulations parameters definition
+      // Definition of the fluids in the simulation
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
-          fluids[i_fluid].declare_parameters(prm, i_fluid);
+          fluids[i_fluid].declare_parameters(prm, "fluid", i_fluid);
+        }
+
+      prm.declare_entry("number of solids",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of solids");
+
+      // Definition of the solids in the simulation
+      for (unsigned int i_solid = 0; i_solid < max_solids; ++i_solid)
+        {
+          solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
     }
+
     prm.leave_subsection();
   }
 
@@ -532,23 +551,35 @@ namespace Parameters
   {
     prm.enter_subsection("physical properties");
     {
-      // Multiphasic simulations parameters definition
+      // Multiphase simulations parameters definition
       number_of_fluids = prm.get_integer("number of fluids");
-      Assert(number_of_fluids == 1 || number_of_fluids == 2,
-             NumberOfFluidsError(number_of_fluids));
+      AssertThrow(number_of_fluids <= max_fluids,
+                  NumberOfFluidsError(number_of_fluids));
 
       for (unsigned int i_fluid = 0; i_fluid < number_of_fluids; ++i_fluid)
         {
-          fluids[i_fluid].parse_parameters(prm, i_fluid, dimensions);
+          fluids[i_fluid].parse_parameters(prm, "fluid", i_fluid, dimensions);
         }
+
+      // Multiphase simulations parameters definition
+      number_of_solids = prm.get_integer("number of solids");
+      for (unsigned int i_solid = 0; i_solid < number_of_solids; ++i_solid)
+        {
+          solids[i_solid].parse_parameters(prm, "solid", i_solid, dimensions);
+        }
+      AssertThrow(number_of_solids <= max_solids,
+                  NumberOfSolidsError(number_of_fluids));
     }
     prm.leave_subsection();
   }
 
   void
-  Fluid::declare_parameters(ParameterHandler &prm, unsigned int id)
+  Material::declare_parameters(ParameterHandler &prm,
+                               std::string       material_prefix,
+                               unsigned int      id)
   {
-    prm.enter_subsection("fluid " + Utilities::int_to_string(id, 1));
+    prm.enter_subsection(material_prefix + " " +
+                         Utilities::int_to_string(id, 1));
     {
       prm.declare_entry("density",
                         "1",
@@ -638,11 +669,13 @@ namespace Parameters
   }
 
   void
-  Fluid::parse_parameters(ParameterHandler &               prm,
-                          const unsigned int               id,
-                          const Parameters::Dimensionality dimensions)
+  Material::parse_parameters(ParameterHandler &               prm,
+                             std::string                      material_prefix,
+                             const unsigned int               id,
+                             const Parameters::Dimensionality dimensions)
   {
-    prm.enter_subsection("fluid " + Utilities::int_to_string(id, 1));
+    prm.enter_subsection(material_prefix + " " +
+                         Utilities::int_to_string(id, 1));
     {
       // String that will be used to parse the models
       std::string op;
