@@ -153,13 +153,11 @@ public:
    * mobile), it can't be used as is in the pvd post-processing, it needs to be
    * converted to a vector of mobility status by active cell index
    *
-   * @param n_active_cells The number of active cells in the triangulation
+   * @param status The initiated vector for the conversio
    */
-  std::vector<unsigned int>
-  get_mobility_status_vector(unsigned int n_active_cells)
+  void
+  get_mobility_status_vector(std::vector<unsigned int> status)
   {
-    std::vector<unsigned int> status(n_active_cells);
-
     // Loop over all set with different mobility status (except empty)
     for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
          i_set++)
@@ -167,8 +165,18 @@ public:
         for (auto &cell : status_to_cell[i_set])
           status[cell->active_cell_index()] = i_set;
       }
+  };
 
-    return status;
+  void
+  get_mobility_status_vector(Vector<float> status)
+  {
+    // Loop over all set with different mobility status (except empty)
+    for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
+         i_set++)
+      {
+        for (auto &cell : status_to_cell[i_set])
+          status[cell->active_cell_index()] = i_set;
+      }
   };
 
   std::vector<typename DEM::dem_data_structures<dim>::cell_set>

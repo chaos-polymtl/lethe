@@ -236,33 +236,11 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
 
   average_solution_names.push_back("mobility_status");
 
-  auto mobility_status_to_cell = disable_contact_object.get_mobility_status();
   Vector<float> mobility_status(triangulation.n_active_cells());
-  for (const auto &cell : triangulation.active_cell_iterators())
-    {
-      // Loop over all set with different mobility status
-      for (unsigned int i_set = 0; i_set < mobility_status_to_cell.size();
-           i_set++)
-        {
-          if (cell->is_locally_owned())
-            {
-              for (auto &cell : mobility_status_to_cell[i_set])
-                {
-                  unsigned int cell_id     = cell->active_cell_index();
-                  mobility_status[cell_id] = i_set;
-                }
-            }
-        }
-    }
-
+  disable_contact_object.get_mobility_status_vector(mobility_status);
   data_out.add_data_vector(mobility_status,
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);
-
-  //  average_solution_names.push_back("mobility_status_node");
-  //
-  //  data_out.add_data_vector((LinearAlgebra::distributed::Vector<float>)disable_contact_object.get_mobility_at_nodes(),
-  //                           average_solution_names.back());
 
   // Attach the solution data to data_out object
   Vector<float> subdomain(triangulation.n_active_cells());

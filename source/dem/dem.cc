@@ -370,9 +370,8 @@ DEMSolver<dim>::load_balance()
 {
   if (has_disabled_contacts)
     {
-      std::vector<unsigned int> mobility_status_vector =
-        disable_contact_object.get_mobility_status_vector(
-          triangulation.n_active_cells());
+      std::vector<unsigned int> mobility_status(triangulation.n_active_cells());
+      disable_contact_object.get_mobility_status_vector(mobility_status);
 
       // Clear and connect a new cell weight function
       triangulation.signals.weight.disconnect_all_slots();
@@ -389,7 +388,7 @@ DEMSolver<dim>::load_balance()
             const typename parallel::distributed::Triangulation<dim>::CellStatus
               status) -> unsigned int {
           return this->cell_weight_with_mobility_status(
-            cell, status, mobility_status_vector[cell->active_cell_index()]);
+            cell, status, mobility_status[cell->active_cell_index()]);
         });
     }
 
@@ -508,9 +507,10 @@ DEMSolver<dim>::check_load_balance_dynamic()
           const unsigned int particle_weight =
             parameters.model_parameters.load_balance_particle_weight;
 
-          const std::vector<unsigned int> mobility_status_vector =
-            disable_contact_object.get_mobility_status_vector(
-              triangulation.n_active_cells());
+          std::vector<unsigned int> mobility_status_vector(
+            triangulation.n_active_cells());
+          disable_contact_object.get_mobility_status_vector(
+            mobility_status_vector);
 
           for (const auto &cell : triangulation.active_cell_iterators())
             {
@@ -749,7 +749,23 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      visualization_object.print_xyz(particle_handler, mpi_communicator, pcout);
+      if (parameters.test.test_type ==
+          Parameters::Testing::TestType::mobility_status)
+        {
+          // Get mobility status vector sorted by cell id
+          Vector<float> mobility_status(triangulation.n_active_cells());
+          disable_contact_object.get_mobility_status_vector(mobility_status);
+
+          // Print data in deal.II format
+          visualization_object.print_intermediate_format(mobility_status,
+                                                         background_dh,
+                                                         mpi_communicator,
+                                                         pcout);
+        }
+      else
+        visualization_object.print_xyz(particle_handler,
+                                       mpi_communicator,
+                                       pcout);
     }
 
   // Outputting force and torques over boundary

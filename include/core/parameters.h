@@ -996,6 +996,13 @@ namespace Parameters
   struct Testing
   {
     bool enabled;
+
+    enum class TestType
+    {
+      none,
+      mobility_status,
+    } test_type;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

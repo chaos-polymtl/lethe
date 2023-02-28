@@ -1920,6 +1920,12 @@ namespace Parameters
         "Enable testing mode of a solver. Some solvers have a specific"
         "testing mode which enables the output of debug variables. This"
         "testing mode is generally used only for the automatic testing bench using ctest.");
+      prm.declare_entry(
+        "type",
+        "default",
+        Patterns::Selection("default|mobility_status"),
+        "Output type for testing mode for no. Currently only mobility_status is "
+        "available for DEM or FEM-DEM.");
     }
     prm.leave_subsection();
   }
@@ -1930,6 +1936,18 @@ namespace Parameters
     prm.enter_subsection("test");
     {
       enabled = prm.get_bool("enable");
+      if (enabled)
+        {
+          const std::string op = prm.get("type");
+          if (op == "mobility_status")
+            test_type = TestType::mobility_status;
+          else if (op == "default")
+            test_type = TestType::none;
+          else
+            throw std::logic_error(
+              "Error, invalid testing type. Current choices are mobility_status "
+              "or default");
+        }
     }
     prm.leave_subsection();
   }
