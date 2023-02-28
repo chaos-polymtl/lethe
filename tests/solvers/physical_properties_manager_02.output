@@ -1,0 +1,9 @@
+
+DEAL::Testing PhysicalPropertiesManager - Fluid 0 
+DEAL::Density              : 1.00000
+DEAL::Specific heat        : 2.00000
+DEAL::Thermal conductivity : 3.00000
+DEAL::Testing PhysicalPropertiesManager - Solid 0 
+DEAL::Density              : 10.0000
+DEAL::Specific heat        : 20.0000
+DEAL::Thermal conductivity : 30.0000

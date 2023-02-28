@@ -878,7 +878,8 @@ GDNavierStokesSolver<dim>::setup_ILU()
   system_ilu_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
     gamma,
-    this->simulation_parameters.physical_properties_manager.viscosity_scale,
+    this->simulation_parameters.physical_properties_manager
+      .get_viscosity_scale(),
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
@@ -993,7 +994,8 @@ GDNavierStokesSolver<dim>::setup_AMG()
   system_amg_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>(
     gamma,
-    this->simulation_parameters.physical_properties_manager.viscosity_scale,
+    this->simulation_parameters.physical_properties_manager
+      .get_viscosity_scale(),
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),

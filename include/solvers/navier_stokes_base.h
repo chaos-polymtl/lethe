@@ -353,6 +353,24 @@ protected:
   check_existance_of_bc(BoundaryConditions::BoundaryType bc);
 
   /**
+   * @brief Turns regions of the mesh where the material_id=1 to a solid block by injecting it into the constraints
+   * This is achieved by imposing $\mathbf{u}=0$ within the cells which have a
+   * material_id=1. In addition, solid cells which are not connected to the
+   * fluid by any means also get a pressure dirichlet boundary condition which
+   * fixes the pressure to 0. This ensures that the linear system is well-posed.
+   * Right now, this routine only supports the usage of 1 solid domain, but
+   * eventually it could be extended to more than one. By default, the fluid
+   * domain is assumed to have a material_id=0 and the rest of the domains have
+   * a material_id>0.
+   *
+   * @param non_zero_constraints If this parameter is true, it indicates that it is the non_zero constraints
+   * which are being constrainted for the solid domain. If this is set to
+   * false, the zero constraints are constrained in the solid domain
+   */
+  void
+  establish_solid_domain(const bool non_zero_constraints);
+
+  /**
    * @brief write_checkpoint
    */
   virtual void
@@ -417,14 +435,14 @@ protected:
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
+  AffineConstraints<double> nonzero_constraints;
 
   // Present solution and non-linear solution components
-  VectorType                evaluation_point;
-  VectorType                local_evaluation_point;
-  VectorType                newton_update;
-  VectorType                present_solution;
-  VectorType                system_rhs;
-  AffineConstraints<double> nonzero_constraints;
+  VectorType evaluation_point;
+  VectorType local_evaluation_point;
+  VectorType newton_update;
+  VectorType present_solution;
+  VectorType system_rhs;
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;

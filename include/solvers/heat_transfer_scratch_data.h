@@ -189,6 +189,7 @@ public:
          const std::vector<VectorType> &                   solution_stages,
          Function<dim> *                                   source_function)
   {
+    material_id = cell->material_id();
     this->fe_values_T.reinit(cell);
 
     quadrature_points = this->fe_values_T.get_quadrature_points();
@@ -409,6 +410,7 @@ public:
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
+  dealii::types::material_id           material_id;
   std::vector<double>                  specific_heat;
   std::vector<double>                  thermal_conductivity;
   std::vector<double>                  density;

@@ -92,16 +92,16 @@ private:
    *  @brief Assembles the matrix associated with the solver
    */
   void
-  assemble_system_matrix();
+  assemble_system_matrix() override;
 
   /**
    * @brief Assemble the rhs associated with the solver
    */
   void
-  assemble_system_rhs();
+  assemble_system_rhs() override;
 
   /**
-   * @brief  Update the average velocity field solution in the multiphyscics interface
+   * @brief  Update the average velocity field solution in the multiphysics interface
    */
   virtual void
   update_multiphysics_time_average_solution() override;

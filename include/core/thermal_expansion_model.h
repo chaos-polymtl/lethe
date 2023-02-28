@@ -31,10 +31,10 @@ public:
    * @brief Instantiates and returns a pointer to a ThermalExpansionModel object by casting it to
    * the proper child class
    *
-   * @param physical_properties Parameters for a single fluid
+   * @param material_properties Parameters for a material
    */
   static std::shared_ptr<ThermalExpansionModel>
-  model_cast(const Parameters::Fluid &fluid_properties);
+  model_cast(const Parameters::Material &material_properties);
 };
 
 

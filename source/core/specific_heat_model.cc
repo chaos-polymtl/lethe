@@ -17,14 +17,14 @@
 #include <core/specific_heat_model.h>
 
 std::shared_ptr<SpecificHeatModel>
-SpecificHeatModel::model_cast(const Parameters::Fluid &fluid_properties)
+SpecificHeatModel::model_cast(const Parameters::Material &material_properties)
 {
-  if (fluid_properties.specific_heat_model ==
-      Parameters::Fluid::SpecificHeatModel::phase_change)
+  if (material_properties.specific_heat_model ==
+      Parameters::Material::SpecificHeatModel::phase_change)
     return std::make_shared<PhaseChangeSpecificHeat>(
-      fluid_properties.phase_change_parameters);
+      material_properties.phase_change_parameters);
 
   else
     return std::make_shared<ConstantSpecificHeat>(
-      fluid_properties.specific_heat);
+      material_properties.specific_heat);
 }
