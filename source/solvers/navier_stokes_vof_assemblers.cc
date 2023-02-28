@@ -69,6 +69,21 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
+      const Tensor<3, dim> &velocity_hessian =
+        scratch_data.velocity_hessians[q];
+
+      // From hessian, calculate grad (div (u)) term needed for VOF problems
+      Tensor<1, dim> grad_div_velocity;
+      for (int d = 0; d < dim; ++d)
+        {
+          for (int k = 0; k < dim; ++k)
+            {
+              // hessian[c][i][j] is the (i,j)th component of the matrix of
+              // second derivatives of the cth vector component of the vector
+              // field at quadrature point q of the current cell
+              grad_div_velocity[d] += velocity_hessian[k][d][k];
+            }
+        }
 
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -106,6 +121,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
+                             dynamic_viscosity_eq * grad_div_velocity -
                              density_eq * force + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -259,6 +275,22 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
         scratch_data.velocity_laplacians[q];
 
 
+      const Tensor<3, dim> &velocity_hessian =
+        scratch_data.velocity_hessians[q];
+      // From hessian, calculate grad (div (u)) term needed for VOF problems
+      Tensor<1, dim> grad_div_velocity;
+      for (int d = 0; d < dim; ++d)
+        {
+          for (int k = 0; k < dim; ++k)
+            {
+              // hessian[c][i][j] is the (i,j)th component of the matrix of
+              // second derivatives of the cth vector component of the vector
+              // field at quadrature point q of the current cell
+              grad_div_velocity[d] += velocity_hessian[k][d][k];
+            }
+        }
+
+
       // Calculate shear rate
       const Tensor<2, dim> shear_rate =
         velocity_gradient + transpose(velocity_gradient);
@@ -302,6 +334,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
+                             dynamic_viscosity_eq * grad_div_velocity -
                              density_eq * force + strong_residual_vec[q];
 
       // Assembly of the right-hand side
