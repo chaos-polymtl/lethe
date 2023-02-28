@@ -73,9 +73,7 @@ template <int dim, int spacedim>
 void
 GridMotion<dim, spacedim>::
   update_boundary_points_and_normal_vectors_in_contact_list(
-    std::unordered_map<
-      types::particle_index,
-      std::map<types::boundary_id, particle_wall_contact_info<spacedim>>>
+    typename DEM::dem_data_structures<spacedim>::particle_wall_in_contact
       &particle_wall_pairs_in_contact,
     const typename DEM::dem_data_structures<
       spacedim>::boundary_points_and_normal_vectors

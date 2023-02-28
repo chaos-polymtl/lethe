@@ -157,7 +157,7 @@ namespace DEM
       particle_wall_candidates;
 
     // <particle id, <global_face_id, particle-wall info>>
-    typedef std::unordered_map<
+    typedef ankerl::unordered_dense::map<
       types::particle_index,
       std::map<global_face_id, particle_wall_contact_info<dim>>>
       particle_wall_in_contact;

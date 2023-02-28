@@ -165,8 +165,7 @@ test()
 
   // Particle-Wall fine search
   ParticleWallFineSearch<dim> particle_wall_fine_search_object;
-  std::unordered_map<unsigned int,
-                     std::map<unsigned int, particle_wall_contact_info<dim>>>
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
                                   particle_wall_contact_information;
   ParticleWallNonLinearForce<dim> particle_wall_force_object(
     dem_parameters.boundary_conditions.boundary_translational_velocity,
