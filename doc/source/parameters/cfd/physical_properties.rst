@@ -1,39 +1,42 @@
 Physical Properties
 ---------------------
 .. note:: 
-    Lethe supports both single phase and two phase (through VOF) simulations. The same subsection is used to manage both types of simulation using the fluid subsections.
+    Lethe supports single phase, two phase (using VOF) and conjugate simulations. This is managed using the fluid and solid subsections.
 
 .. code-block:: text
 
   subsection physical properties
-  set number of fluids	= 1
-     subsection fluid 0
-       # Rheology
-       set rheological model = newtonian
-       set kinematic viscosity 	= 1
-
-       # Density
-       set density model = constant
-       set density 		= 1
-
-       # Specific heat
-       set specific heat model = constant
-       set specific heat 	= 1
-
-       # Thermal conductivity
-       set thermal conductivity model = constant
-       set thermal conductivity = 1
-
-       # Thermal expansion
-       set thermal expansion model = constant 
-       set thermal expansion = 0
-
-       # Tracer diffusivity
-       set tracer diffusivity model = constant
-       set tracer diffusivity   = 0
-     end
+    set number of fluids	= 1
+    subsection fluid 0
+      # Rheology
+      set rheological model = newtonian
+      set kinematic viscosity 	= 1
+      
+      # Density
+      set density model = constant
+      set density 		= 1
+      
+      # Specific heat
+      set specific heat model = constant
+      set specific heat 	= 1
+      
+      # Thermal conductivity
+      set thermal conductivity model = constant
+      set thermal conductivity = 1
+      
+      # Thermal expansion
+      set thermal expansion model = constant 
+      set thermal expansion = 0
+      
+      # Tracer diffusivity
+      set tracer diffusivity model = constant
+      set tracer diffusivity   = 0
+    end
+    set number of solids	= 0
   end
  
+* The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `two phase simulations`_ .
+
 * The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `Rheological models`_ .
 
 * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
@@ -63,6 +66,9 @@ where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the th
 * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, only a constant tracer diffusivity is supported.
 
 * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}` .
+
+* The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `conjugate heat transfer`_.
+
 
 .. note:: 
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
@@ -102,6 +108,39 @@ For two phases, the properties are defined for each fluid. Default values are:
 .. warning:: 
   Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
 
+
+.. _conjugate heat transfer:
+
+Conjugate heat transfer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physcal properties of the solid region are set in an identical fashion as those of the fluid. 
+
+ .. warning::
+  This is an experimental feature. It has not been tested on a large range of application cases. 
+
+.. code-block:: text
+
+  subsection physical properties
+    set number of fluids	= 1
+    subsection fluid 0
+      ...
+    end
+    set number of solids	= 1
+    subsection solid 0
+      # Density
+      set density model = constant
+      set density 		= 1
+      
+      # Specific heat
+      set specific heat model = constant
+      set specific heat 	= 1
+      
+      # Thermal conductivity
+      set thermal conductivity model = constant
+      set thermal conductivity = 1
+    end
+  end
 
 .. _rheological_models:
 

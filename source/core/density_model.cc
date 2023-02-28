@@ -17,7 +17,7 @@
 #include <core/density_model.h>
 
 std::shared_ptr<DensityModel>
-DensityModel::model_cast(const Parameters::Fluid &fluid_properties)
+DensityModel::model_cast(const Parameters::Material &material_properties)
 {
-  return std::make_shared<DensityConstant>(fluid_properties.density);
+  return std::make_shared<DensityConstant>(material_properties.density);
 }

@@ -32,7 +32,7 @@ Enstrophy  : 223.229
 Kinetic energy : 0.00511074
 
 *****************************************************************
-Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.224564
+Transient iteration : 5        Time : 0.005    Time step : 0.001    CFL : 0.224563
 *****************************************************************
 Enstrophy  : 360.617
 Kinetic energy : 0.00855407
