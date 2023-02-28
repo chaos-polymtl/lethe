@@ -18,8 +18,6 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
-#include <cfloat>
-
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>
@@ -383,10 +381,9 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
       projected_point[2] = pt_on_surface.Z();
     }
 
-  BRepClass3d_SolidClassifier point_classifier(shape,
-                                               vertex_position,
-                                               shape_tol);
-  TopAbs_State                point_state = point_classifier.State();
+  BRepClass3d_SolidClassifier point_classifier(shape);
+  point_classifier.Perform(pt, shape_tol);
+  TopAbs_State point_state = point_classifier.State();
   // Check if the evaluation point is inside the shape (This check can return
   // true only if the shape is a solid). By default, step file format will
   // define a solid. This is necessary to sign the distance function evaluation.
@@ -520,10 +517,9 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
     {
       projected_point[2] = pt_on_surface.Z();
     }
-  BRepClass3d_SolidClassifier point_classifier(shape,
-                                               vertex_position,
-                                               shape_tol);
-  TopAbs_State                point_state = point_classifier.State();
+  BRepClass3d_SolidClassifier point_classifier(shape);
+  point_classifier.Perform(pt, shape_tol);
+  TopAbs_State point_state = point_classifier.State();
   // Check the evaluation point is inside the shape (This check can return true
   // only if the shape is a solid). By default, step file format will define a
   // solid. This is necessary to sign the distance function evaluation.

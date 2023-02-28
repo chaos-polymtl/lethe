@@ -1,0 +1,10 @@
+
+DEAL::Beginning
+DEAL::Testing value
+DEAL::Hex extrusion value at (1.5; 1.8; 1.75) = 2.23465
+DEAL::OK
+DEAL::Testing translation rotation
+DEAL::Translation =(0.2; 0.; 0.3)
+DEAL::Orientation =(1.; 1.; 1.)
+DEAL::Hex extrusion value at (1.5; 1.8; 1.75) = 2.06800
+DEAL::OK

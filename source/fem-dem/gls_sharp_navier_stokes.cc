@@ -2622,20 +2622,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          double sum_line = 0;
-          fe_values.reinit(cell);
-
-          double volume = 0;
-          // Define the order of magnitude for the stencil.
-          for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            volume += fe_values.JxW(qf);
-
-          sum_line = volume / dt;
-
-
-
-          cell->get_dof_indices(local_dof_indices);
-
           // Check if the cell is cut or not by the IB and what the particle the
           // cut the cell. If the particle is cut
           bool cell_is_cut;
@@ -2650,6 +2636,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           if (cell_is_cut)
             {
+              double sum_line = 0;
+              fe_values.reinit(cell);
+
+              double volume = 0;
+              // Define the order of magnitude for the stencil.
+              for (unsigned int qf = 0; qf < n_q_points; ++qf)
+                volume += fe_values.JxW(qf);
+
+              sum_line = volume / dt;
+              cell->get_dof_indices(local_dof_indices);
               // If we are here, the cell is cut by the IB.
               // Loops on the dof that represents the velocity  component
               // and pressure separately
