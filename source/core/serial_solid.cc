@@ -15,6 +15,7 @@
  */
 
 
+#include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 #include <core/solutions_output.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -99,31 +100,66 @@ SerialSolid<dim, spacedim>::SerialSolid(
   initial_setup();
 }
 
+
+// BB NOTE
+// This is the part where distance calculations must be done when mapping the
+// solid This is the function that has to be optimized
 template <int dim, int spacedim>
 std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
             typename Triangulation<dim, spacedim>::active_cell_iterator>>
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
   const parallel::distributed::Triangulation<spacedim> &background_tr,
-  const std::shared_ptr<Triangulation<dim, spacedim>> & solid_tr)
+  const std::shared_ptr<Triangulation<dim, spacedim>>  &solid_tr)
 {
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
     mapped_solid;
 
+
+  // Gather the amount of vertices per cell in the solid cells once to have
+  // static memory
+  auto                         temporary_solid_cell = solid_tr->begin();
+  std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
+
+
+  // Calculate distance from cell center to  solid_cell
   for (const auto &background_cell : background_tr.active_cell_iterators())
     {
       // If the cell is owned by the processor
       if (background_cell->is_locally_owned())
         {
+          // Calculate the characteristic size of the background cell
+          const double bg_cell_length = background_cell->diameter();
+
+          // Calculate the center of the cell
+          Point<spacedim> bg_cell_center = background_cell->center();
+
+          // Calculate distance from center of the cell to triangle
           for (auto &solid_cell : solid_tr->active_cell_iterators())
             {
-              mapped_solid.push_back(
-                std::make_pair(background_cell, solid_cell));
+              // Gather triangle vertices
+              for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
+                {
+                  triangle[v] = solid_cell->vertex(v);
+                }
+
+              // Calculate distance between triangle and center
+              const double distance =
+                LetheGridTools::find_point_triangle_distance(triangle,
+                                                             bg_cell_center);
+
+              if (distance < bg_cell_length)
+                {
+                  mapped_solid.push_back(
+                    std::make_pair(background_cell, solid_cell));
+                }
             }
         }
     }
+
+
 
   return mapped_solid;
 }
@@ -516,7 +552,8 @@ SerialSolid<dim, spacedim>::write_output_results(
 }
 
 template <int dim, int spacedim>
-void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
+void
+SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 {
   // SolutionTransfer<dim, Vector<double>, spacedim> system_trans_vectors(
   //   this->displacement_dh);
@@ -535,7 +572,8 @@ void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 }
 
 template <int dim, int spacedim>
-void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
+void
+SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 {
   // Setup an un-refined triangulation before loading
   // setup_triangulation(true);

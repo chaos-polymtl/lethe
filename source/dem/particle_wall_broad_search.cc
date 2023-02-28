@@ -11,7 +11,7 @@ template <int dim>
 void
 ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
   const std::map<int, boundary_cells_info_struct<dim>>
-    &                                    boundary_cells_information,
+                                        &boundary_cells_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_wall_candidates
     &particle_wall_contact_candidates)
@@ -70,7 +70,7 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
     types::particle_index,
     std::set<typename Triangulation<dim>::active_cell_iterator>>
-    &                                    boundary_cells_for_floating_walls,
+                                        &boundary_cells_for_floating_walls,
   const Particles::ParticleHandler<dim> &particle_handler,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double                                      simulation_time,
@@ -138,7 +138,7 @@ template <int dim>
 void
 ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
   const typename DEM::dem_data_structures<dim>::floating_mesh_information
-    &                                    floating_mesh_information,
+                                        &floating_mesh_information,
   const Particles::ParticleHandler<dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
@@ -156,6 +156,10 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
     {
       auto &candidates =
         particle_floating_mesh_contact_candidates[solid_counter];
+
+
+      // BB NOTE
+      // To look more into this
 
       // I am assuming that triangles in different solids have different unique
       // global ids. If it's not the case, we have to modify the code

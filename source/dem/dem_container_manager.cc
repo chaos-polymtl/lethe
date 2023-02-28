@@ -253,8 +253,8 @@ DEMContainerManager<dim>::execute_particle_particle_broad_search(
 template <int dim>
 void
 DEMContainerManager<dim>::execute_particle_wall_broad_search(
-  const Particles::ParticleHandler<dim> &           particle_handler,
-  BoundaryCellsInformation<dim> &                   boundary_cell_object,
+  const Particles::ParticleHandler<dim>            &particle_handler,
+  BoundaryCellsInformation<dim>                    &boundary_cell_object,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const bool                                        has_floating_mesh)
@@ -391,10 +391,13 @@ DEMContainerManager<dim>::execute_particle_wall_fine_search(
     }
 }
 
+
+// BB NOTE
+// This is what needs to be modified to use the triangle to point distance
 template <int dim>
 void
 DEMContainerManager<dim>::store_floating_mesh_info(
-  const parallel::distributed::Triangulation<dim> &       triangulation,
+  const parallel::distributed::Triangulation<dim>        &triangulation,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
 {
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
