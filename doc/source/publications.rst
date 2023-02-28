@@ -7,9 +7,11 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2023
 ----
 
+* `T. El Geitani, S. Golshan and B. Blais, "A High Order Stabilized Solver for the Volume Averaged Navier-Stokes Equations", International Journal for Numerical Methods in Fluids, 1-23, 2023 <https://doi.org/10.1002/fld.5182>`_.
+
 * `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", Journal of Non-Newtonian Fluid Mechanics, 311, 104951, 2023 <https://doi.org/10.1016/j.jnnfm.2022.104951>`_.
 
-* `T. El Geitani, S. Golshan, Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 0, null, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
+* `T. El Geitani, S. Golshan, Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 62, 1141-1159, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
 
 2022
 ----
@@ -30,11 +32,7 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `T. E. Geitani, S. Golshan and B. Blais, "A High Order Stabilized Solver for the Volume Averaged Navier-Stokes Equations", June 2022 <https://doi.org/10.48550/arXiv.2206.02842>`_.
-
 * `L. Prieto Saavedra, C. E. N. Radburn, A. Collard-Daigneault and B. Blais, "An implicit large-eddy simulation perspective on the flow over periodic hills", June 2022 <https://doi.org/10.48550/arXiv.2206.08145>`_.
-
-* `T. E. Geitani, S. Golshan and B. Blais, "Towards High-order CFD-DEM: Development and Validation", September 2022 <https://doi.org/10.48550/arXiv.2211.01185>`_.
 
 * `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", October 2022 <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4264140>`_
 
