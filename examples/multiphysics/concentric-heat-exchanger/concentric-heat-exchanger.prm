@@ -38,7 +38,7 @@ end
 subsection FEM
   set velocity order    = 1
   set pressure order    = 1
-  set temperature order = 2
+  set temperature order = 1
 end
 
 #---------------------------------------------------

@@ -270,7 +270,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -310,7 +310,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &   prm,
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -346,7 +346,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &   prm,
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -397,7 +397,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &   prm,
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
@@ -524,7 +524,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of fluids");
 
-      // Multiphasic simulations parameters definition
+      // Definition of the fluids in the simulation
       for (unsigned int i_fluid = 0; i_fluid < max_fluids; ++i_fluid)
         {
           fluids[i_fluid].declare_parameters(prm, "fluid", i_fluid);
@@ -535,7 +535,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Number of solids");
 
-      // Multiphasic simulations parameters definition
+      // Definition of the solids in the simulation
       for (unsigned int i_solid = 0; i_solid < max_solids; ++i_solid)
         {
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
@@ -546,7 +546,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -669,7 +669,7 @@ namespace Parameters
   }
 
   void
-  Material::parse_parameters(ParameterHandler &               prm,
+  Material::parse_parameters(ParameterHandler                &prm,
                              std::string                      material_prefix,
                              const unsigned int               id,
                              const Parameters::Dimensionality dimensions)

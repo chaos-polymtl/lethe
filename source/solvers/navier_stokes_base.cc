@@ -54,9 +54,6 @@
 
 #include <sys/stat.h>
 
-#include <map>
-
-
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -894,7 +891,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -1566,8 +1563,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
 
   // We will need to identify which pressure degrees of freedom are connected to
   // fluid region For these we won't establish a zero pressure equation.
-  std::set<types::global_dof_index>  dof_is_connected_to_fluid;
-  std::set<types::global_cell_index> cell_is_connected_to_fluid;
+  std::unordered_set<types::global_dof_index>  dof_is_connected_to_fluid;
+  std::unordered_set<types::global_cell_index> cell_is_connected_to_fluid;
 
   // Loop through all cells to identify which cells are solid. This first step
   // is used to 1) constraint the velocity degree of freedom to be zero in the
@@ -1588,6 +1585,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                     this->fe->system_to_component_index(i).first;
                   if (component < dim)
                     {
+                      // We apply a constraint to all DOFS in the solid region,
+                      // whether they are locally owned or not.
                       if (non_zero_constraints)
                         {
                           this->nonzero_constraints.add_line(
@@ -1618,8 +1617,8 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
         }
     }
 
-  // All pressure DOFs which are not connected to a fluid cell are set to
-  // dirichlet BC to ensure that the system matrix has adequate conditioning
+  // All pressure DOFs which are not connected to a fluid cell are constrained
+  // to ensure that the system matrix has adequate conditioning
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
@@ -1640,7 +1639,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                 }
 
               // All of the pressure DOFS with the cell are not connected to the
-              // fluid. Consequently we fix a Dirichlet boundary condition on
+              // fluid. Consequently we fix a constraint for the
               // pressure on these dofs.
               if (!connected_to_fluid)
                 {
@@ -1649,24 +1648,54 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                       const unsigned int component =
                         this->fe->system_to_component_index(i).first;
 
-                      // Only pressure DOFs have an additional Dirichlet BC
+                      // Only pressure DOFs have an additional Dirichlet
+                      // condition
                       if (component == dim)
                         {
-                          auto search = dof_is_connected_to_fluid.find(
-                            local_dof_indices[i]);
-                          if (search != dof_is_connected_to_fluid.end())
+                          // We only apply the constraint on the locally owned
+                          // pressure DOFs since we have no way of verifying if
+                          // the locally relevant DOFs are connected to a fluid
+                          // cell
+
+                          bool dof_is_locally_owned = false;
+                          // For the GLS-family of solvers, we only have a
+                          // single index set
+                          if constexpr (std::is_same_v<DofsType, IndexSet>)
                             {
-                              if (non_zero_constraints)
+                              dof_is_locally_owned =
+                                locally_owned_dofs.is_element(
+                                  local_dof_indices[i]);
+                            }
+
+                          // For the GD-family of solver, we have two index set.
+                          // One fore velocities and one for pressure.
+                          if constexpr (std::is_same_v<DofsType,
+                                                       std::vector<IndexSet>>)
+                            {
+                              dof_is_locally_owned =
+                                locally_owned_dofs[1].is_element(
+                                  local_dof_indices[i]);
+                            }
+
+                          if (dof_is_locally_owned)
+                            {
+                              auto search = dof_is_connected_to_fluid.find(
+                                local_dof_indices[i]);
+                              if (search != dof_is_connected_to_fluid.end())
                                 {
-                                  this->nonzero_constraints.add_line(
-                                    local_dof_indices[i]);
-                                  this->nonzero_constraints.set_inhomogeneity(
-                                    local_dof_indices[i], 0);
-                                }
-                              else
-                                {
-                                  this->zero_constraints.add_line(
-                                    local_dof_indices[i]);
+                                  if (non_zero_constraints)
+                                    {
+                                      this->nonzero_constraints.add_line(
+                                        local_dof_indices[i]);
+                                      this->nonzero_constraints
+                                        .set_inhomogeneity(local_dof_indices[i],
+                                                           0);
+                                    }
+                                  else
+                                    {
+                                      this->zero_constraints.add_line(
+                                        local_dof_indices[i]);
+                                    }
                                 }
                             }
                         }
@@ -1819,7 +1848,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
           1, DataComponentInterpretation::component_is_scalar);
 
       std::vector<std::string> qcriterion_name = {"qcriterion"};
-      const DoFHandler<dim> &  dof_handler_qcriterion =
+      const DoFHandler<dim>   &dof_handler_qcriterion =
         qcriterion_smoothing.get_dof_handler();
       data_out.add_data_vector(dof_handler_qcriterion,
                                qcriterion_field,
