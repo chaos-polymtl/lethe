@@ -33,6 +33,12 @@ subsection VOF
     set interface sharpness = 2
     set frequency           = 10
   end
+
+  subsection phase filtration
+    set type            = tanh
+    set verbosity       = quiet
+    set beta            = 10
+  end
 end
 
 #---------------------------------------------------
