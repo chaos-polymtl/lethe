@@ -97,10 +97,10 @@ To sharpen the immersed boundary of each particle, a layer of cells around the i
 	:align: center
 
 .. warning::
-	The ``mesh adaptation type`` must be ``kelly`` to use the near-particle refinement zone around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
+	The ``mesh adaptation type`` must be ``kelly`` to use the near-particle refinement around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
 
 .. note::
-	The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each application of the refinement zone reduces the size of the elements by a factor two.
+	The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each cycle of refinement reduces the length of the elements by a factor two.
 
 .. note::
 	This near-particle zone will be systematically refined at each refinement step until reaching the ``max refinement level`` parameter (:doc:`../cfd/mesh_adaptation_control`).
@@ -125,9 +125,9 @@ To sharpen the immersed boundary of each particle, a layer of cells around the i
 .. warning::
 	If ``contact search radius factor`` :math:`\leq 1`, an error is thrown.
 
-* The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, that is, the contact search list is updated at each time-step.
+* The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, which means that the contact search list is updated at each time-step.
 
-* The ``enable extra sharp interface vtu output field`` when set this parameter is set to true it enable the output of additional value field in the vtu file produce by the simulation. Currently these additional output field consiste of: The cell id that cut a specific cell (cell_cut). 
+* When the ``enable extra sharp interface vtu output field`` parameter is set to ``true``, it enables the output of additional value fields in the vtu file produce by the simulation. Currently, these additional output fields consist of: the cell id that cut a specific cell (``cell_cut``).
 
 * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
@@ -161,19 +161,19 @@ The following properties are used if the particle impact one of the boundaries o
 .. warning::
     Currently this feature works only for spherical particles.
 
-* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient. The particle type is defined by the shape index. The shape indices are as follow: sphere=0, rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hallow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file.
+* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file.
 
-The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separatly.
+The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separately.
 
-* The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id 0. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
+* The subsection ``particle info 0`` is used to define relevant information that is specific to the particle with id ``0``. For each particle with the index ``n``, a new subsection name ``particle info n`` should be defined with relevant information.
 
-* The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinate X, Y, and Z.
+* The subsection ``position`` defines the initial value of the particle position if the parameter ``integrate motion=true``. Otherwise, it defines the particle's position at all points in time. This position is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of coordinates X, Y, and Z.
 
-* The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z direction.
+* The subsection ``velocity`` defines the initial value of the particle velocity if the parameter ``integrate motion=true``. Otherwise, it defines the particle's velocity at all points in time. This velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z directions.
 
 * If the parameter ``integrate motion`` is set to ``true``, the subsection ``omega`` defines the initial value of the particle's rotational velocity. Otherwise, it defines the particle's rotational velocity at all time steps. This rotational velocity is expressed as a function that can evolve in time. Each component of the ``Function expression`` corresponds to the value of its component in the X, Y, and Z directions.
 
-* The subsection ``orientation`` defines the initial value of the particle's angular position around each of the axes X, then Y, and lastly Z.
+* The subsection ``orientation`` defines the initial value of the particle's angular position around each of the axes: X, then Y, and lastly Z.
 
 .. warning::
     The way position and orientation are defined is that the position of the solid is taken into account first, and then the orientation is considered. The orientation is considered as a rotation around each main axis, in the order X, then Y, and lastly Z. The center of rotation for this rotation is the position point of the solid.
@@ -183,11 +183,11 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.
 
-* The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to true to define the pressure reference point.
+* The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to ``true`` to define the pressure reference point.
 
-* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``, ``cylinder``, ``cylindrical tube``, ``cylindrical helix``, ``composite``, ``rbf``. An ``rbf`` geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a `bitpit <https://github.com/optimad/bitpit>`_-based script.
+* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``, ``cylinder``, ``cylindrical tube``, ``cylindrical helix``, ``composite``, ``rbf``, ``opencascade``. An ``rbf`` geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a `bitpit <https://github.com/optimad/bitpit>`_-based script, namely example `RBF_example_00001 <https://github.com/optimad/bitpit/blob/master/examples/RBF_example_00001.cpp>`_.
 
-* The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``,``. The required arguments and the effective radius, used for near-particle refinement, are:
+* The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``;``. The required arguments and the effective radius, used for near-particle refinement, are:
     * Sphere: *radius*; the effective radius is the *radius*;
 
     * Rectangle: *x half length*, *y half length*, [*z half length* (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
@@ -198,9 +198,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Cone: *tan(base angle)*, *height*; the effective radius is the *height*;
 
-    * Cylinder: *radius*, *half-length*; the effective radius is the *radius*.
+    * Cylinder: *radius*, *half-length*; the effective radius is the *radius*. The cylinder is aligned with the Z axis, and its center corresponds to the origin of its frame of reference.
 
-    * Cylindrical Tube: *hole radius*, *cylinder radius*, *half-length*; the effective radius is the average between *hole radius* and *cylinder radius*.
+    * Cylindrical Tube: *hole radius*, *cylinder radius*, *half-length*; the effective radius is the average between *hole radius* and *cylinder radius*. The tube is aligned with the Z axis, and its center corresponds to the origin of its frame of reference.
 
     * Cylindrical Helix: *helix radius*, *extruded disk radius*, *helicoid height*, *pitch* (height difference between each loop); the effective radius is the *extruded disk radius*.
 
@@ -210,7 +210,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Composite: *file name*.
    
-    The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these two boolean operations have been implemented. Here is the content of a file that defines a cylinder topped with a sphere:
+    The composite shapes are defined by a text file which contains two sections that begin with their names: ``shapes`` and ``operations``. All instructions are given on the lines following the section title, in a similar syntax as the one from GMSH. For shapes, the syntax is: ``<shape_id>;<args separated by :>;<position components separated by :>;<orientation components separated by :>``.For operations, the syntax is: ``<resulting_shape_id>;<union|difference|intersection>;<first shape id>:<second shape id>``. In the case of difference, the first shape is the negative and the second shape is the positive. At this point in time, only these boolean operations have been implemented. Here is the content of a file that defines a cylinder topped with a sphere:
 
     .. code-block:: text
 
@@ -218,15 +218,17 @@ The following parameter and subsection are all inside the subsection ``particle 
         0;   sphere;     0.5; 0:0:0.5 ; 0:0:0
         1; cylinder; 0.5:0.5; 0:0:0.0 ; 0:0:0
         operations
-        2; union     ; 0:1
+        2;    union;     0:1
 
-.. warning:: 
-	Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the sign distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact sign distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
-	
+    .. warning::
+	    Some limitations exist for composite shapes. The composition of shapes with union and difference are not always exact (see [this link](https://iquilezles.org/articles/interiordistance/) for a relatively simple explanation of why this is the case). In general boolean operation only guarantee to preserve the surface of the object. The union operation also preserves the properties of the sign distance function outside of the shapes, which is helpful for external flow around the shapes. But the difference operator does not guarantee to yield an exact sign distance function. This means that shapes defined by using the difference operator may not converge to the expected convergence order of the FEM scheme with the currently implemented scheme.
+
     * RBF: *file name*; the effective radius is the ``support_radius`` of the first node. The file must be constructed with 6 columns of numbers containing: ``weight``, ``support_radius``, ``basis_function``, ``node_x``, ``node_y``, ``node_z``. The ``weight`` is the weight associated to each node, the ``support_radius`` relates to the influence radius of each node, the ``basis_function`` can be one of thirteen functions, described in an upcoming example, and the ``node_*`` describe the center of each node.
     
-    * Opencascade: *file name*; the OpenCascade shape allows the user to read  .step file, .iges file, .stl file. From these files, a sign distance function is calculated. The .step file and the .stl file have a sign distance function. The .iges file has only a positive sign function assigned to them. Shapes defined by these files can significantly slow the simulation when they are in motion since the evaluation of the distance function of these shapes can be computationally intensive. 
+    * OpenCascade: *file name*; the effective radius is the *dim*-root of the sphere that has the same volume as the shape. The OpenCascade shape allows the user to read  .step file, .iges file, .stl file. From these files, a sign distance function is calculated. The .step file and the .stl file have a sign distance function. The .iges file has only a positive sign function assigned to them. Shapes defined by these files can significantly slow the simulation when they are in motion since the evaluation of the distance function of these shapes can be computationally intensive.
 
+    .. note::
+        As could be expected, using this type of shape requires that ``dealii`` be compiled with OpenCascade. This module can be installed with candi, by uncommenting the appropriate line in ``candi.cfg``.
 
 The following properties are used if the particle collides with one of the boundaries of the domain or another particle. The effective properties used to calculate the impact force are the harmonic mean between the properties of the colliding entities.
 

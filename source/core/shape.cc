@@ -1623,7 +1623,7 @@ CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
 
 
   // external cylinder
-  double level_set_of_cylinder_hallow = 0;
+  double level_set_of_cylinder_hollow = 0;
   double p_radius      = std::pow(centered_point[0] * centered_point[0] +
                                centered_point[1] * centered_point[1],
                              0.5);
@@ -1632,22 +1632,22 @@ CylindricalTube<dim>::value(const Point<dim> &evaluation_point,
   double h_diff_o      = abs(centered_point[2] - height / 2) - height / 2;
 
   if (radius_diff_o > 0 && h_diff_o > 0)
-    level_set_of_cylinder_hallow =
+    level_set_of_cylinder_hollow =
       std::pow(radius_diff_o * radius_diff_o + h_diff_o * h_diff_o, 0.5);
   else if (radius_diff_o > 0 && h_diff_o <= 0)
-    level_set_of_cylinder_hallow = radius_diff_o;
+    level_set_of_cylinder_hollow = radius_diff_o;
   else if (radius_diff_o <= 0 && radius_diff_i > 0 && h_diff_o > 0)
-    level_set_of_cylinder_hallow = h_diff_o;
+    level_set_of_cylinder_hollow = h_diff_o;
   else if (radius_diff_i <= 0 && h_diff_o > 0)
-    level_set_of_cylinder_hallow =
+    level_set_of_cylinder_hollow =
       std::pow(radius_diff_i * radius_diff_i + h_diff_o * h_diff_o, 0.5);
   else if (radius_diff_i <= 0 && h_diff_o <= 0)
-    level_set_of_cylinder_hallow = -radius_diff_i;
+    level_set_of_cylinder_hollow = -radius_diff_i;
   else
-    level_set_of_cylinder_hallow =
+    level_set_of_cylinder_hollow =
       std::max(std::max(radius_diff_o, h_diff_o), -radius_diff_i);
 
-  return level_set_of_cylinder_hallow;
+  return level_set_of_cylinder_hollow;
 }
 
 template <int dim>
