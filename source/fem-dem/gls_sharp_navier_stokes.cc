@@ -597,7 +597,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::refine_ib()
 {
-  Point<dim>                                    center_immersed;
+  TimerOutput::Scope t(this->computing_timer, "refine_around_ib");
+  Point<dim>         center_immersed;
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
@@ -628,20 +629,25 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                 cell->point_inside(particles[p].position + r);
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // Count the number of DOFs that fall in the refinement zone
-                  // around the particle. To fall in the zone, the radius of the
-                  // DOFs to the center of the particle must be bigger than the
-                  // inside radius of the refinement zone and smaller than the
-                  // outside radius of the refinement zone.
-                  if (particles[p].is_inside_crown(
-                        support_points[local_dof_indices[j]],
-                        this->simulation_parameters.particlesParameters
-                          ->outside_radius,
-                        this->simulation_parameters.particlesParameters
-                          ->inside_radius,
-                        cell))
+                  // Only check the dof of velocity in x.
+                  if (0 == this->fe->system_to_component_index(j).first)
                     {
-                      ++count_small;
+                      // Count the number of DOFs that fall in the refinement
+                      // zone around the particle. To fall in the zone, the
+                      // radius of the DOFs to the center of the particle must
+                      // be bigger than the inside radius of the refinement zone
+                      // and smaller than the outside radius of the refinement
+                      // zone.
+                      if (particles[p].is_inside_crown(
+                            support_points[local_dof_indices[j]],
+                            this->simulation_parameters.particlesParameters
+                              ->outside_radius,
+                            this->simulation_parameters.particlesParameters
+                              ->inside_radius,
+                            cell))
+                        {
+                          ++count_small;
+                        }
                     }
                 }
               if (count_small > 0 || cell_as_ib_inside)
