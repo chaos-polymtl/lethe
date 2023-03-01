@@ -127,8 +127,7 @@ template <int dim>
 Point<dim>
 Shape<dim>::reverse_align_and_center(const Point<dim> &evaluation_point) const
 {
-  // Translation and rotation to standard position and orientation for
-  // distance calculations
+  // Reverse translation and rotation from standard position and orientation to global referential
   Point<dim> center_of_rotation = position;
   Point<dim> rotated_point;
   Point<dim> translated_point;
