@@ -10,15 +10,11 @@ The mixing of stirred-tanks is a common chemical engineering problem that can be
 .. seealso::
 	The original example using Nitsche immersed boudaries: :doc:`../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller`.
 
-:raw-html:`<br />`
-
 Features
 ----------------------------------
 - Solvers: ``gls_sharp_navier_stokes_3d``
 - Transient problem
 - Rotating complex solid, defined by a step file using the OpenCascade shape, modeled with sharp immersed boundary
-
-:raw-html:`<br />`
 
 Files used in this example
 ----------------------------
@@ -26,17 +22,15 @@ Files used in this example
 * Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/mixer.prm``
 * Step file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/impeller.step``
 
-:raw-html:`<br />`
-
 Description of the case
 -----------------------
 
 In this example, we simulate a mixer using a PBT impeller through the usage of a step file with the OpenCascade shape feature of the sharp immersed boundary solver.
 
-Creation of the step file.
+Creation of the step file
 ------------------------------------
 
-The step file can be defined using any CAD tool available to the user. The step file must represent a solid. It's favorable to avoid step file that represent shells, composite of solides or compound of objects. 
+The step file can be defined using any CAD tool available to the user. The step file must represent a solid. It's favorable to avoid step file that represent shells, composite of solids or compound of objects.
 
 .. tip::
 	Use the union tool at your disposal to avoid issues with step files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the step file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox. 
@@ -47,33 +41,40 @@ Definition of the shape and its motion
 
 The section defining each parameter for the particles has certains requirements:
 
-1. ``length ratio`` defined the length used to apply the immersed boundaries through interpolation. It should stay as low as possible, but above ``1``.
-2. ``type`` and ``shape arguments`` are used to declare that the shape is a ``opencascade`` and that its data is located in ``impeller.step``.
+1. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. It should stay as low as possible, but above ``1``.
+2. ``type`` and ``shape arguments`` are used to declare that the shape is an ``opencascade`` and that its data is located in ``impeller.step``.
 3. ``integrate motion`` is set to ``false``. This way, the solid only moves according to the prescribed `orientation` and angular velocity `omega` (the alternative being the integration of particle movement from forces).
 
 .. code-block:: text
 
-  subsection particles
-    set number of particles =1
-    set stencil order = 1
-    set refine mesh inside radius factor = 0.0
-    set refine mesh outside radius factor = 1.1
-    set length ratio = 3
-    set initial refinement = 1
-    set integrate motion = false
-    set assemble Navier-Stokes inside particles =false
+    subsection particles
+      set number of particles                           = 1
+      set stencil order                                 = 2
+      set refine mesh inside radius factor              = 0.0
+      set refine mesh outside radius factor             = 1.1
+      set length ratio                                  = 3
+      set initial refinement                            = 4
+      set integrate motion                              = false
+      set assemble Navier-Stokes inside particles       = false
+      set enable extra sharp interface vtu output field = true
 
-    subsection particle info 0
-      subsection orientation
-          set Function expression =-1*2*pi*t;pi/2;0
+      subsection particle info 0
+        subsection position
+          set Function expression = -0.25;0;0
+        end
+        subsection velocity
+          set Function expression = 0;0;0
+        end
+        subsection orientation
+          set Function expression = -1*2*pi*t;pi/2;0
+        end
+        subsection omega
+          set Function expression = -1*2*pi;0;0
+        end
+        set type            = opencascade
+        set shape arguments = impeller.step
       end
-      subsection omega
-          set Function expression =-1*2*pi;0;0
-      end
-      set type       = opencascade
-      set shape arguments = impeller.step
     end
-  end
 
 Additionnal information on the ``particles`` parameters can be found on :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
 
@@ -88,31 +89,31 @@ Two aspects need special consideration:
 
 .. code-block:: text
 
-  subsection boundary conditions
-    set number = 3
-    subsection bc 0
-      set id   = 0
-      set type = noslip
+    subsection boundary conditions
+      set number = 3
+      subsection bc 0
+        set id   = 0
+        set type = noslip
+      end
+      subsection bc 1
+        set id   = 1
+        set type = noslip
+      end
+      subsection bc 2
+        set id   = 2
+        set type = function weak
+        set beta = 1
+        subsection u
+          set Function expression = 0
+        end
+        subsection v
+          set Function expression = 0
+        end
+        subsection w
+          set Function expression = 0
+        end
+      end
     end
-    subsection bc 1
-      set id   = 1
-      set type = noslip
-    end
-    subsection bc 2
-      set id   = 2
-      set type              = function weak
-          set beta = 1
-          subsection u
-              set Function expression = 0
-          end
-          subsection v
-              set Function expression = 0
-          end
-          subsection w
-              set Function expression = 0
-          end
-    end
-  end
 
 Results
 --------
@@ -125,7 +126,7 @@ The velocity field obtained with this example is similar to the one obtained wit
    :align: center
    :name: velocity_field_norm
    
-Using meter and second as the length and time unit and assuming a fluid density of :math:`1000 (\frac{\text{kg}}{\text{m}^3})` produce the following torque on impeller:
+Using meter and second as the length and time unit and assuming a fluid density of :math:`1000 \left(\frac{\text{kg}}{\text{m}^3}\right)` produce the following torque on impeller:
 
 .. image:: images/impeller_torque.png
    :alt: Impeller Torque
