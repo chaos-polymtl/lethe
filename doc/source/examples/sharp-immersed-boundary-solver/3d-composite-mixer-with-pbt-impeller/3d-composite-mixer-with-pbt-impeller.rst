@@ -152,4 +152,13 @@ Two aspects need special consideration:
 Results
 --------
 
-This example allows to reach similar results as the original example. .....
+The velocity field obtained with this example is similar to the one obtained with the Nitsche immersed boundary. 
+
+  .. image:: images/velocity_field_norm.png
+   :alt: Velocity field norm
+   :align: center
+   :name: velocity_field_norm
+   
+Using meter and second as the length and time unit and assuming a fluid density of :math:`1000 (\frac{\text{kg}}{\text{m}^3})` produce the following torque on impeller:
+
+
