@@ -52,7 +52,7 @@ public:
   // Member functions
   PostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
+    const SimulationParameters<dim>                   &simulation_parameters,
     const unsigned int &number_quadrature_points);
 
   /**
@@ -80,8 +80,8 @@ public:
    * @brief Returns the smoothed field solution.
    */
   const TrilinosWrappers::MPI::Vector &
-  calculate_smoothed_field(const VectorType &            solution,
-                           const DoFHandler<dim> &       dof_handler_fluid,
+  calculate_smoothed_field(const VectorType             &solution,
+                           const DoFHandler<dim>        &dof_handler_fluid,
                            std::shared_ptr<Mapping<dim>> mapping_fluid);
 
   /**
@@ -108,34 +108,6 @@ private:
 };
 
 /**
- * A class that assembles the rhs and solves the L2projection of the Vorticity
- * on nodes.
- * ** This part of the code is not yet implemented. There can not be a
- * VorticityPostProcessorSmoothing object as its methods are not implemented.
- */
-template <int dim, typename VectorType>
-class VorticityPostProcessorSmoothing
-  : public PostProcessorSmoothing<dim, VectorType>
-{
-public:
-  // Member functions
-  VorticityPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &number_quadrature_points);
-
-  /**
-   * @brief Generates the right hand side based on the fluid's solution.
-   */
-  void
-  generate_rhs(const VectorType &,
-               const DoFHandler<dim> &,
-               std::shared_ptr<Mapping<dim>>);
-
-private:
-};
-
-/**
  * A class that assembles the rhs and solves the L2projection of the Qcriterion
  * on nodes
  */
@@ -147,19 +119,50 @@ public:
   // Member functions
   QcriterionPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
+    const SimulationParameters<dim>                   &simulation_parameters,
     const unsigned int &number_quadrature_points);
 
   /**
    * @brief Generates the right hand side based on the fluid's solution.
    *
    * @tparam solution The fluid's solution
-   * @tparam dof_hanfler_fluid The dof_hanfler of the fluid solution
+   * @tparam dof_hanfler_fluid The dof_handler of the fluid solution
    * @tparam mapping_fluid The mapping of the fluid
    */
   void
-  generate_rhs(const VectorType &            solution,
-               const DoFHandler<dim> &       dof_handler_fluid,
+  generate_rhs(const VectorType             &solution,
+               const DoFHandler<dim>        &dof_handler_fluid,
+               std::shared_ptr<Mapping<dim>> mapping_fluid);
+
+private:
+};
+
+
+/**
+ * A class that assembles the rhs and solves the L2projection of the continuity
+ * equation (div u) at the nodes
+ */
+template <int dim, typename VectorType>
+class ContinuityPostProcessorSmoothing
+  : public PostProcessorSmoothing<dim, VectorType>
+{
+public:
+  // Member functions
+  ContinuityPostProcessorSmoothing(
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim>                   &simulation_parameters,
+    const unsigned int &number_quadrature_points);
+
+  /**
+   * @brief Generates the right hand side based on the fluid dynamics solution.
+   *
+   * @tparam solution The fluid's solution
+   * @tparam dof_hanfler_fluid The dof_handler of the fluid dynamics solution
+   * @tparam mapping_fluid The mapping of the fluid
+   */
+  void
+  generate_rhs(const VectorType             &solution,
+               const DoFHandler<dim>        &dof_handler_fluid,
                std::shared_ptr<Mapping<dim>> mapping_fluid);
 
 private:

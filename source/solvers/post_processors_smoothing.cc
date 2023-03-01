@@ -3,8 +3,8 @@
 template <int dim, typename VectorType>
 PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
   const parallel::DistributedTriangulationBase<dim> &triangulation,
-  const SimulationParameters<dim> &                  simulation_parameters,
-  const unsigned int &                               number_quadrature_points)
+  const SimulationParameters<dim>                   &simulation_parameters,
+  const unsigned int                                &number_quadrature_points)
   : fe_q(1)
   , dof_handler(triangulation)
   , simulation_parameters(simulation_parameters)
@@ -47,8 +47,8 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
   FEValues<dim> fe_values(*this->mapping,
                           fe_q,
                           quadrature_formula,
-                          update_values | update_quadrature_points |
-                            update_JxW_values);
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
 
   const unsigned int dofs_per_cell = fe_q.dofs_per_cell;
   const unsigned int n_q_points    = quadrature_formula.size();
@@ -56,6 +56,8 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
   FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_vf(dofs_per_cell);
+  std::vector<Tensor<1, dim>>          grad_phi_vf(dofs_per_cell);
+
 
   (*system_matrix) = 0;
 
@@ -65,6 +67,8 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
         {
           fe_values.reinit(cell);
 
+          double h = cell->diameter();
+
           local_matrix = 0;
 
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -72,15 +76,19 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
               const double JxW = fe_values.JxW(q);
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
-                  phi_vf[k] = fe_values.shape_value(k, q);
+                  phi_vf[k]      = fe_values.shape_value(k, q);
+                  grad_phi_vf[k] = fe_values.shape_grad(k, q);
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  // Assemble L2 projection
+                  // Assemble L2 projection with smoothing
                   // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
-                      local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) * JxW;
+                      local_matrix(i, j) +=
+                        (phi_vf[j] * phi_vf[i] +
+                         h * h * grad_phi_vf[j] * grad_phi_vf[i]) *
+                        JxW;
                     }
                 }
             }
@@ -98,7 +106,7 @@ const TrilinosWrappers::MPI::Vector &
 PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 {
   // Solve the L2 projection system
-  const double linear_solver_tolerance = 1e-15;
+  const double linear_solver_tolerance = 1e-12;
 
   completely_distributed_solution =
     TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
@@ -141,8 +149,8 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
 template <int dim, typename VectorType>
 const TrilinosWrappers::MPI::Vector &
 PostProcessorSmoothing<dim, VectorType>::calculate_smoothed_field(
-  const VectorType &            solution,
-  const DoFHandler<dim> &       dof_handler_fluid,
+  const VectorType             &solution,
+  const DoFHandler<dim>        &dof_handler_fluid,
   std::shared_ptr<Mapping<dim>> mapping_fluid)
 {
   generate_mass_matrix();
@@ -163,41 +171,11 @@ template class PostProcessorSmoothing<2, TrilinosWrappers::MPI::BlockVector>;
 template class PostProcessorSmoothing<3, TrilinosWrappers::MPI::BlockVector>;
 
 template <int dim, typename VectorType>
-VorticityPostProcessorSmoothing<dim, VectorType>::
-  VorticityPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points)
-  : PostProcessorSmoothing<dim, VectorType>(triangulation,
-                                            simulation_parameters,
-                                            number_quadrature_points)
-{}
-
-template <int dim, typename VectorType>
-void
-VorticityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
-  const VectorType &,
-  const DoFHandler<dim> &,
-  std::shared_ptr<Mapping<dim>>)
-{}
-
-template class VorticityPostProcessorSmoothing<2,
-                                               TrilinosWrappers::MPI::Vector>;
-template class VorticityPostProcessorSmoothing<3,
-                                               TrilinosWrappers::MPI::Vector>;
-template class VorticityPostProcessorSmoothing<
-  2,
-  TrilinosWrappers::MPI::BlockVector>;
-template class VorticityPostProcessorSmoothing<
-  3,
-  TrilinosWrappers::MPI::BlockVector>;
-
-template <int dim, typename VectorType>
 QcriterionPostProcessorSmoothing<dim, VectorType>::
   QcriterionPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &                               number_quadrature_points)
+    const SimulationParameters<dim>                   &simulation_parameters,
+    const unsigned int                                &number_quadrature_points)
   : PostProcessorSmoothing<dim, VectorType>(triangulation,
                                             simulation_parameters,
                                             number_quadrature_points)
@@ -206,12 +184,11 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::
 template <int dim, typename VectorType>
 void
 QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
-  const VectorType &            solution,
-  const DoFHandler<dim> &       dof_handler_fluid,
+  const VectorType             &solution,
+  const DoFHandler<dim>        &dof_handler_velocity,
   std::shared_ptr<Mapping<dim>> mapping_fluid)
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
-
 
   const FESystem<dim, dim> fe = this->dof_handler.get_fe();
   FEValues<dim>            fe_values(*this->mapping,
@@ -236,29 +213,32 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   std::vector<Tensor<2, dim>>      present_velocity_gradients(n_q_points);
 
   // Fluid information
-  const FESystem<dim, dim> fe_fluid = dof_handler_fluid.get_fe();
-  FEValues<dim>            fe_values_fluid(*mapping_fluid,
-                                fe_fluid,
-                                quadrature_formula,
-                                update_values | update_quadrature_points |
-                                  update_JxW_values | update_gradients);
+  const FESystem<dim, dim> fe_fluid = dof_handler_velocity.get_fe();
+  FEValues<dim>            fe_values_velocity(*mapping_fluid,
+                                   fe_fluid,
+                                   quadrature_formula,
+                                   update_quadrature_points | update_gradients);
 
-  for (const auto &cell : dof_handler_fluid.active_cell_iterators())
+  for (const auto &cell : dof_handler_velocity.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
-          fe_values_fluid.reinit(cell);
+          const auto &smoother_cell =
+            typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
+          fe_values.reinit(smoother_cell);
 
-          fe_values_fluid[velocities].get_function_gradients(
+          fe_values_velocity.reinit(cell);
+
+          fe_values_velocity[velocities].get_function_gradients(
             solution, present_velocity_gradients);
 
           local_rhs = 0;
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              const double JxW = fe_values_fluid.JxW(q);
+              const double JxW = fe_values.JxW(q);
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  phi_vf[i] = fe_values_fluid.shape_value(i, q);
+                  phi_vf[i] = fe_values.shape_value(i, q);
 
                   double         p1 = 0.0, r1 = 0.0;
                   Tensor<2, dim> vorticity_vector;
@@ -292,9 +272,7 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
             }
           // Associate cell of fluid dof_handler to current (qcriterion)
           // dof_handler
-          const auto &dh_cell =
-            typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
-          dh_cell->get_dof_indices(local_dof_indices);
+          smoother_cell->get_dof_indices(local_dof_indices);
           this->constraints.distribute_local_to_global(local_rhs,
                                                        local_dof_indices,
                                                        this->system_rhs);
@@ -311,5 +289,107 @@ template class QcriterionPostProcessorSmoothing<
   2,
   TrilinosWrappers::MPI::BlockVector>;
 template class QcriterionPostProcessorSmoothing<
+  3,
+  TrilinosWrappers::MPI::BlockVector>;
+
+
+template <int dim, typename VectorType>
+ContinuityPostProcessorSmoothing<dim, VectorType>::
+  ContinuityPostProcessorSmoothing(
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim>                   &simulation_parameters,
+    const unsigned int                                &number_quadrature_points)
+  : PostProcessorSmoothing<dim, VectorType>(triangulation,
+                                            simulation_parameters,
+                                            number_quadrature_points)
+{}
+
+template <int dim, typename VectorType>
+void
+ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
+  const VectorType             &solution,
+  const DoFHandler<dim>        &dof_handler_velocity,
+  std::shared_ptr<Mapping<dim>> mapping_fluid)
+{
+  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->system_rhs = 0;
+
+
+  // Smoother management
+  QGauss<dim> quadrature_formula(this->number_quadrature_points);
+
+  const FESystem<dim, dim> fe = this->dof_handler.get_fe();
+  FEValues<dim>            fe_values(*this->mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
+
+  const unsigned int dofs_per_cell = this->fe_q.dofs_per_cell;
+  const unsigned int n_q_points    = quadrature_formula.size();
+
+  Vector<double>                       local_rhs(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<double>                  phi_vf(dofs_per_cell);
+
+
+  // Velocity information
+  const FEValuesExtractors::Vector velocities(0);
+  std::vector<Tensor<2, dim>>      present_velocity_gradients(n_q_points);
+
+  const FESystem<dim, dim> fe_fluid = dof_handler_velocity.get_fe();
+  FEValues<dim>            fe_values_velocity(*mapping_fluid,
+                                   fe_fluid,
+                                   quadrature_formula,
+                                   update_quadrature_points | update_gradients);
+
+  for (const auto &cell : dof_handler_velocity.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const auto &smoother_cell =
+            typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
+          fe_values.reinit(smoother_cell);
+
+          fe_values_velocity.reinit(cell);
+
+          fe_values_velocity[velocities].get_function_gradients(
+            solution, present_velocity_gradients);
+
+          local_rhs = 0;
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              const double JxW = fe_values.JxW(q);
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  phi_vf[i]         = fe_values.shape_value(i, q);
+                  double continuity = 0;
+                  for (unsigned int d = 0; d < dim; d++)
+                    {
+                      continuity += present_velocity_gradients[q][d][d];
+                    }
+
+                  local_rhs(i) += phi_vf[i] * continuity * JxW;
+                }
+            }
+          // Associate cell of fluid dof_handler to current (qcriterion)
+          // dof_handler
+          smoother_cell->get_dof_indices(local_dof_indices);
+          this->constraints.distribute_local_to_global(local_rhs,
+                                                       local_dof_indices,
+                                                       this->system_rhs);
+        }
+    }
+  this->system_rhs.compress(VectorOperation::add);
+}
+
+template class ContinuityPostProcessorSmoothing<2,
+                                                TrilinosWrappers::MPI::Vector>;
+template class ContinuityPostProcessorSmoothing<3,
+                                                TrilinosWrappers::MPI::Vector>;
+template class ContinuityPostProcessorSmoothing<
+  2,
+  TrilinosWrappers::MPI::BlockVector>;
+template class ContinuityPostProcessorSmoothing<
   3,
   TrilinosWrappers::MPI::BlockVector>;

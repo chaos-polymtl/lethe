@@ -891,7 +891,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -1822,41 +1822,73 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_out.add_data_vector(subdomain, "subdomain");
 
 
-  // Create additional post-processor that derives information from the
-  // solution
-  VorticityPostprocessor<dim> vorticity;
+  // Create the post-processors to have derived information about the velocity
+  // They are generated outside of the if condition for smoothing to ensure
+  // that the objects still exist when the write output of DataOut is called
+  // Regular discontinuous postprocessors
+  QCriterionPostprocessor<dim> qcriterion;
+  DivergencePostprocessor<dim> divergence;
+  VorticityPostprocessor<dim>  vorticity;
   data_out.add_data_vector(solution, vorticity);
 
-  DivergencePostprocessor<dim> divergence;
-  data_out.add_data_vector(solution, divergence);
-
-  QCriterionPostprocessor<dim>                      qcriterion;
+  // Trilinos vector for the smoothed output fields
   QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
     *this->triangulation,
     this->simulation_parameters,
     number_quadrature_points);
 
+  ContinuityPostProcessorSmoothing<dim, VectorType> continuity_smoothing(
+    *this->triangulation,
+    this->simulation_parameters,
+    number_quadrature_points);
+  TrilinosWrappers::MPI::Vector qcriterion_field;
+  TrilinosWrappers::MPI::Vector continuity_field;
+
   if (this->simulation_parameters.post_processing.smoothed_output_fields)
     {
-      const TrilinosWrappers::MPI::Vector qcriterion_field =
-        qcriterion_smoothing.calculate_smoothed_field(solution,
-                                                      this->dof_handler,
-                                                      this->mapping);
+      // Qcriterion smoothing
+      {
+        qcriterion_field =
+          qcriterion_smoothing.calculate_smoothed_field(solution,
+                                                        this->dof_handler,
+                                                        this->mapping);
 
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        data_component_interpretation(
-          1, DataComponentInterpretation::component_is_scalar);
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>
+          data_component_interpretation(
+            1, DataComponentInterpretation::component_is_scalar);
 
-      std::vector<std::string> qcriterion_name = {"qcriterion"};
-      const DoFHandler<dim> &  dof_handler_qcriterion =
-        qcriterion_smoothing.get_dof_handler();
-      data_out.add_data_vector(dof_handler_qcriterion,
-                               qcriterion_field,
-                               qcriterion_name,
-                               data_component_interpretation);
+        std::vector<std::string> qcriterion_name = {"qcriterion"};
+        const DoFHandler<dim>   &dof_handler_qcriterion =
+          qcriterion_smoothing.get_dof_handler();
+        data_out.add_data_vector(dof_handler_qcriterion,
+                                 qcriterion_field,
+                                 qcriterion_name,
+                                 data_component_interpretation);
+      }
+      // Continuity smoothing
+      {
+        continuity_field =
+          continuity_smoothing.calculate_smoothed_field(solution,
+                                                        this->dof_handler,
+                                                        this->mapping);
+
+        std::vector<DataComponentInterpretation::DataComponentInterpretation>
+          data_component_interpretation(
+            1, DataComponentInterpretation::component_is_scalar);
+
+        std::vector<std::string> continuity_name = {"velocity_divergence"};
+        const DoFHandler<dim>   &dof_handler_qcriterion =
+          continuity_smoothing.get_dof_handler();
+        data_out.add_data_vector(dof_handler_qcriterion,
+                                 continuity_field,
+                                 continuity_name,
+                                 data_component_interpretation);
+      }
     }
   else
     {
+      // Use the non-smoothed version of the post-processors
+      data_out.add_data_vector(solution, divergence);
       data_out.add_data_vector(solution, qcriterion);
     }
 
