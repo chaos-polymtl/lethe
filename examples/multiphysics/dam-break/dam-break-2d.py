@@ -41,7 +41,7 @@ phase_limit = 0.5
 output_path = sys.argv[1]
 
 # Read the pvd file to extract the times
-reader = pv.get_reader("output/dam-break.pvd")
+reader = pv.get_reader(f"{output_path}/dam-break.pvd")
 # Get active times
 time_list = reader.time_values
 

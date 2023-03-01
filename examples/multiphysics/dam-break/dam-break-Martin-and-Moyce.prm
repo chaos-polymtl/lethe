@@ -11,7 +11,7 @@ subsection simulation control
   set max cfl          = 0.5
   set output name      = dam-break
   set output frequency = 20
-  set output path      = ./output/
+  set output path      = ./output_filter/
 end
 
 #---------------------------------------------------
@@ -32,6 +32,12 @@ subsection VOF
     set threshold           = 0.5
     set interface sharpness = 2
     set frequency           = 10
+  end
+
+  subsection phase filtration
+    set type            = tanh
+    set verbosity       = quiet
+    set beta            = 5
   end
 end
 

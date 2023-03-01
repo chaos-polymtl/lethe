@@ -67,9 +67,8 @@ time step of :math:`0.01` seconds.
       set time step        = 0.01
       set adapt            = true
       set max cfl          = 0.5
-      set stop tolerance   = 1e-5
       set output name      = dam-break
-      set output frequency = 10
+      set output frequency = 20
       set output path      = ./output/
     end
 
@@ -132,8 +131,12 @@ This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_
 frequency of interface sharpening; sharpening threshold defines 
 a phase fraction threshold for interface sharpening (generally :math:`0.5`).
 Interface sharpness is a model parameter which is generally in
-the range of :math:`(1,2]`. 
+the range of :math:`(1,2]`.
 
+3. Phase filtering
+
+The phase filtration is enable in this example. We refer the reader to the Volume of Fluid (Multiphase Flow)
+documentation for more explanation on the phase filtration.
 
 .. code-block:: text
 
@@ -146,6 +149,12 @@ the range of :math:`(1,2]`.
         set threshold           = 0.5
         set interface sharpness = 2
         set frequency           = 10
+      end
+
+      subsection phase filtration
+        set type            = tanh
+        set verbosity       = quiet
+        set beta            = 5
       end
     end
 
@@ -293,7 +302,7 @@ contains the simulation results. In post-processing, the maximum
 dimensionless lateral position of the liquid phase is tracked 
 through time and compared with the experiments of Martin and Moyce
 (1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_. The following figure shows the result of
-the post-processing, with a very good agreement between the simulation and the experiment:
+the post-processing, with a good agreement between the simulation and the experiment:
 
 .. image:: images/xmax-t.png
     :alt: xmax_t
