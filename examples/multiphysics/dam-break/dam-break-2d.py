@@ -41,7 +41,7 @@ phase_limit = 0.5
 output_path = sys.argv[1]
 
 # Read the pvd file to extract the times
-reader = pv.get_reader("output/dam-break.pvd")
+reader = pv.get_reader(f"{output_path}/dam-break.pvd")
 # Get active times
 time_list = reader.time_values
 
@@ -65,7 +65,7 @@ for i in range(0, len(list_vtu)):
 
     #find max 'x' in which phase > 0
     points = pd.DataFrame(df.points[:, 0])
-    phase  = pd.DataFrame(df['phase'])
+    phase  = pd.DataFrame(df['filtered_phase'])
 
     x_max = max(points[phase[0] > phase_limit].values)[0]
     x_list.append(x_max)
