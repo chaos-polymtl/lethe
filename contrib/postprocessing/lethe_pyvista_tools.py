@@ -41,7 +41,7 @@ class lethe_pyvista_tools():
 
         if not ".prm" in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
-
+        
         # Read .prm file to dictionary
         # Create dictionary
         self.prm_dict = {}
