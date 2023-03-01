@@ -11,7 +11,7 @@ subsection simulation control
   set max cfl          = 0.5
   set output name      = dam-break
   set output frequency = 20
-  set output path      = ./output_filter/
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
