@@ -8,3 +8,4 @@ Tools
     :titlesonly:
 
     gmsh/gmsh
+    automatic_launch/automatic_launch
