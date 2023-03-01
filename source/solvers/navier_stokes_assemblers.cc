@@ -1596,12 +1596,11 @@ LaplaceAssembly<dim>::assemble_matrix(
               // the end result for our purposes
               // Laplacian on the velocity terms
               double local_matrix_ij =
-                scratch_data.viscosity[q] *
-                scalar_product(grad_phi_u_j, grad_phi_u_i);
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i);
 
               // Laplacian on the pressure terms
-              local_matrix_ij += 1 / scratch_data.viscosity[q] * h *
-                                 scalar_product(grad_phi_p_j, grad_phi_p_i);
+              local_matrix_ij +=
+                1 / viscosity * h * scalar_product(grad_phi_p_j, grad_phi_p_i);
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -1659,12 +1658,12 @@ LaplaceAssembly<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Laplacian on the velocity terms
-          local_rhs_i += -scratch_data.viscosity[q] *
-                         scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
+          local_rhs_i +=
+            -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
 
 
           // Laplacian on the pressure terms
-          local_rhs_i += -1 / scratch_data.viscosity[q] * h *
+          local_rhs_i += -1 / viscosity * h *
                          scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
           local_rhs(i) += local_rhs_i;
