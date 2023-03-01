@@ -288,7 +288,8 @@ Results
 -------
 
 The following image shows the screenshots of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds,
-with the red area and the blue area corresponding conversely to the water location and the air location.
+of the phase results without and with phase filtering.
+The red area corresponds to the liquid phase and the blue area corresponds to the air phase.
 
 .. image:: images/time-series.png
     :alt: time-shots
