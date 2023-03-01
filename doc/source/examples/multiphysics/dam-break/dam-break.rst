@@ -154,7 +154,7 @@ documentation for more explanation on the phase filtration.
       subsection phase filtration
         set type            = tanh
         set verbosity       = quiet
-        set beta            = 5
+        set beta            = 10
       end
     end
 
