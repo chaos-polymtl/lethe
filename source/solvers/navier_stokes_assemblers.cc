@@ -1565,6 +1565,8 @@ LaplaceAssembly<dim>::assemble_matrix(
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       viscosity  = scratch_data.viscosity_scale;
+  const double       h          = scratch_data.cell_size;
   // Copy data elements
   auto &local_matrix = copy_data.local_matrix;
 
@@ -1578,7 +1580,6 @@ LaplaceAssembly<dim>::assemble_matrix(
     {
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -1595,10 +1596,12 @@ LaplaceAssembly<dim>::assemble_matrix(
               // the end result for our purposes
               // Laplacian on the velocity terms
               double local_matrix_ij =
+                scratch_data.viscosity[q] *
                 scalar_product(grad_phi_u_j, grad_phi_u_i);
 
               // Laplacian on the pressure terms
-              local_matrix_ij += scalar_product(grad_phi_p_j, grad_phi_p_i);
+              local_matrix_ij += 1 / scratch_data.viscosity[q] * h *
+                                 scalar_product(grad_phi_p_j, grad_phi_p_i);
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -1624,6 +1627,8 @@ LaplaceAssembly<dim>::assemble_rhs(
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   auto &             local_rhs  = copy_data.local_rhs;
+  const double       viscosity  = scratch_data.viscosity_scale;
+  const double       h          = scratch_data.cell_size;
 
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
@@ -1654,11 +1659,13 @@ LaplaceAssembly<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Laplacian on the velocity terms
-          local_rhs_i += -scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
+          local_rhs_i += -scratch_data.viscosity[q] *
+                         scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
 
 
           // Laplacian on the pressure terms
-          local_rhs_i += -scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
+          local_rhs_i += -1 / scratch_data.viscosity[q] * h *
+                         scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
           local_rhs(i) += local_rhs_i;
         }

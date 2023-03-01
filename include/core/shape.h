@@ -882,7 +882,8 @@ public:
       }
     else
       {
-        throw "Wrong file extension for an opencascade shape. The possible file type are: step, stp, iges, igs, stl.";
+        throw std::runtime_error(
+          "Wrong file extension for an opencascade shape. The possible file type are: step, stp, iges, igs, stl.");
       }
 
     // used this local variable as the shape tolerance in the calculations.
@@ -901,8 +902,8 @@ public:
       {
         if (shells.size() > 1)
           {
-            std::cout
-              << "Warning!: The shape has more than one shell. Only the first shell is used in the calculation.";
+            std::runtime_error(
+              "Error!: The shape has more than one shell. The code does not support shapes with multiple shells or solids. If your shape has more than one shell or solid, it is usually possible to recombine them into one. Otherwise, it is possible to split the shape into sub-shells and sub-solids and then define one particle for each of them.");
           }
         distancetool = BRepExtrema_DistShapeShape(shells[0], vertex);
         point_classifier.Load(shape);
@@ -1219,7 +1220,7 @@ public:
                          const unsigned int levels_not_precalculated);
 
   /**
-   * @brief Rotate RBF nodes in the global reference frame.
+   * @brief Rotate RBF nodes in the global reference frame (the reference frame of the triangulation).
    */
   void
   rotate_nodes();

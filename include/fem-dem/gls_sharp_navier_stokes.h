@@ -366,9 +366,9 @@ private:
 
   /**
    * @brief
-   * Return a bool to define if a cell is cut by an IB particle and the local
-   * DOFs of the cell for later use. This function is built to handle special
-   * cases where the level set is always positive.
+   * Return a bool to define if a cell is cut by an IB.
+   * This function is built to handle special cases where the level set is
+   * always positive.
    *
    * @param cell, the cell that we verify whether it is cut or not.
    *
