@@ -156,4 +156,8 @@ The velocity field obtained with this example is similar to the one obtained wit
    
 Using meter and second as the length and time units and assuming a fluid density of :math:`1000 \left(\frac{\text{kg}}{\text{m}^3}\right)` produce the following torque on impeller:
 
+.. image:: images/impeller_torque.png
+   :alt: Impeller Torque
+   :align: center
+   :name: impeller_torque
 
