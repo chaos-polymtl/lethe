@@ -135,7 +135,7 @@ the range of :math:`(1,2]`.
 
 3. Phase filtering
 
-The phase filtration is enable in this example. We refer the reader to the Volume of Fluid (Multiphase Flow)
+The phase filtration is enabled in this example. We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid`
 documentation for more explanation on the phase filtration.
 
 .. code-block:: text
