@@ -52,3 +52,5 @@ for u in velocity:
     # Write a unique prm file with the prm template being updated
     with open(f'{case_path}/{PRM_FILE}', 'w') as f:
         f.write(parameters)
+
+    print(f'{case_folder_name} generated successfully!')
