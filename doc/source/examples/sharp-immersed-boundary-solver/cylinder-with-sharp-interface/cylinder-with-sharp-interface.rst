@@ -90,11 +90,7 @@ The initial condition has been modified compared to the initial solution propose
     end
 	
 The only thing that is left to define is the immersed boundary.
-.. note:: text
-
-	At this point, the immersed boundary tool only allows the representation of spherical objects. This means the immersed boundary can represent a circle in 2D and a spherical shell in 3d. We refer to the parameter definition of the immersed boundary in :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver` section of the documentation.
-
-In this case, we want to define a circular boundary of radius 0.5 center at (8,8) that has no velocity.
+In this case, we want to define a circular boundary of radius 0.5 center at (8,8) that has no velocity. We use the sphere to model the cylinder in 2D.
 
 .. code-block:: text
 
