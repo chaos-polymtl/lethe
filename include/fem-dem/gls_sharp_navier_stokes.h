@@ -166,6 +166,7 @@ private:
       {
         force_on_ib();
         integrate_particles();
+        update_precalculations_for_ib();
         if (all_spheres)
           optimized_generate_cut_cells_map();
         else
@@ -362,10 +363,26 @@ private:
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
            std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
+
+  /**
+   * @brief
+   * Return a bool to define if a cell is cut by an IB.
+   * This function is built to handle special cases where the level set is
+   * always positive.
+   *
+   * @param cell, the cell that we verify whether it is cut or not.
+   *
+   * @param support_points, a mapping of support points for the DOFs.
+   *
+   * @param p, the particle index of the particle used in the check
+   *
+   */
   bool
-  cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
-                std::map<types::global_dof_index, Point<dim>> &support_points,
-                unsigned int                                   p);
+  cell_cut_by_p_absolute_distance(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    std::map<types::global_dof_index, Point<dim>> &       support_points,
+    unsigned int                                          p);
+
   /**
    * @brief
    * Return a bool to define if a cell is contains inside an IB particle and the

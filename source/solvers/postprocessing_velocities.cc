@@ -8,6 +8,7 @@ AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
   : solution_transfer_sum_velocity_dt(dof_handler)
   , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler)
   , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler)
+  , total_time_for_average(0.0)
   , average_calculation(false)
 {}
 
@@ -54,10 +55,10 @@ AverageVelocities<dim, VectorType, DofsType>::update_average_velocities()
 {
   // Use the inverse of the time since the beginning of the time averaging to
   // reevaluate the average velocity field and Reynolds stress.
-  if (total_time_for_average > 0)
+
+  if (total_time_for_average > 1e-16)
     {
       inv_range_time = 1.0 / total_time_for_average;
-
       // Calculate the average velocities.
       average_velocities.equ(inv_range_time, sum_velocity_dt);
       reynolds_normal_stresses.equ(inv_range_time,

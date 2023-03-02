@@ -1,0 +1,30 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       125
+   Number of degrees of freedom: 864
+   Volume of triangulation:      64
+Initial refinement in box - Step  1 of 3
+   Number of active cells:       314
+   Number of degrees of freedom: 1980
+   Volume of triangulation:      64
+Initial refinement in box - Step  2 of 3
+   Number of active cells:       762
+   Number of degrees of freedom: 4396
+   Volume of triangulation:      64
+Initial refinement in box - Step  3 of 3
+   Number of active cells:       6096
+   Number of degrees of freedom: 29476
+   Volume of triangulation:      64
+
+*****************************************************************
+Steady iteration :        1/1
+*****************************************************************
+div u : 1.46627e-12
+error at the weak BC : 0.00105126
+L2 error velocity : 0.0335513 L2 error pressure: 0.157093
++------------------------------------------+
+|  Force  summary particles                |
++------------------------------------------+
+particle_ID  time     T_x       T_y       T_z      f_x       f_y      f_z      f_xv     f_yv      f_zv     f_xp     f_yp     f_zp   
+          0 1.0000 -0.000170 -0.026892 -0.000390 8.129634 -0.000052 0.007897 5.290564 -0.000241 0.007778 2.839070 0.000189 0.000120 
+cells error_velocity error_pressure 
+ 6096 3.355128e-02 - 1.570932e-01 - 

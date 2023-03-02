@@ -186,6 +186,13 @@ public:
     this->shape->set_position(this->position);
   }
 
+
+  /**
+   * @brief Clear the cache used to evaluate the value and vector defining the sign distance function of the shape
+   */
+  void
+  clear_shape_cache();
+
   /**
    * @brief
    * Sets up a shape in accordance with the given type and arguments
