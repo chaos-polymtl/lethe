@@ -3,9 +3,9 @@ How to automatically create and launch Lethe simulations
 ======================================================================
 
 .. seealso::
-	All files used in this example are available in the `lethe/contrib/utilities <https://github.com/lethe-cfd/lethe/tree/master/contrib/utilities>`_ under ``automatic_launch``.
+	All files used in this example are available in `lethe/contrib/utilities <https://github.com/lethe-cfd/lethe/tree/master/contrib/utilities>`_ under ``automatic_launch``.
 
-The main python scripts of this tutorial are:
+The main Python scripts of this tutorial are:
 
 - ``generate_cases_locally.py``
 - ``generate_cases_cluster.py``
@@ -18,7 +18,8 @@ The main python scripts of this tutorial are:
 -------------------------------------
 Generate automatically multiple cases
 -------------------------------------
-Lazy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file so the inlet velocity in the boundary condition is different for each case.
+Let us say that you are simulating a flow around a cylinder and you want to see how the inlet velocity impacts the force around the sphere.
+Lazy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file such that the inlet velocity is different for each case.
 
 You will need all these files from the :doc:`../../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder` example:
 
@@ -34,10 +35,10 @@ Here are the boundary conditions of the flow around the cylinder.
     :name: geometry_bc
 
 
-In the ``.prm`` file, we need to change the function expression of ``bc = 1``, which represents the velocity :math:`u` in the :math:`x` direction.
+In the ``.prm`` file, we need to set ``bc = 1`` as ``Function expression`` , which represents the velocity :math:`u` in the :math:`x` direction.
 
-To do so, we use the `Jinja2 <https://jinja.palletsprojects.com/en/3.1.x/>`_ python package.
-It allows us to create a parameter file template, where some parameter variables, in double brackets ``{{}}``, can be replace to any value we want.
+To do so, we use the `Jinja2 <https://jinja.palletsprojects.com/en/3.1.x/>`_ Python package.
+It allows us to create a parameter file template, where parameter variables in double brackets ``{{}}``, can be replaced by any value we want.
 
 The boundary conditions section in the ``.prm`` file becomes as follow.
 
@@ -66,11 +67,11 @@ The boundary conditions section in the ``.prm`` file becomes as follow.
     end
 
 .. note::
-	Note the ``{{velocity_x}}`` parameter variable in the Jinja2 format.
-	This will allow us to insert a specified value for a case of the 2D around a cylinder. 
+	Note the ``{{velocity_x}}`` parameter variable is in Jinja2 format.
+	This will allow us to insert a specified value for the 2D around a cylinder case. 
 
-We will now present how to generate multiple folders, containing different parameters files, to ultimately launch them as separated cases.
-We can generate these folders locally and even on a cluster.
+We will now present how to generate multiple folders, containing different parameters files, to ultimately launch them as separate cases.
+We can generate these folders locally and even on a Digital Alliance cluster.
 
 """"""""""""""""""""""""""""""""""
 Locally
@@ -90,7 +91,7 @@ Then, we can import the right packages to launch the script.
 	import numpy as np
 	import shutil
 
-The first thing to do, is set up the constants of the script.
+The first thing to do is set up the constants of the script.
 
 .. code-block:: python
     
@@ -99,13 +100,14 @@ The first thing to do, is set up the constants of the script.
 	PRM_FILE = 'cylinder.prm'
 	MESH_FILE = 'cylinder-structured.msh'
 
-The ``PATH`` is the current path of the user directory where all cases' folders will be placed.
-The ``CASE_PREFIX`` will specify how we want to name each folder.
-The ``PRM_FILE`` is the name of the parameter file of the Lethe simulation.
-The ``MESH_FILE`` is the name of the mesh used for the simulations.
+- ``PATH`` is the current path of the user directory where all cases' folders will be placed.
+- ``CASE_PREFIX`` will specify how we want to name each folder.
+- ``PRM_FILE`` is the name of the parameter file of the Lethe simulation.
+- ``MESH_FILE`` is the name of the mesh used for the simulations.
 
 .. warning::
 	The ``.msh`` file is not available as it is. You will need to run ``gmsh`` in order to generate the mesh around the cylinder from the ``.geo`` file.
+	See the documentation about ``gmsh`` here: :doc:`../gmsh/gmsh`.
 
 Then we specify the range of velocity we want to explore.
 In this example, we will generate 20 cases of the flow around a cylinder, where the inlet velocity varies from 1 to 10 :math:`m/s`.
@@ -142,7 +144,7 @@ we will:
 	parameters = template.render(velocity_x=u)
 
 .. warning::
-	In the render step, it is really important to use the same variable name as the template file.
+	In the rendering step, it is really important to use the same variable name as the template file.
 
 Then, we will need to copy in the ``case_path`` (the path of one case's folder) all the files we need for the simulation.
 
@@ -228,7 +230,7 @@ Before launching the script, we strongly suggest you to create a virtual environ
 
 To leave the virtual environment, just deactivate it with the command ``deactivate``.
 
-You can now launch the script on the cluser. Be sure to activate your virtual environment and change these lines of code that are specific to the cluster:
+You can now launch the script on the cluster. Be sure to activate your virtual environment and change these lines of code that are specific to the cluster:
 
 1. Specify the shell script that will launch a job on the cluster.
 
@@ -242,17 +244,17 @@ You can now launch the script on the cluser. Be sure to activate your virtual en
 
 	shutil.copy(f'{PATH}/{SHELL_FILE}', f'{case_path}/{SHELL_FILE}')
 
-This last step allows to launch one batch script for each case.
-The ``launch_lethe.sh`` is the batch script that send the simulation to the cluster scheduler.
+This last step allows to launch one job script for each case.
+The ``launch_lethe.sh`` is the job script that sends the simulation to the cluster scheduler.
 
 .. note::
-	See the documentation about :doc:`../../installation/digital_alliance` to make a proper batch script.
+	See the documentation about :doc:`../../installation/digital_alliance` to make a proper job script.
 
-If you have multiple cases to launch on the cluster (let's say 100 thousand), it is not a good idea to launch a really heavy python script to the cluster.
-Otherwise, a crying baby panda will appear and hunt you.
-To do so, it is recommended to create another batch script that launches the automatic generator itself.
+If you have multiple cases to launch on the cluster (let's say 100 thousand), it is not a good idea to launch a really heavy Python script on the cluster.
+If you do this, a crying baby panda will appear and hunt you.
+To do so, it is recommended to create another job script that launches the automatic generator itself.
 
-Let's name the automatic generator script is named ``launch_cases.py``. Here is an example of how to make the batch script:
+The automatic generator script is named ``launch_cases.py``. Here is an example of how to make the job script:
 
 .. code-block:: text
 
@@ -269,14 +271,14 @@ Let's name the automatic generator script is named ``launch_cases.py``. Here is 
 	srun python3 launch_cases.py
 
 .. note::
-	Note that we activate the virtual environement, in order to have the packages required, and we launch the python script with ``srun``.
+	Note that we activate the virtual environment in order to have the packages required, and then we launch the Python script with ``srun``.
 
 -----------------------------------
 Launch automatically multiple cases
 -----------------------------------
-Now that the folders of every cases are all set up, we can launch Lethe automatically.
+Now that the folders of every case are all set up, we can launch Lethe automatically.
 
-Both python scripts to launch Lethe locally and on the cluster are simple and are presented below.
+Both Python scripts to launch Lethe locally and on the cluster are simple and are presented below.
 
 """"""""""""""""""""""""""""""""""
 Locally
@@ -313,7 +315,7 @@ Here is the script:
 On Digital Alliance of Canada clusters
 """"""""""""""""""""""""""""""""""""""
 The same script applies for launching all cases on a cluster. The advantage is that we send jobs to the scheduler, meaning that we can run multiple simulations at a time, instead of doing it one after the other.
-The only difference is the command line to launch the batch script.
+The only difference is the command line to launch the job script.
 
 Add these steps to your code:
 
