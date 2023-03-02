@@ -3,7 +3,14 @@ How to automatically create and launch Lethe simulations
 ======================================================================
 
 .. seealso::
-	All files used in this example are available in the `lethe-utils github <https://github.com/lethe-cfd/lethe-utils/>`_ in the ``cases`` folder under ``automatic_launch``.
+	All files used in this example are available in the `lethe/contrib/utilities <https://github.com/lethe-cfd/lethe/tree/master/contrib/utilities>`_ under ``automatic_launch``.
+
+The main python scripts of this tutorial are:
+
+- ``generate_cases_locally.py``
+- ``generate_cases_cluster.py``
+- ``launch_lethe_locally.py``
+- ``launch_lethe_cluster.py``
 
 .. seealso::
 	The example :doc:`../../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame` uses really similar automatic launch scripts.
