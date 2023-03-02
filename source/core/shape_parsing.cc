@@ -9,7 +9,7 @@ ShapeGenerator::initialize_shape(const std::string   type,
 {
   std::shared_ptr<Shape<dim>> shape;
   std::vector<double>         shape_arguments;
-  if (type == "rbf" || type == "composite")
+  if (type == "rbf" || type == "composite" || type == "opencascade")
     {
       shape = initialize_shape_from_file(type,
                                          shape_arguments_str,
@@ -317,6 +317,12 @@ ShapeGenerator::initialize_shape_from_file(const std::string   type,
         }
       else
         throw std::invalid_argument(file_name);
+    }
+  else if (type == "opencascade")
+    {
+      shape = std::make_shared<OpenCascadeShape<dim>>(file_name,
+                                                      position,
+                                                      orientation);
     }
   return shape;
 }

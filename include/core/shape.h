@@ -18,6 +18,21 @@
 
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/function.h>
+
+#include <deal.II/grid/manifold.h>
+#include <deal.II/grid/manifold_lib.h>
+
+#ifdef DEAL_II_WITH_OPENCASCADE
+#  include <deal.II/opencascade/manifold_lib.h>
+#  include <deal.II/opencascade/utilities.h>
+
+#  include <BRepBuilderAPI_MakeVertex.hxx>
+#  include <BRepClass3d_SolidClassifier.hxx>
+#  include <BRepExtrema_DistShapeShape.hxx>
+#  include <BRepGProp.hxx>
+#  include <GProp_GProps.hxx>
+#endif
+
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
 #else
 #  include <deal.II/base/function_signed_distance.h>
@@ -65,6 +80,7 @@ public:
     death_star,
     composite_shape,
     rbf_shape,
+    opencascade_shape,
   } type;
 
   /**
@@ -125,16 +141,29 @@ public:
 
 
   /**
-   * @brief Return the manifold of the shape by default the manifold is always Flat.
-   */
-  virtual std::shared_ptr<Manifold<dim - 1, dim>>
-  get_shape_manifold();
-
-  /**
    * @brief Return a pointer to a copy of the Shape
    */
   virtual std::shared_ptr<Shape<dim>>
   static_copy() const = 0;
+
+
+  /**
+   * @brief
+   * Sets the closest_point parameter to be the point on the surface of the
+   * shape which has the minimal distance from the given point p
+   *
+   * @param p The point at which the evaluation is performed
+   * @param closest_point The reference to the closest point. This point will be modified by the function.
+   * @param cell_guess A guess of the cell containing the evaluation point, which
+   * is useful to reduce computation time
+   */
+  virtual void
+  closest_surface_point(
+    const Point<dim> &                                    p,
+    Point<dim> &                                          closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
+  virtual void
+  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
 
   /**
    * @brief
@@ -191,6 +220,24 @@ public:
     return orientation;
   }
 
+
+  /**
+   * @brief
+   * Returns the default manifold of the shape. If not redefined, it is a flat
+   * manifold.
+   */
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
+  get_shape_manifold();
+
+
+  /**
+   * @brief
+   * Clear the cache of the shape
+   *
+   */
+  virtual void
+  clear_cache();
+
   /**
    * @brief
    * Most value functions assume that the particle's position is at the origin
@@ -207,9 +254,37 @@ public:
    */
   Point<dim>
   align_and_center(const Point<dim> &evaluation_point) const;
+
+  /**
+   * @brief
+   * This function applies the inverse operation of align_and_center
+   *
+   * Returns the centered and aligned point used on the levelset evaluation in
+   * the global reference frame.
+   *
+   * @param evaluation_point The point that will be centered and aligned in the global reference frame.
+   * @return The aligned and centered point
+   */
+  Point<dim>
+  reverse_align_and_center(const Point<dim> &evaluation_point) const;
+
+  /**
+   * @brief
+   * This function returns a point in a string of text. This is used in the
+   * cache of the shape.
+   *
+   * @param evaluation_point is the point that is transformed to its text form.
+   */
+  std::string
+  point_to_string(const Point<dim> &evaluation_point) const;
+
   // Effective radius used for crown refinement
   double effective_radius;
 
+  // The string contains additional information on the shape. This may refer to
+  // the file type used to define the shape or any other information relative to
+  // how the shape was defined.
+  std::string additional_info_on_shape;
 
 protected:
   // Position of the center of the Shape. It doesn't always correspond to the
@@ -218,6 +293,11 @@ protected:
   // The solid orientation, which is defined as the sequential rotation around
   // the axes x->y->z by each of the tensor components, in radian
   Tensor<1, 3> orientation;
+
+  // The cache of the evaluation of the shape. This is used to avoid costly
+  // reevaluation of the shape.
+  std::unordered_map<std::string, double>         value_cache;
+  std::unordered_map<std::string, Tensor<1, dim>> gradient_cache;
 };
 
 
@@ -255,11 +335,6 @@ public:
   value(const Point<dim> & evaluation_point,
         const unsigned int component = 0) const override;
 
-  /**
-   * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
-   */
-  virtual std::shared_ptr<Manifold<dim - 1, dim>>
-  get_shape_manifold() override;
 
   /**
    * @brief Return a pointer to a copy of the Shape
@@ -287,6 +362,13 @@ public:
 
   void
   set_position(const Point<dim> &position) override;
+
+  /**
+   * @brief Return the manifold of the sphere as a spherical manifold center at the position of the shape.
+   */
+  virtual std::shared_ptr<Manifold<dim - 1, dim>>
+  get_shape_manifold() override;
+
 
 
 private:
@@ -757,6 +839,191 @@ private:
     operations;
 };
 
+template <int dim>
+class OpenCascadeShape : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructor for an OpenCascade shape
+   * @param file_name The name of the file describing the shape
+   * @param position The shape center
+   * @param orientation The shape orientation
+   */
+  OpenCascadeShape<dim>(const std::string   file_name,
+                        const Point<dim> &  position,
+                        const Tensor<1, 3> &orientation)
+    : Shape<dim>(0.1, position, orientation)
+  {
+    // First, we read the shape file name
+    local_file_name = file_name;
+#ifdef DEAL_II_WITH_OPENCASCADE
+    // Checks the file name extension to identify which type of OpenCascade
+    // shape we are working with.
+    std::vector<std::string> file_name_and_extension(
+      Utilities::split_string_list(local_file_name, "."));
+
+    // Load the shape with the appropriate tool.
+    if (file_name_and_extension[1] == "step" ||
+        file_name_and_extension[1] == "stp")
+      {
+        shape = OpenCASCADE::read_STEP(local_file_name);
+        this->additional_info_on_shape = "step";
+      }
+    else if (file_name_and_extension[1] == "iges" ||
+             file_name_and_extension[1] == "igs")
+      {
+        shape = OpenCASCADE::read_IGES(local_file_name);
+        this->additional_info_on_shape = "iges";
+      }
+    else if (file_name_and_extension[1] == "stl")
+      {
+        shape                          = OpenCASCADE::read_STL(local_file_name);
+        this->additional_info_on_shape = "stl";
+      }
+    else
+      {
+        throw std::runtime_error(
+          "Wrong file extension for an opencascade shape. The possible file type are: step, stp, iges, igs, stl.");
+      }
+
+    // used this local variable as the shape tolerance in the calculations.
+    shape_tol = OpenCASCADE::get_shape_tolerance(shape);
+
+    // Initialize some variables and the OpenCascade distance tool.
+    OpenCASCADE::extract_compound_shapes(
+      shape, compounds, compsolids, solids, shells, wires);
+    vertex_position = OpenCASCADE::point(Point<dim>());
+    vertex          = BRepBuilderAPI_MakeVertex(vertex_position);
+    distancetool    = BRepExtrema_DistShapeShape(shape, vertex);
+
+    // Check if the shape has a shell. If it has a shell, we initialize a
+    // distance tool with just the shell.
+    if (shells.size() > 0)
+      {
+        if (shells.size() > 1)
+          {
+            throw std::runtime_error(
+              "Error!: The shape has more than one shell. The code does not support shapes with multiple shells or solids. If your shape has more than one shell or solid, it is usually possible to recombine them into one. Otherwise, it is possible to split the shape into sub-shells and sub-solids and then define one particle for each of them.");
+          }
+        distancetool = BRepExtrema_DistShapeShape(shells[0], vertex);
+        point_classifier.Load(shape);
+      }
+    else
+      {
+        distancetool = BRepExtrema_DistShapeShape(shape, vertex);
+        point_classifier.Load(shape);
+      }
+
+    // Define the effective radius as the raidus of the sphere with the same
+    // volume as the shape.
+    GProp_GProps system;
+    BRepGProp::LinearProperties(shape, system);
+    BRepGProp::SurfaceProperties(shape, system);
+    BRepGProp::VolumeProperties(shape, system);
+    this->effective_radius =
+      std::pow(system.Mass() * 3.0 / (4 * numbers::PI), 1.0 / dim);
+
+#endif
+  }
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluate.
+   * @param component Not applicable
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point. Use
+   * @param component Not applicable
+   */
+  double
+  value_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+  /**
+   * @brief
+   * Return the volume displaced by the solid
+   *
+   * @param fluid_density The density of the fluid that is displaced
+   */
+  double
+  displaced_volume(const double fluid_density) override;
+
+  /**
+   * @brief
+   * Sets a new position for the shape
+   *
+   * @param The new position the shape will be placed at
+   */
+  void
+  set_position(const Point<dim> &position) override;
+
+private:
+  // Keep in memory the file name of the shape.
+  std::string local_file_name;
+#ifdef DEAL_II_WITH_OPENCASCADE
+  // The shape define by the opencascade file.
+  TopoDS_Shape shape;
+
+  // We split the shape into its components we store them in these containers.
+  std::vector<TopoDS_Compound>  compounds;
+  std::vector<TopoDS_CompSolid> compsolids;
+  std::vector<TopoDS_Solid>     solids;
+  std::vector<TopoDS_Shell>     shells;
+  std::vector<TopoDS_Wire>      wires;
+
+  // The point at which we are going to evaluate the shape.
+  gp_Pnt vertex_position;
+
+  // The shape object (vertex) used in the distance evaluation.
+  TopoDS_Vertex vertex;
+
+  // The tool used for the distance evaluation.
+  BRepClass3d_SolidClassifier point_classifier;
+  BRepExtrema_DistShapeShape  distancetool;
+  BRepExtrema_DistShapeShape  distancetool_shell;
+  double                      shape_tol;
+#endif
+};
+
 
 /**
  * @tparam dim Dimension of the shape
@@ -951,6 +1218,12 @@ public:
   void
   update_precalculations(DoFHandler<dim> &  dof_handler,
                          const unsigned int levels_not_precalculated);
+
+  /**
+   * @brief Rotate RBF nodes in the global reference frame (the reference frame of the triangulation).
+   */
+  void
+  rotate_nodes();
 
   /**
    * @brief Compact Wendland C2 function defined from 0 to 1.
@@ -1329,6 +1602,7 @@ public:
   std::vector<size_t>           nodes_id;
   std::vector<double>           weights;
   std::vector<Point<dim>>       nodes_positions;
+  std::vector<Point<dim>>       rotated_nodes_positions;
   std::vector<double>           support_radii;
   std::vector<RBFBasisFunction> basis_functions;
 };

@@ -1,3 +1,6 @@
+IF(DEAL_II_WITH_OPENCASCADE)
+add_subdirectory(opencascade)
+ENDIF()
 set(TEST_TARGET gls_sharp_navier_stokes_3d)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)

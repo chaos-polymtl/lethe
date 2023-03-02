@@ -94,6 +94,11 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   // with the key being the cell.
   TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   std::map<types::global_dof_index, Point<dim>> support_points;
+
+  // A vector of the unordered map. Each map stores if a point is inside or
+  // outside of a given particle.
+  std::vector<std::unordered_map<types::global_dof_index, bool>>
+    inside_outside_support_point_vector(particles.size());
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
@@ -126,65 +131,108 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
-              unsigned int nb_dof_inside = 0;
-
-
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+              // Particles defined from a stl or an iges don't have a signed
+              // distance function. To identify cells that are cut a special
+              // algorithm is required. For this type of particle, no cell are
+              // identified as being inside the particle. This means that the
+              // fluid is always solved inside the particle.
+              if (particles[p].shape->additional_info_on_shape == "iges")
                 {
-                  // Count the number of DOFs that are inside
-                  // of the particles. If all the DOfs are on one side
-                  // the cell is not cut by the boundary.
-                  if (0 == this->fe->system_to_component_index(j).first)
+                  cell_is_cut =
+                    cell_cut_by_p_absolute_distance(cell, support_points, p);
+                  particle_id_which_cuts_this_cell = p;
+                  if (cell_is_cut)
                     {
-                      if (particles[p].get_levelset(
-                            support_points[local_dof_indices[j]], cell) <= 0)
-                        ++nb_dof_inside;
-                    }
-                }
-
-              // If some of the DOFs are inside the boundary, some are outside,
-              // the cell is cut.
-              if (nb_dof_inside != 0)
-                {
-                  // If all the DOFs are inside the boundary this cell is inside
-                  // the particle. Otherwise the particle is cut.
-                  if (nb_dof_inside == dofs_per_cell_local_v_x)
-                    {
-                      // We only register the particle the lowest id as the
-                      // particle in which this cell is embedded if the cell is
-                      // embedded in multiple particles.
-                      if (number_of_particles_cutting_this_cell == 0)
-                        {
-                          cell_is_cut                                = false;
-                          particle_id_which_cuts_this_cell           = 0;
-                          cell_is_inside                             = true;
-                          particle_id_in_which_this_cell_is_embedded = p;
-                        }
-                      break;
-                    }
-                  else
-                    {
-                      // We only register the particle with the lowest id as the
-                      // particle by this cell is cut if the cell is cut in
-                      // multiple particles.
-                      if (number_of_particles_cutting_this_cell == 0)
-                        {
-                          cell_is_cut                                = true;
-                          particle_id_which_cuts_this_cell           = p;
-                          cell_is_inside                             = false;
-                          particle_id_in_which_this_cell_is_embedded = 0;
-                        }
                       number_of_particles_cutting_this_cell += 1;
                     }
                 }
               else
                 {
-                  if (number_of_particles_cutting_this_cell == 0)
+                  unsigned int nb_dof_inside = 0;
+                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                     {
-                      cell_is_cut                                = false;
-                      particle_id_which_cuts_this_cell           = 0;
-                      cell_is_inside                             = false;
-                      particle_id_in_which_this_cell_is_embedded = 0;
+                      // Count the number of DOFs that are inside
+                      // of the particles. If all the DOfs are on one side
+                      // the cell is not cut by the boundary.
+                      if (0 == this->fe->system_to_component_index(j).first)
+                        {
+                          // Check if we already have checked this point in a
+                          // previously evaluated cell. If we didn't find it in
+                          // the previous evaluation, we assess whether the DOF
+                          // is inside or outside the shape.
+                          auto iterator =
+                            inside_outside_support_point_vector[p].find(
+                              local_dof_indices[j]);
+                          if (iterator ==
+                              inside_outside_support_point_vector[p].end())
+                            {
+                              if (particles[p].get_levelset(
+                                    support_points[local_dof_indices[j]],
+                                    cell) <= 0)
+                                {
+                                  ++nb_dof_inside;
+                                  inside_outside_support_point_vector
+                                    [p][local_dof_indices[j]] = true;
+                                }
+                              else
+                                inside_outside_support_point_vector
+                                  [p][local_dof_indices[j]] = false;
+                            }
+                          else
+                            {
+                              if (inside_outside_support_point_vector
+                                    [p][local_dof_indices[j]] == true)
+                                {
+                                  ++nb_dof_inside;
+                                }
+                            }
+                        }
+                    }
+
+                  // If some DOFs are inside the boundary, the cell is inside
+                  // the particle or cut by the particle.
+                  if (nb_dof_inside != 0)
+                    {
+                      // If all the DOFs are inside the boundary this cell is
+                      // inside the particle. Otherwise the particle is cut.
+                      if (nb_dof_inside == dofs_per_cell_local_v_x)
+                        {
+                          //  We register only the particle with the lowest id
+                          //  as the particle in which this cell is embedded if
+                          //  the cell is in multiple particles.
+                          if (number_of_particles_cutting_this_cell == 0)
+                            {
+                              cell_is_cut                      = false;
+                              particle_id_which_cuts_this_cell = 0;
+                              cell_is_inside                   = true;
+                              particle_id_in_which_this_cell_is_embedded = p;
+                            }
+                          break;
+                        }
+                      else
+                        {
+                          // We only register the particle with the lowest id as
+                          // the particle by this cell is cut if the cell is cut
+                          // in multiple particles.
+                          if (number_of_particles_cutting_this_cell == 0)
+                            {
+                              cell_is_cut                      = true;
+                              particle_id_which_cuts_this_cell = p;
+                              cell_is_inside                   = false;
+                              particle_id_in_which_this_cell_is_embedded = 0;
+                            }
+                          number_of_particles_cutting_this_cell += 1;
+                        }
+                    }
+                  else
+                    {
+                      if (number_of_particles_cutting_this_cell == 0)
+                        {
+                          cell_is_cut                                = false;
+                          particle_id_which_cuts_this_cell           = 0;
+                          cell_is_inside                             = false;
+                          particle_id_in_which_this_cell_is_embedded = 0;
+                        }
                     }
                 }
             }
@@ -198,6 +246,62 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     }
 }
 
+template <int dim>
+bool
+GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_absolute_distance(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  std::map<types::global_dof_index, Point<dim>> &       support_points,
+  unsigned int                                          p)
+{
+  // This function aims at defining if a cell is cut when the level set used to
+  // define the particle is not signed. This function works by analyzing the
+  // location of the projection of the support point and the cell centroid on
+  // the particle's surface. If the projected point at the surface of the
+  // particle is inside the cell then the cell is cut.
+
+  // First step: define useful variables.
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  cell->get_dof_indices(local_dof_indices);
+  bool       cell_is_cut      = false;
+  Point<dim> centroid_of_cell = cell->barycenter();
+  Point<dim> projected_point;
+  particles[p].closest_surface_point(centroid_of_cell, projected_point, cell);
+
+  // Check the centroid of the cell first.
+  if (cell->point_inside(projected_point))
+    {
+      cell_is_cut = true;
+      return cell_is_cut;
+    }
+  else
+    {
+      // If the projection of the centroid is not inside the cell we also check
+      // for each dof support point of the cell.
+      for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+        {
+          // Only check for the support point of the velocity in x.
+          if (0 == this->fe->system_to_component_index(j).first)
+            {
+              particles[p].closest_surface_point(
+                support_points[local_dof_indices[j]], projected_point, cell);
+
+              if (cell->point_inside(projected_point))
+                {
+                  cell_is_cut = true;
+                  break;
+                }
+              if ((projected_point - support_points[local_dof_indices[j]])
+                    .norm() < cell->diameter() * 0.1)
+                {
+                  cell_is_cut = true;
+                  break;
+                }
+            }
+        }
+    }
+  return cell_is_cut;
+}
 
 template <int dim>
 void
@@ -494,7 +598,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::refine_ib()
 {
-  Point<dim>                                    center_immersed;
+  TimerOutput::Scope t(this->computing_timer, "refine_around_ib");
+  Point<dim>         center_immersed;
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
@@ -525,20 +630,25 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                 cell->point_inside(particles[p].position + r);
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // Count the number of DOFs that fall in the refinement zone
-                  // around the particle. To fall in the zone, the radius of the
-                  // DOFs to the center of the particle must be bigger than the
-                  // inside radius of the refinement zone and smaller than the
-                  // outside radius of the refinement zone.
-                  if (particles[p].is_inside_crown(
-                        support_points[local_dof_indices[j]],
-                        this->simulation_parameters.particlesParameters
-                          ->outside_radius,
-                        this->simulation_parameters.particlesParameters
-                          ->inside_radius,
-                        cell))
+                  // Only check the dof of velocity in x.
+                  if (this->fe->system_to_component_index(j).first == 0)
                     {
-                      ++count_small;
+                      // Count the number of DOFs that fall in the refinement
+                      // zone around the particle. To fall in the zone, the
+                      // radius of the DOFs to the center of the particle must
+                      // be bigger than the inside radius of the refinement zone
+                      // and smaller than the outside radius of the refinement
+                      // zone.
+                      if (particles[p].is_inside_crown(
+                            support_points[local_dof_indices[j]],
+                            this->simulation_parameters.particlesParameters
+                              ->outside_radius,
+                            this->simulation_parameters.particlesParameters
+                              ->inside_radius,
+                            cell))
+                        {
+                          ++count_small;
+                        }
                     }
                 }
               if (count_small > 0 || cell_as_ib_inside)
@@ -658,7 +768,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
   std::vector<double>     local_interp_sol(ib_coef.size());
 
-  std::map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>> force_eval;
+  std::unordered_map<unsigned int, std::pair<Tensor<2, dim>, Tensor<2, dim>>>
+    force_eval;
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
@@ -720,7 +831,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // solution. Define the triangulation of the surface cell.
                       for (unsigned int i = 0; i < vertices_per_face; ++i)
                         {
-                          // Define the vertices of the surface cell.
                           Point<dim> vertex_projection;
                           particles[p].closest_surface_point(
                             local_face->vertex(i), vertex_projection, cell);
@@ -730,6 +840,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                .norm() +
                              DBL_MIN);
 
+                          // Define the vertices of the surface cell.
                           // Create the list of vertices
                           for (unsigned int j = 0; j < dim; ++j)
                             {
@@ -1045,7 +1156,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             {
                               // Evaluate the total surface
                               // Redefined the normal at the quadrature point
-                              // since we dont control the orientation of the
+                              // since we don't control the orientation of the
                               // cell.
                               normal_vector =
                                 fe_face_projection_values.normal_vector(q);
@@ -1227,6 +1338,30 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
+  Vector<float> cell_cuts(this->triangulation->n_active_cells());
+
+  // If the enable extra verbose output is activated we add an output field to
+  // the results where we identify which particle cuts each cell of the domain.
+  if (this->simulation_parameters.particlesParameters
+        ->enable_extra_sharp_interface_vtu_output_field)
+    {
+      // Define cell iterator
+      const auto & cell_iterator = this->dof_handler.active_cell_iterators();
+      unsigned int i             = 0;
+      for (const auto &cell : cell_iterator)
+        {
+          bool cell_is_cut;
+          int  particle_id;
+          std::tie(cell_is_cut, particle_id, std::ignore) = cut_cells_map[cell];
+          if (cell_is_cut)
+            cell_cuts(i) = particle_id;
+          else
+            cell_cuts(i) = -1;
+
+          i += 1;
+        }
+      data_out.add_data_vector(cell_cuts, "cell_cut");
+    }
 }
 
 template <int dim>
@@ -1938,6 +2073,12 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                   particles[p].position[2] += particles[p].velocity[2] * dt;
                 }
             }
+          if (particles[p].position != particles[p].previous_positions[0] ||
+              particles[p].orientation != particles[p].previous_orientation[0])
+            {
+              particles[p].clear_shape_cache();
+            }
+
           particles[p].set_position(particles[p].position);
           particles[p].set_orientation(particles[p].orientation);
         }
@@ -2484,463 +2625,440 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   ib_done.clear();
   // Loop on all the cell to define if the sharp edge cut them
-  for (const auto &cell : cell_iterator)
+  for (const auto &cell_cut : cell_iterator)
     {
-      if (cell->is_locally_owned() || cell->is_ghost())
+      if (cell_cut->is_locally_owned() || cell_cut->is_ghost())
         {
-          double sum_line = 0;
-          fe_values.reinit(cell);
-
-          double volume = 0;
-          // Define the order of magnitude for the stencil.
-          for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            volume += fe_values.JxW(qf);
-
-          sum_line = volume / dt;
-
-
-
-          cell->get_dof_indices(local_dof_indices);
-
-          // Check if the cell is cut or not by the IB and what the particle the
-          // cut the cell. If the particle is cut
+          // Check if the cell_cut is cut or not by the IB and what the particle
+          // the cut the cell_cut. If the particle is cut
           bool cell_is_cut;
-          // The id of the particle that cut the cell. Returns 0 if the cell is
-          // not cut.We also check the number of particles that cut the cell. If
-          // multiple particles cut the cell, the dummy dofs of pressure will be
-          // treated differently to avoid self-reference.
+          // The id of the particle that cut the cell_cut. Returns 0 if the
+          // cell_cut is not cut.We also check the number of particles that cut
+          // the cell_cut. If multiple particles cut the cell_cut, the dummy
+          // dofs of pressure will be treated differently to avoid
+          // self-reference.
           unsigned int ib_particle_id;
           unsigned int count_particles;
           std::tie(cell_is_cut, ib_particle_id, count_particles) =
-            cut_cells_map[cell];
+            cut_cells_map[cell_cut];
 
           if (cell_is_cut)
             {
-              // If we are here, the cell is cut by the IB.
+              double sum_line = 0;
+              fe_values.reinit(cell_cut);
+
+              double volume = 0;
+              // Define the order of magnitude for the stencil.
+              for (unsigned int qf = 0; qf < n_q_points; ++qf)
+                volume += fe_values.JxW(qf);
+
+              sum_line = volume / dt;
+              cell_cut->get_dof_indices(local_dof_indices);
+              // If we are here, the cell_cut is cut by the IB.
               // Loops on the dof that represents the velocity  component
               // and pressure separately
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                 {
-                  const unsigned int component_i =
-                    this->fe->system_to_component_index(i).first;
                   unsigned int global_index_overwrite = local_dof_indices[i];
-                  bool         dof_is_inside =
-                    particles[ib_particle_id].get_levelset(
-                      support_points[local_dof_indices[i]], cell) < 0;
-
-                  // If multiple particles cut the cell, we treat the dof of
-                  // pressure as a dummy dof. We don't use them to set the
-                  // boundary condition for the Poisson problem inside the
-                  // particle.
-                  bool use_ib_for_pressure =
-                    (dof_is_inside) && (component_i == dim) &&
-                    (this->simulation_parameters.particlesParameters
-                       ->assemble_navier_stokes_inside == false) &&
-                    count_particles < 2;
-
-                  // Check if the DOfs is owned and if it's not a hanging node.
-                  if (((component_i < dim) || use_ib_for_pressure) &&
-                      this->locally_owned_dofs.is_element(
-                        global_index_overwrite) &&
-                      ib_done[global_index_overwrite].first == false)
+                  if (ib_done[global_index_overwrite].first == false)
                     {
-                      // We are working on the velocity of the cell cut
-                      // loops on the dof that are for vx or vy separately
-                      // loops on all the dof of the cell that represent
-                      // a specific component
-                      // Define which dof is going to be redefined
+                      const unsigned int component_i =
+                        this->fe->system_to_component_index(i).first;
+                      bool dof_is_inside =
+                        particles[ib_particle_id].get_levelset(
+                          support_points[local_dof_indices[i]], cell_cut) <= 0;
 
-                      // Clear the current line of this dof
-                      this->system_matrix.clear_row(global_index_overwrite);
+                      // If multiple particles cut the cell_cut, we treat the
+                      // dof of pressure as a dummy dof. We don't use them to
+                      // set the boundary condition for the Poisson problem
+                      // inside the particle.
+                      bool use_ib_for_pressure =
+                        (dof_is_inside) && (component_i == dim) &&
+                        (this->simulation_parameters.particlesParameters
+                           ->assemble_navier_stokes_inside == false) &&
+                        count_particles < 2;
 
-                      // Define the points for the IB stencil, based on the
-                      // order and the particle position as well as the DOF
-                      // position. Depending on the order, the output variable
-                      // "point" change definition. In the case of stencil
-                      // orders 1 to 4 the variable point returns the position
-                      // of the DOF directly. In the case of high order stencil,
-                      // it returns the position of the point that is on the IB.
-                      // The variable "interpolation points" return the points
-                      // used to define the cell used for the stencil definition
-                      // and the locations of the points use in the stencil
-                      // calculation.
-
-                      auto [point, interpolation_points] =
-                        stencil.support_points_for_interpolation(
-                          order,
-                          length_ratio,
-                          particles[ib_particle_id],
-                          support_points[local_dof_indices[i]],
-                          cell);
-                      // Find the cell used for the stencil definition.
-                      auto point_to_find_cell =
-                        stencil.point_for_cell_detection(
-                          particles[ib_particle_id],
-                          support_points[local_dof_indices[i]],
-                          cell);
-                      typename DoFHandler<dim>::active_cell_iterator cell_2;
-                      bool particle_close_to_wall = false;
-                      (void)particle_close_to_wall;
-                      try
+                      // Check if the DOfs is owned and if it's not a hanging
+                      // node.
+                      if (((component_i < dim) || use_ib_for_pressure) &&
+                          this->locally_owned_dofs.is_element(
+                            global_index_overwrite) &&
+                          (this->zero_constraints.is_constrained(
+                             local_dof_indices[i]) ||
+                           this->nonzero_constraints.is_constrained(
+                             local_dof_indices[i])) == false)
                         {
-                          cell_2 = LetheGridTools::
-                            find_cell_around_point_with_neighbors<dim>(
-                              this->dof_handler,
-                              vertices_to_cell,
-                              cell,
-                              point_to_find_cell);
-                        }
-                      catch (...)
-                        {
-                          // If we are here, the DOF is on a boundary.
-                          particle_close_to_wall = true;
-                          cell_2                 = cell;
-                          // If a boundary condition is already applied to this
-                          // DOF we skip it otherwise we impose a value base on
-                          // the velocity of the particle.
-                          if (this->zero_constraints.is_constrained(
-                                global_index_overwrite) ||
-                              this->nonzero_constraints.is_constrained(
-                                global_index_overwrite))
-                            {
-                              continue;
-                            }
-                        }
+                          // We are working on the DOFs of cells cut by a
+                          // particle. We clear the current equation associated
+                          // with the current DOF and replace it with the sharp
+                          // IB constraints.
 
-                      cell_2->get_dof_indices(local_dof_indices_2);
-                      ib_done[global_index_overwrite] =
-                        std::make_pair(true, cell_2);
+                          // Clear the current line of this dof
+                          this->system_matrix.clear_row(global_index_overwrite);
 
-                      bool skip_stencil = false;
+                          // Define the points for the IB stencil based on the
+                          // order, particle position, and DOF position. The
+                          // definition of the output variable "point" changes
+                          // depending on the order. In the case of stencil
+                          // orders 1 to 4, the variable point returns the
+                          // position of the DOF directly. In the case of higher
+                          // order stencil (5 or more), it returns the position
+                          // of the point that is on the IB. This is because
+                          // stencil orders higher than four are not
+                          // implemented. The function extrapolates the element
+                          // at the particle's surface in these cases. To do so,
+                          // we use the point at the surface of the particle.
+                          // The variable "interpolation points" return the
+                          // points used to define the cell_cut used for the
+                          // stencil definition and the locations of the points
+                          // used in the stencil calculation.
 
-                      // Check if the DOF intersect the IB
-                      bool dof_on_ib = false;
-
-                      // Check if this dof is a dummy dof or directly on IB and
-                      // Check if the point used to define the cell used for the
-                      // definition of the stencil ("cell_2") is on a face
-                      // between the cell that is cut ("cell") and the "cell_2".
-                      bool point_in_cell = cell->point_inside(
-                        interpolation_points
-                          [stencil.number_of_interpolation_support_points(
-                             order) -
-                           1]);
-
-                      bool         dof_is_dummy = false;
-                      bool         cell2_is_cut;
-                      unsigned int ib_particle_id_2;
-                      std::tie(cell2_is_cut, ib_particle_id_2, std::ignore) =
-                        cut_cells_map[cell_2];
-                      if (cell2_is_cut || point_in_cell)
-                        {
-                          dof_is_dummy = true;
-                        }
-
-                      if (dof_is_dummy || use_ib_for_pressure ||
-                          particle_close_to_wall)
-                        {
-                          // Give the DOF an approximated value. This help
-                          // with pressure shock when the DOF passes from part
-                          // of the boundary to the fluid.
-
-                          this->system_matrix.add(global_index_overwrite,
-                                                  global_index_overwrite,
-                                                  sum_line);
-                          skip_stencil = true;
-
-                          // Tolerance to define an intersection of
-                          // the DOF and IB
-                          if (abs(particles[ib_particle_id].get_levelset(
-                                support_points[local_dof_indices[i]], cell)) <=
-                              1e-12 * dr)
-                            {
-                              dof_on_ib = true;
-                            }
-                        }
-                      // Define the variable used for the
-                      // extrapolation of the actual solution at the
-                      // boundaries in order to define the correction
-
-                      // Define the unit cell points for the points
-                      // used in the stencil.
-                      std::vector<Point<dim>> unite_cell_interpolation_points(
-                        ib_coef.size());
-                      unite_cell_interpolation_points[0] =
-                        this->mapping->transform_real_to_unit_cell(cell_2,
-                                                                   point);
-                      for (unsigned int j = 1; j < ib_coef.size(); ++j)
-                        {
-                          unite_cell_interpolation_points[j] =
-                            this->mapping->transform_real_to_unit_cell(
-                              cell_2, interpolation_points[j - 1]);
-                        }
-
-                      std::vector<double> local_interp_sol(ib_coef.size());
-
-                      // Define the new matrix entry for this dof
-                      if (skip_stencil == false)
-                        {
-                          for (unsigned int j = 0;
-                               j < local_dof_indices_2.size();
-                               ++j)
-                            {
-                              const unsigned int component_j =
-                                this->fe->system_to_component_index(j).first;
-                              if (component_j == component_i)
-                                {
-                                  //  Define the solution at each point used for
-                                  //  the stencil and applied the stencil for
-                                  //  the specific DOF. For stencils of order 4
-                                  //  or higher, the stencil is defined through
-                                  //  direct extrapolation of the cell. This can
-                                  //  only be done when using a structured mesh
-                                  //  as this required a mapping of a point
-                                  //  outside of a cell.
-
-                                  // Define the local matrix entries of this DOF
-                                  // based on its contribution of each of the
-                                  // points used in the stencil definition and
-                                  // the coefficient associated with this point.
-                                  // This loop defined the current solution at
-                                  // the boundary using the same stencil. This
-                                  // is needed to define the residual.
-                                  double local_matrix_entry = 0;
-                                  for (unsigned int k = 0; k < ib_coef.size();
-                                       ++k)
-                                    {
-                                      local_matrix_entry +=
-                                        this->fe->shape_value(
-                                          j,
-                                          unite_cell_interpolation_points[k]) *
-                                        ib_coef[k];
-                                      local_interp_sol[k] +=
-                                        this->fe->shape_value(
-                                          j,
-                                          unite_cell_interpolation_points[k]) *
-                                        this->evaluation_point(
-                                          local_dof_indices_2[j]);
-                                    }
-                                  // update the matrix.
-                                  try
-                                    {
-                                      this->system_matrix.add(
-                                        global_index_overwrite,
-                                        local_dof_indices_2[j],
-                                        local_matrix_entry * sum_line);
-                                    }
-                                  catch (...)
-                                    {
-                                      //  If we are here, an error happens when
-                                      //  trying to fill the line in the matrix.
-                                      // For example, this can occur if a
-                                      // particle is close to a wall and we are
-                                      // trying to impose the equation on a DOF
-                                      // that as a boundary condition applied to
-                                      // it. As such, we discard these errors.
-                                    }
-                                }
-                            }
-                        }
-
-                      // Define the RHS of the equation.
-
-                      double rhs_add = 0;
-                      // Different boundary conditions depending
-                      // on the component index of the DOF and
-                      // the dimension.
-                      double v_ib = stencil.ib_velocity(
-                        particles[ib_particle_id],
-                        support_points[local_dof_indices[i]],
-                        component_i,
-                        cell);
-
-                      //  If the pressure is imposed trough IB inside the
-                      //  particle we use an approximation of the pressure
-                      //  outside of the IB in this cell.
-                      if (component_i == dim)
-                        {
-                          for (unsigned int k = 0; k < local_dof_indices.size();
-                               ++k)
-                            {
-                              // Check if the dof is inside or outside of the
-                              // particle.
-                              bool dof_is_inside_p =
-                                particles[ib_particle_id].get_levelset(
-                                  support_points[local_dof_indices[k]], cell) <
-                                0;
-                              const unsigned int component_k =
-                                this->fe->system_to_component_index(k).first;
-                              if (component_k == dim &&
-                                  dof_is_inside_p == false)
-                                {
-                                  v_ib = this->evaluation_point(
-                                    local_dof_indices[k]);
-                                  try
-                                    {
-                                      this->system_matrix.add(
-                                        global_index_overwrite,
-                                        local_dof_indices[k],
-                                        -1 * sum_line);
-                                    }
-                                  catch (...)
-                                    {
-                                      //  If we are here, an error happens when
-                                      //  trying to fill the line in the matrix.
-                                      // For example, this can occur if a
-                                      // particle is close to a wall and we are
-                                      // trying to impose the equation on a DOF
-                                      // that as a boundary condition applied to
-                                      // it. As such, we discard these errors.
-                                    }
-                                  break;
-                                }
-                            }
-                        }
-
-                      for (unsigned int k = 0; k < ib_coef.size(); ++k)
-                        {
-                          rhs_add +=
-                            -local_interp_sol[k] * ib_coef[k] * sum_line;
-                        }
-                      this->system_rhs(global_index_overwrite) =
-                        v_ib * sum_line + rhs_add;
-
-                      if (dof_on_ib)
-                        // Dof is on the immersed boundary
-                        this->system_rhs(global_index_overwrite) =
-                          v_ib * sum_line -
-                          this->evaluation_point(global_index_overwrite) *
-                            sum_line;
-
-                      if (skip_stencil && dof_on_ib == false)
-                        // Impose the value of the dummy dof. This help
-                        // with pressure variation when the IB is
-                        // moving.
-                        this->system_rhs(global_index_overwrite) =
-                          sum_line * v_ib -
-                          this->evaluation_point(global_index_overwrite) *
-                            sum_line;
-                    }
-
-                  // If the DOFs is hanging put back the equations of the
-                  // hanging nodes
-                  if (this->zero_constraints.is_constrained(
-                        local_dof_indices[i]) &&
-                      this->locally_owned_dofs.is_element(
-                        global_index_overwrite))
-                    {
-                      // Clear the line if there is something on it
-                      this->system_matrix.clear_row(global_index_overwrite);
-                      // Get the constraint equations
-                      auto local_entries =
-                        *this->zero_constraints.get_constraint_entries(
-                          local_dof_indices[i]);
-
-                      double interpolation = 0;
-                      // Write the equation
-                      for (unsigned int j = 0; j < local_entries.size(); ++j)
-                        {
-                          unsigned int col     = local_entries[j].first;
-                          double       entries = local_entries[j].second;
-
-                          interpolation +=
-                            this->evaluation_point(col) * entries;
+                          auto [point, interpolation_points] =
+                            stencil.support_points_for_interpolation(
+                              order,
+                              length_ratio,
+                              particles[ib_particle_id],
+                              support_points[local_dof_indices[i]],
+                              cell_cut);
+                          // Find the cell_cut used for the stencil definition.
+                          auto point_to_find_cell =
+                            stencil.point_for_cell_detection(
+                              particles[ib_particle_id],
+                              support_points[local_dof_indices[i]],
+                              cell_cut);
+                          typename DoFHandler<dim>::active_cell_iterator
+                               stencil_cell;
+                          bool particle_close_to_wall = false;
+                          (void)particle_close_to_wall;
                           try
                             {
-                              this->system_matrix.add(local_dof_indices[i],
-                                                      col,
-                                                      entries * sum_line);
+                              stencil_cell = LetheGridTools::
+                                find_cell_around_point_with_neighbors<dim>(
+                                  this->dof_handler,
+                                  vertices_to_cell,
+                                  cell_cut,
+                                  point_to_find_cell);
                             }
                           catch (...)
                             {
-                              //  If we are here, an error happens when trying
-                              //  to fill the line in the matrix.
-                              // For example, this can occur if a particle is
-                              // close to a wall and we are trying to impose the
-                              // equation on a DOF that as a boundary condition
-                              // applied to it. As such, we discard these
-                              // errors.
-                            }
-                        }
-                      this->system_matrix.add(local_dof_indices[i],
-                                              local_dof_indices[i],
-                                              sum_line);
-                      // Write the RHS
-                      this->system_rhs(local_dof_indices[i]) =
-                        -this->evaluation_point(local_dof_indices[i]) *
-                          sum_line +
-                        interpolation * sum_line +
-                        this->zero_constraints.get_inhomogeneity(
-                          local_dof_indices[i]) *
-                          sum_line;
-                    }
-
-                  if (component_i == dim && this->locally_owned_dofs.is_element(
-                                              global_index_overwrite))
-                    {
-                      // Applied equation on dof that have no equation
-                      // defined for them. those DOF become Dummy dof. This
-                      // is usefull for high order cells or when a dof is
-                      // only element of cells that are cut.
-                      unsigned int global_index_overwrite =
-                        local_dof_indices[i];
-                      bool dummy_dof = true;
-
-                      // To check if the pressure dof is a dummy. first check if
-                      // the matrix entry is close to 0.
-                      if (abs(this->system_matrix.el(global_index_overwrite,
-                                                     global_index_overwrite)) <=
-                          1e-16 * dr)
-                        {
-                          // If the matrix entry on the diagonal of this DOF is
-                          // close to zero, check if all the cells close are
-                          // cut. If it's the case, the DOF is a dummy DOF.
-                          active_neighbors_set =
-                            LetheGridTools::find_cells_around_cell<dim>(
-                              vertices_to_cell, cell);
-                          for (unsigned int m = 0;
-                               m < active_neighbors_set.size();
-                               m++)
-                            {
-                              const auto &cell_3 = active_neighbors_set[m];
-                              cell_3->get_dof_indices(local_dof_indices_3);
-                              for (unsigned int o = 0;
-                                   o < local_dof_indices_3.size();
-                                   ++o)
+                              // If we are here, the DOF is on a boundary.
+                              particle_close_to_wall = true;
+                              stencil_cell           = cell_cut;
+                              // If a boundary condition is already applied to
+                              // this DOF we skip it otherwise we impose a value
+                              // base on the velocity of the particle.
+                              if (this->zero_constraints.is_constrained(
+                                    global_index_overwrite) ||
+                                  this->nonzero_constraints.is_constrained(
+                                    global_index_overwrite))
                                 {
-                                  if (global_index_overwrite ==
-                                      local_dof_indices_3[o])
-                                    {
-                                      // cell_3 contain the same dof
-                                      // check if this cell is cut if
-                                      // it's not cut this dof must not
-                                      // be overwritten
-                                      bool cell_is_cut;
-                                      std::tie(cell_is_cut,
-                                               std::ignore,
-                                               std::ignore) =
-                                        cut_cells_map[cell_3];
-
-
-                                      if (cell_is_cut == false)
-                                        {
-                                          dummy_dof = false;
-                                          break;
-                                        }
-                                    }
+                                  continue;
                                 }
-                              if (dummy_dof == false)
-                                break;
                             }
 
-                          if (dummy_dof)
+                          stencil_cell->get_dof_indices(local_dof_indices_2);
+                          ib_done[global_index_overwrite] =
+                            std::make_pair(true, stencil_cell);
+
+                          bool skip_stencil = false;
+
+                          // Check if the DOF intersect the IB
+                          bool dof_on_ib = false;
+
+                          // Check if this dof is a dummy dof or directly on IB
+                          // and Check if the point used to define the cell_cut
+                          // used for the definition of the stencil
+                          // ("stencil_cell") is on a face between the cell_cut
+                          // that is cut ("cell_cut") and the "stencil_cell".
+                          bool point_in_cell = cell_cut->point_inside(
+                            interpolation_points
+                              [stencil.number_of_interpolation_support_points(
+                                 order) -
+                               1]);
+
+                          bool         dof_is_dummy = false;
+                          bool         cell2_is_cut;
+                          unsigned int ib_particle_id_2;
+                          std::tie(cell2_is_cut,
+                                   ib_particle_id_2,
+                                   std::ignore) = cut_cells_map[stencil_cell];
+                          if (cell2_is_cut || point_in_cell)
                             {
-                              // The DOF is dummy
+                              dof_is_dummy = true;
+                            }
+
+                          if (dof_is_dummy || use_ib_for_pressure ||
+                              particle_close_to_wall)
+                            {
+                              // Give the DOF an approximated value. This help
+                              // with pressure shock when the DOF passes from
+                              // part of the boundary to the fluid.
+
                               this->system_matrix.add(global_index_overwrite,
                                                       global_index_overwrite,
                                                       sum_line);
-                              auto &system_rhs = this->system_rhs;
-                              system_rhs(global_index_overwrite) = 0;
+                              skip_stencil = true;
+
+                              // Tolerance to define an intersection of
+                              // the DOF and IB
+                              if (abs(particles[ib_particle_id].get_levelset(
+                                    support_points[local_dof_indices[i]],
+                                    cell_cut)) <= 1e-12 * dr)
+                                {
+                                  dof_on_ib = true;
+                                }
+                            }
+                          // Define the variable used for the
+                          // extrapolation of the actual solution at the
+                          // boundaries in order to define the correction
+
+                          // Define the unit cell_cut points for the points
+                          // used in the stencil.
+                          std::vector<Point<dim>>
+                            unite_cell_interpolation_points(ib_coef.size());
+                          unite_cell_interpolation_points[0] =
+                            this->mapping->transform_real_to_unit_cell(
+                              stencil_cell, point);
+                          for (unsigned int j = 1; j < ib_coef.size(); ++j)
+                            {
+                              unite_cell_interpolation_points[j] =
+                                this->mapping->transform_real_to_unit_cell(
+                                  stencil_cell, interpolation_points[j - 1]);
+                            }
+
+                          std::vector<double> local_interp_sol(ib_coef.size());
+
+                          // Define the new matrix entry for this dof
+                          if (skip_stencil == false)
+                            {
+                              for (unsigned int j = 0;
+                                   j < local_dof_indices_2.size();
+                                   ++j)
+                                {
+                                  const unsigned int component_j =
+                                    this->fe->system_to_component_index(j)
+                                      .first;
+                                  if (component_j == component_i)
+                                    {
+                                      //  Define the solution at each point used
+                                      //  for the stencil and applied the
+                                      //  stencil for the specific DOF. For
+                                      //  stencils of order 4 or higher, the
+                                      //  stencil is defined through direct
+                                      //  extrapolation of the cell_cut. This
+                                      //  can only be done when using a
+                                      //  structured mesh as this required a
+                                      //  mapping of a point outside of a
+                                      //  cell_cut.
+
+                                      // Define the local matrix entries of this
+                                      // DOF based on its contribution of each
+                                      // of the points used in the stencil
+                                      // definition and the coefficient
+                                      // associated with this point. This loop
+                                      // defined the current solution at the
+                                      // boundary using the same stencil. This
+                                      // is needed to define the residual.
+                                      double local_matrix_entry = 0;
+                                      for (unsigned int k = 0;
+                                           k < ib_coef.size();
+                                           ++k)
+                                        {
+                                          local_matrix_entry +=
+                                            this->fe->shape_value(
+                                              j,
+                                              unite_cell_interpolation_points
+                                                [k]) *
+                                            ib_coef[k];
+                                          local_interp_sol[k] +=
+                                            this->fe->shape_value(
+                                              j,
+                                              unite_cell_interpolation_points
+                                                [k]) *
+                                            this->evaluation_point(
+                                              local_dof_indices_2[j]);
+                                        }
+                                      // update the matrix.
+                                      try
+                                        {
+                                          this->system_matrix.add(
+                                            global_index_overwrite,
+                                            local_dof_indices_2[j],
+                                            local_matrix_entry * sum_line);
+                                        }
+                                      catch (...)
+                                        {
+                                          //  If we are here, an error happens
+                                          //  when trying to fill the line in
+                                          //  the matrix.
+                                          // For example, this can occur if a
+                                          // particle is close to a wall and we
+                                          // are trying to impose the equation
+                                          // on a DOF that as a boundary
+                                          // condition applied to it. As such,
+                                          // we discard these errors.
+                                        }
+                                    }
+                                }
+                            }
+
+                          // Define the RHS of the equation.
+
+                          double rhs_add = 0;
+                          // Different boundary conditions depending
+                          // on the component index of the DOF and
+                          // the dimension.
+                          double v_ib = stencil.ib_velocity(
+                            particles[ib_particle_id],
+                            support_points[local_dof_indices[i]],
+                            component_i,
+                            cell_cut);
+
+                          //  If the pressure is imposed trough IB inside the
+                          //  particle we use an approximation of the pressure
+                          //  outside of the IB in this cell_cut.
+                          if (component_i == dim)
+                            {
+                              for (unsigned int k = 0;
+                                   k < local_dof_indices.size();
+                                   ++k)
+                                {
+                                  // Check if the dof is inside or outside of
+                                  // the particle.
+                                  bool dof_is_inside_p =
+                                    particles[ib_particle_id].get_levelset(
+                                      support_points[local_dof_indices[k]],
+                                      cell_cut) <= 0;
+                                  const unsigned int component_k =
+                                    this->fe->system_to_component_index(k)
+                                      .first;
+                                  if (component_k == dim &&
+                                      dof_is_inside_p == false)
+                                    {
+                                      v_ib = this->evaluation_point(
+                                        local_dof_indices[k]);
+                                      try
+                                        {
+                                          this->system_matrix.add(
+                                            global_index_overwrite,
+                                            local_dof_indices[k],
+                                            -1 * sum_line);
+                                        }
+                                      catch (...)
+                                        {
+                                          //  If we are here, an error happens
+                                          //  when trying to fill the line in
+                                          //  the matrix.
+                                          // For example, this can occur if a
+                                          // particle is close to a wall and we
+                                          // are trying to impose the equation
+                                          // on a DOF that as a boundary
+                                          // condition applied to it. As such,
+                                          // we discard these errors.
+                                        }
+                                      break;
+                                    }
+                                }
+                            }
+
+                          for (unsigned int k = 0; k < ib_coef.size(); ++k)
+                            {
+                              rhs_add +=
+                                -local_interp_sol[k] * ib_coef[k] * sum_line;
+                            }
+                          this->system_rhs(global_index_overwrite) =
+                            v_ib * sum_line + rhs_add;
+
+                          if (dof_on_ib)
+                            // Dof is on the immersed boundary
+                            this->system_rhs(global_index_overwrite) =
+                              v_ib * sum_line -
+                              this->evaluation_point(global_index_overwrite) *
+                                sum_line;
+
+                          if (skip_stencil && dof_on_ib == false)
+                            // Impose the value of the dummy dof. This help
+                            // with pressure variation when the IB is
+                            // moving.
+                            this->system_rhs(global_index_overwrite) =
+                              sum_line * v_ib -
+                              this->evaluation_point(global_index_overwrite) *
+                                sum_line;
+                        }
+
+
+                      if (component_i == dim &&
+                          this->locally_owned_dofs.is_element(
+                            global_index_overwrite))
+                        {
+                          // Applied equation on dof that have no equation
+                          // defined for them. those DOF become Dummy dof. This
+                          // is usefull for high order cells or when a dof is
+                          // only element of cells that are cut.
+                          unsigned int global_index_overwrite =
+                            local_dof_indices[i];
+                          bool dummy_dof = true;
+
+                          // To check if the pressure dof is a dummy. first
+                          // check if the matrix entry is close to 0.
+                          if (abs(this->system_matrix.el(
+                                global_index_overwrite,
+                                global_index_overwrite)) <= 1e-16 * dr)
+                            {
+                              // If the matrix entry on the diagonal of this DOF
+                              // is close to zero, check if all the cells close
+                              // are cut. If it's the case, the DOF is a dummy
+                              // DOF.
+                              active_neighbors_set =
+                                LetheGridTools::find_cells_around_cell<dim>(
+                                  vertices_to_cell, cell_cut);
+                              for (unsigned int m = 0;
+                                   m < active_neighbors_set.size();
+                                   m++)
+                                {
+                                  const auto &neighbor_cell =
+                                    active_neighbors_set[m];
+                                  neighbor_cell->get_dof_indices(
+                                    local_dof_indices_3);
+                                  for (unsigned int o = 0;
+                                       o < local_dof_indices_3.size();
+                                       ++o)
+                                    {
+                                      if (global_index_overwrite ==
+                                          local_dof_indices_3[o])
+                                        {
+                                          // neighbor_cell contain the same dof
+                                          // check if this cell_cut is cut if
+                                          // it's not cut this dof must not
+                                          // be overwritten
+                                          bool cell_is_cut;
+                                          std::tie(cell_is_cut,
+                                                   std::ignore,
+                                                   std::ignore) =
+                                            cut_cells_map[neighbor_cell];
+
+
+                                          if (cell_is_cut == false)
+                                            {
+                                              dummy_dof = false;
+                                              break;
+                                            }
+                                        }
+                                    }
+                                  if (dummy_dof == false)
+                                    break;
+                                }
+
+                              if (dummy_dof)
+                                {
+                                  // The DOF is dummy
+                                  this->system_matrix.add(
+                                    global_index_overwrite,
+                                    global_index_overwrite,
+                                    sum_line);
+                                  auto &system_rhs = this->system_rhs;
+                                  system_rhs(global_index_overwrite) = 0;
+                                }
                             }
                         }
                     }
@@ -3814,6 +3932,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   define_particles();
   this->setup_dofs();
   this->box_refine_mesh();
+
   update_precalculations_for_ib();
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
@@ -3889,7 +4008,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-
+          update_precalculations_for_ib();
           if (all_spheres)
             optimized_generate_cut_cells_map();
           else
@@ -3915,7 +4034,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
             optimized_generate_cut_cells_map();
           else
             generate_cut_cells_map();
-
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,
