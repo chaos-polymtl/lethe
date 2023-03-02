@@ -27,9 +27,9 @@ This example simulates the sedimentation of a group of particles in a viscous fl
 DEM parameter file
 -------------------
 
-The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are descrichannel in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
+The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
 
-We introduce the different sections of the parameter file ``dem-packing-in-fluidized-channel.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted channel <../../../examples/unresolved-cfd-dem/gas-solid-spouted-channel/gas-solid-spouted-channel.html>`_. Therefore, we will not go over them in detail.
+We introduce the different sections of the parameter file ``dem-packing-in-fluidized-bed.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
 
 Mesh
 ~~~~~
@@ -271,8 +271,8 @@ The additional sections for the CFD-DEM simulations are the void fraction subsec
 Void fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
-We choose to use the quadrature centered method (QCM) to calculate the void fraction. This method does not require smoothing the void fraction as it is continuous in space and time. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
-For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since we want to keep the mass conservative properties of the  :math:`L^2` projection, we do not bound the void fraction and as such we set ``bound void fraction`` to ``false``.
+We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
+For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since we want to keep the mass conservative properties of the :math:`L^2` projection, we do not bound the void fraction and as such we set ``bound void fraction`` to ``false``. Unlike the other schemes, we do not smooth the void fraction as we usually do using the PCM and SPM void fraction schemes since QCM is continuous in time and space.
 
 .. code-block:: text
 
@@ -287,13 +287,13 @@ For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since
 CFD-DEM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We also enable grad-div stabilization in order to improve local mass conservation. The void fraction time derivative is disabled as the two phases have close densities and as such the time variation of the void fraction may lead to unstable simulations.
+We also enable grad-div stabilization in order to improve local mass conservation. If we were using PCM and SPM void fraction schemes, the void fraction time derivative should be disabled as the time variation of the void fraction will lead to unstable simulations. The source of such instability is the first term of the continuity equation :math:`\rho_f \frac{\partial \varepsilon_f}{\partial t}`, which is stiff and unstable for the slightest temporal discontinuity of the void fraction and as :math:`\Delta t \to 0`. However, as we are using the QCM void fraction scheme, this term can be enabled. Usually, this term is neglected, however; disabling this term affects the results as we are no longer solving for the actual `Volume Averaged Navier-Stokes equations <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_. Therefore, we should not neglect this term based on numerical reasoning without any physical explanation.
 
 .. code-block:: text
 
     subsection cfd-dem
       set grad div                      = true
-      set void fraction time derivative = false
+      set void fraction time derivative = true
       set drag force                    = true
       set buoyancy force                = true
       set shear force                   = true

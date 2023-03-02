@@ -97,7 +97,7 @@ end
 
 subsection cfd-dem
   set grad div                      = true
-  set void fraction time derivative = false
+  set void fraction time derivative = true
   set drag force                    = true
   set buoyancy force                = true
   set shear force                   = true
@@ -125,7 +125,6 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  subsection boundary conditions
     set number = 6
     subsection bc 0
       set id   = 0

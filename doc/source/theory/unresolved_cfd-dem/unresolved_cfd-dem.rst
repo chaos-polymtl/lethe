@@ -9,6 +9,7 @@ The micro-meso scale approach allows for particle-fluid simulations involving la
     :alt: Schematic represantion of micro-meso scale approach in unresolved CFD-DEM
     :align: center
     :name: geometry
+    :scale: 40
 
 In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard, Patience & Blais (2019) `[1] <https://doi.org/10.1002/cjce.23686>`_, and Zhou et al. (2010) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
@@ -105,12 +106,37 @@ Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B
 
 Void fraction
 --------------
-Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. In Lethe we apply the Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_, which is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle on the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
+Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
+
+.. math:: 
+    \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \varepsilon_{f,i} \right )
+
+where :math:`\varepsilon_{f,i}` is the void fraction calculated by PCM, :math:`\varphi_j` is the finite element shape function of the void fraction, and :math:`\varepsilon_{f,j}` the projected void fraction.
+
+Then, we assemble and solve the following:
+
+.. math::
+    \int_{\Omega} \varphi_i \varepsilon_{f,j} \varphi_j d \Omega = \int_{\Omega} \varepsilon_{f,i} \varphi_i d \Omega
+
+
+Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time such as the PCM and SPM. To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation:
+
+.. math::
+    \iint_\Omega L^2 \nabla \varphi_i \nabla \varphi_j d\Omega
+
+where :math:`L` is the smoothing length, used as parameter in Lethe unresolved CFD-DEM simulations. In Lethe, three void fraction schemes are currently supported. They are the particle centroid method, the satellite point method, and the quadrature centered method.
+
+
+The Particle Centroid Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_ is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
 .. image:: images/void_frac1.png
+   :width: 49% 
 .. image:: images/void_frac2.png
+   :width: 49%
 
-PCM can be written as:
+This results in the PCM being discontinuous in space and time. The void fraction in a cell using PCM can be written as:
 
 .. math:: 
     \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{V_\Omega}
@@ -120,26 +146,43 @@ where :math:`n_p` is the number of particles with centroid inside the cell :math
 .. warning::
     The void fraction of a single cell must always be close to the actual porosity of the media, regardless of the method applied on its calculation. If the cells are too small, the void fraction will be excessively low in some cells and excessively high in others. This leads to miscalculation of quantities highly dependent of the void fraction, such as the drag force. According to the literature, **cells should be at least 3 to 4 times larger than particles**. 
 
-In the finite element method, the void fraction must be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
+
+The Satellite Point Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+This method divides each particle into pseudo-particles where the sum of the volume of all pseudo-particles in a single particle is equal to the volume of the particle. Then, each pseudo-particle is treated similarly to the PCM, that is, the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within. 
+
+.. image:: images/spm.png
+   :width: 49% 
+   :align: center
+   
+The void fraction in a cell using SPM can be written as: 
 
 .. math:: 
-    \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \phi_j - \varepsilon_{f,i} \right )
+    \varepsilon_f = 1 - \frac{\sum_{i}^{n_p}\sum_{i}^{n_{sp}} V_{sp,j}}{V_\Omega}
 
-where :math:`\varepsilon_{f,i}` is the void fraction calculated by PCM and :math:`\varepsilon_{f,j}` the projected void fraction.
+where :math:`n_{sp}` is the number of pseudo-particles j belonging to particle i with centroid inside the cell :math:`\Omega` with volume :math:`V_{\Omega}` and :math:`V_{sp}` is the volume of the satellite point. The satellite point method suffers from the same limitations as the PCM. However, it is slightly less discontinuous due to the refined nature of the particles.
 
-Then, we assemble and solve the following:
+The Quadrature Centered Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+It is an analytical method that decouples the averaging volume from the mesh cells. It constructs an averaging sphere centered at each quadrature point in a given cell, and it calculates the void fraction directly in the averaging volume at the quadrature point. Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step. The advantage of this method is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous, especially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable, when there exist even small discontinuities in the void fraction, and where it explodes when :math:`\Delta t_{CFD} \to 0`. 
 
-.. math::
-    \int_{\Omega} \varphi_i \varepsilon_{f,j} \varphi_j d \Omega = \int_{\Omega} \varepsilon_{f,i} \varphi_i d \Omega
+An averaging volume sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value of this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
 
+.. image:: images/qcm.png
+   :width: 49% 
+   :align: center
 
-Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. To do so, the left hand side of the previous equation is substituted by:
+The void fraction at the quadrature point using QCM can be written as:
 
-.. math::
-    \iint_\Omega L^2 \nabla \phi_i \nabla \phi_j d\Omega
+.. math:: 
+    \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V^N_{p,i}}{V^N_{sphere}}
+    
+where :math:`V^N_{sphere}` is the normalized volume of the volume averaging spheres and :math:`V^N_{p,i}` is the normalized volume of the particle. In order not to miss any particle in the current cell and to avoid exceeding neighboring cells, the volume of the averaging spheres is defined through the user specified sphere radius (:math:`R_s`) and should respect the following condition:
 
-Where :math:`L` is the smoothing length, used as parameter in Lethe unresolved CFD-DEM simulations.
-
+.. math:: 
+    \frac{h_{\Omega}}{2} \leq R_s \leq h_{\Omega}
+    
+    
 Reference
 -----------
 `[1] <https://doi.org/10.1002/cjce.23686>`_ Bérard, Patience, and Blais. Experimental methods in chemical engineering: Unresolved CFD‐DEM. The Canadian Journal of Chemical Engineering, v. 98, n. 2, p. 424-440, 2020.
