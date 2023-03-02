@@ -1,3 +1,5 @@
+// Structured 2D cylinder in rectangular domain
+
 // Define a variable
 L=32;
 H=16;
