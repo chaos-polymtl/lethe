@@ -19,6 +19,10 @@ import sys
 # Main
 #--------------------------------------------
 
+#To make it work, type "python3 rayleigh-taylor_postprocess.py ./output/adaptive/" or
+#"python3 rayleigh-taylor_postprocess.py ./output/constant /" into the terminal.
+
+
 #Load reference data from He et al (1999)
 ref_data_file = "ref_He_et_al_data.txt"
 ref_data = np.loadtxt(ref_data_file,skiprows=1)
@@ -37,6 +41,7 @@ phase_limit = 0.5
 output_path = sys.argv[1]
 
 
+
 #Define list of VTU files
 list_vtu = os.listdir(output_path)
 list_vtu = [x for x in list_vtu if ("vtu" in x and "pvtu" not in x)]
@@ -46,9 +51,9 @@ list_vtu = sorted(list_vtu)
 
 # Read the pvd file to extract the times
 if "constant" in list_vtu[0]:
-    reader = pv.get_reader("output/rayleigh-taylor-constant-sharpening.pvd")
+    reader = pv.get_reader("output/constant/rayleigh-taylor-constant-sharpening.pvd")
 else:
-    reader = pv.get_reader("output/rayleigh-taylor-adaptive-sharpening.pvd")
+    reader = pv.get_reader("output/adaptive/rayleigh-taylor-adaptive-sharpening.pvd")
 
 # Get active times
 time_list = reader.time_values
@@ -112,3 +117,52 @@ ax0.set_ylim([0.1, 0.8])
 ax0.legend(loc="upper left")
 fig0.savefig(f'./spike_and_bubble_evolution.png')
 plt.show()
+
+
+#Plot the mass of fluid along the simulation
+
+#Functions to turn .dat data in numpy array
+def is_number(s):
+    try:
+        float(s)
+    except ValueError:
+        return False
+    return True
+def read_my_data(results_path):
+    force_file = open(results_path, 'r')
+    list_of_list_of_vars_name = [[]];
+    list_of_list_of_vars = [[]];
+    fix_vars_name = False
+
+    nb_set_of_vars = 0;
+    for line in force_file.readlines():
+        i = 0;
+        for word in line.split():
+            if is_number(word):
+                fix_vars_name = True
+                list_of_list_of_vars[nb_set_of_vars][i] = np.append(list_of_list_of_vars[nb_set_of_vars][i],
+                                                                    float(word))
+                i += 1
+            else:
+                if word != 'particle':
+                    if fix_vars_name:
+                        nb_set_of_vars += 1
+                        list_of_list_of_vars_name.append([])
+                        list_of_list_of_vars.append([])
+                        fix_vars_name = False
+                    list_of_list_of_vars_name[nb_set_of_vars].append(word)
+                    list_of_list_of_vars[nb_set_of_vars].append(np.array([]))
+                    # locals() [word]=np.array([])
+    return list_of_list_of_vars_name, list_of_list_of_vars
+
+list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "VOF_monitoring_fluid_1.dat")
+
+
+plt.plot(list_of_list_of_vars[0][0],list_of_list_of_vars[0][2])
+plt.title("Evolution of the mass of fluid 1 with {} interface sharpening".format(output_path[9:-1]))
+plt.xlabel("Time (s)")
+plt.ylabel("Mass of fluid 1 (kg)")
+plt.ylim(37.4,37.6)
+plt.show()
+
+

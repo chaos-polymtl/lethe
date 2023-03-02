@@ -11,7 +11,7 @@ subsection simulation control
   set adapt          = true
   set max cfl        = 0.9
   set output name    = rayleigh-taylor-constant-sharpening
-  set output path    = ./output/
+  set output path    = ./output/constant/
   set output control = time
   set output time    = 0.005
 end
@@ -37,6 +37,12 @@ subsection initial conditions
 
   subsection VOF
     set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
+    
+    subsection projection step
+      set enable           = true
+      set diffusion factor = 1
+    end
+    
   end
 end
 
@@ -107,8 +113,14 @@ subsection VOF
   subsection mass conservation
     set monitoring      = true
     set monitored fluid = fluid 1
-    set tolerance       = 1e-6
-    set verbosity       = quiet
+    set tolerance       = 1e-2
+    set verbosity       = extra verbose
+  end
+
+  subsection phase filtration
+    set type  = tanh
+    set verbosity = verbose
+    set beta = 10
   end
 end
 
