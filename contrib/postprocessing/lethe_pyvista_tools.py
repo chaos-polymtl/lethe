@@ -581,9 +581,10 @@ class lethe_pyvista_tools():
 
         If library sklearn is missing, the method will not work.
         To install sklearn, run the following line in your terminal:
-        $ pip install sklearn
+        $ pip install scikit-learn
         or
-        $ pip3 install sklearn        
+        $ pip3 install scikit-learn
+        At the moment of the implementation, sklearn version was: 1.2.1
         '''
 
         # Import KDTree library
@@ -616,8 +617,8 @@ class lethe_pyvista_tools():
 
     def mixing_index_nearest_neighbors(self, n_neighbors = 15, reference_array = "particle_color", mixing_index_array_name = "mixing_index"):
         '''
-        Calculates mixing index per time-step using the method by 
-        Godlieb et al. (2007)
+        Calculates mixing index per time-step using the Nearest
+        Neighbors Method (NNM) by Godlieb et al. (2007).
         # Godlieb, W., N. G. Deen, and J. A. M. Kuipers. "Characterizing solids 
         mixing in DEM simulations." cell 1 (2007).
 
@@ -647,7 +648,7 @@ class lethe_pyvista_tools():
         softwares, such as ParaView. Check the write_vtu method of this module.
         '''
 
-        # Apply method by Godlieb et al. (2007)
+        # Apply NNM by Godlieb et al. (2007)
         # Godlieb, W., N. G. Deen, and J. A. M. Kuipers.
         # "Characterizing solids mixing in DEM simulations." cell 1 (2007).
 
@@ -666,10 +667,10 @@ class lethe_pyvista_tools():
             # Find particles with different values for the reference array per 
             # particle
             list_neighbor_reference_array = self.df[i][reference_array][self.df[i].neighbors]
-            n_different_per_particle = np.sum(np.not_equal(self.df[i][reference_array][:, None], list_neighbor_reference_array), axis = 1)
+            n_equal_neighbors_per_particle = np.sum(np.equal(self.df[i][reference_array][:, None], list_neighbor_reference_array), axis = 1)
 
             # Calculate mixing index per particle
-            mixing_index_per_particle = np.multiply(n_different_per_particle, 2/n_neighbors)
+            mixing_index_per_particle = 2*(1-(1/n_neighbors) * n_equal_neighbors_per_particle)
 
             # Create array of mixing index per particle
             self.df[i][mixing_index_array_name] = mixing_index_per_particle
@@ -683,7 +684,7 @@ class lethe_pyvista_tools():
 
     def mixing_index_doucet(self, reference_time_step = 0, use_cyl = False, increasing_index = False, normalize = True):
         '''
-        Calculates mixing index per time-step using the method by 
+        Calculates mixing index per time-step using the method by
         Doucet et al. (2008).
         J. Doucet, F. Bertrand, J. Chaouki. "A measure of mixing from 
         Lagrangian tracking and its application to granular and fluid flow 
@@ -700,12 +701,12 @@ class lethe_pyvista_tools():
         (check get_cylindrical_coords method). Otherwise cartesian .points are 
         used.
 
-        increasing index = False    -> Choose whether the mixing index is 
+        increasing_index = False    -> Choose whether the mixing index is
         increasing or decreasing with mixing. Doucet et al. (2008) uses a 
         decreasing mixing index, however, most mixing indices increase with 
         mixing.
 
-        increasing index = False    -> Choose whether the mixing index is 
+        normalize = False           -> Choose whether the mixing index is
         normalized according to the mixing index of the reference_time_step.
 
         This method assigns the following attributes to the object:

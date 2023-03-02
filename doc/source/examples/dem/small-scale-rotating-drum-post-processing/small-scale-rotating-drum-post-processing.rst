@@ -6,13 +6,16 @@ Small scale rotating drum post-processing
 This is an example of how to post-process results obtained in the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_. 
 
 .. important::
+  
   This example uses the DEM files of the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
 
 .. warning::
-  For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, and `tqdm <https://tqdm.github.io/>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal.
+  
+  For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `tqdm <https://tqdm.github.io/>`_, `matplotlib <https://matplotlib.org/stable/index.html>`_, and `SciPy <https://scipy.org/>`_, and `scikit-learn <https://scikit-learn.org/stable/index.html>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal.
 
 Features
 ----------------------------------
+
 - DEM simulation
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
@@ -26,11 +29,12 @@ Files used in this example
 - Python script using module for rotating drum post-processing: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
 
 
-
 Description of the case
 -----------------------
 
-In this example, we illustrate the mixing inside a rotating drum by coloring the particles according to their radial position right after their full packing. To do so, we post-process Lethe-DEM data using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_
+In this example, we illustrate the mixing inside a rotating drum by coloring the particles according to their radial position right after their full packing. To do so, we post-process Lethe-DEM data using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
+
+Additionally, we calculate the mixing index using the Nearest Neighbors Method (NNM) [`1 <https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf>`_] and Doucet method [`2 <https://www.sciencedirect.com/science/article/abs/pii/S0263876208002724>`_, `3 <https://doi.org/10.1016/j.cherd.2016.12.018>`_].
 
 The DEM files used in this example are obtained following the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_.
 
@@ -54,14 +58,17 @@ First of all, we import the module to our Python script. There are two ways to d
   path_to_module = '../../../contrib/postprocessing/'
   sys.path.append(path_to_module)
   from lethe_pyvista_tools import *
+  import matplotlib.pyplot as plt
 
-where `sys.path <https://docs.python.org/3/library/sys.html#sys.path:~:text=in%20version%203.10.-,sys.path%C2%B6,-A%20list%20of>`_ is a list of strings that specifies the search path for modules. However, one can simply copy the `lethe_pyvista_tools.py <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ file to the same folder as the Python post-processing script is and simply import it, such as:
+where `sys.path <https://docs.python.org/3/library/sys.html#sys.path:~:text=in%20version%203.10.-,sys.path%C2%B6,-A%20list%20of>`_ is a list of strings that specifies the search path for modules. However, one can simply copy the `lethe_pyvista_tools.py <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ file to the same folder as the Python post-processing script is and import it, such as:
  
 .. code-block::
 
   from lethe_pyvista_tools import *
 
-The ``*`` means that we want to import all members of lethe_pyvista_tools. 
+One third and very convenient way to always import the module without copying it or even adding the ``sys.path.append(path_to_module)`` is permanentely adding the path to the module (``/contrib/postprocessing/``) to your `PYTHONPATH <https://docs.python.org/3/library/sys_path_init.html#:~:text=The%20PYTHONPATH%20environment%20variable%20is,all%20installed%20Python%20versions%2Fenvironments.>`_.
+
+The ``*`` means that we want to import all members of lethe_pyvista_tools.
 
 Constructing the object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,6 +146,7 @@ This time, we set ``restart_array = False`` to guarantee it is not going to affe
   If we applied the second condition first, since conditions would overlap, intead of 3 layers of particles we would have only two.
 
 
+
 Visualizing the results
 -------------------------
 
@@ -166,9 +174,9 @@ Now that particles are created, we can visualize them:
 
 .. code-block::
   
-  plt = pv.Plotter()
-  plt.add_mesh(particle_glyph, scalars = "particle_color")
-  plt.show()
+  plotter = pv.Plotter()
+  plotter.add_mesh(particle_glyph, scalars = "particle_color")
+  plotter.show()
 
 This will open one iteractive window such as this one:
 
@@ -201,6 +209,99 @@ This will save all data in the output folder of the simulation. All files will h
     :alt: ParaView zoom in
     :align: center
 
+
+Mixing index
+-------------
+
+We used two methods to calculate the mixing index of the rotating drum:
+
+- Nearest Neighbors Method (NNM) [`1 <https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf>`_].
+
+- Doucet method [`2 <https://www.sciencedirect.com/science/article/abs/pii/S0263876208002724>`_, `3 <https://doi.org/10.1016/j.cherd.2016.12.018>`_].
+
+Nearest Neighbors Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+One example of application of the ``modify_array`` method is on the calculation of the mixing index using the Nearest Neighbors Method (NNM) [`1 <https://www.researchgate.net/profile/Niels-Deen/publication/228722534_Characterizing_solids_mixing_in_DEM_simulations/links/00b495289f429c5b39000000/Characterizing-solids-mixing-in-DEM-simulations.pdf>`_]. To do so, we first need to split the domain in half. Since we are interested on working with the radial mixing, first we need to calculate the cylindric coordinates of each particle:
+
+.. code-block::
+
+  particles.get_cylindrical_coords(radial_components = "yz")
+
+Given the radial components, this method assigns ``.points_cyl`` to the object ``particles``. The coordinates :math:`[0, 1, 2]` are :math:`[r, \theta, Z]`, respectively
+
+To help us finding where to split the domain, we will also find the radial coordinate of the center of mass of the particles at ``reference_time_step = 40``:abbreviation:
+
+.. code-block::
+
+  r_center_mass = np.mean(particles.df[40].points_cyl[:, 0])
+
+Now we can split the domain:
+
+.. code-block::
+
+  condition = f"(y**2 + z**2)**(1/2) > {r_center_mass}"
+  particles.modify_array(array_name = "particle_color", condition = condition, array_values = 1, restart_array = True, reference_time_step = 40)
+
+.. note:: 
+  
+  We need to set ``restart_array = True`` since we are doing a new split on the particles using the same ``array_name = 'particle_color'``.
+
+The following method is used to find the ``15`` nearest neighbors of each particle:
+
+.. code-block::
+
+  particles.get_nearest_neighbors(return_id = True, n_neighbors = 15)
+
+To get the indice and the position of the nearest neighbor (`0`) of particle `2` at the 5th time-step, the following can be used:
+
+.. code-block::
+
+  neighbor_indice = particles.df[5].neighbors[2][0]
+  print(particles.df[5].points[neighbor_indice])
+
+It is also possible to print the neighbor's `ID` and its distance to particle `2`:abbreviation:
+
+.. code-block::
+
+  print(particles.df[5].neighbors_id[2][0])
+  print(particles.df[5].neighbors_dist[2][0])
+
+
+All set, now we can calculate the mixing index using NNM and store it in `particles.mixing_index_nnm`:
+
+.. code-block::
+
+  particles.mixing_index_nearest_neighbors(reference_array = "particle_color", n_neighbors = 15, mixing_index_array_name = "mixing_index_NNM")
+  particles.mixing_index_nnm = particles.mixing_index
+
+
+This method calculates the mixing index for each particles and stores it in an array named according to the parameter `mixing_index_array_name`. This array can be used for vizualization:
+
+.. code-block::
+
+  particles.write_vtu(prefix = "mix_")
+
+The same way as before, ``vtu`` and ``pvd`` will be stored with prefix ``"mix_"`` in the output folder of the simulation.
+
+.. image:: images/paraview_window_zoom_nnm.png
+    :alt: ParaView zoom in NNM
+    :align: center
+
+
+Doucet mixing index
+~~~~~~~~~~~~~~~~~~~~
+
+Similar to NNM, we are interested in the mixing index results using cylindrical coordinates. Calculating the Doucet mixing index is as simple as running:
+
+.. code-block::
+  
+  particles.mixing_index_doucet(reference_time_step = 40, use_cyl = True, increasing_index = True, normalize = True)
+  particles.mixing_index_doucet = particles.mixing_index
+
+Usually, Doucet mixing index decreases with mixing, but for comparison with NNM purposes we do ``increasing_index = True``. Doucet method does not need any sort of splitting of particles, so it is not necessary to split them previous to using this method.
+
+
 Results
 ---------
 
@@ -212,13 +313,36 @@ Following we present one video of the full simulation with particles colored by 
 
 The simulation results show that the layers in red and green, that is, particles close to the walls, tend to mix faster than the ones in the center.
 
+The poor mixing of the particles is confirmed with NNM and Doucet mixing indices. To plot both indices as a function of time:
+
+.. code-block::
+  
+  plt.plot(particles.time_list[40:], particles.mixing_index_nnm[40:], '-b', label = "Generalized NNM")
+  plt.plot(particles.time_list[40:], particles.mixing_index_doucet[40:], '--k', label = "Doucet")
+  plt.plot(particles.time_list[40:], np.repeat(1, len(particles.time_list[40:])), ':r')
+  plt.xlabel("Time [s]")
+  plt.ylabel("Mixing index [-]")
+  plt.xlim(particles.time_list[40], particles.time_list[-1])
+  plt.ylim(0, 1.1)
+  plt.legend()
+  plt.savefig("./mixing_index.png")
+  plt.close()
+
+For ``set rotational speed    = 2``, the following is observed:
+
+.. image:: images/mixing_indices_comparison.png
+    :alt: ParaView zoom in NNM
+    :align: center
+
+As shown, neither of the mixing indices point to a full mixing of the particles, even at higher simulation times. NNM is always above Doucet, indicating that the main mixing component must not be the radius. Higher rotating velocities can improve results.
+
 Possibilities for extension
 ----------------------------
 
 - Give a different ``condition`` to create the ``particle_color`` array
 - Use the ``lethe_pyvista_tools`` for a different problem, modifying the ``condition`` accordingly
 - Use the tools in the `PyVista official repository <https://docs.pyvista.org>`_ to create screenshots, movies, and plots with the data.
-- Change the rotation velocity and track the mixing of the three layers of particles
+- Change the rotation velocity and track the mixing indices.
 
 
  

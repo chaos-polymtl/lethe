@@ -9,6 +9,7 @@ sys.path.append(path_to_module)
 
 # Import tools from module
 from lethe_pyvista_tools import *
+import matplotlib.pyplot as plt
 
 
 # Create object named "particles"
@@ -42,14 +43,78 @@ particles.modify_array(array_name = "particle_color", condition = condition, arr
 sphere = pv.Sphere(theta_resolution=50, phi_resolution=50)
 
 # Use sphere as basis to create sheric representation of particles
-particle_glyph = particles.df[0].glyph(scale='Diameter', geom=sphere)
+particle_glyph = particles.df[40].glyph(scale='Diameter', geom=sphere)
 
 # Create a plotter object
-plt = pv.Plotter()
+plotter = pv.Plotter()
 # Add particles to object and color them by particle_color array
-plt.add_mesh(particle_glyph, scalars = "particle_color")
+plotter.add_mesh(particle_glyph, scalars = "particle_color")
 # Open plot window
-plt.show()
+plotter.show()
 
 # Save results to be able to open them on ParaView
 particles.write_vtu(prefix = "mod_")
+
+
+# MIXING INDEX:
+
+# To measure the mixing index using the nearest neighbors technique by
+# Godlieb et al. (2007), the domain must be split in half. Thus:
+
+# Find center of mass radial position
+# To do so, first we will need the cylindric coods of each particle
+# Note that the radial components of our cylinder are y and z.
+particles.get_cylindrical_coords(radial_components = "yz")
+
+# Since all particles are of the same size (radius = coord 0)
+r_center_mass = np.mean(particles.df[40].points_cyl[:, 0])
+
+# Split domain in half (restarting array)
+condition = f"(y**2 + z**2)**(1/2) > {r_center_mass}"
+particles.modify_array(array_name = "particle_color", condition = condition, array_values = 1, restart_array = True, reference_time_step = 40)
+
+# Get list of nearest neighbors of each particle
+particles.get_nearest_neighbors(return_id = True, n_neighbors = 15)
+
+# Print position of nearest neighbors:
+print(f"\nPosition of nearest neighbor of particle 2 at time-step 5 = {particles.df[5].points[particles.df[5].neighbors[2][0]]}\n")
+
+# Calculate mixing index using nearest neighbors technique by
+# Godlieb et al. (2007)
+particles.mixing_index_nearest_neighbors(reference_array = "particle_color", n_neighbors = 15, mixing_index_array_name = "mixing_index_NNM")
+
+# Store mixing index in a variable to compare with Doucet et al. (2008)
+particles.mixing_index_nnm = particles.mixing_index
+
+# Write data again to see the NNM mixing index on ParaView
+particles.write_vtu(prefix = "mix_")
+
+# Calculate mixing index using Doucet et al. (2008)
+
+# Since the problem is cylindrical, we will set use_cyl = True
+# Also, since Doucet does not use the color of particles, we need
+# to set reference_time_step = 40
+# Additionally, by default, Doucet mixing index decreases with mixing,
+# but, to compare with NNM, we need to use and increasing index.
+# Finally, to avoid values above 1, we normalize it using the mixing index
+# of the 40th time-step seting normalize = True. 
+particles.mixing_index_doucet(reference_time_step = 40, use_cyl = True, increasing_index = True, normalize = True)
+
+# Store the second index:
+particles.mixing_index_doucet = particles.mixing_index
+
+# Save plot with mixing index as a function of time
+# Note that the mixing index will only make sense for
+# a time-steps greater than the one colored.
+# In this case, we will plot only from the 40th time-step on.
+plt.plot(particles.time_list[40:], particles.mixing_index_nnm[40:], '-b', label = "NNM")
+plt.plot(particles.time_list[40:], particles.mixing_index_doucet[40:], '--k', label = "Doucet")
+plt.plot(particles.time_list[40:], np.repeat(1, len(particles.time_list[40:])), ':r')
+plt.xlabel("Time [s]")
+plt.ylabel("Mixing index [-]")
+plt.xlim(particles.time_list[40], particles.time_list[-1])
+plt.ylim(0, 1.1)
+plt.legend()
+plt.savefig("./mixing_index.png")
+plt.close()
+

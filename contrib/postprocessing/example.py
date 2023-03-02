@@ -60,7 +60,7 @@ print(example.df[0].array_names)
 example.sort_by_array("ID")
 
 # It is also possible to modify or create new arrays using
-example.array_modifier()
+example.modify_array()
 # The arguments (and their default values) are:
 
 # reference_array_name = "ID"        -> array to be used as reference to
