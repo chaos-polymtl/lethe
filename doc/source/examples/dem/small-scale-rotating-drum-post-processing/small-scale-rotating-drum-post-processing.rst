@@ -230,7 +230,7 @@ One example of application of the ``modify_array`` method is on the calculation 
 
 Given the radial components, this method assigns ``.points_cyl`` to the object ``particles``. The coordinates :math:`[0, 1, 2]` are :math:`[r, \theta, Z]`, respectively
 
-To help us finding where to split the domain, we will also find the radial coordinate of the center of mass of the particles at ``reference_time_step = 40``:abbreviation:
+To help us finding where to split the domain, we will also find the radial coordinate of the center of mass of the particles at ``reference_time_step = 40``:
 
 .. code-block::
 
@@ -328,7 +328,7 @@ The poor mixing of the particles is confirmed with NNM and Doucet mixing indices
   plt.savefig("./mixing_index.png")
   plt.close()
 
-For ``set rotational speed    = 2``, the following is observed:
+For ``set rotational speed = 2``, the following is observed:
 
 .. image:: images/mixing_indices_comparison.png
     :alt: ParaView zoom in NNM
