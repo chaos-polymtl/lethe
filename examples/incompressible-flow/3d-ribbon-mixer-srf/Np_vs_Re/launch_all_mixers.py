@@ -1,15 +1,17 @@
 import os
 
-# Read folder names
-with open('case_index.txt') as f:
-    mixers = f.readlines()
+PATH = os.getcwd()
 
-path = os.getcwd()
+# User input
+CASE_PREFIX = 'mixer_nu_'
+PRM_FILE = 'ribbon-gls.prm'
+SHELL_FILE = 'launch-mixer.sh'
 
-# Submit a new job for each case
-for mixer in mixers:
-    mixer = mixer.replace('\n','')
-    case_path = path + '/' + mixer
-    os.chdir(case_path)
-    os.system('sbatch -J ' + mixer + ' launch-mixer.sh')      # submit job and name it by its folder's name
-    os.system('cd ../')
+for root, directories, files in os.walk(PATH):
+
+    if CASE_PREFIX in root:
+
+        os.chdir(root)
+
+        case_name = root.split('/')[-1]
+        os.system(f'sbatch -J {case_name} {SHELL_FILE}')
