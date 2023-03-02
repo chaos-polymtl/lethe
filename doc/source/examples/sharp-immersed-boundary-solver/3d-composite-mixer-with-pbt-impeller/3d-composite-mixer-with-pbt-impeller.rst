@@ -102,7 +102,7 @@ The section defining each parameter for the particles has certains requirements:
 Boundary conditions
 -----------------------
 
-Because the particles defined for the sharp solver are not divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
+Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
 Two aspects need special consideration:
 
 1. ``function weak`` is a variation of ``function``. It is used to weakly imposed a Dirichlet boundary condition, and it is necessary when using ``gls_sharp_navier_stokes_3d``.
