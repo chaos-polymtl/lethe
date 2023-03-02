@@ -18,9 +18,7 @@ The main python scripts of this tutorial are:
 -------------------------------------
 Generate automatically multiple cases
 -------------------------------------
-Lets say that you are simulating a flow around a cylinder and you want to see how the inlet velocity impacts the force around the sphere.
-Lasy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file so the boundary condition 
-imposing the inlet velocity is different for each case.
+Lazy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file so the inlet velocity in the boundary condition is different for each case.
 
 You will need all these files from the :doc:`../../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder` example:
 

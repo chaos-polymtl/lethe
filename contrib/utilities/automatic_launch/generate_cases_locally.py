@@ -2,7 +2,7 @@
 Summary: Script to generate different cases (as folders) of the same problem 
 with one parameters being changed.
 
-This script generates multiples folders of the example of the flow around a sphere.
+This script generates multiples folders of the example of the flow around a cylinder.
 In each folder, we change the input velocity (u) in the parameter file in order to 
 have a different case of the same problem.
 """
