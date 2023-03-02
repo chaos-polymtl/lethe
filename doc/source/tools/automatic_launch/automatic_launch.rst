@@ -110,6 +110,14 @@ In this example, we will generate 20 cases of the flow around a cylinder, where 
 
 Now, the fun begins.
 
+First, we create a Jinja2 template.
+
+.. code-block:: python
+
+	templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
+	templateEnv = jinja2.Environment(loader=templateLoader)
+	template = templateEnv.get_template(PRM_FILE)
+
 For each velocity in the range specified above,
 
 .. code-block:: python
@@ -118,43 +126,23 @@ For each velocity in the range specified above,
 
 we will:
 
-1. Open the parameter file (with the ``{{}}`` variables) and read it.
+1. Render the template with the right value.
 
 .. code-block:: python
 
-	fic_prm = open(PRM_FILE, 'r')
-	read_prm = fic_prm.read()
-
-2. Create a Jinja2 ``Template``.
-   
-.. code-block:: python
-
-	template = Template(read_prm)
-
-4. Render the template with the right value and close the reading state of the parameter file.
-
-.. code-block:: python
-
-	parameters = template.render(velocity_x = u)
-
-	fic_prm.close()
+	parameters = template.render(velocity_x=u)
 
 .. warning::
 	In the render step, it is really important to use the same variable name as the template file.
 
 Then, we will need to copy in the ``case_path`` (the path of one case's folder) all the files we need for the simulation.
 
-1. Name the ``case_path``.
+2. Name the ``case_path`` and create it.
    
 .. code-block:: python
 
 	case_folder_name = f'{CASE_PREFIX}{u:.2f}'
 	case_path = f'{PATH}/{case_folder_name}'
-
-2. Create the ``case_path``.
-
-.. code-block:: python
-
 	os.mkdir(case_path)
 
 3. Copy the ``.prm`` file and the ``.msh`` file from the current ``PATH`` to the ``case_path``.
@@ -164,21 +152,12 @@ Then, we will need to copy in the ``case_path`` (the path of one case's folder) 
 	shutil.copy(f'{PATH}/{PRM_FILE}', f'{case_path}/{PRM_FILE}')
 	shutil.copy(f'{PATH}/{MESH_FILE}', f'{case_path}/{MESH_FILE}')
 
-1. Enter the ``case_path`` and write the parameter file with the rendered template.
+4. Write the parameter file of the case with the rendered template.
 
 .. code-block:: python
 
-	os.chdir(case_path)
-
-	write_prm = open(PRM_FILE, 'w')
-	write_prm.write(parameters)
-	write_prm.close()
-
-1. Never forget to step back from the directory, in order to create another template and another folder for the next case.
-
-.. code-block:: python
-
-	os.chdir('../')
+	with open(f'{case_path}/{PRM_FILE}', 'w') as f:
+		f.write(parameters)
 
 And voilà! The final current directory should look like this:
 
