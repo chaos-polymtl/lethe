@@ -129,7 +129,7 @@ where :math:`L` is the smoothing length, used as parameter in Lethe unresolved C
 
 The Particle Centroid Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_ is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle on the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
+The Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_ is simple and the most popular method. It consists of tracking the position of the centroid of each particle and applying the total volume of the particle to the calculation of the void fraction of the cell. This means that in either of the following situations the void fraction of the colored cell is the same:
 
 .. image:: images/void_frac1.png
    :width: 49% 
@@ -149,7 +149,7 @@ where :math:`n_p` is the number of particles with centroid inside the cell :math
 
 The Satellite Point Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-This method divides each particle into pseudo-particles where the sum of the volume of all pseudo-particles in a single particle is equal to the volume of the particle. Then, each pseudo-particle is treated similarly as the PCM, that is the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within. 
+This method divides each particle into pseudo-particles where the sum of the volume of all pseudo-particles in a single particle is equal to the volume of the particle. Then, each pseudo-particle is treated similarly to the PCM, that is, the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within. 
 
 .. image:: images/spm.png
    :width: 49% 
@@ -164,7 +164,7 @@ where :math:`n_{sp}` is the number of pseudo-particles j belonging to particle i
 
 The Quadrature Centered Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-It is an analytical method which decouples the averaging volume from the mesh cells. It constructs an averaging sphere centered at each quadrature point in a given cell, and it calculates the void fraction directly in the averaging volume at the quadrature point. Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step. The advantage of this method is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous specially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable when there exist even small discontinuities in the void fraction and where it explodes when :math:`\Delta t_{CFD} \to 0`. 
+It is an analytical method that decouples the averaging volume from the mesh cells. It constructs an averaging sphere centered at each quadrature point in a given cell, and it calculates the void fraction directly in the averaging volume at the quadrature point. Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step. The advantage of this method is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous, especially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable, when there exist even small discontinuities in the void fraction, and where it explodes when :math:`\Delta t_{CFD} \to 0`. 
 
 An averaging volume sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value of this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
 
