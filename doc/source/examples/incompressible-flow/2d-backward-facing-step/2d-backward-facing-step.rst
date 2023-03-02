@@ -13,8 +13,8 @@ Features
 Files used in this example
 ----------------------------
 
-- Base case (:math:`Re < 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds100-600``
-- Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds700-1000``
+- Base case (:math:`Re < 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds100-600.prm``
+- Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds700-1000.prm``
 
 
 Description of the case
@@ -262,7 +262,7 @@ For :math:`Re = 100` :
 
 .. image:: image/Reynolds100-zoom.png
 
-It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 17.9`). With the Python module Pyvista, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically. This can be calculated with the following equation. 
+It is possible to notice that there seems to be a lot of diffusion past the step. This phenomenon is coherent with what is known of the Navier-Stokes equations: the diffusivity term is inversely proportional to the Reynolds number. Most importantly, a small eddy adjacent to the step is clearly observable. It is also visually noticeable that :math:`x_r \simeq 2.9` (:math:`x \simeq 17.9`). With the Python module `PyVista <https://docs.pyvista.org/>`_, raw simulation data can be extracted (from the .vtu files) and this data can be used to compute :math:`x_r` numerically. This can be calculated with the following equation. 
 
 .. math::
 	\left[ \frac{du}{dy} \right]_{y=0} = 0
@@ -289,7 +289,7 @@ For :math:`Re = 1000` :
 
 .. image:: image/Reynolds1000-zoom.png
 
-On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python algorithm as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
+On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python code as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
 
 Validation and comparison
