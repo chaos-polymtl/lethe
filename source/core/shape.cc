@@ -655,8 +655,8 @@ OpenCascadeShape<dim>::set_position(const Point<dim> &position)
 
 template <int dim>
 double
-Rectangle<dim>::value(const Point<dim> &evaluation_point,
-                      const unsigned int /*component*/) const
+HyperRectangle<dim>::value(const Point<dim> &evaluation_point,
+                           const unsigned int /*component*/) const
 {
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
@@ -680,18 +680,18 @@ Rectangle<dim>::value(const Point<dim> &evaluation_point,
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
-Rectangle<dim>::static_copy() const
+HyperRectangle<dim>::static_copy() const
 {
   std::shared_ptr<Shape<dim>> copy =
-    std::make_shared<Rectangle<dim>>(this->half_lengths,
-                                     this->position,
-                                     this->orientation);
+    std::make_shared<HyperRectangle<dim>>(this->half_lengths,
+                                          this->position,
+                                          this->orientation);
   return copy;
 }
 
 template <int dim>
 double
-Rectangle<dim>::displaced_volume(const double /*fluid_density*/)
+HyperRectangle<dim>::displaced_volume(const double /*fluid_density*/)
 {
   double solid_volume = 1.0;
   for (unsigned int i = 0; i < dim; i++)
@@ -1308,10 +1308,10 @@ RBFShape<dim>::initialize_bounding_box()
       half_lengths[d] = 0.5 * (high_bounding_point[d] - low_bounding_point[d]);
     }
   bounding_box =
-    std::make_shared<Rectangle<dim>>(half_lengths,
-                                     this->reverse_align_and_center(
-                                       bounding_box_center),
-                                     this->orientation);
+    std::make_shared<HyperRectangle<dim>>(half_lengths,
+                                          this->reverse_align_and_center(
+                                            bounding_box_center),
+                                          this->orientation);
 }
 
 template <int dim>
@@ -1915,8 +1915,8 @@ CylindricalHelix<dim>::displaced_volume(const double /*fluid_density*/)
 
 template class Sphere<2>;
 template class Sphere<3>;
-template class Rectangle<2>;
-template class Rectangle<3>;
+template class HyperRectangle<2>;
+template class HyperRectangle<3>;
 template class Ellipsoid<2>;
 template class Ellipsoid<3>;
 template class Torus<3>;

@@ -69,7 +69,7 @@ public:
   enum ShapeType : int
   {
     sphere,
-    rectangle,
+    hyper_rectangle,
     ellipsoid,
     torus,
     cone,
@@ -379,18 +379,18 @@ private:
 };
 
 template <int dim>
-class Rectangle : public Shape<dim>
+class HyperRectangle : public Shape<dim>
 {
 public:
   /**
    * @brief Constructs a box with the given parameters
    * @param half_lengths The half lengths of each direction
-   * @param position The rectangle center
-   * @param orientation The rectangle orientation
+   * @param position The hyper rectangle center
+   * @param orientation The hyper rectangle orientation
    */
-  Rectangle<dim>(const Tensor<1, dim> &half_lengths,
-                 const Point<dim> &    position,
-                 const Tensor<1, 3> &  orientation)
+  HyperRectangle<dim>(const Tensor<1, dim> &half_lengths,
+                      const Point<dim> &    position,
+                      const Tensor<1, 3> &  orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
   {}
@@ -1167,10 +1167,10 @@ public:
    * A bounding box is constructed around the collection of nodes defining the
    * RBF. It solves an issue where the collection of nodes is located only
    * around the object itself, which would result in an undefined distance
-   * when the value is evaluated outside of all support radii. The rectangle
-   * shape doesn't have this limitation, as its distance can be evaluated
-   * anywhere. The distance computed by an RBF object will therefore use an
-   * approximated distance when the evaluation point is too far.
+   * when the value is evaluated outside of all support radii. The hyper
+   * rectangle shape doesn't have this limitation, as its distance can be
+   * evaluated anywhere. The distance computed by an RBF object will therefore
+   * use an approximated distance when the evaluation point is too far.
    *
    * @brief Initializes the bounding box around the nodes which enables distance
    * calculation even if the RBF nodes don't cover the whole domain
@@ -1578,9 +1578,9 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
-  size_t                          number_of_nodes;
-  std::shared_ptr<Rectangle<dim>> bounding_box;
-  std::vector<size_t>             iterable_nodes;
+  size_t                               number_of_nodes;
+  std::shared_ptr<HyperRectangle<dim>> bounding_box;
+  std::vector<size_t>                  iterable_nodes;
 
   std::map<const typename DoFHandler<dim>::cell_iterator,
            std::shared_ptr<std::vector<size_t>>>
