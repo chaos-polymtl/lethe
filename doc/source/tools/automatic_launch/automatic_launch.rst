@@ -5,6 +5,9 @@ How to automatically create and launch Lethe simulations
 .. seealso::
 	All files used in this example are available in the `lethe-utils github <https://github.com/lethe-cfd/lethe-utils/>`_ in the ``cases`` folder under ``automatic_launch``.
 
+.. seealso::
+	The example :doc:`../../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame` uses really similar automatic launch scripts.
+
 -------------------------------------
 Generate automatically multiple cases
 -------------------------------------
@@ -12,10 +15,11 @@ Lets say that you are simulating a flow around a cylinder and you want to see ho
 Lasy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file so the boundary condition 
 imposing the inlet velocity is different for each case.
 
-You will need all these files from the 2D flow around a cylinder:
+You will need all these files from the :doc:`../../examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder` example:
 
 - ``cylinder.prm``
 - ``cylinder-structured.geo``
+- ``cylinder-structured.msh``
 
 Here are the boundary conditions of the flow around the cylinder.
 
@@ -237,7 +241,7 @@ This last step allows to launch one batch script for each case.
 The ``launch_lethe.sh`` is the batch script that send the simulation to the cluster scheduler.
 
 .. note::
-	See the documentation about running Lethe on Digital Research Alliance of Canada clusters to make a proper batch script.
+	See the documentation about :doc:`../../installation/digital_alliance` to make a proper batch script.
 
 If you have multiple cases to launch on the cluster (let's say 100 thousand), it is not a good idea to launch a really heavy python script to the cluster.
 Otherwise, a crying baby panda will appear and hunt you.
