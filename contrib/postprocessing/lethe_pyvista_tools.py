@@ -196,7 +196,7 @@ class lethe_pyvista_tools():
 
         # Write modified PVD to match new VTU files
         with open(f'{self.path_output}/{self.pvd_name}') as pvd_in:
-            with open(f'{self.path_output}/mod_{self.pvd_name}', 'w') as pvd_out:
+            with open(f'{self.path_output}/{prefix}{self.pvd_name}', 'w') as pvd_out:
                 for line in pvd_in:
                     
                     # If line refers to a dataset
