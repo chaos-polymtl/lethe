@@ -56,9 +56,10 @@ Let go over each line:
 
 * ``shapes``: introduces the shapes section.
 * ``0; cylinder; 0.025:0.375; 0:0:0.125 ; 0:0:0``: defines a cylinder, with ID equal to 0. Its radius is 0.025 and its half-length 0.375. Its z position is 0.125 and its orientation is default (aligned with Z axis).
-* The next shapes are defined in a similar fashion, and are assigned IDs 1, 2, 3, 4, and 5.
+* ``1; hyper rectangle; 0.083333333:0.00625:0.0416666;0.08333333:0:-0.208333 ; 0.7853981:0:0``: defines a hyper rectangle, with ID equal to 1. Its has half-lengths of 0.083, 0.00625 and 0.0417 in X, Y and Z directions, respectively, in its own referential. Its center is at 0.083, 0 and -0.208 in the global referential and it is rotated by 0.787 radians around the X axis.
+* The next shapes are defined in a similar fashion, and are assigned IDs 2, 3, 4, and 5.
 * ``operations``: introduces the operations section.
-* ``6; union     ; 0:1``: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.
+* ``6; union; 0:1``: defines an intermediate shape that is the union of shapes 0 and 1, and assigns it the ID 6.
 * The next operations build iteratively on this intermediate shape.
 * The result of the last defined operation is considered as the final shape to be used for simulation, regardless of its ID number.
 
