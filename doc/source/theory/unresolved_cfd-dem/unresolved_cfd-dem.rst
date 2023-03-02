@@ -109,9 +109,9 @@ Void fraction
 Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
 
 .. math:: 
-    \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \phi_j - \varepsilon_{f,i} \right )
+    \min_{\varepsilon_f \in \mathbb{R}} \frac{1}{2} \sum_i \left (\sum_j \varepsilon_{f,j} \varphi_j - \varepsilon_{f,i} \right )
 
-where :math:`\varepsilon_{f,i}` is the void fraction calculated by PCM and :math:`\varepsilon_{f,j}` the projected void fraction.
+where :math:`\varepsilon_{f,i}` is the void fraction calculated by PCM, :math:`\varphi_j` is the finite element shape function of the void fraction, and :math:`\varepsilon_{f,j}` the projected void fraction.
 
 Then, we assemble and solve the following:
 
@@ -136,7 +136,7 @@ The Particle Centroid Method (PCM) `[5] <https://doi.org/10.1002/aic.14421>`_ is
 .. image:: images/void_frac2.png
    :width: 49%
 
-This results in the PCm being discontinuous in space and time. The void fraction in a cell using PCM can be written as:
+This results in the PCM being discontinuous in space and time. The void fraction in a cell using PCM can be written as:
 
 .. math:: 
     \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V_{p,i}}{V_\Omega}
@@ -149,7 +149,7 @@ where :math:`n_p` is the number of particles with centroid inside the cell :math
 
 The Satellite Point Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-This method divides each particle into pseudo-particles and then each pseudo-particle is treated similarly as the PCM, that is the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within. 
+This method divides each particle into pseudo-particles where the sum of the volume of all pseudo-particles in a single particle is equal to the volume of the particle. Then, each pseudo-particle is treated similarly as the PCM, that is the centroid of each pseudo-particle is tracked, and the entire volume of the pseudo-particle is considered in a given cell if its centroid lies within. 
 
 .. image:: images/spm.png
    :width: 49% 
@@ -172,12 +172,12 @@ An averaging volume sphere is constructed around each quadrature point. All part
    :width: 49% 
    :align: center
 
-The void fraction at the quadrature point using QCM can be writtena s:
+The void fraction at the quadrature point using QCM can be written as:
 
 .. math:: 
     \varepsilon_f = 1 - \frac{\sum_{i}^{n_p} V^N_{p,i}}{V^N_{sphere}}
     
-where :math:`V^N_{shere}` is the normalized volume of the volume averaging spheres and :math:`V^N_{p,i}` is the normalized volume of the particle. In order not to miss any particle in the current cell and to avoid exceeding neighboring cells, the volume of the averaging spheres defined thorugh the user specified sphere radius (:math:`R_s`) and should respect the following condition:
+where :math:`V^N_{sphere}` is the normalized volume of the volume averaging spheres and :math:`V^N_{p,i}` is the normalized volume of the particle. In order not to miss any particle in the current cell and to avoid exceeding neighboring cells, the volume of the averaging spheres is defined through the user specified sphere radius (:math:`R_s`) and should respect the following condition:
 
 .. math:: 
     \frac{h_{\Omega}}{2} \leq R_s \leq h_{\Omega}

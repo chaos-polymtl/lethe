@@ -29,7 +29,7 @@ DEM parameter file
 
 The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
 
-We introduce the different sections of the parameter file ``dem-packing-in-fluidized-channel.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
+We introduce the different sections of the parameter file ``dem-packing-in-fluidized-bed.prm`` needed to run this simulation. Most subsections are explained in detail in other CFD-DEM examples such as:  `Gas-solid spouted bed <../../../examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html>`_. Therefore, we will not go over them in detail.
 
 Mesh
 ~~~~~
@@ -271,7 +271,7 @@ The additional sections for the CFD-DEM simulations are the void fraction subsec
 Void fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
-We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. This method does not require smoothing the void fraction as it is continuous in space and time. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
+We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
 For this, we set the ``qcm sphere equal cell volume`` equals to ``false``. Since we want to keep the mass conservative properties of the  :math:`L^2` projection, we do not bound the void fraction and as such we set ``bound void fraction`` to ``false``. We don't smooth the void fraction as we usually do using the PCM and SPM void fraction schemes since QCM is continuous in time and space unlike the other schemes.
 
 .. code-block:: text
