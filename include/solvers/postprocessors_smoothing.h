@@ -2,8 +2,6 @@
 #ifndef lethe_post_processors_smoothing_h
 #define lethe_post_processors_smoothing_h
 
-// DEALII INCLUDES
-
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -81,8 +79,8 @@ public:
    */
   const TrilinosWrappers::MPI::Vector &
   calculate_smoothed_field(const VectorType &            solution,
-                           const DoFHandler<dim> &       dof_handler_fluid,
-                           std::shared_ptr<Mapping<dim>> mapping_fluid);
+                           const DoFHandler<dim> &       dof_handler_velocity,
+                           std::shared_ptr<Mapping<dim>> mapping_velocity);
 
   /**
    * @brief Returns a constant reference to the dof_handler

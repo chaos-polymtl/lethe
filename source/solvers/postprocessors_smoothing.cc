@@ -1,4 +1,4 @@
-#include <solvers/post_processors_smoothing.h>
+#include <solvers/postprocessors_smoothing.h>
 
 template <int dim, typename VectorType>
 PostProcessorSmoothing<dim, VectorType>::PostProcessorSmoothing(
@@ -82,7 +82,6 @@ PostProcessorSmoothing<dim, VectorType>::generate_mass_matrix()
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   // Assemble L2 projection with smoothing
-                  // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
                       local_matrix(i, j) +=
@@ -150,11 +149,11 @@ template <int dim, typename VectorType>
 const TrilinosWrappers::MPI::Vector &
 PostProcessorSmoothing<dim, VectorType>::calculate_smoothed_field(
   const VectorType &            solution,
-  const DoFHandler<dim> &       dof_handler_fluid,
-  std::shared_ptr<Mapping<dim>> mapping_fluid)
+  const DoFHandler<dim> &       dof_handler_velocity,
+  std::shared_ptr<Mapping<dim>> mapping_velocity)
 {
   generate_mass_matrix();
-  generate_rhs(solution, dof_handler_fluid, mapping_fluid);
+  generate_rhs(solution, dof_handler_velocity, mapping_velocity);
   return solve_L2_projection();
 }
 
@@ -186,7 +185,7 @@ void
 QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   const VectorType &            solution,
   const DoFHandler<dim> &       dof_handler_velocity,
-  std::shared_ptr<Mapping<dim>> mapping_fluid)
+  std::shared_ptr<Mapping<dim>> mapping_velocity)
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
 
@@ -212,10 +211,10 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<2, dim>>      present_velocity_gradients(n_q_points);
 
-  // Fluid information
-  const FESystem<dim, dim> fe_fluid = dof_handler_velocity.get_fe();
-  FEValues<dim>            fe_values_velocity(*mapping_fluid,
-                                   fe_fluid,
+  // Fluid dynamics information
+  const FESystem<dim, dim> fe_velocity = dof_handler_velocity.get_fe();
+  FEValues<dim>            fe_values_velocity(*mapping_velocity,
+                                   fe_velocity,
                                    quadrature_formula,
                                    update_quadrature_points | update_gradients);
 
@@ -223,6 +222,9 @@ QcriterionPostProcessorSmoothing<dim, VectorType>::generate_rhs(
     {
       if (cell->is_locally_owned())
         {
+          // Because we are looping over the active cells of the
+          // dof_handler_velocity.  We need to explicitely build a cell iterator
+          // to the same cell, but for the smoother dof_handler
           const auto &smoother_cell =
             typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
           fe_values.reinit(smoother_cell);
@@ -309,7 +311,7 @@ void
 ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   const VectorType &            solution,
   const DoFHandler<dim> &       dof_handler_velocity,
-  std::shared_ptr<Mapping<dim>> mapping_fluid)
+  std::shared_ptr<Mapping<dim>> mapping_velocity)
 {
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs = 0;
@@ -335,9 +337,9 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   const FEValuesExtractors::Vector velocities(0);
   std::vector<Tensor<2, dim>>      present_velocity_gradients(n_q_points);
 
-  const FESystem<dim, dim> fe_fluid = dof_handler_velocity.get_fe();
-  FEValues<dim>            fe_values_velocity(*mapping_fluid,
-                                   fe_fluid,
+  const FESystem<dim, dim> fe_velocity = dof_handler_velocity.get_fe();
+  FEValues<dim>            fe_values_velocity(*mapping_velocity,
+                                   fe_velocity,
                                    quadrature_formula,
                                    update_quadrature_points | update_gradients);
 
@@ -345,6 +347,9 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
     {
       if (cell->is_locally_owned())
         {
+          // Because we are looping over the active cells of the
+          // dof_handler_velocity.  We need to explicitely build a cell iterator
+          // to the same cell, but for the smoother dof_handler
           const auto &smoother_cell =
             typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
           fe_values.reinit(smoother_cell);
@@ -370,7 +375,7 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
                   local_rhs(i) += phi_vf[i] * continuity * JxW;
                 }
             }
-          // Associate cell of fluid dof_handler to current (qcriterion)
+          // Associate cell of velocity dof_handler to current (qcriterion)
           // dof_handler
           smoother_cell->get_dof_indices(local_dof_indices);
           this->constraints.distribute_local_to_global(local_rhs,

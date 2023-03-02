@@ -27,10 +27,10 @@
 
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
-#include <solvers/post_processors.h>
-#include <solvers/post_processors_smoothing.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
+#include <solvers/postprocessors.h>
+#include <solvers/postprocessors_smoothing.h>
 
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>

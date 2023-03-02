@@ -16,9 +16,9 @@ add_library(lethe-solvers
   navier_stokes_scratch_data.cc
   navier_stokes_vof_assemblers.cc
   physical_properties_manager.cc
-  post_processors_smoothing.cc
   postprocessing_cfd.cc
   postprocessing_velocities.cc
+  postprocessors_smoothing.cc
   simulation_parameters.cc
   source_terms.cc
   tracer.cc
@@ -46,10 +46,10 @@ add_library(lethe-solvers
   ../../include/solvers/navier_stokes_scratch_data.h
   ../../include/solvers/navier_stokes_vof_assemblers.h
   ../../include/solvers/physical_properties_manager.h
-  ../../include/solvers/post_processors_smoothing.h
-  ../../include/solvers/post_processors.h
   ../../include/solvers/postprocessing_cfd.h
   ../../include/solvers/postprocessing_velocities.h
+  ../../include/solvers/postprocessors_smoothing.h
+  ../../include/solvers/postprocessors.h
   ../../include/solvers/simulation_parameters.h
   ../../include/solvers/source_terms.h
   ../../include/solvers/stabilization.h
