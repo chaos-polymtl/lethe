@@ -73,6 +73,9 @@ The boundary conditions section in the ``.prm`` file becomes as follow.
 We will now present how to generate multiple folders, containing different parameters files, to ultimately launch them as separate cases.
 We can generate these folders locally and even on a Digital Alliance cluster.
 
+.. note::
+	See the documentation about :doc:`../../installation/digital_alliance`.
+
 """"""""""""""""""""""""""""""""""
 Locally
 """"""""""""""""""""""""""""""""""
@@ -246,9 +249,6 @@ You can now launch the script on the cluster. Be sure to activate your virtual e
 
 This last step allows to launch one job script for each case.
 The ``launch_lethe.sh`` is the job script that sends the simulation to the cluster scheduler.
-
-.. note::
-	See the documentation about :doc:`../../installation/digital_alliance` to make a proper job script.
 
 If you have multiple cases to launch on the cluster (let's say 100 thousand), it is not a good idea to launch a really heavy Python script on the cluster.
 If you do this, a crying baby panda will appear and hunt you.
