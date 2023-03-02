@@ -314,7 +314,6 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs = 0;
 
-
   // Smoother management
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
 
@@ -331,7 +330,6 @@ ContinuityPostProcessorSmoothing<dim, VectorType>::generate_rhs(
   Vector<double>                       local_rhs(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_vf(dofs_per_cell);
-
 
   // Velocity information
   const FEValuesExtractors::Vector velocities(0);
