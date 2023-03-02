@@ -119,7 +119,7 @@ Then, we assemble and solve the following:
     \int_{\Omega} \varphi_i \varepsilon_{f,j} \varphi_j d \Omega = \int_{\Omega} \varepsilon_{f,i} \varphi_i d \Omega
 
 
-Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time. To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation:
+Lethe also has the option of smoothing the void fraction profile, which helps to mitigate sharp discontinuities. This is specifically advantageous when using void fraction schemes that are discontinuous in space and time such as the PCM and SPM. To do so, we add to the left hand side of the previous equation a term similar to a Poisson equation:
 
 .. math::
     \iint_\Omega L^2 \nabla \varphi_i \nabla \varphi_j d\Omega
