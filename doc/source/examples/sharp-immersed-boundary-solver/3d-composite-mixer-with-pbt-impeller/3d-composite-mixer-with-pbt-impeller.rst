@@ -16,7 +16,7 @@ Features
 ----------------------------------
 - Solvers: ``gls_sharp_navier_stokes_3d``
 - Transient problem
-- Rotating complex solid, defined as a composite shape, modeled with sharp immersed boundary
+- Rotating complex solid  modelled with the sharp immersed boundary method
 
 Files used in this example
 ----------------------------
