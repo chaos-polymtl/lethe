@@ -849,7 +849,7 @@ public:
    * @param position The shape center
    * @param orientation The shape orientation
    */
-  OpenCascadeShape<dim>(std::string         file_name,
+  OpenCascadeShape<dim>(const std::string   file_name,
                         const Point<dim> &  position,
                         const Tensor<1, 3> &orientation)
     : Shape<dim>(0.1, position, orientation)
@@ -902,7 +902,7 @@ public:
       {
         if (shells.size() > 1)
           {
-            std::runtime_error(
+            throw std::runtime_error(
               "Error!: The shape has more than one shell. The code does not support shapes with multiple shells or solids. If your shape has more than one shell or solid, it is usually possible to recombine them into one. Otherwise, it is possible to split the shape into sub-shells and sub-solids and then define one particle for each of them.");
           }
         distancetool = BRepExtrema_DistShapeShape(shells[0], vertex);

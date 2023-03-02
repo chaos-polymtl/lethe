@@ -378,7 +378,7 @@ private:
    *
    */
   bool
-  cell_cut_by_p_exception(
+  cell_cut_by_p_absolute_distance(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     std::map<types::global_dof_index, Point<dim>> &       support_points,
     unsigned int                                          p);
