@@ -12,7 +12,8 @@ Lets say that you are simulating a flow around a cylinder and you want to see ho
 Lasy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file so the boundary condition 
 imposing the inlet velocity is different for each case.
 
-You will need all these files from the `2D flow around a cylinder example <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_:
+You will need all these files from the 2D flow around a cylinder:
+
 - ``cylinder.prm``
 - ``cylinder-structured.geo``
 
@@ -57,9 +58,7 @@ The boundary conditions section in the ``.prm`` file becomes as follow.
 
 .. note::
 	Note the ``{{velocity_x}}`` parameter variable in the Jinja2 format.
-	This will allow us to insert a specified value for a case of the 2D around a cylinder.
-
-The 
+	This will allow us to insert a specified value for a case of the 2D around a cylinder. 
 
 We will now present how to generate multiple folders, containing different parameters files, to ultimately launch them as separated cases.
 We can generate these folders locally and even on a cluster.
@@ -87,12 +86,12 @@ The first thing to do, is set up the constants of the script.
 .. code-block:: python
     
 	PATH = os.getcwd()
-	PATH_PREFIX = 'cylinder_u_'
+	CASE_PREFIX = 'cylinder_u_'
 	PRM_FILE = 'cylinder.prm'
 	MESH_FILE = 'cylinder-structured.msh'
 
-The ``PATH`` is the current path of the user directory.
-The ``PATH_PREFIX`` will specify how we want to name each folder.
+The ``PATH`` is the current path of the user directory where all cases' folders will be placed.
+The ``CASE_PREFIX`` will specify how we want to name each folder.
 The ``PRM_FILE`` is the name of the parameter file of the Lethe simulation.
 The ``MESH_FILE`` is the name of the mesh used for the simulations.
 
@@ -143,13 +142,13 @@ we will:
 .. warning::
 	In the render step, it is really important to use the same variable name as the template file.
 
-Then, we will need to copy in the ``case_path`` (containing the folder of one case) all the files we need for the simulation.
+Then, we will need to copy in the ``case_path`` (the path of one case's folder) all the files we need for the simulation.
 
 1. Name the ``case_path``.
    
 .. code-block:: python
 
-	case_folder_name = f'{PATH_PREFIX}{u:.2f}'
+	case_folder_name = f'{CASE_PREFIX}{u:.2f}'
 	case_path = f'{PATH}/{case_folder_name}'
 
 2. Create the ``case_path``.
@@ -202,12 +201,46 @@ And voilà! The final current directory should look like this:
 	|   |       cylinder-structured.msh
 	|   |       cylinder.prm
 
+.. hint::
+	Verify that the ``cylinder.prm`` files in each folder have a different boundary condition at ``bc = 1``. This means that the Jinja2 script worked perfectly fine.
+
 """"""""""""""""""""""""""""""""""""""
 On Digital Alliance of Canada clusters
 """"""""""""""""""""""""""""""""""""""
-If you want to generate the same folders, but on a cluster, the same script applies.
+If you want to generate different cases of a 2D flow around a cylinder, but on a cluster, the same script applies, with minor differences.
 
-The main differences are:
+Before launching the script, we strongly suggest you to create a virtual environment. It is much easier to download the packages that you need.
+
+1. Load the python module on the cluster.
+
+.. code-block:: text
+
+	module load python/3.X
+
+2. Create the virtual environment.
+
+.. code-block:: text
+
+	virtualenv --no-download ENV
+
+3. Activate the virtual environment.
+
+.. code-block:: text
+
+	source ENV/bin/activate
+
+.. note::
+	The tag ``(ENV)`` should appear before the command prompt, meaning that you are in your virtual environment.
+
+4. Install the requirements of the script.
+
+.. code-block:: text
+
+	pip install -r requirements.txt
+
+To leave the virtual environment, just deactivate it with the command ``deactivate``.
+
+You can now launch the script on the cluser. Be sure to activate your virtual environment and change these lines of code that are specific to the cluster:
 
 1. Specify the shell script that will launch a job on the cluster.
 
@@ -221,17 +254,92 @@ The main differences are:
 
 	shutil.copy(f'{PATH}/{SHELL_FILE}', f'{case_path}/{SHELL_FILE}')
 
-This last step will allow to launch one job for each case.
+This last step allows to launch one batch script for each case.
+The ``launch_lethe.sh`` is the batch script that send the simulation to the cluster scheduler.
+
+.. note::
+	See the documentation about running Lethe on Digital Research Alliance of Canada clusters to make a proper batch script.
+
+If you have multiple cases to launch on the cluster (let's say 100 thousand), it is not a good idea to launch a really heavy python script to the cluster.
+Otherwise, a crying baby panda will appear and hunt you.
+To do so, it is recommended to create another batch script that launches the automatic generator itself.
+
+Let's name the automatic generator script is named ``launch_cases.py``. Here is an example of how to make the batch script:
+
+.. code-block:: text
+
+	#!/bin/bash
+	#SBATCH --time=02:00:00
+	#SBATCH --account=$yourgroupaccount
+	#SBATCH --ntasks=1
+	#SBATCH --mem-per-cpu=32G
+	#SBATCH --mail-type=FAIL
+	#SBATCH --mail-user=$your.email.adress@email.provider
+	#SBATCH --output=%x-%j.out
+
+	source $SCRATCH/ENV/bin/activate
+	srun python3 launch_cases.py
+
+.. note::
+	Note that we activate the virtual environement, in order to have the packages required, and we launch the python script with ``srun``.
 
 -----------------------------------
 Launch automatically multiple cases
 -----------------------------------
+Now that the folders of every cases are all set up, we can launch Lethe automatically.
+
+Both python scripts to launch Lethe locally and on the cluster are simple and are presented below.
 
 """"""""""""""""""""""""""""""""""
 Locally
 """"""""""""""""""""""""""""""""""
+Launching locally will simulate one case at a time.
 
+Here is the script:
+
+1. Set up the constants of the script.
+
+.. code-block:: python
+
+	PATH = os.getcwd()
+	PRM_FILE = 'cylinder.prm'
+	LETHE_EXEC = 'gls_navier_stokes_2d'
+
+.. warning::
+	Here, we suppose that the executable ``gls_navier_stokes_2d`` is available directly in the ``PATH`` where all cases' folders are present.
+	If your Lethe executable is elsewhere, just change the path to the right destination.
+
+2. Enter each case's folder and execute Lethe.
+
+.. code-block:: python
+
+	for root, directories, files in os.walk(PATH):
+		if PRM_FILE in files and root != PATH:
+			os.chdir(root)
+			os.system(f'{LETHE_EXEC} {PRM_FILE}')
+
+.. note::
+	If you want to run each simulation with more than one core, change the last line for ``os.system(f'mpirun -np $n {LETHE_EXEC} {PRM_FILE}')``, with ``n`` being the number of CPU cores.
 
 """"""""""""""""""""""""""""""""""""""
 On Digital Alliance of Canada clusters
 """"""""""""""""""""""""""""""""""""""
+The same script applies for launching all cases on a cluster. The advantage is that we send jobs to the scheduler, meaning that we can run multiple simulations at a time, instead of doing it one after the other.
+The only difference is the command line to launch the batch script.
+
+Add these steps to your code:
+
+1. Specify the shell script that will launch a job on the cluster.
+
+.. code-block:: python
+
+	SHELL_FILE = 'launch_lethe.sh'
+
+1. Instead of launching the Lethe executable, launch a job using the ``sbatch`` command.
+
+.. code-block:: python
+
+	case_name = root.split('/')[-1]
+	os.system(f'sbatch -J {case_name} {SHELL_FILE}')
+
+And you are done!
