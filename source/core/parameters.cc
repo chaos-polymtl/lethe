@@ -270,7 +270,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -310,7 +310,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &   prm,
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -346,7 +346,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &   prm,
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -458,7 +458,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &   prm,
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
@@ -607,7 +607,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -737,7 +737,7 @@ namespace Parameters
   }
 
   void
-  Material::parse_parameters(ParameterHandler &               prm,
+  Material::parse_parameters(ParameterHandler                &prm,
                              std::string                      material_prefix,
                              const unsigned int               id,
                              const Parameters::Dimensionality dimensions)
@@ -2165,6 +2165,12 @@ namespace Parameters
   IBParticles<dim>::declare_default_entry(ParameterHandler &prm,
                                           unsigned int      index)
   {
+    prm.declare_entry(
+      "integrate motion",
+      "false",
+      Patterns::Bool(),
+      "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+
     prm.enter_subsection("position");
     particles[index].f_position =
       std::make_shared<Functions::ParsedFunction<dim>>(dim);
@@ -2233,6 +2239,7 @@ namespace Parameters
       "The last is the tolerance of the found surface."
       "The parameter for an rbf is the file name."
       "The parameter for a composite is the file name.");
+
     prm.declare_entry("shape arguments",
                       "1",
                       Patterns::Anything(),
@@ -2243,37 +2250,42 @@ namespace Parameters
       "0; 0; 0",
       Patterns::Anything(),
       "position relative to the center of the particle for the location of the point where the pressure is imposed inside the particle");
-    prm.declare_entry("density",
-                      "1",
-                      Patterns::Double(),
-                      "density of the particle ");
-    prm.declare_entry("inertia",
-                      "1",
-                      Patterns::Double(),
-                      "uniform rotational moment of inertia");
-    prm.declare_entry("youngs modulus",
-                      "100000000",
-                      Patterns::Double(),
-                      "The youngs modulus of particle in case of contact");
-    prm.declare_entry("poisson ratio",
-                      "0.3",
-                      Patterns::Double(),
-                      "The poisson ratio of particle in case of contact");
-    prm.declare_entry(
-      "restitution coefficient",
-      "1",
-      Patterns::Double(),
-      "The restitution coefficient of particle in case of contact");
-    prm.declare_entry(
-      "friction coefficient",
-      "0",
-      Patterns::Double(),
-      "The friction coefficient of particle in case of contact");
-    prm.declare_entry(
-      "rolling friction coefficient",
-      "0",
-      Patterns::Double(),
-      "The rolling friction coefficient of particle in case of contact");
+
+    prm.enter_subsection("physical properties");
+    {
+      prm.declare_entry("density",
+                        "1",
+                        Patterns::Double(),
+                        "density of the particle ");
+      prm.declare_entry("inertia",
+                        "1",
+                        Patterns::Double(),
+                        "uniform rotational moment of inertia");
+      prm.declare_entry("youngs modulus",
+                        "100000000",
+                        Patterns::Double(),
+                        "The youngs modulus of particle in case of contact");
+      prm.declare_entry("poisson ratio",
+                        "0.3",
+                        Patterns::Double(),
+                        "The poisson ratio of particle in case of contact");
+      prm.declare_entry(
+        "restitution coefficient",
+        "1",
+        Patterns::Double(),
+        "The restitution coefficient of particle in case of contact");
+      prm.declare_entry(
+        "friction coefficient",
+        "0",
+        Patterns::Double(),
+        "The friction coefficient of particle in case of contact");
+      prm.declare_entry(
+        "rolling friction coefficient",
+        "0",
+        Patterns::Double(),
+        "The rolling friction coefficient of particle in case of contact");
+      prm.leave_subsection();
+    }
   }
 
   template <int dim>
@@ -2286,17 +2298,8 @@ namespace Parameters
         "number of particles",
         "1",
         Patterns::Integer(),
-        "Number of particles represented by IB max number of particles = 10 ");
-      prm.declare_entry(
-        "initial refinement",
-        "0",
-        Patterns::Integer(),
-        "number of refinement around the particles before the start of the simulation ");
-      prm.declare_entry(
-        "stencil order",
-        "2",
-        Patterns::Integer(),
-        "Order of the stencil used for extrapolation to the boundary.");
+        "Number of particles reprensented by IB max number of particles = 10 ");
+
       prm.declare_entry(
         "levels not precalculated",
         "0",
@@ -2304,146 +2307,177 @@ namespace Parameters
         "Number of levels that are ignored in precalculations. Setting this "
         "parameter higher allows for a lower memory footprint at the cost of"
         " higher computing time.");
-      prm.declare_entry(
-        "refine mesh inside radius factor",
-        "0.5",
-        Patterns::Double(),
-        "The factor that multiplies the radius to define the inside bound for the refinement of the mesh");
-      prm.declare_entry(
-        "refine mesh outside radius factor",
-        "1.5",
-        Patterns::Double(),
-        "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
-      prm.declare_entry(
-        "calculate force",
-        "true",
-        Patterns::Bool(),
-        "Bool to define if the force is evaluated on each particle ");
-      prm.declare_entry(
-        "ib force output file",
-        "ib_force",
-        Patterns::FileName(),
-        "The name of the file where the data on the force of each particle is stored");
-      prm.declare_entry(
-        "load particles from file",
-        "false",
-        Patterns::Bool(),
-        "Bool to define if particles are loaded from an external file");
-      prm.declare_entry("particles file",
-                        "particles",
-                        Patterns::FileName(),
-                        "The file name from which we load the particles");
-      prm.declare_entry(
-        "ib particles pvd file",
-        "ib_particles_data",
-        Patterns::FileName(),
-        "The output files of the pvd data for the ib particles");
-      prm.declare_entry(
-        "integrate motion",
-        "false",
-        Patterns::Bool(),
-        "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
-      prm.declare_entry(
-        "print DEM",
-        "true",
-        Patterns::Bool(),
-        "Bool to define if particles' informations are printed on the terminal when particles' time-step is finished");
-      prm.declare_entry(
-        "contact search radius factor",
-        "3",
-        Patterns::Double(),
-        "The factor that multiplies the radius to define the region of contact search around the particle");
-      prm.declare_entry(
-        "contact search frequency",
-        "1",
-        Patterns::Integer(),
-        "The frequency of update in the contact candidates list");
+
       prm.declare_entry(
         "assemble Navier-Stokes inside particles",
         "false",
         Patterns::Bool(),
         "Bool to define if you assemble the inside of particles with the NS equation.");
-      prm.declare_entry(
-        "length ratio",
-        "4",
-        Patterns::Double(),
-        "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
-      prm.declare_entry(
-        "particle nonlinear tolerance",
-        "1e-6",
-        Patterns::Double(),
-        "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
-      prm.declare_entry("DEM coupling frequency",
-                        "1000",
-                        Patterns::Integer(),
-                        "The number of DEM time steps per CFD time step");
-      prm.declare_entry("alpha",
-                        "1",
-                        Patterns::Double(),
-                        "relaxation parameter");
 
-      prm.declare_entry("enable lubrication force",
-                        "true",
-                        Patterns::Bool(),
-                        "Bool to enable or disable the lubrication force");
-      prm.declare_entry(
-        "lubrication range max",
-        "2",
-        Patterns::Double(),
-        "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
-      prm.declare_entry(
-        "lubrication range min",
-        "0.1",
-        Patterns::Double(),
-        "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
-      prm.declare_entry(
-        "wall youngs modulus",
-        "100000000",
-        Patterns::Double(),
-        "The wall youngs modulus if IB particles are in contact with it");
+      prm.enter_subsection("extrapolation function");
+      {
+        prm.declare_entry(
+          "stencil order",
+          "2",
+          Patterns::Integer(),
+          "The polynomial order used in the extrapolation function");
+        prm.declare_entry(
+          "length ratio",
+          "4",
+          Patterns::Double(),
+          "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
+        prm.leave_subsection();
+      }
 
-      prm.declare_entry(
-        "wall poisson ratio",
-        "0.3",
-        Patterns::Double(),
-        "The wall poisson ratio if IB particles are in contact with it");
+      prm.enter_subsection("input file");
+      {
+        prm.declare_entry(
+          "load particles from file",
+          "false",
+          Patterns::Bool(),
+          "Bool to define if particles are loaded from an external file");
+        prm.declare_entry("particles file",
+                          "particles",
+                          Patterns::FileName(),
+                          "The file name from which we load the particles");
+        prm.leave_subsection();
+      }
 
-      prm.declare_entry(
-        "wall rolling friction coefficient",
-        "0",
-        Patterns::Double(),
-        "The wall rolling friction coefficient if IB particles are in contact with it");
+      prm.enter_subsection("local mesh refinement");
+      {
+        prm.declare_entry(
+          "initial refinement",
+          "0",
+          Patterns::Integer(),
+          "number of refinement around the particles before the start of the simulation ");
+        prm.declare_entry(
+          "refine mesh inside radius factor",
+          "0.5",
+          Patterns::Double(),
+          "The factor that multiplies the radius to define the inside bound for the refinement of the mesh");
+        prm.declare_entry(
+          "refine mesh outside radius factor",
+          "1.5",
+          Patterns::Double(),
+          "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
+        prm.leave_subsection();
+      }
 
-      prm.declare_entry(
-        "wall friction coefficient",
-        "0",
-        Patterns::Double(),
-        "The wall friction coefficient if IB particles are in contact with it");
+      prm.enter_subsection("output");
+      {
+        prm.declare_entry(
+          "calculate force",
+          "true",
+          Patterns::Bool(),
+          "Bool to define if the force is evaluated on each particle ");
+        prm.declare_entry(
+          "ib force output file",
+          "ib_force",
+          Patterns::FileName(),
+          "The name of the file where the data on the force of each particle is stored");
+        prm.declare_entry(
+          "ib particles pvd file",
+          "ib_particles_data",
+          Patterns::FileName(),
+          "The output files of the pvd data for the ib particles");
+        prm.declare_entry(
+          "print DEM",
+          "true",
+          Patterns::Bool(),
+          "Bool to define if particles' informations are printed on the terminal when particles' time-step is finished");
+        prm.declare_entry(
+          "enable extra sharp interface vtu output field",
+          "false",
+          Patterns::Bool(),
+          "This parameter enables the output of more information related to the particles in the vtu file.");
+        prm.leave_subsection();
+      }
 
-      prm.declare_entry(
-        "wall restitution coefficient",
-        "1",
-        Patterns::Double(),
-        "The wall restitution coefficient if IB particles are in contact with it");
-      prm.declare_entry(
-        "enable extra sharp interface vtu output field",
-        "false",
-        Patterns::Bool(),
-        "This parameter enables the output of more information related to the particles in the vtu file.");
-      prm.declare_entry(
-        "refinement zone extrapolation",
-        "false",
-        Patterns::Bool(),
-        "This parameter enables the extrapolation in time of the refinement zone. This means that it will try to refine where the particle will be at the end of the time step instead of the initial position.");
+      prm.enter_subsection("DEM");
+      {
+        prm.declare_entry(
+          "contact search radius factor",
+          "3",
+          Patterns::Double(),
+          "The factor that multiplies the radius to define the region of contact search around the particle");
+        prm.declare_entry(
+          "contact search frequency",
+          "1",
+          Patterns::Integer(),
+          "The frequency of update in the contact candidates list");
+        prm.declare_entry(
+          "particle nonlinear tolerance",
+          "1e-6",
+          Patterns::Double(),
+          "The nonlinear tolerance for the coupling of the particle dynamics and the fluid");
+        prm.declare_entry("DEM coupling frequency",
+                          "1000",
+                          Patterns::Integer(),
+                          "The number of DEM time steps per CFD time step");
+        prm.declare_entry("alpha",
+                          "1",
+                          Patterns::Double(),
+                          "relaxation parameter");
 
+        prm.declare_entry("enable lubrication force",
+                          "true",
+                          Patterns::Bool(),
+                          "Bool to enable or disable the lubrication force");
+        prm.declare_entry(
+          "lubrication range max",
+          "2",
+          Patterns::Double(),
+          "Gap require to consider the lubrication force. This value is multiplied the smallest cell size");
+        prm.declare_entry(
+          "lubrication range min",
+          "0.1",
+          Patterns::Double(),
+          "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
-      prm.enter_subsection("gravity");
-      f_gravity->declare_parameters(prm, dim);
-      if (dim == 2)
-        prm.set("Function expression", "0; 0");
-      if (dim == 3)
-        prm.set("Function expression", "0; 0; 0");
-      prm.leave_subsection();
+        prm.enter_subsection("wall wall physical properties");
+        {
+          prm.declare_entry(
+            "wall youngs modulus",
+            "100000000",
+            Patterns::Double(),
+            "The wall youngs modulus if IB particles are in contact with it");
+
+          prm.declare_entry(
+            "wall poisson ratio",
+            "0.3",
+            Patterns::Double(),
+            "The wall poisson ratio if IB particles are in contact with it");
+
+          prm.declare_entry(
+            "wall rolling friction coefficient",
+            "0",
+            Patterns::Double(),
+            "The wall rolling friction coefficient if IB particles are in contact with it");
+
+          prm.declare_entry(
+            "wall friction coefficient",
+            "0",
+            Patterns::Double(),
+            "The wall friction coefficient if IB particles are in contact with it");
+
+          prm.declare_entry(
+            "wall restitution coefficient",
+            "1",
+            Patterns::Double(),
+            "The wall restitution coefficient if IB particles are in contact with it");
+          prm.leave_subsection();
+        }
+
+        prm.enter_subsection("gravity");
+        f_gravity->declare_parameters(prm, dim);
+        if (dim == 2)
+          prm.set("Function expression", "0; 0");
+        if (dim == 3)
+          prm.set("Function expression", "0; 0; 0");
+        prm.leave_subsection();
+
+        prm.leave_subsection();
+      }
 
       unsigned int max_ib_particles = 10;
       particles.resize(max_ib_particles);
@@ -2467,55 +2501,81 @@ namespace Parameters
     using numbers::PI;
     prm.enter_subsection("particles");
     {
-      nb                 = prm.get_integer("number of particles");
-      order              = prm.get_integer("stencil order");
-      initial_refinement = prm.get_integer("initial refinement");
+      prm.enter_subsection("extrapolation function");
+      {
+        order        = prm.get_integer("stencil order");
+        length_ratio = prm.get_double("length ratio");
+        prm.leave_subsection();
+      }
+
+      prm.enter_subsection("input file");
+      {
+        load_particles_from_file = prm.get_bool("load particles from file");
+        particles_file           = prm.get("particles file");
+        prm.leave_subsection();
+      }
+
+      prm.enter_subsection("local mesh refinement");
+      {
+        initial_refinement = prm.get_integer("initial refinement");
+        inside_radius      = prm.get_double("refine mesh inside radius factor");
+        outside_radius = prm.get_double("refine mesh outside radius factor");
+        prm.leave_subsection();
+      }
+
+      prm.enter_subsection("output");
+      {
+        calculate_force_ib   = prm.get_bool("calculate force");
+        ib_force_output_file = prm.get("ib force output file");
+        print_dem            = prm.get_bool("print DEM");
+        enable_extra_sharp_interface_vtu_output_field =
+          prm.get_bool("enable extra sharp interface vtu output field");
+        ib_particles_pvd_file = prm.get("ib particles pvd file");
+        prm.leave_subsection();
+      }
+      prm.enter_subsection("DEM");
+      {
+        alpha = prm.get_double("alpha");
+        contact_search_radius_factor =
+          prm.get_double("contact search radius factor");
+        if (contact_search_radius_factor < 1.)
+          throw(std::logic_error(
+            "Error, the parameter 'contact search radius factor' cannot be < 1."));
+        contact_search_frequency = prm.get_integer("contact search frequency");
+        particle_nonlinear_tolerance =
+          prm.get_double("particle nonlinear tolerance");
+        coupling_frequency       = prm.get_double("DEM coupling frequency");
+        enable_lubrication_force = prm.get_bool("enable lubrication force");
+        lubrication_range_max    = prm.get_double("lubrication range max");
+        lubrication_range_min    = prm.get_double("lubrication range min");
+        prm.enter_subsection("wall physical properties");
+        {
+          wall_youngs_modulus = prm.get_double("wall youngs modulus");
+          wall_poisson_ratio  = prm.get_double("wall poisson ratio");
+          wall_rolling_friction_coefficient =
+            prm.get_double("wall rolling friction coefficient");
+          wall_friction_coefficient =
+            prm.get_double("wall friction coefficient");
+          wall_restitution_coefficient =
+            prm.get_double("wall restitution coefficient");
+          prm.leave_subsection();
+        }
+        f_gravity = std::make_shared<Functions::ParsedFunction<dim>>(dim);
+        prm.enter_subsection("gravity");
+        f_gravity->parse_parameters(prm);
+        prm.leave_subsection();
+        prm.leave_subsection();
+      }
+
+      nb                       = prm.get_integer("number of particles");
       time_extrapolation_of_refinement_zone =
         prm.get_bool("refinement zone extrapolation");
       levels_not_precalculated = prm.get_integer("levels not precalculated");
-      inside_radius      = prm.get_double("refine mesh inside radius factor");
-      outside_radius     = prm.get_double("refine mesh outside radius factor");
-      calculate_force_ib = prm.get_bool("calculate force");
-      ib_force_output_file = prm.get("ib force output file");
-      integrate_motion     = prm.get_bool("integrate motion");
-      print_dem            = prm.get_bool("print DEM");
-      alpha                = prm.get_double("alpha");
-      contact_search_radius_factor =
-        prm.get_double("contact search radius factor");
-      if (contact_search_radius_factor < 1.)
-        throw(std::logic_error(
-          "Error, the parameter 'contact search radius factor' cannot be < 1."));
-
-      enable_extra_sharp_interface_vtu_output_field =
-        prm.get_bool("enable extra sharp interface vtu output field");
-      contact_search_frequency = prm.get_integer("contact search frequency");
-
-      load_particles_from_file = prm.get_bool("load particles from file");
-      particles_file           = prm.get("particles file");
 
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
-      length_ratio          = prm.get_double("length ratio");
-      ib_particles_pvd_file = prm.get("ib particles pvd file");
-      particle_nonlinear_tolerance =
-        prm.get_double("particle nonlinear tolerance");
 
-      f_gravity = std::make_shared<Functions::ParsedFunction<dim>>(dim);
-      prm.enter_subsection("gravity");
-      f_gravity->parse_parameters(prm);
-      prm.leave_subsection();
 
-      wall_youngs_modulus = prm.get_double("wall youngs modulus");
-      wall_poisson_ratio  = prm.get_double("wall poisson ratio");
-      wall_rolling_friction_coefficient =
-        prm.get_double("wall rolling friction coefficient");
-      wall_friction_coefficient = prm.get_double("wall friction coefficient");
-      wall_restitution_coefficient =
-        prm.get_double("wall restitution coefficient");
-      coupling_frequency       = prm.get_double("DEM coupling frequency");
-      enable_lubrication_force = prm.get_bool("enable lubrication force");
-      lubrication_range_max    = prm.get_double("lubrication range max");
-      lubrication_range_min    = prm.get_double("lubrication range min");
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
@@ -2523,6 +2583,7 @@ namespace Parameters
           particles[i].initialize_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
+          particles[i].integrate_motion = prm.get_bool("integrate motion");
 
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);
@@ -2562,10 +2623,7 @@ namespace Parameters
           particles[i].omega[2] =
             particles[i].f_omega->value(particles[i].position, 2);
 
-          particles[i].particle_id   = i;
-          particles[i].inertia[0][0] = prm.get_double("inertia");
-          particles[i].inertia[1][1] = prm.get_double("inertia");
-          particles[i].inertia[2][2] = prm.get_double("inertia");
+          particles[i].particle_id = i;
 
           std::string pressure_location_str = prm.get("pressure location");
           std::vector<std::string> pressure_location_str_list(
@@ -2574,17 +2632,6 @@ namespace Parameters
             Utilities::string_to_double(pressure_location_str_list);
           particles[i].pressure_location[0] = pressure_list[0];
           particles[i].pressure_location[1] = pressure_list[1];
-
-
-          particles[i].youngs_modulus = prm.get_double("youngs modulus");
-          particles[i].restitution_coefficient =
-            prm.get_double("restitution coefficient");
-          particles[i].friction_coefficient =
-            prm.get_double("friction coefficient");
-          particles[i].poisson_ratio = prm.get_double("poisson ratio");
-          particles[i].rolling_friction_coefficient =
-            prm.get_double("rolling friction coefficient");
-
           if (dim == 3)
             {
               particles[i].position[2] =
@@ -2594,28 +2641,45 @@ namespace Parameters
               particles[i].pressure_location[2] = pressure_list[2];
             }
 
-          std::string shape_type          = prm.get("type");
-          std::string shape_arguments_str = prm.get("shape arguments");
-          particles[i].initialize_shape(shape_type, shape_arguments_str);
+          prm.enter_subsection("physical properties");
+          {
+            particles[i].inertia[0][0] = prm.get_double("inertia");
+            particles[i].inertia[1][1] = prm.get_double("inertia");
+            particles[i].inertia[2][2] = prm.get_double("inertia");
 
-          particles[i].radius = particles[i].shape->effective_radius;
+            particles[i].youngs_modulus = prm.get_double("youngs modulus");
+            particles[i].restitution_coefficient =
+              prm.get_double("restitution coefficient");
+            particles[i].friction_coefficient =
+              prm.get_double("friction coefficient");
+            particles[i].poisson_ratio = prm.get_double("poisson ratio");
+            particles[i].rolling_friction_coefficient =
+              prm.get_double("rolling friction coefficient");
 
-          if (dim == 2)
-            {
-              particles[i].mass = PI * particles[i].radius *
-                                  particles[i].radius *
-                                  prm.get_double("density");
-            }
-          else if (dim == 3)
-            {
-              particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
-                                  particles[i].radius * particles[i].radius *
-                                  prm.get_double("density");
-            }
-          particles[i].initialize_previous_solution();
+
+            std::string shape_type          = prm.get("type");
+            std::string shape_arguments_str = prm.get("shape arguments");
+            particles[i].initialize_shape(shape_type, shape_arguments_str);
+
+            particles[i].radius = particles[i].shape->effective_radius;
+
+            if (dim == 2)
+              {
+                particles[i].mass = PI * particles[i].radius *
+                                    particles[i].radius *
+                                    prm.get_double("density");
+              }
+            else if (dim == 3)
+              {
+                particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
+                                    particles[i].radius * particles[i].radius *
+                                    prm.get_double("density");
+              }
+            particles[i].initialize_previous_solution();
+            prm.leave_subsection();
+          }
           prm.leave_subsection();
         }
-      prm.leave_subsection();
     }
   }
 
