@@ -17,37 +17,40 @@ import shutil
 import os
 import numpy as np
 
-#system characteristics
+PATH = os.getcwd()
+
+# User input
+CASE_PREFIX = 'mixer_nu_'
+PRM_FILE = 'ribbon-gls.prm'
+TEMPLATE_FOLDER = 'template'
+
+# System characteristics
 D = 0.27                                      # impeller diameter
 N = 10 / 2 / np.pi                            # angular velocity of the agitator
 Re = np.logspace(-1,np.log10(100),25)         # Re values (different cases)
 nu = N * D * D / Re                           # kinematic vicosity values
 
-folder_prefix="mixer_"
 values=nu
 
-template_folder="template"
-template_prm_file="ribbon-gls.prm"
-
-templateLoader = jinja2.FileSystemLoader(searchpath="./")
+templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
 templateEnv = jinja2.Environment(loader=templateLoader)
-template = templateEnv.get_template(template_prm_file)
+template = templateEnv.get_template(PRM_FILE)
 
-
-case_index = open('case_index.txt', "w")
-
+case_index = open('case_index.txt', 'w')
 
 for val in values:
 
-    copy_folder = folder_prefix + str(val)
+    copy_folder = f'{CASE_PREFIX}{val:.3f}'
+
     if os.path.exists(copy_folder) and os.path.isdir(copy_folder):
         shutil.rmtree(copy_folder)
-    shutil.copytree(template_folder, copy_folder)
-
-    # Copy folder    
-    outputText = template.render(N=val)
-    with open(copy_folder +"/"+ template_prm_file, 'w') as f:
-        f.write(outputText)
     
-    case_index.write(copy_folder+"\n")
+    # Copy folder
+    shutil.copytree(TEMPLATE_FOLDER, copy_folder)
 
+    # Render the template and write the prm file
+    outputText = template.render(N=val)
+    with open(f'{copy_folder}/{PRM_FILE}', 'w') as f:
+        f.write(outputText)
+
+    case_index.write(copy_folder+'\n')
