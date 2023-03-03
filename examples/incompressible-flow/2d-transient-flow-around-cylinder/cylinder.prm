@@ -33,6 +33,14 @@ subsection timer
 end
 
 #---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set smoothed output fields = true
+end
+
+#---------------------------------------------------
 # Force
 #---------------------------------------------------
 
@@ -139,8 +147,9 @@ end
 
 subsection non-linear solver
   set verbosity      = verbose
+  set solver         = inexact_newton
   set tolerance      = 1e-6
-  set max iterations = 100
+  set max iterations = 10
 end
 
 # --------------------------------------------------

@@ -2,8 +2,6 @@
 #ifndef lethe_post_processors_smoothing_h
 #define lethe_post_processors_smoothing_h
 
-// DEALII INCLUDES
-
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -26,8 +24,6 @@
 
 #include <deal.II/numerics/data_postprocessor.h>
 
-
-// standard library includes includes
 #include <vector>
 
 using namespace dealii;
@@ -39,10 +35,10 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the variable being smoothed is solved
- * @tparam triangulation Flow triangulation
- * @tparam simulation_parameters The simulation parameters
- * @tparam number_quadrature_points The number of quadrature points
- * @tparam mpi_communicator Allowing communication between cores
+ * @param triangulation Flow triangulation
+ * @param simulation_parameters The simulation parameters
+ * @param number_quadrature_points The number of quadrature points
+ * @param mpi_communicator Allowing communication between cores
  */
 
 template <int dim, typename VectorType>
@@ -81,8 +77,8 @@ public:
    */
   const TrilinosWrappers::MPI::Vector &
   calculate_smoothed_field(const VectorType &            solution,
-                           const DoFHandler<dim> &       dof_handler_fluid,
-                           std::shared_ptr<Mapping<dim>> mapping_fluid);
+                           const DoFHandler<dim> &       dof_handler_velocity,
+                           std::shared_ptr<Mapping<dim>> mapping_velocity);
 
   /**
    * @brief Returns a constant reference to the dof_handler
@@ -108,34 +104,6 @@ private:
 };
 
 /**
- * A class that assembles the rhs and solves the L2projection of the Vorticity
- * on nodes.
- * ** This part of the code is not yet implemented. There can not be a
- * VorticityPostProcessorSmoothing object as its methods are not implemented.
- */
-template <int dim, typename VectorType>
-class VorticityPostProcessorSmoothing
-  : public PostProcessorSmoothing<dim, VectorType>
-{
-public:
-  // Member functions
-  VorticityPostProcessorSmoothing(
-    const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
-    const unsigned int &number_quadrature_points);
-
-  /**
-   * @brief Generates the right hand side based on the fluid's solution.
-   */
-  void
-  generate_rhs(const VectorType &,
-               const DoFHandler<dim> &,
-               std::shared_ptr<Mapping<dim>>);
-
-private:
-};
-
-/**
  * A class that assembles the rhs and solves the L2projection of the Qcriterion
  * on nodes
  */
@@ -153,9 +121,40 @@ public:
   /**
    * @brief Generates the right hand side based on the fluid's solution.
    *
-   * @tparam solution The fluid's solution
-   * @tparam dof_hanfler_fluid The dof_hanfler of the fluid solution
-   * @tparam mapping_fluid The mapping of the fluid
+   * @param solution The fluid's solution
+   * @param dof_hanfler_fluid The dof_handler of the fluid solution
+   * @param mapping_fluid The mapping of the fluid
+   */
+  void
+  generate_rhs(const VectorType &            solution,
+               const DoFHandler<dim> &       dof_handler_fluid,
+               std::shared_ptr<Mapping<dim>> mapping_fluid);
+
+private:
+};
+
+
+/**
+ * A class that assembles the rhs and solves the L2projection of the continuity
+ * equation (div u) at the nodes
+ */
+template <int dim, typename VectorType>
+class ContinuityPostProcessorSmoothing
+  : public PostProcessorSmoothing<dim, VectorType>
+{
+public:
+  // Member functions
+  ContinuityPostProcessorSmoothing(
+    const parallel::DistributedTriangulationBase<dim> &triangulation,
+    const SimulationParameters<dim> &                  simulation_parameters,
+    const unsigned int &number_quadrature_points);
+
+  /**
+   * @brief Generates the right hand side based on the fluid dynamics solution.
+   *
+   * @param solution The fluid's solution
+   * @param dof_hanfler_fluid The dof_handler of the fluid dynamics solution
+   * @param mapping_fluid The mapping of the fluid
    */
   void
   generate_rhs(const VectorType &            solution,
