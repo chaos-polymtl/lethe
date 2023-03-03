@@ -103,13 +103,13 @@ public:
    * @return shared_ptr of the solid triangulation
    */
   std::shared_ptr<Triangulation<dim, spacedim>>
-  get_solid_triangulation();
+  get_triangulation();
 
   /**
    * @return the reference to the solid dof handler
    */
   DoFHandler<dim, spacedim> &
-  get_solid_dof_handler();
+  get_dof_handler();
 
   /**
    * @return the reference to the displacement dof handler

@@ -284,7 +284,7 @@ SerialSolid<dim, spacedim>::load_triangulation(const std::string filename_tria)
     {
       if (auto solid_tria =
             dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
-              get_solid_triangulation().get()))
+              get_triangulation().get()))
         {
           solid_tria->load(filename_tria.c_str());
         }
@@ -302,7 +302,7 @@ SerialSolid<dim, spacedim>::load_triangulation(const std::string filename_tria)
 
 template <int dim, int spacedim>
 DoFHandler<dim, spacedim> &
-SerialSolid<dim, spacedim>::get_solid_dof_handler()
+SerialSolid<dim, spacedim>::get_dof_handler()
 {
   return solid_dh;
 }
@@ -324,7 +324,7 @@ SerialSolid<dim, spacedim>::get_displacement_vector()
 
 template <int dim, int spacedim>
 std::shared_ptr<Triangulation<dim, spacedim>>
-SerialSolid<dim, spacedim>::get_solid_triangulation()
+SerialSolid<dim, spacedim>::get_triangulation()
 {
   return solid_tria;
 }

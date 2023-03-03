@@ -81,7 +81,7 @@ test()
 
   DoFHandler<2, 3> &solid_dof_handler = solid.get_displacement_dof_handler();
   std::shared_ptr<Triangulation<2, 3>> solid_triangulation =
-    solid.get_solid_triangulation();
+    solid.get_triangulation();
 
   // Loop over backgorund
   Vector<double> subdomain_background(background_tria->n_active_cells());
