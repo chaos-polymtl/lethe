@@ -293,8 +293,6 @@ template class QcriterionPostProcessorSmoothing<
 template class QcriterionPostProcessorSmoothing<
   3,
   TrilinosWrappers::MPI::BlockVector>;
-
-
 template <int dim, typename VectorType>
 ContinuityPostProcessorSmoothing<dim, VectorType>::
   ContinuityPostProcessorSmoothing(
