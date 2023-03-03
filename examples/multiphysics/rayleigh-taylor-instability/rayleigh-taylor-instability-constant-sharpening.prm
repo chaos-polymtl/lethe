@@ -113,7 +113,6 @@ subsection VOF
   subsection mass conservation
     set monitoring      = true
     set monitored fluid = fluid 1
-    set tolerance       = 1e-2
     set verbosity       = extra verbose
   end
 

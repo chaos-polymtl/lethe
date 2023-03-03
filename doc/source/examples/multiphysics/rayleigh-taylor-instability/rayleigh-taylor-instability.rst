@@ -369,7 +369,7 @@ The following figures shows the mass of fluid 1 throughout the simulation with a
 .. image:: images/adaptive_mass.png
     :alt: Schematic
     :align: center
-    :width: 397.95
+    :width: 400
 
 
 -----------

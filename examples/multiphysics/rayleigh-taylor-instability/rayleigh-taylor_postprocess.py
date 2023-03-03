@@ -78,11 +78,11 @@ for vtu_file in list_vtu:
     sim = pv.read(f"{output_path}/{vtu_file}")
 
     sampled_data_spike = sim.sample_over_line(a_spike, b_spike, resolution=1000)
-    phase_spike = pd.DataFrame(sampled_data_spike["phase"])
+    phase_spike = pd.DataFrame(sampled_data_spike["filtered_phase"])
     points_spike = pd.DataFrame(sampled_data_spike.points)
 
     sampled_data_bubble = sim.sample_over_line(a_bubble, b_bubble, resolution=1000)
-    phase_bubble = pd.DataFrame(sampled_data_bubble["phase"])
+    phase_bubble = pd.DataFrame(sampled_data_bubble["filtered_phase"])
     points_bubble = pd.DataFrame(sampled_data_bubble.points)
 
     #Find min 'y' in phase > phase_limit (SPIKE)
@@ -115,13 +115,15 @@ ax0.set_xlabel(r'$t^* = t \sqrt{g/H}$')
 ax0.set_xlim([0, 4.5])
 ax0.set_ylim([0.1, 0.8])
 ax0.legend(loc="upper left")
-fig0.savefig(f'./spike_and_bubble_evolution.png')
+plt.title("Spike and bubble evolution with {} interface sharpening".format(output_path[9:-1]))
+fig0.savefig('./spike_and_bubble_evolution_{}.png'.format(output_path[9:-1]))
 plt.show()
 
 
 #Plot the mass of fluid along the simulation
 
 #Functions to turn .dat data in numpy array
+#Credits to Lucka Barbeau for the two functions below !
 def is_number(s):
     try:
         float(s)
@@ -152,7 +154,6 @@ def read_my_data(results_path):
                         fix_vars_name = False
                     list_of_list_of_vars_name[nb_set_of_vars].append(word)
                     list_of_list_of_vars[nb_set_of_vars].append(np.array([]))
-                    # locals() [word]=np.array([])
     return list_of_list_of_vars_name, list_of_list_of_vars
 
 list_of_list_of_vars_name,list_of_list_of_vars=read_my_data(output_path + "VOF_monitoring_fluid_1.dat")
@@ -163,6 +164,7 @@ plt.title("Evolution of the mass of fluid 1 with {} interface sharpening".format
 plt.xlabel("Time (s)")
 plt.ylabel("Mass of fluid 1 (kg)")
 plt.ylim(37.4,37.6)
+plt.savefig('./mass_of_fluid_1_{}.png'.format(output_path[9:-1]))
 plt.show()
 
 
