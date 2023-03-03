@@ -19,21 +19,18 @@
  * intersections is generated.
  */
 
-// Deal.II includes
+#include <core/parameters.h>
+#include <core/serial_solid.h>
+#include <core/solid_objects_parameters.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/particles/data_out.h>
+#include <deal.II/numerics/data_out.h>
 
-// Lethe
-#include <core/parameters.h>
-#include <core/serial_solid.h>
-#include <core/solid_objects_parameters.h>
-
-// Tests (with common definitions)
 #include <../tests/tests.h>
 
 void
@@ -42,7 +39,7 @@ test()
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   // Generate a background fluid triangulation made of a sphere
-  std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
+  std::shared_ptr<parallel::TriangulationBase<3>> background_tria =
     std::make_shared<parallel::distributed::Triangulation<3>>(
       mpi_communicator,
       typename Triangulation<3>::MeshSmoothing(
@@ -50,7 +47,8 @@ test()
         Triangulation<3>::smoothing_on_coarsening));
 
   // Mesh of the fluid
-  GridGenerator::hyper_ball(*fluid_tria, {0.2, 0, 0}, 2);
+  GridGenerator::hyper_ball(*background_tria, {0.2, 0, 0}, 2);
+  background_tria->refine_global(3);
 
   // Generate the serial solid
 
@@ -58,36 +56,60 @@ test()
   auto param             = std::make_shared<Parameters::RigidSolidObject<3>>();
   param->solid_mesh.type = Parameters::Mesh::Type::dealii;
   param->solid_mesh.grid_type          = "hyper_rectangle";
-  param->solid_mesh.grid_arguments     = "-1, -1 : 1, 1 : 1";
-  param->solid_mesh.initial_refinement = 5;
+  param->solid_mesh.grid_arguments     = "-2, -1 : 2, 1 : false";
+  param->solid_mesh.initial_refinement = 3;
   param->solid_mesh.simplex            = true;
   param->solid_mesh.translate          = false;
   param->solid_mesh.rotate             = false;
 
-  std::shared_ptr<Mapping<3>> fluid_mapping =
-    std::make_shared<MappingQGeneric<3>>(1);
   SerialSolid<2, 3> solid(param, 0);
-
-  // Set-up the solid
-  solid.initial_setup();
-
 
   // Calculate the intersections between the background triangulation and the
   // floating solid
+  auto cell_and_triangle_intersection =
+    solid.map_solid_in_background_triangulation(*background_tria);
+  deallog << "Cell pairs (background, solid)" << std::endl;
+  for (auto &cell_pair : cell_and_triangle_intersection)
+    {
+      deallog << cell_pair.first->id() << " " << cell_pair.second->id()
+              << std::endl;
+    }
 
+  // Generate sufficient information to generate a graphical output
+  DoFHandler<3> background_dof_handler;
+  background_dof_handler.reinit(*background_tria);
+
+  DoFHandler<2, 3> &solid_dof_handler = solid.get_displacement_dof_handler();
+  std::shared_ptr<Triangulation<2, 3>> solid_triangulation =
+    solid.get_solid_triangulation();
+
+  // Loop over backgorund
+  Vector<double> subdomain_background(background_tria->n_active_cells());
+  Vector<double> subdomain_solid(solid_triangulation->n_active_cells());
+  for (auto &cell_pair : cell_and_triangle_intersection)
+    {
+      cell_pair.first->set_subdomain_id(1);
+      cell_pair.second->set_subdomain_id(1);
+      subdomain_background(cell_pair.first->global_active_cell_index()) = 1;
+      subdomain_solid(cell_pair.second->global_active_cell_index())     = 1;
+    }
+
+
+  DataOut<3>    background_data_out;
+  DataOut<2, 3> solid_data_out;
 
   // Generate a VTU for debugging purposes which shows the intersection
+  background_data_out.attach_dof_handler(background_dof_handler);
+  background_data_out.add_data_vector(subdomain_background, "subdomain");
+  background_data_out.build_patches();
+  std::ofstream output("background.vtu");
+  background_data_out.write_vtu(output);
 
-  // Generate the particles
-  //  Particles::DataOut<3, 3>                       particles_out;
-  //  std::shared_ptr<Particles::ParticleHandler<3>> solid_particle_handler =
-  //    solid.get_solid_particle_handler();
-  //  particles_out.build_patches(*solid_particle_handler);
-  //  const std::string filename = ("particles.vtu");
-  //  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
-
-  //      deallog << "Particle location: " << particle.get_location() <<
-  //      std::endl;
+  solid_data_out.attach_dof_handler(solid_dof_handler);
+  solid_data_out.add_data_vector(subdomain_solid, "subdomain");
+  solid_data_out.build_patches();
+  std::ofstream solid_output("solid_tria.vtu");
+  solid_data_out.write_vtu(solid_output);
 }
 
 int

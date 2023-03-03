@@ -109,8 +109,7 @@ std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
             typename Triangulation<dim, spacedim>::active_cell_iterator>>
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
-  const parallel::TriangulationBase<spacedim>         &background_tr,
-  const std::shared_ptr<Triangulation<dim, spacedim>> &solid_tr)
+  const parallel::TriangulationBase<spacedim> &background_tr)
 {
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
@@ -120,7 +119,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
 
   // Gather the amount of vertices per cell in the solid cells once to have
   // static memory
-  auto                         temporary_solid_cell = solid_tr->begin();
+  auto                         temporary_solid_cell = solid_tria->begin();
   std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
 
 
@@ -137,7 +136,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
           Point<spacedim> bg_cell_center = background_cell->center();
 
           // Calculate distance from center of the cell to triangle
-          for (auto &solid_cell : solid_tr->active_cell_iterators())
+          for (auto &solid_cell : solid_tria->active_cell_iterators())
             {
               // Gather triangle vertices
               for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)

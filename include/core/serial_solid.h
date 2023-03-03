@@ -71,8 +71,7 @@ public:
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
   map_solid_in_background_triangulation(
-    const parallel::TriangulationBase<spacedim>         &background_tr,
-    const std::shared_ptr<Triangulation<dim, spacedim>> &solid_tr);
+    const parallel::TriangulationBase<spacedim> &background_tr);
 
 
 
