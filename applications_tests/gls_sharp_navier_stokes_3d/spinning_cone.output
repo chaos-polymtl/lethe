@@ -12,16 +12,16 @@ Initial refinement around IB particles - Step : 2 of 2
    Volume of triangulation:      512
 
 *****************************************************************
-Transient iteration : 1        Time : 0.03125  Time step : 0.03125  CFL : 0.100749
+Transient iteration : 1        Time : 0.03125  Time step : 0.03125  CFL : 0.1007  
 *****************************************************************
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time     T_x      T_y       T_z        f_x        f_y      f_z      f_xv      f_yv      f_zv      f_xp      f_yp      f_zp   
-0           0.0312 -1.930396 0.545870 168.045869 111.006298 25.248943 0.722175 45.278440 -1.218506 -0.032613 65.727858 26.467449 0.754788 
+particle_ID  time    T_x    T_y     T_z      f_x      f_y    f_z    f_xv    f_yv    f_zv    f_xp    f_yp    f_zp  
+0           0.0312 -1.9304 0.5459 168.0459 111.0063 25.2489 0.7222 45.2784 -1.2185 -0.0326 65.7279 26.4674 0.7548 
 
 *****************************************************************
-Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.118859
+Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.1189  
 *****************************************************************
    Number of active cells:       6980
    Number of degrees of freedom: 33756
@@ -29,5 +29,5 @@ Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.1188
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_x       T_y       T_z       f_x      f_y       f_z      f_xv      f_yv      f_zv      f_xp      f_yp     f_zp    
-0           0.0625 0.987434 -0.721123 72.062745 53.972329 3.639503 -0.398396 37.121418 -0.312617 -0.140809 16.850912 3.952121 -0.257587 
+particle_ID  time   T_x     T_y     T_z     f_x    f_y     f_z    f_xv    f_yv    f_zv    f_xp    f_yp   f_zp   
+0           0.0625 0.9874 -0.7211 72.0627 53.9723 3.6395 -0.3984 37.1214 -0.3126 -0.1408 16.8509 3.9521 -0.2576 
