@@ -3,15 +3,11 @@ subsection simulation control
   set number mesh adapt = 2
   set output name       = output
   set output frequency  = 0
+  set log precision     = 4
 end
 
 subsection mesh adaptation
   set type = uniform
-end
-
-subsection FEM
-  set velocity order = 1
-  set pressure order = 1
 end
 
 subsection physical properties

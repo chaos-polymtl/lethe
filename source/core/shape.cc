@@ -405,6 +405,7 @@ OpenCascadeShape<dim>::value(const Point<dim> &evaluation_point,
     }
 
 #else
+  (void)evaluation_point;
   return 0;
 #endif
 }
@@ -478,6 +479,7 @@ OpenCascadeShape<dim>::value_with_cell_guess(
       return this->value_cache[point_in_string];
     }
 #else
+  (void)evaluation_point;
   return 0;
 #endif
 }
@@ -543,6 +545,7 @@ OpenCascadeShape<dim>::gradient(const Point<dim> &evaluation_point,
     }
 #else
   // Empty return if Lethe is not compile with OpenCascade
+  (void)evaluation_point;
   return Point<dim>();
 #endif
 }
@@ -621,6 +624,8 @@ OpenCascadeShape<dim>::gradient_with_cell_guess(
       return this->gradient_cache[point_in_string];
     }
 #else
+
+  (void)evaluation_point;
   return Tensor<1, dim>();
 #endif
 }
