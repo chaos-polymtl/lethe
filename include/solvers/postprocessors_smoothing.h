@@ -24,8 +24,6 @@
 
 #include <deal.II/numerics/data_postprocessor.h>
 
-
-// standard library includes includes
 #include <vector>
 
 using namespace dealii;
@@ -37,10 +35,10 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the variable being smoothed is solved
- * @tparam triangulation Flow triangulation
- * @tparam simulation_parameters The simulation parameters
- * @tparam number_quadrature_points The number of quadrature points
- * @tparam mpi_communicator Allowing communication between cores
+ * @param triangulation Flow triangulation
+ * @param simulation_parameters The simulation parameters
+ * @param number_quadrature_points The number of quadrature points
+ * @param mpi_communicator Allowing communication between cores
  */
 
 template <int dim, typename VectorType>
@@ -50,7 +48,7 @@ public:
   // Member functions
   PostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
+    const SimulationParameters<dim>                   &simulation_parameters,
     const unsigned int &number_quadrature_points);
 
   /**
@@ -78,8 +76,8 @@ public:
    * @brief Returns the smoothed field solution.
    */
   const TrilinosWrappers::MPI::Vector &
-  calculate_smoothed_field(const VectorType &            solution,
-                           const DoFHandler<dim> &       dof_handler_velocity,
+  calculate_smoothed_field(const VectorType             &solution,
+                           const DoFHandler<dim>        &dof_handler_velocity,
                            std::shared_ptr<Mapping<dim>> mapping_velocity);
 
   /**
@@ -117,19 +115,19 @@ public:
   // Member functions
   QcriterionPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
+    const SimulationParameters<dim>                   &simulation_parameters,
     const unsigned int &number_quadrature_points);
 
   /**
    * @brief Generates the right hand side based on the fluid's solution.
    *
-   * @tparam solution The fluid's solution
-   * @tparam dof_hanfler_fluid The dof_handler of the fluid solution
-   * @tparam mapping_fluid The mapping of the fluid
+   * @param solution The fluid's solution
+   * @param dof_hanfler_fluid The dof_handler of the fluid solution
+   * @param mapping_fluid The mapping of the fluid
    */
   void
-  generate_rhs(const VectorType &            solution,
-               const DoFHandler<dim> &       dof_handler_fluid,
+  generate_rhs(const VectorType             &solution,
+               const DoFHandler<dim>        &dof_handler_fluid,
                std::shared_ptr<Mapping<dim>> mapping_fluid);
 
 private:
@@ -148,19 +146,19 @@ public:
   // Member functions
   ContinuityPostProcessorSmoothing(
     const parallel::DistributedTriangulationBase<dim> &triangulation,
-    const SimulationParameters<dim> &                  simulation_parameters,
+    const SimulationParameters<dim>                   &simulation_parameters,
     const unsigned int &number_quadrature_points);
 
   /**
    * @brief Generates the right hand side based on the fluid dynamics solution.
    *
-   * @tparam solution The fluid's solution
-   * @tparam dof_hanfler_fluid The dof_handler of the fluid dynamics solution
-   * @tparam mapping_fluid The mapping of the fluid
+   * @param solution The fluid's solution
+   * @param dof_hanfler_fluid The dof_handler of the fluid dynamics solution
+   * @param mapping_fluid The mapping of the fluid
    */
   void
-  generate_rhs(const VectorType &            solution,
-               const DoFHandler<dim> &       dof_handler_fluid,
+  generate_rhs(const VectorType             &solution,
+               const DoFHandler<dim>        &dof_handler_fluid,
                std::shared_ptr<Mapping<dim>> mapping_fluid);
 
 private:
