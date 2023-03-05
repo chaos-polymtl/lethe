@@ -2434,7 +2434,7 @@ namespace Parameters
           Patterns::Double(),
           "Smallest gap considered for the lubrification force calculation. This value is multiplied by the smallest cell size");
 
-        prm.enter_subsection("wall wall physical properties");
+        prm.enter_subsection("wall physical properties");
         {
           prm.declare_entry(
             "wall youngs modulus",
@@ -2571,11 +2571,8 @@ namespace Parameters
       time_extrapolation_of_refinement_zone =
         prm.get_bool("refinement zone extrapolation");
       levels_not_precalculated = prm.get_integer("levels not precalculated");
-
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
-
-
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
@@ -2583,6 +2580,7 @@ namespace Parameters
           particles[i].initialize_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
+
           particles[i].integrate_motion = prm.get_bool("integrate motion");
 
           prm.enter_subsection("position");
@@ -2640,7 +2638,11 @@ namespace Parameters
                 particles[i].f_velocity->value(particles[i].position, 2);
               particles[i].pressure_location[2] = pressure_list[2];
             }
+          std::string shape_type          = prm.get("type");
+          std::string shape_arguments_str = prm.get("shape arguments");
+          particles[i].initialize_shape(shape_type, shape_arguments_str);
 
+          particles[i].radius = particles[i].shape->effective_radius;
           prm.enter_subsection("physical properties");
           {
             particles[i].inertia[0][0] = prm.get_double("inertia");
@@ -2656,12 +2658,6 @@ namespace Parameters
             particles[i].rolling_friction_coefficient =
               prm.get_double("rolling friction coefficient");
 
-
-            std::string shape_type          = prm.get("type");
-            std::string shape_arguments_str = prm.get("shape arguments");
-            particles[i].initialize_shape(shape_type, shape_arguments_str);
-
-            particles[i].radius = particles[i].shape->effective_radius;
 
             if (dim == 2)
               {
@@ -2680,6 +2676,7 @@ namespace Parameters
           }
           prm.leave_subsection();
         }
+      prm.leave_subsection();
     }
   }
 
