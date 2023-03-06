@@ -345,7 +345,7 @@ Boundary Layer Mesh
 """"""""""""""""""""""""""
 
 Some problems require special attention in the vicinity of surfaces, especially when one wishes to take into account boundary layer effects. Gmsh is equipped with tools to mesh geometries to obtain high accuracy near surfaces: transfinite meshes and the Field Boundary Layer.
-This section first gives an example of the use of the Field Boundary Layer in a simple case. An application on a more complex geometry, a naca0012 airfoil will be shown at end. The .geo and .msh will be available in an example very soon.
+This section first gives an example of the use of the Field Boundary Layer in a simple case. An application on a more complex geometry, a naca0012 airfoil will be shown at end. The ``.geo`` and ``.msh`` will be available in an example very soon.
 
 First, we define the geometry: a rectangular plate in a square enclosure. We want to mesh the area between the two objects. Without further parameterization of the .geo, we obtain the following mesh:
 
@@ -395,7 +395,7 @@ Here is the mesh generated with the previous settings around the plate:
     :name: bondary layer basic
     :width: 600
     
-5. The result is interesting, although the elements at the corners are skewed. This can be solved by feeding the field a list of the points at the corners which will be defined as FanPoints. Then, one may refine the mesh by specifying a number of elements for each fan. Alternatively the size can be defined as the same for all points, see the commented line below.
+5. The result is interesting, although the elements at the corners are skewed. This can be solved by feeding the field a list of the points at the corners which will be defined as FanPoints. Then, one may refine the mesh by specifying a number of elements for each fan. Alternatively, the size can be defined as the same for all points, see the commented line below.
 
 .. code-block::
 
@@ -404,7 +404,7 @@ Here is the mesh generated with the previous settings around the plate:
         //Mesh.BoundaryLayerFanElements = 17;
 
 
-We obtain the following mesh, it is much better to account for boundary layer effects: 
+We obtain the following mesh which is much better to account for boundary layer effects: 
 
 .. image:: images/boundaryLayer/boundaryLayerMesh.png
     :alt: The surface is meshed with small elements at the surface of the plate
@@ -431,7 +431,7 @@ The mesh around the angle looks like this:
     :width: 600
  
 
-You now know everything about boundary layer meshing. Here is an example on a naca0012 airfoil profile. The .geo will be available on a future example very soon.
+You now know everything about boundary layer meshing. Here is an example on a naca0012 airfoil profile. The ``.geo`` will be available on a future example very soon.
 
 .. image:: images/boundaryLayer/nacaWhole.png
     :alt: naca0012 airfoil profile with 2000 points on its surface
