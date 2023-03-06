@@ -311,6 +311,12 @@ Tensor<1, dim>
 Sphere<dim>::gradient(const Point<dim> &evaluation_point,
                       const unsigned int /*component*/) const
 {
+  // We make sure that the evaluation point and the sphere center are different,
+  // because if they are the same the analytical gradient is not defined: the
+  // function returns a NaN. We use the numerical gradient if the points are the
+  // same.
+  if ((evaluation_point - this->position).norm() < 1e-12)
+    return AutoDerivativeFunction<dim>::gradient(evaluation_point);
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 4)
   const Tensor<1, dim> center_to_point = evaluation_point - this->position;
   const Tensor<1, dim> grad = center_to_point / center_to_point.norm();
