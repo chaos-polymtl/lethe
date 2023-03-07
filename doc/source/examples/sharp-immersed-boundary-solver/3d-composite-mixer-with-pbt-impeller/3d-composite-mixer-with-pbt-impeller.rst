@@ -19,7 +19,7 @@ Files used in this example
 Description of the case
 -----------------------
 
-In this example, we simulate a mixer using a PBT impeller through the usage of Sharp-Immersed boudaries. The shape of the impeller is defined by a composition of basic shapes.
+In this example, we simulate a mixer using a PBT impeller through the usage of Sharp-Immersed boundaries. The shape of the impeller is defined by a composition of basic shapes.
 
 Creation of the composite shape file
 ------------------------------------
