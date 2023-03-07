@@ -150,32 +150,43 @@ public:
    * Convert the vector of mobility status set to a vector of mobility status
    * with cell id order
    * status_to_cell is a vector of 3 sets of cell iterator (inactive, active,
-   * mobile), it can't be used as is in the pvd post-processing, it needs to be
-   * converted to a vector of mobility status by active cell index
+   * mobile), it can't be used as is in the pvd post-processing or any data out,
+   * it needs to be converted to a vector of mobility status by active cell
+   * index
    *
-   * @param status The initiated vector for the conversio
+   * @param status The initiated vector for the conversion
    */
   void
-  get_mobility_status_vector(std::vector<unsigned int> status)
+  get_mobility_status_vector(std::vector<unsigned int> &status)
   {
     // Loop over all set with different mobility status (except empty)
     for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
          i_set++)
       {
         for (auto &cell : status_to_cell[i_set])
-          status[cell->active_cell_index()] = i_set;
+          {
+            if (cell->is_locally_owned())
+              {
+                status[cell->active_cell_index()] = i_set;
+              }
+          }
       }
   };
 
   void
-  get_mobility_status_vector(Vector<float> status)
+  get_mobility_status_vector(Vector<float> &status)
   {
     // Loop over all set with different mobility status (except empty)
     for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
          i_set++)
       {
         for (auto &cell : status_to_cell[i_set])
-          status[cell->active_cell_index()] = i_set;
+          {
+            if (cell->is_locally_owned())
+              {
+                status[cell->active_cell_index()] = i_set;
+              }
+          }
       }
   };
 

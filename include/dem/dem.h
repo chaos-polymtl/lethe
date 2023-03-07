@@ -101,7 +101,13 @@ private:
     const;
 
   /**
-   * TODO
+   * Similar to the cell_weight() function, this function is used when the cell
+   * weight is adapted to the mobility status of the cell. For instance, if the
+   * cell is inactive, there's not as much as load as an mobile one since there
+   * is no force calculation of the particles in it, as well as the velocity
+   * integration. This may result of a processor that may process a lot of
+   * particles in comparison of other processors, but most of them may be in
+   * inactive cells.
    */
   unsigned int
   cell_weight_with_mobility_status(

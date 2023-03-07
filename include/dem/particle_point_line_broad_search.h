@@ -18,6 +18,7 @@
  */
 
 #include <dem/data_containers.h>
+#include <dem/disable_particle_contact.h>
 
 #include <deal.II/distributed/tria.h>
 

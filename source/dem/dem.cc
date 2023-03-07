@@ -295,15 +295,6 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
   if (!cell->is_locally_owned())
     return 0;
 
-  // This determines how important particle work is compared to cell
-  // work (by default every cell has a weight of 1000).
-  // We set the weight per particle much higher to indicate that
-  // the particle load is the only one that is important to distribute
-  // in this example. The optimal value of this number depends on the
-  // application and can range from 0 (cheap particle operations,
-  // expensive cell operations) to much larger than 1000 (expensive
-  // particle operations, cheap cell operations, like in this case).
-  // This parameter will need to be tuned for the case of DEM.
   const unsigned int particle_weight =
     parameters.model_parameters.load_balance_particle_weight;
 
@@ -755,8 +746,6 @@ DEMSolver<dim>::finish_simulation()
           // Get mobility status vector sorted by cell id
           Vector<float> mobility_status(triangulation.n_active_cells());
           disable_contact_object.get_mobility_status_vector(mobility_status);
-
-          // Print data in deal.II format
           visualization_object.print_intermediate_format(mobility_status,
                                                          background_dh,
                                                          mpi_communicator,
