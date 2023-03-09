@@ -340,6 +340,120 @@ A mesh can also be partially structured, to better encounter for a boundary laye
 
 .. _tips:
 
+""""""""""""""""""""""""""
+Boundary Layer Mesh
+""""""""""""""""""""""""""
+
+Some problems require special attention in the vicinity of surfaces, especially when one wishes to take into account boundary layer effects. Gmsh is equipped with tools to mesh geometries to obtain high accuracy near surfaces: transfinite meshes and the Field Boundary Layer.
+This section first gives an example of the use of the Field Boundary Layer in a simple case. An application on a more complex geometry, a naca0012 airfoil will be shown at end. The ``.geo`` and ``.msh`` will be available in an example very soon.
+
+First, we define the geometry: a rectangular plate in a square enclosure. We want to mesh the area between the two objects. Without further parameterization of the .geo, we obtain the following mesh:
+
+.. image:: images/boundaryLayer/basicMesh.png
+    :alt: The surface is meshed without specific instructions around the plate
+    :align: center
+    :name: basic mesh
+    :width: 400
+
+
+We will now use one of the many fields offered by gmsh. These objects allow you to perform various operations on the mesh: define a box where to mesh more finely, calculate a field of distances to a precise point and combine with a Threshold etc. We are interested in the Field BoundaryLayer which allows, given curves and points, to make a boundary layer mesh in the neighbourhood of these entities. The parameters are the following (for an exhaustive list of parameters and possibilities, see the `user manual <http://gmsh.info/dev/doc/texinfo/gmsh.pdf>`_   p303-304):
+
+1. Set the BoundaryLayer Field:
+
+.. code-block::
+
+	Field[1] = BoundaryLayer;
+	
+2. Specify the curves which define your boundary:
+
+.. code-block::
+
+	Field[1].CurvesList = {5,6,7,8};
+
+	
+3. Set the desired characteristics of the boundary layer, size of the elements close/far to the surface, size ratio between two successive layers and maximal thickness of the boundary layer: 
+
+.. code-block::
+
+        Field[1].SizeFar = 1; 
+        Field[1].Size = 0.004;
+        Field[1].Ratio = 1.5; 
+        Field[1].Thickness = 1; 
+	
+4. Specify if the elements must be quadrangles and apply the field:
+
+.. code-block::
+
+        Field[1].Quads = 1; 
+        BoundaryLayer Field = 1;
+	
+Here is the mesh generated with the previous settings around the plate:
+
+.. image:: images/boundaryLayer/noFan.png
+    :alt: The mesh generated with a BoundaryLayer Field around the plate
+    :align: center
+    :name: bondary layer basic
+    :width: 600
+    
+5. The result is interesting, although the elements at the corners are skewed. This can be solved by feeding the field a list of the points at the corners which will be defined as FanPoints. Then, one may refine the mesh by specifying a number of elements for each fan. Alternatively, the size can be defined as the same for all points, see the commented line below.
+
+.. code-block::
+
+        Field[1].FanPointsList = {5,6,7,8}; 
+        Field[1].FanPointsSizesList = {17,17,17,17}; 
+        //Mesh.BoundaryLayerFanElements = 17;
+
+
+We obtain the following mesh which is much better to account for boundary layer effects: 
+
+.. image:: images/boundaryLayer/boundaryLayerMesh.png
+    :alt: The surface is meshed with small elements at the surface of the plate
+    :align: center
+    :name: boundary layer mesh
+    :width: 600
+
+
+If we take a closer look at the surface, the geometric progression of the sizes of elements becomes visible: 
+
+.. image:: images/boundaryLayer/zoom.png
+    :alt: The mesh is highly refined close to the surface
+    :align: center
+    :name: zoom boundary layer mesh
+    :width: 600
+
+
+The mesh around the angle looks like this: 
+
+.. image:: images/boundaryLayer/angle.png
+    :alt: The angles are also meshed accordingly
+    :align: center
+    :name: fan boundary layer mesh
+    :width: 600
+ 
+
+You now know everything about boundary layer meshing. Here is an example on a naca0012 airfoil profile. The ``.geo`` will be available on a future example very soon.
+
+.. image:: images/boundaryLayer/nacaWhole.png
+    :alt: naca0012 airfoil profile with 2000 points on its surface
+    :align: center
+    :name: naca in box
+    :width: 600
+
+
+.. image:: images/boundaryLayer/naca_big.png
+    :alt: boundary layer mesh around naca
+    :align: center
+    :name: zoom naca
+    :width: 600
+
+.. image:: images/boundaryLayer/voisinageFan.png
+    :alt: The trailing edge requires a specific meshing to simulate the phenomenas happening here
+    :align: center
+    :name: fan Naca
+    :width: 600
+
+
+
 --------------------------
 Other tips
 --------------------------
