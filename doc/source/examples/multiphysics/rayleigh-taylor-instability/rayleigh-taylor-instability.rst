@@ -120,39 +120,48 @@ The ``physical properties`` subsection defines the physical properties of the fl
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
-    subsection physical properties
-      set number of fluids = 2
-      subsection fluid 0
-        set density             = 100
-        set kinematic viscosity = 0.00153
-      end
-      subsection fluid 1
-        set density             = 300
-        set kinematic viscosity = 0.00153
-      end
-    end
+   #---------------------------------------------------
+   # Physical Properties
+   #---------------------------------------------------
+   subsection physical properties
+     set number of fluids = 2
+     subsection fluid 0
+       set density             = 100
+       set kinematic viscosity = 0.00153
+     end
+     subsection fluid 1
+       set density             = 300
+       set kinematic viscosity = 0.00153
+     end
+   end
 
-In the ``initial condition`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial condition``.
 
+In the ``initial condition`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial condition``. The interface between the two fluids is made smoother with the `projection step`_ parameter.
+
+.. _projection step: https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Condition
-    #---------------------------------------------------
-    subsection initial conditions
-      set type = nodal
-      subsection uvwp
-        set Function expression = 0; 0; 0
-      end
+   #---------------------------------------------------
+   # Initial Condition
+   #---------------------------------------------------
+
+   subsection initial conditions
+     set type = nodal
+     subsection uvwp
+       set Function expression = 0; 0; 0
+     end
+
+     subsection VOF
+       set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
     
-      subsection VOF
-        set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
-      end
-    end
+       subsection projection step
+         set enable           = true
+         set diffusion factor = 1
+       end
+    
+     end
+   end
 
 In the ``mesh`` subsection we configure the simulation domain. The ``initial refinement`` of the mesh is equal to 5, but we use mesh adaptation to coarsen the mesh in cells far from the interface to improve the computation performance.
 
@@ -225,25 +234,32 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
-    subsection VOF
-      subsection interface sharpening
-        set enable              = true
-        set threshold           = 0.5
-        set interface sharpness = 1.5
-        set frequency           = 25
-        set type                = constant
-      end
-    
-      subsection mass conservation
-        set monitoring      = true
-        set monitored fluid = fluid 1
-        set tolerance       = 1e-6
-        set verbosity       = quiet
-      end
-    end
+   #---------------------------------------------------
+   # VOF
+   #---------------------------------------------------
+
+   subsection VOF
+     subsection interface sharpening
+       set enable              = true
+       set threshold           = 0.5
+       set interface sharpness = 1.5
+       set frequency           = 25
+       set type                = constant
+     end
+
+     subsection mass conservation
+       set monitoring      = true
+       set monitored fluid = fluid 1
+       set tolerance       = 1e-2
+       set verbosity       = extra verbose
+     end
+
+     subsection phase filtration
+       set type  = tanh
+       set verbosity = verbose
+       set beta = 10
+     end
+   end
 
 
 and for the ``adaptive`` refinement
@@ -251,28 +267,37 @@ and for the ``adaptive`` refinement
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
-    subsection VOF
-      subsection interface sharpening
-        set enable                  = true
-        set threshold               = 0.5
-        set interface sharpness     = 1.5
-        set frequency               = 25
-        set type                    = adaptative
-        set threshold max deviation = 0.2
-        set max iterations          = 50
-      end
-    
-      subsection mass conservation
-        set monitoring      = true
-        set monitored fluid = fluid 1
-        set tolerance       = 1e-2
-        set verbosity       = quiet
-      end
-    end
+   #---------------------------------------------------
+   # VOF
+   #---------------------------------------------------
 
+   subsection VOF
+     subsection interface sharpening
+       set enable                  = true
+       set threshold               = 0.5
+       set interface sharpness     = 1.5
+       set frequency               = 25
+       set type                    = adaptative
+       set threshold max deviation = 0.2
+       set max iterations          = 50
+     end
+
+     subsection mass conservation
+       set monitoring      = true
+       set monitored fluid = fluid 1
+       set tolerance       = 1e-2
+       set verbosity       = extra verbose
+     end
+
+     subsection phase filtration
+       set type  = tanh
+       set verbosity = verbose
+       set beta = 10
+     end
+   end
+
+The ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid`
+documentation for more explanation on the phase filtration.
 
 ---------------------------
 Running the simulation
@@ -294,6 +319,13 @@ to run the simulations using eight CPU cores. Feel free to use more.
 -------
 Results
 -------
+
+In the following picture, the boundary between the two fluids is compared with (right) and without (left) ``projection step`` :
+
+.. image:: images/smoothedInitialCondition.png
+    :alt: Schematic
+    :align: center
+    :width: 800
 
 The following animation shows the results of this simulation:
 
@@ -326,10 +358,15 @@ With higher levels of refinement, we can see better correspondence between the v
     :width: 800
 
 
-The following figure shows the mass of fluid 1 throughout the simulation with a constant interface sharpening.
+The following figures shows the mass of fluid 1 throughout the simulation with a constant (top) and adaptive (bottom) interface sharpening.
 
 
-.. image:: images/mass-of-fluid1.png
+.. image:: images/constant_mass.png
+    :alt: Schematic
+    :align: center
+    :width: 400
+    
+.. image:: images/adaptive_mass.png
     :alt: Schematic
     :align: center
     :width: 400
