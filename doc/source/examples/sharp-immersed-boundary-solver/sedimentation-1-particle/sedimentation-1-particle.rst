@@ -18,7 +18,7 @@ Features
 
 Files used in this example
 ---------------------------
- ``/examples/resolved-cfd-dem/sedimentation-1-particle/sedimentation-1-particle.prm``
+ ``/examples/sharp-immersed-boundary-solver/sedimentation-1-particle/sedimentation-1-particle.prm``
 
 Description of the case
 -----------------------

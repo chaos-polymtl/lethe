@@ -22,7 +22,7 @@ test()
   std::shared_ptr<Shape<3>> sphere =
     std::make_shared<Sphere<3>>(radius, Point<3>(), Point<3>());
   std::shared_ptr<Shape<3>> rectangle =
-    std::make_shared<Rectangle<3>>(half_lengths, Point<3>(), Point<3>());
+    std::make_shared<HyperRectangle<3>>(half_lengths, Point<3>(), Point<3>());
 
   // Creation of a map of shapes
   std::map<unsigned int, std::shared_ptr<Shape<3>>> shapes;
