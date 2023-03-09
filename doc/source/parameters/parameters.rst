@@ -12,7 +12,7 @@ Launching an application requires an executable of the required solver, and a pa
     cfd/cfd
     dem/dem
     unresolved-cfd-dem/unresolved-cfd-dem
-    resolved-cfd-dem/resolved-cfd-dem
+    sharp-immersed-boundary-solver/sharp-immersed-boundary-solver
     rpt/rpt
 
 .. tip:: 

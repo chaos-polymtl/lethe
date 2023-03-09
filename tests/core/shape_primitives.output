@@ -2,7 +2,7 @@
 DEAL::Beginning
 DEAL::Testing value
 DEAL:: Sphere , SD = -0.515918
-DEAL:: Rectangle , SD = 0.00000
+DEAL:: HyperRectangle , SD = 0.00000
 DEAL:: Ellipsoid , SD = 0.309897
 DEAL:: Torus , SD = 0.896586
 DEAL:: Cone , SD = 1.27456
@@ -13,7 +13,7 @@ DEAL:: Cylindrical Tube , SD = -0.280625
 DEAL:: Cylindrical Helix , SD = 0.202481
 DEAL::OK
 DEAL::Testing rotation and translation
-DEAL:: New distance for rectangle , SD = 0.141370
+DEAL:: New distance for hyper rectangle , SD = 0.141370
 DEAL::OK
 DEAL::Testing gradient
 DEAL:: Gradient for sphere at p[0] = 0.673817

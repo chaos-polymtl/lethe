@@ -25,7 +25,7 @@ test()
   std::shared_ptr<Shape<3>> sphere =
     std::make_shared<Sphere<3>>(radius, position, orientation);
   std::shared_ptr<Shape<3>> rectangle =
-    std::make_shared<Rectangle<3>>(half_lengths, position, orientation);
+    std::make_shared<HyperRectangle<3>>(half_lengths, position, orientation);
   std::shared_ptr<Shape<3>> ellipsoid =
     std::make_shared<Ellipsoid<3>>(half_lengths, position, orientation);
   std::shared_ptr<Shape<3>> torus =
@@ -50,7 +50,7 @@ test()
   // Testing value of all shape, to confirm proper implementation
   Point<3> p({1., 0.8, 0.75});
   deallog << " Sphere , SD = " << sphere->value(p) << std::endl;
-  deallog << " Rectangle , SD = " << rectangle->value(p) << std::endl;
+  deallog << " HyperRectangle , SD = " << rectangle->value(p) << std::endl;
   deallog << " Ellipsoid , SD = " << ellipsoid->value(p) << std::endl;
   deallog << " Torus , SD = " << torus->value(p) << std::endl;
   deallog << " Cone , SD = " << cone->value(p) << std::endl;
@@ -69,7 +69,7 @@ test()
   Point<3>     translation({0.2, 0., 0.3});
   rectangle->set_orientation(rotation);
   rectangle->set_position(translation);
-  deallog << " New distance for rectangle , SD = " << rectangle->value(p)
+  deallog << " New distance for hyper rectangle , SD = " << rectangle->value(p)
           << std::endl;
   deallog << "OK" << std::endl;
 

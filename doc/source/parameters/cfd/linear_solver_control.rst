@@ -79,9 +79,9 @@ In this subsection, the control options of linear solvers are specified. These c
 	* ``gmres`` (default parameter value), a GMRES iterative solver with ILU preconditioning.
 	* ``amg``, a GMRES iterative solver with AMG preconditioning and an ILU coarsener and smoother.
 	* ``bicgstab``, a BICGSTAB iterative solver with ILU preconditioning.
-	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_. 
+	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_.
 
-	.. hint:: 
+	.. hint::
 		Which solver is the most efficient for a given problem?
 		
 		* For steady-state problems (2D and 3D):
@@ -89,12 +89,16 @@ In this subsection, the control options of linear solvers are specified. These c
 			* fine meshes (from :math:`\approx 1` M cells): ``amg`` solver.
 		* For transient problems, this is much more problem dependent, but generally:
 			* relatively low :math:`\text{CFL}` condition: ``gmres`` solver with a low fill level, for instance ``set ilu preconditioner fill = 0``. This applies even the mesh is very large (:math:`>10` M cells), because the transient version of the system of equation is much easier to solve.
-			* large :math:`\text{CFL}` condition (:math:`\text{CFL}>10`) and/or very large mesh: ``amg`` solver may become preferable. 
+			* large :math:`\text{CFL}` condition (:math:`\text{CFL}>10`) and/or very large mesh: ``amg`` solver may become preferable.
 
 	.. caution:: 
 		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` (see :doc:`non-linear_solver_control`).
 		
 		The use of ``direct`` solver should be avoided for 3D problems.
+
+.. warning::
+    Currently, the ``gls_sharp_navier_stokes_2d`` and ``gls_sharp_navier_stokes_2d`` solvers make it almost impossible to reach convergence with the ``amg`` linear solver. It is recommended to use ``gmres`` instead, even for fine meshes.
+
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.
 

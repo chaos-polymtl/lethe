@@ -3744,12 +3744,13 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               particles[p_i].initialize_shape("sphere", shape_argument);
             }
           else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::rectangle)
+                   Shape<dim>::ShapeType::hyper_rectangle)
             {
               std::vector<double> shape_argument(2);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               shape_argument[1] = restart_data["shape_argument_1"][p_i];
-              particles[p_i].initialize_shape("rectangle", shape_argument);
+              particles[p_i].initialize_shape("hyper rectangle",
+                                              shape_argument);
             }
           else if (restart_data["type"][p_i] ==
                    Shape<dim>::ShapeType::ellipsoid)
@@ -3810,13 +3811,14 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
               particles[p_i].initialize_shape("sphere", shape_argument);
             }
           else if (restart_data["type"][p_i] ==
-                   Shape<dim>::ShapeType::rectangle)
+                   Shape<dim>::ShapeType::hyper_rectangle)
             {
               std::vector<double> shape_argument(3);
               shape_argument[0] = restart_data["shape_argument_0"][p_i];
               shape_argument[1] = restart_data["shape_argument_1"][p_i];
               shape_argument[2] = restart_data["shape_argument_2"][p_i];
-              particles[p_i].initialize_shape("rectangle", shape_argument);
+              particles[p_i].initialize_shape("hyper rectangle",
+                                              shape_argument);
             }
           else if (restart_data["type"][p_i] ==
                    Shape<dim>::ShapeType::ellipsoid)

@@ -41,15 +41,16 @@ ShapeGenerator::initialize_shape_from_vector(
   if (type == "sphere")
     shape =
       std::make_shared<Sphere<dim>>(shape_arguments[0], position, orientation);
-  else if (type == "rectangle")
+  else if (type == "hyper rectangle")
     {
       Tensor<1, dim> half_lengths;
       for (unsigned int i = 0; i < dim; ++i)
         {
           half_lengths[i] = shape_arguments[i];
         }
-      shape =
-        std::make_shared<Rectangle<dim>>(half_lengths, position, orientation);
+      shape = std::make_shared<HyperRectangle<dim>>(half_lengths,
+                                                    position,
+                                                    orientation);
     }
   else if (type == "ellipsoid")
     {
