@@ -239,8 +239,7 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
@@ -250,8 +249,7 @@ DEMSolver<dim>::cell_weight(
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
         break;
 
-      case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
-        {
+        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -296,7 +294,8 @@ DEMSolver<dim>::load_balance()
 
   // Update the container with all the combinations of background and
   // solid cells
-  container_manager.store_floating_mesh_info(triangulation, solids);
+  // BB NOTE
+  // container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (has_periodic_boundaries)
     {
@@ -417,13 +416,21 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
   bool sorting_in_subdomains_step =
     (particles_insertion_step || load_balance_step || contact_detection_step);
 
-  contact_detection_step =
-    find_contact_detection_step<dim>(particle_handler,
-                                     simulation_control->get_time_step(),
-                                     smallest_contact_search_criterion,
-                                     mpi_communicator,
-                                     sorting_in_subdomains_step,
-                                     displacement);
+  contact_detection_step = find_particle_contact_detection_step<dim>(
+    particle_handler,
+    simulation_control->get_time_step(),
+    smallest_contact_search_criterion,
+    mpi_communicator,
+    sorting_in_subdomains_step,
+    displacement);
+
+  if (has_floating_mesh)
+    {
+      contact_detection_step =
+        contact_detection_step ||
+        find_floating_mesh_contact_detection_step(
+          smallest_contact_search_criterion, this->solids);
+    }
 
   return contact_detection_step;
 }
@@ -452,7 +459,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
@@ -759,6 +766,7 @@ DEMSolver<dim>::solve()
             triangulation_cell_diameter,
             parameters.boundary_conditions);
 
+  // Store information about floating mesh/background mesh intersection
   container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (parameters.restart.restart == true)
@@ -894,6 +902,9 @@ DEMSolver<dim>::solve()
 
           // Updating number of contact builds
           contact_build_number++;
+
+          // Update floating mesh information in the container manager
+          container_manager.store_floating_mesh_info(triangulation, solids);
 
           // Execute broad search by filling containers of particle-wall
           // contact pair candidates

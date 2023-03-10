@@ -124,6 +124,12 @@ public:
   get_displacement_vector();
 
   /**
+   * @return the reference to the vector of the displacement since the mapping
+   */
+  double
+  get_max_displacement_since_intersection();
+
+  /**
    * @return translational veclocity
    */
   Tensor<1, 3>
@@ -176,6 +182,15 @@ public:
   rotate_grid(double angle, int axis);
 
   /**
+   * @brief Reset displacements since intersection for contact detection
+   */
+  void
+  reset_displacement_monitoring()
+  {
+    displacement_since_intersection = 0;
+  }
+
+  /**
    *  @brief output solid triangulation
    */
   void
@@ -215,6 +230,8 @@ private:
   DoFHandler<dim, spacedim>                displacement_dh;
   std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
   Vector<double>                           displacement;
+  Vector<double>                           displacement_since_intersection;
+
 
   PVDHandler pvdhandler;
 

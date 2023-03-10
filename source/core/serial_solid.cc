@@ -323,6 +323,13 @@ SerialSolid<dim, spacedim>::get_displacement_vector()
 }
 
 template <int dim, int spacedim>
+double
+SerialSolid<dim, spacedim>::get_max_displacement_since_intersection()
+{
+  return displacement_since_intersection.linfty_norm();
+}
+
+template <int dim, int spacedim>
 std::shared_ptr<Triangulation<dim, spacedim>>
 SerialSolid<dim, spacedim>::get_triangulation()
 {
@@ -461,8 +468,12 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
               vertex_position += vertex_displacement;
 
               for (unsigned d = 0; d < spacedim; ++d)
-                displacement[dof_index + d] =
-                  displacement[dof_index + d] + vertex_displacement[d];
+                {
+                  displacement[dof_index + d] =
+                    displacement[dof_index + d] + vertex_displacement[d];
+                  displacement_since_intersection[dof_index + d] +=
+                    vertex_displacement[d];
+                }
 
               vertex_moved[global_vertex_no] = true;
             }
@@ -631,8 +642,12 @@ SerialSolid<dim, spacedim>::setup_displacement()
   displacement_dh.distribute_dofs(*this->displacement_fe);
 
   displacement.reinit(displacement_dh.n_locally_owned_dofs());
+  displacement_since_intersection.reinit(
+    displacement_dh.n_locally_owned_dofs());
 
-  displacement = 0;
+
+  displacement                    = 0;
+  displacement_since_intersection = 0;
 }
 
 
