@@ -1358,10 +1358,65 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           for (unsigned int boundary_id = 0;
                boundary_id < simulation_parameters.boundary_conditions.size;
                ++boundary_id)
-            flow_rate_table.set_precision("pressure-drop" +
+            flow_rate_table.set_precision("flow-rate-" +
                                             std::to_string(boundary_id),
                                           12);
           this->flow_rate_table.write_text(output);
+        }
+    }
+
+  // Calculate momentum flux at every boundary
+  if (this->simulation_parameters.post_processing.calculate_momentum_flux)
+    {
+      TimerOutput::Scope t(this->computing_timer, "momentum_flux_calculation");
+      for (unsigned int boundary_id = 0;
+           boundary_id < simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          std::pair<double, double> boundary_momentum_flux =
+            calculate_momentum_flux(
+              this->dof_handler,
+              this->mapping,
+              this->present_solution,
+              *this->face_quadrature,
+              boundary_id,
+              simulation_parameters.physical_properties_manager);
+          this->momentum_flux_table.add_value(
+            "time", simulation_control->get_current_time());
+          this->momentum_flux_table.add_value("momentum-flux-" +
+                                                std::to_string(boundary_id),
+                                              boundary_momentum_flux.first);
+          if (this->simulation_parameters.post_processing.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              this->pcout << "Momentum flux at boundary " +
+                               std::to_string(boundary_id) + ": "
+                          << std::setprecision(
+                               simulation_control->get_log_precision())
+                          << boundary_momentum_flux.first << " kg.m^2/s^3"
+                          << std::endl;
+            }
+        }
+
+      // Output flow rate to a text file from processor 0
+      if ((simulation_control->get_step_number() %
+             this->simulation_parameters.post_processing.output_frequency ==
+           0) &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.momentum_flux_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          momentum_flux_table.set_precision("time", 12);
+          for (unsigned int boundary_id = 0;
+               boundary_id < simulation_parameters.boundary_conditions.size;
+               ++boundary_id)
+            momentum_flux_table.set_precision("momentum-flux-" +
+                                                std::to_string(boundary_id),
+                                              12);
+          this->momentum_flux_table.write_text(output);
         }
     }
 

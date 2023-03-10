@@ -78,22 +78,22 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
  *
  * @param evaluation_point The solution for which the pressure drop is calculated. The velocity field is assumed to be the "dim" field
  *
- * @param cell_quadrature_formula The cell quadrature formula for the calculation
- *
  * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  *
  * @param boundary_id The id of the inlet boundary
+ *
+ * @param physical_properties The parameters containing the required physical properties
  */
 template <int dim, typename VectorType>
-double
+std::pair<double, double>
 calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
                         std::shared_ptr<Mapping<dim>> mapping,
                         const VectorType &            evaluation_point,
-                        const Quadrature<dim> &       cell_quadrature_formula,
                         const Quadrature<dim - 1> &   face_quadrature_formula,
-                        const unsigned int            boundary_id);
+                        const unsigned int            boundary_id,
+                        PhysicalPropertiesManager &   properties_manager);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain

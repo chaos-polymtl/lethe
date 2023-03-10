@@ -160,52 +160,114 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const unsigned int                        outlet_boundary_id);
 
 template <int dim, typename VectorType>
-double
+std::pair<double, double>
 calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
                         std::shared_ptr<Mapping<dim>> mapping,
                         const VectorType &            evaluation_point,
-                        const Quadrature<dim> &       cell_quadrature_formula,
                         const Quadrature<dim - 1> &   face_quadrature_formula,
-                        const unsigned int            boundary_id)
+                        const unsigned int            boundary_id,
+                        PhysicalPropertiesManager &   properties_manager)
 {
-  return 1.;
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
+
+  const unsigned int               n_q_points = face_quadrature_formula.size();
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+  std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
+  std::vector<double>              pressure_values(n_q_points);
+  Tensor<1, dim>                   normal_vector;
+
+  FEFaceValues<dim> fe_face_values(*mapping,
+                                   fe,
+                                   face_quadrature_formula,
+                                   update_values | update_quadrature_points |
+                                     update_JxW_values | update_normal_vectors);
+
+  auto                    density_model = properties_manager.get_density(0);
+  std::map<field, double> field_values;
+  field_values[field::temperature] = 0;
+  double fluid_density             = density_model->value(field_values);
+
+  double momentum = 0;
+  double area     = 0;
+
+  // Calculating area and volumetric flow rate at the inlet flow
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned() && cell->at_boundary())
+        {
+          for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+               face++)
+            {
+              if (cell->face(face)->at_boundary())
+                {
+                  fe_face_values.reinit(cell, face);
+                  if (cell->face(face)->boundary_id() == boundary_id)
+                    {
+                      for (unsigned int q = 0; q < n_q_points; q++)
+                        {
+                          area += fe_face_values.JxW(q);
+                          normal_vector = fe_face_values.normal_vector(q);
+                          fe_face_values[velocities].get_function_values(
+                            evaluation_point, velocity_values);
+                          fe_face_values[pressure].get_function_values(
+                            evaluation_point, pressure_values);
+                          // Integration of density*velocity^3 +
+                          // pressure*velocity
+                          momentum += velocity_values[q] * normal_vector *
+                                      fe_face_values.JxW(q) *
+                                      (velocity_values[q] * velocity_values[q] *
+                                         fluid_density +
+                                       pressure_values[q]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  area                            = Utilities::MPI::sum(area, mpi_communicator);
+  momentum = Utilities::MPI::sum(momentum, mpi_communicator);
+
+  return std::make_pair(momentum, area);
 }
 
-template double
+template std::pair<double, double>
 calculate_momentum_flux<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   std::shared_ptr<Mapping<2>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Quadrature<2> &                cell_quadrature_formula,
   const Quadrature<1> &                face_quadrature_formula,
-  const unsigned int                   boundary_id);
+  const unsigned int                   boundary_id,
+  PhysicalPropertiesManager &          properties_manager);
 
-template double
+template std::pair<double, double>
 calculate_momentum_flux<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   std::shared_ptr<Mapping<3>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Quadrature<3> &                cell_quadrature_formula,
   const Quadrature<2> &                face_quadrature_formula,
-  const unsigned int                   boundary_id);
+  const unsigned int                   boundary_id,
+  PhysicalPropertiesManager &          properties_manager);
 
-template double
+template std::pair<double, double>
 calculate_momentum_flux<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   std::shared_ptr<Mapping<2>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Quadrature<2> &                     cell_quadrature_formula,
   const Quadrature<1> &                     face_quadrature_formula,
-  const unsigned int                        boundary_id);
+  const unsigned int                        boundary_id,
+  PhysicalPropertiesManager &               properties_manager);
 
-template double
+template std::pair<double, double>
 calculate_momentum_flux<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   std::shared_ptr<Mapping<3>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Quadrature<3> &                     cell_quadrature_formula,
   const Quadrature<2> &                     face_quadrature_formula,
-  const unsigned int                        boundary_id);
+  const unsigned int                        boundary_id,
+  PhysicalPropertiesManager &               properties_manager);
 
 template <int dim, typename VectorType>
 double
@@ -1054,7 +1116,7 @@ calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
   double flow_rate = 0;
   double area      = 0;
 
-  // Calculating area and volumetric flow rate at the inlet flow
+  // Calculating area and volumetric flow rate at the boundary
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
