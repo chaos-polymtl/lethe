@@ -161,6 +161,54 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
 
 template <int dim, typename VectorType>
 double
+calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
+                        std::shared_ptr<Mapping<dim>> mapping,
+                        const VectorType &            evaluation_point,
+                        const Quadrature<dim> &       cell_quadrature_formula,
+                        const Quadrature<dim - 1> &   face_quadrature_formula,
+                        const unsigned int            boundary_id)
+{
+  return 1.;
+}
+
+template double
+calculate_momentum_flux<2, TrilinosWrappers::MPI::Vector>(
+  const DoFHandler<2> &                dof_handler,
+  std::shared_ptr<Mapping<2>>          mapping,
+  const TrilinosWrappers::MPI::Vector &evaluation_point,
+  const Quadrature<2> &                cell_quadrature_formula,
+  const Quadrature<1> &                face_quadrature_formula,
+  const unsigned int                   boundary_id);
+
+template double
+calculate_momentum_flux<3, TrilinosWrappers::MPI::Vector>(
+  const DoFHandler<3> &                dof_handler,
+  std::shared_ptr<Mapping<3>>          mapping,
+  const TrilinosWrappers::MPI::Vector &evaluation_point,
+  const Quadrature<3> &                cell_quadrature_formula,
+  const Quadrature<2> &                face_quadrature_formula,
+  const unsigned int                   boundary_id);
+
+template double
+calculate_momentum_flux<2, TrilinosWrappers::MPI::BlockVector>(
+  const DoFHandler<2> &                     dof_handler,
+  std::shared_ptr<Mapping<2>>               mapping,
+  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<2> &                     cell_quadrature_formula,
+  const Quadrature<1> &                     face_quadrature_formula,
+  const unsigned int                        boundary_id);
+
+template double
+calculate_momentum_flux<3, TrilinosWrappers::MPI::BlockVector>(
+  const DoFHandler<3> &                     dof_handler,
+  std::shared_ptr<Mapping<3>>               mapping,
+  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<3> &                     cell_quadrature_formula,
+  const Quadrature<2> &                     face_quadrature_formula,
+  const unsigned int                        boundary_id);
+
+template <int dim, typename VectorType>
+double
 calculate_CFL(const DoFHandler<dim> &dof_handler,
               const VectorType &     evaluation_point,
               const double           time_step,
