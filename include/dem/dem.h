@@ -95,7 +95,7 @@ private:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-      &                                                                  cell,
+                                                                        &cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 
@@ -159,7 +159,7 @@ private:
   void
   update_moment_of_inertia(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double> &                    MOI);
+    std::vector<double>                     &MOI);
 
 
   /**
@@ -258,6 +258,7 @@ private:
   unsigned int                         contact_build_number;
   TimerOutput                          computing_timer;
   double                               smallest_contact_search_criterion;
+  double                               smallest_floating_mesh_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
   bool                                 load_balance_step;

@@ -294,8 +294,7 @@ DEMSolver<dim>::load_balance()
 
   // Update the container with all the combinations of background and
   // solid cells
-  // BB NOTE
-  // container_manager.store_floating_mesh_info(triangulation, solids);
+  container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (has_periodic_boundaries)
     {
@@ -424,13 +423,7 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
     sorting_in_subdomains_step,
     displacement);
 
-  if (has_floating_mesh)
-    {
-      contact_detection_step =
-        contact_detection_step ||
-        find_floating_mesh_contact_detection_step(
-          smallest_contact_search_criterion, this->solids);
-    }
+
 
   return contact_detection_step;
 }
@@ -798,6 +791,12 @@ DEMSolver<dim>::solve()
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
 
+  // Find the smallest cell size and use this as the floating mesh mapping
+  // criterion
+  smallest_floating_mesh_mapping_criterion =
+    GridTools::minimal_cell_diameter(triangulation);
+
+
   if (has_periodic_boundaries)
     {
       periodic_boundaries_object.set_periodic_boundaries_information(
@@ -888,6 +887,25 @@ DEMSolver<dim>::solve()
           particle_handler.update_ghost_particles();
         }
 
+      // Check to see if floating mesh needs to be mapped in background mesh
+      if (has_floating_mesh)
+        {
+          bool floating_mesh_map_step =
+            find_floating_mesh_contact_detection_step(
+              smallest_floating_mesh_mapping_criterion, this->solids);
+
+          if (floating_mesh_map_step)
+            {
+              // Update floating mesh information in the container manager
+              container_manager.store_floating_mesh_info(triangulation, solids);
+
+              for (auto &solid : solids)
+                {
+                  solid->reset_displacement_monitoring();
+                }
+            }
+        }
+
       // Modify particles contact containers by search sequence
       if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
@@ -902,9 +920,6 @@ DEMSolver<dim>::solve()
 
           // Updating number of contact builds
           contact_build_number++;
-
-          // Update floating mesh information in the container manager
-          container_manager.store_floating_mesh_info(triangulation, solids);
 
           // Execute broad search by filling containers of particle-wall
           // contact pair candidates
