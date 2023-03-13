@@ -104,6 +104,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
+  this->vertices_cut.reinit(this->locally_owned_dofs,
+                            this->locally_relevant_dofs,
+                            this->mpi_communicator);
+  this->particles_that_cut_vertices.reinit(this->locally_owned_dofs,
+                                           this->locally_relevant_dofs,
+                                           this->mpi_communicator);
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -237,11 +243,66 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 }
             }
 
+          // If a cell is cut, we register its DOFs as "cut" also. This will
+          // allow us to detect fluid cells that have all their DOFs cut, and
+          // consider them as cut cells.
+          if (cell_is_cut)
+            {
+              size_t id;
+              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                {
+                  id               = local_dof_indices[j];
+                  vertices_cut(id) = 1;
+                  particles_that_cut_vertices(id) =
+                    particle_id_which_cuts_this_cell;
+                }
+            }
+
           cut_cells_map[cell]    = {cell_is_cut,
                                  particle_id_which_cuts_this_cell,
                                  number_of_particles_cutting_this_cell};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
+        }
+    }
+
+  // We loop over every fluid cell, and if all of its DOFs are cut we change the
+  // status of the cell itself.
+  for (const auto &cell : cell_iterator)
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          bool cell_is_cut;
+          bool cell_is_inside;
+          cell->get_dof_indices(local_dof_indices);
+          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+          if (!cell_is_cut)
+            {
+              unsigned int number_of_vertices_in_cell =
+                local_dof_indices.size();
+              unsigned int number_of_vertices_cut = 0;
+              size_t       current_particle_candidate =
+                std::numeric_limits<int>::max();
+              size_t potential_particle_candidate;
+              size_t id;
+              // We count the number of vertices that are cut while keeping
+              // track of the lowest particle ID.
+              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                {
+                  id = local_dof_indices[j];
+                  number_of_vertices_cut += round(vertices_cut(id));
+                  potential_particle_candidate =
+                    round(particles_that_cut_vertices(id));
+                  current_particle_candidate =
+                    std::min(current_particle_candidate,
+                             potential_particle_candidate);
+                }
+              if (number_of_vertices_in_cell == number_of_vertices_cut)
+                {
+                  cut_cells_map[cell] = {true, current_particle_candidate, 0};
+                }
+            }
         }
     }
 }
