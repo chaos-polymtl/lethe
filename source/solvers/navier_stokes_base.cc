@@ -1365,40 +1365,41 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
-  // Calculate momentum flux at every boundary
-  if (this->simulation_parameters.post_processing.calculate_momentum_flux)
+  // Calculate momentum at every boundary
+  if (this->simulation_parameters.post_processing.calculate_momentum)
     {
-      TimerOutput::Scope t(this->computing_timer, "momentum_flux_calculation");
+      TimerOutput::Scope t(this->computing_timer, "momentum_calculation");
       for (unsigned int boundary_id = 0;
            boundary_id < simulation_parameters.boundary_conditions.size;
            ++boundary_id)
         {
-          std::pair<double, double> boundary_momentum_flux =
-            calculate_momentum_flux(
-              this->dof_handler,
-              this->mapping,
-              this->present_solution,
-              *this->face_quadrature,
-              boundary_id,
-              simulation_parameters.physical_properties_manager);
-          this->momentum_flux_table.add_value(
+          std::pair<double, double> boundary_momentum = calculate_momentum(
+            this->dof_handler,
+            this->mapping,
+            this->present_solution,
+            *this->face_quadrature,
+            boundary_id,
+            simulation_parameters.physical_properties_manager);
+          this->momentum_table.add_value(
             "time", simulation_control->get_current_time());
-          this->momentum_flux_table.add_value("momentum-flux-" +
-                                                std::to_string(boundary_id),
-                                              boundary_momentum_flux.first);
+          this->momentum_table.add_value("momentum-" +
+                                           std::to_string(boundary_id),
+                                         boundary_momentum.first);
+          this->momentum_table.add_value("area-" + std::to_string(boundary_id),
+                                         boundary_momentum.second);
           if (this->simulation_parameters.post_processing.verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "Momentum flux at boundary " +
-                               std::to_string(boundary_id) + ": "
-                          << std::setprecision(
-                               simulation_control->get_log_precision())
-                          << boundary_momentum_flux.first << " kg.m^2/s^3"
-                          << std::endl;
+              this->pcout
+                << "Momentum at boundary " + std::to_string(boundary_id) + ": "
+                << std::setprecision(simulation_control->get_log_precision())
+                << boundary_momentum.first << " kg/(m.s^2)"
+                << " over an area of " + std::to_string(boundary_id) + ": "
+                << boundary_momentum.second << " m^2" << std::endl;
             }
         }
 
-      // Output flow rate to a text file from processor 0
+      // Output to a text file from processor 0
       if ((simulation_control->get_step_number() %
              this->simulation_parameters.post_processing.output_frequency ==
            0) &&
@@ -1406,17 +1407,21 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         {
           std::string filename =
             simulation_parameters.simulation_control.output_folder +
-            simulation_parameters.post_processing.momentum_flux_output_name +
-            ".dat";
+            simulation_parameters.post_processing.momentum_output_name + ".dat";
           std::ofstream output(filename.c_str());
-          momentum_flux_table.set_precision("time", 12);
+          momentum_table.set_precision("time", 12);
           for (unsigned int boundary_id = 0;
                boundary_id < simulation_parameters.boundary_conditions.size;
                ++boundary_id)
-            momentum_flux_table.set_precision("momentum-flux-" +
-                                                std::to_string(boundary_id),
-                                              12);
-          this->momentum_flux_table.write_text(output);
+            {
+              momentum_table.set_precision("momentum-" +
+                                             std::to_string(boundary_id),
+                                           12);
+              momentum_table.set_precision("area-" +
+                                             std::to_string(boundary_id),
+                                           12);
+            }
+          this->momentum_table.write_text(output);
         }
     }
 

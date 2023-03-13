@@ -71,12 +71,14 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                         const unsigned int            outlet_boundary_id);
 
 /**
- * @brief Calculate the momentum flux at a given boundary. The volumetric flux thus calculated has units of Length^3/Time.
- * @return Volumetric flux at the boundary
+ * @brief Calculate the momentum and the area at a given boundary.
+ * The momentum thus calculated has units of Mass/(Length*Time^2).
+ *
+ * @return Momentum and area at the boundary
  *
  * @param dof_handler The dof_handler used for the calculation
  *
- * @param evaluation_point The solution for which the pressure drop is calculated. The velocity field is assumed to be the "dim" field
+ * @param evaluation_point The solution for which the momentum is calculated. The velocity field is assumed to be the "dim" field
  *
  * @param face_quadrature_formula The face quadrature formula for the calculation
  *
@@ -88,12 +90,12 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType &            evaluation_point,
-                        const Quadrature<dim - 1> &   face_quadrature_formula,
-                        const unsigned int            boundary_id,
-                        PhysicalPropertiesManager &   properties_manager);
+calculate_momentum(const DoFHandler<dim> &       dof_handler,
+                   std::shared_ptr<Mapping<dim>> mapping,
+                   const VectorType &            evaluation_point,
+                   const Quadrature<dim - 1> &   face_quadrature_formula,
+                   const unsigned int            boundary_id,
+                   PhysicalPropertiesManager &   properties_manager);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain

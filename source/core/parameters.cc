@@ -1144,10 +1144,10 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of flow rate at boundaries.");
 
-      prm.declare_entry("calculate momentum flux",
+      prm.declare_entry("calculate momentum",
                         "false",
                         Patterns::Bool(),
-                        "Enable calculation of momentum flux at boundaries.");
+                        "Enable calculation of momentum at boundaries.");
 
       prm.declare_entry(
         "initial time",
@@ -1170,10 +1170,10 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output volumetric flux");
 
-      prm.declare_entry("momentum flux name",
-                        "momentum_flux",
+      prm.declare_entry("momentum name",
+                        "momentum",
                         Patterns::FileName(),
-                        "File output momentum flux");
+                        "File output momentum");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -1277,12 +1277,12 @@ namespace Parameters
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
       calculate_flow_rate            = prm.get_bool("calculate flow rate");
-      calculate_momentum_flux        = prm.get_bool("calculate momentum flux");
+      calculate_momentum             = prm.get_bool("calculate momentum");
       initial_time                   = prm.get_double("initial time");
       kinetic_energy_output_name     = prm.get("kinetic energy name");
       pressure_drop_output_name      = prm.get("pressure drop name");
       flow_rate_output_name          = prm.get("flow rate name");
-      momentum_flux_output_name      = prm.get("momentum flux name");
+      momentum_output_name           = prm.get("momentum name");
       enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       output_frequency               = prm.get_integer("output frequency");

@@ -161,12 +161,12 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
 
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType &            evaluation_point,
-                        const Quadrature<dim - 1> &   face_quadrature_formula,
-                        const unsigned int            boundary_id,
-                        PhysicalPropertiesManager &   properties_manager)
+calculate_momentum(const DoFHandler<dim> &       dof_handler,
+                   std::shared_ptr<Mapping<dim>> mapping,
+                   const VectorType &            evaluation_point,
+                   const Quadrature<dim - 1> &   face_quadrature_formula,
+                   const unsigned int            boundary_id,
+                   PhysicalPropertiesManager &   properties_manager)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
@@ -212,10 +212,9 @@ calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
                             evaluation_point, velocity_values);
                           fe_face_values[pressure].get_function_values(
                             evaluation_point, pressure_values);
-                          // Integration of density*velocity^3 +
-                          // pressure*velocity
-                          momentum += velocity_values[q] * normal_vector *
-                                      fe_face_values.JxW(q) *
+                          // Integration of density*velocity^2 +
+                          // pressure
+                          momentum += fe_face_values.JxW(q) *
                                       (velocity_values[q] * velocity_values[q] *
                                          fluid_density +
                                        pressure_values[q]);
@@ -234,7 +233,7 @@ calculate_momentum_flux(const DoFHandler<dim> &       dof_handler,
 }
 
 template std::pair<double, double>
-calculate_momentum_flux<2, TrilinosWrappers::MPI::Vector>(
+calculate_momentum<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   std::shared_ptr<Mapping<2>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
@@ -243,7 +242,7 @@ calculate_momentum_flux<2, TrilinosWrappers::MPI::Vector>(
   PhysicalPropertiesManager &          properties_manager);
 
 template std::pair<double, double>
-calculate_momentum_flux<3, TrilinosWrappers::MPI::Vector>(
+calculate_momentum<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   std::shared_ptr<Mapping<3>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
@@ -252,7 +251,7 @@ calculate_momentum_flux<3, TrilinosWrappers::MPI::Vector>(
   PhysicalPropertiesManager &          properties_manager);
 
 template std::pair<double, double>
-calculate_momentum_flux<2, TrilinosWrappers::MPI::BlockVector>(
+calculate_momentum<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   std::shared_ptr<Mapping<2>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
@@ -261,7 +260,7 @@ calculate_momentum_flux<2, TrilinosWrappers::MPI::BlockVector>(
   PhysicalPropertiesManager &               properties_manager);
 
 template std::pair<double, double>
-calculate_momentum_flux<3, TrilinosWrappers::MPI::BlockVector>(
+calculate_momentum<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   std::shared_ptr<Mapping<3>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
