@@ -73,29 +73,30 @@ template bool find_particle_contact_detection_step(
 
 template <int dim>
 bool
-find_floating_mesh_contact_detection_step(
+find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
 {
-  bool contact_detection_step = false;
+  bool floating_mesh_requires_map = false;
 
   for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
     {
       double displacement =
-        solids[i_solid]->get_max_displacement_since_intersection();
-      contact_detection_step = contact_detection_step ||
-                               displacement > smallest_contact_search_criterion;
+        solids[i_solid]->get_max_displacement_since_mapped();
+      floating_mesh_requires_map =
+        floating_mesh_requires_map ||
+        displacement > smallest_contact_search_criterion;
     }
 
-  return contact_detection_step;
+  return floating_mesh_requires_map;
 }
 
 template bool
-find_floating_mesh_contact_detection_step(
+find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<2, 3>>> solids);
 
 template bool
-find_floating_mesh_contact_detection_step(
+find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<1, 2>>> solids);

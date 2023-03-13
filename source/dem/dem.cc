@@ -889,22 +889,16 @@ DEMSolver<dim>::solve()
           particle_handler.update_ghost_particles();
         }
 
-      // Check to see if floating mesh needs to be mapped in background mesh
+      // Check to see if floating meshes need to be mapped in background mesh
       if (has_floating_mesh)
         {
-          bool floating_mesh_map_step =
-            find_floating_mesh_contact_detection_step(
-              smallest_floating_mesh_mapping_criterion, this->solids);
+          bool floating_mesh_map_step = find_floating_mesh_mapping_step(
+            smallest_floating_mesh_mapping_criterion, this->solids);
 
           if (floating_mesh_map_step)
             {
               // Update floating mesh information in the container manager
               container_manager.store_floating_mesh_info(triangulation, solids);
-
-              for (auto &solid : solids)
-                {
-                  solid->reset_displacement_monitoring();
-                }
             }
         }
 

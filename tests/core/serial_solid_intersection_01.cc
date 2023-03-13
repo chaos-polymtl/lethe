@@ -79,7 +79,7 @@ test()
   DoFHandler<3> background_dof_handler;
   background_dof_handler.reinit(*background_tria);
 
-  DoFHandler<2, 3> &solid_dof_handler = solid.get_displacement_dof_handler();
+  DoFHandler<2, 3> &solid_dof_handler = solid.get_dof_handler();
   std::shared_ptr<Triangulation<2, 3>> solid_triangulation =
     solid.get_triangulation();
 

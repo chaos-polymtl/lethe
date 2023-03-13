@@ -23,6 +23,7 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <core/solid_objects_parameters.h>
+#include <core/tensors_and_points_dimension_manipulation.h>
 
 // Dealii Includes
 #include <deal.II/base/function.h>
@@ -60,7 +61,6 @@ template <int dim, int spacedim = dim>
 class SerialSolid
 {
 public:
-  // Member functions
   SerialSolid(std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param,
               unsigned int                                             id);
 
@@ -72,8 +72,6 @@ public:
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
   map_solid_in_background_triangulation(
     const parallel::TriangulationBase<spacedim> &background_tr);
-
-
 
   /**
    * @brief Manages solid triangulation setup
@@ -91,67 +89,95 @@ public:
    * @brief Set-ups the displacement vector to store the motion of the triangulation
    */
   void
-  setup_displacement();
+  setup_dof_handler();
 
   /**
-   * @brief Loads a solid triangulation from a restart file
-   */
-  void
-  load_triangulation(const std::string filename_tria);
-
-  /**
+   * @brief Returns the shared pointer to the solid object triangulation
+   *
    * @return shared_ptr of the solid triangulation
    */
   std::shared_ptr<Triangulation<dim, spacedim>>
   get_triangulation();
 
   /**
-   * @return the reference to the solid dof handler
+   * @brief Returns the dof_handler associated with the displacement of the solid object
+   *
+   * @return the reference to the displacement dof handler
    */
   DoFHandler<dim, spacedim> &
   get_dof_handler();
 
   /**
-   * @return the reference to the displacement dof handler
-   */
-  DoFHandler<dim, spacedim> &
-  get_displacement_dof_handler();
-
-  /**
+   * @brief Returns the displacement vector of all the vertices of the solid object
+   *
    * @return the reference to the displacement vector
    */
   Vector<double> &
   get_displacement_vector();
 
   /**
+   * @brief Calculates the max displacement of the solid object. The max displacement is defined as
+   *  the L^\infty norm of the displacement components. This is a measure of the
+   * maximal displacement in any direction.
+   *
    * @return the reference to the vector of the displacement since the mapping
    */
   double
-  get_max_displacement_since_intersection();
+  get_max_displacement_since_mapped();
 
   /**
-   * @return translational veclocity
+   * @brief Returns translational velocity of the solid object
+   *
+   * @return The translational velocity of the solid object
+   */
+  inline Tensor<1, 3>
+  get_translational_velocity() const
+  {
+    if constexpr (spacedim == 3)
+      return this->current_translational_velocity;
+
+    if constexpr (spacedim == 2)
+      return tensor_nd_to_3d(this->current_translational_velocity);
+  }
+
+  /**
+   * @brief Returns the angular velocity of the solid object
+   *
+   * @return The angular velocity of the solid object
    */
   Tensor<1, 3>
-  get_translational_velocity();
+  get_angular_velocity() const
+  {
+    return this->current_angular_velocity;
+  }
 
   /**
-   * @return rotational (angular) veclocity
-   */
-  Tensor<1, 3>
-  get_rotational_velocity();
-
-  /**
-   * @return center of rotation
+   * @brief Returns the center of rotation of the solid object
+   *
+   * @return The center of rotation of the solid object
    */
   Point<3>
-  get_center_of_rotation();
+  get_center_of_rotation() const
+  {
+    if constexpr (spacedim == 3)
+      return this->center_of_rotation;
+
+    if constexpr (spacedim == 2)
+      return point_nd_to_3d(this->center_of_rotation);
+  }
 
   /**
+   * @brief Returns the solid id of the solid object.
+   * This ID is an unsigned integer which is given to the solid object at
+   * compile time and is mostly used when writing files.
+   *
    * @return id of the solid
    */
   unsigned int
-  get_solid_id();
+  get_solid_id() const
+  {
+    return id;
+  }
 
   /**
    * @brief Moves the vertices of the solid triangulation. This function
@@ -168,18 +194,42 @@ public:
   move_solid_triangulation(double time_step, double initial_time);
 
   /**
+   *  @brief Write the solid object triangulation
+   *
+   *  @param simulation_control The simulation control object
+   */
+  void
+  write_output_results(std::shared_ptr<SimulationControl> simulation_control);
+
+  /**
+   * @brief read solid base triangulation checkpoint
+   *
+   * @param prefix_name The prefix of the checkpoint of the simulation
+   *
+   * @warning This is currently not implemented
+   */
+  void
+  read_checkpoint(std::string prefix_name);
+
+  /**
+   * @brief write solid base triangulation checkpoint
+   *
+   * @param prefix_name The prefix of the checkpoint of the simulation
+   *
+   * @warning This is currently not implemented
+   */
+  void
+  write_checkpoint(std::string prefix_name);
+
+
+private:
+  /**
    * @brief Moves the dofs of the solid_triangulation by using the displacement vector.
    * This is only used to move the solid triangulation at the correct location
    * when the simulation is restarted.
    */
   void
-  move_solid_triangulation_with_displacement();
-
-  /**
-   * @brief Rotates the grid by a given angle around an axis
-   */
-  void
-  rotate_grid(double angle, int axis);
+  displace_solid_triangulation();
 
   /**
    * @brief Reset displacements since intersection for contact detection
@@ -187,30 +237,15 @@ public:
   void
   reset_displacement_monitoring()
   {
-    displacement_since_intersection = 0;
+    displacement_since_mapped = 0;
   }
 
   /**
-   *  @brief output solid triangulation
+   * @brief Rotates the grid by a given angle around an axis
    */
   void
-  write_output_results(std::shared_ptr<SimulationControl> simulation_control);
+  rotate_grid(double angle, int axis);
 
-
-  /**
-   * @brief read solid base triangulation checkpoint
-   */
-  void
-  read_checkpoint(std::string prefix_name);
-
-  /**
-   * @brief write solid base triangulation checkpoint
-   */
-  void
-  write_checkpoint(std::string prefix_name);
-
-
-private:
   // Member variables
   MPI_Comm                                                 mpi_communicator;
   const unsigned int                                       n_mpi_processes;
@@ -221,7 +256,6 @@ private:
   unsigned int id;
 
   std::shared_ptr<Triangulation<dim, spacedim>> solid_tria;
-  DoFHandler<dim, spacedim>                     solid_dh;
 
   std::shared_ptr<FiniteElement<dim, spacedim>> fe;
 
@@ -230,7 +264,7 @@ private:
   DoFHandler<dim, spacedim>                displacement_dh;
   std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
   Vector<double>                           displacement;
-  Vector<double>                           displacement_since_intersection;
+  Vector<double>                           displacement_since_mapped;
 
 
   PVDHandler pvdhandler;

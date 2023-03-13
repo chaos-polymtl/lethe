@@ -28,7 +28,6 @@
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/grid/filtered_iterator.h>
@@ -39,8 +38,6 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
-
-#include <deal.II/particles/data_out.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -88,10 +85,6 @@ SerialSolid<dim, spacedim>::SerialSolid(
                                                   spacedim);
     }
 
-  // Dof handler associated with particles
-  solid_dh.clear();
-  solid_dh.reinit(*this->solid_tria);
-
   // Dof handler associated with mesh displacement
   displacement_dh.clear();
   displacement_dh.reinit(*this->solid_tria);
@@ -100,10 +93,6 @@ SerialSolid<dim, spacedim>::SerialSolid(
   initial_setup();
 }
 
-
-// BB NOTE
-// This is the part where distance calculations must be done when mapping the
-// solid This is the function that has to be optimized
 template <int dim, int spacedim>
 std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
@@ -159,6 +148,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
     }
 
 
+  reset_displacement_monitoring();
 
   return mapped_solid;
 }
@@ -172,7 +162,7 @@ SerialSolid<dim, spacedim>::initial_setup()
   // initial_setup is called if the simulation is not a restarted one
   // Set-up of solid triangulation
   setup_triangulation(false);
-  setup_displacement();
+  setup_dof_handler();
 }
 
 
@@ -259,57 +249,13 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
         {
           solid_tria->refine_global(param->solid_mesh.initial_refinement);
         }
-      solid_dh.distribute_dofs(*fe);
     }
 }
 
-template <int dim, int spacedim>
-void
-SerialSolid<dim, spacedim>::load_triangulation(const std::string filename_tria)
-{
-  // Load solid triangulation from given file
-  // TODO not functional for now, as not all information as passed with the load
-  // function (see dealii documentation for classTriangulation) => change the
-  // way the load works, or change the way the solid triangulation is handled
-  std::ifstream in_folder(filename_tria.c_str());
-  if (!in_folder)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename_tria + "> does not appear to exist!"));
-
-  try
-    {
-      if (auto solid_tria =
-            dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
-              get_triangulation().get()))
-        {
-          solid_tria->load(filename_tria.c_str());
-        }
-    }
-  catch (...)
-    {
-      AssertThrow(false,
-                  ExcMessage("Cannot open snapshot mesh file or read the "
-                             "solid triangulation stored there."));
-    }
-
-  // Initialize dof handler for solid
-  solid_dh.distribute_dofs(*fe);
-}
 
 template <int dim, int spacedim>
 DoFHandler<dim, spacedim> &
 SerialSolid<dim, spacedim>::get_dof_handler()
-{
-  return solid_dh;
-}
-
-template <int dim, int spacedim>
-DoFHandler<dim, spacedim> &
-SerialSolid<dim, spacedim>::get_displacement_dof_handler()
 {
   return displacement_dh;
 }
@@ -324,9 +270,9 @@ SerialSolid<dim, spacedim>::get_displacement_vector()
 
 template <int dim, int spacedim>
 double
-SerialSolid<dim, spacedim>::get_max_displacement_since_intersection()
+SerialSolid<dim, spacedim>::get_max_displacement_since_mapped()
 {
-  return displacement_since_intersection.linfty_norm();
+  return displacement_since_mapped.linfty_norm();
 }
 
 template <int dim, int spacedim>
@@ -334,35 +280,6 @@ std::shared_ptr<Triangulation<dim, spacedim>>
 SerialSolid<dim, spacedim>::get_triangulation()
 {
   return solid_tria;
-}
-
-template <int dim, int spacedim>
-Tensor<1, 3>
-SerialSolid<dim, spacedim>::get_translational_velocity()
-{
-  if constexpr (spacedim == 3)
-    return this->current_translational_velocity;
-
-  if constexpr (spacedim == 2)
-    return tensor_nd_to_3d(this->current_translational_velocity);
-}
-
-template <int dim, int spacedim>
-Tensor<1, 3>
-SerialSolid<dim, spacedim>::get_rotational_velocity()
-{
-  return this->current_angular_velocity;
-}
-
-template <int dim, int spacedim>
-Point<3>
-SerialSolid<dim, spacedim>::get_center_of_rotation()
-{
-  if constexpr (spacedim == 3)
-    return this->center_of_rotation;
-
-  if constexpr (spacedim == 2)
-    return point_nd_to_3d(this->center_of_rotation);
 }
 
 template <>
@@ -395,14 +312,6 @@ SerialSolid<2, 3>::rotate_grid(double angle, int axis)
   Tensor<1, 3> t_axis;
   t_axis[axis] = 1;
   GridTools::rotate(t_axis, angle, *solid_tria);
-}
-
-
-template <int dim, int spacedim>
-unsigned int
-SerialSolid<dim, spacedim>::get_solid_id()
-{
-  return id;
 }
 
 template <int dim, int spacedim>
@@ -471,7 +380,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
                 {
                   displacement[dof_index + d] =
                     displacement[dof_index + d] + vertex_displacement[d];
-                  displacement_since_intersection[dof_index + d] +=
+                  displacement_since_mapped[dof_index + d] +=
                     vertex_displacement[d];
                 }
 
@@ -486,7 +395,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
+SerialSolid<dim, spacedim>::displace_solid_triangulation()
 {
   const unsigned int     dofs_per_cell = displacement_fe->dofs_per_cell;
   std::set<unsigned int> dof_vertex_displaced;
@@ -525,21 +434,34 @@ SerialSolid<dim, spacedim>::write_output_results(
   std::shared_ptr<SimulationControl> simulation_control)
 {
   DataOut<dim, spacedim> data_out;
-  data_out.attach_dof_handler(solid_dh);
-
   data_out.attach_dof_handler(displacement_dh);
 
-  std::vector<std::string> solution_names(spacedim, "displacement");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation(
-      spacedim, DataComponentInterpretation::component_is_part_of_vector);
+  {
+    std::vector<std::string> displacement_names(spacedim, "displacement");
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>
+      data_component_interpretation(
+        spacedim, DataComponentInterpretation::component_is_part_of_vector);
 
 
-  data_out.add_data_vector(displacement,
-                           solution_names,
-                           DataOut<dim, spacedim>::type_dof_data,
-                           data_component_interpretation);
+    data_out.add_data_vector(displacement,
+                             displacement_names,
+                             DataOut<dim, spacedim>::type_dof_data,
+                             data_component_interpretation);
+  }
 
+  {
+    std::vector<std::string> displacement_names(spacedim,
+                                                "displacement_since_mapped");
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>
+      data_component_interpretation(
+        spacedim, DataComponentInterpretation::component_is_part_of_vector);
+
+
+    data_out.add_data_vector(displacement_since_mapped,
+                             displacement_names,
+                             DataOut<dim, spacedim>::type_dof_data,
+                             data_component_interpretation);
+  }
 
 
   data_out.build_patches();
@@ -583,6 +505,10 @@ void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 template <int dim, int spacedim>
 void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 {
+  throw(std::runtime_error(
+    "Restarting DEM simulations with floating meshes is currently not possible."));
+
+
   // Setup an un-refined triangulation before loading
   // setup_triangulation(true);
 
@@ -635,17 +561,16 @@ void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::setup_displacement()
+SerialSolid<dim, spacedim>::setup_dof_handler()
 {
   displacement_dh.distribute_dofs(*this->displacement_fe);
 
   displacement.reinit(displacement_dh.n_locally_owned_dofs());
-  displacement_since_intersection.reinit(
-    displacement_dh.n_locally_owned_dofs());
+  displacement_since_mapped.reinit(displacement_dh.n_locally_owned_dofs());
 
 
-  displacement                    = 0;
-  displacement_since_intersection = 0;
+  displacement              = 0;
+  displacement_since_mapped = 0;
 }
 
 

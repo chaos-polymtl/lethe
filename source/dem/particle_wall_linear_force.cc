@@ -223,8 +223,8 @@ ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
       // rotation
       Tensor<1, 3> translational_velocity =
         solids[solid_counter]->get_translational_velocity();
-      Tensor<1, 3> rotational_velocity =
-        solids[solid_counter]->get_rotational_velocity();
+      Tensor<1, 3> angular_velocity =
+        solids[solid_counter]->get_angular_velocity();
       Point<3> center_of_rotation =
         solids[solid_counter]->get_center_of_rotation();
 
@@ -318,7 +318,7 @@ ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
                               particle_properties,
                               dt,
                               translational_velocity,
-                              rotational_velocity,
+                              angular_velocity,
                               center_of_rotation.distance(
                                 particle_location_3d));
 

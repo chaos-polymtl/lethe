@@ -75,7 +75,7 @@ find_particle_contact_detection_step(
 
 template <int dim>
 bool
-find_floating_mesh_contact_detection_step(
+find_floating_mesh_mapping_step(
   const double smallest_contact_search_criterion,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);
 
