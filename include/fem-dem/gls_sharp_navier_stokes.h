@@ -576,6 +576,17 @@ private:
            std::tuple<bool, unsigned int, unsigned int>>
     cut_cells_map;
 
+
+  /*
+   * This map uses the cell as the key, and stores the following information:
+   * if that cell is overconstrains (bool), what particle overconstrains this
+   * cell (unsigned int). The id of the particle that overconstrains the cell
+   * is the id of the particle with the lowest particle index.
+   */
+  std::map<typename DoFHandler<dim>::active_cell_iterator,
+           std::tuple<bool, int>>
+    overconstrained_fluid_cell_map;
+
   /*
    * These vectors are used to keep information about the vertices that are cut.
    * This information is used to convert cells that are not considered cut at
