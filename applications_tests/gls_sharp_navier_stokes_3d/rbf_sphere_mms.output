@@ -6,9 +6,9 @@ Running on 1 MPI rank(s)...
 *****************************************************************
 Steady iteration :        1/3
 *****************************************************************
-div u : 1.241e-08
-error at the weak BC : 0.3751
-L2 error velocity : 0.3046 L2 error pressure: 1.342
+div u : 0
+error at the weak BC : 0
+L2 error velocity : 0 L2 error pressure: 0
 
 *****************************************************************
 Steady iteration :        2/3
@@ -16,7 +16,7 @@ Steady iteration :        2/3
    Number of active cells:       512
    Number of degrees of freedom: 2916
    Volume of triangulation:      8
-div u : -2.506e-10
+div u : 1.002e-10
 error at the weak BC : 0.1423
 L2 error velocity : 0.1033 L2 error pressure: 1.045
 
@@ -29,7 +29,7 @@ Steady iteration :        3/3
 div u : -1.739e-06
 error at the weak BC : 0.03942
 L2 error velocity : 0.04315 L2 error pressure: 0.4822
-cells error_velocity  error_pressure  
-   64 3.0465e-01    - 1.3418e+00    - 
-  512 1.0329e-01 1.56 1.0446e+00 0.36 
+cells error_velocity  error_pressure
+   64 0.0000e+00    - 0.0000e+00    -
+  512 1.0329e-01 -inf 1.0446e+00 -inf
  4096 4.3147e-02 1.26 4.8217e-01 1.12
