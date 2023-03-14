@@ -24,7 +24,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate pressure drop     = false
     set pressure drop name          = pressure_drop
     set calculate momentum drop     = false
-    set momentum drop name          = momentum
+    set momentum drop name          = momentum_drop
     set inlet boundary id           = 0
     set outlet boundary id          = 1
 
