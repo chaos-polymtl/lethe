@@ -1124,10 +1124,17 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
-      prm.declare_entry("calculate pressure drop",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of between two boundaries.");
+      prm.declare_entry(
+        "calculate pressure drop",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of pressure drop between two boundaries.");
+
+      prm.declare_entry(
+        "calculate momentum drop",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of momentum drop between two boundaries.");
 
       prm.declare_entry("inlet boundary id",
                         "0",
@@ -1143,11 +1150,6 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of flow rate at boundaries.");
-
-      prm.declare_entry("calculate momentum",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of momentum at boundaries.");
 
       prm.declare_entry(
         "initial time",
@@ -1165,15 +1167,15 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output pressure drop");
 
+      prm.declare_entry("momentum drop name",
+                        "momentum_drop",
+                        Patterns::FileName(),
+                        "File output momentum");
+
       prm.declare_entry("flow rate name",
                         "flow_rate",
                         Patterns::FileName(),
                         "File output volumetric flux");
-
-      prm.declare_entry("momentum name",
-                        "momentum",
-                        Patterns::FileName(),
-                        "File output momentum");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -1274,15 +1276,15 @@ namespace Parameters
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
       calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
+      calculate_momentum_drop        = prm.get_bool("calculate momentum drop");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
       calculate_flow_rate            = prm.get_bool("calculate flow rate");
-      calculate_momentum             = prm.get_bool("calculate momentum");
       initial_time                   = prm.get_double("initial time");
       kinetic_energy_output_name     = prm.get("kinetic energy name");
       pressure_drop_output_name      = prm.get("pressure drop name");
+      momentum_drop_output_name      = prm.get("momentum drop name");
       flow_rate_output_name          = prm.get("flow rate name");
-      momentum_output_name           = prm.get("momentum name");
       enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       output_frequency               = prm.get_integer("output frequency");

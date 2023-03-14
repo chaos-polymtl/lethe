@@ -600,6 +600,9 @@ namespace Parameters
     // Enable pressure drop post-processing
     bool calculate_pressure_drop;
 
+    // Enable momentum drop post-processing
+    bool calculate_momentum_drop;
+
     // The outlet boundary ID for pressure drop calculation
     unsigned int inlet_boundary_id;
 
@@ -608,9 +611,6 @@ namespace Parameters
 
     // Enable flow rate post-processing
     bool calculate_flow_rate;
-
-    // Enable momentum post-processing
-    bool calculate_momentum;
 
     // Set initial time to start calculations for velocities
     double initial_time;
@@ -627,11 +627,11 @@ namespace Parameters
     // Prefix for pressure drop output
     std::string pressure_drop_output_name;
 
+    // Prefix for momentum drop output
+    std::string momentum_drop_output_name;
+
     // Prefix for flow rate output
     std::string flow_rate_output_name;
-
-    // Prefix for momentum output
-    std::string momentum_output_name;
 
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;

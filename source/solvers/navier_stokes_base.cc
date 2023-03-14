@@ -1293,7 +1293,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            pressure_drop
-                      << " Pa" << std::endl;
+                      << " m^2/s^2" << std::endl;
         }
 
       // Output pressure drop to a text file from processor 0
@@ -1310,6 +1310,50 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           pressure_drop_table.set_precision("time", 12);
           pressure_drop_table.set_precision("pressure-drop", 12);
           this->pressure_drop_table.write_text(output);
+        }
+    }
+
+
+  // Calculate momentum drop between two boundaries
+  if (this->simulation_parameters.post_processing.calculate_momentum_drop)
+    {
+      double momentum_drop = calculate_momentum_drop(
+        this->dof_handler,
+        this->mapping,
+        this->evaluation_point,
+        *this->face_quadrature,
+        this->simulation_parameters.post_processing.inlet_boundary_id,
+        this->simulation_parameters.post_processing.outlet_boundary_id,
+        simulation_parameters.physical_properties_manager);
+      this->momentum_drop_table.add_value(
+        "time", simulation_control->get_current_time());
+      this->momentum_drop_table.add_value("momentum-drop", momentum_drop);
+      if (this->simulation_parameters.post_processing.verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "Momentum drop: "
+                      << std::setprecision(
+                           simulation_control->get_log_precision())
+                      << this->simulation_parameters.physical_properties_manager
+                             .get_density_scale() *
+                           momentum_drop
+                      << " kg/(m*s^2)." << std::endl;
+        }
+
+      // Output momentum drop to a text file from processor 0
+      if ((simulation_control->get_step_number() %
+             this->simulation_parameters.post_processing.output_frequency ==
+           0) &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.momentum_drop_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          momentum_drop_table.set_precision("time", 12);
+          momentum_drop_table.set_precision("momentum-drop", 12);
+          this->momentum_drop_table.write_text(output);
         }
     }
 
@@ -1362,66 +1406,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                             std::to_string(boundary_id),
                                           12);
           this->flow_rate_table.write_text(output);
-        }
-    }
-
-  // Calculate momentum at every boundary
-  if (this->simulation_parameters.post_processing.calculate_momentum)
-    {
-      TimerOutput::Scope t(this->computing_timer, "momentum_calculation");
-      for (unsigned int boundary_id = 0;
-           boundary_id < simulation_parameters.boundary_conditions.size;
-           ++boundary_id)
-        {
-          std::pair<double, double> boundary_momentum = calculate_momentum(
-            this->dof_handler,
-            this->mapping,
-            this->present_solution,
-            *this->face_quadrature,
-            boundary_id,
-            simulation_parameters.physical_properties_manager);
-          this->momentum_table.add_value(
-            "time", simulation_control->get_current_time());
-          this->momentum_table.add_value("momentum-" +
-                                           std::to_string(boundary_id),
-                                         boundary_momentum.first);
-          this->momentum_table.add_value("area-" + std::to_string(boundary_id),
-                                         boundary_momentum.second);
-          if (this->simulation_parameters.post_processing.verbosity ==
-              Parameters::Verbosity::verbose)
-            {
-              this->pcout
-                << "Momentum at boundary " + std::to_string(boundary_id) + ": "
-                << std::setprecision(simulation_control->get_log_precision())
-                << boundary_momentum.first << " kg/(m.s^2)"
-                << " over an area of " + std::to_string(boundary_id) + ": "
-                << boundary_momentum.second << " m^2" << std::endl;
-            }
-        }
-
-      // Output to a text file from processor 0
-      if ((simulation_control->get_step_number() %
-             this->simulation_parameters.post_processing.output_frequency ==
-           0) &&
-          this->this_mpi_process == 0)
-        {
-          std::string filename =
-            simulation_parameters.simulation_control.output_folder +
-            simulation_parameters.post_processing.momentum_output_name + ".dat";
-          std::ofstream output(filename.c_str());
-          momentum_table.set_precision("time", 12);
-          for (unsigned int boundary_id = 0;
-               boundary_id < simulation_parameters.boundary_conditions.size;
-               ++boundary_id)
-            {
-              momentum_table.set_precision("momentum-" +
-                                             std::to_string(boundary_id),
-                                           12);
-              momentum_table.set_precision("area-" +
-                                             std::to_string(boundary_id),
-                                           12);
-            }
-          this->momentum_table.write_text(output);
         }
     }
 

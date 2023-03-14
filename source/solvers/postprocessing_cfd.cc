@@ -160,13 +160,14 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const unsigned int                        outlet_boundary_id);
 
 template <int dim, typename VectorType>
-std::pair<double, double>
-calculate_momentum(const DoFHandler<dim> &       dof_handler,
-                   std::shared_ptr<Mapping<dim>> mapping,
-                   const VectorType &            evaluation_point,
-                   const Quadrature<dim - 1> &   face_quadrature_formula,
-                   const unsigned int            boundary_id,
-                   PhysicalPropertiesManager &   properties_manager)
+double
+calculate_momentum_drop(const DoFHandler<dim> &       dof_handler,
+                        std::shared_ptr<Mapping<dim>> mapping,
+                        const VectorType &            evaluation_point,
+                        const Quadrature<dim - 1> &   face_quadrature_formula,
+                        const unsigned int            inlet_boundary_id,
+                        const unsigned int            outlet_boundary_id,
+                        PhysicalPropertiesManager &   properties_manager)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
@@ -188,8 +189,11 @@ calculate_momentum(const DoFHandler<dim> &       dof_handler,
   field_values[field::temperature] = 0;
   double fluid_density             = density_model->value(field_values);
 
-  double momentum = 0;
-  double area     = 0;
+  double momentum_outlet_boundary = 0;
+  double outlet_surface           = 0;
+  double momentum_inlet_boundary  = 0;
+  double inlet_surface            = 0;
+  double momentum_drop            = 0;
 
   // Calculating area and volumetric flow rate at the inlet flow
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -201,71 +205,103 @@ calculate_momentum(const DoFHandler<dim> &       dof_handler,
             {
               if (cell->face(face)->at_boundary())
                 {
-                  fe_face_values.reinit(cell, face);
-                  if (cell->face(face)->boundary_id() == boundary_id)
+                  if (cell->face(face)->boundary_id() == inlet_boundary_id)
                     {
+                      fe_face_values.reinit(cell, face);
                       for (unsigned int q = 0; q < n_q_points; q++)
                         {
-                          area += fe_face_values.JxW(q);
-                          normal_vector = fe_face_values.normal_vector(q);
+                          inlet_surface += fe_face_values.JxW(q);
                           fe_face_values[velocities].get_function_values(
                             evaluation_point, velocity_values);
                           fe_face_values[pressure].get_function_values(
                             evaluation_point, pressure_values);
-                          // Integration of density*velocity^2 +
-                          // pressure
-                          momentum += fe_face_values.JxW(q) *
-                                      (velocity_values[q] * velocity_values[q] *
-                                         fluid_density +
-                                       pressure_values[q]);
+                          // Integration of density*(velocity^2 +
+                          // pressure), since the pressure in Lethe has units of
+                          // Length^2/Time^2
+                          momentum_inlet_boundary +=
+                            fe_face_values.JxW(q) *
+                            (velocity_values[q] * velocity_values[q] *
+                               fluid_density +
+                             pressure_values[q]);
+                        }
+                    }
+                  if (cell->face(face)->boundary_id() == outlet_boundary_id)
+                    {
+                      fe_face_values.reinit(cell, face);
+                      for (unsigned int q = 0; q < n_q_points; q++)
+                        {
+                          outlet_surface += fe_face_values.JxW(q);
+                          fe_face_values[velocities].get_function_values(
+                            evaluation_point, velocity_values);
+                          fe_face_values[pressure].get_function_values(
+                            evaluation_point, pressure_values);
+                          // Integration of density*(velocity^2 +
+                          // pressure), since the pressure in Lethe has units of
+                          // Length^2/Time^2
+                          momentum_outlet_boundary +=
+                            fe_face_values.JxW(q) *
+                            (velocity_values[q] * velocity_values[q] +
+                             pressure_values[q]) *
+                            fluid_density;
                         }
                     }
                 }
             }
         }
     }
-
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  area                            = Utilities::MPI::sum(area, mpi_communicator);
-  momentum = Utilities::MPI::sum(momentum, mpi_communicator);
+  momentum_inlet_boundary =
+    Utilities::MPI::sum(momentum_inlet_boundary, mpi_communicator);
+  inlet_surface = Utilities::MPI::sum(inlet_surface, mpi_communicator);
+  momentum_outlet_boundary =
+    Utilities::MPI::sum(momentum_outlet_boundary, mpi_communicator);
+  outlet_surface = Utilities::MPI::sum(outlet_surface, mpi_communicator);
 
-  return std::make_pair(momentum, area);
+  momentum_outlet_boundary = momentum_outlet_boundary / outlet_surface;
+  momentum_inlet_boundary  = momentum_inlet_boundary / inlet_surface;
+  momentum_drop            = momentum_inlet_boundary - momentum_outlet_boundary;
+
+  return momentum_drop;
 }
 
-template std::pair<double, double>
-calculate_momentum<2, TrilinosWrappers::MPI::Vector>(
+template double
+calculate_momentum_drop<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   std::shared_ptr<Mapping<2>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<1> &                face_quadrature_formula,
-  const unsigned int                   boundary_id,
+  const unsigned int                   inlet_boundary_id,
+  const unsigned int                   outlet_boundary_id,
   PhysicalPropertiesManager &          properties_manager);
 
-template std::pair<double, double>
-calculate_momentum<3, TrilinosWrappers::MPI::Vector>(
+template double
+calculate_momentum_drop<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   std::shared_ptr<Mapping<3>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<2> &                face_quadrature_formula,
-  const unsigned int                   boundary_id,
+  const unsigned int                   inlet_boundary_id,
+  const unsigned int                   outlet_boundary_id,
   PhysicalPropertiesManager &          properties_manager);
 
-template std::pair<double, double>
-calculate_momentum<2, TrilinosWrappers::MPI::BlockVector>(
+template double
+calculate_momentum_drop<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   std::shared_ptr<Mapping<2>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<1> &                     face_quadrature_formula,
-  const unsigned int                        boundary_id,
+  const unsigned int                        inlet_boundary_id,
+  const unsigned int                        outlet_boundary_id,
   PhysicalPropertiesManager &               properties_manager);
 
-template std::pair<double, double>
-calculate_momentum<3, TrilinosWrappers::MPI::BlockVector>(
+template double
+calculate_momentum_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   std::shared_ptr<Mapping<3>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<2> &                     face_quadrature_formula,
-  const unsigned int                        boundary_id,
+  const unsigned int                        inlet_boundary_id,
+  const unsigned int                        outlet_boundary_id,
   PhysicalPropertiesManager &               properties_manager);
 
 template <int dim, typename VectorType>

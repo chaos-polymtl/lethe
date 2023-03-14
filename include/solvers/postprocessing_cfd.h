@@ -71,10 +71,10 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                         const unsigned int            outlet_boundary_id);
 
 /**
- * @brief Calculate the momentum and the area at a given boundary.
+ * @brief Calculate the momentum drop for a given inlet and outlet.
  * The momentum thus calculated has units of Mass/(Length*Time^2).
  *
- * @return Momentum and area at the boundary
+ * @return surface-averaged momentum drop between the boundaries
  *
  * @param dof_handler The dof_handler used for the calculation
  *
@@ -84,18 +84,21 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
  *
  * @param mapping The mapping of the simulation
  *
- * @param boundary_id The id of the inlet boundary
+ * @param inlet_boundary_id The id of the inlet boundary
+ *
+ * @param outlet_boundary_id The id of the outlet boundary
  *
  * @param physical_properties The parameters containing the required physical properties
  */
 template <int dim, typename VectorType>
-std::pair<double, double>
-calculate_momentum(const DoFHandler<dim> &       dof_handler,
-                   std::shared_ptr<Mapping<dim>> mapping,
-                   const VectorType &            evaluation_point,
-                   const Quadrature<dim - 1> &   face_quadrature_formula,
-                   const unsigned int            boundary_id,
-                   PhysicalPropertiesManager &   properties_manager);
+double
+calculate_momentum_drop(const DoFHandler<dim> &       dof_handler,
+                        std::shared_ptr<Mapping<dim>> mapping,
+                        const VectorType &            evaluation_point,
+                        const Quadrature<dim - 1> &   face_quadrature_formula,
+                        const unsigned int            inlet_boundary_id,
+                        const unsigned int            outlet_boundary_id,
+                        PhysicalPropertiesManager &   properties_manager);
 
 /**
  * @brief Calculate the CFL condition on the simulation domain
