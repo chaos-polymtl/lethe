@@ -103,11 +103,10 @@ private:
   /**
    * Similar to the cell_weight() function, this function is used when the cell
    * weight is adapted to the mobility status of the cell. For instance, if the
-   * cell is inactive, there's not as much as load as an mobile one since there
-   * is no force calculation of the particles in it, as well as the velocity
-   * integration. This may result of a processor that may process a lot of
-   * particles in comparison of other processors, but most of them may be in
-   * inactive cells.
+   * cell is inactive, its computational load will be significantly lower than
+   * if it is a mobile cell since there is no force calculation and no velocity
+   * integration for the particles that lie within it. The weight of the cells
+   * must thus be adapted to the status of the cell.
    */
   unsigned int
   cell_weight_with_mobility_status(

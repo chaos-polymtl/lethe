@@ -168,12 +168,12 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error("Specified load balance method is not valid");
     }
 
-  if (parameters.model_parameters.disabling_particle_contacts)
+  if (parameters.model_parameters.disable_particle_contacts)
     {
       has_disabled_contacts = true;
-      disable_contact_object.set_limit_value(
-        parameters.model_parameters.granular_temperature_limit,
-        parameters.model_parameters.solid_fraction_limit);
+      disable_contact_object.set_threshold_values(
+        parameters.model_parameters.granular_temperature_threshold,
+        parameters.model_parameters.solid_fraction_threshold);
     }
 
   // Calling input_parameter_inspection to evaluate input parameters in the
@@ -1096,7 +1096,7 @@ DEMSolver<dim>::solve()
           if (has_disabled_contacts && !simulation_control->is_at_start())
             {
               // Compute cell mobility for all cells
-              disable_contact_object.calculate_average_granular_temperature(
+              disable_contact_object.calculate_cell_granular_temperature(
                 background_dh, particle_handler);
               disable_contact_object.identify_mobility_status(background_dh,
                                                               particle_handler,

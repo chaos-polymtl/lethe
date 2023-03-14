@@ -242,9 +242,18 @@ namespace Parameters
       } integration_method;
 
       // Disable particle contacts to optimize performance
-      bool   disabling_particle_contacts;
-      double granular_temperature_limit;
-      double solid_fraction_limit;
+      bool disable_particle_contacts;
+
+      // Minimal granular temperature value of cells where particle contacts
+      // are considered
+      double granular_temperature_threshold;
+
+      // Maximal solid fraction value of cells where particle contacts are
+      // considered no matter the granular temperature
+      double solid_fraction_threshold;
+
+      // Factors applied on the particle weight in load balancing for active and
+      // inactive cells (factor of mobile cells is always 1)
       double active_load_balancing_factor;
       double inactive_load_balancing_factor;
 

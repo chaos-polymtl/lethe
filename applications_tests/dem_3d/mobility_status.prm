@@ -16,7 +16,7 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method 		   		  = constant
+  set contact detection method                = constant
   set dynamic contact search size coefficient = 5
   set load balance method                     = none
   set neighborhood threshold                  = 1.3

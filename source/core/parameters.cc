@@ -1922,10 +1922,11 @@ namespace Parameters
         "testing mode is generally used only for the automatic testing bench using ctest.");
       prm.declare_entry(
         "type",
-        "default",
-        Patterns::Selection("default|mobility_status"),
-        "Output type for testing mode for no. Currently only mobility_status is "
-        "available for DEM or FEM-DEM.");
+        "particles",
+        Patterns::Selection("particles|mobility_status"),
+        "Output type for testing mode. Currently, particles type will print each "
+        "particles with some informations and mobility_status with print results "
+        "in deal.II format.");
     }
     prm.leave_subsection();
   }
@@ -1941,12 +1942,12 @@ namespace Parameters
           const std::string op = prm.get("type");
           if (op == "mobility_status")
             test_type = TestType::mobility_status;
-          else if (op == "default")
-            test_type = TestType::none;
+          else if (op == "particles")
+            test_type = TestType::particles;
           else
             throw std::logic_error(
-              "Error, invalid testing type. Current choices are mobility_status "
-              "or default");
+              "Error, invalid testing type. Current choices are particles or "
+              "mobility_status");
         }
     }
     prm.leave_subsection();

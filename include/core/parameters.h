@@ -999,7 +999,7 @@ namespace Parameters
 
     enum class TestType
     {
-      none,
+      particles,
       mobility_status,
     } test_type;
 

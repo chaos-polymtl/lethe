@@ -50,17 +50,24 @@ public:
 
   /**
    * Mobility status flag used to identify the status at nodes and the status
-   * of the cell
-   * inactive: the movement of particles is negligible in the cell, particles within this cell are not considered in the contact detection and force calculation procedure.
-   * active:   movement of particles is negligible, but there's at least one
-   * neighbor cell that is flagged as mobile, meaning that particles need to be in
-   * contact candidates lists
-   * mobile:   movement of particles is significant or
-   * there is at least one neighbor cell that is mobile by criteria, particles
-   * need to be in contact candidates lists
-   * empty:    cell is empty, only useful
-   * for mobility at nodes
+   * of the cell:
+   *
+   * inactive:
+   * the movement of particles is negligible in the cell, particles within this
+   * cell are not considered in the contact detection and force calculation
+   * procedure.
+   * active:
+   * movement of particles is negligible, but there's at least one neighbor cell
+   * that is flagged as mobile, meaning that particles need to be in contact
+   * candidates lists
+   * mobile:
+   * movement of particles is significant or there is at least one neighbor cell
+   * that is mobile by criteria, particles need to be in contact candidates
+   * lists
+   * empty:
+   * cell is empty, only useful for mobility at nodes
    */
+  // TODO : remove n_mobility_status
   enum mobility_status
   {
     inactive,
@@ -78,9 +85,9 @@ public:
    * 1. Check if the cell is empty (n_particle = 0), if so, nodes and cells are
    * flagged as empty mobility status
    * 2. Check if the cell is mobile by criterion (n_particle > 0, average
-   * granular temperature > threshold, solid fraction < limit, has at least one empty node
-   * from previous check), if so, nodes and cells are flagged as mobile mobility
-   * status
+   * granular temperature > threshold, solid fraction < threshold, has at least
+   * one empty node from previous check), if so, nodes and cells are flagged as
+   * mobile mobility status
    * 3. Check if the cell is mobile by neighbor (at least a node is flagged as
    * mobile from previous check), if so, cells are flagged as mobile status and
    * nodes that are not mobile are flagged as active
@@ -109,7 +116,7 @@ public:
    * @param particle_handler The particle handler that contains all the particles
    */
   void
-  calculate_average_granular_temperature(
+  calculate_cell_granular_temperature(
     const DoFHandler<dim> &                background_dh,
     const Particles::ParticleHandler<dim> &particle_handler);
 
@@ -210,11 +217,11 @@ public:
   }
 
   void
-  set_limit_value(const double granular_temperature,
-                  const double solid_fraction)
+  set_threshold_values(const double granular_temperature,
+                       const double solid_fraction)
   {
-    granular_temperature_limit = granular_temperature;
-    solid_fraction_limit       = solid_fraction;
+    granular_temperature_threshold = granular_temperature;
+    solid_fraction_threshold       = solid_fraction;
   }
 
 private:
@@ -231,10 +238,9 @@ private:
   std::set<typename DoFHandler<dim>::active_cell_iterator> active_ghost_cells;
   LinearAlgebra::distributed::Vector<int>                  mobility_at_nodes;
 
-  double granular_temperature_limit;
-  double solid_fraction_limit;
+  double granular_temperature_threshold;
+  double solid_fraction_threshold;
 };
-
 
 
 #endif // lethe_disable_particle_contact_h

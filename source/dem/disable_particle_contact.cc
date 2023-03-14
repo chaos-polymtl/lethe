@@ -29,7 +29,7 @@ DisableParticleContact<dim>::DisableParticleContact()
 
 template <int dim>
 void
-DisableParticleContact<dim>::calculate_average_granular_temperature(
+DisableParticleContact<dim>::calculate_cell_granular_temperature(
   const DoFHandler<dim> &                background_dh,
   const Particles::ParticleHandler<dim> &particle_handler)
 {
@@ -222,8 +222,9 @@ DisableParticleContact<dim>::identify_mobility_status(
             }
         }
 
-      if (granular_temperature_average[cell_id] >= granular_temperature_limit ||
-          solid_fractions[cell_id] <= solid_fraction_limit ||
+      if (granular_temperature_average[cell_id] >=
+            granular_temperature_threshold ||
+          solid_fractions[cell_id] <= solid_fraction_threshold ||
           has_empty_neighbor)
         {
           // Insert cell in mobile status set
