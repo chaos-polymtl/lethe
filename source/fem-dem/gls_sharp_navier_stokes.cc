@@ -105,12 +105,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   cut_cells_map.clear();
   cells_inside_map.clear();
   overconstrained_fluid_cell_map.clear();
-  this->vertices_cut.reinit(this->locally_owned_dofs,
-                            this->locally_relevant_dofs,
-                            this->mpi_communicator);
-  this->particles_that_cut_vertices.reinit(this->locally_owned_dofs,
-                                           this->locally_relevant_dofs,
-                                           this->mpi_communicator);
+  vertices_cut.clear();
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
@@ -125,8 +120,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          bool         cell_is_cut;
-          bool         cell_is_inside;
+          bool         cell_is_cut                                = false;
+          bool         cell_is_inside                             = false;
           unsigned int particle_id_which_cuts_this_cell           = 0;
           unsigned int particle_id_in_which_this_cell_is_embedded = 0;
           unsigned int number_of_particles_cutting_this_cell      = 0;
@@ -255,9 +250,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
                   id               = local_dof_indices[j];
-                  vertices_cut(id) = 1;
-                  particles_that_cut_vertices(id) =
-                    particle_id_which_cuts_this_cell;
+                  vertices_cut[id] = {true, particle_id_which_cuts_this_cell};
                 }
             }
 
@@ -275,8 +268,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                        ++v)
                     {
                       id               = local_face_dof_indices[v];
-                      vertices_cut(id) = 1;
-                      particles_that_cut_vertices(id) = 0;
+                      vertices_cut[id] = {true, 0};
                     }
                 }
             }
@@ -317,11 +309,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
               for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
                 {
                   id = local_dof_indices[j];
-                  if (round(vertices_cut(id)) == 1)
+                  bool vertex_cut;
+                  std::tie(vertex_cut, potential_particle_candidate) =
+                    vertices_cut[id];
+                  if (vertex_cut)
                     {
                       number_of_vertices_cut += 1;
-                      potential_particle_candidate =
-                        round(particles_that_cut_vertices(id));
                       current_particle_candidate =
                         std::min(current_particle_candidate,
                                  potential_particle_candidate);
@@ -1609,7 +1602,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           std::tie(cell_is_overconstrained, std::ignore) =
             overconstrained_fluid_cell_map[cell];
 
-          if (!cell_is_cut && !cell_is_inside ||
+          if ((!cell_is_cut && !cell_is_inside) ||
               cell_is_overconstrained == false)
             {
               auto &evaluation_point = this->evaluation_point;
