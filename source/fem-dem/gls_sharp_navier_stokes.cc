@@ -113,8 +113,10 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                            this->mpi_communicator);
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
 
   auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
@@ -259,6 +261,26 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 }
             }
 
+          // We loop on every face of the cell, and if the face is at a boundary
+          // we count it as constrained.
+          size_t nb_faces = cell->n_faces();
+          for (unsigned int f = 0; f < nb_faces; ++f)
+            {
+              const auto face = cell->face(f);
+              if (face->at_boundary())
+                {
+                  face->get_dof_indices(local_face_dof_indices);
+                  size_t id;
+                  for (unsigned int v = 0; v < local_face_dof_indices.size();
+                       ++v)
+                    {
+                      id               = local_face_dof_indices[v];
+                      vertices_cut(id) = 1;
+                      particles_that_cut_vertices(id) = 0;
+                    }
+                }
+            }
+
           cut_cells_map[cell]    = {cell_is_cut,
                                  particle_id_which_cuts_this_cell,
                                  number_of_particles_cutting_this_cell};
@@ -289,17 +311,21 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 std::numeric_limits<int>::max();
               size_t potential_particle_candidate;
               size_t id;
-              // We count the number of vertices that are cut while keeping
-              // track of the lowest particle ID.
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+
+              // We count the number of vertices that are constrained while
+              // keeping track of the lowest particle ID.
+              for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
                 {
                   id = local_dof_indices[j];
-                  number_of_vertices_cut += round(vertices_cut(id));
-                  potential_particle_candidate =
-                    round(particles_that_cut_vertices(id));
-                  current_particle_candidate =
-                    std::min(current_particle_candidate,
-                             potential_particle_candidate);
+                  if (round(vertices_cut(id)) == 1)
+                    {
+                      number_of_vertices_cut += 1;
+                      potential_particle_candidate =
+                        round(particles_that_cut_vertices(id));
+                      current_particle_candidate =
+                        std::min(current_particle_candidate,
+                                 potential_particle_candidate);
+                    }
                 }
               if (number_of_vertices_in_cell == number_of_vertices_cut)
                 {
