@@ -20,11 +20,17 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate average velocities  = false
     set initial time                  = 0.0
 
-    # Pressure drop calculation
+    # Pressure and momentum drop calculations
     set calculate pressure drop     = false
     set pressure drop name          = pressure_drop
+    set calculate momentum drop     = false
+    set momentum drop name          = momentum
     set inlet boundary id           = 0
     set outlet boundary id          = 1
+
+    # Flow rate at boundaries calculation
+    set calculate flow rate         = false
+    set flow rate name              = flow_rate
 
     # Enstrophy calculation
     set calculate enstrophy         = false
@@ -70,9 +76,9 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate average velocities``: controls if calculation of time-averaged velocities is enabled.
     * ``initial time``: initial time used for the average velocities calculations.
 
-* ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled. 
+* ``calculate pressure drop`` and ``calculate momentum drop``: control if calculation of the pressure drop and momentum from the inlet boundary to the outlet boundary are enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
-    * ``pressure drop name``: output filename for pressure drop calculations.
+    * ``pressure drop name`` and ``momentum drop name``: output filename for pressure drop and momentum calculations.
 
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
     * ``enstrophy name``: output filename for enstrophy calculations.
