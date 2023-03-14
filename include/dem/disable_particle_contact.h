@@ -51,13 +51,14 @@ public:
   /**
    * Mobility status flag used to identify the status at nodes and the status
    * of the cell
-   * inactive: movement of particles is negligible in the cell, particles won't
-   *           be in the contact candidates list
+   * inactive: the movement of particles is negligible in the cell, particles within this cell are not considered in the contact detection and force calculation procedure.
    * active:   movement of particles is negligible, but there's at least one
-   * neighbor cell that is flag mobile, meaning that particles need to be in
-   * contact candidates lists mobile:   movement of particles is significant or
+   * neighbor cell that is flagged as mobile, meaning that particles need to be in
+   * contact candidates lists
+   * mobile:   movement of particles is significant or
    * there is at least one neighbor cell that is mobile by criteria, particles
-   * need to be in contact candidates lists empty:    cell is empty, only useful
+   * need to be in contact candidates lists
+   * empty:    cell is empty, only useful
    * for mobility at nodes
    */
   enum mobility_status
@@ -70,14 +71,14 @@ public:
   };
 
   /**
-   * Carries out the identification of the mobility status of each cell thought
+   * Carries out the identification of the mobility status of each cell through
    * processing at nodes.
    *
-   * 4 checks (search loops) are done is order:
+   * The following 4 checks (search loops) are done:
    * 1. Check if the cell is empty (n_particle = 0), if so, nodes and cells are
    * flagged as empty mobility status
    * 2. Check if the cell is mobile by criterion (n_particle > 0, average
-   * granular temperature > threshold, solid fraction < limit, as one empty node
+   * granular temperature > threshold, solid fraction < limit, has at least one empty node
    * from previous check), if so, nodes and cells are flagged as mobile mobility
    * status
    * 3. Check if the cell is mobile by neighbor (at least a node is flagged as
