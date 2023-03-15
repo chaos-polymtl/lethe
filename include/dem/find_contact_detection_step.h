@@ -53,9 +53,9 @@ find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,
   const double                     dt,
   const double                     smallest_contact_search_criterion,
-  MPI_Comm                        &mpi_communicator,
+  MPI_Comm &                       mpi_communicator,
   bool                             sorting_in_subdomains_step,
-  std::vector<double>             &displacement);
+  std::vector<double> &            displacement);
 
 /**
  * @brief Carries out finding steps for dynamic contact search in particle-floating

@@ -37,7 +37,7 @@ The background mesh (mixer body) is created using dealii ``subdivided_cylinder``
       set type                = dealii
       set grid type           = subdivided_cylinder
       set grid arguments      = 2 : 0.05 : 0.055
-      set initial refinement  = 2
+      set initial refinement  = 3
     end
 
 Lagrangian physical properties
@@ -117,14 +117,14 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
 
 Running the simulation
 ----------------------
-This simulation can be launched by (in parallel mode on 16 processes):
+This simulation can be launched by (in parallel mode on 8 processes):
 
 .. code-block:: text
 
-  mpirun -np 16 dem_3d granular-mixer.prm
+  mpirun -np 8 dem_3d granular-mixer.prm
 
 .. warning::
-	This example takes approximately 30 hours on 16 cores.
+	This example takes approximately 2 hours on 8 cores.
 
 
 Results

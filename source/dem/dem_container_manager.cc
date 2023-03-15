@@ -391,9 +391,6 @@ DEMContainerManager<dim>::execute_particle_wall_fine_search(
     }
 }
 
-
-// BB NOTE
-// This is what needs to be modified to use the triangle to point distance
 template <int dim>
 void
 DEMContainerManager<dim>::store_floating_mesh_info(

@@ -157,12 +157,12 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
       auto &candidates =
         particle_floating_mesh_contact_candidates[solid_counter];
 
-
       // BB NOTE
-      // To look more into this
+      // To look more into this, I am not sure to which extent this is true
+      // The code has never really been tested with more than one floating solid
 
-      // I am assuming that triangles in different solids have different unique
-      // global ids. If it's not the case, we have to modify the code
+      // "I am assuming that triangles in different solids have different unique
+      // global ids. If it's not the case, we have to modify the code" - ???
 
       // Loop through solids
       auto &solid_iterator = floating_mesh_information[solid_counter];
