@@ -307,7 +307,7 @@ SerialSolid<3, 3>::rotate_grid(double /*angle*/, int /*axis*/)
 
 template <>
 void
-SerialSolid<2, 3>::rotate_grid(double angle, int axis)
+SerialSolid<2, 3>::rotate_grid(const double angle, const int axis)
 {
   Tensor<1, 3> t_axis;
   t_axis[axis] = 1;

@@ -81,6 +81,8 @@ public:
 
   /**
    * @brief Generates a solid triangulation from a dealii or gmsh mesh
+   *
+   * @param restart Boolean variable that indicates if the simulation is being restarted
    */
   void
   setup_triangulation(const bool restart);
@@ -126,7 +128,7 @@ public:
   get_max_displacement_since_mapped();
 
   /**
-   * @brief Returns translational velocity of the solid object
+   * @brief Returns translational velocity of the center of mass of the solid object
    *
    * @return The translational velocity of the solid object
    */
@@ -141,7 +143,7 @@ public:
   }
 
   /**
-   * @brief Returns the angular velocity of the solid object
+   * @brief Returns the angular velocity of the center of mass of the solid object
    *
    * @return The angular velocity of the solid object
    */
@@ -152,7 +154,7 @@ public:
   }
 
   /**
-   * @brief Returns the center of rotation of the solid object
+   * @brief Returns the center of rotation of the center of mass of the solid object
    *
    * @return The center of rotation of the solid object
    */
@@ -242,31 +244,38 @@ private:
 
   /**
    * @brief Rotates the grid by a given angle around an axis
+   *
+   * @param angle The angle (in rad) with which the solid is rotated
+   *
+   * @param axis The axis over which the solid is rotated. Currently, only (x=0, y=1, z=2) are supported
+   *
    */
   void
-  rotate_grid(double angle, int axis);
+  rotate_grid(const double angle, const int axis);
 
   // Member variables
-  MPI_Comm                                                 mpi_communicator;
-  const unsigned int                                       n_mpi_processes;
-  const unsigned int                                       this_mpi_process;
+
+  // MPI
+  MPI_Comm           mpi_communicator;
+  const unsigned int n_mpi_processes;
+  const unsigned int this_mpi_process;
+
+  // Parameters
   std::shared_ptr<Parameters::RigidSolidObject<spacedim>> &param;
 
-
+  // Identifier of the solid
   unsigned int id;
 
+  // Triangulation and DOFs management
   std::shared_ptr<Triangulation<dim, spacedim>> solid_tria;
-
   std::shared_ptr<FiniteElement<dim, spacedim>> fe;
+  std::shared_ptr<Mapping<dim, spacedim>>       solid_mapping;
+  DoFHandler<dim, spacedim>                     displacement_dh;
+  std::shared_ptr<FESystem<dim, spacedim>>      displacement_fe;
+  Vector<double>                                displacement;
+  Vector<double>                                displacement_since_mapped;
 
-  std::shared_ptr<Mapping<dim, spacedim>> solid_mapping;
-
-  DoFHandler<dim, spacedim>                displacement_dh;
-  std::shared_ptr<FESystem<dim, spacedim>> displacement_fe;
-  Vector<double>                           displacement;
-  Vector<double>                           displacement_since_mapped;
-
-
+  // Output management
   PVDHandler pvdhandler;
 
   // Elements used to store the velocity of the solid object

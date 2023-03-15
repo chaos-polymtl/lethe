@@ -30,7 +30,7 @@ using namespace dealii;
 #  define find_contact_detection_step_h
 
 /**
- * Carries out finding steps for dynamic contact search for particle-particle
+ * @brief Carries out finding steps for dynamic contact search for particle-particle
  * contacts
  *
  * @param particle_handler
@@ -53,20 +53,16 @@ find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,
   const double                     dt,
   const double                     smallest_contact_search_criterion,
-  MPI_Comm &                       mpi_communicator,
+  MPI_Comm                        &mpi_communicator,
   bool                             sorting_in_subdomains_step,
-  std::vector<double> &            displacement);
+  std::vector<double>             &displacement);
 
 /**
- * Carries out finding steps for dynamic contact search in particle-floating
+ * @brief Carries out finding steps for dynamic contact search in particle-floating
  * mesh contacts
  *
  * @param particle_handler
- * @param dt DEM time step
- * @param smallest_contact_search_criterion A criterion for finding
- * dynamic contact search steps. This value is defined as the minimum of
- * particle-particle and particle-wall displacement threshold values
- * @param mpi_communicator
+ * @param smallest_contact_search_criterion A criterion which defines the maximal displacement that a solid face may have displaced
  * @param solids All solid objects used in the simulation
  * @return Returns true if the maximum cumulative
  * displacement of particles exceeds the threshold and false otherwise
