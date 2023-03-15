@@ -1130,12 +1130,6 @@ namespace Parameters
         Patterns::Bool(),
         "Enable calculation of pressure drop between two boundaries.");
 
-      prm.declare_entry(
-        "calculate momentum drop",
-        "false",
-        Patterns::Bool(),
-        "Enable calculation of momentum drop between two boundaries.");
-
       prm.declare_entry("inlet boundary id",
                         "0",
                         Patterns::Integer(),
@@ -1166,11 +1160,6 @@ namespace Parameters
                         "pressure_drop",
                         Patterns::FileName(),
                         "File output pressure drop");
-
-      prm.declare_entry("momentum drop name",
-                        "momentum_drop",
-                        Patterns::FileName(),
-                        "File output momentum");
 
       prm.declare_entry("flow rate name",
                         "flow_rate",
@@ -1276,14 +1265,12 @@ namespace Parameters
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
       calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
-      calculate_momentum_drop        = prm.get_bool("calculate momentum drop");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
       calculate_flow_rate            = prm.get_bool("calculate flow rate");
       initial_time                   = prm.get_double("initial time");
       kinetic_energy_output_name     = prm.get("kinetic energy name");
       pressure_drop_output_name      = prm.get("pressure drop name");
-      momentum_drop_output_name      = prm.get("momentum drop name");
       flow_rate_output_name          = prm.get("flow rate name");
       enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");

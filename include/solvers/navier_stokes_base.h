@@ -474,7 +474,6 @@ protected:
   TableHandler kinetic_energy_table;
   TableHandler apparent_viscosity_table;
   TableHandler pressure_drop_table;
-  TableHandler momentum_drop_table;
   TableHandler flow_rate_table;
   std::shared_ptr<AverageVelocities<dim, VectorType, DofsType>>
              average_velocities;

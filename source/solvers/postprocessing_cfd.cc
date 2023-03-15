@@ -161,13 +161,13 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
 
 template <int dim, typename VectorType>
 double
-calculate_momentum_drop(const DoFHandler<dim> &       dof_handler,
-                        std::shared_ptr<Mapping<dim>> mapping,
-                        const VectorType &            evaluation_point,
-                        const Quadrature<dim - 1> &   face_quadrature_formula,
-                        const unsigned int            inlet_boundary_id,
-                        const unsigned int            outlet_boundary_id,
-                        PhysicalPropertiesManager &   properties_manager)
+calculate_total_pressure_drop(
+  const DoFHandler<dim> &       dof_handler,
+  std::shared_ptr<Mapping<dim>> mapping,
+  const VectorType &            evaluation_point,
+  const Quadrature<dim - 1> &   face_quadrature_formula,
+  const unsigned int            inlet_boundary_id,
+  const unsigned int            outlet_boundary_id)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
 
@@ -184,18 +184,15 @@ calculate_momentum_drop(const DoFHandler<dim> &       dof_handler,
                                    update_values | update_quadrature_points |
                                      update_JxW_values | update_normal_vectors);
 
-  auto                    density_model = properties_manager.get_density(0);
   std::map<field, double> field_values;
   field_values[field::temperature] = 0;
-  double fluid_density             = density_model->value(field_values);
 
-  double momentum_outlet_boundary = 0;
-  double outlet_surface           = 0;
-  double momentum_inlet_boundary  = 0;
-  double inlet_surface            = 0;
-  double momentum_drop            = 0;
+  double total_pressure_outlet_boundary, total_pressure_inlet_boundary,
+    temp_total_pressure_boundary;
+  double outlet_surface, inlet_surface, temp_surface;
+  double total_pressure_drop = 0;
 
-  // Calculating area and volumetric flow rate at the inlet flow
+  // Calculating area and total pressure at boudaries
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() && cell->at_boundary())
@@ -205,104 +202,93 @@ calculate_momentum_drop(const DoFHandler<dim> &       dof_handler,
             {
               if (cell->face(face)->at_boundary())
                 {
-                  if (cell->face(face)->boundary_id() == inlet_boundary_id)
+                  fe_face_values.reinit(cell, face);
+                  fe_face_values[velocities].get_function_values(
+                    evaluation_point, velocity_values);
+                  fe_face_values[pressure].get_function_values(evaluation_point,
+                                                               pressure_values);
+                  temp_surface                 = 0.;
+                  temp_total_pressure_boundary = 0.;
+                  for (unsigned int q = 0; q < n_q_points; q++)
                     {
-                      fe_face_values.reinit(cell, face);
-                      for (unsigned int q = 0; q < n_q_points; q++)
-                        {
-                          inlet_surface += fe_face_values.JxW(q);
-                          fe_face_values[velocities].get_function_values(
-                            evaluation_point, velocity_values);
-                          fe_face_values[pressure].get_function_values(
-                            evaluation_point, pressure_values);
-                          // Integration of density*(velocity^2 +
-                          // pressure), since the pressure in Lethe has units of
-                          // Length^2/Time^2
-                          momentum_inlet_boundary +=
-                            fe_face_values.JxW(q) *
-                            (velocity_values[q] * velocity_values[q] *
-                               fluid_density +
-                             pressure_values[q]);
-                        }
+                      temp_surface += fe_face_values.JxW(q);
+                      // Integration of (velocity^2 +
+                      // pressure), since the pressure in Lethe has units of
+                      // Length^2/Time^2
+                      temp_total_pressure_boundary +=
+                        fe_face_values.JxW(q) *
+                        (velocity_values[q] * velocity_values[q] +
+                         pressure_values[q]);
                     }
-                  if (cell->face(face)->boundary_id() == outlet_boundary_id)
+                  unsigned int face_id = cell->face(face)->boundary_id();
+                  if (face_id == inlet_boundary_id)
                     {
-                      fe_face_values.reinit(cell, face);
-                      for (unsigned int q = 0; q < n_q_points; q++)
-                        {
-                          outlet_surface += fe_face_values.JxW(q);
-                          fe_face_values[velocities].get_function_values(
-                            evaluation_point, velocity_values);
-                          fe_face_values[pressure].get_function_values(
-                            evaluation_point, pressure_values);
-                          // Integration of density*(velocity^2 +
-                          // pressure), since the pressure in Lethe has units of
-                          // Length^2/Time^2
-                          momentum_outlet_boundary +=
-                            fe_face_values.JxW(q) *
-                            (velocity_values[q] * velocity_values[q] +
-                             pressure_values[q]) *
-                            fluid_density;
-                        }
+                      inlet_surface += temp_surface;
+                      total_pressure_inlet_boundary +=
+                        temp_total_pressure_boundary;
+                    }
+                  if (face_id == outlet_boundary_id)
+                    {
+                      outlet_surface += temp_surface;
+                      total_pressure_outlet_boundary +=
+                        temp_total_pressure_boundary;
                     }
                 }
             }
         }
     }
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  momentum_inlet_boundary =
-    Utilities::MPI::sum(momentum_inlet_boundary, mpi_communicator);
+  total_pressure_inlet_boundary =
+    Utilities::MPI::sum(total_pressure_inlet_boundary, mpi_communicator);
   inlet_surface = Utilities::MPI::sum(inlet_surface, mpi_communicator);
-  momentum_outlet_boundary =
-    Utilities::MPI::sum(momentum_outlet_boundary, mpi_communicator);
+  total_pressure_outlet_boundary =
+    Utilities::MPI::sum(total_pressure_outlet_boundary, mpi_communicator);
   outlet_surface = Utilities::MPI::sum(outlet_surface, mpi_communicator);
 
-  momentum_outlet_boundary = momentum_outlet_boundary / outlet_surface;
-  momentum_inlet_boundary  = momentum_inlet_boundary / inlet_surface;
-  momentum_drop            = momentum_inlet_boundary - momentum_outlet_boundary;
+  total_pressure_outlet_boundary =
+    total_pressure_outlet_boundary / outlet_surface;
+  total_pressure_inlet_boundary = total_pressure_inlet_boundary / inlet_surface;
+  total_pressure_drop =
+    total_pressure_inlet_boundary - total_pressure_outlet_boundary;
 
-  return momentum_drop;
+  return total_pressure_drop;
 }
 
 template double
-calculate_momentum_drop<2, TrilinosWrappers::MPI::Vector>(
+calculate_total_pressure_drop<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   std::shared_ptr<Mapping<2>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<1> &                face_quadrature_formula,
   const unsigned int                   inlet_boundary_id,
-  const unsigned int                   outlet_boundary_id,
-  PhysicalPropertiesManager &          properties_manager);
+  const unsigned int                   outlet_boundary_id);
 
 template double
-calculate_momentum_drop<3, TrilinosWrappers::MPI::Vector>(
+calculate_total_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   std::shared_ptr<Mapping<3>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Quadrature<2> &                face_quadrature_formula,
   const unsigned int                   inlet_boundary_id,
-  const unsigned int                   outlet_boundary_id,
-  PhysicalPropertiesManager &          properties_manager);
+  const unsigned int                   outlet_boundary_id);
 
 template double
-calculate_momentum_drop<2, TrilinosWrappers::MPI::BlockVector>(
+calculate_total_pressure_drop<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   std::shared_ptr<Mapping<2>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<1> &                     face_quadrature_formula,
   const unsigned int                        inlet_boundary_id,
-  const unsigned int                        outlet_boundary_id,
-  PhysicalPropertiesManager &               properties_manager);
+  const unsigned int                        outlet_boundary_id);
 
 template double
-calculate_momentum_drop<3, TrilinosWrappers::MPI::BlockVector>(
+calculate_total_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   std::shared_ptr<Mapping<3>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<2> &                     face_quadrature_formula,
   const unsigned int                        inlet_boundary_id,
-  const unsigned int                        outlet_boundary_id,
-  PhysicalPropertiesManager &               properties_manager);
+  const unsigned int                        outlet_boundary_id);
 
 template <int dim, typename VectorType>
 double
