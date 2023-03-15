@@ -169,5 +169,5 @@ This subsection contains the general information of the simulation, including th
 * ``subdivision``: sub-division of the mesh cells to enable visualisation of high-order elements with Paraview. 
 
 .. tip::
-	Generally, we advise to use a subdivision level of :math:`(n-1)` for interpolation order of :math:`n`. For example, a Q2-Q2 interpolation could be visualized with ``set subdivision = 1``.
+	Generally, we advise to use a subdivision level of :math:`(n)` for interpolation order of :math:`n`. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.
 
