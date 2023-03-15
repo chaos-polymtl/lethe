@@ -1602,8 +1602,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           std::tie(cell_is_overconstrained, std::ignore) =
             overconstrained_fluid_cell_map[cell];
 
-          if ((!cell_is_cut && !cell_is_inside) &&
-              !cell_is_overconstrained)
+          if ((!cell_is_cut && !cell_is_inside) && !cell_is_overconstrained)
             {
               auto &evaluation_point = this->evaluation_point;
               fe_values.reinit(cell);
