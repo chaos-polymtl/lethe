@@ -15,7 +15,7 @@ In Lethe we support the following linear solvers:
 * GMRES preconditioned with ILU or AMG.
 * BiCGStab preconditioned with ILU.
 
-Only coupled methods are used at the moment: a direct method and two iterative algorithms (Krylov subspace methods). We are mainly interested in solving problems that are both large and sparse, therefore, the two iterative methods will be explained in this section, along with their preconditioners. For more information on the different direct solvers supported by Trilinos see the `deal.II <https://www.dealii.org/>`_ documentation: `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_. **This is not by any means a detailed explanation of all the linear solvers; however, it should give you a general idea and it should point you to useful references in case you are more interested in this topic.**
+Only coupled methods are used at the moment: a direct method and two iterative algorithms (Krylov subspace methods). We are mainly interested in solving problems that are both large and sparse, therefore, the two iterative methods will be explained in this section, along with their preconditioners. A direct method should only be used for tests and development of new features as it is not efficient for large problems. For more information on the direct solver supported by Trilinos see the `deal.II <https://www.dealii.org/>`_ documentation: `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_. **This is not by any means a detailed explanation of all the linear solvers; however, it should give you a general idea and it should point you to useful references in case you are more interested in this topic.**
 
 
 General theory on Krylov methods
@@ -42,9 +42,9 @@ _____________________________________________
 If :math:`\mathcal{A}` is non-symmetric positive definite, an approximate solution can be found by choosing :math:`\mathcal{C}_k = \mathcal{K}_k(\mathcal{A}, r_0)`, one implementation of this corresponds to the GMRES method. 
 
 
-*  The GMRES method is based on what is called an Arnoldi iteration. This iteration has a :math:`k`-term recurrence, which means that its computational cost increases as :math:`k` increases. The method is not very practical for very large :math:`k` because of the increase on memory and computational requirements. Therefore, for these kinds of systems, usually a restart is needed after certain iterations (for example 30 iterations) to build a new Krylov subspace. This restart may affect the convergence of the method when the matrix is not positive definite; a remedy for this is the use of a preconditioner.
+*  The GMRES method is based on what is called an Arnoldi iteration. This iteration has a :math:`k`-term recurrence, which means that its computational cost increases as :math:`k` increases. The method is not very practical for very large :math:`k` because of the increase on memory and computational requirements. Therefore, for these kinds of systems, usually a restart is needed after certain iterations to build a new Krylov subspace. The number of iterations depends on the application. In Lethe the default number of iterations is 100, however, for the problems tackled in Lethe 200 or 250 are required. This restart may affect the convergence of the method when the matrix is not positive definite; a remedy for this is the use of a preconditioner.
 
-* In Lethe, we use the Trilinos implementation of the GMRES method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::SolverGMRES <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1SolverGMRES.html>`_. It is possible to specify the minimum residual, the solver residual, the maximum number of iterations and the maximum Krylov vectors. The latter is in fact the one that controls the number of iterations after which a restart should be done.
+* In Lethe, we use the Trilinos implementation of the GMRES method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::SolverGMRES <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1SolverGMRES.html>`_. It is possible to specify the minimum residual, the solver residual, the maximum number of iterations and the maximum Krylov vectors. The latter is in fact the one that controls the number of iterations after which a restart should be done. The first two are also known in literature as absolute residual (:math:`||b - \mathcal{A}x||`) and relative residual (:math:`||b - \mathcal{A}x||/||b||`), and are used to define the linear solver tolerance. The first one monitors the maximum absolute error allowed in a solution, while the second one is relative to the solution value; the linear solver tolerance is defined as the maximum value of both to avoid numerical issues.
 
 Biconjugate Gradient Stabilized Method (BiCGStab)
 __________________________________________________
@@ -62,7 +62,7 @@ _____________
 
 * There is no general agreement on which method is better than the other as it heavily depends on the structure of the system matrix given by the specific problem. However, the disadvantages of each method can be overcome by using an effective preconditioner. There are several preconditioners in literature that have been proposed for these methods. In this document we will focus on the two classes of preconditioners used in Lethe, which are both in the category of "black box" preconditioners.
 
-* For more information about the parameters for these solvers and some practical tips visit the `Linear Solver Control <../../../parameters/cfd/linear_solver_control.html>`_ page in the `CFD parameters <../../../parameters/cfd/cfd.html>`_ section.
+* For more information about the parameters for these solvers and some practical tips visit the `Linear Solver Control <../../parameters/cfd/linear_solver_control.html>`_ page in the `CFD parameters <../../parameters/cfd/cfd.html>`_ section.
 
 Preconditioners
 ----------------
@@ -99,7 +99,7 @@ The advantages between the left-, right- and factorized preconditioning are high
 Incomplete LU factorization (ILU)
 __________________________________
 
-This method performs an approximate factorization of the system matrix that consists of a sparse lower-diagonal matrix :math:`L` and a sparse upper-diagonal matrix :math:`U`:
+For detailed information on the theory, algorithms and implementation of the different ILU versions, we recommend the book `Iterative Methods for Sparse Linear Systems <https://books.google.ca/books/about/Iterative_Methods_for_Sparse_Linear_Syst.html?id=qtzmkzzqFmcC&redir_esc=y>`_ by Y. Saad. This method performs an approximate factorization of the system matrix that consists of a sparse lower-diagonal matrix :math:`L` and a sparse upper-diagonal matrix :math:`U`:
 
 .. math::
 
@@ -115,22 +115,20 @@ The different versions of ILU arise with the different treatment of the non-zero
 
 * The first ILU version is known as the *no-fill* or *ILU(0)* method. It is defined as any pair of matrices :math:`L` and :math:`U` so that the elements of :math:`\mathcal{R}` are zero in the same locations as the system matrix :math:`\mathcal{A}`. This version may be insufficient to yield an adequate rate of convergence for certain problems. In practice this leads to an algorithm where the pattern of :math:`LU` is equal to the zero pattern of :math:`\mathcal{A}`.
 
-* Another version is the *ILU(k)* which allows for *fill-in elements* and improves accuracy.  In fact, it consists of zeroing out all the fills of level :math:`k+1` or higher. In other words, it constructs :math:`LU` by setting the pattern of this matrix to be the pattern obtained in the decomposition of *ILU(k-1)*. The drawbacks of this approach are that the amount of fill-in and computational work are not predictable for :math:`k > 0`. Also, when the fill is large, this is closer to the traditional LU decomposition, which is expensive. In addition, one must keep in mind that if there are elements that are being dropped and have a significant value, this will lead to an inaccurate factorization and to a larger number of iterations.  An important concept when dealing with these methods is the *level of fill*, which is used when calculating the entries of the preconditioner. It is basically a way of identifying which elements should be preserved or dropped in the final preconditioner. All the fill-in elements whose level does not exceed :math:`k` are kept. 
+* Another version is the *ILU(k)* which allows for *fill-in elements* and improves accuracy.  It consists of zeroing out all the fills of level :math:`k+1` or higher. At this point it is important to define the *level of fill* which is used when calculating the entries of the preconditioner; it is basically a way of identifying which elements should be preserved or dropped in the final preconditioner. If the *level of fill* is set to :math:`k`` then all the fill-in elements whose level does not exceed :math:`k` are kept. In other words, this method constructs :math:`LU` by setting the pattern of this matrix to be the pattern obtained in the decomposition of *ILU(k-1)*. The drawbacks of this approach are that the amount of fill-in and computational work are not predictable for :math:`k > 0`. Also, when the fill is large, this is closer to the traditional LU decomposition, which is expensive. In addition, one must keep in mind that if there are elements that are being dropped and have a significant value, this will lead to an inaccurate factorization and to a larger number of iterations.  
 
 * The previous versions can be further improved by using a threshold that controls the fill-in according to the size of the elements and not only based on the sparsity pattern. One version is known as ILU with dual thresholding (*ILUT*).
 
 * Other versions try to reduce the effect of dropping some entries by taking into account the values in other ways. For example, one strategy is to add all the elements that have been dropped and subtract them from the diagonal entry of :math:`U`. This is another version called Modified ILU (MILU) factorization.
 
-* In Lethe we use the Trilinos implementation of the ILU method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionILU <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionILU.html>`_. This is of type *ILU(k)* (where ILU(0) is also included). To use this preconditioner, one must specify the absolute and relative tolerance, and the fill level. If the iterative method fails, the fill level is increased by 1 and the solution is attempted again.
-
-* For detailed information on the theory, algorithms and implementation of the different ILU versions, we recommend the book `Iterative Methods for Sparse Linear Systems <https://books.google.ca/books/about/Iterative_Methods_for_Sparse_Linear_Syst.html?id=qtzmkzzqFmcC&redir_esc=y>`_ by Y. Saad.
+* In Lethe we use the Trilinos implementation of the ILU method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionILU <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionILU.html>`_. This is of type *ILU(k)* (where ILU(0) is also included). To use this preconditioner, one must specify the absolute and relative tolerance, and the fill level. If the iterative method fails, the fill level is increased by 1 and the solution is attempted again. The absolute tolerance (:math:`\alpha \geq 0`) and relative tolerance (:math:`\beta \geq 1`) change the diagonal of the matrix before factorization as follows: a diagonal entry :math:`a_{ii}` is replaced by :math:`\alpha \: \text{sign}(a_{ii}) + \beta a_{ii}`. This strategy can improve the conditioning of the matrix in some cases. Default values in Lethe are 1e-12 and 1, respectively.
 
 Algebraic multigrid (AMG)
 __________________________
 
-The main idea of multigrid methods is to efficiently correct all components of the error of the solution on the fine level by using a hierarchy of levels composed by coarser grids. In the algebraic multigrid method, the levels are generated based on the algebraic structure of the system matrix :math:`\mathcal{A}`. It requires the definition of three key components:
+The main idea of multigrid methods is to efficiently correct all components of the error of the solution on the fine level by using a hierarchy of levels composed by coarser grids. A good starting point to understand all the details of AMG is given in `A Multigrid Tutorial <https://www.researchgate.net/publication/220690328_A_Multigrid_Tutorial_2nd_Edition>`_. In the algebraic multigrid method, the levels are generated based on the algebraic structure of the system matrix :math:`\mathcal{A}`. It requires the definition of three key components:
 
-* Smoother: it is in charge of smoothing the solution of the residual equations at each level. In general, one uses stationary iterative methods, such as Jacobi or Gauss-Seidel or incomplete LU. The latter two are known for having difficulties as preconditioners for saddle-point problems, therefore, in Lethe we use ILU(k). 
+* Smoother: it is in charge of smoothing the solution of the residual equations at each level. In general, one uses stationary iterative methods, such as Jacobi or Gauss-Seidel or incomplete LU. The former two are known for having difficulties as preconditioners for saddle-point problems, therefore, in Lethe we use ILU(k). 
 
 * Intergrid operators: operators that allow to move between the different levels. They are also known as prolongation (:math:`P`) and restriction (:math:`R`) and are used to define the matrices of each level :math:`l`: :math:`\mathcal{A}^{l-1} = R \mathcal{A}^l P`.
 
@@ -142,7 +140,7 @@ Some remarks:
 
 * There are two types of AMG methods: the classical AMG and smoothed aggregation AMG, which differ in their coarsening strategy that in turn leads to differences also in the prolongation and restriction operators. 
 
-* In Lethe we use the Trilinos implementation of the AMG method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionAMG <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_. One must specify several parameters related to the number of cycles, the type of cycle and smoother parameters. A good starting point to understand all the details of AMG is given in `A Multigrid Tutorial <https://www.researchgate.net/publication/220690328_A_Multigrid_Tutorial_2nd_Edition>`_.
+* In Lethe we use the Trilinos implementation of the AMG method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionAMG <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_. One must specify several parameters related to the number of cycles, the type of cycle and smoother parameters.
 
 References
 ----------
