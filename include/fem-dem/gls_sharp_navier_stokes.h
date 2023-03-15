@@ -579,7 +579,7 @@ private:
 
   /*
    * This map uses the cell as the key, and stores the following information:
-   * if that cell is overconstrains (bool), what particle overconstrains this
+   * if that cell is overconstrained (bool), what particle overconstrains this
    * cell (unsigned int). The id of the particle that overconstrains the cell
    * is the id of the particle with the lowest particle index.
    */
