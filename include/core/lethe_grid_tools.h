@@ -282,10 +282,10 @@ namespace LetheGridTools
    * @brief Calculates the distance between points and a triangle (defined using
    * three vertices)
    *
-   * @return A vector of distances
+   * @return A distance
    *
-   * @param triangle A vector of points that defines a triangle
-   * @param particles A vector of points for which we want to find the distance to the triangle
+   * @param triangle_vertices A vector of points that defines a triangle
+   * @param point A point for which we want to find the distance to the triangle
    *
    */
   template <int dim>

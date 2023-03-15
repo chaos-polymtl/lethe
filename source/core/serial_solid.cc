@@ -112,7 +112,7 @@ SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
   std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
 
 
-  // Calculate distance from cell center to  solid_cell
+  // Calculate distance from cell center to solid_cell
   for (const auto &background_cell : background_tr.active_cell_iterators())
     {
       // If the cell is owned by the processor

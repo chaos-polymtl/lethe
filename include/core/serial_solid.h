@@ -120,7 +120,7 @@ public:
    *  the L^\infty norm of the displacement components. This is a measure of the
    * maximal displacement in any direction.
    *
-   * @return the reference to the vector of the displacement since the mapping
+   * @return The reference to the vector of the displacement since the mapping
    */
   double
   get_max_displacement_since_mapped();
@@ -194,9 +194,9 @@ public:
   move_solid_triangulation(double time_step, double initial_time);
 
   /**
-   *  @brief Write the solid object triangulation
+   * @brief Write the output file of the solid object triangulation
    *
-   *  @param simulation_control The simulation control object
+   * @param simulation_control The simulation control object
    */
   void
   write_output_results(std::shared_ptr<SimulationControl> simulation_control);
