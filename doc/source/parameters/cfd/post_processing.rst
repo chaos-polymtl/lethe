@@ -20,7 +20,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate average velocities  = false
     set initial time                  = 0.0
 
-    # Pressure and momentum drop calculations
+    # Pressure drop calculation
     set calculate pressure drop     = false
     set pressure drop name          = pressure_drop
     set inlet boundary id           = 0
