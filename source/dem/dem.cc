@@ -1082,7 +1082,15 @@ DEMSolver<dim>::solve()
       load_balance_step = (this->*check_load_balance_step)();
 
       if (load_balance_step || checkpoint_step)
-        displacement.resize(particle_handler.get_max_local_particle_index());
+        {
+          displacement.resize(particle_handler.get_max_local_particle_index());
+
+          if (has_disabled_contacts)
+            {
+              disable_contact_object.update_active_ghost_cell_set(
+                background_dh);
+            }
+        }
 
       // Check to see if it is contact search step
       contact_detection_step = (this->*check_contact_search_step)();
@@ -1097,7 +1105,7 @@ DEMSolver<dim>::solve()
             {
               // Compute cell mobility for all cells
               disable_contact_object.calculate_cell_granular_temperature(
-                background_dh, particle_handler);
+                particle_handler, triangulation.n_active_cells());
               disable_contact_object.identify_mobility_status(background_dh,
                                                               particle_handler,
                                                               mpi_communicator);
@@ -1246,7 +1254,6 @@ DEMSolver<dim>::solve()
         {
           if (has_disabled_contacts && contact_build_number > 1)
             {
-              unsigned int mobile_set = DisableParticleContact<dim>::mobile;
               integrator_object->integrate(
                 particle_handler,
                 g,
@@ -1254,7 +1261,8 @@ DEMSolver<dim>::solve()
                 torque,
                 force,
                 MOI,
-                disable_contact_object.get_mobility_status()[mobile_set]);
+                triangulation,
+                disable_contact_object.get_mobility_status_map());
             }
           else
             {

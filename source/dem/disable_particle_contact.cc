@@ -24,120 +24,125 @@
 
 template <int dim>
 DisableParticleContact<dim>::DisableParticleContact()
-  : status_to_cell(mobility_status::n_mobility_status)
 {}
 
 template <int dim>
 void
-DisableParticleContact<dim>::calculate_cell_granular_temperature(
-  const DoFHandler<dim> &                background_dh,
-  const Particles::ParticleHandler<dim> &particle_handler)
+DisableParticleContact<dim>::update_active_ghost_cell_set(
+  const DoFHandler<dim> &background_dh)
 {
-  auto triangulation = &background_dh.get_triangulation();
-  granular_temperature_average.reinit(triangulation->n_active_cells());
-  solid_fractions.reinit(triangulation->n_active_cells());
   active_ghost_cells.clear();
-
-  // Iterating through the active cells in the triangulation
   for (const auto &cell : background_dh.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          // Get active and ghost cells in a set
           active_ghost_cells.insert(cell);
-          double granular_temperature_cell = 0.0;
-          double solid_fraction            = 0.0;
+        }
+    }
+}
 
-          // Particles in the cell
-          typename Particles::ParticleHandler<dim>::particle_iterator_range
-                             particles_in_cell = particle_handler.particles_in_cell(cell);
-          const unsigned int n_particles_in_cell =
-            particle_handler.n_particles_in_cell(cell);
+template <int dim>
+void
+DisableParticleContact<dim>::calculate_cell_granular_temperature(
+  const Particles::ParticleHandler<dim> &particle_handler,
+  const unsigned int                     n_active_cells)
+{
+  granular_temperature_average.reinit(n_active_cells);
+  solid_fractions.reinit(n_active_cells);
 
-          // Check if the cell has any particles
-          if (n_particles_in_cell > 0)
+  // Iterating through the active cells in the triangulation
+  for (const auto &cell : active_ghost_cells)
+    {
+      double granular_temperature_cell = 0.0;
+      double solid_fraction            = 0.0;
+
+      // Particles in the cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+                         particles_in_cell = particle_handler.particles_in_cell(cell);
+      const unsigned int n_particles_in_cell =
+        particle_handler.n_particles_in_cell(cell);
+
+      // Check if the cell has any particles
+      if (n_particles_in_cell > 0)
+        {
+          // Initialize variables for average velocity
+          Tensor<1, dim> velocity_cell_sum;
+          Tensor<1, dim> velocity_cell_average;
+
+          // Initialize variables for void fraction
+          double       solid_volume = 0.0;
+          const double cell_volume  = cell->measure();
+
+          // Initialize velocity fluctuations
+          Tensor<1, dim> cell_velocity_fluctuation_squared_sum;
+          Tensor<1, dim> cell_velocity_fluctuation_squared_average;
+
+          // First loop over particles in cell to calculation the average
+          // velocity and the void fraction
+          for (typename Particles::ParticleHandler<dim>::
+                 particle_iterator_range::iterator particles_in_cell_iterator =
+                   particles_in_cell.begin();
+               particles_in_cell_iterator != particles_in_cell.end();
+               ++particles_in_cell_iterator)
             {
-              // Initialize variables for average velocity
-              Tensor<1, dim> velocity_cell_sum;
-              Tensor<1, dim> velocity_cell_average;
+              auto &particle_properties =
+                particles_in_cell_iterator->get_properties();
 
-              // Initialize variables for void fraction
-              double       solid_volume = 0.0;
-              const double cell_volume  = cell->measure();
-
-              // Initialize velocity fluctuations
-              Tensor<1, dim> cell_velocity_fluctuation_squared_sum;
-              Tensor<1, dim> cell_velocity_fluctuation_squared_average;
-
-              // First loop over particles in cell to calculation the average
-              // velocity and the void fraction
-              for (typename Particles::ParticleHandler<
-                     dim>::particle_iterator_range::iterator
-                     particles_in_cell_iterator = particles_in_cell.begin();
-                   particles_in_cell_iterator != particles_in_cell.end();
-                   ++particles_in_cell_iterator)
-                {
-                  auto &particle_properties =
-                    particles_in_cell_iterator->get_properties();
-
-                  for (int d = 0; d < dim; ++d)
-                    {
-                      velocity_cell_sum[d] +=
-                        particle_properties[DEM::PropertiesIndex::v_x + d];
-                    }
-
-                  solid_volume +=
-                    M_PI *
-                    pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-                    (2.0 * dim);
-                }
-
-              // Calculate average velocity in the cell
-              for (int d = 0; d < dim; ++d)
-                velocity_cell_average[d] =
-                  velocity_cell_sum[d] / n_particles_in_cell;
-
-              // Calculate void fraction of cell
-              solid_fraction = solid_volume / cell_volume;
-
-              // Second loop over particle to calculate the average granular
-              // temperature
-              for (typename Particles::ParticleHandler<
-                     dim>::particle_iterator_range::iterator
-                     particles_in_cell_iterator = particles_in_cell.begin();
-                   particles_in_cell_iterator != particles_in_cell.end();
-                   ++particles_in_cell_iterator)
-                {
-                  auto &particle_properties =
-                    particles_in_cell_iterator->get_properties();
-
-                  for (int d = 0; d < dim; ++d)
-                    {
-                      cell_velocity_fluctuation_squared_sum[d] +=
-                        (particle_properties[DEM::PropertiesIndex::v_x + d] -
-                         velocity_cell_average[d]) *
-                        (particle_properties[DEM::PropertiesIndex::v_x + d] -
-                         velocity_cell_average[d]);
-                    }
-                }
-
-              // Calculate average granular temperature in the cell
               for (int d = 0; d < dim; ++d)
                 {
-                  cell_velocity_fluctuation_squared_average[d] =
-                    cell_velocity_fluctuation_squared_sum[d] /
-                    n_particles_in_cell;
-                  granular_temperature_cell +=
-                    (1.0 / dim) * cell_velocity_fluctuation_squared_average[d];
+                  velocity_cell_sum[d] +=
+                    particle_properties[DEM::PropertiesIndex::v_x + d];
+                }
+
+              solid_volume +=
+                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                (2.0 * dim);
+            }
+
+          // Calculate average velocity in the cell
+          for (int d = 0; d < dim; ++d)
+            velocity_cell_average[d] =
+              velocity_cell_sum[d] / n_particles_in_cell;
+
+          // Calculate void fraction of cell
+          solid_fraction = solid_volume / cell_volume;
+
+          // Second loop over particle to calculate the average granular
+          // temperature
+          for (typename Particles::ParticleHandler<dim>::
+                 particle_iterator_range::iterator particles_in_cell_iterator =
+                   particles_in_cell.begin();
+               particles_in_cell_iterator != particles_in_cell.end();
+               ++particles_in_cell_iterator)
+            {
+              auto &particle_properties =
+                particles_in_cell_iterator->get_properties();
+
+              for (int d = 0; d < dim; ++d)
+                {
+                  cell_velocity_fluctuation_squared_sum[d] +=
+                    (particle_properties[DEM::PropertiesIndex::v_x + d] -
+                     velocity_cell_average[d]) *
+                    (particle_properties[DEM::PropertiesIndex::v_x + d] -
+                     velocity_cell_average[d]);
                 }
             }
 
-          // Store the average granular temperature and solid fraction with
-          // active cell index
-          granular_temperature_average[cell->active_cell_index()] =
-            granular_temperature_cell;
-          solid_fractions[cell->active_cell_index()] = solid_fraction;
+          // Calculate average granular temperature in the cell
+          for (int d = 0; d < dim; ++d)
+            {
+              cell_velocity_fluctuation_squared_average[d] =
+                cell_velocity_fluctuation_squared_sum[d] / n_particles_in_cell;
+              granular_temperature_cell +=
+                (1.0 / dim) * cell_velocity_fluctuation_squared_average[d];
+            }
         }
+
+      // Store the average granular temperature and solid fraction with
+      // active cell index
+      granular_temperature_average[cell->active_cell_index()] =
+        granular_temperature_cell;
+      solid_fractions[cell->active_cell_index()] = solid_fraction;
     }
 }
 
@@ -150,8 +155,14 @@ DisableParticleContact<dim>::identify_mobility_status(
   MPI_Comm                               mpi_communicator)
 {
   // Reset cell status containers
-  status_to_cell.clear();
-  status_to_cell.resize(mobility_status::n_mobility_status);
+  cell_mobility_status_map.clear();
+
+  // Get a copy of the active & ghost cells to iterate over and remove cell of
+  // the set when the mobility status is known to avoid unnecessary iterations
+  // for next loops.
+  // We don't want to modify the original set since it is only updated when
+  // there's load balancing or reading of checkpoints.
+  auto active_ghost_cells_copy = active_ghost_cells;
 
   // Create dummy dofs for background dof handler
   const FE_Q<dim>    fe(1);
@@ -169,8 +180,8 @@ DisableParticleContact<dim>::identify_mobility_status(
   mobility_at_nodes = 0;
 
   // Empty status (3) to nodes when no particle in cell
-  for (auto cell = active_ghost_cells.begin();
-       cell != active_ghost_cells.end();)
+  for (auto cell = active_ghost_cells_copy.begin();
+       cell != active_ghost_cells_copy.end();)
     {
       // Check if the cell has any particles
       if (particle_handler.n_particles_in_cell(*cell) == 0)
@@ -180,7 +191,7 @@ DisableParticleContact<dim>::identify_mobility_status(
           (*cell)->get_dof_indices(local_dofs_indices);
 
           // Remove empty cell from cells to reduce the number of check
-          cell = active_ghost_cells.erase(cell);
+          cell = active_ghost_cells_copy.erase(cell);
 
           // Assign empty status to nodes
           for (auto dof_index : local_dofs_indices)
@@ -199,8 +210,8 @@ DisableParticleContact<dim>::identify_mobility_status(
   // Mobile status (2) to nodes (no overwrite of empty status) and to cell if
   // the criteria is respected or cell has one or many empty nodes
   // (empty neighbor)
-  for (auto cell = active_ghost_cells.begin();
-       cell != active_ghost_cells.end();)
+  for (auto cell = active_ghost_cells_copy.begin();
+       cell != active_ghost_cells_copy.end();)
     {
       // Assign mobility status to cell if has particles and
       // - granular temperature > limit or
@@ -228,10 +239,11 @@ DisableParticleContact<dim>::identify_mobility_status(
           has_empty_neighbor)
         {
           // Insert cell in mobile status set
-          status_to_cell[mobility_status::mobile].insert(*cell);
+          cell_mobility_status_map.insert({cell_id, mobility_status::mobile});
 
-          // Remove cell from cell set
-          cell = active_ghost_cells.erase(cell);
+          // Remove cell from cell set and iterate to the following cell.
+          // The erase function returns the next iterator.
+          cell = active_ghost_cells_copy.erase(cell);
 
           // Assign mobile status to nodes
           for (auto dof_index : local_dofs_indices)
@@ -251,8 +263,8 @@ DisableParticleContact<dim>::identify_mobility_status(
   mobility_at_nodes.update_ghost_values();
 
   // Layer of mobile cells over mobile cells
-  for (auto cell = active_ghost_cells.begin();
-       cell != active_ghost_cells.end();)
+  for (auto cell = active_ghost_cells_copy.begin();
+       cell != active_ghost_cells_copy.end();)
     {
       std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dofs_indices);
@@ -265,10 +277,14 @@ DisableParticleContact<dim>::identify_mobility_status(
           // the cell
           if (mobility_at_nodes[dof_index] == mobility_status::mobile)
             {
-              status_to_cell[mobility_status::mobile].insert(*cell);
+              // Assign mobility status to cell map
+              const unsigned int cell_id = (*cell)->active_cell_index();
+              cell_mobility_status_map.insert(
+                {cell_id, mobility_status::mobile});
 
-              // Remove cell from cell set
-              cell             = active_ghost_cells.erase(cell);
+              // Remove cell from cell set and iterate to the following cell,
+              // allso label it as mobile to avoid double iteration
+              cell             = active_ghost_cells_copy.erase(cell);
               has_mobile_nodes = true;
 
               // Assign active status to nodes except mobile because
@@ -288,6 +304,7 @@ DisableParticleContact<dim>::identify_mobility_status(
             }
         }
 
+      // Since the cell has no mobile nodes, we have to iterate to the next cell
       if (!has_mobile_nodes)
         {
           ++cell;
@@ -297,8 +314,8 @@ DisableParticleContact<dim>::identify_mobility_status(
   mobility_at_nodes.update_ghost_values();
 
   // Layer of neighbor of mobile cells
-  for (auto cell = active_ghost_cells.begin();
-       cell != active_ghost_cells.end();)
+  for (auto cell = active_ghost_cells_copy.begin();
+       cell != active_ghost_cells_copy.end();)
     {
       std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dofs_indices);
@@ -306,11 +323,11 @@ DisableParticleContact<dim>::identify_mobility_status(
       bool has_active_nodes = false;
       bool has_mobile_nodes = false;
 
-      // Loop over nodes of cell and check if cell has active or mobile
-      // nodes
+      // Loop over nodes of cell and check if cell has active or mobile nodes.
       // Active nodes and no mobiles nodes means that the cell is a neighbor
-      // of the layer of cell over mobily cell by criterion Active nodes
-      // with mobiles nodes means that the cell is part of this layer
+      // of the layer of cell over mobile cell by criteria.
+      // Active nodes with mobile nodes means that the cell is part of this
+      // layer.
       for (auto dof_index : local_dofs_indices)
         {
           has_active_nodes =
@@ -322,11 +339,16 @@ DisableParticleContact<dim>::identify_mobility_status(
             has_mobile_nodes;
         }
 
+      // Assign active status to cell if has active nodes and no mobile nodes
       if (has_active_nodes && !has_mobile_nodes)
         {
-          status_to_cell[mobility_status::active].insert(*cell);
+          const unsigned int cell_id = (*cell)->active_cell_index();
+          cell_mobility_status_map.insert({cell_id, mobility_status::active});
         }
 
+      // Iterate to the next cell, none of the cells needs to be removed from
+      // the cell set has done in previous loops since there are no other loop
+      // over this set
       ++cell;
     }
 }

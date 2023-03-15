@@ -68,7 +68,7 @@ public:
    * cell is empty, only useful for mobility at nodes
    */
   // TODO : remove n_mobility_status
-  enum mobility_status
+  enum mobility_status : unsigned int
   {
     inactive,
     active,
@@ -117,8 +117,11 @@ public:
    */
   void
   calculate_cell_granular_temperature(
-    const DoFHandler<dim> &                background_dh,
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const unsigned int                     n_active_cells);
+
+  void
+  update_active_ghost_cell_set(const DoFHandler<dim> &background_dh);
 
   /**
    * Find the mobility status of a cell
@@ -129,29 +132,13 @@ public:
   check_cell_mobility(
     const typename Triangulation<dim>::active_cell_iterator &cell) const
   {
-    unsigned int status;
-    // Check if the cell is in the mobile status set
-    status = mobility_status::mobile;
-    auto cell_iterator_from_mobile_container =
-      status_to_cell[status].find(cell);
-
-    if (cell_iterator_from_mobile_container != status_to_cell[status].end())
-      {
-        return status;
-      }
-
-    // Check if the cell is in the active status set
-    status = mobility_status::active;
-    auto cell_iterator_from_active_container =
-      status_to_cell[status].find(cell);
-
-    if (cell_iterator_from_active_container != status_to_cell[status].end())
-      {
-        return status;
-      }
-
-    // If not mobile or active, cell is inactive
-    return mobility_status::inactive;
+    // Look for the mobility status from map, if not found, return inactive
+    // status since no inactive status is stored in the map
+    auto it = cell_mobility_status_map.find(cell->active_cell_index());
+    if (it != cell_mobility_status_map.end())
+      return it->second;
+    else
+      return mobility_status::inactive;
   }
 
   /**
@@ -167,41 +154,25 @@ public:
   void
   get_mobility_status_vector(std::vector<unsigned int> &status)
   {
-    // Loop over all set with different mobility status (except empty)
-    for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
-         i_set++)
+    for (auto &cell_to_status : cell_mobility_status_map)
       {
-        for (auto &cell : status_to_cell[i_set])
-          {
-            if (cell->is_locally_owned())
-              {
-                status[cell->active_cell_index()] = i_set;
-              }
-          }
+        status[cell_to_status.first] = cell_to_status.second;
       }
   };
 
   void
   get_mobility_status_vector(Vector<float> &status)
   {
-    // Loop over all set with different mobility status (except empty)
-    for (unsigned int i_set = 0; i_set < mobility_status::n_mobility_status - 1;
-         i_set++)
+    for (auto &cell_to_status : cell_mobility_status_map)
       {
-        for (auto &cell : status_to_cell[i_set])
-          {
-            if (cell->is_locally_owned())
-              {
-                status[cell->active_cell_index()] = i_set;
-              }
-          }
+        status[cell_to_status.first] = cell_to_status.second;
       }
   };
 
-  std::vector<typename DEM::dem_data_structures<dim>::cell_set>
-  get_mobility_status()
+  std::unordered_map<types::global_cell_index, unsigned int> &
+  get_mobility_status_map()
   {
-    return status_to_cell;
+    return cell_mobility_status_map;
   }
 
   LinearAlgebra::distributed::Vector<int>
@@ -231,8 +202,9 @@ private:
       &                                    cells_neighbor_list,
     const Particles::ParticleHandler<dim> &particle_handler);
 
-  std::vector<typename DEM::dem_data_structures<dim>::cell_set> status_to_cell;
-  Vector<double>                                                solid_fractions;
+  std::unordered_map<types::global_cell_index, unsigned int>
+                 cell_mobility_status_map;
+  Vector<double> solid_fractions;
 
   Vector<double> granular_temperature_average;
   std::set<typename DoFHandler<dim>::active_cell_iterator> active_ghost_cells;

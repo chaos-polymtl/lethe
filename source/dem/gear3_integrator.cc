@@ -87,8 +87,9 @@ Gear3Integrator<dim>::integrate(
   std::vector<Tensor<1, 3>> & /* torque */,
   std::vector<Tensor<1, 3>> & /* force */,
   const std::vector<double> & /* MOI */,
-  const typename DEM::dem_data_structures<dim>::cell_set
-    & /* mobile_cells_container */)
+  const parallel::distributed::Triangulation<dim> & /* triangulation */,
+  std::unordered_map<types::global_cell_index, unsigned int> &
+  /* cell_mobility_status_map */)
 {
   throw std::runtime_error(
     "Disabiling particle contacts not supported with explicit Gear 3 integrator, use Verlet integrator.");
