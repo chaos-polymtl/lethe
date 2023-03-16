@@ -1924,8 +1924,8 @@ namespace Parameters
         "type",
         "particles",
         Patterns::Selection("particles|mobility_status"),
-        "Output type for testing mode. Currently, particles type will print each "
-        "particles with some informations and mobility_status with print results "
+        "Output type for testing mode. Currently, particles type will output "
+        "each particle with some information and mobility_status output results "
         "in deal.II format.");
     }
     prm.leave_subsection();

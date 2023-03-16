@@ -515,37 +515,41 @@ namespace Parameters
           "Choosing integration method"
           "Choices are <velocity_verlet|explicit_euler|gear3>.");
 
-        prm.declare_entry(
-          "enable dynamic disabling contacts",
-          "false",
-          Patterns::Selection("true|false"),
-          "Enable the dynamic search for disabling particle contacts"
-          "Choices are <true|false>.");
+        prm.enter_subsection("dynamic disabling contacts");
+        {
+          prm.declare_entry(
+            "enable dynamic disabling contacts",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the dynamic search for disabling particle contacts"
+            "Choices are <true|false>.");
 
-        prm.declare_entry(
-          "granular temperature threshold",
-          "1e-4",
-          Patterns::Double(),
-          "The minimal granular temperature where particle contacts are considered");
+          prm.declare_entry(
+            "granular temperature threshold",
+            "1e-4",
+            Patterns::Double(),
+            "The minimal granular temperature where particle contacts are considered");
 
-        prm.declare_entry(
-          "solid fraction threshold",
-          "0.4",
-          Patterns::Double(),
-          "The maximal solid fraction where particle contacts are considered "
-          "no matter the granular temperature");
+          prm.declare_entry(
+            "solid fraction threshold",
+            "0.4",
+            Patterns::Double(),
+            "The maximal solid fraction where particle contacts are considered "
+            "no matter the granular temperature");
 
-        prm.declare_entry(
-          "load balance active weight factor",
-          "1.0",
-          Patterns::Double(),
-          "The factor applied on the particle weight in load balancing if cell is active");
+          prm.declare_entry(
+            "load balance active weight factor",
+            "1.0",
+            Patterns::Double(),
+            "The factor applied on the particle weight in load balancing if cell is active");
 
-        prm.declare_entry(
-          "load balance inactive weight factor",
-          "1.0",
-          Patterns::Double(),
-          "The factor applied on the particle weight in load balancing if cell is inactive");
+          prm.declare_entry(
+            "load balance inactive weight factor",
+            "1.0",
+            Patterns::Double(),
+            "The factor applied on the particle weight in load balancing if cell is inactive");
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
@@ -577,10 +581,6 @@ namespace Parameters
             load_balance_threshold = prm.get_double("load balance threshold");
             dynamic_load_balance_check_frequency =
               prm.get_integer("dynamic load balance check frequency");
-            active_load_balancing_factor =
-              prm.get_double("load balance active weight factor");
-            inactive_load_balancing_factor =
-              prm.get_double("load balance inactive weight factor");
           }
         else if (load_balance == "none")
           {
@@ -677,16 +677,23 @@ namespace Parameters
           {
             throw(std::runtime_error("Invalid integration method "));
           }
+        prm.enter_subsection("dynamic disabling contacts");
+        {
+          disable_particle_contacts =
+            prm.get_bool("enable dynamic disabling contacts");
 
-        disable_particle_contacts =
-          prm.get_bool("enable dynamic disabling contacts");
-        if (disable_particle_contacts)
-          {
-            granular_temperature_threshold =
-              prm.get_double("granular temperature threshold");
-            solid_fraction_threshold =
-              prm.get_double("solid fraction threshold");
-          }
+          // Thresholds for disabling contacts
+          granular_temperature_threshold =
+            prm.get_double("granular temperature threshold");
+          solid_fraction_threshold = prm.get_double("solid fraction threshold");
+
+          // Weights for load balancing of active and inactive cells
+          active_load_balancing_factor =
+            prm.get_double("load balance active weight factor");
+          inactive_load_balancing_factor =
+            prm.get_double("load balance inactive weight factor");
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
