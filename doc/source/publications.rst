@@ -7,13 +7,15 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2023
 ----
 
+* `T. El Geitani and B. Blais, "Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations", Industrial & Engineering Chemistry Research, 2023 <https://doi.org/10.1021/acs.iecr.3c00172>`_.
+
 * `V. Bibeau, L. Barbeau, D. C. Boffito and B. Blais, "Artificial neural network to predict the power number of agitated tanks fed by CFD simulations", The Canadian Journal of Chemical Engineering, 1-11, 2023 <https://doi.org/10.1002/cjce.24870>`_.
 
 * `T. El Geitani, S. Golshan and B. Blais, "A High Order Stabilized Solver for the Volume Averaged Navier-Stokes Equations", International Journal for Numerical Methods in Fluids, 1-23, 2023 <https://doi.org/10.1002/fld.5182>`_.
 
 * `C.-A. Daunais, L. Barbeau and B. Blais, "An Extensive Study of Shear Thinning Flow Around a Spherical Particle for Power-Law and Carreau Fluids", Journal of Non-Newtonian Fluid Mechanics, 311, 104951, 2023 <https://doi.org/10.1016/j.jnnfm.2022.104951>`_.
 
-* `T. El Geitani, S. Golshan, Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 62, 1141-1159, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
+* `T. El Geitani, S. Golshan and B. Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 62, 1141-1159, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
 
 2022
 ----
