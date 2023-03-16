@@ -1273,18 +1273,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   if (this->simulation_parameters.post_processing.calculate_pressure_drop)
     {
       TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
-      double             pressure_drop = calculate_pressure_drop(
+      double             pressure_drop, total_pressure_drop;
+      std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
         this->mapping,
         this->evaluation_point,
         *this->cell_quadrature,
-        *this->face_quadrature,
-        this->simulation_parameters.post_processing.inlet_boundary_id,
-        this->simulation_parameters.post_processing.outlet_boundary_id);
-      double total_pressure_drop = calculate_total_pressure_drop(
-        this->dof_handler,
-        this->mapping,
-        this->evaluation_point,
         *this->face_quadrature,
         this->simulation_parameters.post_processing.inlet_boundary_id,
         this->simulation_parameters.post_processing.outlet_boundary_id);

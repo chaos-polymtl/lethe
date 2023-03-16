@@ -33,7 +33,7 @@
 using namespace dealii;
 
 template <int dim, typename VectorType>
-double
+std::pair<double, double>
 calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                         std::shared_ptr<Mapping<dim>> mapping,
                         const VectorType &            evaluation_point,
@@ -54,148 +54,32 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                                    update_values | update_quadrature_points |
                                      update_normal_vectors | update_JxW_values);
 
+  const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
 
-  const unsigned int n_q_points      = cell_quadrature_formula.size();
   const unsigned int face_n_q_points = face_quadrature_formula.size();
 
-  std::vector<double> present_pressure_values(n_q_points);
+  std::vector<Tensor<1, dim>> velocity_values(face_n_q_points);
+  std::vector<double>         pressure_values(face_n_q_points);
 
-  double pressure_outlet_boundary = 0;
-  double outlet_surface           = 0;
-  double pressure_inlet_boundary  = 0;
-  double inlet_surface            = 0;
-  double pressure_drop            = 0;
+  double static_pressure_outlet_boundary  = 0.;
+  double static_pressure_inlet_boundary   = 0.;
+  double static_pressure_drop             = 0.;
+
+  double dynamic_pressure_outlet_boundary  = 0.;
+  double dynamic_pressure_inlet_boundary   = 0.;
+  double dynamic_pressure_drop             = 0.;
+
+  double outlet_surface = 0.;
+  double inlet_surface  = 0.;
+
+  double temp_surface   = 0.;
+  double temp_static_pressure_at_boundary = 0.;
+  double temp_dynamic_pressure_at_boundary = 0.;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          // Gather pressure (values)
-          fe_values[pressure].get_function_values(evaluation_point,
-                                                  present_pressure_values);
-
-          for (unsigned int q = 0; q < face_n_q_points; ++q)
-            {
-              for (const auto &face : cell->face_iterators())
-                {
-                  if (face->at_boundary() &&
-                      (face->boundary_id() == outlet_boundary_id))
-                    {
-                      fe_face_values.reinit(cell, face);
-                      pressure_outlet_boundary +=
-                        present_pressure_values[q] * fe_face_values.JxW(q);
-
-                      outlet_surface += fe_face_values.JxW(q);
-                    }
-
-                  if (face->at_boundary() &&
-                      (face->boundary_id() == inlet_boundary_id))
-                    {
-                      fe_face_values.reinit(cell, face);
-                      pressure_inlet_boundary +=
-                        present_pressure_values[q] * fe_face_values.JxW(q);
-
-                      inlet_surface += fe_face_values.JxW(q);
-                    }
-                }
-            }
-        }
-    }
-
-  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  pressure_inlet_boundary =
-    Utilities::MPI::sum(pressure_inlet_boundary, mpi_communicator);
-  inlet_surface = Utilities::MPI::sum(inlet_surface, mpi_communicator);
-  pressure_outlet_boundary =
-    Utilities::MPI::sum(pressure_outlet_boundary, mpi_communicator);
-  outlet_surface = Utilities::MPI::sum(outlet_surface, mpi_communicator);
-
-  pressure_outlet_boundary = pressure_outlet_boundary / outlet_surface;
-  pressure_inlet_boundary  = pressure_inlet_boundary / inlet_surface;
-  pressure_drop            = pressure_inlet_boundary - pressure_outlet_boundary;
-
-  return pressure_drop;
-}
-
-template double
-calculate_pressure_drop<2, TrilinosWrappers::MPI::Vector>(
-  const DoFHandler<2> &                dof_handler,
-  std::shared_ptr<Mapping<2>>          mapping,
-  const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Quadrature<2> &                cell_quadrature_formula,
-  const Quadrature<1> &                face_quadrature_formula,
-  const unsigned int                   inlet_boundary_id,
-  const unsigned int                   outlet_boundary_id);
-
-template double
-calculate_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
-  const DoFHandler<3> &                dof_handler,
-  std::shared_ptr<Mapping<3>>          mapping,
-  const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Quadrature<3> &                cell_quadrature_formula,
-  const Quadrature<2> &                face_quadrature_formula,
-  const unsigned int                   inlet_boundary_id,
-  const unsigned int                   outlet_boundary_id);
-
-template double
-calculate_pressure_drop<2, TrilinosWrappers::MPI::BlockVector>(
-  const DoFHandler<2> &                     dof_handler,
-  std::shared_ptr<Mapping<2>>               mapping,
-  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Quadrature<2> &                     cell_quadrature_formula,
-  const Quadrature<1> &                     face_quadrature_formula,
-  const unsigned int                        inlet_boundary_id,
-  const unsigned int                        outlet_boundary_id);
-
-template double
-calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
-  const DoFHandler<3> &                     dof_handler,
-  std::shared_ptr<Mapping<3>>               mapping,
-  const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Quadrature<3> &                     cell_quadrature_formula,
-  const Quadrature<2> &                     face_quadrature_formula,
-  const unsigned int                        inlet_boundary_id,
-  const unsigned int                        outlet_boundary_id);
-
-template <int dim, typename VectorType>
-double
-calculate_total_pressure_drop(
-  const DoFHandler<dim> &       dof_handler,
-  std::shared_ptr<Mapping<dim>> mapping,
-  const VectorType &            evaluation_point,
-  const Quadrature<dim - 1> &   face_quadrature_formula,
-  const unsigned int            inlet_boundary_id,
-  const unsigned int            outlet_boundary_id)
-{
-  const FESystem<dim, dim> fe = dof_handler.get_fe();
-
-  const unsigned int               n_q_points = face_quadrature_formula.size();
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
-  std::vector<double>              pressure_values(n_q_points);
-  Tensor<1, dim>                   normal_vector;
-
-  FEFaceValues<dim> fe_face_values(*mapping,
-                                   fe,
-                                   face_quadrature_formula,
-                                   update_values | update_quadrature_points |
-                                     update_JxW_values | update_normal_vectors);
-
-  std::map<field, double> field_values;
-  field_values[field::temperature] = 0;
-
-  double total_pressure_outlet_boundary, total_pressure_inlet_boundary,
-    temp_total_pressure_boundary;
-  double outlet_surface, inlet_surface, temp_surface;
-  double total_pressure_drop = 0;
-
-  // Calculating area and total pressure at boudaries
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned() && cell->at_boundary())
         {
           for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
                face++)
@@ -207,85 +91,110 @@ calculate_total_pressure_drop(
                     evaluation_point, velocity_values);
                   fe_face_values[pressure].get_function_values(evaluation_point,
                                                                pressure_values);
-                  temp_surface                 = 0.;
-                  temp_total_pressure_boundary = 0.;
-                  for (unsigned int q = 0; q < n_q_points; q++)
+                  temp_surface                      = 0.;
+                  temp_static_pressure_at_boundary  = 0.;
+                  temp_dynamic_pressure_at_boundary = 0.;
+                  for (unsigned int q = 0; q < face_n_q_points; q++)
                     {
                       temp_surface += fe_face_values.JxW(q);
-                      // Integration of (velocity^2 +
-                      // pressure), since the pressure in Lethe has units of
+                      // Integration of velocity^2 and
+                      // pressure, since the pressure in Lethe has units of
                       // Length^2/Time^2
-                      temp_total_pressure_boundary +=
-                        fe_face_values.JxW(q) *
-                        (velocity_values[q] * velocity_values[q] +
-                         pressure_values[q]);
+                      temp_static_pressure_at_boundary +=
+                        fe_face_values.JxW(q) * pressure_values[q];
+                      temp_dynamic_pressure_at_boundary +=
+                        fe_face_values.JxW(q) * velocity_values[q] *
+                        velocity_values[q];
                     }
                   unsigned int face_id = cell->face(face)->boundary_id();
                   if (face_id == inlet_boundary_id)
                     {
                       inlet_surface += temp_surface;
-                      total_pressure_inlet_boundary +=
-                        temp_total_pressure_boundary;
+                      dynamic_pressure_inlet_boundary +=
+                        temp_dynamic_pressure_at_boundary;
+                      static_pressure_inlet_boundary +=
+                        temp_static_pressure_at_boundary;
                     }
                   if (face_id == outlet_boundary_id)
                     {
                       outlet_surface += temp_surface;
-                      total_pressure_outlet_boundary +=
-                        temp_total_pressure_boundary;
+                      dynamic_pressure_outlet_boundary +=
+                        temp_dynamic_pressure_at_boundary;
+                      static_pressure_outlet_boundary +=
+                        temp_static_pressure_at_boundary;
                     }
                 }
             }
         }
     }
+
   const MPI_Comm mpi_communicator = dof_handler.get_communicator();
-  total_pressure_inlet_boundary =
-    Utilities::MPI::sum(total_pressure_inlet_boundary, mpi_communicator);
+  static_pressure_inlet_boundary =
+    Utilities::MPI::sum(static_pressure_inlet_boundary, mpi_communicator);
+  static_pressure_outlet_boundary =
+    Utilities::MPI::sum(static_pressure_outlet_boundary, mpi_communicator);
+
+  dynamic_pressure_inlet_boundary =
+    Utilities::MPI::sum(dynamic_pressure_inlet_boundary, mpi_communicator);
+  dynamic_pressure_outlet_boundary =
+    Utilities::MPI::sum(dynamic_pressure_outlet_boundary, mpi_communicator);
+
   inlet_surface = Utilities::MPI::sum(inlet_surface, mpi_communicator);
-  total_pressure_outlet_boundary =
-    Utilities::MPI::sum(total_pressure_outlet_boundary, mpi_communicator);
   outlet_surface = Utilities::MPI::sum(outlet_surface, mpi_communicator);
 
-  total_pressure_outlet_boundary =
-    total_pressure_outlet_boundary / outlet_surface;
-  total_pressure_inlet_boundary = total_pressure_inlet_boundary / inlet_surface;
-  total_pressure_drop =
-    total_pressure_inlet_boundary - total_pressure_outlet_boundary;
+  static_pressure_outlet_boundary =
+    static_pressure_outlet_boundary / outlet_surface;
+  static_pressure_inlet_boundary =
+    static_pressure_inlet_boundary / inlet_surface;
+  static_pressure_drop =
+    static_pressure_inlet_boundary - static_pressure_outlet_boundary;
 
-  return total_pressure_drop;
+  dynamic_pressure_outlet_boundary =
+    dynamic_pressure_outlet_boundary / outlet_surface;
+  dynamic_pressure_inlet_boundary =
+    dynamic_pressure_inlet_boundary / inlet_surface;
+  dynamic_pressure_drop =
+    dynamic_pressure_inlet_boundary - dynamic_pressure_outlet_boundary;
+
+  return {static_pressure_drop, static_pressure_drop + dynamic_pressure_drop};
 }
 
-template double
-calculate_total_pressure_drop<2, TrilinosWrappers::MPI::Vector>(
+template std::pair<double, double>
+calculate_pressure_drop<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   std::shared_ptr<Mapping<2>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
+  const Quadrature<2> &                cell_quadrature_formula,
   const Quadrature<1> &                face_quadrature_formula,
   const unsigned int                   inlet_boundary_id,
   const unsigned int                   outlet_boundary_id);
 
-template double
-calculate_total_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
+template std::pair<double, double>
+calculate_pressure_drop<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   std::shared_ptr<Mapping<3>>          mapping,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
+  const Quadrature<3> &                cell_quadrature_formula,
   const Quadrature<2> &                face_quadrature_formula,
   const unsigned int                   inlet_boundary_id,
   const unsigned int                   outlet_boundary_id);
 
-template double
-calculate_total_pressure_drop<2, TrilinosWrappers::MPI::BlockVector>(
+template std::pair<double, double>
+calculate_pressure_drop<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   std::shared_ptr<Mapping<2>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<2> &                     cell_quadrature_formula,
   const Quadrature<1> &                     face_quadrature_formula,
   const unsigned int                        inlet_boundary_id,
   const unsigned int                        outlet_boundary_id);
 
-template double
-calculate_total_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
+template std::pair<double, double>
+calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   std::shared_ptr<Mapping<3>>               mapping,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
+  const Quadrature<3> &                     cell_quadrature_formula,
   const Quadrature<2> &                     face_quadrature_formula,
   const unsigned int                        inlet_boundary_id,
   const unsigned int                        outlet_boundary_id);
