@@ -5,10 +5,11 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 1e-5
-  set time end         = 40
+  set time step        = 2e-5
+  set time end         = 30
   set log frequency    = 1000
   set output frequency = 1000
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
@@ -17,9 +18,17 @@ end
 
 subsection restart
   set checkpoint = true
-  set filename   = sliding_restart
   set frequency  = 100000
 end
+
+#---------------------------------------------------
+# Lagrangian post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set Lagrangian post-processing = true
+end
+
 
 # --------------------------------------------------
 # Model parameters
@@ -70,7 +79,7 @@ end
 subsection insertion info
   set insertion method                               = non_uniform
   set inserted number of particles at each time step = 20000
-  set insertion frequency                            = 20000
+  set insertion frequency                            = 10000
   set insertion box minimum x                        = -0.37
   set insertion box minimum y                        = -0.042
   set insertion box minimum z                        = 0.9
