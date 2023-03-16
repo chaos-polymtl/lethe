@@ -19,7 +19,9 @@ Discrete Element Method
 Unresolved CFD-DEM
 -------------------
 
-* `T. El Geitani, S. Golshan, Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 62, 1141-1159, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
+* `T. El Geitani and B. Blais, "Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations", Industrial & Engineering Chemistry Research, 2023 <https://doi.org/10.1021/acs.iecr.3c00172>`_.
+
+* `T. El Geitani, S. Golshan, and B. Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 62, 1141-1159, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
 
 * `T. El Geitani, S. Golshan and B. Blais, "A High Order Stabilized Solver for the Volume Averaged Navier-Stokes Equations", International Journal for Numerical Methods in Fluids, 1-23, 2023 <https://doi.org/10.1002/fld.5182>`_.
 
