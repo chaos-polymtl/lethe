@@ -77,6 +77,15 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
     * ``pressure drop name``: output filename for pressure drop calculations.
+    * The pressure drop is calculated as such, with :math:`\Gamma` representing the boundary and :math:`P` the pressure:
+.. math::
+    \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
+
+* ``calculate flow rate``: controls if calculation of the volumetric flow rates at every boundary is enabled.
+    * ``flow rate name``: output filename for flow rate calculations.
+    * The flow rate :math:`Q` is calculated as such, with :math:`\Gamma` representing the boundary, :math:`\pmb{u}` the velocity and :math:`\pmb{n}` the vector normal to the surface:
+.. math::
+    Q =  \int_{\Gamma} \pmb{n} \cdot \pmb{u} d \Gamma
 
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
     * ``enstrophy name``: output filename for enstrophy calculations.

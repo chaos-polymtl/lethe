@@ -62,19 +62,19 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
   std::vector<Tensor<1, dim>> velocity_values(face_n_q_points);
   std::vector<double>         pressure_values(face_n_q_points);
 
-  double static_pressure_outlet_boundary  = 0.;
-  double static_pressure_inlet_boundary   = 0.;
-  double static_pressure_drop             = 0.;
+  double static_pressure_outlet_boundary = 0.;
+  double static_pressure_inlet_boundary  = 0.;
+  double static_pressure_drop            = 0.;
 
-  double dynamic_pressure_outlet_boundary  = 0.;
-  double dynamic_pressure_inlet_boundary   = 0.;
-  double dynamic_pressure_drop             = 0.;
+  double dynamic_pressure_outlet_boundary = 0.;
+  double dynamic_pressure_inlet_boundary  = 0.;
+  double dynamic_pressure_drop            = 0.;
 
   double outlet_surface = 0.;
   double inlet_surface  = 0.;
 
-  double temp_surface   = 0.;
-  double temp_static_pressure_at_boundary = 0.;
+  double temp_surface                      = 0.;
+  double temp_static_pressure_at_boundary  = 0.;
   double temp_dynamic_pressure_at_boundary = 0.;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -139,7 +139,7 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
   dynamic_pressure_outlet_boundary =
     Utilities::MPI::sum(dynamic_pressure_outlet_boundary, mpi_communicator);
 
-  inlet_surface = Utilities::MPI::sum(inlet_surface, mpi_communicator);
+  inlet_surface  = Utilities::MPI::sum(inlet_surface, mpi_communicator);
   outlet_surface = Utilities::MPI::sum(outlet_surface, mpi_communicator);
 
   static_pressure_outlet_boundary =
