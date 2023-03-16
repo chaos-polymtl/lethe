@@ -42,6 +42,46 @@ using namespace dealii;
 // with the Vector class (error because of calling of abs() function)
 template class LinearAlgebra::distributed::Vector<int>;
 
+/**
+ * The general idea behind the algorithm :
+ * It uses the granular temperature to determinate if particles in a cell are
+ * mobile enough that the contact forces are worth computation. A cell having a
+ * granular temperature under a value (default is 1e-4) will have an inactive
+ * status which makes them rejected in the broad search step. This results in no
+ * contact forces or velocity integration in future steps for those particles,
+ * which make less computation cost for the simulation.
+ *
+ * Cells may be flagged as that called mobility status :
+ * mobile (everything is calculated as if feature is not enabled),
+ * active (particles with low motion next to mobile particles),
+ * inactive (particles are not in a neighbor’s candidate list of cells around)
+ *
+ * There are some edge cases that need some attention. In these cases, particles
+ * in cells can't be deactivated :
+ *
+ * The solid fraction of the cell is under a value (default = 40%) : particles
+ * in the cell may have other forces that can move them and it is supposed that
+ * with this fraction, there is not enough particles around to hold them in
+ * their position.
+ *
+ * Cells having empty cell neighbors : it means that particles are next to a
+ * floating wall/mesh and they may have a change of contact forces from it if
+ * the wall disappears or is moving.
+ *
+ * The cell has cell neighbors which is flagged as mobile from the 3 criteria
+ * mentioned above (granular temperature, solid fractions or floating walls) :
+ * this is because motion is badly propagated to particles to the cell around
+ * without this additional "layer" of mobile cells.
+ *
+ * The cell has cell neighbors which is flagged as mobile from the previous
+ * criterion (additional layer of mobile cells) : this is again to allow the
+ * propagation of motion, but only the particles in contact with particles
+ * from the mobile cells are considered for the contact force calculation but
+ * their position is not computed at the integration step. Those cells are
+ * flagged as active cells. It works with the assignment and verification of the
+ * mobility status at nodes to check the status of the neighboring cells.
+ *
+ */
 template <int dim>
 class DisableParticleContact
 {
