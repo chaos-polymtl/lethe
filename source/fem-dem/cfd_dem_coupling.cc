@@ -659,12 +659,12 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       periodic_offset = periodic_boundaries_object.get_constant_offset();
     }
 
-  if (dem_parameters.model_parameters.disabling_particle_contacts)
+  if (dem_parameters.model_parameters.disable_particle_contacts)
     {
       has_disabled_contacts = true;
-      disable_contact_object.set_limit_value(
-        dem_parameters.model_parameters.granular_temperature_limit,
-        dem_parameters.model_parameters.solid_fraction_limit);
+      disable_contact_object.set_threshold_values(
+        dem_parameters.model_parameters.granular_temperature_threshold,
+        dem_parameters.model_parameters.solid_fraction_threshold);
     }
 
   // Finding cell neighbors
@@ -813,7 +813,9 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     {
       if (has_disabled_contacts)
         {
-          unsigned int mobile_set = DisableParticleContact<dim>::mobile;
+          const auto parallel_triangulation =
+            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+              &*this->triangulation);
           integrator_object->integrate(
             this->particle_handler,
             dem_parameters.lagrangian_physical_properties.g,
@@ -821,7 +823,8 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             torque,
             force,
             MOI,
-            disable_contact_object.get_mobility_status()[mobile_set]);
+            *parallel_triangulation,
+            disable_contact_object.get_mobility_status_map());
         }
       else
         {
@@ -872,12 +875,16 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       if (has_disabled_contacts && !this->simulation_control->is_at_start())
         {
-          // Compute cell mobility for all cells
-          disable_contact_object.calculate_average_granular_temperature(
-            this->void_fraction_dof_handler, this->particle_handler);
+          // Update the active and ghost cells set (this should be done after a
+          // load balance or a checkpoint, but since the fem-dem code do not
+          // have a specific step for that we do it also when the contact search
+          // is done)
+          disable_contact_object.update_active_ghost_cell_set(
+            this->void_fraction_dof_handler);
           disable_contact_object.identify_mobility_status(
             this->void_fraction_dof_handler,
             this->particle_handler,
+            (*this->triangulation).n_active_cells(),
             this->mpi_communicator);
         }
 

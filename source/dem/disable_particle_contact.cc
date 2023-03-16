@@ -43,14 +43,12 @@ DisableParticleContact<dim>::update_active_ghost_cell_set(
 
 template <int dim>
 void
-DisableParticleContact<dim>::calculate_cell_granular_temperature(
+DisableParticleContact<dim>::calculate_granular_temperature_solid_fraction(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const unsigned int                     n_active_cells)
+  Vector<double> &                       granular_temperature_average,
+  Vector<double> &                       solid_fractions)
 {
-  granular_temperature_average.reinit(n_active_cells);
-  solid_fractions.reinit(n_active_cells);
-
-  // Iterating through the active cells in the triangulation
+  // Iterating through the active cells in the active and ghost cells set
   for (const auto &cell : active_ghost_cells)
     {
       double granular_temperature_cell = 0.0;
@@ -69,7 +67,7 @@ DisableParticleContact<dim>::calculate_cell_granular_temperature(
           Tensor<1, dim> velocity_cell_sum;
           Tensor<1, dim> velocity_cell_average;
 
-          // Initialize variables for void fraction
+          // Initialize variables for solid fraction
           double       solid_volume = 0.0;
           const double cell_volume  = cell->measure();
 
@@ -104,7 +102,7 @@ DisableParticleContact<dim>::calculate_cell_granular_temperature(
             velocity_cell_average[d] =
               velocity_cell_sum[d] / n_particles_in_cell;
 
-          // Calculate void fraction of cell
+          // Calculate solid fraction of cell
           solid_fraction = solid_volume / cell_volume;
 
           // Second loop over particle to calculate the average granular
@@ -146,25 +144,24 @@ DisableParticleContact<dim>::calculate_cell_granular_temperature(
     }
 }
 
-
 template <int dim>
 void
 DisableParticleContact<dim>::identify_mobility_status(
   const DoFHandler<dim> &                background_dh,
   const Particles::ParticleHandler<dim> &particle_handler,
+  const unsigned int                     n_active_cells,
   MPI_Comm                               mpi_communicator)
 {
   // Reset cell status containers
   cell_mobility_status_map.clear();
 
-  // Get a copy of the active & ghost cells to iterate over and remove cell of
-  // the set when the mobility status is known to avoid unnecessary iterations
-  // for next loops.
-  // We don't want to modify the original set since it is only updated when
-  // there's load balancing or reading of checkpoints.
+  // Get a copy of the active & ghost cells set to iterate over and remove cell
+  // of the set when the mobility status is known to avoid unnecessary
+  // iterations for next loops. We don't want to modify the original set since
+  // it is only updated when there's load balancing or reading of checkpoints.
   auto active_ghost_cells_copy = active_ghost_cells;
 
-  // Create dummy dofs for background dof handler
+  // Create dummy dofs for background dof handler for the mobility_at_nodes
   const FE_Q<dim>    fe(1);
   const unsigned int dofs_per_cell = fe.dofs_per_cell;
 
@@ -173,139 +170,162 @@ DisableParticleContact<dim>::identify_mobility_status(
   IndexSet       locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(background_dh);
 
-  // Reinit all value of mobility at nodes
+  // Reinit all value of mobility at nodes as inactive (0)
   mobility_at_nodes.reinit(locally_owned_dofs,
                            locally_relevant_dofs,
                            mpi_communicator);
   mobility_at_nodes = 0;
 
-  // Empty status (3) to nodes when no particle in cell
+  // Calculate the average granular temperature and solid fraction for each
+  // cells
+  Vector<double> granular_temperature_average(n_active_cells);
+  Vector<double> solid_fractions(n_active_cells);
+  calculate_granular_temperature_solid_fraction(particle_handler,
+                                                granular_temperature_average,
+                                                solid_fractions);
+
+  // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
+  // flagged as empty mobility status (3) (empty cells are not stored in the
+  // map).
   for (auto cell = active_ghost_cells_copy.begin();
        cell != active_ghost_cells_copy.end();)
     {
       // Check if the cell has any particles
       if (particle_handler.n_particles_in_cell(*cell) == 0)
         {
-          std::vector<types::global_dof_index> local_dofs_indices(
-            dofs_per_cell);
-          (*cell)->get_dof_indices(local_dofs_indices);
+          std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+          (*cell)->get_dof_indices(local_dof_indices);
 
-          // Remove empty cell from cells to reduce the number of check
+          // Remove cell from cell set and iterate to the following cell, the
+          // erase function returns the next iterator.
           cell = active_ghost_cells_copy.erase(cell);
 
-          // Assign empty status to nodes
-          for (auto dof_index : local_dofs_indices)
+          // Assign empty status to all nodes
+          for (auto node_id : local_dof_indices)
             {
-              mobility_at_nodes(dof_index) = mobility_status::empty;
+              mobility_at_nodes(node_id) = mobility_status::empty;
             }
         }
       else
         {
+          // Since erase() is not called, we need to increment the iterator
           ++cell;
         }
     }
 
+  // Update ghost values of mobility_at_nodes
   mobility_at_nodes.update_ghost_values();
 
-  // Mobile status (2) to nodes (no overwrite of empty status) and to cell if
-  // the criteria is respected or cell has one or many empty nodes
-  // (empty neighbor)
+  // Check if the cell is mobile by criteria:
+  // * granular temperature > threshold or
+  // * solid fraction of cell < threshold or
+  // * is next to an empty cell
+  // If so, nodes are flagged and cells are stored with mobile status (2)
   for (auto cell = active_ghost_cells_copy.begin();
        cell != active_ghost_cells_copy.end();)
     {
-      // Assign mobility status to cell if has particles and
-      // - granular temperature > limit or
-      // - solid fraction of cell < limit or
-      // - is next to an empty cell
-      const unsigned int cell_id = (*cell)->active_cell_index();
+      std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+      (*cell)->get_dof_indices(local_dof_indices);
 
-      std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
-      (*cell)->get_dof_indices(local_dofs_indices);
-
-      // Check if cell has an empty status node
+      // Check if the cell has any empty neighbor cell by the value at nodes
       bool has_empty_neighbor = false;
-      for (auto dof_index : local_dofs_indices)
+      for (auto node_id : local_dof_indices)
         {
-          if (mobility_at_nodes[dof_index] == mobility_status::empty)
+          if (mobility_at_nodes[node_id] == mobility_status::empty)
             {
               has_empty_neighbor = true;
-              break;
+              break; // No need to check the other nodes
             }
         }
 
-      if (granular_temperature_average[cell_id] >=
+      // Check if the cell is mobile by criteria
+      // (granular temperature or solid fraction or empty neighbor)
+      const unsigned int cell_id = (*cell)->active_cell_index();
+      if (granular_temperature_average[cell_id] >
             granular_temperature_threshold ||
-          solid_fractions[cell_id] <= solid_fraction_threshold ||
+          solid_fractions[cell_id] < solid_fraction_threshold ||
           has_empty_neighbor)
         {
-          // Insert cell in mobile status set
+          // Assign mobile status to cell in map
           cell_mobility_status_map.insert({cell_id, mobility_status::mobile});
 
-          // Remove cell from cell set and iterate to the following cell.
-          // The erase function returns the next iterator.
+          // Remove cell from cell set and iterate to the following cell
           cell = active_ghost_cells_copy.erase(cell);
 
-          // Assign mobile status to nodes
-          for (auto dof_index : local_dofs_indices)
+          // Assign mobile status to nodes but don't overwrite empty nodes.
+          // This prevents assigning mobile status to the empty cells in the
+          // next check (additional mobile layer) since we don't verify again if
+          // cell is empty or not.
+          for (auto node_id : local_dof_indices)
             {
-              // Don't overwrite empty nodes
-              mobility_at_nodes(dof_index) =
+              // Possible cases: (nodes are initialized to inactive (0))
+              // node = max(mobile (2), inactive (0)) = mobile (2)
+              // node = max(mobile (2), empty (3))    = empty (3)
+              mobility_at_nodes(node_id) =
                 std::max((int)mobility_status::mobile,
-                         mobility_at_nodes[dof_index]);
+                         mobility_at_nodes[node_id]);
             }
         }
       else
         {
+          // Since erase() is not called, we need to increment the iterator
           ++cell;
         }
     }
 
   mobility_at_nodes.update_ghost_values();
 
-  // Layer of mobile cells over mobile cells
+  // Check if the cell is mobile by neighbor (at least a node is flagged as
+  // mobile from previous check), this is the additional mobile layer.
+  // If so, cells are stored in map as mobile status (2) and nodes that are not
+  // mobile are flagged as active (1)
   for (auto cell = active_ghost_cells_copy.begin();
        cell != active_ghost_cells_copy.end();)
     {
-      std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
-      (*cell)->get_dof_indices(local_dofs_indices);
-      bool has_mobile_nodes = false;
+      std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+      (*cell)->get_dof_indices(local_dof_indices);
 
-      // Loop over nodes of cell
-      for (auto dof_index : local_dofs_indices)
+      // Check if the cell has any mobile nodes to know if we need to iterate
+      // over the next cell (no call of erase() function)
+      bool has_mobile_node = false;
+
+      for (auto node_id : local_dof_indices)
         {
-          // Check if node is mobile and assign mobile status to
-          // the cell
-          if (mobility_at_nodes[dof_index] == mobility_status::mobile)
+          // Check if node is mobile and assign mobile status to the cell
+          if (mobility_at_nodes[node_id] == mobility_status::mobile)
             {
-              // Assign mobility status to cell map
+              // Assign mobile status to cell in map
               const unsigned int cell_id = (*cell)->active_cell_index();
               cell_mobility_status_map.insert(
                 {cell_id, mobility_status::mobile});
 
               // Remove cell from cell set and iterate to the following cell,
-              // allso label it as mobile to avoid double iteration
-              cell             = active_ghost_cells_copy.erase(cell);
-              has_mobile_nodes = true;
+              // also label it as mobile to avoid double iteration
+              cell            = active_ghost_cells_copy.erase(cell);
+              has_mobile_node = true;
 
               // Assign active status to nodes except mobile because
               // this will cause to propagate the mobile status to the
               // neighbors in this loop since the mobility check at node
-              // is executed in the same container that we assign new
+              // is executed in the same container that we are assigning new
               // mobility status
-              // Since mobile = 2 > active = 1, this step won't overwrite
-              // mobile nodes
-              for (auto dof_index : local_dofs_indices)
+              for (auto node_id : local_dof_indices)
                 {
-                  mobility_at_nodes[dof_index] =
+                  // Possible cases: (nodes are initialized to inactive (0))
+                  // node = max(active (1), inactive (0)) = active (1)
+                  // node = max(active (1), empty (3))    = empty (3)
+                  // node = max(active (1), mobile (2))   = mobile (2)
+                  mobility_at_nodes[node_id] =
                     std::max((int)mobility_status::active,
-                             mobility_at_nodes[dof_index]);
+                             mobility_at_nodes[node_id]);
                 }
-              break;
+              break; // No need to check the other nodes
             }
         }
 
-      // Since the cell has no mobile nodes, we have to iterate to the next cell
-      if (!has_mobile_nodes)
+      // Since erase() is not called (no mobile node), we need to increment the
+      // iterator
+      if (!has_mobile_node)
         {
           ++cell;
         }
@@ -313,33 +333,35 @@ DisableParticleContact<dim>::identify_mobility_status(
 
   mobility_at_nodes.update_ghost_values();
 
-  // Layer of neighbor of mobile cells
+  // Check if the cell is active (at least a node is flagged as active from
+  // previous check), this is the layer of active cells
+  // If so, cells are stored with active status in the map (1)
   for (auto cell = active_ghost_cells_copy.begin();
        cell != active_ghost_cells_copy.end();)
     {
       std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dofs_indices);
 
+
       bool has_active_nodes = false;
       bool has_mobile_nodes = false;
 
-      // Loop over nodes of cell and check if cell has active or mobile nodes.
-      // Active nodes and no mobiles nodes means that the cell is a neighbor
-      // of the layer of cell over mobile cell by criteria.
-      // Active nodes with mobile nodes means that the cell is part of this
-      // layer.
-      for (auto dof_index : local_dofs_indices)
+      // Check if cell has active and/or mobile nodes
+      for (auto node_id : local_dofs_indices)
         {
           has_active_nodes =
-            (mobility_at_nodes[dof_index] == mobility_status::active) ||
+            (mobility_at_nodes[node_id] == mobility_status::active) ||
             has_active_nodes;
 
           has_mobile_nodes =
-            (mobility_at_nodes[dof_index] == mobility_status::mobile) ||
+            (mobility_at_nodes[node_id] == mobility_status::mobile) ||
             has_mobile_nodes;
         }
 
-      // Assign active status to cell if has active nodes and no mobile nodes
+      // Active nodes with mobile nodes means that the cell is part of the
+      // additional mobile layer.
+      // Active nodes and no mobile nodes means that the cell is a neighbor
+      // of the additional layer of mobile cells, this is an active cell.
       if (has_active_nodes && !has_mobile_nodes)
         {
           const unsigned int cell_id = (*cell)->active_cell_index();
@@ -347,7 +369,7 @@ DisableParticleContact<dim>::identify_mobility_status(
         }
 
       // Iterate to the next cell, none of the cells needs to be removed from
-      // the cell set has done in previous loops since there are no other loop
+      // the cell set as done in previous loops since there are no other loop
       // over this set
       ++cell;
     }

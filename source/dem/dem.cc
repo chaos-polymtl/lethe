@@ -1104,11 +1104,11 @@ DEMSolver<dim>::solve()
           if (has_disabled_contacts && !simulation_control->is_at_start())
             {
               // Compute cell mobility for all cells
-              disable_contact_object.calculate_cell_granular_temperature(
-                particle_handler, triangulation.n_active_cells());
-              disable_contact_object.identify_mobility_status(background_dh,
-                                                              particle_handler,
-                                                              mpi_communicator);
+              disable_contact_object.identify_mobility_status(
+                background_dh,
+                particle_handler,
+                triangulation.n_active_cells(),
+                mpi_communicator);
             }
 
           displacement.resize(particle_handler.get_max_local_particle_index());

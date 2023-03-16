@@ -52,79 +52,98 @@ public:
    * Mobility status flag used to identify the status at nodes and the status
    * of the cell:
    *
-   * inactive:
-   * the movement of particles is negligible in the cell, particles within this
-   * cell are not considered in the contact detection and force calculation
-   * procedure.
-   * active:
-   * movement of particles is negligible, but there's at least one neighbor cell
-   * that is flagged as mobile, meaning that particles need to be in contact
-   * candidates lists
-   * mobile:
-   * movement of particles is significant or there is at least one neighbor cell
-   * that is mobile by criteria, particles need to be in contact candidates
-   * lists
-   * empty:
-   * cell is empty, only useful for mobility at nodes
+   * inactive (0)
+   * The movement of particles in the cell is considered as negligible,
+   * particles within this cell are not considered in the contact detection
+   * (rejected at the broad search step), so no force calculation or
+   * intregation is applied
+   *
+   * active (1)
+   * The movement of particles in the cell is considered as negligible, but
+   * there's at least one neighbor cell that is flagged as mobile, meaning that
+   * particles need to be in contact candidates lists at the broad search step,
+   * particles directly in contact with the mobile cell are also considered in
+   * force calculation, but none of the particles in the cell are integrated.
+   *
+   * mobile (2)
+   * The movement of particles in the cell is significant or there is at least
+   * one neighbor cell that is mobile by criteria (see the
+   * identify_mobility_status() description), particles need to be in contact
+   * candidates lists at the broad search step and particles are treated as
+   * usual (force calculation and integration)
+   *
+   * empty (3)
+   * This status is only used for the node-based mobility status identification,
+   * no cells are flagged as empty, only node can by identify as empty. Without
+   * this identification of the empty cells, we can't identify the cell that
+   * have a empty neighbor cell, which is critical for simulationd using
+   * floating walls or mesh
    */
-  // TODO : remove n_mobility_status
   enum mobility_status : unsigned int
   {
-    inactive,
-    active,
-    mobile,
-    empty,
-    n_mobility_status
+    inactive, // 0 (used for cells and nodes)
+    active,   // 1 (used for cells and nodes)
+    mobile,   // 2 (used for cells and nodes)
+    empty     // 3 (used for nodes only)
   };
 
   /**
-   * Carries out the identification of the mobility status of each cell through
-   * processing at nodes.
+   * @brief Create or update a set of the active and ghost cells so that we don't
+   * have to loop over all the cells in the triangulation for the granular
+   * temperature and solid fraction calculation, and during the identification
+   * of the mobility status. This set prevent 4 iteration steps over all the
+   * cells
+   * + the verification if the cell is locally owned, ghost or not.
+   * This set is updated at every load balance step since cells are
+   * redistributed among processors.
+   *
+   * @param background_dh The DoFHandler of the background grid
+   */
+  void
+  update_active_ghost_cell_set(const DoFHandler<dim> &background_dh);
+
+  /**
+   * @brief Carries out the identification of the mobility status of each cell
+   * through a node-based identification and check. Only the active and ghost
+   * cells are processed and only mobile and active cells are stored in the map
+   * since the cells that are not stored in the map are considered as empty or
+   * inactive.
    *
    * The following 4 checks (search loops) are done:
-   * 1. Check if the cell is empty (n_particle = 0), if so, nodes and cells are
-   * flagged as empty mobility status
-   * 2. Check if the cell is mobile by criterion (n_particle > 0, average
-   * granular temperature > threshold, solid fraction < threshold, has at least
-   * one empty node from previous check), if so, nodes and cells are flagged as
-   * mobile mobility status
-   * 3. Check if the cell is mobile by neighbor (at least a node is flagged as
-   * mobile from previous check), if so, cells are flagged as mobile status and
-   * nodes that are not mobile are flagged as active
-   * 4. Check if the cell is active (at least a node is flagged as active from
-   * previous check), if so, cells are flagged as active status
    *
-   * The remaining cells are flagged as inactive by default (vector is
-   * initialized with 0)
+   * 1. Check if the cell is empty (n_particle = 0), if so, nodes and cells are
+   * flagged as empty mobility status (3) (empty cells are not stored in the
+   * map).
+   *
+   * 2. Check if the cell is mobile by criteria (average granular temperature >
+   * threshold, solid fraction < threshold or has at least one empty node from
+   * previous check), if so, nodes are flagged and cells are stored with mobile
+   * mobility status (2)
+   *
+   * 3. Check if the cell is mobile by neighbor (at least a node is flagged as
+   * mobile from previous check), if so, cells are stored in map as mobile
+   * status (2) and nodes that are not mobile are flagged as active (1)
+   *
+   * 4. Check if the cell is active (at least a node is flagged as active from
+   * previous check), if so, cells are stored with active status in the map (1)
+   *
+   * The remaining cells are inactive (0), there are not stored in the map.
    *
    * @param background_dh The dof handler of the background grid
+   *
    * @param particle_handler The particle handler that contains all the particles
+   *
    * @param mpi_communicator The MPI communicator
    */
   void
   identify_mobility_status(
     const DoFHandler<dim> &                background_dh,
     const Particles::ParticleHandler<dim> &particle_handler,
+    const unsigned int                     n_active_cells,
     MPI_Comm                               mpi_communicator);
 
   /**
-   * Carries out the calculation of the granular temperature and solid
-   * fraction approximation in each local cell. Those values are a criteria
-   * for cell mobility
-   *
-   * @param triangulation The triangulation
-   * @param particle_handler The particle handler that contains all the particles
-   */
-  void
-  calculate_cell_granular_temperature(
-    const Particles::ParticleHandler<dim> &particle_handler,
-    const unsigned int                     n_active_cells);
-
-  void
-  update_active_ghost_cell_set(const DoFHandler<dim> &background_dh);
-
-  /**
-   * Find the mobility status of a cell
+   * @brief Find the mobility status of a cell
    *
    * @param cell The iterator of the cell that needs mobility evaluation
    */
@@ -142,10 +161,8 @@ public:
   }
 
   /**
-   * Convert the vector of mobility status set to a vector of mobility status
-   * with cell id order
-   * status_to_cell is a vector of 3 sets of cell iterator (inactive, active,
-   * mobile), it can't be used as is in the pvd post-processing or any data out,
+   * @brief Convert the map of mobility status to a vector of mobility status
+   * because map can't be used as is in the pvd post-processing or any data out,
    * it needs to be converted to a vector of mobility status by active cell
    * index
    *
@@ -175,18 +192,6 @@ public:
     return cell_mobility_status_map;
   }
 
-  LinearAlgebra::distributed::Vector<int>
-  get_mobility_at_nodes()
-  {
-    return mobility_at_nodes;
-  }
-
-  unsigned int
-  get_n_mobility_status()
-  {
-    return mobility_status::n_mobility_status;
-  }
-
   void
   set_threshold_values(const double granular_temperature,
                        const double solid_fraction)
@@ -196,20 +201,38 @@ public:
   }
 
 private:
+  /**
+   * @brief Carries out the calculation of the granular temperature and solid
+   * fraction approximation in each local cell. Those values are criteria for
+   * cell mobility
+   *
+   * @param particle_handler The particle handler that contains all the particles
+   *
+   * @param cell_granular_temperature The empty vector of granular temperature
+   *
+   * @param cell_solid_fraction The empty vector of solid fraction
+   */
   void
-  check_granular_temperature(
-    const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-      &                                    cells_neighbor_list,
-    const Particles::ParticleHandler<dim> &particle_handler);
+  calculate_granular_temperature_solid_fraction(
+    const Particles::ParticleHandler<dim> &particle_handler,
+    Vector<double> &                       cell_granular_temperature,
+    Vector<double> &                       cell_solid_fraction);
 
+  // Map of cell mobility status, the key is the active cell index and the value
+  // is the mobility status (active or mobile only, inactive are not stored)
   std::unordered_map<types::global_cell_index, unsigned int>
-                 cell_mobility_status_map;
-  Vector<double> solid_fractions;
+    cell_mobility_status_map;
 
-  Vector<double> granular_temperature_average;
+  // Set of active and ghost cells, used to loop over only the active and ghost
+  // cells without looping over all the cells in the triangulation many times
   std::set<typename DoFHandler<dim>::active_cell_iterator> active_ghost_cells;
-  LinearAlgebra::distributed::Vector<int>                  mobility_at_nodes;
 
+  // Vector of mobility status at nodes, used to check the value at node to
+  // determine the mobility status of the cell, this type of vector is used
+  // to allow update values in parallel
+  LinearAlgebra::distributed::Vector<int> mobility_at_nodes;
+
+  // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
   double solid_fraction_threshold;
 };
