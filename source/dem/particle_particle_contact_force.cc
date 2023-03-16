@@ -22,10 +22,7 @@
 
 #include <dem/particle_particle_contact_force.h>
 
-#include <deal.II/particles/particle_accessor.h>
-
 using namespace DEM;
-
 
 template <
   int                                                       dim,

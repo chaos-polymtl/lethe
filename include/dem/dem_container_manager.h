@@ -118,9 +118,9 @@ public:
     const bool                             has_periodic_boundaries = false);
 
   /**
-   * Particle-particle broad search which finds the particle-particle contact
-   * pairs candidates, local or ghost, which shows the collision pairs.
-   * These collision pairs will be used in the fine search
+   * Execute the particle-particle broad search which finds the local and ghost
+   * particle-particle contact pairs candidates. These contact pairs will be
+   * used in the fine search to investigate if they are in contact or not.
    * to investigate if they are in contact or not.
    *
    * @param particle_handler The particle handler of particles in the broad
@@ -134,10 +134,9 @@ public:
     const bool                               has_periodic_boundaries = false);
 
   /**
-   * Particle-particle broad search which finds the particle-particle contact
-   * pairs candidates, local or ghost, which shows the collision pairs.
-   * These collision pairs will be used in the fine search to investigate if
-   * they are in contact or not.
+   * Execute the particle-particle broad search which finds the local and ghost
+   * particle-particle contact pairs candidates. These contact pairs will be
+   * used in the fine search to investigate if they are in contact or not.
    * This version of the function is used when disabling particle contacts
    * regards mobility is enable.
    *

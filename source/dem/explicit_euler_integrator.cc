@@ -87,7 +87,7 @@ ExplicitEulerIntegrator<dim>::integrate(
     }
 }
 
-// Explicite Euler not implemented for disabling contacts
+// Explicit Euler not implemented for disabling contacts
 template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(

@@ -132,8 +132,7 @@ public:
    * have to loop over all the cells in the triangulation for the granular
    * temperature and solid fraction calculation, and during the identification
    * of the mobility status. This set prevent 4 iteration steps over all the
-   * cells
-   * + the verification if the cell is locally owned, ghost or not.
+   * cells  + the verification if the cell is locally owned, ghost or not.
    * This set is updated at every load balance step since cells are
    * redistributed among processors.
    *
