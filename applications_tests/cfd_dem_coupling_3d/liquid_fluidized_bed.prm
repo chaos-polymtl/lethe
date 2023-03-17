@@ -80,9 +80,6 @@ subsection cfd-dem
    set shear force = true
    set pressure force = true
    set drag model = difelice
-   set post processing = true
-   set inlet boundary id = 2
-   set outlet boundary id = 3
    set coupling frequency = 10
    set vans model = modelB
 end

@@ -14,7 +14,6 @@ subsection simulation control
   set time step            = 0.005
   set subdivision          = 1
   set log precision        = 10
-  #  set output boundaries    = true
 end
 
 #---------------------------------------------------
@@ -78,17 +77,16 @@ end
 #---------------------------------------------------
 
 subsection cfd-dem
-  set grad div                      = true
-  set void fraction time derivative = true
-  set drag force                    = true
-  set buoyancy force                = true
-  set shear force                   = false
-  set pressure force                = false
-  set drag model                    = difelice
-  set post processing               = true
-  set coupling frequency            = 100
-  set implicit stabilization        = false
-  set vans model                    = modelB
+   set grad div = true
+   set void fraction time derivative = true
+   set drag force = true
+   set buoyancy force = true
+   set shear force = false
+   set pressure force = false
+   set drag model = difelice
+   set coupling frequency = 100
+   set implicit stabilization = false
+   set vans model = modelB
 end
 
 #---------------------------------------------------

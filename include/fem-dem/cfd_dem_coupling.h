@@ -213,7 +213,7 @@ private:
   postprocess_fd(bool first_iteration) override;
 
   void
-  post_processing() override;
+  monitor_mass_conservation() override;
 
   /**
    * @brief Check if the disabling contacts is enabled and that

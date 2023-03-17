@@ -80,7 +80,6 @@ subsection cfd-dem
    set shear force = false
    set pressure force = false
    set drag model = difelice
-   set post processing = true
    set coupling frequency = 100
    set implicit stabilization = false
    set vans model = modelB

@@ -99,9 +99,6 @@ namespace Parameters
     bool         grad_div;
     DragModel    drag_model;
     VANSModel    vans_model;
-    bool         post_processing;
-    unsigned int inlet_boundary_id;
-    unsigned int outlet_boundary_id;
     unsigned int coupling_frequency;
     bool         drag_force;
     bool         buoyancy_force;

@@ -1084,21 +1084,19 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::post_processing()
+CFDDEMSolver<dim>::monitor_mass_conservation()
 {
-  if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-    {
-      this->GLSVANSSolver<dim>::post_processing();
-      double particle_total_kinetic_energy =
-        calculate_granular_statistics<
-          dim,
-          DEM::dem_statistic_variable::translational_kinetic_energy>(
-          this->particle_handler, this->mpi_communicator)
-          .total;
+  this->GLSVANSSolver<dim>::monitor_mass_conservation();
 
-      this->pcout << "Total particles kinetic energy: "
-                  << particle_total_kinetic_energy << std::endl;
-    }
+  double particle_total_kinetic_energy =
+    calculate_granular_statistics<
+      dim,
+      DEM::dem_statistic_variable::translational_kinetic_energy>(
+      this->particle_handler, this->mpi_communicator)
+      .total;
+
+  this->pcout << "Total particles kinetic energy: "
+              << particle_total_kinetic_energy << std::endl;
 
   if (dem_parameters.post_processing.Lagrangian_post_processing &&
       this->simulation_control->is_output_iteration())
@@ -1365,7 +1363,7 @@ CFDDEMSolver<dim>::solve()
       this->postprocess(false);
       this->finish_time_step_fd();
 
-      post_processing();
+      monitor_mass_conservation();
 
       // Load balancing
       // The input argument to this function is set to zero as this integer is
