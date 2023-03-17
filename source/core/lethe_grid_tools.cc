@@ -1383,9 +1383,9 @@ LetheGridTools::find_point_triangle_distance(
   const Tensor<1, dim> e_1 = point_2 - point_0;
 
   const Tensor<1, dim> normal      = cross_product_3d(e_0, e_1);
-  const double         norm_normal = normal.norm();
-  Tensor<1, dim>       unit_normal = normal / norm_normal;
-  Tensor<1, 3>         unit_normal_3d;
+  const double         normal_norm = normal.norm();
+  Tensor<1, dim>       normal_unit = normal / normal_norm;
+  Tensor<1, 3>         normal_unit_3d;
   Point<3>             pt_in_triangle_3d;
 
   const double a   = e_0.norm_square();
@@ -1399,12 +1399,9 @@ LetheGridTools::find_point_triangle_distance(
 
   vector_to_plane = point_0 - point;
 
-  // Do the full calculation taken from  Geometric Tools for Computer Graphics,
-  // Eberly 2003 The calculation is taken from Chapter 10.3.2 - Point to
-  // triangle The entire reference is available at:
-  // https://www.sciencedirect.com/science/article/pii/B9781558605947500138
-  // Variables name are taken straight from this reference to ensure a better
-  // readability
+  // From this point onward, the variable name follow the notation of  Geometric
+  // Tools for Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to
+  // triangle.
 
   const double d = scalar_product(e_0, vector_to_plane);
   const double e = scalar_product(e_1, vector_to_plane);
@@ -1472,10 +1469,10 @@ LetheGridTools::find_point_triangle_distance(
           // In region 0, normal vector is the face normal vector
           // Cast unit_normal to a tensor<1, 3>
           if constexpr (dim == 3)
-            unit_normal_3d = unit_normal;
+            normal_unit_3d = normal_unit;
 
           if constexpr (dim == 2)
-            unit_normal_3d = tensor_nd_to_3d(unit_normal);
+            normal_unit_3d = tensor_nd_to_3d(normal_unit);
         }
     }
   else

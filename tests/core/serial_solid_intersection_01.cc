@@ -83,7 +83,7 @@ test()
   std::shared_ptr<Triangulation<2, 3>> solid_triangulation =
     solid.get_triangulation();
 
-  // Loop over backgorund
+  // Loop over background
   Vector<double> subdomain_background(background_tria->n_active_cells());
   Vector<double> subdomain_solid(solid_triangulation->n_active_cells());
   for (auto &cell_pair : cell_and_triangle_intersection)
