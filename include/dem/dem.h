@@ -102,11 +102,21 @@ private:
 
   /**
    * Similar to the cell_weight() function, this function is used when the cell
-   * weight is adapted to the mobility status of the cell. For instance, if the
+   * weight is adapted to the mobility status. For instance, if the
    * cell is inactive, its computational load will be significantly lower than
    * if it is a mobile cell since there is no force calculation and no velocity
    * integration for the particles that lie within it. The weight of the cells
    * must thus be adapted to the status of the cell.
+   *
+   * cell load = cell weight + load balancing factor * n particles * particle
+   * weight
+   *
+   * @param cell The cell for which the load is calculated
+   *
+   * @param status The status of the cell used to inform functions in derived
+   * classes how the cell with the given cell iterator is going to change
+   *
+   * @param mobility_status The mobility status of the cell
    */
   unsigned int
   cell_weight_with_mobility_status(
@@ -150,6 +160,12 @@ private:
    */
   inline bool
   check_load_balance_dynamic();
+
+  /**
+   * Finds load-balance step for dynamic load-balance with disabled contact
+   */
+  inline bool
+  check_load_balance_with_disabled_contacts();
 
   /**
    * @brief Manages the call to the load balancing. Returns true if

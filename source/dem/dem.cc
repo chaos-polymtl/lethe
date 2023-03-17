@@ -157,6 +157,14 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
     {
       check_load_balance_step = &DEMSolver<dim>::check_load_balance_dynamic;
+      ;
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
+             dynamic_with_disabling_contacts)
+    {
+      check_load_balance_step =
+        &DEMSolver<dim>::check_load_balance_with_disabled_contacts;
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
@@ -273,8 +281,8 @@ DEMSolver<dim>::cell_weight(
               particle_handler.n_particles_in_cell(cell->child(child_index));
 
           return n_particles_in_cell * particle_weight;
+          break;
         }
-        break;
 
       default:
         Assert(false, ExcInternalError());
@@ -331,12 +339,12 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
           for (unsigned int child_index = 0;
                child_index < GeometryInfo<dim>::max_children_per_cell;
                ++child_index)
-            n_particles_in_cell += alpha * particle_handler.n_particles_in_cell(
-                                             cell->child(child_index));
+            n_particles_in_cell +=
+              particle_handler.n_particles_in_cell(cell->child(child_index));
 
-          return n_particles_in_cell * particle_weight;
+          return alpha * n_particles_in_cell * particle_weight;
+          break;
         }
-        break;
 
       default:
         Assert(false, ExcInternalError());
@@ -351,7 +359,6 @@ void
 DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
-  background_dh.reinit(triangulation);
   background_dh.distribute_dofs(background_fe);
 }
 
@@ -359,30 +366,6 @@ template <int dim>
 void
 DEMSolver<dim>::load_balance()
 {
-  if (has_disabled_contacts)
-    {
-      std::vector<unsigned int> mobility_status(triangulation.n_active_cells());
-      disable_contact_object.get_mobility_status_vector(mobility_status);
-
-      // Clear and connect a new cell weight function
-      triangulation.signals.weight.disconnect_all_slots();
-
-      triangulation.signals.weight.connect(
-        [](const typename Triangulation<dim>::cell_iterator &,
-           const typename Triangulation<dim>::CellStatus) -> unsigned int {
-          return 1000;
-        });
-
-      triangulation.signals.weight.connect(
-        [&](const typename parallel::distributed::Triangulation<
-              dim>::cell_iterator &cell,
-            const typename parallel::distributed::Triangulation<dim>::CellStatus
-              status) -> unsigned int {
-          return this->cell_weight_with_mobility_status(
-            cell, status, mobility_status[cell->active_cell_index()]);
-        });
-    }
-
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
@@ -480,7 +463,7 @@ DEMSolver<dim>::check_load_balance_frequent()
 
 template <int dim>
 inline bool
-DEMSolver<dim>::check_load_balance_dynamic()
+DEMSolver<dim>::check_load_balance_with_disabled_contacts()
 {
   bool load_balance_step = false;
   if (simulation_control->get_step_number() %
@@ -581,29 +564,60 @@ DEMSolver<dim>::check_load_balance_dynamic()
               load_balance_step = true;
             }
         }
-      else
+    }
+
+  std::vector<unsigned int> mobility_status(triangulation.n_active_cells());
+  disable_contact_object.get_mobility_status_vector(mobility_status);
+
+  // Clear and connect a new cell weight function
+  triangulation.signals.weight.disconnect_all_slots();
+
+  triangulation.signals.weight.connect(
+    [](const typename Triangulation<dim>::cell_iterator &,
+       const typename Triangulation<dim>::CellStatus) -> unsigned int {
+      return 1000;
+    });
+
+  triangulation.signals.weight.connect(
+    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
+          &cell,
+        const typename parallel::distributed::Triangulation<dim>::CellStatus
+          status) -> unsigned int {
+      return this->cell_weight_with_mobility_status(
+        cell, status, mobility_status[cell->active_cell_index()]);
+    });
+
+  return load_balance_step;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::check_load_balance_dynamic()
+{
+  bool load_balance_step = false;
+  if (simulation_control->get_step_number() %
+        parameters.model_parameters.dynamic_load_balance_check_frequency ==
+      0)
+    {
+      unsigned int maximum_particle_number_on_proc = 0;
+      unsigned int minimum_particle_number_on_proc = 0;
+
+      maximum_particle_number_on_proc =
+        Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
+                            mpi_communicator);
+      minimum_particle_number_on_proc =
+        Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
+                            mpi_communicator);
+
+      // Execute load balancing if difference of load between processors is
+      // larger than threshold of the load per processor
+      if ((maximum_particle_number_on_proc - minimum_particle_number_on_proc) >
+            parameters.model_parameters.load_balance_threshold *
+              (particle_handler.n_global_particles() / n_mpi_processes) ||
+          checkpoint_step)
         {
-          unsigned int maximum_particle_number_on_proc = 0;
-          unsigned int minimum_particle_number_on_proc = 0;
-
-          maximum_particle_number_on_proc =
-            Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
-                                mpi_communicator);
-          minimum_particle_number_on_proc =
-            Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
-                                mpi_communicator);
-
-          // Execute load balancing if difference of load between processors is
-          // larger than threshold of the load per processor
-          if ((maximum_particle_number_on_proc -
-               minimum_particle_number_on_proc) >
-                parameters.model_parameters.load_balance_threshold *
-                  (particle_handler.n_global_particles() / n_mpi_processes) ||
-              checkpoint_step)
-            {
-              load_balance();
-              load_balance_step = true;
-            }
+          load_balance();
+          load_balance_step = true;
         }
     }
 
@@ -1148,7 +1162,19 @@ DEMSolver<dim>::solve()
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates and containers of particle-wall
           // contact pair candidates
-          if (has_disabled_contacts && contact_build_number > 1)
+          if (!has_disabled_contacts || contact_build_number < 2)
+            {
+              container_manager.execute_particle_particle_broad_search(
+                particle_handler, has_periodic_boundaries);
+
+              container_manager.execute_particle_wall_broad_search(
+                particle_handler,
+                boundary_cell_object,
+                parameters.floating_walls,
+                simulation_control->get_current_time(),
+                has_floating_mesh);
+            }
+          else // has_disabled_contacts && contact_build_number > 1
             {
               container_manager.execute_particle_particle_broad_search(
                 particle_handler,
@@ -1162,9 +1188,9 @@ DEMSolver<dim>::solve()
                 simulation_control->get_current_time(),
                 disable_contact_object,
                 has_floating_mesh);
-            }
-          else
-            {
+
+
+
               container_manager.execute_particle_particle_broad_search(
                 particle_handler, has_periodic_boundaries);
 

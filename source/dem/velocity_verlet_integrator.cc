@@ -163,6 +163,8 @@ VelocityVerletIntegrator<dim>::integrate(
           cell_is_mobile =
             it != cell_mobility_status_map.end() && it->second == mobile_status;
 
+          // We loop over the particles, even if cell is not mobile, to reset
+          // the force and torques value of the particle with the particle id
           auto particles_in_cell = particle_handler.particles_in_cell(cell);
           for (auto &particle : particles_in_cell)
             {
