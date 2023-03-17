@@ -1,0 +1,105 @@
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 1
+  set output frequency  = 1
+  set output name       = almost_blocked_channels
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1
+  end
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2,2,1 : -1,-1,-0.5 : 1,1,0.5 : true
+  set initial refinement = 2
+end
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+subsection boundary conditions
+  set number = 5
+
+  subsection bc 0
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 5
+    set type = noslip
+  end
+  subsection bc 4
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+end
+
+subsection source term
+  set enable = true
+  subsection xyz
+    set Function expression = 1; 0; 0; 0
+  end
+end
+
+subsection particles
+  set number of particles               = 3
+  set stencil order                     = 1
+  set length ratio                      = 2
+  set refine mesh inside radius factor  = 0
+  set refine mesh outside radius factor = 1.5
+  set initial refinement                = 0
+  subsection particle info 0
+    set type            = cylinder
+    set shape arguments = 0.35;1.1
+    subsection position
+      set Function expression = 0;0.9;0
+    end
+  end
+  subsection particle info 1
+    set type            = cylinder
+    set shape arguments = 0.20;1.1
+    subsection position
+      set Function expression = 0;-0.02;0
+    end
+  end
+  subsection particle info 2
+    set type            = cylinder
+    set shape arguments = 0.25;1.1
+    subsection position
+      set Function expression = 0;-0.65;0
+    end
+  end
+end
+
+subsection forces
+  set verbosity = verbose
+end
+
+subsection non-linear solver
+  set verbosity = quiet
+end
+
+subsection linear solver
+  set verbosity = quiet
+end
+

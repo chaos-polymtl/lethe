@@ -104,10 +104,14 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                        support_points);
   cut_cells_map.clear();
   cells_inside_map.clear();
+  overconstrained_fluid_cell_map.clear();
+  vertices_cut.clear();
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
 
   auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
@@ -116,8 +120,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          bool         cell_is_cut;
-          bool         cell_is_inside;
+          bool         cell_is_cut                                = false;
+          bool         cell_is_inside                             = false;
           unsigned int particle_id_which_cuts_this_cell           = 0;
           unsigned int particle_id_in_which_this_cell_is_embedded = 0;
           unsigned int number_of_particles_cutting_this_cell      = 0;
@@ -237,11 +241,91 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 }
             }
 
+          // If a cell is cut, we register its DOFs as "cut" also. This will
+          // allow us to detect fluid cells that have all their DOFs cut, and
+          // consider them as cut cells.
+          if (cell_is_cut)
+            {
+              size_t id;
+              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                {
+                  id               = local_dof_indices[j];
+                  vertices_cut[id] = {true, particle_id_which_cuts_this_cell};
+                }
+            }
+
+          // We loop on every face of the cell, and if the face is at a boundary
+          // we count it as constrained.
+          size_t nb_faces = cell->n_faces();
+          for (unsigned int f = 0; f < nb_faces; ++f)
+            {
+              const auto face = cell->face(f);
+              if (face->at_boundary())
+                {
+                  face->get_dof_indices(local_face_dof_indices);
+                  size_t id;
+                  for (unsigned int v = 0; v < local_face_dof_indices.size();
+                       ++v)
+                    {
+                      id               = local_face_dof_indices[v];
+                      vertices_cut[id] = {true, 0};
+                    }
+                }
+            }
+
           cut_cells_map[cell]    = {cell_is_cut,
                                  particle_id_which_cuts_this_cell,
                                  number_of_particles_cutting_this_cell};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
+        }
+    }
+
+  // We loop over every fluid cell, and if all of its DOFs are cut we change the
+  // status of the cell itself.
+  for (const auto &cell : cell_iterator)
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          overconstrained_fluid_cell_map[cell] = {false, -1};
+
+          bool cell_is_cut;
+          bool cell_is_inside;
+          cell->get_dof_indices(local_dof_indices);
+          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+          if (!cell_is_cut && !cell_is_inside)
+            {
+              unsigned int number_of_vertices_in_cell =
+                local_dof_indices.size();
+              unsigned int number_of_vertices_cut = 0;
+              size_t       current_particle_candidate =
+                std::numeric_limits<int>::max();
+              size_t potential_particle_candidate;
+              size_t id;
+
+              // We count the number of vertices that are constrained while
+              // keeping track of the lowest particle ID.
+              for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
+                {
+                  id = local_dof_indices[j];
+                  bool vertex_cut;
+                  std::tie(vertex_cut, potential_particle_candidate) =
+                    vertices_cut[id];
+                  if (vertex_cut)
+                    {
+                      number_of_vertices_cut += 1;
+                      current_particle_candidate =
+                        std::min(current_particle_candidate,
+                                 potential_particle_candidate);
+                    }
+                }
+              if (number_of_vertices_in_cell == number_of_vertices_cut)
+                {
+                  overconstrained_fluid_cell_map[cell] = {
+                    true, current_particle_candidate};
+                }
+            }
         }
     }
 }
@@ -1339,6 +1423,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
+  Vector<float> cell_overconstrained(this->triangulation->n_active_cells());
 
   // If the enable extra verbose output is activated we add an output field to
   // the results where we identify which particle cuts each cell of the domain.
@@ -1358,9 +1443,18 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
           else
             cell_cuts(i) = -1;
 
+          bool cell_is_overconstrained;
+          std::tie(cell_is_overconstrained, particle_id) =
+            overconstrained_fluid_cell_map[cell];
+          if (cell_is_overconstrained)
+            cell_overconstrained(i) = particle_id;
+          else
+            cell_overconstrained(i) = -1;
+
           i += 1;
         }
       data_out.add_data_vector(cell_cuts, "cell_cut");
+      data_out.add_data_vector(cell_overconstrained, "cell_overconstrained");
     }
 }
 
@@ -1504,8 +1598,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+          bool cell_is_overconstrained;
+          std::tie(cell_is_overconstrained, std::ignore) =
+            overconstrained_fluid_cell_map[cell];
 
-          if (!cell_is_cut && !cell_is_inside)
+          if ((!cell_is_cut && !cell_is_inside) && !cell_is_overconstrained)
             {
               auto &evaluation_point = this->evaluation_point;
               fe_values.reinit(cell);
@@ -1553,6 +1650,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           // std::ignore is used because we don't care about what particle cut
           // the cell or the number of particles that cut the cell.
           std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
+
+          bool cell_is_overconstrained;
+          std::tie(cell_is_overconstrained, std::ignore) =
+            overconstrained_fluid_cell_map[cell];
 
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -1633,7 +1734,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 }
             }
 
-          if (!cell_is_cut)
+          if (!cell_is_cut && !cell_is_overconstrained)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
@@ -2641,8 +2742,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           unsigned int count_particles;
           std::tie(cell_is_cut, ib_particle_id, count_particles) =
             cut_cells_map[cell_cut];
+          bool cell_is_overconstrained;
+          std::tie(cell_is_overconstrained, std::ignore) =
+            overconstrained_fluid_cell_map[cell_cut];
 
-          if (cell_is_cut)
+          if (cell_is_cut || cell_is_overconstrained)
             {
               double sum_line = 0;
               fe_values.reinit(cell_cut);
@@ -2686,7 +2790,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           (this->zero_constraints.is_constrained(
                              local_dof_indices[i]) ||
                            this->nonzero_constraints.is_constrained(
-                             local_dof_indices[i])) == false)
+                             local_dof_indices[i])) == false &&
+                          cell_is_overconstrained == false)
                         {
                           // We are working on the DOFs of cells cut by a
                           // particle. We clear the current equation associated
@@ -3204,9 +3309,14 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // not cut.
   unsigned int ib_particle_id;
   std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
-  copy_data.cell_is_cut                              = cell_is_cut;
 
-  if (cell_is_cut)
+  bool cell_is_overconstrained;
+  std::tie(cell_is_overconstrained, std::ignore) =
+    overconstrained_fluid_cell_map[cell];
+
+  copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
+
+  if (cell_is_cut || cell_is_overconstrained)
     return;
   scratch_data.reinit(cell,
                       this->evaluation_point,
@@ -3294,9 +3404,14 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // not cut.
   unsigned int ib_particle_id;
   std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
-  copy_data.cell_is_cut                              = cell_is_cut;
 
-  if (cell_is_cut)
+  bool cell_is_overconstrained;
+  std::tie(cell_is_overconstrained, std::ignore) =
+    overconstrained_fluid_cell_map[cell];
+
+  copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
+
+  if (cell_is_cut || cell_is_overconstrained)
     return;
   scratch_data.reinit(cell,
                       this->evaluation_point,
