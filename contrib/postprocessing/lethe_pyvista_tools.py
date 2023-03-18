@@ -770,6 +770,7 @@ class lethe_pyvista_tools():
 
             # Find maximum eigenvalue and the eigenvector associated to it
             max_eigenvalue, assoc_eigenvectors = eigh(M, subset_by_index=[2, 2])
+            max_eigenvalue = max_eigenvalue[0]
 
             # Store reference eigenvalue for further normalization
             if i == reference_time_step:
