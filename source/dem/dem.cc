@@ -417,13 +417,15 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
   bool sorting_in_subdomains_step =
     (particles_insertion_step || load_balance_step || contact_detection_step);
 
-  contact_detection_step =
-    find_contact_detection_step<dim>(particle_handler,
-                                     simulation_control->get_time_step(),
-                                     smallest_contact_search_criterion,
-                                     mpi_communicator,
-                                     sorting_in_subdomains_step,
-                                     displacement);
+  contact_detection_step = find_particle_contact_detection_step<dim>(
+    particle_handler,
+    simulation_control->get_time_step(),
+    smallest_contact_search_criterion,
+    mpi_communicator,
+    sorting_in_subdomains_step,
+    displacement);
+
+
 
   return contact_detection_step;
 }
@@ -759,6 +761,7 @@ DEMSolver<dim>::solve()
             triangulation_cell_diameter,
             parameters.boundary_conditions);
 
+  // Store information about floating mesh/background mesh intersection
   container_manager.store_floating_mesh_info(triangulation, solids);
 
   if (parameters.restart.restart == true)
@@ -789,6 +792,12 @@ DEMSolver<dim>::solve()
              (parameters.model_parameters.dynamic_contact_search_factor *
               (parameters.model_parameters.neighborhood_threshold - 1) *
               maximum_particle_diameter * 0.5));
+
+  // Find the smallest cell size and use this as the floating mesh mapping
+  // criterion
+  smallest_floating_mesh_mapping_criterion =
+    GridTools::minimal_cell_diameter(triangulation);
+
 
   if (has_periodic_boundaries)
     {
@@ -878,6 +887,19 @@ DEMSolver<dim>::solve()
       else
         {
           particle_handler.update_ghost_particles();
+        }
+
+      // Check to see if floating meshes need to be mapped in background mesh
+      if (has_floating_mesh)
+        {
+          bool floating_mesh_map_step = find_floating_mesh_mapping_step(
+            smallest_floating_mesh_mapping_criterion, this->solids);
+
+          if (floating_mesh_map_step)
+            {
+              // Update floating mesh information in the container manager
+              container_manager.store_floating_mesh_info(triangulation, solids);
+            }
         }
 
       // Modify particles contact containers by search sequence

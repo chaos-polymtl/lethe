@@ -257,7 +257,14 @@ namespace LetheGridTools
 
   /**
    * @brief Calculates the distance between particles and a triangle (defined using
-   * three vertices)
+   * three vertices). The full calculation is taken from  Geometric Tools for
+   * Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to triangle.
+   * The entire reference is available at:
+   * https://www.sciencedirect.com/science/article/pii/B9781558605947500138
+   * A full implementation of the  above reference is also available here:
+   * https://www.geometrictools.com/Documentation/DistancePoint3Triangle3.pdf
+   * Variables name are taken straight from this reference to ensure a better
+   * readability.
    *
    * @return A tuple in which 0. a vector of bools to determine if the particle is
    * close to the triangle plane, 1. a vector of projected location of particles
@@ -276,6 +283,29 @@ namespace LetheGridTools
       const std::vector<Point<dim>> &                      triangle,
       const std::vector<Particles::ParticleIterator<dim>> &particles,
       const unsigned int &n_particles_in_base_cell);
+
+
+  /**
+   * @brief Calculates the distance between points and a triangle (defined using
+   * three vertices). The full calculation is taken from  Geometric Tools for
+   * Computer Graphics, Eberly 2003 Chapter 10.3.2 - Point to triangle.
+   * The entire reference is available at:
+   * https://www.sciencedirect.com/science/article/pii/B9781558605947500138
+   * A full implementation of the  above reference is also available here:
+   * https://www.geometrictools.com/Documentation/DistancePoint3Triangle3.pdf
+   * Variables name are taken straight from this reference to ensure a better
+   * readability.
+   *
+   * @return A distance
+   *
+   * @param triangle_vertices A vector of points that defines a triangle
+   * @param point A point for which we want to find the distance to the triangle
+   *
+   */
+  template <int dim>
+  double
+  find_point_triangle_distance(const std::vector<Point<dim>> &triangle_vertices,
+                               const Point<dim> &             point);
 
   /**
    * @brief

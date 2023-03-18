@@ -51,14 +51,13 @@ check_contact_detection_method(
       if (sorting_in_subdomains_step)
         displacement.resize(particle_handler.get_max_local_particle_index());
 
-      contact_detection_step =
-        find_contact_detection_step<dim>(particle_handler,
-                                         simulation_control->get_time_step() /
-                                           param.cfd_dem.coupling_frequency,
-                                         smallest_contact_search_criterion,
-                                         mpi_communicator,
-                                         sorting_in_subdomains_step,
-                                         displacement);
+      contact_detection_step = find_particle_contact_detection_step<dim>(
+        particle_handler,
+        simulation_control->get_time_step() / param.cfd_dem.coupling_frequency,
+        smallest_contact_search_criterion,
+        mpi_communicator,
+        sorting_in_subdomains_step,
+        displacement);
 
       return contact_detection_step;
     }

@@ -5,7 +5,7 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 1e-6
+  set time step         = 5e-6
   set time end          = 5
   set log frequency     = 1000
   set output frequency  = 1000
@@ -22,7 +22,7 @@ subsection model parameters
   set contact detection method                = dynamic
   set dynamic contact search size coefficient = 0.7
   set load balance method                     = frequent
-  set load balance frequency                  = 100000
+  set load balance frequency                  = 10000
   set neighborhood threshold                  = 1.3
   set particle particle contact force method  = hertz_mindlin_limit_overlap
   set particle wall contact force method      = nonlinear
@@ -71,7 +71,7 @@ end
 subsection insertion info
   set insertion method                               = non_uniform
   set inserted number of particles at each time step = 23500
-  set insertion frequency                            = 150000
+  set insertion frequency                            = 50000
   set insertion box minimum x                        = -0.022
   set insertion box minimum y                        = -0.022
   set insertion box minimum z                        = -0.022
@@ -91,7 +91,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_cylinder
   set grid arguments     = 2 : 0.05 : 0.055
-  set initial refinement = 2
+  set initial refinement = 3
 end
 
 #---------------------------------------------------

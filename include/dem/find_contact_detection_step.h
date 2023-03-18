@@ -18,6 +18,7 @@
  */
 
 #include <core/dem_properties.h>
+#include <core/serial_solid.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -29,7 +30,8 @@ using namespace dealii;
 #  define find_contact_detection_step_h
 
 /**
- * Carries out finding steps for dynamic contact search
+ * @brief Carries out finding steps for dynamic contact search for particle-particle
+ * contacts
  *
  * @param particle_handler
  * @param dt DEM time step
@@ -40,18 +42,37 @@ using namespace dealii;
  * @param sorting_in_subdomains_step True if it is insertion, load-
  * balance or contact detection step
  * @param displacement Displacement of particles since last sorting step
- * @return Returns 1 if the maximum cumulative
- * displacement of particles exceeds the threshold and 0 otherwise
+ * @return Returns true if the maximum cumulative
+ * displacement of particles exceeds the threshold and false otherwise
  *
  */
 
 template <int dim>
 bool
-find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
-                            const double                     dt,
-                            const double smallest_contact_search_criterion,
-                            MPI_Comm &   mpi_communicator,
-                            bool         sorting_in_subdomains_step,
-                            std::vector<double> &displacement);
+find_particle_contact_detection_step(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const double                     dt,
+  const double                     smallest_contact_search_criterion,
+  MPI_Comm &                       mpi_communicator,
+  bool                             sorting_in_subdomains_step,
+  std::vector<double> &            displacement);
+
+/**
+ * @brief Carries out finding steps for dynamic contact search in particle-floating
+ * mesh contacts
+ *
+ * @param particle_handler
+ * @param smallest_contact_search_criterion A criterion which defines the maximal displacement that a solid face may have displaced
+ * @param solids All solid objects used in the simulation
+ * @return Returns true if the maximum cumulative
+ * displacement of particles exceeds the threshold and false otherwise
+ *
+ */
+
+template <int dim>
+bool
+find_floating_mesh_mapping_step(
+  const double smallest_contact_search_criterion,
+  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);
 
 #endif

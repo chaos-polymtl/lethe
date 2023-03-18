@@ -402,8 +402,7 @@ DEMContainerManager<dim>::store_floating_mesh_info(
       // Create/update a container that contains all the combinations of
       // background and solid cells
       floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(
-          triangulation, solids[i_solid]->get_solid_triangulation());
+        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
     }
 }
 
