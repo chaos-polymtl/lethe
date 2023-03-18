@@ -15,19 +15,16 @@
  */
 
 
+#include <core/lethe_grid_tools.h>
 #include <core/serial_solid.h>
 #include <core/solutions_output.h>
-#include <core/tensors_and_points_dimension_manipulation.h>
 
-#include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
-#include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/grid/filtered_iterator.h>
@@ -36,13 +33,7 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
-
-#include <deal.II/particles/data_out.h>
-
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
 
 #include <fstream>
 
@@ -87,10 +78,6 @@ SerialSolid<dim, spacedim>::SerialSolid(
                                                   spacedim);
     }
 
-  // Dof handler associated with particles
-  solid_dh.clear();
-  solid_dh.reinit(*this->solid_tria);
-
   // Dof handler associated with mesh displacement
   displacement_dh.clear();
   displacement_dh.reinit(*this->solid_tria);
@@ -104,26 +91,56 @@ std::vector<
   std::pair<typename Triangulation<spacedim>::active_cell_iterator,
             typename Triangulation<dim, spacedim>::active_cell_iterator>>
 SerialSolid<dim, spacedim>::map_solid_in_background_triangulation(
-  const parallel::distributed::Triangulation<spacedim> &background_tr,
-  const std::shared_ptr<Triangulation<dim, spacedim>> & solid_tr)
+  const parallel::TriangulationBase<spacedim> &background_tr)
 {
   std::vector<
     std::pair<typename Triangulation<spacedim>::active_cell_iterator,
               typename Triangulation<dim, spacedim>::active_cell_iterator>>
     mapped_solid;
 
+  // Gather the amount of vertices per cell in the solid cells once to have
+  // a static memory allocation of the vector. This prevents reallocating
+  // the vector dynamically using push_back if the solid triangulation
+  // has many triangles
+  auto                         temporary_solid_cell = solid_tria->begin();
+  std::vector<Point<spacedim>> triangle(temporary_solid_cell->n_vertices());
+
+  // Calculate distance from cell center to solid_cell
   for (const auto &background_cell : background_tr.active_cell_iterators())
     {
       // If the cell is owned by the processor
       if (background_cell->is_locally_owned())
         {
-          for (auto &solid_cell : solid_tr->active_cell_iterators())
+          // Calculate the characteristic size of the background cell
+          const double bg_cell_length = background_cell->diameter();
+
+          // Calculate the center of the cell
+          Point<spacedim> bg_cell_center = background_cell->center();
+
+          // Calculate distance from center of the cell to triangle
+          for (auto &solid_cell : solid_tria->active_cell_iterators())
             {
-              mapped_solid.push_back(
-                std::make_pair(background_cell, solid_cell));
+              // Gather triangle vertices
+              for (unsigned int v = 0; v < solid_cell->n_vertices(); ++v)
+                {
+                  triangle[v] = solid_cell->vertex(v);
+                }
+
+              // Calculate distance between triangle and center
+              const double distance =
+                LetheGridTools::find_point_triangle_distance(triangle,
+                                                             bg_cell_center);
+
+              if (distance < bg_cell_length)
+                {
+                  mapped_solid.push_back(
+                    std::make_pair(background_cell, solid_cell));
+                }
             }
         }
     }
+
+  reset_displacement_monitoring();
 
   return mapped_solid;
 }
@@ -137,7 +154,7 @@ SerialSolid<dim, spacedim>::initial_setup()
   // initial_setup is called if the simulation is not a restarted one
   // Set-up of solid triangulation
   setup_triangulation(false);
-  setup_displacement();
+  setup_dof_handler();
 }
 
 
@@ -224,57 +241,13 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
         {
           solid_tria->refine_global(param->solid_mesh.initial_refinement);
         }
-      solid_dh.distribute_dofs(*fe);
     }
 }
 
-template <int dim, int spacedim>
-void
-SerialSolid<dim, spacedim>::load_triangulation(const std::string filename_tria)
-{
-  // Load solid triangulation from given file
-  // TODO not functional for now, as not all information as passed with the load
-  // function (see dealii documentation for classTriangulation) => change the
-  // way the load works, or change the way the solid triangulation is handled
-  std::ifstream in_folder(filename_tria.c_str());
-  if (!in_folder)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename_tria + "> does not appear to exist!"));
-
-  try
-    {
-      if (auto solid_tria =
-            dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
-              get_solid_triangulation().get()))
-        {
-          solid_tria->load(filename_tria.c_str());
-        }
-    }
-  catch (...)
-    {
-      AssertThrow(false,
-                  ExcMessage("Cannot open snapshot mesh file or read the "
-                             "solid triangulation stored there."));
-    }
-
-  // Initialize dof handler for solid
-  solid_dh.distribute_dofs(*fe);
-}
 
 template <int dim, int spacedim>
 DoFHandler<dim, spacedim> &
-SerialSolid<dim, spacedim>::get_solid_dof_handler()
-{
-  return solid_dh;
-}
-
-template <int dim, int spacedim>
-DoFHandler<dim, spacedim> &
-SerialSolid<dim, spacedim>::get_displacement_dof_handler()
+SerialSolid<dim, spacedim>::get_dof_handler()
 {
   return displacement_dh;
 }
@@ -288,39 +261,17 @@ SerialSolid<dim, spacedim>::get_displacement_vector()
 }
 
 template <int dim, int spacedim>
+double
+SerialSolid<dim, spacedim>::get_max_displacement_since_mapped()
+{
+  return displacement_since_mapped.linfty_norm();
+}
+
+template <int dim, int spacedim>
 std::shared_ptr<Triangulation<dim, spacedim>>
-SerialSolid<dim, spacedim>::get_solid_triangulation()
+SerialSolid<dim, spacedim>::get_triangulation()
 {
   return solid_tria;
-}
-
-template <int dim, int spacedim>
-Tensor<1, 3>
-SerialSolid<dim, spacedim>::get_translational_velocity()
-{
-  if constexpr (spacedim == 3)
-    return this->current_translational_velocity;
-
-  if constexpr (spacedim == 2)
-    return tensor_nd_to_3d(this->current_translational_velocity);
-}
-
-template <int dim, int spacedim>
-Tensor<1, 3>
-SerialSolid<dim, spacedim>::get_rotational_velocity()
-{
-  return this->current_angular_velocity;
-}
-
-template <int dim, int spacedim>
-Point<3>
-SerialSolid<dim, spacedim>::get_center_of_rotation()
-{
-  if constexpr (spacedim == 3)
-    return this->center_of_rotation;
-
-  if constexpr (spacedim == 2)
-    return point_nd_to_3d(this->center_of_rotation);
 }
 
 template <>
@@ -348,19 +299,11 @@ SerialSolid<3, 3>::rotate_grid(double /*angle*/, int /*axis*/)
 
 template <>
 void
-SerialSolid<2, 3>::rotate_grid(double angle, int axis)
+SerialSolid<2, 3>::rotate_grid(const double angle, const int axis)
 {
   Tensor<1, 3> t_axis;
   t_axis[axis] = 1;
   GridTools::rotate(t_axis, angle, *solid_tria);
-}
-
-
-template <int dim, int spacedim>
-unsigned int
-SerialSolid<dim, spacedim>::get_solid_id()
-{
-  return id;
 }
 
 template <int dim, int spacedim>
@@ -426,8 +369,12 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
               vertex_position += vertex_displacement;
 
               for (unsigned d = 0; d < spacedim; ++d)
-                displacement[dof_index + d] =
-                  displacement[dof_index + d] + vertex_displacement[d];
+                {
+                  displacement[dof_index + d] =
+                    displacement[dof_index + d] + vertex_displacement[d];
+                  displacement_since_mapped[dof_index + d] +=
+                    vertex_displacement[d];
+                }
 
               vertex_moved[global_vertex_no] = true;
             }
@@ -440,7 +387,7 @@ SerialSolid<dim, spacedim>::move_solid_triangulation(const double time_step,
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::move_solid_triangulation_with_displacement()
+SerialSolid<dim, spacedim>::displace_solid_triangulation()
 {
   const unsigned int     dofs_per_cell = displacement_fe->dofs_per_cell;
   std::set<unsigned int> dof_vertex_displaced;
@@ -479,22 +426,32 @@ SerialSolid<dim, spacedim>::write_output_results(
   std::shared_ptr<SimulationControl> simulation_control)
 {
   DataOut<dim, spacedim> data_out;
-  data_out.attach_dof_handler(solid_dh);
-
   data_out.attach_dof_handler(displacement_dh);
 
-  std::vector<std::string> solution_names(spacedim, "displacement");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation(
-      spacedim, DataComponentInterpretation::component_is_part_of_vector);
+  {
+    std::vector<std::string> displacement_names(spacedim, "displacement");
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>
+      data_component_interpretation(
+        spacedim, DataComponentInterpretation::component_is_part_of_vector);
 
+    data_out.add_data_vector(displacement,
+                             displacement_names,
+                             DataOut<dim, spacedim>::type_dof_data,
+                             data_component_interpretation);
+  }
 
-  data_out.add_data_vector(displacement,
-                           solution_names,
-                           DataOut<dim, spacedim>::type_dof_data,
-                           data_component_interpretation);
+  {
+    std::vector<std::string> displacement_names(spacedim,
+                                                "displacement_since_mapped");
+    std::vector<DataComponentInterpretation::DataComponentInterpretation>
+      data_component_interpretation(
+        spacedim, DataComponentInterpretation::component_is_part_of_vector);
 
-
+    data_out.add_data_vector(displacement_since_mapped,
+                             displacement_names,
+                             DataOut<dim, spacedim>::type_dof_data,
+                             data_component_interpretation);
+  }
 
   data_out.build_patches();
 
@@ -537,6 +494,8 @@ void SerialSolid<dim, spacedim>::write_checkpoint(std::string /*prefix*/)
 template <int dim, int spacedim>
 void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 {
+  throw(std::runtime_error(
+    "Restarting DEM simulations with floating meshes is currently not possible."));
   // Setup an un-refined triangulation before loading
   // setup_triangulation(true);
 
@@ -589,13 +548,14 @@ void SerialSolid<dim, spacedim>::read_checkpoint(std::string /*prefix*/)
 
 template <int dim, int spacedim>
 void
-SerialSolid<dim, spacedim>::setup_displacement()
+SerialSolid<dim, spacedim>::setup_dof_handler()
 {
   displacement_dh.distribute_dofs(*this->displacement_fe);
-
   displacement.reinit(displacement_dh.n_locally_owned_dofs());
+  displacement_since_mapped.reinit(displacement_dh.n_locally_owned_dofs());
 
-  displacement = 0;
+  displacement              = 0;
+  displacement_since_mapped = 0;
 }
 
 

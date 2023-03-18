@@ -258,6 +258,7 @@ private:
   unsigned int                         contact_build_number;
   TimerOutput                          computing_timer;
   double                               smallest_contact_search_criterion;
+  double                               smallest_floating_mesh_mapping_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   bool                                 contact_detection_step;
   bool                                 load_balance_step;
