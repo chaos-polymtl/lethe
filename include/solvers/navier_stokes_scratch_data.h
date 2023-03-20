@@ -248,6 +248,11 @@ public:
         force[q] = force[q] + beta_force;
       }
 
+    for (const unsigned int k : fe_values.dof_indices())
+      {
+        components[k] = fe.system_to_component_index(k).first;
+      }
+
     if (dim == 2)
       this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe.degree;
     else if (dim == 3)
@@ -937,6 +942,9 @@ public:
   // Quadrature
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;
+
+  // Components index
+  std::vector<unsigned int> components;
 
   // Velocity and pressure values
   std::vector<Tensor<1, dim>>              velocity_values;
