@@ -81,12 +81,17 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
     {
       if (cell->is_locally_owned())
         {
-          for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
-               face++)
+          for (unsigned int face_id = 0;
+               face_id < GeometryInfo<dim>::faces_per_cell;
+               face_id++)
             {
-              if (cell->face(face)->at_boundary())
+              if (cell->face(face_id)->at_boundary())
                 {
-                  fe_face_values.reinit(cell, face);
+                  unsigned int boundary_id = cell->face(face_id)->boundary_id();
+                  if (boundary_id != inlet_boundary_id &&
+                      boundary_id != outlet_boundary_id)
+                    continue;
+                  fe_face_values.reinit(cell, face_id);
                   fe_face_values[velocities].get_function_values(
                     evaluation_point, velocity_values);
                   fe_face_values[pressure].get_function_values(evaluation_point,
@@ -106,8 +111,7 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                         fe_face_values.JxW(q) * velocity_values[q] *
                         velocity_values[q];
                     }
-                  unsigned int face_id = cell->face(face)->boundary_id();
-                  if (face_id == inlet_boundary_id)
+                  if (boundary_id == inlet_boundary_id)
                     {
                       inlet_surface += temp_surface;
                       dynamic_pressure_inlet_boundary +=
@@ -115,7 +119,7 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                       static_pressure_inlet_boundary +=
                         temp_static_pressure_at_boundary;
                     }
-                  if (face_id == outlet_boundary_id)
+                  if (boundary_id == outlet_boundary_id)
                     {
                       outlet_surface += temp_surface;
                       dynamic_pressure_outlet_boundary +=
