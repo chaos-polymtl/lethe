@@ -257,6 +257,20 @@ private:
   setup_background_dofs();
 
   /**
+   * @brief Check if the disabling contacts is enabled and the contact build
+   * number is at least 2. To allow the disabling of contacts in broad search,
+   * we need a first full solved iteration to execute the mobility status
+   * identification, meaning that the first application of the mobility status
+   * in broad search is at after the second contact search.
+   *
+   */
+  inline bool
+  contacts_are_disabled() const
+  {
+    return has_disabled_contacts && contact_build_number > 1;
+  }
+
+  /**
    * @brief write_output_results
    * Generates VTU file with particles information for visualization and
    * post-processing

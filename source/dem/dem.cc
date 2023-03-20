@@ -536,9 +536,7 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
           // First it finds the minimum load on a process, but since values in
           // the vector that are not on this process are 0.0, it looks for
           // values > 1e-8. After that, it finds the minimum load of all the
-          // process
-          // TODO : check if min(process_to_load_weight[this process]) is not
-          // better, same for max
+          // processors
           minimum_load_on_proc = Utilities::MPI::min(
             *std::min_element(process_to_load_weight.begin(),
                               process_to_load_weight.end(),
@@ -1117,7 +1115,8 @@ DEMSolver<dim>::solve()
 
           if (has_disabled_contacts && !simulation_control->is_at_start())
             {
-              // Compute cell mobility for all cells
+              // Compute cell mobility for all cells after the sort particles
+              // into subdomains and cells
               disable_contact_object.identify_mobility_status(
                 background_dh,
                 particle_handler,
@@ -1162,7 +1161,7 @@ DEMSolver<dim>::solve()
           // Execute broad search by filling containers of particle-particle
           // contact pair candidates and containers of particle-wall
           // contact pair candidates
-          if (!has_disabled_contacts || contact_build_number < 2)
+          if (!contacts_are_disabled())
             {
               container_manager.execute_particle_particle_broad_search(
                 particle_handler, has_periodic_boundaries);
@@ -1188,8 +1187,6 @@ DEMSolver<dim>::solve()
                 simulation_control->get_current_time(),
                 disable_contact_object,
                 has_floating_mesh);
-
-
 
               container_manager.execute_particle_particle_broad_search(
                 particle_handler, has_periodic_boundaries);
@@ -1276,9 +1273,18 @@ DEMSolver<dim>::solve()
             force,
             MOI);
         }
-      else
+      else // Step number > 0
         {
-          if (has_disabled_contacts && contact_build_number > 1)
+          if (!contacts_are_disabled())
+            {
+              integrator_object->integrate(particle_handler,
+                                           g,
+                                           simulation_control->get_time_step(),
+                                           torque,
+                                           force,
+                                           MOI);
+            }
+          else // has_disabled_contacts && contact_build_number > 1
             {
               integrator_object->integrate(
                 particle_handler,
@@ -1289,15 +1295,6 @@ DEMSolver<dim>::solve()
                 MOI,
                 triangulation,
                 disable_contact_object.get_mobility_status_map());
-            }
-          else
-            {
-              integrator_object->integrate(particle_handler,
-                                           g,
-                                           simulation_control->get_time_step(),
-                                           torque,
-                                           force,
-                                           MOI);
             }
         }
 

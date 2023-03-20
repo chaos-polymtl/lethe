@@ -214,6 +214,16 @@ private:
   void
   post_processing() override;
 
+  /**
+   * @brief Check if the disabling contacts is enabled and that
+   *
+   */
+  inline bool
+  contacts_are_disabled(unsigned int counter) const
+  {
+    return has_disabled_contacts && counter > 1;
+  }
+
   unsigned int              coupling_frequency;
   bool                      contact_detection_step;
   bool                      checkpoint_step;

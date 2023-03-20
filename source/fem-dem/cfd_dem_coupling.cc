@@ -811,7 +811,17 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     }
   else
     {
-      if (has_disabled_contacts)
+      if (!contacts_are_disabled(counter))
+        {
+          integrator_object->integrate(
+            this->particle_handler,
+            dem_parameters.lagrangian_physical_properties.g,
+            dem_time_step,
+            torque,
+            force,
+            MOI);
+        }
+      else // contacts are disabled
         {
           const auto parallel_triangulation =
             dynamic_cast<parallel::distributed::Triangulation<dim> *>(
@@ -825,16 +835,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             MOI,
             *parallel_triangulation,
             disable_contact_object.get_mobility_status_map());
-        }
-      else
-        {
-          integrator_object->integrate(
-            this->particle_handler,
-            dem_parameters.lagrangian_physical_properties.g,
-            dem_time_step,
-            torque,
-            force,
-            MOI);
         }
     }
 
@@ -910,8 +910,18 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Execute broad search by filling containers of particle-particle
       // contact pair candidates and containers of particle-wall
       // contact pair candidates
-      // TODO check if counter > 1 is necessary
-      if (has_disabled_contacts) // && counter > 1)
+      if (!contacts_are_disabled(counter))
+        {
+          container_manager.execute_particle_particle_broad_search(
+            this->particle_handler, has_periodic_boundaries);
+
+          container_manager.execute_particle_wall_broad_search(
+            this->particle_handler,
+            boundary_cell_object,
+            dem_parameters.floating_walls,
+            this->simulation_control->get_current_time());
+        }
+      else // disabling particle contacts are enabled & counter > 1
         {
           container_manager.execute_particle_particle_broad_search(
             this->particle_handler,
@@ -924,17 +934,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time(),
             disable_contact_object);
-        }
-      else
-        {
-          container_manager.execute_particle_particle_broad_search(
-            this->particle_handler, has_periodic_boundaries);
-
-          container_manager.execute_particle_wall_broad_search(
-            this->particle_handler,
-            boundary_cell_object,
-            dem_parameters.floating_walls,
-            this->simulation_control->get_current_time());
         }
 
       // Update contacts, remove replicates and add new contact pairs
@@ -1216,7 +1215,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
               << "% of Rayleigh time step" << std::endl;
 
-  // Initilize contact detection step
+  // Initialize contact detection step
   contact_detection_step = false;
   load_balance_step      = false;
 
