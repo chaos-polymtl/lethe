@@ -29,7 +29,6 @@ subsection post-processing
   set Lagrangian post-processing = true
 end
 
-
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
