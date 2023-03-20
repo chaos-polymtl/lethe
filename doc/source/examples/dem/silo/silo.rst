@@ -169,14 +169,14 @@ In this simulation, we need a stopper (floating wall) in the filling stage (0-4 
 
 Running the simulation
 ----------------------
-This simulation can be launched by (in parallel mode on 32 processes):
+This simulation can be launched by (in parallel mode on 8 processes):
 
 .. code-block:: text
 
-  mpirun -np 32 dem_3d silo-Golshan.prm
+  mpirun -np 8 dem_3d silo-Golshan.prm
 
 .. warning::
-	This example takes approximately 48 hours on 32 cores. This high computational cost is due to the long simulation time (40 s of real-time) and the high number of particles. The number of particles can be reduced to have a shorter simulation time. For example, the entire simulation could be run in less than an hour on an 8 cores processor if only 13 230 particles are inserted.
+	This example takes approximately 14 hours on 8 cores. This high computational cost is due to the long simulation time (30 s of real-time).
 
 Results
 ---------
