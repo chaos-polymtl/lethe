@@ -100,9 +100,9 @@ Model parameters
 
     subsection model parameters
       set contact detection method                = dynamic
-      set dynamic contact search size coefficient = 0.8
+      set dynamic contact search size coefficient = 0.9
       set load balance method                     = frequent
-      set load balance frequency                  = 100000
+      set load balance frequency                  = 10000
       set neighborhood threshold                  = 1.3
       set particle particle contact force method  = hertz_mindlin_limit_overlap
       set particle wall contact force method      = nonlinear
