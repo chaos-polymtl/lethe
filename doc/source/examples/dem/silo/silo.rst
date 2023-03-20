@@ -51,7 +51,7 @@ An insertion box is defined inside and on the top of the silo.
     subsection insertion info
       set insertion method                               = non_uniform
       set inserted number of particles at each time step = 20000
-      set insertion frequency                            = 20000
+      set insertion frequency                            = 10000
       set insertion box minimum x                        = -0.37
       set insertion box minimum y                        = -0.042
       set insertion box minimum z                        = 0.9
@@ -116,8 +116,8 @@ Simulation control
 .. code-block:: text
 
     subsection simulation control
-      set time step        = 1e-5
-      set time end         = 40
+      set time step        = 2e-5
+      set time end         = 30
       set log frequency    = 1000
       set output frequency = 1000
     end
@@ -132,7 +132,6 @@ In this subsection, we specify the checkpointing parameters. Checkpoints are ver
 
     subsection restart
       set checkpoint = true
-      set filename   = sliding_restart
       set frequency  = 100000
     end
 
@@ -169,14 +168,14 @@ In this simulation, we need a stopper (floating wall) in the filling stage (0-4 
 
 Running the simulation
 ----------------------
-This simulation can be launched by (in parallel mode on 8 processes):
+This simulation can be launched in parallel (e.g. using 8 processes) by running:
 
 .. code-block:: text
 
   mpirun -np 8 dem_3d silo-Golshan.prm
 
 .. warning::
-	This example takes approximately 14 hours on 8 cores. This high computational cost is due to the long simulation time (30 s of real-time).
+	This example takes approximately 14 hours on 8 cores. This high computational time is due to the long simulation time (30 s of real-time).
 
 Results
 ---------
