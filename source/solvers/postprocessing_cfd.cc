@@ -108,7 +108,7 @@ calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                       temp_static_pressure_at_boundary +=
                         fe_face_values.JxW(q) * pressure_values[q];
                       temp_dynamic_pressure_at_boundary +=
-                        fe_face_values.JxW(q) * velocity_values[q] *
+                        0.5 * fe_face_values.JxW(q) * velocity_values[q] *
                         velocity_values[q];
                     }
                   if (boundary_id == inlet_boundary_id)

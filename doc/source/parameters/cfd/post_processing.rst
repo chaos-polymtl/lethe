@@ -83,7 +83,7 @@ This subsection controls the post-processing other than the forces and torque on
     \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} 1 d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} 1 d \Gamma}
 
 .. math::
-    \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
+    \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
 
 * ``calculate flow rate``: controls if calculation of the volumetric flow rates at every boundary is enabled.
     * ``flow rate name``: output filename for flow rate calculations.
