@@ -80,7 +80,7 @@ This subsection controls the post-processing other than the forces and torque on
     * The pressure drop :math:`\Delta P` and total pressure drop :math:`\Delta P_\text{total}` are calculated as such, with :math:`\Gamma` representing the boundary, :math:`\pmb{u}` the velocity  and :math:`P` the pressure:
 
 .. math::
-    \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
+    \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} 1 d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} 1 d \Gamma}
 
 .. math::
     \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
