@@ -80,7 +80,8 @@ struct Settings
   enum GeometryType
   {
     hyperball,
-    hypercube
+    hypercube,
+    hyperrectangle
   };
 
   enum SourceTermType
@@ -97,6 +98,7 @@ struct Settings
   unsigned int element_order;
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
+  unsigned int repetitions;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -122,12 +124,16 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hyperball",
-                    Patterns::Selection("hyperball|hypercube"),
-                    "Geometry <hyperball|hypercube>");
+                    Patterns::Selection("hyperball|hypercube|hyperrectangle"),
+                    "Geometry <hyperball|hypercube|hyperrectangle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
+  prm.declare_entry("repetitions",
+                    "1",
+                    Patterns::Integer(),
+                    "Repetitions in z direction for the hyper rectangle");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -185,6 +191,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->geometry = hyperball;
   else if (prm.get("geometry") == "hypercube")
     this->geometry = hypercube;
+  else if (prm.get("geometry") == "hyperrectangle")
+    this->geometry = hyperrectangle;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -199,6 +207,7 @@ Settings::try_parse(const std::string &prm_filename)
   this->element_order      = prm.get_integer("element order");
   this->number_of_cycles   = prm.get_integer("number of cycles");
   this->initial_refinement = prm.get_integer("initial refinement");
+  this->repetitions        = prm.get_integer("repetitions");
   this->output             = prm.get_bool("output");
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
@@ -418,6 +427,20 @@ MatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
         }
         case Settings::hypercube: {
           GridGenerator::hyper_cube(triangulation);
+          break;
+        }
+        case Settings::hyperrectangle: {
+          std::vector<unsigned int> repetitions(dim);
+          for (unsigned int i = 0; i < dim - 1; i++)
+            {
+              repetitions[i] = 1;
+            }
+          repetitions[dim - 1] = parameters.repetitions;
+
+          GridGenerator::subdivided_hyper_rectangle(triangulation,
+                                                    repetitions,
+                                                    Point<dim>(),
+                                                    Point<dim>(1., 1., 1.));
           break;
         }
     }
@@ -1233,6 +1256,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
       GEOMETRY_header = "Geometry: hyperball";
     else if (parameters.geometry == Settings::hypercube)
       GEOMETRY_header = "Geometry: hypercube";
+    else if (parameters.geometry == Settings::hyperrectangle)
+      GEOMETRY_header = "Geometry: hyper rectangle";
     std::string SOURCE_header = "";
     if (parameters.source_term == Settings::zero)
       SOURCE_header = "Source term: zero";
@@ -1240,6 +1265,8 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
       SOURCE_header = "Source term: according to MMS";
     std::string REFINE_header =
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
+    std::string REPETITIONS_header =
+      "Repetitions in z: " + std::to_string(parameters.repetitions);
     std::string CYCLES_header =
       "Total number of cycles: " + std::to_string(parameters.number_of_cycles);
 
@@ -1254,6 +1281,7 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
     pcout << GEOMETRY_header << std::endl;
     pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
+    pcout << REPETITIONS_header << std::endl;
     pcout << CYCLES_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
