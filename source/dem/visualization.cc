@@ -135,10 +135,9 @@ Visualization<dim>::print_xyz(
 template <int dim>
 void
 Visualization<dim>::print_intermediate_format(
-  const Vector<float> &     data_to_print,
-  const DoFHandler<dim> &   background_dh,
-  const MPI_Comm &          mpi_communicator,
-  const ConditionalOStream &pcout)
+  const Vector<float> &  data_to_print,
+  const DoFHandler<dim> &background_dh,
+  const MPI_Comm &       mpi_communicator)
 {
   // Attach the data to the background mesh
   DataOut<dim> data_out;

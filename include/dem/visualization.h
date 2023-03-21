@@ -83,10 +83,9 @@ public:
    * @param pcout Printing in parallel
    */
   void
-  print_intermediate_format(const Vector<float> &     data_to_print,
-                            const DoFHandler<dim> &   background_dh,
-                            const MPI_Comm &          mpi_communicator,
-                            const ConditionalOStream &pcout);
+  print_intermediate_format(const Vector<float> &  data_to_print,
+                            const DoFHandler<dim> &background_dh,
+                            const MPI_Comm &       mpi_communicator);
 
   ~Visualization();
 

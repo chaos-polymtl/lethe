@@ -144,15 +144,12 @@ public:
   /**
    * @brief Carries out the identification of the mobility status of each cell
    * through a node-based identification and check. Only the active and ghost
-   * cells are processed and only mobile and active cells are stored in the map
-   * since the cells that are not stored in the map are considered as empty or
-   * inactive.
+   * cells are processed.
    *
    * The following 4 checks (search loops) are done:
    *
    * 1. Check if the cell is empty (n_particle = 0), if so, nodes and cells are
-   * flagged as empty mobility status (3) (empty cells are not stored in the
-   * map).
+   * flagged as empty mobility status (3)
    *
    * 2. Check if the cell is mobile by criteria (average granular temperature >
    * threshold, solid fraction < threshold or has at least one empty node from
@@ -166,7 +163,7 @@ public:
    * 4. Check if the cell is active (at least a node is flagged as active from
    * previous check), if so, cells are stored with active status in the map (1)
    *
-   * The remaining cells are inactive (0), there are not stored in the map.
+   * The remaining cells are inactive (0)
    *
    * @param background_dh The dof handler of the background grid
    *
@@ -190,13 +187,7 @@ public:
   check_cell_mobility(
     const typename Triangulation<dim>::active_cell_iterator &cell) const
   {
-    // Look for the mobility status from map, if not found, return inactive
-    // status since no inactive status is stored in the map
-    auto it = cell_mobility_status.find(cell->active_cell_index());
-    if (it != cell_mobility_status.end())
-      return it->second;
-    else
-      return mobility_status::inactive;
+    return cell_mobility_status.at(cell->active_cell_index());
   }
 
   /**
@@ -258,7 +249,7 @@ private:
     Vector<double> &                       cell_solid_fraction);
 
   // Map of cell mobility status, the key is the active cell index and the value
-  // is the mobility status (active or mobile only, inactive are not stored)
+  // is the mobility status
   typename DEM::dem_data_structures<dim>::cell_index_int_map
     cell_mobility_status;
 

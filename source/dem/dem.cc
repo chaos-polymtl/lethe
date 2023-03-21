@@ -769,8 +769,7 @@ DEMSolver<dim>::finish_simulation()
               // Output mobility status vector
               visualization_object.print_intermediate_format(mobility_status,
                                                              background_dh,
-                                                             mpi_communicator,
-                                                             pcout);
+                                                             mpi_communicator);
               break;
             }
           case Parameters::Testing::TestType::subdomain:
@@ -783,8 +782,7 @@ DEMSolver<dim>::finish_simulation()
               // Output subdomain vector
               visualization_object.print_intermediate_format(subdomain,
                                                              background_dh,
-                                                             mpi_communicator,
-                                                             pcout);
+                                                             mpi_communicator);
               break;
             }
         }

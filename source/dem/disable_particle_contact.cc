@@ -185,8 +185,7 @@ DisableParticleContact<dim>::identify_mobility_status(
                                                 solid_fractions);
 
   // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
-  // flagged as empty mobility status (3) (empty cells are not stored in the
-  // map).
+  // flagged as empty mobility status (3)
   for (auto cell = active_ghost_cells_copy.begin();
        cell != active_ghost_cells_copy.end();)
     {
@@ -195,6 +194,10 @@ DisableParticleContact<dim>::identify_mobility_status(
         {
           std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
           (*cell)->get_dof_indices(local_dof_indices);
+
+          // Assign mobile status to cell in map
+          const unsigned int cell_id = (*cell)->active_cell_index();
+          cell_mobility_status.insert({cell_id, mobility_status::inactive});
 
           // Remove cell from cell set and iterate to the following cell, the
           // erase function returns the next iterator.
@@ -336,7 +339,8 @@ DisableParticleContact<dim>::identify_mobility_status(
   // previous check), this is the layer of active cells
   // If so, cells are stored with active status in the map (1)
   for (auto cell = active_ghost_cells_copy.begin();
-       cell != active_ghost_cells_copy.end();)
+       cell != active_ghost_cells_copy.end();
+       ++cell)
     {
       std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dofs_indices);
@@ -365,11 +369,24 @@ DisableParticleContact<dim>::identify_mobility_status(
           const unsigned int cell_id = (*cell)->active_cell_index();
           cell_mobility_status.insert({cell_id, mobility_status::active});
         }
+    }
 
-      // Iterate to the next cell, none of the cells needs to be removed from
-      // the cell set as done in previous loops since there are no other loop
-      // over this set
-      ++cell;
+  // Store the inactive cells in the map
+  for (auto cell = active_ghost_cells_copy.begin();
+       cell != active_ghost_cells_copy.end();
+       ++cell)
+    {
+      // Assign mobile status to cell in map
+      const unsigned int cell_id = (*cell)->active_cell_index();
+      cell_mobility_status.insert({cell_id, mobility_status::inactive});
+    }
+
+  for (auto cell = active_ghost_cells_copy.begin();
+       cell != active_ghost_cells_copy.end();)
+    {
+      // Assign mobile status to cell in map
+      const unsigned int cell_id = (*cell)->active_cell_index();
+      cell_mobility_status.insert({cell_id, mobility_status::inactive});
     }
 }
 
