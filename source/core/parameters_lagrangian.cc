@@ -470,13 +470,13 @@ namespace Parameters
           "load balance active weight factor",
           "1.0",
           Patterns::Double(),
-          "The factor applied on the particle weight in load balancing if cell is active");
+          "Factor applied on the particle weight in load balancing if the cell is active");
 
         prm.declare_entry(
           "load balance inactive weight factor",
           "1.0",
           Patterns::Double(),
-          "The factor applied on the particle weight in load balancing if cell is inactive");
+          "Factor applied on the particle weight in load balancing if the cell is inactive");
 
         prm.declare_entry("contact detection method",
                           "dynamic",
@@ -542,13 +542,13 @@ namespace Parameters
             "granular temperature threshold",
             "1e-4",
             Patterns::Double(),
-            "The minimal granular temperature where particle contacts are considered");
+            "Minimum granular temperature where particle contacts are considered");
 
           prm.declare_entry(
             "solid fraction threshold",
             "0.4",
             Patterns::Double(),
-            "The maximal solid fraction where particle contacts are considered "
+            "Maximum solid fraction where particle contacts are considered "
             "no matter the granular temperature");
         }
         prm.leave_subsection();
@@ -598,7 +598,7 @@ namespace Parameters
           }
         else if (load_balance == "dynamic_with_disabling_contacts")
           {
-            // Check is dynamic disabling contacts is enabled, otherwise throw
+            // Check if dynamic disabling contacts is enabled, otherwise throw
             // an error message indicating that the user should use dynamic
             // load balancing instead or enable dynamic disabling contacts
             if (disable_particle_contacts)

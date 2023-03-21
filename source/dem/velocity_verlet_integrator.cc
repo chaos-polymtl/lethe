@@ -157,9 +157,9 @@ VelocityVerletIntegrator<dim>::integrate(
           // Get the iterator to the cell in the map
           auto it = cell_mobility_status_map.find(cell->active_cell_index());
 
-          // Check if the cell exists in the map (meaning that the cell is
-          // mobile or active, inactive cells are not stored) and verify if the
-          // status is mobile : true = iterator exist && value is mobile
+          // Check if the cell exists in the map (meaning that the cell is mobile
+          // or active, inactive cells are not stored) and verify if the status
+          // is mobile : true = iterator exist && value is mobile
           cell_is_mobile =
             it != cell_mobility_status_map.end() && it->second == mobile_status;
 

@@ -257,7 +257,7 @@ private:
   setup_background_dofs();
 
   /**
-   * @brief Check if the disabling contacts is enabled and the contact build
+   * @brief Check if the contacts are disabled and the contact build
    * number is at least 2. To allow the disabling of contacts in broad search,
    * we need a first full solved iteration to execute the mobility status
    * identification, meaning that the first application of the mobility status
