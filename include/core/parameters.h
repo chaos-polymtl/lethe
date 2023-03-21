@@ -1001,6 +1001,7 @@ namespace Parameters
     {
       particles,
       mobility_status,
+      subdomain
     } test_type;
 
     static void

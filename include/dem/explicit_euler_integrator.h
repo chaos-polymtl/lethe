@@ -96,7 +96,7 @@ public:
             std::vector<Tensor<1, 3>> &                      force,
             const std::vector<double> &                      MOI,
             const parallel::distributed::Triangulation<dim> &triangulation,
-            std::unordered_map<types::global_cell_index, unsigned int>
+            typename DEM::dem_data_structures<dim>::cell_index_int_map
               &cell_mobility_status_map) override;
 
 private:

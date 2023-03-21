@@ -122,8 +122,8 @@ private:
   cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
       &                                                                  cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status,
-    const unsigned int &mobility_status) const;
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
 
   /**
    * Finds contact search steps for constant contact search method

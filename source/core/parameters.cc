@@ -1923,9 +1923,9 @@ namespace Parameters
       prm.declare_entry(
         "type",
         "particles",
-        Patterns::Selection("particles|mobility_status"),
+        Patterns::Selection("particles|mobility_status|subdomain"),
         "Output type for testing mode. Currently, particles type will output "
-        "each particle with some information and mobility_status output results "
+        "each particle with some information and mobility_status or subdomain output results "
         "in deal.II format.");
     }
     prm.leave_subsection();
@@ -1940,14 +1940,16 @@ namespace Parameters
       if (enabled)
         {
           const std::string op = prm.get("type");
-          if (op == "mobility_status")
-            test_type = TestType::mobility_status;
-          else if (op == "particles")
+          if (op == "particles")
             test_type = TestType::particles;
+          else if (op == "mobility_status")
+            test_type = TestType::mobility_status;
+          else if (op == "subdomain")
+            test_type = TestType::subdomain;
           else
             throw std::logic_error(
-              "Error, invalid testing type. Current choices are particles or "
-              "mobility_status");
+              "Error, invalid testing type. Current choices are particles, "
+              "mobility_status or subdomain");
         }
     }
     prm.leave_subsection();

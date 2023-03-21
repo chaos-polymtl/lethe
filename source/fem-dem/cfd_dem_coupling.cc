@@ -834,7 +834,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             force,
             MOI,
             *parallel_triangulation,
-            disable_contact_object.get_mobility_status_map());
+            disable_contact_object.get_mobility_status());
         }
     }
 

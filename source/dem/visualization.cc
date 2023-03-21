@@ -174,7 +174,7 @@ Visualization<dim>::print_intermediate_format(
   while (std::getline(out, line))
     {
       if (counter++ > 4)
-        pcout << line << std::endl;
+        std::cout << line << std::endl;
     }
 }
 

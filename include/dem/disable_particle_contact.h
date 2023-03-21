@@ -121,10 +121,10 @@ public:
    */
   enum mobility_status : unsigned int
   {
-    inactive, // 0 (used for cells and nodes)
-    active,   // 1 (used for cells and nodes)
-    mobile,   // 2 (used for cells and nodes)
-    empty     // 3 (used for nodes only)
+    inactive = 0, // used for cells and nodes
+    active   = 1, // used for cells and nodes
+    mobile   = 2, // used for cells and nodes
+    empty    = 3  // used for nodes only
   };
 
   /**
@@ -192,8 +192,8 @@ public:
   {
     // Look for the mobility status from map, if not found, return inactive
     // status since no inactive status is stored in the map
-    auto it = cell_mobility_status_map.find(cell->active_cell_index());
-    if (it != cell_mobility_status_map.end())
+    auto it = cell_mobility_status.find(cell->active_cell_index());
+    if (it != cell_mobility_status.end())
       return it->second;
     else
       return mobility_status::inactive;
@@ -210,7 +210,7 @@ public:
   void
   get_mobility_status_vector(std::vector<unsigned int> &status)
   {
-    for (auto &cell_to_status : cell_mobility_status_map)
+    for (auto &cell_to_status : cell_mobility_status)
       {
         status[cell_to_status.first] = cell_to_status.second;
       }
@@ -219,16 +219,16 @@ public:
   void
   get_mobility_status_vector(Vector<float> &status)
   {
-    for (auto &cell_to_status : cell_mobility_status_map)
+    for (auto &cell_to_status : cell_mobility_status)
       {
         status[cell_to_status.first] = cell_to_status.second;
       }
   };
 
-  std::unordered_map<types::global_cell_index, unsigned int> &
-  get_mobility_status_map()
+  typename DEM::dem_data_structures<dim>::cell_index_int_map &
+  get_mobility_status()
   {
-    return cell_mobility_status_map;
+    return cell_mobility_status;
   }
 
   void
@@ -259,8 +259,8 @@ private:
 
   // Map of cell mobility status, the key is the active cell index and the value
   // is the mobility status (active or mobile only, inactive are not stored)
-  std::unordered_map<types::global_cell_index, unsigned int>
-    cell_mobility_status_map;
+  typename DEM::dem_data_structures<dim>::cell_index_int_map
+    cell_mobility_status;
 
   // Set of active and ghost cells, used to loop over only the active and ghost
   // cells without looping over all the cells in the triangulation many times

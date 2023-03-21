@@ -153,7 +153,7 @@ DisableParticleContact<dim>::identify_mobility_status(
   MPI_Comm                               mpi_communicator)
 {
   // Reset cell status containers
-  cell_mobility_status_map.clear();
+  cell_mobility_status.clear();
 
   // Get a copy of the active & ghost cells set to iterate over and remove cell
   // of the set when the mobility status is known to avoid unnecessary
@@ -247,7 +247,7 @@ DisableParticleContact<dim>::identify_mobility_status(
           has_empty_neighbor)
         {
           // Assign mobile status to cell in map
-          cell_mobility_status_map.insert({cell_id, mobility_status::mobile});
+          cell_mobility_status.insert({cell_id, mobility_status::mobile});
 
           // Remove cell from cell set and iterate to the following cell
           cell = active_ghost_cells_copy.erase(cell);
@@ -296,8 +296,7 @@ DisableParticleContact<dim>::identify_mobility_status(
             {
               // Assign mobile status to cell in map
               const unsigned int cell_id = (*cell)->active_cell_index();
-              cell_mobility_status_map.insert(
-                {cell_id, mobility_status::mobile});
+              cell_mobility_status.insert({cell_id, mobility_status::mobile});
 
               // Remove cell from cell set and iterate to the following cell,
               // also label it as mobile to avoid double iteration
@@ -342,7 +341,6 @@ DisableParticleContact<dim>::identify_mobility_status(
       std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dofs_indices);
 
-
       bool has_active_nodes = false;
       bool has_mobile_nodes = false;
 
@@ -365,7 +363,7 @@ DisableParticleContact<dim>::identify_mobility_status(
       if (has_active_nodes && !has_mobile_nodes)
         {
           const unsigned int cell_id = (*cell)->active_cell_index();
-          cell_mobility_status_map.insert({cell_id, mobility_status::active});
+          cell_mobility_status.insert({cell_id, mobility_status::active});
         }
 
       // Iterate to the next cell, none of the cells needs to be removed from

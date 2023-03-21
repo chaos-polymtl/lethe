@@ -296,8 +296,8 @@ template <int dim>
 unsigned int
 DEMSolver<dim>::cell_weight_with_mobility_status(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status,
-  const unsigned int &mobility_status) const
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+  const
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -306,14 +306,18 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
   const unsigned int particle_weight =
     parameters.model_parameters.load_balance_particle_weight;
 
+  // Get mobility status of the cell
+  const unsigned int cell_mobility_status =
+    disable_contact_object.check_cell_mobility(cell);
+
   // Applied a factor on the particle weight regards the mobility status
   // Factor of 1 when mobile cell
   double alpha = 1.0;
-  if (mobility_status == disable_contact_object.active)
+  if (cell_mobility_status == disable_contact_object.active)
     {
       alpha = parameters.model_parameters.active_load_balancing_factor;
     }
-  else if (mobility_status == disable_contact_object.inactive)
+  else if (cell_mobility_status == disable_contact_object.inactive)
     {
       alpha = parameters.model_parameters.inactive_load_balancing_factor;
     }
@@ -470,99 +474,94 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
         parameters.model_parameters.dynamic_load_balance_check_frequency ==
       0)
     {
-      if (has_disabled_contacts)
+      // Process to accumulate the load of each process regards the number
+      // of cells and particles with their selected weight and with a factor
+      // related to the mobility status of the cells
+      vector<double> process_to_load_weight(n_mpi_processes, 0.0);
+
+      // Get the particle weight
+      const unsigned int particle_weight =
+        parameters.model_parameters.load_balance_particle_weight;
+
+      for (const auto &cell : triangulation.active_cell_iterators())
         {
-          // Process to accumulate the load of each process regards the number
-          // of cells and particles with their selected weight and with a factor
-          // related to the mobility status of the cells
-          vector<double> process_to_load_weight(n_mpi_processes, 0.0);
-
-          // Get the particle weight
-          const unsigned int particle_weight =
-            parameters.model_parameters.load_balance_particle_weight;
-
-          std::vector<unsigned int> mobility_status_vector(
-            triangulation.n_active_cells());
-          disable_contact_object.get_mobility_status_vector(
-            mobility_status_vector);
-
-          for (const auto &cell : triangulation.active_cell_iterators())
+          if (cell->is_locally_owned())
             {
-              if (cell->is_locally_owned())
+              // Apply a weight of 1000 to the cell (default value)
+              process_to_load_weight[this_mpi_process] += 1000;
+
+              // Get the mobility status of the cell & the number of
+              // particles
+              const unsigned int cell_mobility_status =
+                disable_contact_object.check_cell_mobility(cell);
+              const unsigned int n_particles_in_cell =
+                particle_handler.n_particles_in_cell(cell);
+
+              // Apply a factor on the particle weight regards the
+              // mobility status. alpha = 1 by default for mobile cell, but
+              // is modified if cell is active or inactive
+              double alpha = 1.0;
+              if (cell_mobility_status == disable_contact_object.active)
                 {
-                  // Apply a weight of 1000 to the cell (default value)
-                  process_to_load_weight[this_mpi_process] += 1000;
-
-                  // Get the mobility status of the cell & the number of
-                  // particles
-                  const unsigned int mobility_status =
-                    mobility_status_vector[cell->active_cell_index()];
-                  const unsigned int n_particles_in_cell =
-                    particle_handler.n_particles_in_cell(cell);
-
-                  // Apply a factor on the particle weight regards the
-                  // mobility status. alpha = 1 by default for mobile cell, but
-                  // is modified if cell is active or inactive
-                  double alpha = 1.0;
-                  if (mobility_status == disable_contact_object.active)
-                    {
-                      alpha = parameters.model_parameters
-                                .active_load_balancing_factor;
-                    }
-                  else if (mobility_status == disable_contact_object.inactive)
-                    {
-                      alpha = parameters.model_parameters
-                                .inactive_load_balancing_factor;
-                    }
-
-                  // Add the particle weight time the number of particles in the
-                  // cell to the processor load
-                  process_to_load_weight[this_mpi_process] +=
-                    alpha * n_particles_in_cell * particle_weight;
+                  alpha =
+                    parameters.model_parameters.active_load_balancing_factor;
                 }
-            }
+              else if (cell_mobility_status == disable_contact_object.inactive)
+                {
+                  alpha =
+                    parameters.model_parameters.inactive_load_balancing_factor;
+                }
 
-          // Exchange information
-          double maximum_load_on_proc = 0.0;
-          double minimum_load_on_proc = 0.0;
-          double total_load           = 0.0;
-
-          maximum_load_on_proc = Utilities::MPI::max(
-            *std::max_element(process_to_load_weight.begin(),
-                              process_to_load_weight.end()),
-            mpi_communicator);
-
-          // Find the minimum load on a process
-          // First it finds the minimum load on a process, but since values in
-          // the vector that are not on this process are 0.0, it looks for
-          // values > 1e-8. After that, it finds the minimum load of all the
-          // processors
-          minimum_load_on_proc = Utilities::MPI::min(
-            *std::min_element(process_to_load_weight.begin(),
-                              process_to_load_weight.end(),
-                              [](double a, double b) {
-                                return (a > 1e-8) ? (b > 1e-8 ? a < b : true) :
-                                                    false;
-                              }),
-            mpi_communicator);
-
-          // Get the total load
-          total_load =
-            Utilities::MPI::sum(std::accumulate(process_to_load_weight.begin(),
-                                                process_to_load_weight.end(),
-                                                0.0),
-                                mpi_communicator);
-
-          if ((maximum_load_on_proc - minimum_load_on_proc) >
-                parameters.model_parameters.load_balance_threshold *
-                  (total_load / n_mpi_processes) ||
-              checkpoint_step)
-            {
-              load_balance();
-              load_balance_step = true;
+              // Add the particle weight time the number of particles in the
+              // cell to the processor load
+              process_to_load_weight[this_mpi_process] +=
+                alpha * n_particles_in_cell * particle_weight;
             }
         }
+
+      // Exchange information
+      double maximum_load_on_proc = 0.0;
+      double minimum_load_on_proc = 0.0;
+      double total_load           = 0.0;
+
+      maximum_load_on_proc =
+        Utilities::MPI::max(*std::max_element(process_to_load_weight.begin(),
+                                              process_to_load_weight.end()),
+                            mpi_communicator);
+
+      // Find the minimum load on a process
+      // First it finds the minimum load on a process, but since values in
+      // the vector that are not on this process are 0.0, it looks for
+      // values > 1e-8. After that, it finds the minimum load of all the
+      // processors
+      minimum_load_on_proc =
+        Utilities::MPI::min(*std::min_element(process_to_load_weight.begin(),
+                                              process_to_load_weight.end(),
+                                              [](double a, double b) {
+                                                return (a > 1e-8) ?
+                                                         (b > 1e-8 ? a < b :
+                                                                     true) :
+                                                         false;
+                                              }),
+                            mpi_communicator);
+
+      // Get the total load
+      total_load =
+        Utilities::MPI::sum(std::accumulate(process_to_load_weight.begin(),
+                                            process_to_load_weight.end(),
+                                            0.0),
+                            mpi_communicator);
+
+      if ((maximum_load_on_proc - minimum_load_on_proc) >
+            parameters.model_parameters.load_balance_threshold *
+              (total_load / n_mpi_processes) ||
+          checkpoint_step)
+        {
+          load_balance();
+          load_balance_step = true;
+        }
     }
+
 
   std::vector<unsigned int> mobility_status(triangulation.n_active_cells());
   disable_contact_object.get_mobility_status_vector(mobility_status);
@@ -581,8 +580,7 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
           &cell,
         const typename parallel::distributed::Triangulation<dim>::CellStatus
           status) -> unsigned int {
-      return this->cell_weight_with_mobility_status(
-        cell, status, mobility_status[cell->active_cell_index()]);
+      return this->cell_weight_with_mobility_status(cell, status);
     });
 
   return load_balance_step;
@@ -752,21 +750,44 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      if (parameters.test.test_type ==
-          Parameters::Testing::TestType::mobility_status)
+      switch (parameters.test.test_type)
         {
-          // Get mobility status vector sorted by cell id
-          Vector<float> mobility_status(triangulation.n_active_cells());
-          disable_contact_object.get_mobility_status_vector(mobility_status);
-          visualization_object.print_intermediate_format(mobility_status,
-                                                         background_dh,
-                                                         mpi_communicator,
-                                                         pcout);
+          case Parameters::Testing::TestType::particles:
+            {
+              visualization_object.print_xyz(particle_handler,
+                                             mpi_communicator,
+                                             pcout);
+              break;
+            }
+          case Parameters::Testing::TestType::mobility_status:
+            {
+              // Get mobility status vector sorted by cell id
+              Vector<float> mobility_status(triangulation.n_active_cells());
+              disable_contact_object.get_mobility_status_vector(
+                mobility_status);
+
+              // Output mobility status vector
+              visualization_object.print_intermediate_format(mobility_status,
+                                                             background_dh,
+                                                             mpi_communicator,
+                                                             pcout);
+              break;
+            }
+          case Parameters::Testing::TestType::subdomain:
+            {
+              // Get mobility status vector sorted by cell id
+              Vector<float> subdomain(triangulation.n_active_cells());
+              for (unsigned int i = 0; i < subdomain.size(); ++i)
+                subdomain(i) = triangulation.locally_owned_subdomain();
+
+              // Output subdomain vector
+              visualization_object.print_intermediate_format(subdomain,
+                                                             background_dh,
+                                                             mpi_communicator,
+                                                             pcout);
+              break;
+            }
         }
-      else
-        visualization_object.print_xyz(particle_handler,
-                                       mpi_communicator,
-                                       pcout);
     }
 
   // Outputting force and torques over boundary
@@ -1294,7 +1315,7 @@ DEMSolver<dim>::solve()
                 force,
                 MOI,
                 triangulation,
-                disable_contact_object.get_mobility_status_map());
+                disable_contact_object.get_mobility_status());
             }
         }
 
