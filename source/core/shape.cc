@@ -1020,6 +1020,86 @@ CompositeShape<dim>::value_with_cell_guess(
 }
 
 template <int dim>
+Tensor<1, dim>
+CompositeShape<dim>::gradient_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component*/)
+{
+  // We align and center the evaluation point according to the shape referential
+  Point<dim> centered_point = this->align_and_center(evaluation_point);
+  // The levelset value of all component shapes is computed
+  std::map<unsigned int, double>         components_value;
+  std::map<unsigned int, Tensor<1, dim>> components_gradient;
+  for (auto const &[component_id, component] : constituents)
+    {
+      components_value[component_id] =
+        component->value_with_cell_guess(centered_point, cell);
+      components_gradient[component_id] =
+        component->gradient_with_cell_guess(centered_point, cell);
+    }
+
+  // The boolean operations between the shapes are applied in order
+  // The last computed levelset value is considered to be the right value
+  double         levelset = components_value[0];
+  Tensor<1, dim> gradient = components_gradient[0];
+  for (auto const &[operation_id, op_triplet] : operations)
+    {
+      BooleanOperation operation;
+      unsigned int     first_id;
+      unsigned int     second_id;
+      std::tie(operation, first_id, second_id) = op_triplet;
+
+      double         value_first_component, value_second_component;
+      Tensor<1, dim> gradient_first_component{};
+      Tensor<1, dim> gradient_second_component{};
+      value_first_component  = components_value.at(first_id);
+      value_second_component = components_value.at(second_id);
+      switch (operation)
+        {
+          case BooleanOperation::Union:
+            if (value_first_component < value_second_component)
+              {
+                components_value[operation_id]    = value_first_component;
+                components_gradient[operation_id] = gradient_first_component;
+              }
+            else
+              {
+                components_value[operation_id]    = value_second_component;
+                components_gradient[operation_id] = gradient_second_component;
+              }
+            break;
+          case BooleanOperation::Difference:
+            if (-value_first_component > value_second_component)
+              {
+                components_value[operation_id]    = -value_first_component;
+                components_gradient[operation_id] = -gradient_first_component;
+              }
+            else
+              {
+                components_value[operation_id]    = value_second_component;
+                components_gradient[operation_id] = gradient_second_component;
+              }
+            break;
+          default: // BooleanOperation::Intersection
+            if (value_first_component > value_second_component)
+              {
+                components_value[operation_id]    = value_first_component;
+                components_gradient[operation_id] = gradient_first_component;
+              }
+            else
+              {
+                components_value[operation_id]    = value_second_component;
+                components_gradient[operation_id] = gradient_second_component;
+              }
+        }
+      levelset = components_value[operation_id];
+      gradient = components_gradient[operation_id];
+    }
+  return gradient;
+}
+
+template <int dim>
 std::shared_ptr<Shape<dim>>
 CompositeShape<dim>::static_copy() const
 {

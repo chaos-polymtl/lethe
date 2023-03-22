@@ -809,6 +809,18 @@ public:
     const unsigned int /*component = 0*/) override;
 
   /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+  /**
    * @brief Return a pointer to a copy of the Shape
    */
   std::shared_ptr<Shape<dim>>
