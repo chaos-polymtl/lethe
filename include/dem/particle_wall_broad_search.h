@@ -20,7 +20,7 @@
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_particle_contact.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -85,8 +85,8 @@ public:
       &                                    boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     typename DEM::dem_data_structures<dim>::particle_wall_candidates
-      &                                particle_wall_contact_candidates,
-    const DisableParticleContact<dim> &disable_particle_contact_object);
+      &                         particle_wall_contact_candidates,
+    const DisableContacts<dim> &disable_contacts_object);
 
   /**
    * Finds a two-layered unordered map of particle iterators which shows the
@@ -127,8 +127,8 @@ public:
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double                                      simulation_time,
     typename DEM::dem_data_structures<dim>::particle_floating_wall_candidates
-      &                                particle_floating_wall_candidates,
-    const DisableParticleContact<dim> &disable_particle_contact_object);
+      &                         particle_floating_wall_candidates,
+    const DisableContacts<dim> &disable_contacts_object);
 
   /**
    * Finds a two-layered unordered map
@@ -164,8 +164,8 @@ public:
     typename DEM::dem_data_structures<dim>::particle_floating_mesh_candidates
       &particle_floating_mesh_contact_candidates,
     typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
-      &                                cells_total_neighbor_list,
-    const DisableParticleContact<dim> &disable_particle_contact_object);
+      &                         cells_total_neighbor_list,
+    const DisableContacts<dim> &disable_contacts_object);
 };
 
 #endif /* particle_wall_broad_search_h */

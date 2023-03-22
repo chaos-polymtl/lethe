@@ -102,7 +102,7 @@ ExplicitEulerIntegrator<dim>::integrate(
     & /* cell_mobility_status_map */)
 {
   throw std::runtime_error(
-    "Disabiling particle contacts not supported with explicit Euler integrator, use Verlet integrator.");
+    "Disabling particle contacts not supported with explicit Euler integrator, use Verlet integrator.");
 }
 
 template class ExplicitEulerIntegrator<2>;

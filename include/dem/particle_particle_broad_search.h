@@ -17,7 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <dem/data_containers.h>
-#include <dem/disable_particle_contact.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_particle_contact_info.h>
 
@@ -79,7 +79,7 @@ public:
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair candidates with other
    * containers with neighbors lists
-   * @param disable_particle_contact_object The object that contains the
+   * @param disable_contacts_object The object that contains the
    * information about the mobility status of cells
    */
 
@@ -87,7 +87,7 @@ public:
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     DEMContainerManager<dim> &               container_manager,
-    const DisableParticleContact<dim> &      disable_particle_contact_object);
+    const DisableContacts<dim> &             disable_contacts_object);
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -118,7 +118,7 @@ public:
    * @param container_manager The container manager object that contains
    * containers to modify of contact pair periodic candidates with other
    * containers with periodic neighbors lists
-   * @param disable_particle_contact_object The object that contains the
+   * @param disable_contacts_object The object that contains the
    * information about the mobility status of cells
    */
 
@@ -126,7 +126,7 @@ public:
   find_particle_particle_periodic_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     DEMContainerManager<dim> &               container_manager,
-    const DisableParticleContact<dim> &      disable_particle_contact_object);
+    const DisableContacts<dim> &             disable_contacts_object);
 
 private:
   /**

@@ -182,7 +182,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   const double                                     current_time,
   const unsigned int                               step_number,
   const MPI_Comm &                                 mpi_communicator,
-  DisableParticleContact<dim> &                    disable_contact_object)
+  DisableContacts<dim> &                           disable_contacts_object)
 {
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
@@ -237,7 +237,7 @@ LagrangianPostProcessing<dim>::write_post_processing_results(
   average_solution_names.push_back("mobility_status");
 
   Vector<float> mobility_status(triangulation.n_active_cells());
-  disable_contact_object.get_mobility_status_vector(mobility_status);
+  disable_contacts_object.get_mobility_status_vector(mobility_status);
   data_out.add_data_vector(mobility_status,
                            average_solution_names.back(),
                            DataOut<dim>::type_cell_data);

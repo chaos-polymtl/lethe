@@ -20,6 +20,7 @@
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -149,7 +150,7 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    const DisableParticleContact<dim> &      disable_particle_contact_object,
+    const DisableContacts<dim> &             disable_particle_contact_object,
     const bool                               has_periodic_boundaries = false);
 
   /**
@@ -192,8 +193,8 @@ public:
     BoundaryCellsInformation<dim> &                   boundary_cell_object,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
-    const DisableParticleContact<dim> &disable_particle_contact_object,
-    const bool                         has_floating_mesh = false);
+    const DisableContacts<dim> &disable_particle_contact_object,
+    const bool                  has_floating_mesh = false);
 
   /**
    * Iterates over a vector of maps to see if the particles

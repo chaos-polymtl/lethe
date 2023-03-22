@@ -18,7 +18,7 @@
  */
 
 #include <dem/data_containers.h>
-#include <dem/disable_particle_contact.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -74,8 +74,8 @@ public:
     const std::unordered_map<
       std::string,
       std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-      &                                boundary_cells_with_points,
-    const DisableParticleContact<dim> &disable_particle_contact_object);
+      &                         boundary_cells_with_points,
+    const DisableContacts<dim> &disable_contacts_object);
 
   /**
    * Finds a map of tuples (tuple of particle and the locations of beginning and
@@ -107,8 +107,8 @@ public:
       std::string,
       std::tuple<typename Triangulation<dim>::active_cell_iterator,
                  Point<dim>,
-                 Point<dim>>> &        boundary_cells_with_lines,
-    const DisableParticleContact<dim> &disable_particle_contact_object);
+                 Point<dim>>> & boundary_cells_with_lines,
+    const DisableContacts<dim> &disable_contacts_object);
 };
 
 #endif /* particle_point_line_broad_search_h */

@@ -34,8 +34,8 @@
 
 using namespace dealii;
 
-#ifndef lethe_disable_particle_contact_h
-#  define lethe_disable_particle_contact_h
+#ifndef lethe_disable_contacts_h
+#  define lethe_disable_contacts_h
 
 // Special template instance for this class.
 // Unsigned integer would have been a better choice, but is not working
@@ -83,10 +83,10 @@ template class LinearAlgebra::distributed::Vector<int>;
  *
  */
 template <int dim>
-class DisableParticleContact
+class DisableContacts
 {
 public:
-  DisableParticleContact<dim>();
+  DisableContacts<dim>();
 
   /**
    * Mobility status flag used to identify the status at nodes and the status
@@ -139,7 +139,7 @@ public:
    * @param background_dh The DoFHandler of the background grid
    */
   void
-  update_active_ghost_cell_set(const DoFHandler<dim> &background_dh);
+  update_local_and_ghost_cell_set(const DoFHandler<dim> &background_dh);
 
   /**
    * @brief Carries out the identification of the mobility status of each cell
@@ -199,15 +199,6 @@ public:
    * @param status The initiated vector for the conversion
    */
   void
-  get_mobility_status_vector(std::vector<unsigned int> &status)
-  {
-    for (auto &cell_to_status : cell_mobility_status)
-      {
-        status[cell_to_status.first] = cell_to_status.second;
-      }
-  };
-
-  void
   get_mobility_status_vector(Vector<float> &status)
   {
     for (auto &cell_to_status : cell_mobility_status)
@@ -253,9 +244,11 @@ private:
   typename DEM::dem_data_structures<dim>::cell_index_int_map
     cell_mobility_status;
 
-  // Set of active and ghost cells, used to loop over only the active and ghost
-  // cells without looping over all the cells in the triangulation many times
-  std::set<typename DoFHandler<dim>::active_cell_iterator> active_ghost_cells;
+  // Set of locally owned and ghost cells, used to loop over only the locally
+  // owned and ghost cells without looping over all the cells in the
+  // triangulation many times
+  std::set<typename DoFHandler<dim>::active_cell_iterator>
+    local_and_ghost_cells;
 
   // Vector of mobility status at nodes, used to check the value at node to
   // determine the mobility status of the cell, this type of vector is used
@@ -267,5 +260,4 @@ private:
   double solid_fraction_threshold;
 };
 
-
-#endif // lethe_disable_particle_contact_h
+#endif // lethe_disable_contacts_h

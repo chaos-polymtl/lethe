@@ -5,7 +5,7 @@ add_library(lethe-dem
   dem_container_manager.cc
   dem_solver_parameters.cc
   explicit_euler_integrator.cc
-  disable_particle_contact.cc
+  disable_contacts.cc
   find_boundary_cells_information.cc
   find_cell_neighbors.cc
   find_contact_detection_step.cc
@@ -49,7 +49,7 @@ add_library(lethe-dem
   ../../include/dem/data_containers.h
   ../../include/dem/dem.h
   ../../include/dem/dem_solver_parameters.h
-  ../../include/dem/disable_particle_contact.h
+  ../../include/dem/disable_contacts.h
   ../../include/dem/explicit_euler_integrator.h
   ../../include/dem/find_boundary_cells_information.h
   ../../include/dem/find_cell_neighbors.h

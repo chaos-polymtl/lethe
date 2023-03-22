@@ -254,17 +254,18 @@ template <int dim>
 void
 DEMContainerManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const DisableParticleContact<dim> &      disable_particle_contact_object,
+  const DisableContacts<dim> &             disable_contacts_object,
   const bool                               has_periodic_boundaries)
 {
   particle_particle_broad_search_object.find_particle_particle_contact_pairs(
-    particle_handler, *this, disable_particle_contact_object);
+    particle_handler, *this, disable_contacts_object);
 
   if (has_periodic_boundaries)
     {
       particle_particle_broad_search_object
-        .find_particle_particle_periodic_contact_pairs(
-          particle_handler, *this, disable_particle_contact_object);
+        .find_particle_particle_periodic_contact_pairs(particle_handler,
+                                                       *this,
+                                                       disable_contacts_object);
     }
 }
 
@@ -326,15 +327,15 @@ DEMContainerManager<dim>::execute_particle_wall_broad_search(
   BoundaryCellsInformation<dim> &                   boundary_cell_object,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
-  const DisableParticleContact<dim> &disable_particle_contact_object,
-  const bool                         has_floating_mesh)
+  const DisableContacts<dim> &                      disable_contacts_object,
+  const bool                                        has_floating_mesh)
 {
   // Particle-wall contact candidates
   particle_wall_broad_search_object.find_particle_wall_contact_pairs(
     boundary_cell_object.get_boundary_cells_information(),
     particle_handler,
     particle_wall_candidates,
-    disable_particle_contact_object);
+    disable_contacts_object);
 
   // Particle-floating wall contact pairs
   if (floating_walls.floating_walls_number > 0)
@@ -346,7 +347,7 @@ DEMContainerManager<dim>::execute_particle_wall_broad_search(
           floating_walls,
           simulation_time,
           particle_floating_wall_candidates,
-          disable_particle_contact_object);
+          disable_contacts_object);
     }
 
   // Particle-floating mesh broad search
@@ -357,14 +358,14 @@ DEMContainerManager<dim>::execute_particle_wall_broad_search(
         particle_handler,
         particle_floating_mesh_candidates,
         total_neighbor_list,
-        disable_particle_contact_object);
+        disable_contacts_object);
     }
 
   particle_point_candidates =
     particle_point_line_broad_search_object.find_particle_point_contact_pairs(
       particle_handler,
       boundary_cell_object.get_boundary_cells_with_points(),
-      disable_particle_contact_object);
+      disable_contacts_object);
 
   if constexpr (dim == 3)
     {
@@ -373,7 +374,7 @@ DEMContainerManager<dim>::execute_particle_wall_broad_search(
           .find_particle_line_contact_pairs(
             particle_handler,
             boundary_cell_object.get_boundary_cells_with_lines(),
-            disable_particle_contact_object);
+            disable_contacts_object);
     }
 }
 

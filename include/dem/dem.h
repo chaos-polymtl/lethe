@@ -21,7 +21,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_particle_contact.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
@@ -358,8 +358,8 @@ private:
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
 
   // Dynamic disabling of particle contacts in cells object
-  DisableParticleContact<dim> disable_contact_object;
-  bool                        has_disabled_contacts;
+  DisableContacts<dim> disable_contacts_object;
+  bool                 has_disabled_contacts;
 };
 
 #endif

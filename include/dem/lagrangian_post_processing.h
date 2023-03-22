@@ -22,7 +22,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_particle_contact.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -74,7 +74,7 @@ public:
     const double                                     current_time,
     const unsigned int                               step_number,
     const MPI_Comm &                                 mpi_communicator,
-    DisableParticleContact<dim> &                    disable_contact_object);
+    DisableContacts<dim> &                           disable_contacts_object);
 
 private:
   /**

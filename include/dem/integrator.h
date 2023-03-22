@@ -19,7 +19,7 @@
 
 #include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/disable_particle_contact.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/particles/particle_handler.h>
 

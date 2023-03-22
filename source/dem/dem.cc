@@ -179,7 +179,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   if (parameters.model_parameters.disable_particle_contacts)
     {
       has_disabled_contacts = true;
-      disable_contact_object.set_threshold_values(
+      disable_contacts_object.set_threshold_values(
         parameters.model_parameters.granular_temperature_threshold,
         parameters.model_parameters.solid_fraction_threshold);
     }
@@ -308,16 +308,16 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
 
   // Get mobility status of the cell
   const unsigned int cell_mobility_status =
-    disable_contact_object.check_cell_mobility(cell);
+    disable_contacts_object.check_cell_mobility(cell);
 
   // Applied a factor on the particle weight regards the mobility status
   // Factor of 1 when mobile cell
   double alpha = 1.0;
-  if (cell_mobility_status == disable_contact_object.active)
+  if (cell_mobility_status == disable_contacts_object.active)
     {
       alpha = parameters.model_parameters.active_load_balancing_factor;
     }
-  else if (cell_mobility_status == disable_contact_object.inactive)
+  else if (cell_mobility_status == disable_contacts_object.inactive)
     {
       alpha = parameters.model_parameters.inactive_load_balancing_factor;
     }
@@ -493,7 +493,7 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
               // Get the mobility status of the cell & the number of
               // particles
               const unsigned int cell_mobility_status =
-                disable_contact_object.check_cell_mobility(cell);
+                disable_contacts_object.check_cell_mobility(cell);
               const unsigned int n_particles_in_cell =
                 particle_handler.n_particles_in_cell(cell);
 
@@ -501,12 +501,12 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
               // mobility status. alpha = 1 by default for mobile cell, but
               // is modified if cell is active or inactive
               double alpha = 1.0;
-              if (cell_mobility_status == disable_contact_object.active)
+              if (cell_mobility_status == disable_contacts_object.active)
                 {
                   alpha =
                     parameters.model_parameters.active_load_balancing_factor;
                 }
-              else if (cell_mobility_status == disable_contact_object.inactive)
+              else if (cell_mobility_status == disable_contacts_object.inactive)
                 {
                   alpha =
                     parameters.model_parameters.inactive_load_balancing_factor;
@@ -561,10 +561,6 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
           load_balance_step = true;
         }
     }
-
-
-  std::vector<unsigned int> mobility_status(triangulation.n_active_cells());
-  disable_contact_object.get_mobility_status_vector(mobility_status);
 
   // Clear and connect a new cell weight function
   triangulation.signals.weight.disconnect_all_slots();
@@ -634,8 +630,6 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
     mpi_communicator,
     sorting_in_subdomains_step,
     displacement);
-
-
 
   return contact_detection_step;
 }
@@ -763,7 +757,7 @@ DEMSolver<dim>::finish_simulation()
             {
               // Get mobility status vector sorted by cell id
               Vector<float> mobility_status(triangulation.n_active_cells());
-              disable_contact_object.get_mobility_status_vector(
+              disable_contacts_object.get_mobility_status_vector(
                 mobility_status);
 
               // Output mobility status vector
@@ -920,7 +914,7 @@ DEMSolver<dim>::post_process_results()
     simulation_control->get_current_time(),
     simulation_control->get_step_number(),
     mpi_communicator,
-    disable_contact_object);
+    disable_contacts_object);
 }
 
 template <int dim>
@@ -1118,7 +1112,7 @@ DEMSolver<dim>::solve()
 
           if (has_disabled_contacts)
             {
-              disable_contact_object.update_active_ghost_cell_set(
+              disable_contacts_object.update_local_and_ghost_cell_set(
                 background_dh);
             }
         }
@@ -1136,7 +1130,7 @@ DEMSolver<dim>::solve()
             {
               // Compute cell mobility for all cells after the sort particles
               // into subdomains and cells
-              disable_contact_object.identify_mobility_status(
+              disable_contacts_object.identify_mobility_status(
                 background_dh,
                 particle_handler,
                 triangulation.n_active_cells(),
@@ -1196,7 +1190,7 @@ DEMSolver<dim>::solve()
             {
               container_manager.execute_particle_particle_broad_search(
                 particle_handler,
-                disable_contact_object,
+                disable_contacts_object,
                 has_periodic_boundaries);
 
               container_manager.execute_particle_wall_broad_search(
@@ -1204,7 +1198,7 @@ DEMSolver<dim>::solve()
                 boundary_cell_object,
                 parameters.floating_walls,
                 simulation_control->get_current_time(),
-                disable_contact_object,
+                disable_contacts_object,
                 has_floating_mesh);
 
               container_manager.execute_particle_particle_broad_search(
@@ -1313,7 +1307,7 @@ DEMSolver<dim>::solve()
                 force,
                 MOI,
                 triangulation,
-                disable_contact_object.get_mobility_status());
+                disable_contacts_object.get_mobility_status());
             }
         }
 

@@ -23,6 +23,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
@@ -252,8 +253,8 @@ private:
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
 
-  DisableParticleContact<dim> disable_contact_object;
-  bool                        has_disabled_contacts;
+  DisableContacts<dim> disable_contacts_object;
+  bool                 has_disabled_contacts;
 
   DEM::DEMProperties<dim> properties_class;
 
