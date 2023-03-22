@@ -96,7 +96,7 @@ public:
    * The movement of particles in the cell is considered as negligible,
    * particles within this cell are not considered in the contact detection
    * (rejected at the broad search step), so no force calculation or
-   * intregation is applied
+   * integration is applied
    *
    * active (1)
    * The movement of particles in the cell is considered as negligible, but

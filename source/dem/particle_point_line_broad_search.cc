@@ -22,11 +22,11 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
 
-  // Defining and reseting a local particle-point candidate counter. This is
+  // Defining and resetting a local particle-point candidate counter. This is
   // used as a key to the output map
   int contact_candidate_counter = 0;
 
-  // Iterating over the  boundary_cells_with_points which is the output of
+  // Iterating over the boundary_cells_with_points which is the output of
   // the find_boundary_cells_information class.
   // This vector contains all the required information of the boundary
   // cells with points. In this loop we find the particles located in each of
@@ -80,11 +80,11 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
 
-  // Defining and reseting a local particle-point candidate counter. This is
+  // Defining and resetting a local particle-point candidate counter. This is
   // used as a key to the output map
   int contact_candidate_counter = 0;
 
-  // Iterating over the  boundary_cells_with_points which is the output of
+  // Iterating over the boundary_cells_with_points which is the output of
   // the find_boundary_cells_information class.
   // This vector contains all the required information of the boundary
   // cells with points. In this loop we find the particles located in each of
@@ -99,14 +99,13 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
       auto cell_with_boundary_point =
         cells_with_boundary_points_information->first;
 
-      // If main cell has status "inactive", skip to next cell
+      // If main cell has status inactive or active, skip to next
+      // cell
       unsigned int main_cell_mobility_status =
         disable_particle_contact_object.check_cell_mobility(
           cell_with_boundary_point);
-      if (main_cell_mobility_status == DisableParticleContact<dim>::inactive)
-        {
-          continue;
-        }
+      if (main_cell_mobility_status != DisableParticleContact<dim>::mobile)
+        continue;
 
       Point<dim> vertex_location =
         cells_with_boundary_points_information->second;
@@ -149,7 +148,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
 
-  // Defining and reseting a local particle-line candidate counter. This is
+  // Defining and resetting a local particle-line candidate counter. This is
   // used as a key to the output map
   unsigned int contact_candidate_counter = 0;
 
@@ -215,7 +214,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
 
-  // Defining and reseting a local particle-line candidate counter. This is
+  // Defining and resetting a local particle-line candidate counter. This is
   // used as a key to the output map
   unsigned int contact_candidate_counter = 0;
 
@@ -240,9 +239,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
         disable_particle_contact_object.check_cell_mobility(
           cell_with_boundary_line);
       if (main_cell_mobility_status != DisableParticleContact<dim>::mobile)
-        {
-          continue;
-        }
+        continue;
 
       Point<dim> first_vertex_location =
         std::get<1>(*cells_with_boundary_lines_information);
@@ -254,8 +251,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
         particles_in_cell =
           particle_handler.particles_in_cell(cell_with_boundary_line);
 
-      for (typename Particles::ParticleHandler<dim>::particle_iterator_range::
-             iterator particles_in_cell_iterator = particles_in_cell.begin();
+      for (auto particles_in_cell_iterator = particles_in_cell.begin();
            particles_in_cell_iterator != particles_in_cell.end();
            ++particles_in_cell_iterator)
         {

@@ -248,41 +248,30 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
       auto cell                   = boundary_cells_content.cell;
 
       // If main cell has status inactive or active, skip to next cell
+      // No needs to check if the main cell has any particle after this
+      // step since mobile cells have particles
       unsigned int main_cell_mobility_status =
         disable_particle_contact_object.check_cell_mobility(cell);
       if (main_cell_mobility_status != DisableParticleContact<dim>::mobile)
-        {
-          continue;
-        }
+        continue;
 
       // Finding particles located in the corresponding cell
-      // (boundary_cells_content.cell)
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(cell);
 
-      const bool particles_exist_in_main_cell = !particles_in_cell.empty();
-
-      // If the main cell is not empty
-      if (particles_exist_in_main_cell)
+      for (auto particles_in_cell_iterator = particles_in_cell.begin();
+           particles_in_cell_iterator != particles_in_cell.end();
+           ++particles_in_cell_iterator)
         {
-          for (typename Particles::ParticleHandler<dim>::
-                 particle_iterator_range::iterator particles_in_cell_iterator =
-                   particles_in_cell.begin();
-               particles_in_cell_iterator != particles_in_cell.end();
-               ++particles_in_cell_iterator)
-            {
-              // Making the tuple and adding it to the
-              // particle_wall_contact_candidates. This unordered map is the
-              // output of this function
-
-              particle_wall_contact_candidates[particles_in_cell_iterator
-                                                 ->get_id()]
-                .emplace(boundary_cells_content.global_face_id,
-                         std::make_tuple(particles_in_cell_iterator,
-                                         boundary_cells_content.normal_vector,
-                                         boundary_cells_content.point_on_face,
-                                         boundary_cells_content.boundary_id));
-            }
+          // Making the tuple and adding it to the
+          // particle_wall_contact_candidates. This unordered map is the
+          // output of this function
+          particle_wall_contact_candidates[particles_in_cell_iterator->get_id()]
+            .emplace(boundary_cells_content.global_face_id,
+                     std::make_tuple(particles_in_cell_iterator,
+                                     boundary_cells_content.normal_vector,
+                                     boundary_cells_content.point_on_face,
+                                     boundary_cells_content.boundary_id));
         }
     }
 }
@@ -332,35 +321,25 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
                ++cell)
             {
               // If main cell has status inactive or active, skip to next cell
+              // No needs to check if the main cell has any particle after this
+              // step since mobile cells have particles
               unsigned int main_cell_mobility_status =
                 disable_particle_contact_object.check_cell_mobility(*cell);
               if (main_cell_mobility_status !=
                   DisableParticleContact<dim>::mobile)
-                {
-                  continue;
-                }
+                continue;
 
               // Finding particles located in the corresponding cell
               typename Particles::ParticleHandler<dim>::particle_iterator_range
                 particles_in_cell = particle_handler.particles_in_cell(*cell);
 
-              const bool particles_exist_in_main_cell =
-                !particles_in_cell.empty();
-
-              // If the main cell is not empty
-              if (particles_exist_in_main_cell)
+              for (auto particles_in_cell_iterator = particles_in_cell.begin();
+                   particles_in_cell_iterator != particles_in_cell.end();
+                   ++particles_in_cell_iterator)
                 {
-                  for (typename Particles::ParticleHandler<
-                         dim>::particle_iterator_range::iterator
-                         particles_in_cell_iterator = particles_in_cell.begin();
-                       particles_in_cell_iterator != particles_in_cell.end();
-                       ++particles_in_cell_iterator)
-                    {
-                      particle_floating_wall_candidates
-                        [particles_in_cell_iterator->get_id()]
-                          .insert(
-                            {floating_wall_id, particles_in_cell_iterator});
-                    }
+                  particle_floating_wall_candidates[particles_in_cell_iterator
+                                                      ->get_id()]
+                    .insert({floating_wall_id, particles_in_cell_iterator});
                 }
             }
         }
@@ -420,40 +399,30 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
                 {
                   // If main cell has status inactive or active, skip to next
                   // cell
+                  // No needs to check if the main cell has any particle after
+                  // this step since mobile cells have particles
                   unsigned int main_cell_mobility_status =
                     disable_particle_contact_object.check_cell_mobility(
                       cell_iterator);
                   if (main_cell_mobility_status !=
                       DisableParticleContact<dim>::mobile)
-                    {
-                      continue;
-                    }
+                    continue;
 
                   // Find particles located in cell
                   typename Particles::ParticleHandler<
                     dim>::particle_iterator_range particles_in_cell =
                     particle_handler.particles_in_cell(cell_iterator);
 
-                  const bool particles_exist_in_cell =
-                    !particles_in_cell.empty();
-
-                  // If the main cell is not empty
-                  if (particles_exist_in_cell)
+                  // Loop through particles in the main cell and build
+                  // contact candidate pairs
+                  for (auto particles_in_cell_iterator =
+                         particles_in_cell.begin();
+                       particles_in_cell_iterator != particles_in_cell.end();
+                       ++particles_in_cell_iterator)
                     {
-                      // Loop through particles in the main cell and build
-                      // contact candidate pairs
-                      for (typename Particles::ParticleHandler<
-                             dim>::particle_iterator_range::iterator
-                             particles_in_cell_iterator =
-                               particles_in_cell.begin();
-                           particles_in_cell_iterator !=
-                           particles_in_cell.end();
-                           ++particles_in_cell_iterator)
-                        {
-                          candidates[cut_cells].insert(
-                            {particles_in_cell_iterator->get_id(),
-                             particles_in_cell_iterator});
-                        }
+                      candidates[cut_cells].insert(
+                        {particles_in_cell_iterator->get_id(),
+                         particles_in_cell_iterator});
                     }
                 }
             }
