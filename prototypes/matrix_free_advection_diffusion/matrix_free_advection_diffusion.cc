@@ -39,6 +39,11 @@
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/vector.h>
 
 #include <deal.II/matrix_free/fe_evaluation.h>
@@ -346,6 +351,9 @@ public:
   virtual void
   compute_diagonal() override;
 
+  const TrilinosWrappers::SparseMatrix &
+  get_coarse_system_matrix(const DoFHandler<dim> &dof_handler);
+
 private:
   virtual void
   apply_add(
@@ -359,11 +367,11 @@ private:
               const std::pair<unsigned int, unsigned int> &cell_range) const;
 
   void
-  local_compute_diagonal(FECellIntegrator &integrator) const;
+  local_compute(FECellIntegrator &integrator) const;
 
-  Table<2, VectorizedArray<number>> nonlinear_values;
+  Table<2, VectorizedArray<number>>      nonlinear_values;
+  mutable TrilinosWrappers::SparseMatrix coarse_system_matrix;
 };
-
 
 template <int dim, int fe_degree, typename number>
 AdvectionDiffusionOperator<dim, fe_degree, number>::AdvectionDiffusionOperator()
@@ -371,8 +379,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::AdvectionDiffusionOperator()
 {
   nonlinear_values.reinit(0, 0);
 }
-
-
 
 template <int dim, int fe_degree, typename number>
 void
@@ -382,7 +388,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::clear()
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
     clear();
 }
-
 
 template <int dim, int fe_degree, typename number>
 void
@@ -458,8 +463,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
     }
 }
 
-
-
 template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::apply_add(
@@ -472,11 +475,9 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::apply_add(
                         src);
 }
 
-
-
 template <int dim, int fe_degree, typename number>
 void
-AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute_diagonal(
+AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
   FECellIntegrator &phi) const
 {
   AssertDimension(nonlinear_values.size(0),
@@ -513,8 +514,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute_diagonal(
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
-
-
 template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::compute_diagonal()
@@ -525,11 +524,10 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::compute_diagonal()
     this->inverse_diagonal_entries->get_vector();
   this->data->initialize_dof_vector(inverse_diagonal);
 
-  MatrixFreeTools::compute_diagonal(
-    *this->data,
-    inverse_diagonal,
-    &AdvectionDiffusionOperator::local_compute_diagonal,
-    this);
+  MatrixFreeTools::compute_diagonal(*this->data,
+                                    inverse_diagonal,
+                                    &AdvectionDiffusionOperator::local_compute,
+                                    this);
 
   for (auto &diagonal_element : inverse_diagonal)
     {
@@ -538,7 +536,35 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::compute_diagonal()
     }
 }
 
+template <int dim, int fe_degree, typename number>
+const TrilinosWrappers::SparseMatrix &
+AdvectionDiffusionOperator<dim, fe_degree, number>::get_coarse_system_matrix(
+  const DoFHandler<dim> &dof_handler)
+{
+  AffineConstraints<number> constraints;
+  constraints.clear();
+  const IndexSet relevant_dofs =
+    DoFTools::extract_locally_relevant_dofs(dof_handler);
+  constraints.reinit(relevant_dofs);
+  constraints.close();
 
+  TrilinosWrappers::SparsityPattern dsp(
+    dof_handler.locally_owned_mg_dofs(0),
+    dof_handler.get_triangulation().get_communicator());
+
+  MGTools::make_sparsity_pattern(dof_handler, dsp, 0, constraints);
+
+  dsp.compress();
+  coarse_system_matrix.reinit(dsp);
+
+  MatrixFreeTools::compute_matrix(*this->data,
+                                  constraints,
+                                  coarse_system_matrix,
+                                  &AdvectionDiffusionOperator::local_compute,
+                                  this);
+
+  return coarse_system_matrix;
+}
 
 template <int dim, int fe_degree>
 class MatrixFreeAdvectionDiffusion
@@ -592,7 +618,6 @@ private:
   void
   output_results(const unsigned int cycle) const;
 
-
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
 
@@ -602,11 +627,10 @@ private:
   using SystemMatrixType = AdvectionDiffusionOperator<dim, fe_degree, double>;
   SystemMatrixType  system_matrix;
   MGConstrainedDoFs mg_constrained_dofs;
-  using LevelMatrixType = AdvectionDiffusionOperator<dim, fe_degree, float>;
-  MGLevelObject<LevelMatrixType>                           mg_matrices;
-  MGLevelObject<LinearAlgebra::distributed::Vector<float>> mg_solution;
-  MGTransferMatrixFree<dim, float>                         mg_transfer;
-
+  using LevelMatrixType = AdvectionDiffusionOperator<dim, fe_degree, double>;
+  MGLevelObject<LevelMatrixType>                            mg_matrices;
+  MGLevelObject<LinearAlgebra::distributed::Vector<double>> mg_solution;
+  MGTransferMatrixFree<dim, double>                         mg_transfer;
 
   LinearAlgebra::distributed::Vector<double> solution;
   LinearAlgebra::distributed::Vector<double> newton_update;
@@ -636,7 +660,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::MatrixFreeAdvectionDiffusion(
                     TimerOutput::wall_times)
   , parameters(parameters)
 {}
-
 
 template <int dim, int fe_degree>
 void
@@ -670,8 +693,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
 
   triangulation.refine_global(parameters.initial_refinement);
 }
-
-
 
 template <int dim, int fe_degree>
 void
@@ -885,14 +906,14 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints.close();
 
-      typename MatrixFree<dim, float>::AdditionalData additional_data;
+      typename MatrixFree<dim, double>::AdditionalData additional_data;
       additional_data.tasks_parallel_scheme =
-        MatrixFree<dim, float>::AdditionalData::partition_color;
+        MatrixFree<dim, double>::AdditionalData::partition_color;
       additional_data.mapping_update_flags =
         (update_values | update_gradients | update_JxW_values |
          update_quadrature_points);
       additional_data.mg_level = level;
-      auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, float>>();
+      auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, double>>();
       mg_mf_storage_level->reinit(mapping,
                                   dof_handler,
                                   level_constraints,
@@ -1033,9 +1054,9 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
   using SmootherType =
     PreconditionChebyshev<LevelMatrixType,
-                          LinearAlgebra::distributed::Vector<float>>;
+                          LinearAlgebra::distributed::Vector<double>>;
   mg::SmootherRelaxation<SmootherType,
-                         LinearAlgebra::distributed::Vector<float>>
+                         LinearAlgebra::distributed::Vector<double>>
                                                        mg_smoother;
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data;
   smoother_data.resize(0, triangulation.n_global_levels() - 1);
@@ -1064,18 +1085,27 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
   mg_smoother.initialize(mg_matrices, smoother_data);
 
 
-  SolverControl coarse_solver_control(1000, 1e-12, false, false);
-  SolverCG<LinearAlgebra::distributed::Vector<float>> coarse_solver(
+  SolverControl coarse_solver_control(1000, 1e-6, false, false);
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>> coarse_solver(
     coarse_solver_control);
-  PreconditionIdentity identity;
-  MGCoarseGridIterativeSolver<
-    LinearAlgebra::distributed::Vector<float>,
-    SolverCG<LinearAlgebra::distributed::Vector<float>>,
-    LevelMatrixType,
-    PreconditionIdentity>
-    mg_coarse(coarse_solver, mg_matrices[0], identity);
+  // PreconditionIdentity identity;
 
-  mg::Matrix<LinearAlgebra::distributed::Vector<float>> mg_matrix(mg_matrices);
+  TrilinosWrappers::PreconditionAMG                 precondition_amg;
+  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+  amg_data.smoother_sweeps = 1;
+  amg_data.n_cycles        = 1;
+  amg_data.smoother_type   = "ILU";
+  precondition_amg.initialize(
+    mg_matrices[0].get_coarse_system_matrix(dof_handler), amg_data);
+
+  MGCoarseGridIterativeSolver<
+    LinearAlgebra::distributed::Vector<double>,
+    SolverGMRES<LinearAlgebra::distributed::Vector<double>>,
+    LevelMatrixType,
+    TrilinosWrappers::PreconditionAMG>
+    mg_coarse(coarse_solver, mg_matrices[0], precondition_amg);
+
+  mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_matrix(mg_matrices);
 
   MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
     mg_interface_matrices;
@@ -1084,24 +1114,24 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
     {
       mg_interface_matrices[level].initialize(mg_matrices[level]);
     }
-  mg::Matrix<LinearAlgebra::distributed::Vector<float>> mg_interface(
+  mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_interface(
     mg_interface_matrices);
 
-  Multigrid<LinearAlgebra::distributed::Vector<float>> mg(
+  Multigrid<LinearAlgebra::distributed::Vector<double>> mg(
     mg_matrix, mg_coarse, mg_transfer, mg_smoother, mg_smoother);
   mg.set_edge_matrices(mg_interface, mg_interface);
 
   PreconditionMG<dim,
-                 LinearAlgebra::distributed::Vector<float>,
-                 MGTransferMatrixFree<dim, float>>
+                 LinearAlgebra::distributed::Vector<double>,
+                 MGTransferMatrixFree<dim, double>>
     preconditioner(dof_handler, mg, mg_transfer);
 
-  SolverControl solver_control(100, 1.e-12);
-  SolverCG<LinearAlgebra::distributed::Vector<double>> cg(solver_control);
+  SolverControl solver_control(1000, 1.e-12);
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
 
-  cg.solve(system_matrix, newton_update, system_rhs, preconditioner);
+  gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
 
   constraints.distribute(newton_update);
 
@@ -1165,7 +1195,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
-  Vector<float> norm_per_cell(triangulation.n_active_cells());
+  Vector<double> norm_per_cell(triangulation.n_active_cells());
 
   VectorTools::integrate_difference(mapping,
                                     dof_handler,
@@ -1188,7 +1218,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
-  Vector<float> error_per_cell(triangulation.n_active_cells());
+  Vector<double> error_per_cell(triangulation.n_active_cells());
 
   VectorTools::integrate_difference(mapping,
                                     dof_handler,
@@ -1220,7 +1250,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution");
 
-  Vector<float> subdomain(triangulation.n_active_cells());
+  Vector<double> subdomain(triangulation.n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     {
       subdomain(i) = triangulation.locally_owned_subdomain();
