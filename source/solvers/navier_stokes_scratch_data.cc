@@ -16,6 +16,9 @@ NavierStokesScratchData<dim>::allocate()
   // Initialize arrays related to quadrature
   this->JxW = std::vector<double>(n_q_points);
 
+  // Initialize component array
+  this->components = std::vector<unsigned int>(n_dofs);
+
   // Forcing term array
   this->rhs_force =
     std::vector<Vector<double>>(n_q_points, Vector<double>(dim + 1));
