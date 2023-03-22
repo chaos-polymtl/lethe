@@ -1088,8 +1088,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs, mpi_communicator);
 
-  SolverControl              solver_control(100, 1.e-12);
-  TrilinosWrappers::SolverCG cg(solver_control);
+  SolverControl                 solver_control(1000, 1.e-12);
+  TrilinosWrappers::SolverGMRES gmres(solver_control);
 
   switch (parameters.preconditioner)
     {
@@ -1102,10 +1102,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
 
           preconditioner.initialize(system_matrix, data);
 
-          cg.solve(system_matrix,
-                   completely_distributed_solution,
-                   system_rhs,
-                   preconditioner);
+          gmres.solve(system_matrix,
+                      completely_distributed_solution,
+                      system_rhs,
+                      preconditioner);
           break;
         }
         case Settings::gmg: {
