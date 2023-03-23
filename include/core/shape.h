@@ -811,6 +811,15 @@ public:
   /**
    * @brief Return the gradient of the distance function
    * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
    * @param cell The cell that is likely to contain the evaluation point
    * @param component Not applicable
    */
