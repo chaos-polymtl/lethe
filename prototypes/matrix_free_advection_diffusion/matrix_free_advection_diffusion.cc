@@ -75,7 +75,9 @@ struct Settings
 
   enum PreconditionerType
   {
-    gmg
+    amg,
+    gmg,
+    ilu
   };
 
   enum GeometryType
@@ -151,9 +153,9 @@ Settings::try_parse(const std::string &prm_filename)
                     Patterns::FileName(),
                     "Path for vtu output files");
   prm.declare_entry("preconditioner",
-                    "GMG",
-                    Patterns::Selection("GMG"),
-                    "Preconditioner <GMG>");
+                    "AMG",
+                    Patterns::Selection("AMG|GMG|ILU"),
+                    "GMRES Preconditioner <AMG|GMG|ILU>");
   prm.declare_entry("source term",
                     "zero",
                     Patterns::Selection("zero|mms"),
@@ -188,8 +190,12 @@ Settings::try_parse(const std::string &prm_filename)
       return false;
     }
 
-  if (prm.get("preconditioner") == "GMG")
+  if (prm.get("preconditioner") == "AMG")
+    this->preconditioner = amg;
+  else if (prm.get("preconditioner") == "GMG")
     this->preconditioner = gmg;
+  else if (prm.get("preconditioner") == "ILU")
+    this->preconditioner = ilu;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -352,7 +358,7 @@ public:
   compute_diagonal() override;
 
   const TrilinosWrappers::SparseMatrix &
-  get_coarse_system_matrix(const DoFHandler<dim> &dof_handler);
+  get_system_matrix(const AffineConstraints<number> &constraints);
 
 private:
   virtual void
@@ -370,7 +376,7 @@ private:
   local_compute(FECellIntegrator &integrator) const;
 
   Table<2, VectorizedArray<number>>      nonlinear_values;
-  mutable TrilinosWrappers::SparseMatrix coarse_system_matrix;
+  mutable TrilinosWrappers::SparseMatrix system_matrix;
 };
 
 template <int dim, int fe_degree, typename number>
@@ -378,6 +384,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::AdvectionDiffusionOperator()
   : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
 {
   nonlinear_values.reinit(0, 0);
+  system_matrix.clear();
 }
 
 template <int dim, int fe_degree, typename number>
@@ -538,32 +545,40 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::compute_diagonal()
 
 template <int dim, int fe_degree, typename number>
 const TrilinosWrappers::SparseMatrix &
-AdvectionDiffusionOperator<dim, fe_degree, number>::get_coarse_system_matrix(
-  const DoFHandler<dim> &dof_handler)
+AdvectionDiffusionOperator<dim, fe_degree, number>::get_system_matrix(
+  const AffineConstraints<number> &constraints)
 {
-  AffineConstraints<number> constraints;
-  constraints.clear();
-  const IndexSet relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(dof_handler);
-  constraints.reinit(relevant_dofs);
-  constraints.close();
+  if (system_matrix.m() == 0 && system_matrix.n() == 0)
+    {
+      AffineConstraints<number> constraints_copy;
+      constraints_copy.copy_from(constraints);
 
-  TrilinosWrappers::SparsityPattern dsp(
-    dof_handler.locally_owned_mg_dofs(0),
-    dof_handler.get_triangulation().get_communicator());
+      const auto &dof_handler = this->get_matrix_free()->get_dof_handler();
+      const auto &mg_level    = this->get_matrix_free()->get_mg_level();
 
-  MGTools::make_sparsity_pattern(dof_handler, dsp, 0, constraints);
+      TrilinosWrappers::SparsityPattern dsp(
+        mg_level != numbers::invalid_unsigned_int ?
+          dof_handler.locally_owned_mg_dofs(mg_level) :
+          dof_handler.locally_owned_dofs(),
+        dof_handler.get_triangulation().get_communicator());
 
-  dsp.compress();
-  coarse_system_matrix.reinit(dsp);
+      if (mg_level != numbers::invalid_unsigned_int)
+        MGTools::make_sparsity_pattern(dof_handler, dsp, mg_level, constraints);
+      else
+        DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
 
-  MatrixFreeTools::compute_matrix(*this->data,
-                                  constraints,
-                                  coarse_system_matrix,
-                                  &AdvectionDiffusionOperator::local_compute,
-                                  this);
 
-  return coarse_system_matrix;
+      dsp.compress();
+      system_matrix.reinit(dsp);
+
+      MatrixFreeTools::compute_matrix(
+        *this->data,
+        constraints,
+        system_matrix,
+        &AdvectionDiffusionOperator::local_compute,
+        this);
+    }
+  return system_matrix;
 }
 
 template <int dim, int fe_degree>
@@ -1050,88 +1065,120 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
   system_matrix.evaluate_newton_step(solution);
 
-  mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
-
-  using SmootherType =
-    PreconditionChebyshev<LevelMatrixType,
-                          LinearAlgebra::distributed::Vector<double>>;
-  mg::SmootherRelaxation<SmootherType,
-                         LinearAlgebra::distributed::Vector<double>>
-                                                       mg_smoother;
-  MGLevelObject<typename SmootherType::AdditionalData> smoother_data;
-  smoother_data.resize(0, triangulation.n_global_levels() - 1);
-  for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
-    {
-      if (level > 0)
-        {
-          smoother_data[level].smoothing_range     = 15.;
-          smoother_data[level].degree              = 4;
-          smoother_data[level].eig_cg_n_iterations = 10;
-        }
-      else
-        {
-          smoother_data[0].smoothing_range     = 1e-3;
-          smoother_data[0].degree              = numbers::invalid_unsigned_int;
-          smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
-        }
-
-      mg_matrices[level].evaluate_newton_step(mg_solution[level]);
-      mg_matrices[level].compute_diagonal();
-      // mg_matrices[level].evaluate_advection_field(AdvectionField<dim>());
-
-      smoother_data[level].preconditioner =
-        mg_matrices[level].get_matrix_diagonal_inverse();
-    }
-  mg_smoother.initialize(mg_matrices, smoother_data);
-
-
-  SolverControl coarse_solver_control(1000, 1e-6, false, false);
-  SolverGMRES<LinearAlgebra::distributed::Vector<double>> coarse_solver(
-    coarse_solver_control);
-  // PreconditionIdentity identity;
-
-  TrilinosWrappers::PreconditionAMG                 precondition_amg;
-  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-  amg_data.smoother_sweeps = 1;
-  amg_data.n_cycles        = 1;
-  amg_data.smoother_type   = "ILU";
-  precondition_amg.initialize(
-    mg_matrices[0].get_coarse_system_matrix(dof_handler), amg_data);
-
-  MGCoarseGridIterativeSolver<
-    LinearAlgebra::distributed::Vector<double>,
-    SolverGMRES<LinearAlgebra::distributed::Vector<double>>,
-    LevelMatrixType,
-    TrilinosWrappers::PreconditionAMG>
-    mg_coarse(coarse_solver, mg_matrices[0], precondition_amg);
-
-  mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_matrix(mg_matrices);
-
-  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
-    mg_interface_matrices;
-  mg_interface_matrices.resize(0, triangulation.n_global_levels() - 1);
-  for (unsigned int level = 0; level < triangulation.n_global_levels(); ++level)
-    {
-      mg_interface_matrices[level].initialize(mg_matrices[level]);
-    }
-  mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_interface(
-    mg_interface_matrices);
-
-  Multigrid<LinearAlgebra::distributed::Vector<double>> mg(
-    mg_matrix, mg_coarse, mg_transfer, mg_smoother, mg_smoother);
-  mg.set_edge_matrices(mg_interface, mg_interface);
-
-  PreconditionMG<dim,
-                 LinearAlgebra::distributed::Vector<double>,
-                 MGTransferMatrixFree<dim, double>>
-    preconditioner(dof_handler, mg, mg_transfer);
-
   SolverControl solver_control(1000, 1.e-12);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
 
-  gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
+  switch (parameters.preconditioner)
+    {
+        case Settings::amg: {
+          TrilinosWrappers::PreconditionAMG                 preconditioner;
+          TrilinosWrappers::PreconditionAMG::AdditionalData data;
+
+          if (fe_degree > 1)
+            data.higher_order_elements = true;
+
+          preconditioner.initialize(
+            system_matrix.get_system_matrix(constraints), data);
+          gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
+          break;
+        }
+        case Settings::gmg: {
+          mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
+          // Set up smoother
+          using SmootherType =
+            PreconditionChebyshev<LevelMatrixType,
+                                  LinearAlgebra::distributed::Vector<double>>;
+          mg::SmootherRelaxation<SmootherType,
+                                 LinearAlgebra::distributed::Vector<double>>
+                                                               mg_smoother;
+          MGLevelObject<typename SmootherType::AdditionalData> smoother_data;
+          smoother_data.resize(0, triangulation.n_global_levels() - 1);
+          for (unsigned int level = 0; level < triangulation.n_global_levels();
+               ++level)
+            {
+              if (level > 0)
+                {
+                  smoother_data[level].smoothing_range     = 15.;
+                  smoother_data[level].degree              = 4;
+                  smoother_data[level].eig_cg_n_iterations = 10;
+                }
+              else
+                {
+                  smoother_data[0].smoothing_range = 1e-3;
+                  smoother_data[0].degree = numbers::invalid_unsigned_int;
+                  smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
+                }
+
+              mg_matrices[level].evaluate_newton_step(mg_solution[level]);
+              mg_matrices[level].compute_diagonal();
+              smoother_data[level].preconditioner =
+                mg_matrices[level].get_matrix_diagonal_inverse();
+            }
+          mg_smoother.initialize(mg_matrices, smoother_data);
+
+          // Set up preconditioned coarse-grid solver
+          SolverControl coarse_solver_control(1000, 1e-6, false, false);
+          SolverGMRES<LinearAlgebra::distributed::Vector<double>> coarse_solver(
+            coarse_solver_control);
+
+          TrilinosWrappers::PreconditionAMG                 precondition_amg;
+          TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+          precondition_amg.initialize(
+            mg_matrices[0].get_system_matrix(constraints), amg_data);
+
+          MGCoarseGridIterativeSolver<
+            LinearAlgebra::distributed::Vector<double>,
+            SolverGMRES<LinearAlgebra::distributed::Vector<double>>,
+            LevelMatrixType,
+            TrilinosWrappers::PreconditionAMG>
+            mg_coarse(coarse_solver, mg_matrices[0], precondition_amg);
+
+          // Set up multigrid
+          mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_matrix(
+            mg_matrices);
+
+          MGLevelObject<
+            MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
+            mg_interface_matrices;
+          mg_interface_matrices.resize(0, triangulation.n_global_levels() - 1);
+          for (unsigned int level = 0; level < triangulation.n_global_levels();
+               ++level)
+            {
+              mg_interface_matrices[level].initialize(mg_matrices[level]);
+            }
+          mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_interface(
+            mg_interface_matrices);
+
+          Multigrid<LinearAlgebra::distributed::Vector<double>> mg(
+            mg_matrix, mg_coarse, mg_transfer, mg_smoother, mg_smoother);
+          mg.set_edge_matrices(mg_interface, mg_interface);
+
+
+          PreconditionMG<dim,
+                         LinearAlgebra::distributed::Vector<double>,
+                         MGTransferMatrixFree<dim, double>>
+            preconditioner(dof_handler, mg, mg_transfer);
+
+          gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
+          break;
+        }
+        case Settings::ilu: {
+          TrilinosWrappers::PreconditionILU                 preconditioner;
+          TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
+          preconditioner.initialize(
+            system_matrix.get_system_matrix(constraints), data_ilu);
+
+          gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
+          break;
+        }
+      default:
+        Assert(
+          false,
+          ExcMessage(
+            "This program supports only AMG, GMG and ILU as preconditioners for the GMRES solver."));
+    }
 
   constraints.distribute(newton_update);
 
@@ -1301,8 +1348,14 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
       Utilities::System::get_current_vectorization_level() +
       "), VECTORIZATION_LEVEL=" +
       std::to_string(DEAL_II_COMPILER_VECTORIZATION_LEVEL);
-    std::string SOL_header      = "Finite element space: " + fe.get_name();
-    std::string PRECOND_header  = "Preconditioner: GMG";
+    std::string SOL_header     = "Finite element space: " + fe.get_name();
+    std::string PRECOND_header = "";
+    if (parameters.preconditioner == Settings::amg)
+      PRECOND_header = "Preconditioner: AMG";
+    else if (parameters.preconditioner == Settings::gmg)
+      PRECOND_header = "Preconditioner: GMG";
+    else if (parameters.preconditioner == Settings::ilu)
+      PRECOND_header = "Preconditioner: ILU";
     std::string GEOMETRY_header = "";
     if (parameters.geometry == Settings::hyperball)
       GEOMETRY_header = "Geometry: hyperball";
@@ -1363,16 +1416,19 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
       pcout << "Set up system..." << std::endl;
       setup_system();
 
-      setup_gmg();
+      if (parameters.preconditioner == Settings::gmg)
+        setup_gmg();
 
       pcout << "   Triangulation: " << triangulation.n_global_active_cells()
             << " cells" << std::endl;
       pcout << "   DoFHandler:    " << dof_handler.n_dofs() << " DoFs"
             << std::endl;
-      for (unsigned int level = 0; level < triangulation.n_global_levels();
-           ++level)
-        pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
-              << " DoFs" << std::endl;
+
+      if (parameters.preconditioner == Settings::gmg)
+        for (unsigned int level = 0; level < triangulation.n_global_levels();
+             ++level)
+          pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
+                << " DoFs" << std::endl;
 
       pcout << std::endl;
 
