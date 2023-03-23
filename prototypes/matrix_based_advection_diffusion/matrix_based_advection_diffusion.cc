@@ -40,6 +40,7 @@
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
@@ -73,7 +74,8 @@ struct Settings
   enum PreconditionerType
   {
     amg,
-    gmg
+    gmg,
+    ilu
   };
 
   enum GeometryType
@@ -155,8 +157,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Path for vtu output files");
   prm.declare_entry("preconditioner",
                     "AMG",
-                    Patterns::Selection("AMG|GMG"),
-                    "Preconditioner <AMG|GMG>");
+                    Patterns::Selection("AMG|GMG|ILU"),
+                    "GMRES Preconditioner <AMG|GMG|ILU>");
   prm.declare_entry("source term",
                     "zero",
                     Patterns::Selection("zero|mms"),
@@ -195,6 +197,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->preconditioner = amg;
   else if (prm.get("preconditioner") == "GMG")
     this->preconditioner = gmg;
+  else if (prm.get("preconditioner") == "ILU")
+    this->preconditioner = ilu;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -1115,17 +1119,22 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           mg_transfer.copy_to_mg(dof_handler, mg_solution, solution);
 
           assemble_gmg();
+          
+          // Set up preconditioned coarse-grid solver
+          SolverControl        coarse_solver_control(1000, 1e-6, false, false);
+          SolverGMRES<VectorType> coarse_solver(coarse_solver_control);
 
-          SolverControl        coarse_solver_control(1000, 1e-12, false, false);
-          SolverCG<VectorType> coarse_solver(coarse_solver_control);
+          TrilinosWrappers::PreconditionAMG precondition_amg;
+          TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+          precondition_amg.initialize(mg_matrix[0], amg_data);
 
-          PreconditionIdentity identity;
           MGCoarseGridIterativeSolver<VectorType,
-                                      SolverCG<VectorType>,
+                                      SolverGMRES<VectorType>,
                                       MatrixType,
-                                      PreconditionIdentity>
-            coarse_grid_solver(coarse_solver, mg_matrix[0], identity);
+                                      TrilinosWrappers::PreconditionAMG>
+            coarse_grid_solver(coarse_solver, mg_matrix[0], precondition_amg);
 
+          // Set up smoother
           using Smoother = TrilinosWrappers::PreconditionChebyshev;
           MGSmootherPrecondition<MatrixType, Smoother, VectorType> smoother;
           MGLevelObject<typename Smoother::AdditionalData> smoother_data;
@@ -1145,6 +1154,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
             }
           smoother.initialize(mg_matrix, smoother_data);
 
+          // Set up multigrid
           mg::Matrix<VectorType> mg_m(mg_matrix);
           mg::Matrix<VectorType> mg_in(mg_interface_in);
           mg::Matrix<VectorType> mg_out(mg_interface_in);
@@ -1156,17 +1166,28 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           PreconditionMG<dim, VectorType, MGTransferPrebuilt<VectorType>>
             preconditioner(dof_handler, mg, mg_transfer);
 
-          SolverCG<VectorType> solver(solver_control);
+          SolverGMRES<VectorType> solver(solver_control);
           solver.solve(system_matrix,
                        completely_distributed_solution,
                        system_rhs,
                        preconditioner);
           break;
         }
+        case Settings::ilu: {
+          TrilinosWrappers::PreconditionILU                 preconditioner;
+          TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
+          preconditioner.initialize(system_matrix, data_ilu);
+
+          gmres.solve(system_matrix,
+                      completely_distributed_solution,
+                      system_rhs,
+                      preconditioner);
+          break;
+        }
       default:
         Assert(false,
                ExcMessage(
-                 "This program supports only AMG and GMG as preconditioner."));
+                 "This program supports only AMG, GMG and ILU as preconditioner."));
     }
 
   constraints.distribute(completely_distributed_solution);
@@ -1349,6 +1370,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       PRECOND_header = "Preconditioner: AMG";
     else if (parameters.preconditioner == Settings::gmg)
       PRECOND_header = "Preconditioner: GMG";
+    else if (parameters.preconditioner == Settings::ilu)
+      PRECOND_header = "Preconditioner: ILU";
     std::string GEOMETRY_header = "";
     if (parameters.geometry == Settings::hyperball)
       GEOMETRY_header = "Geometry: hyperball";
