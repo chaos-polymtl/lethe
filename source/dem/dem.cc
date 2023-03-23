@@ -259,6 +259,7 @@ DEMSolver<dim>::cell_weight(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+        // If CELL_PERSIST, do as CELL_REFINE
       case parallel::distributed::Triangulation<dim>::CELL_REFINE:
         {
           const unsigned int n_particles_in_cell =
@@ -325,6 +326,7 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
   switch (status)
     {
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+        // If CELL_PERSIST, do as CELL_REFINE
       case parallel::distributed::Triangulation<dim>::CELL_REFINE:
         {
           const unsigned int n_particles_in_cell =
@@ -1037,7 +1039,6 @@ DEMSolver<dim>::solve()
   // criterion
   smallest_floating_mesh_mapping_criterion =
     GridTools::minimal_cell_diameter(triangulation);
-
 
   if (has_periodic_boundaries)
     {

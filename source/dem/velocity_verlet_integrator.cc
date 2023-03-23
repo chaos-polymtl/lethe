@@ -1,6 +1,7 @@
 #include <core/dem_properties.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
+#include <dem/disable_contacts.h>
 #include <dem/velocity_verlet_integrator.h>
 
 using namespace DEM;
@@ -150,18 +151,9 @@ VelocityVerletIntegrator<dim>::integrate(
     {
       if (cell->is_locally_owned())
         {
-          // Check if the cell is mobile, if not, integration is skipped
-          unsigned int mobile_status  = 2; // Value of the mobile status
-          bool         cell_is_mobile = false;
-
-          // Get the iterator to the cell in the map
-          auto it = cell_mobility_status_map.find(cell->active_cell_index());
-
-          // Check if the cell exists in the map (meaning that the cell is
-          // mobile or active, inactive cells are not stored) and verify if the
-          // status is mobile : true = iterator exist && value is mobile
-          cell_is_mobile =
-            it != cell_mobility_status_map.end() && it->second == mobile_status;
+          // Get the mobility status of the cell
+          unsigned int mobility_status =
+            cell_mobility_status_map.at(cell->active_cell_index());
 
           // We loop over the particles, even if cell is not mobile, to reset
           // the force and torques value of the particle with the particle id
@@ -169,7 +161,9 @@ VelocityVerletIntegrator<dim>::integrate(
           for (auto &particle : particles_in_cell)
             {
               types::particle_index particle_id = particle.get_local_index();
-              if (cell_is_mobile)
+
+              // Check if the cell is mobile, if not, integration is skipped
+              if (mobility_status == DisableContacts<dim>::mobile)
                 {
                   // Get the total array view to the particle properties once to
                   // improve efficiency
@@ -240,8 +234,8 @@ VelocityVerletIntegrator<dim>::integrate(
               else
                 {
                   // Reset forces
-                  torque[particle_id] = 0.0;
                   force[particle_id]  = 0.0;
+                  torque[particle_id] = 0.0;
                 }
             }
         }

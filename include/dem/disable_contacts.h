@@ -43,7 +43,7 @@ using namespace dealii;
 template class LinearAlgebra::distributed::Vector<int>;
 
 /**
- * The general idea behind the algorithm :
+ * The general idea behind the algorithm:
  * It uses the granular temperature to determinate if particles in a cell are
  * mobile enough that the contact forces are worth computation. A cell having a
  * granular temperature under a value (default is 1e-4) will have an inactive
@@ -51,30 +51,30 @@ template class LinearAlgebra::distributed::Vector<int>;
  * contact forces or velocity integration in future steps for those particles,
  * which make less computation cost for the simulation.
  *
- * Cells may be flagged as that called mobility status :
- * mobile (everything is calculated as if feature is not enabled),
- * active (particles with low motion next to mobile particles),
- * inactive (particles are not in a neighbor’s candidate list of cells around)
+ * Cells may be flagged as that called mobility status:
+ * - mobile (everything is calculated as if feature is not enabled)
+ * - active (particles with low motion next to mobile particles)
+ * - inactive (particles are not in a neighbor’s candidate list of cells around)
  *
  * There are some edge cases that need some attention. In these cases, particles
- * in cells can't be deactivated :
+ * in cells can't be deactivated:
  *
- * The solid fraction of the cell is under a value (default = 40%) : particles
+ * 1. The solid fraction of the cell is under a value (default = 40%): particles
  * in the cell may have other forces that can move them and it is supposed that
  * with this fraction, there is not enough particles around to hold them in
  * their position.
  *
- * Cells having empty cell neighbors : it means that particles are next to a
+ * 2. Cells having empty cell neighbors: it means that particles are next to a
  * floating wall/mesh and they may have a change of contact forces from it if
  * the wall disappears or is moving.
  *
- * The cell has cell neighbors which is flagged as mobile from the 3 criteria
- * mentioned above (granular temperature, solid fractions or floating walls) :
+ * 3. The cell has cell neighbors which is flagged as mobile from the 3 criteria
+ * mentioned above (granular temperature, solid fractions or floating walls):
  * this is because motion is badly propagated to particles to the cell around
  * without this additional "layer" of mobile cells.
  *
- * The cell has cell neighbors which is flagged as mobile from the previous
- * criterion (additional layer of mobile cells) : this is again to allow the
+ * 4. The cell has cell neighbors which is flagged as mobile from the previous
+ * criterion (additional layer of mobile cells): this is again to allow the
  * propagation of motion, but only the particles in contact with particles
  * from the mobile cells are considered for the contact force calculation but
  * their position is not computed at the integration step. Those cells are
@@ -191,6 +191,23 @@ public:
   }
 
   /**
+   * @brief Set the threshold values for the mobile status criteria (granular
+   * temperature and solid fraction)
+   *
+   * @param granular_temperature The threshold value for the granular temperature
+   *
+   * @param solid_fraction The threshold value for the solid fraction (volume of
+   * particles in the cell)
+   */
+  void
+  set_threshold_values(const double granular_temperature,
+                       const double solid_fraction)
+  {
+    granular_temperature_threshold = granular_temperature;
+    solid_fraction_threshold       = solid_fraction;
+  }
+
+  /**
    * @brief Convert the map of mobility status to a vector of mobility status
    * because map can't be used as is in the pvd post-processing or any data out,
    * it needs to be converted to a vector of mobility status by active cell
@@ -213,31 +230,38 @@ public:
     return cell_mobility_status;
   }
 
-  void
-  set_threshold_values(const double granular_temperature,
-                       const double solid_fraction)
-  {
-    granular_temperature_threshold = granular_temperature;
-    solid_fraction_threshold       = solid_fraction;
-  }
-
 private:
   /**
    * @brief Carries out the calculation of the granular temperature and solid
-   * fraction approximation in each local cell. Those values are criteria for
-   * cell mobility
+   * fraction approximation (pcm method) in each active cell. Those values are
+   * criteria for cell mobility
+   *
+   * solid fraction = n particles * particle volume / cell volume
+   *
+   * Granular temperature:
+   * 1. average velocity of cell = sum of particle velocity /
+   * n_particles
+   * 2. average of cell velocity fluctuation squared = sum of particle velocity
+   * fluctuation squared / n_particles
+   * 3. granular temperature = sum of average of cell velocity fluctuation
+   * squared / dim
    *
    * @param particle_handler The particle handler that contains all the particles
+   *
+   * @param current_local_and_ghost_cells The set of locally owned and ghost
+   * cells that empty cells are removed from
    *
    * @param cell_granular_temperature The empty vector of granular temperature
    *
    * @param cell_solid_fraction The empty vector of solid fraction
    */
   void
-  calculate_granular_temperature_solid_fraction(
+  calculate_granular_temperature_and_solid_fraction(
     const Particles::ParticleHandler<dim> &particle_handler,
-    Vector<double> &                       cell_granular_temperature,
-    Vector<double> &                       cell_solid_fraction);
+    const std::set<typename DoFHandler<dim>::active_cell_iterator>
+      &             local_and_ghost_cells_with_particles,
+    Vector<double> &cell_granular_temperature,
+    Vector<double> &cell_solid_fraction);
 
   // Map of cell mobility status, the key is the active cell index and the value
   // is the mobility status

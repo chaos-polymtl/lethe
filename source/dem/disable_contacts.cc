@@ -43,97 +43,86 @@ DisableContacts<dim>::update_local_and_ghost_cell_set(
 
 template <int dim>
 void
-DisableContacts<dim>::calculate_granular_temperature_solid_fraction(
+DisableContacts<dim>::calculate_granular_temperature_and_solid_fraction(
   const Particles::ParticleHandler<dim> &particle_handler,
-  Vector<double> &                       granular_temperature_average,
-  Vector<double> &                       solid_fractions)
+  const std::set<typename DoFHandler<dim>::active_cell_iterator>
+    &             local_and_ghost_cells_with_particles,
+  Vector<double> &granular_temperature_average,
+  Vector<double> &solid_fractions)
 {
-  // Iterating through the active cells in the active and ghost cells set
-  for (const auto &cell : local_and_ghost_cells)
+  // Iterating through the active cells in cell set with particles
+  for (const auto &cell : local_and_ghost_cells_with_particles)
     {
-      double granular_temperature_cell = 0.0;
-      double solid_fraction            = 0.0;
-
       // Particles in the cell
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-                         particles_in_cell = particle_handler.particles_in_cell(cell);
+      auto particles_in_cell = particle_handler.particles_in_cell(cell);
       const unsigned int n_particles_in_cell =
         particle_handler.n_particles_in_cell(cell);
 
-      // Check if the cell has any particles
-      if (n_particles_in_cell > 0)
+      // Initialize variables for solid fraction computation
+      double       solid_fraction = 0.0;
+      double       solid_volume   = 0.0;
+      const double cell_volume    = cell->measure();
+
+      // Initialize variables for granular temperature computation
+      double         granular_temperature_cell = 0.0;
+      Tensor<1, dim> velocity_cell_average;
+      Tensor<1, dim> cell_velocity_fluctuation_squared_average;
+
+      // First loop over particles in cell to compute the sum of
+      // particle velocity and the solid volume of the current cell
+      for (auto particles_in_cell_iterator = particles_in_cell.begin();
+           particles_in_cell_iterator != particles_in_cell.end();
+           ++particles_in_cell_iterator)
         {
-          // Initialize variables for average velocity
-          Tensor<1, dim> velocity_cell_sum;
-          Tensor<1, dim> velocity_cell_average;
+          // Get particle properties
+          auto &particle_properties =
+            particles_in_cell_iterator->get_properties();
+          const double dp = particle_properties[DEM::PropertiesIndex::dp];
 
-          // Initialize variables for solid fraction
-          double       solid_volume = 0.0;
-          const double cell_volume  = cell->measure();
-
-          // Initialize velocity fluctuations
-          Tensor<1, dim> cell_velocity_fluctuation_squared_sum;
-          Tensor<1, dim> cell_velocity_fluctuation_squared_average;
-
-          // First loop over particles in cell to calculation the average
-          // velocity and the void fraction
-          for (typename Particles::ParticleHandler<dim>::
-                 particle_iterator_range::iterator particles_in_cell_iterator =
-                   particles_in_cell.begin();
-               particles_in_cell_iterator != particles_in_cell.end();
-               ++particles_in_cell_iterator)
-            {
-              auto &particle_properties =
-                particles_in_cell_iterator->get_properties();
-
-              for (int d = 0; d < dim; ++d)
-                {
-                  velocity_cell_sum[d] +=
-                    particle_properties[DEM::PropertiesIndex::v_x + d];
-                }
-
-              solid_volume +=
-                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-                (2.0 * dim);
-            }
-
-          // Calculate average velocity in the cell
-          for (int d = 0; d < dim; ++d)
-            velocity_cell_average[d] =
-              velocity_cell_sum[d] / n_particles_in_cell;
-
-          // Calculate solid fraction of cell
-          solid_fraction = solid_volume / cell_volume;
-
-          // Second loop over particle to calculate the average granular
-          // temperature
-          for (typename Particles::ParticleHandler<dim>::
-                 particle_iterator_range::iterator particles_in_cell_iterator =
-                   particles_in_cell.begin();
-               particles_in_cell_iterator != particles_in_cell.end();
-               ++particles_in_cell_iterator)
-            {
-              auto &particle_properties =
-                particles_in_cell_iterator->get_properties();
-
-              for (int d = 0; d < dim; ++d)
-                {
-                  cell_velocity_fluctuation_squared_sum[d] +=
-                    (particle_properties[DEM::PropertiesIndex::v_x + d] -
-                     velocity_cell_average[d]) *
-                    (particle_properties[DEM::PropertiesIndex::v_x + d] -
-                     velocity_cell_average[d]);
-                }
-            }
-
-          // Calculate average granular temperature in the cell
           for (int d = 0; d < dim; ++d)
             {
-              cell_velocity_fluctuation_squared_average[d] =
-                cell_velocity_fluctuation_squared_sum[d] / n_particles_in_cell;
-              granular_temperature_cell +=
-                (1.0 / dim) * cell_velocity_fluctuation_squared_average[d];
+              // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
+              int v_axis = DEM::PropertiesIndex::v_x + d;
+
+              // Add the velocity component value
+              velocity_cell_average[d] += particle_properties[v_axis];
             }
+
+          solid_volume += M_PI * pow(dp, dim) / (2.0 * dim);
+        }
+
+      // Calculate average velocity in the cell (sum/n_particles)
+      velocity_cell_average /= n_particles_in_cell;
+
+      // Calculate solid fraction of cell
+      solid_fraction = solid_volume / cell_volume;
+
+      // Second loop over particle to compute the sum of the cell velocity
+      // fluctuations
+      for (auto particles_in_cell_iterator = particles_in_cell.begin();
+           particles_in_cell_iterator != particles_in_cell.end();
+           ++particles_in_cell_iterator)
+        {
+          auto &particle_properties =
+            particles_in_cell_iterator->get_properties();
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // Get the particle velocity component (v_x, v_y & v_z if dim = 3)
+              int v_axis = DEM::PropertiesIndex::v_x + d;
+
+              cell_velocity_fluctuation_squared_average[d] +=
+                Utilities::fixed_power<2>(particle_properties[v_axis] -
+                                          velocity_cell_average[d]);
+            }
+        }
+
+      // Calculate average granular temperature in the cell
+      for (int d = 0; d < dim; ++d)
+        {
+          cell_velocity_fluctuation_squared_average[d] /= n_particles_in_cell;
+          granular_temperature_cell +=
+            cell_velocity_fluctuation_squared_average[d] / dim;
         }
 
       // Store the average granular temperature and solid fraction with
@@ -176,14 +165,6 @@ DisableContacts<dim>::identify_mobility_status(
                            mpi_communicator);
   mobility_at_nodes = 0;
 
-  // Calculate the average granular temperature and solid fraction for each
-  // cells
-  Vector<double> granular_temperature_average(n_active_cells);
-  Vector<double> solid_fractions(n_active_cells);
-  calculate_granular_temperature_solid_fraction(particle_handler,
-                                                granular_temperature_average,
-                                                solid_fractions);
-
   // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
   // flagged as empty mobility status (3)
   for (auto cell = local_and_ghost_cells_copy.begin();
@@ -218,6 +199,16 @@ DisableContacts<dim>::identify_mobility_status(
 
   // Update ghost values of mobility_at_nodes
   mobility_at_nodes.update_ghost_values();
+
+  // Calculate the average granular temperature and solid fraction for each
+  // cells currently in the local_and_ghost_cells_copy set (no empty cells)
+  Vector<double> granular_temperature_average(n_active_cells);
+  Vector<double> solid_fractions(n_active_cells);
+  calculate_granular_temperature_and_solid_fraction(
+    particle_handler,
+    local_and_ghost_cells_copy,
+    granular_temperature_average,
+    solid_fractions);
 
   // Check if the cell is mobile by criteria:
   // * granular temperature > threshold or
