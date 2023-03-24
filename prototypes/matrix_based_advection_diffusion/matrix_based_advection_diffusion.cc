@@ -39,8 +39,8 @@
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/precondition.h>
-#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
@@ -753,21 +753,37 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
                   const double         phi_i      = fe_values.shape_value(i, q);
                   const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
-                  if (parameters.source_term == Settings::mms)
-                    cell_rhs(i) +=
-                      (-1 / parameters.peclet_number * grad_phi_i *
-                         newton_step_gradients[q] -
-                       advection_term_values[q] * newton_step_gradients[q] *
-                         phi_i +
-                       phi_i * nonlinearity + phi_i * source_term_values[q]) *
-                      dx;
+                  if (parameters.stabilization)
+                    {
+                      // TODO
+                      double h   = cell->measure();
+                      double tau = std::pow(
+                        std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                          std::pow(2 * advection_term_values[q].norm() / h, 2),
+                        -0.5);
+                      (void)h;
+                      (void)tau;
+                    }
                   else
-                    cell_rhs(i) += (-1 / parameters.peclet_number * grad_phi_i *
-                                      newton_step_gradients[q] -
-                                    advection_term_values[q] *
-                                      newton_step_gradients[q] * phi_i +
-                                    phi_i * nonlinearity) *
-                                   dx;
+                    {
+                      if (parameters.source_term == Settings::mms)
+                        cell_rhs(i) +=
+                          (-1 / parameters.peclet_number * grad_phi_i *
+                             newton_step_gradients[q] -
+                           advection_term_values[q] * newton_step_gradients[q] *
+                             phi_i +
+                           phi_i * nonlinearity +
+                           phi_i * source_term_values[q]) *
+                          dx;
+                      else
+                        cell_rhs(i) +=
+                          (-1 / parameters.peclet_number * grad_phi_i *
+                             newton_step_gradients[q] -
+                           advection_term_values[q] * newton_step_gradients[q] *
+                             phi_i +
+                           phi_i * nonlinearity) *
+                          dx;
+                    }
                 }
             }
 
@@ -837,15 +853,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                       const Tensor<1, dim> grad_phi_j =
                         fe_values.shape_grad(j, q);
 
-                      cell_matrix(i, j) +=
-                        (1 / parameters.peclet_number * grad_phi_i *
-                           grad_phi_j +
-                         advection_term_values[q] * grad_phi_j * phi_i -
-                         phi_i * nonlinearity * phi_j) *
-                        dx;
 
                       if (parameters.stabilization)
                         {
+                          // TODO
                           double h   = cell->measure();
                           double tau = std::pow(
                             std::pow(4 / (parameters.peclet_number * h * h),
@@ -860,6 +871,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                               shape_laplacian_j) +
                              (advection_term_values[q] * grad_phi_j)) *
                             (tau * (advection_term_values[q] * grad_phi_i)) *
+                            dx;
+                        }
+                      else
+                        {
+                          cell_matrix(i, j) +=
+                            (1 / parameters.peclet_number * grad_phi_i *
+                               grad_phi_j +
+                             advection_term_values[q] * grad_phi_j * phi_i -
+                             phi_i * nonlinearity * phi_j) *
                             dx;
                         }
                     }
@@ -943,11 +963,31 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
                     const Tensor<1, dim> grad_phi_j =
                       fe_values.shape_grad(j, q);
 
-                    cell_matrix(i, j) +=
-                      (1 / parameters.peclet_number * grad_phi_i * grad_phi_j +
-                       advection_term_values[q] * grad_phi_j * phi_i -
-                       phi_i * nonlinearity * phi_j) *
-                      dx;
+                    if (parameters.stabilization)
+                      {
+                        // TODO
+                        double h   = cell->measure();
+                        double tau = std::pow(
+                          std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                            std::pow(2 * advection_term_values[q].norm() / h,
+                                     2),
+                          -0.5);
+                        auto shape_hessian_j   = fe_values.shape_hessian(j, q);
+                        auto shape_laplacian_j = trace(shape_hessian_j);
+                        cell_matrix(i, j) +=
+                          ((-1 / parameters.peclet_number * shape_laplacian_j) +
+                           (advection_term_values[q] * grad_phi_j)) *
+                          (tau * (advection_term_values[q] * grad_phi_i)) * dx;
+                      }
+                    else
+                      {
+                        cell_matrix(i, j) +=
+                          (1 / parameters.peclet_number * grad_phi_i *
+                             grad_phi_j +
+                           advection_term_values[q] * grad_phi_j * phi_i -
+                           phi_i * nonlinearity * phi_j) *
+                          dx;
+                      }
                   }
               }
           }
@@ -1053,20 +1093,35 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
                   const double         phi_i      = fe_values.shape_value(i, q);
                   const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
-                  if (parameters.source_term == Settings::mms)
-                    cell_residual(i) +=
-                      (1 / parameters.peclet_number * grad_phi_i *
-                         gradients[q] +
-                       advection_term_values[q] * gradients[q] * phi_i -
-                       phi_i * nonlinearity - phi_i * source_term_values[q]) *
-                      dx;
+                  if (parameters.stabilization)
+                    {
+                      // TODO
+                      double h   = cell->measure();
+                      double tau = std::pow(
+                        std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                          std::pow(2 * advection_term_values[q].norm() / h, 2),
+                        -0.5);
+                      (void)h;
+                      (void)tau;
+                    }
                   else
-                    cell_residual(i) +=
-                      (1 / parameters.peclet_number * grad_phi_i *
-                         gradients[q] +
-                       advection_term_values[q] * gradients[q] * phi_i -
-                       phi_i * nonlinearity) *
-                      dx;
+                    {
+                      if (parameters.source_term == Settings::mms)
+                        cell_residual(i) +=
+                          (1 / parameters.peclet_number * grad_phi_i *
+                             gradients[q] +
+                           advection_term_values[q] * gradients[q] * phi_i -
+                           phi_i * nonlinearity -
+                           phi_i * source_term_values[q]) *
+                          dx;
+                      else
+                        cell_residual(i) +=
+                          (1 / parameters.peclet_number * grad_phi_i *
+                             gradients[q] +
+                           advection_term_values[q] * gradients[q] * phi_i -
+                           phi_i * nonlinearity) *
+                          dx;
+                    }
                 }
             }
 
@@ -1119,12 +1174,12 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           mg_transfer.copy_to_mg(dof_handler, mg_solution, solution);
 
           assemble_gmg();
-          
+
           // Set up preconditioned coarse-grid solver
-          SolverControl        coarse_solver_control(1000, 1e-6, false, false);
+          SolverControl coarse_solver_control(1000, 1e-6, false, false);
           SolverGMRES<VectorType> coarse_solver(coarse_solver_control);
 
-          TrilinosWrappers::PreconditionAMG precondition_amg;
+          TrilinosWrappers::PreconditionAMG                 precondition_amg;
           TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
           precondition_amg.initialize(mg_matrix[0], amg_data);
 
@@ -1185,9 +1240,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           break;
         }
       default:
-        Assert(false,
-               ExcMessage(
-                 "This program supports only AMG, GMG and ILU as preconditioner."));
+        Assert(
+          false,
+          ExcMessage(
+            "This program supports only AMG, GMG and ILU as preconditioner."));
     }
 
   constraints.distribute(completely_distributed_solution);
@@ -1393,6 +1449,11 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       PROBLEM_TYPE_header = "Test problem: boundary layer";
     else if (parameters.problem_type == Settings::double_glazing)
       PROBLEM_TYPE_header = "Test problem: double glazing";
+    std::string STABILIZATION_header = "";
+    if (parameters.stabilization)
+      STABILIZATION_header = "Stabilization: true";
+    else
+      STABILIZATION_header = "Stabilization: false";
 
     pcout << std::string(80, '=') << std::endl;
     pcout << DAT_header << std::endl;
@@ -1408,6 +1469,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
     pcout << CYCLES_header << std::endl;
     pcout << PECLET_header << std::endl;
     pcout << PROBLEM_TYPE_header << std::endl;
+    pcout << STABILIZATION_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }

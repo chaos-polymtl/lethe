@@ -108,6 +108,7 @@ struct Settings
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
   double       peclet_number;
+  bool         stabilization;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -140,6 +141,10 @@ Settings::try_parse(const std::string &prm_filename)
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
   prm.declare_entry("peclet number", "10", Patterns::Double(), "Peclet number");
+  prm.declare_entry("stabilization",
+                    "false",
+                    Patterns::Bool(),
+                    "Enable stabilization <true|false>");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -225,6 +230,7 @@ Settings::try_parse(const std::string &prm_filename)
   this->number_of_cycles   = prm.get_integer("number of cycles");
   this->initial_refinement = prm.get_integer("initial refinement");
   this->peclet_number      = prm.get_double("peclet number");
+  this->stabilization      = prm.get_bool("stabilization");
   this->output             = prm.get_bool("output");
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
@@ -351,7 +357,7 @@ public:
   clear() override;
 
   void
-  reinit_operator_parameters( const Settings &parameters);
+  reinit_operator_parameters(const Settings &parameters);
 
   void
   evaluate_newton_step(
@@ -380,7 +386,7 @@ private:
 
   Table<2, VectorizedArray<number>>      nonlinear_values;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
-  Settings parameters;
+  Settings                               parameters;
 };
 
 template <int dim, int fe_degree, typename number>
@@ -442,7 +448,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 {
   FECellIntegrator phi(data);
 
-  AdvectionField<dim>   advection_field(parameters.problem_type);
+  AdvectionField<dim> advection_field(parameters.problem_type);
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -469,10 +475,26 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
               advection_vector = advection_field.value(single_point);
             }
 
-          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                             advection_vector * phi.get_gradient(q),
-                           q);
-          phi.submit_gradient(1 / parameters.peclet_number * phi.get_gradient(q), q);
+          if (parameters.stabilization)
+            {
+              // TODO
+              double h = 3;
+              double tau =
+                std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                           std::pow(2 * advection_vector.norm() / h, 2),
+                         -0.5);
+              (void)h;
+              (void)tau;
+            }
+          else
+            {
+              phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
+                                 advection_vector * phi.get_gradient(q),
+                               q);
+              phi.submit_gradient(1 / parameters.peclet_number *
+                                    phi.get_gradient(q),
+                                  q);
+            }
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -506,7 +528,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
 
   phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-  AdvectionField<dim>   advection_field(parameters.problem_type);
+  AdvectionField<dim> advection_field(parameters.problem_type);
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
@@ -520,11 +542,26 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
             single_point[d] = point_batch[d][v];
           advection_vector = advection_field.value(single_point);
         }
-
-      phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                         advection_vector * phi.get_gradient(q),
-                       q);
-      phi.submit_gradient(1 / parameters.peclet_number * phi.get_gradient(q), q);
+      if (parameters.stabilization)
+        {
+          // TODO
+          double h = 3;
+          double tau =
+            std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                       std::pow(2 * advection_vector.norm() / h, 2),
+                     -0.5);
+          (void)h;
+          (void)tau;
+        }
+      else
+        {
+          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
+                             advection_vector * phi.get_gradient(q),
+                           q);
+          phi.submit_gradient(1 / parameters.peclet_number *
+                                phi.get_gradient(q),
+                              q);
+        }
     }
 
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -1018,12 +1055,26 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
               advection_vector = advection_field.value(single_point);
             }
 
-          phi.submit_value(advection_vector * phi.get_gradient(q) -
-                             source_value,
-                           q);
-          phi.submit_gradient(1 / parameters.peclet_number *
-                                phi.get_gradient(q),
-                              q);
+          if (parameters.stabilization)
+            {
+              // TODO
+              double h = 3;
+              double tau =
+                std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                           std::pow(2 * advection_vector.norm() / h, 2),
+                         -0.5);
+              (void)h;
+              (void)tau;
+            }
+          else
+            {
+              phi.submit_value(advection_vector * phi.get_gradient(q) -
+                                 source_value,
+                               q);
+              phi.submit_gradient(1 / parameters.peclet_number *
+                                    phi.get_gradient(q),
+                                  q);
+            }
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -1389,6 +1440,11 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
       PROBLEM_TYPE_header = "Test problem: boundary layer";
     else if (parameters.problem_type == Settings::double_glazing)
       PROBLEM_TYPE_header = "Test problem: double glazing";
+    std::string STABILIZATION_header = "";
+    if (parameters.stabilization)
+      STABILIZATION_header = "Stabilization: true";
+    else
+      STABILIZATION_header = "Stabilization: false";
 
     pcout << std::string(80, '=') << std::endl;
     pcout << DAT_header << std::endl;
@@ -1404,6 +1460,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
     pcout << CYCLES_header << std::endl;
     pcout << PECLET_header << std::endl;
     pcout << PROBLEM_TYPE_header << std::endl;
+    pcout << STABILIZATION_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }
