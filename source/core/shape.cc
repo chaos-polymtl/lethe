@@ -1049,8 +1049,7 @@ template <int dim>
 std::pair<double, Tensor<1, dim>>
 CompositeShape<dim>::apply_boolean_operations(
   std::map<unsigned int, double>         components_value,
-  std::map<unsigned int, Tensor<1, dim>> components_gradient)
-  const
+  std::map<unsigned int, Tensor<1, dim>> components_gradient) const
 {
   // The boolean operations between the shapes are applied in order
   // The last computed values are considered to be the correct values to return
