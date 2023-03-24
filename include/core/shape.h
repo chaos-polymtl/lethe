@@ -846,6 +846,16 @@ public:
   update_precalculations(DoFHandler<dim> &  updated_dof_handler,
                          const unsigned int levels_not_precalculated);
 
+  /**
+   * @brief Computes the assigned boolean operations
+   * @param components_value map containing the computed values for the component shapes
+   * @param components_gradient map containing the computed gradients for the component shapes
+   */
+  inline std::pair<double, Tensor<1, dim>>
+  apply_boolean_operations(
+    const std::map<unsigned int, double>         components_value,
+    const std::map<unsigned int, Tensor<1, dim>> components_gradient) const;
+
 private:
   // The members of this class are all the constituent and operations that are
   // to be performed to construct the composite shape
