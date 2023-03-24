@@ -351,6 +351,9 @@ public:
   clear() override;
 
   void
+  reinit_operator_parameters( const Settings &parameters);
+
+  void
   evaluate_newton_step(
     const LinearAlgebra::distributed::Vector<number> &newton_step);
 
@@ -377,6 +380,7 @@ private:
 
   Table<2, VectorizedArray<number>>      nonlinear_values;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
+  Settings parameters;
 };
 
 template <int dim, int fe_degree, typename number>
@@ -387,6 +391,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::AdvectionDiffusionOperator()
   system_matrix.clear();
 }
 
+
 template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::clear()
@@ -394,6 +399,14 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::clear()
   nonlinear_values.reinit(0, 0);
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
     clear();
+}
+
+template <int dim, int fe_degree, typename number>
+void
+AdvectionDiffusionOperator<dim, fe_degree, number>::reinit_operator_parameters(
+  const Settings &parameters)
+{
+  this->parameters = parameters;
 }
 
 template <int dim, int fe_degree, typename number>
@@ -429,9 +442,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 {
   FECellIntegrator phi(data);
 
-  Settings::ProblemType test_case = Settings::boundary_layer;
-  AdvectionField<dim>   advection_field(test_case);
-  double                peclet_number = 200;
+  AdvectionField<dim>   advection_field(parameters.problem_type);
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -461,7 +472,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
           phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
                              advection_vector * phi.get_gradient(q),
                            q);
-          phi.submit_gradient(1 / peclet_number * phi.get_gradient(q), q);
+          phi.submit_gradient(1 / parameters.peclet_number * phi.get_gradient(q), q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -495,9 +506,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
 
   phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-  Settings::ProblemType test_case = Settings::boundary_layer;
-  AdvectionField<dim>   advection_field(test_case);
-  double                peclet_number = 200;
+  AdvectionField<dim>   advection_field(parameters.problem_type);
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
@@ -515,7 +524,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
       phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
                          advection_vector * phi.get_gradient(q),
                        q);
-      phi.submit_gradient(1 / peclet_number * phi.get_gradient(q), q);
+      phi.submit_gradient(1 / parameters.peclet_number * phi.get_gradient(q), q);
     }
 
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -717,6 +726,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
 
   system_matrix.clear();
 
+  system_matrix.reinit_operator_parameters(parameters);
+
   dof_handler.distribute_dofs(fe);
 
   const IndexSet locally_relevant_dofs =
@@ -912,6 +923,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
 
   for (unsigned int level = 0; level < nlevels; ++level)
     {
+      mg_matrices[level].reinit_operator_parameters(parameters);
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
@@ -1242,7 +1254,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
-  Vector<double> norm_per_cell(triangulation.n_active_cells());
+  Vector<float> norm_per_cell(triangulation.n_active_cells());
 
   VectorTools::integrate_difference(mapping,
                                     dof_handler,
@@ -1265,7 +1277,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
-  Vector<double> error_per_cell(triangulation.n_active_cells());
+  Vector<float> error_per_cell(triangulation.n_active_cells());
 
   VectorTools::integrate_difference(mapping,
                                     dof_handler,
@@ -1297,7 +1309,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution");
 
-  Vector<double> subdomain(triangulation.n_active_cells());
+  Vector<float> subdomain(triangulation.n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     {
       subdomain(i) = triangulation.locally_owned_subdomain();
