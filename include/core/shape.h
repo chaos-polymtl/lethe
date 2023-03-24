@@ -853,8 +853,8 @@ public:
    */
   inline std::pair<double, Tensor<1, dim>>
   apply_boolean_operations(
-    const std::map<unsigned int, double>         components_value,
-    const std::map<unsigned int, Tensor<1, dim>> components_gradient) const;
+    std::map<unsigned int, double>         components_value,
+    std::map<unsigned int, Tensor<1, dim>> components_gradient) const;
 
 private:
   // The members of this class are all the constituent and operations that are

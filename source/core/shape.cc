@@ -1048,14 +1048,10 @@ CompositeShape<dim>::update_precalculations(
 template <int dim>
 std::pair<double, Tensor<1, dim>>
 CompositeShape<dim>::apply_boolean_operations(
-  const std::map<unsigned int, double>         initial_components_value,
-  const std::map<unsigned int, Tensor<1, dim>> initial_components_gradient)
+  std::map<unsigned int, double>         components_value,
+  std::map<unsigned int, Tensor<1, dim>> components_gradient)
   const
 {
-  std::map<unsigned int, double> components_value = initial_components_value;
-  std::map<unsigned int, Tensor<1, dim>> components_gradient =
-    initial_components_gradient;
-
   // The boolean operations between the shapes are applied in order
   // The last computed values are considered to be the correct values to return
   double         levelset = components_value[0];
