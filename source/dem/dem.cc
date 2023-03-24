@@ -157,7 +157,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
     {
       check_load_balance_step = &DEMSolver<dim>::check_load_balance_dynamic;
-      ;
     }
   else if (parameters.model_parameters.load_balance_method ==
            Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::
@@ -1200,16 +1199,6 @@ DEMSolver<dim>::solve()
                 parameters.floating_walls,
                 simulation_control->get_current_time(),
                 disable_contacts_object,
-                has_floating_mesh);
-
-              container_manager.execute_particle_particle_broad_search(
-                particle_handler, has_periodic_boundaries);
-
-              container_manager.execute_particle_wall_broad_search(
-                particle_handler,
-                boundary_cell_object,
-                parameters.floating_walls,
-                simulation_control->get_current_time(),
                 has_floating_mesh);
             }
 
