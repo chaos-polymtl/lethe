@@ -70,7 +70,7 @@ subsection insertion info
   set insertion box minimum y                        = 0.1
   set insertion box minimum z                        = 0.0
   set insertion box maximum x                        = 0.15
-  set insertion box maximum y                        = 0.
+  set insertion box maximum y                        = 1.0
   set insertion box maximum z                        = 0.1
   set insertion distance threshold                   = 1.01
   set insertion random number range                  = 0.005

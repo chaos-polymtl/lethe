@@ -148,8 +148,8 @@ Visualization<dim>::print_intermediate_format(
   DataOut<dim> data_out;
   data_out.attach_dof_handler(background_dh);
   data_out.add_data_vector(data_to_print,
-                           "dummy_from_processor_" +
-                             Utilities::int_to_string(this_mpi_process),
+                           "**print_from_processor_" +
+                             Utilities::int_to_string(this_mpi_process) + "**",
                            DataOut<dim>::type_cell_data);
   data_out.build_patches();
 
