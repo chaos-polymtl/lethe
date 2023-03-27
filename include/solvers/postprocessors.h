@@ -375,7 +375,6 @@ public:
   {
     const unsigned int n_quadrature_points = inputs.evaluation_points.size();
 
-    double         levelset = 0;
     Tensor<1, dim> levelset_gradient{};
     Tensor<1, dim> properly_scaled_levelset_gradient{};
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
@@ -384,11 +383,10 @@ public:
 
         const Point<dim> evaluation_point = inputs.evaluation_points[q];
         const auto       cell             = inputs.template get_cell<dim>();
-        levelset = shape->value_with_cell_guess(evaluation_point, cell);
         levelset_gradient =
           shape->gradient_with_cell_guess(evaluation_point, cell);
         properly_scaled_levelset_gradient =
-          levelset * levelset_gradient / levelset_gradient.norm();
+          levelset_gradient / levelset_gradient.norm();
         for (int d = 0; d < dim; d++)
           computed_quantities[q][d] = properly_scaled_levelset_gradient[d];
       }
