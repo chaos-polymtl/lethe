@@ -1065,8 +1065,10 @@ CompositeShape<dim>::apply_boolean_operations(
       double         value_first_component, value_second_component;
       Tensor<1, dim> gradient_first_component{};
       Tensor<1, dim> gradient_second_component{};
-      value_first_component  = components_value.at(first_id);
-      value_second_component = components_value.at(second_id);
+      value_first_component     = components_value.at(first_id);
+      value_second_component    = components_value.at(second_id);
+      gradient_first_component  = components_gradient.at(first_id);
+      gradient_second_component = components_gradient.at(second_id);
       switch (operation)
         {
           case BooleanOperation::Union:
