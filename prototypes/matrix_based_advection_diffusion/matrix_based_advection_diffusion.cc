@@ -707,8 +707,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
   system_rhs = 0;
   FEValues<dim> fe_values(fe,
                           quadrature_formula,
-                          update_values | update_gradients | update_JxW_values |
-                            update_quadrature_points);
+                          update_values | update_gradients | update_hessians |
+                            update_JxW_values | update_quadrature_points);
 
   const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
   const unsigned int n_q_points    = fe_values.n_quadrature_points;
@@ -719,6 +719,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
   std::vector<double>         newton_step_values(n_q_points);
   std::vector<Tensor<1, dim>> newton_step_gradients(n_q_points);
+  std::vector<double>         newton_step_laplacians(n_q_points);
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -742,6 +743,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
           fe_values.get_function_values(solution, newton_step_values);
           fe_values.get_function_gradients(solution, newton_step_gradients);
+          if (parameters.stabilization)
+            fe_values.get_function_laplacians(solution, newton_step_laplacians);
+
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -753,36 +757,36 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
                   const double         phi_i      = fe_values.shape_value(i, q);
                   const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
+                  if (parameters.source_term == Settings::mms)
+                    cell_rhs(i) +=
+                      (-1 / parameters.peclet_number * grad_phi_i *
+                         newton_step_gradients[q] -
+                       advection_term_values[q] * newton_step_gradients[q] *
+                         phi_i +
+                       phi_i * nonlinearity + phi_i * source_term_values[q]) *
+                      dx;
+                  else
+                    cell_rhs(i) += (-1 / parameters.peclet_number * grad_phi_i *
+                                      newton_step_gradients[q] -
+                                    advection_term_values[q] *
+                                      newton_step_gradients[q] * phi_i +
+                                    phi_i * nonlinearity) *
+                                   dx;
+
                   if (parameters.stabilization)
                     {
-                      // TODO
                       double h   = cell->measure();
                       double tau = std::pow(
                         std::pow(4 / (parameters.peclet_number * h * h), 2) +
                           std::pow(2 * advection_term_values[q].norm() / h, 2),
                         -0.5);
-                      (void)h;
-                      (void)tau;
-                    }
-                  else
-                    {
-                      if (parameters.source_term == Settings::mms)
-                        cell_rhs(i) +=
-                          (-1 / parameters.peclet_number * grad_phi_i *
-                             newton_step_gradients[q] -
-                           advection_term_values[q] * newton_step_gradients[q] *
-                             phi_i +
-                           phi_i * nonlinearity +
-                           phi_i * source_term_values[q]) *
-                          dx;
-                      else
-                        cell_rhs(i) +=
-                          (-1 / parameters.peclet_number * grad_phi_i *
-                             newton_step_gradients[q] -
-                           advection_term_values[q] * newton_step_gradients[q] *
-                             phi_i +
-                           phi_i * nonlinearity) *
-                          dx;
+
+                      cell_rhs(i) +=
+                        ((-1 / parameters.peclet_number *
+                          newton_step_laplacians[q]) +
+                         (advection_term_values[q] *
+                          newton_step_gradients[q])) *
+                        (tau * (advection_term_values[q] * grad_phi_i)) * dx;
                     }
                 }
             }
@@ -853,10 +857,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                       const Tensor<1, dim> grad_phi_j =
                         fe_values.shape_grad(j, q);
 
+                      cell_matrix(i, j) +=
+                        (1 / parameters.peclet_number * grad_phi_i *
+                           grad_phi_j +
+                         advection_term_values[q] * grad_phi_j * phi_i -
+                         phi_i * nonlinearity * phi_j) *
+                        dx;
 
                       if (parameters.stabilization)
                         {
-                          // TODO
                           double h   = cell->measure();
                           double tau = std::pow(
                             std::pow(4 / (parameters.peclet_number * h * h),
@@ -871,15 +880,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                               shape_laplacian_j) +
                              (advection_term_values[q] * grad_phi_j)) *
                             (tau * (advection_term_values[q] * grad_phi_i)) *
-                            dx;
-                        }
-                      else
-                        {
-                          cell_matrix(i, j) +=
-                            (1 / parameters.peclet_number * grad_phi_i *
-                               grad_phi_j +
-                             advection_term_values[q] * grad_phi_j * phi_i -
-                             phi_i * nonlinearity * phi_j) *
                             dx;
                         }
                     }
@@ -904,7 +904,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
 
   FEValues<dim> fe_values(fe,
                           quadrature_formula,
-                          update_values | update_gradients |
+                          update_values | update_gradients | update_hessians |
                             update_quadrature_points | update_JxW_values);
 
   const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
@@ -963,9 +963,14 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
                     const Tensor<1, dim> grad_phi_j =
                       fe_values.shape_grad(j, q);
 
+                    cell_matrix(i, j) +=
+                      (1 / parameters.peclet_number * grad_phi_i * grad_phi_j +
+                       advection_term_values[q] * grad_phi_j * phi_i -
+                       phi_i * nonlinearity * phi_j) *
+                      dx;
+
                     if (parameters.stabilization)
                       {
-                        // TODO
                         double h   = cell->measure();
                         double tau = std::pow(
                           std::pow(4 / (parameters.peclet_number * h * h), 2) +
@@ -978,15 +983,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
                           ((-1 / parameters.peclet_number * shape_laplacian_j) +
                            (advection_term_values[q] * grad_phi_j)) *
                           (tau * (advection_term_values[q] * grad_phi_i)) * dx;
-                      }
-                    else
-                      {
-                        cell_matrix(i, j) +=
-                          (1 / parameters.peclet_number * grad_phi_i *
-                             grad_phi_j +
-                           advection_term_values[q] * grad_phi_j * phi_i -
-                           phi_i * nonlinearity * phi_j) *
-                          dx;
                       }
                   }
               }
@@ -1047,8 +1043,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
   FEValues<dim> fe_values(fe,
                           quadrature_formula,
-                          update_values | update_gradients | update_JxW_values |
-                            update_quadrature_points);
+                          update_values | update_gradients | update_hessians |
+                            update_JxW_values | update_quadrature_points);
 
   const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
   const unsigned int n_q_points    = fe_values.n_quadrature_points;
@@ -1059,6 +1055,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
   std::vector<double>         values(n_q_points);
   std::vector<Tensor<1, dim>> gradients(n_q_points);
+  std::vector<double>         laplacians(n_q_points);
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -1082,6 +1079,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
           fe_values.get_function_values(local_evaluation_point, values);
           fe_values.get_function_gradients(local_evaluation_point, gradients);
+          if (parameters.stabilization)
+            fe_values.get_function_laplacians(local_evaluation_point,
+                                              laplacians);
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -1093,34 +1093,32 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
                   const double         phi_i      = fe_values.shape_value(i, q);
                   const Tensor<1, dim> grad_phi_i = fe_values.shape_grad(i, q);
 
+                  if (parameters.source_term == Settings::mms)
+                    cell_residual(i) +=
+                      (1 / parameters.peclet_number * grad_phi_i *
+                         gradients[q] +
+                       advection_term_values[q] * gradients[q] * phi_i -
+                       phi_i * nonlinearity - phi_i * source_term_values[q]) *
+                      dx;
+                  else
+                    cell_residual(i) +=
+                      (1 / parameters.peclet_number * grad_phi_i *
+                         gradients[q] +
+                       advection_term_values[q] * gradients[q] * phi_i -
+                       phi_i * nonlinearity) *
+                      dx;
+
                   if (parameters.stabilization)
                     {
-                      // TODO
                       double h   = cell->measure();
                       double tau = std::pow(
                         std::pow(4 / (parameters.peclet_number * h * h), 2) +
                           std::pow(2 * advection_term_values[q].norm() / h, 2),
                         -0.5);
-                      (void)h;
-                      (void)tau;
-                    }
-                  else
-                    {
-                      if (parameters.source_term == Settings::mms)
-                        cell_residual(i) +=
-                          (1 / parameters.peclet_number * grad_phi_i *
-                             gradients[q] +
-                           advection_term_values[q] * gradients[q] * phi_i -
-                           phi_i * nonlinearity -
-                           phi_i * source_term_values[q]) *
-                          dx;
-                      else
-                        cell_residual(i) +=
-                          (1 / parameters.peclet_number * grad_phi_i *
-                             gradients[q] +
-                           advection_term_values[q] * gradients[q] * phi_i -
-                           phi_i * nonlinearity) *
-                          dx;
+                      cell_residual(i) +=
+                        ((-1 / parameters.peclet_number * laplacians[q]) +
+                         (advection_term_values[q] * gradients[q])) *
+                        (tau * (advection_term_values[q] * grad_phi_i)) * dx;
                     }
                 }
             }
@@ -1390,13 +1388,22 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::output_results(
   else if (parameters.problem_type == Settings::double_glazing)
     test_case = "_double_glazing";
 
-  data_out.write_vtu_with_pvtu_record(
-    parameters.output_path,
-    parameters.output_name + std::to_string(dim) + "d_Pe" +
-      std::to_string(parameters.peclet_number) + test_case,
-    cycle,
-    MPI_COMM_WORLD,
-    3);
+  if (parameters.stabilization)
+    data_out.write_vtu_with_pvtu_record(
+      parameters.output_path,
+      parameters.output_name + std::to_string(dim) + "d_Pe" +
+        std::to_string(parameters.peclet_number) + test_case + +"_stabilized",
+      cycle,
+      MPI_COMM_WORLD,
+      3);
+  else
+    data_out.write_vtu_with_pvtu_record(
+      parameters.output_path,
+      parameters.output_name + std::to_string(dim) + "d_Pe" +
+        std::to_string(parameters.peclet_number) + test_case,
+      cycle,
+      MPI_COMM_WORLD,
+      3);
 }
 
 template <int dim, int fe_degree>
