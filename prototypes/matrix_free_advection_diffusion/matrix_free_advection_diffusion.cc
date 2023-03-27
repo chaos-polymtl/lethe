@@ -458,8 +458,15 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 
       phi.reinit(cell);
 
-      phi.gather_evaluate(src,
-                          EvaluationFlags::values | EvaluationFlags::gradients);
+      if (parameters.stabilization)
+        phi.gather_evaluate(src,
+                            EvaluationFlags::values |
+                              EvaluationFlags::gradients |
+                              EvaluationFlags::hessians);
+      else
+        phi.gather_evaluate(src,
+                            EvaluationFlags::values |
+                              EvaluationFlags::gradients);
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
@@ -483,8 +490,15 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
                 std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
                            std::pow(2 * advection_vector.norm() / h, 2),
                          -0.5);
-              (void)h;
-              (void)tau;
+              phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
+                                 advection_vector * phi.get_gradient(q),
+                               q);
+              phi.submit_gradient(
+                1 / parameters.peclet_number * phi.get_gradient(q) +
+                  (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
+                    (advection_vector * phi.get_gradient(q))) *
+                   tau * advection_vector),
+                q);
             }
           else
             {
@@ -526,7 +540,11 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
 
   const unsigned int cell = phi.get_current_cell_index();
 
-  phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+  if (parameters.stabilization)
+    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                 EvaluationFlags::hessians);
+  else
+    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
   AdvectionField<dim> advection_field(parameters.problem_type);
 
@@ -550,8 +568,15 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
             std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
                        std::pow(2 * advection_vector.norm() / h, 2),
                      -0.5);
-          (void)h;
-          (void)tau;
+          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
+                             advection_vector * phi.get_gradient(q),
+                           q);
+          phi.submit_gradient(
+            1 / parameters.peclet_number * phi.get_gradient(q) +
+              (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
+                (advection_vector * phi.get_gradient(q))) *
+               tau * advection_vector),
+            q);
         }
       else
         {
@@ -1023,7 +1048,12 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
       phi.reinit(cell);
 
       phi.read_dof_values_plain(src);
-      phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+      if (parameters.stabilization)
+        phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                     EvaluationFlags::hessians);
+      else
+        phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
@@ -1063,8 +1093,15 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
                 std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
                            std::pow(2 * advection_vector.norm() / h, 2),
                          -0.5);
-              (void)h;
-              (void)tau;
+              phi.submit_value(advection_vector * phi.get_gradient(q) -
+                                 source_value,
+                               q);
+              phi.submit_gradient(
+                1 / parameters.peclet_number * phi.get_gradient(q) +
+                  (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
+                    (advection_vector * phi.get_gradient(q))) *
+                   tau * advection_vector),
+                q);
             }
           else
             {
