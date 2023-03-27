@@ -623,8 +623,11 @@ private:
   // particles.
   IBParticlesDEM<dim> ib_dem;
 
-  // Postprocessor to output the signed distance function of the immersed solids
+  // Postprocessors to output the signed distance function of the immersed
+  // solids
   std::shared_ptr<LevelsetPostprocessor<dim>> levelset_postprocessor;
+  std::shared_ptr<LevelsetGradientPostprocessor<dim>>
+    levelset_gradient_postprocessor;
 };
 
 

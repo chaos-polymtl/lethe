@@ -356,6 +356,46 @@ private:
   std::shared_ptr<Shape<dim>> shape;
 };
 
+/**
+ * @brief LevelsetGradientPostprocessor Post-processor class used to calculate
+ * the levelset gradient field for a given shape within the domain.
+ */
+template <int dim>
+class LevelsetGradientPostprocessor : public DataPostprocessorVector<dim>
+{
+public:
+  LevelsetGradientPostprocessor(const std::shared_ptr<Shape<dim>> shape)
+    : DataPostprocessorVector<dim>(std::string("levelset_gradient"),
+                                   update_values | update_quadrature_points)
+    , shape(shape)
+  {}
+  virtual void
+  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
+                        std::vector<Vector<double>> &computed_quantities) const
+  {
+    const unsigned int n_quadrature_points = inputs.evaluation_points.size();
 
+    double         levelset = 0;
+    Tensor<1, dim> levelset_gradient{};
+    Tensor<1, dim> properly_scaled_levelset_gradient{};
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        AssertDimension(computed_quantities[q].size(), dim);
+
+        const Point<dim> evaluation_point = inputs.evaluation_points[q];
+        const auto       cell             = inputs.template get_cell<dim>();
+        levelset = shape->value_with_cell_guess(evaluation_point, cell);
+        levelset_gradient =
+          shape->gradient_with_cell_guess(evaluation_point, cell);
+        properly_scaled_levelset_gradient =
+          levelset * levelset_gradient / levelset_gradient.norm();
+        for (int d = 0; d < dim; d++)
+          computed_quantities[q][d] = properly_scaled_levelset_gradient[d];
+      }
+  }
+
+private:
+  std::shared_ptr<Shape<dim>> shape;
+};
 
 #endif

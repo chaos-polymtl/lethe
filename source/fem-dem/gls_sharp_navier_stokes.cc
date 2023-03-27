@@ -1421,7 +1421,11 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
   levelset_postprocessor =
     std::make_shared<LevelsetPostprocessor<dim>>(combined_shapes);
+  levelset_gradient_postprocessor =
+    std::make_shared<LevelsetGradientPostprocessor<dim>>(combined_shapes);
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
+  data_out.add_data_vector(this->present_solution,
+                           *levelset_gradient_postprocessor);
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
   Vector<float> cell_overconstrained(this->triangulation->n_active_cells());
 
