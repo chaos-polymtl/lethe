@@ -162,7 +162,7 @@ public:
    * enable the auxiliary physics to output their solution via the core solver.
    */
   void
-  attach_solution_to_output(DataOut<dim> &data_out);
+  attach_solution_to_output(DataOut<dim> &data_out) override;
 
   /**
    * @brief Calculates the L2 error of the solution
@@ -253,13 +253,13 @@ public:
    * mesh refinement/coarsening
    */
   void
-  pre_mesh_adaptation();
+  pre_mesh_adaptation() override;
 
   /**
    * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
    */
   void
-  post_mesh_adaptation();
+  post_mesh_adaptation() override;
 
   /**
    * @brief Compute the Kelly error estimator on the phase parameter for mesh refinement.
@@ -274,7 +274,7 @@ public:
   void
   compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
                                 Parameters::MultipleAdaptationParameters> &ivar,
-                dealii::Vector<float> &estimated_error_per_cell);
+                dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
    * @brief Prepares auxiliary physics to write checkpoint
@@ -314,7 +314,7 @@ public:
    */
   void
   solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true);
+                      const bool renewed_matrix = true) override;
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
@@ -390,13 +390,13 @@ private:
    *  @brief Assembles the matrix associated with the solver
    */
   void
-  assemble_system_matrix();
+  assemble_system_matrix() override;
 
   /**
    * @brief Assemble the rhs associated with the solver
    */
   void
-  assemble_system_rhs();
+  assemble_system_rhs() override;
 
 
   /**

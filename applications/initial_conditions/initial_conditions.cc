@@ -16,7 +16,7 @@ public:
     : Function<dim>(2)
   {}
   virtual void
-  vector_value(const Point<dim> &p, Vector<double> &values) const;
+  vector_value(const Point<dim> &p, Vector<double> &values) const override;
 };
 template <int dim>
 void

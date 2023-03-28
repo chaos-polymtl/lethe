@@ -82,25 +82,20 @@ private:
    * Implementation of the corresponding function of the base class.
    */
   virtual const std::vector<DataOutBase::Patch<0, dim>> &
-  get_patches() const;
+  get_patches() const override;
 
   /**
    * Implementation of the corresponding function of the base class.
    */
   virtual std::vector<std::string>
-  get_dataset_names() const;
+  get_dataset_names() const override;
 
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
   virtual std::vector<
     std::tuple<unsigned int,
                unsigned int,
                std::string,
                DataComponentInterpretation::DataComponentInterpretation>>
-  get_nonscalar_data_ranges() const;
-#  else
-  virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
-  get_vector_data_ranges() const;
-#  endif
+  get_nonscalar_data_ranges() const override;
 
   /**
    * Output information that is filled by build_patches() and

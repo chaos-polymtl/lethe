@@ -160,7 +160,7 @@ public:
   }
 
   double
-  get_viscosity_scale() const
+  get_viscosity_scale() const override
   {
     return viscosity;
   }
@@ -256,7 +256,7 @@ public:
   }
 
   double
-  get_viscosity_scale() const
+  get_viscosity_scale() const override
   {
     return 1.0 > shear_rate_min ? K * std::pow(1.0, n - 1) :
                                   K * std::pow(shear_rate_min, n - 1);
@@ -376,7 +376,7 @@ public:
   }
 
   double
-  get_viscosity_scale() const
+  get_viscosity_scale() const override
   {
     return viscosity_inf +
            (viscosity_0 - viscosity_inf) *

@@ -50,13 +50,13 @@ public:
   ~GLSSharpNavierStokesSolver();
 
   void
-  solve();
+  solve() override;
 
   /**
    * @brief Call for the assembly of the matrix
    */
   void
-  assemble_system_matrix()
+  assemble_system_matrix() override
   {
     assemble_matrix_and_rhs();
   }
@@ -65,7 +65,7 @@ public:
    * @brief Call for the assembly of the right-hand side
    */
   void
-  assemble_system_rhs()
+  assemble_system_rhs() override
   {
     assemble_rhs();
     sharp_edge();
@@ -504,20 +504,20 @@ Return a bool that describes  if a cell contains a specific point
      * Implementation of the corresponding function of the base class.
      */
     virtual const std::vector<DataOutBase::Patch<0, dim>> &
-    get_patches() const;
+    get_patches() const override;
 
     /**
      * Implementation of the corresponding function of the base class.
      */
     virtual std::vector<std::string>
-    get_dataset_names() const;
+    get_dataset_names() const override;
 
     virtual std::vector<
       std::tuple<unsigned int,
                  unsigned int,
                  std::string,
                  DataComponentInterpretation::DataComponentInterpretation>>
-    get_nonscalar_data_ranges() const;
+    get_nonscalar_data_ranges() const override;
 
 
 

@@ -32,8 +32,9 @@ public:
     : DataPostprocessorVector<dim>("vorticity", update_gradients)
   {}
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     AssertDimension(input_data.solution_gradients.size(),
                     computed_quantities.size());
@@ -75,8 +76,9 @@ public:
     : DataPostprocessorScalar<dim>("q_criterion", update_gradients)
   {}
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     for (unsigned int p = 0; p < input_data.solution_gradients.size(); ++p)
       {
@@ -125,8 +127,9 @@ public:
     : DataPostprocessorScalar<dim>("velocity_divergence", update_gradients)
   {}
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     AssertDimension(input_data.solution_gradients.size(),
                     computed_quantities.size());
@@ -162,8 +165,9 @@ public:
     , omega_z(p_omega_z)
   {}
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     Tensor<1, dim> omega;
     omega[0] = omega_x;
@@ -215,8 +219,9 @@ public:
   {}
 
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     const unsigned int n_quadrature_points = inputs.solution_gradients.size();
 
@@ -257,8 +262,9 @@ public:
     : DataPostprocessorScalar<dim>("shear_rate", update_gradients)
   {}
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     const unsigned int n_quadrature_points = inputs.solution_gradients.size();
 
@@ -294,8 +300,9 @@ public:
   {}
 
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     const unsigned int n_quadrature_points =
       input_data.evaluation_points.size();
@@ -327,8 +334,9 @@ public:
   {}
 
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &input_data,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     const unsigned int n_quadrature_points =
       input_data.evaluation_points.size();
