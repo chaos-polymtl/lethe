@@ -180,7 +180,7 @@ private:
   assemble_L2_projection();
 
   virtual void
-  setup_dofs_fd();
+  setup_dofs_fd() override;
 
   virtual void
   set_initial_condition_fd(

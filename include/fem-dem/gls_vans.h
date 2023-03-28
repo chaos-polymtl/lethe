@@ -156,7 +156,7 @@ protected:
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -175,13 +175,13 @@ protected:
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
    * @brief sets up the vector of assembler functions
    */
   void
-  setup_assemblers();
+  setup_assemblers() override;
 
 
   /**
@@ -190,7 +190,7 @@ protected:
 
   void
   copy_local_matrix_to_global_matrix(
-    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+    const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
    * @brief Copy local cell rhs information to global rhs
@@ -198,7 +198,7 @@ protected:
 
   void
   copy_local_rhs_to_global_rhs(
-    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+    const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
    * @brief a function for adding data vectors to the data_out object for

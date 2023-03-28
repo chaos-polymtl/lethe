@@ -128,7 +128,7 @@ public:
   void
   generate_rhs(const VectorType &            solution,
                const DoFHandler<dim> &       dof_handler_fluid,
-               std::shared_ptr<Mapping<dim>> mapping_fluid);
+               std::shared_ptr<Mapping<dim>> mapping_fluid) override;
 
 private:
 };
@@ -159,7 +159,7 @@ public:
   void
   generate_rhs(const VectorType &            solution,
                const DoFHandler<dim> &       dof_handler_fluid,
-               std::shared_ptr<Mapping<dim>> mapping_fluid);
+               std::shared_ptr<Mapping<dim>> mapping_fluid) override;
 
 private:
 };

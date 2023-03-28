@@ -62,7 +62,7 @@ protected:
    * Navier-Stokes problem
    */
   virtual void
-  setup_dofs_fd();
+  setup_dofs_fd() override;
 
   /**
    * @brief update non zero constraint if the boundary is time dependant
@@ -212,7 +212,7 @@ protected:
    */
   void
   solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true);
+                      const bool renewed_matrix = true) override;
 
 private:
   /**
