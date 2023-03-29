@@ -484,12 +484,24 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 
           if (parameters.stabilization)
             {
-              // TODO
-              double h = 3;
-              double tau =
-                std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
-                           std::pow(2 * advection_vector.norm() / h, 2),
-                         -0.5);
+              VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+              std::array<number, VectorizedArray<number>::size()> h;
+
+              for (auto lane = 0u;
+                   lane < data.n_active_entries_per_cell_batch(cell);
+                   lane++)
+                {
+                  h[lane] = data.get_cell_iterator(cell, lane)->measure();
+                }
+
+              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+                {
+                  tau[v] = std::pow(
+                    std::pow(4 / (parameters.peclet_number * h[v] * h[v]), 2) +
+                      std::pow(2 * advection_vector.norm() / h[v], 2),
+                    -0.5);
+                }
+
               phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
                                  advection_vector * phi.get_gradient(q),
                                q);
@@ -562,12 +574,27 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
         }
       if (parameters.stabilization)
         {
-          // TODO
-          double h = 3;
-          double tau =
-            std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
-                       std::pow(2 * advection_vector.norm() / h, 2),
-                     -0.5);
+          VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+          std::array<number, VectorizedArray<number>::size()> h;
+
+          for (auto lane = 0u;
+               lane <
+               this->get_matrix_free()->n_active_entries_per_cell_batch(cell);
+               lane++)
+            {
+              h[lane] = this->get_matrix_free()
+                          ->get_cell_iterator(cell, lane)
+                          ->measure();
+            }
+          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+            {
+              tau[v] =
+                std::pow(std::pow(4 / (parameters.peclet_number * h[v] * h[v]),
+                                  2) +
+                           std::pow(2 * advection_vector.norm() / h[v], 2),
+                         -0.5);
+            }
+
           phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
                              advection_vector * phi.get_gradient(q),
                            q);
@@ -1087,12 +1114,27 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
           if (parameters.stabilization)
             {
-              // TODO
-              double h = 3;
-              double tau =
-                std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
-                           std::pow(2 * advection_vector.norm() / h, 2),
-                         -0.5);
+              VectorizedArray<double> tau = VectorizedArray<double>(0.0);
+              std::array<double, VectorizedArray<double>::size()> h;
+
+              for (auto lane = 0u;
+                   lane < system_matrix.get_matrix_free()
+                            ->n_active_entries_per_cell_batch(cell);
+                   lane++)
+                {
+                  h[lane] = system_matrix.get_matrix_free()
+                              ->get_cell_iterator(cell, lane)
+                              ->measure();
+                }
+
+              for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+                {
+                  tau[v] = std::pow(
+                    std::pow(4 / (parameters.peclet_number * h[v] * h[v]), 2) +
+                      std::pow(2 * advection_vector.norm() / h[v], 2),
+                    -0.5);
+                }
+
               phi.submit_value(advection_vector * phi.get_gradient(q) -
                                  source_value,
                                q);
