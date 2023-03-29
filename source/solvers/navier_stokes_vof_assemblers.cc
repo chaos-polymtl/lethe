@@ -605,8 +605,8 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
 
-      const double &        curvature_value = scratch_data.curvature_values[q];
-
+      // const double &        curvature_value = scratch_data.curvature_values[q];
+      const double curvature_value = 8.0;
 
       // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
