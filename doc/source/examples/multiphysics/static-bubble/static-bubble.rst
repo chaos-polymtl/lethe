@@ -10,6 +10,7 @@ This example simulates a `two-dimensional static bubble`_.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d``
 - Two phase flow handled by the Volume of fluids (VOF) approach with surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
@@ -18,8 +19,9 @@ Features
 ---------------------------
 Files used in this example
 ---------------------------
+
 - Parameter file: ``examples/multiphysics/static-bubble/static_bubble.prm``
-- Python file to generate plot: ``examples/multiphysics/static-bubble/static_bubble.py``
+- Python file to generate plots: ``examples/multiphysics/static-bubble/static_bubble.py``
 
 -----------------------------
 Description of the case
@@ -36,13 +38,14 @@ A circular bubble of radius :math:`R=0.5` is in equilibrium in the center of a t
 """"""""""""""""""""""""""""""""
 Surface tension force
 """"""""""""""""""""""""""""""""
-As its name suggests, the surface tension is a surface force. It is applied at the interface between two immisible fluids and is given by :
+
+As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface force. It is applied at the interface between two immisible fluids and is given by :
 
 .. math::
 
     {\bf{f_{\sigma}}} = \sigma \kappa {\bf{n}}
 
-where :math:`\sigma`, :math:`\kappa` is the curvature and :math:`\bf{n}` is the normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force using the continuous surface force (CSF) model [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_], that is :
+where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the curvature and :math:`\bf{n}` is the normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force :math:`\bf{F_{\sigma}}` using the continuous surface force (CSF) model [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_], that is :
 
 .. math::
 
@@ -74,14 +77,14 @@ The static bubble case is a relevant case to study the spurious currents, since 
 
     \Delta p = p_{int} - p_{ext} = \sigma \kappa
 
-with the analyical curvature of the bubble : :math:`\kappa = 1/R`. This example is based on the static droplet case reported in [`2 <https://doi.org/10.1002/fld.2643>`_].
+with the analyical curvature of the 2D bubble : :math:`\kappa = 1/R`. This example is based on the static droplet case reported in [`2 <https://doi.org/10.1002/fld.2643>`_].
 
 .. _Normal and curvature computations:
 
 """""""""""""""""""""""""""""""""
 Normal and curvature computations
 """""""""""""""""""""""""""""""""
-The following equations calculate the filtered phase fraction gradient and filtered curvature, respectively.
+The following equations compute the filtered phase fraction gradient and filtered curvature, respectively.
 
 
 .. math::
@@ -96,15 +99,21 @@ where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the filte
 
 where :math:`k` is the filtered curvature, and :math:`\eta_k` is the curvature filter value, and :math:`v` is a test function.
 
+The phase fraction gradient filter :math:`\eta_n` and the curvature filter value :math:`\eta_k` are respectively computed according to:
+
+.. math::
+
+  \eta_n = \alpha h^2
+
+  \eta_k = \beta h^2
+
+where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` is the cell size.
+
 --------------
 Parameter file
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme `(bdf1)`, for a :math:`3~\text{s}` simulation time with an constant time step of :math:`0.005~\text{s}`.
-
-.. note::
-    This example uses an adaptive time-stepping method, where the
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output frequency = 20`` ensures that the results are written every 20 iterations. Consequently, the time increment between each vtu file is not constant.
 
 .. code-block:: text
 
@@ -137,6 +146,8 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``surface
 Volume of Fluid (VOF)
 """"""""""""""""""""""""""""""""
 
+The surface tension force computation is enable in the ``VOF`` subsection. The surface tension coefficient :math:`\sigma` is set by the parameter ``surface tension coefficient``. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+
 .. code-block:: text
 
     #---------------------------------------------------
@@ -145,23 +156,31 @@ Volume of Fluid (VOF)
 
     subsection VOF
       subsection surface tension force
-        set enable                         = true
-        set surface tension coefficient    = 1
+        set enable                                = true
+        set surface tension coefficient           = 1
         set phase fraction gradient filter factor = 4
         set curvature filter factor               = 1
-        set output auxiliary fields        = true
+        set output auxiliary fields               = true
       end
     end
+
+.. tip::
+
+  The phase fraction gradient filter value (:math:`\eta_n = \alpha h^2`) and curvature filter value (:math:`\eta_k = \beta h^2`) must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
+
+  1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
+  2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
+  3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
+  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
 
 
 
 """"""""""""""""""""""""""""""""
 Initial conditions
 """"""""""""""""""""""""""""""""
-In the ``initial condition``, the initial velocity and initial position
-of the droplet are defined. The droplet is initially
-defined as a circle with a radius :math:`R= 0.5` at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step to ensure that the initial phase distribution
-sufficiently smooth and avoid a staircase respresentation of the interface.
+
+In the ``initial condition``, the initial velocity and initial position of the droplet are defined. The droplet is initially
+defined as a circle with a radius :math:`R= 0.5` at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution sufficiently smooth and avoid a staircase respresentation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
 
 .. code-block:: text
 
@@ -175,7 +194,7 @@ sufficiently smooth and avoid a staircase respresentation of the interface.
         set Function expression = 0; 0; 0
       end
       subsection VOF
-        set Function expression = if ((x-0) * (x-0) + (y-0) * (y-0) < 0.50 * 0.5 , 1, 0)
+        set Function expression = if ((x-0) * (x-0) + (y-0) * (y-0) < 0.5 * 0.5 , 1, 0)
         subsection projection step
           set enable = true
           set diffusion factor = 1
