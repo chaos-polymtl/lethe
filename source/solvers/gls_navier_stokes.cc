@@ -439,9 +439,9 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
-              this->simulation_control, this->simulation_parameters));
+          // this->assemblers.push_back(
+          //   std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
+          //     this->simulation_control, this->simulation_parameters));
 
           if (this->simulation_parameters.multiphysics.vof_parameters
                 .surface_tension_force.enable_marangoni_effect)
@@ -450,6 +450,12 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
                 this->simulation_control,
                 this->simulation_parameters.multiphysics.vof_parameters
                   .surface_tension_force));
+          else
+          {
+            this->assemblers.push_back(
+              std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
+                this->simulation_control, this->simulation_parameters));
+          }
         }
 
       if (this->simulation_parameters.physical_properties_manager
