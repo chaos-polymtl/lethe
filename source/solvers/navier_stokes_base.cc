@@ -1273,7 +1273,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
   if (this->simulation_parameters.post_processing.calculate_pressure_drop)
     {
       TimerOutput::Scope t(this->computing_timer, "pressure_drop_calculation");
-      double             pressure_drop = calculate_pressure_drop(
+      double             pressure_drop, total_pressure_drop;
+      std::tie(pressure_drop, total_pressure_drop) = calculate_pressure_drop(
         this->dof_handler,
         this->mapping,
         this->evaluation_point,
@@ -1284,13 +1285,24 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       this->pressure_drop_table.add_value(
         "time", simulation_control->get_current_time());
       this->pressure_drop_table.add_value("pressure-drop", pressure_drop);
+      this->pressure_drop_table.add_value("total-pressure-drop",
+                                          total_pressure_drop);
       if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Pressure drop: "
+                      << std::setprecision(
+                           simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            pressure_drop
+                      << " Pa" << std::endl;
+          this->pcout << "Total pressure drop: "
+                      << std::setprecision(
+                           simulation_control->get_log_precision())
+                      << this->simulation_parameters.physical_properties_manager
+                             .get_density_scale() *
+                           total_pressure_drop
                       << " Pa" << std::endl;
         }
 
@@ -1307,10 +1319,62 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           std::ofstream output(filename.c_str());
           pressure_drop_table.set_precision("time", 12);
           pressure_drop_table.set_precision("pressure-drop", 12);
+          pressure_drop_table.set_precision("total-pressure-drop", 12);
           this->pressure_drop_table.write_text(output);
         }
     }
 
+  // Calculate flow rate at every boundary
+  if (this->simulation_parameters.post_processing.calculate_flow_rate)
+    {
+      TimerOutput::Scope t(this->computing_timer, "flow_rate_calculation");
+      for (unsigned int boundary_id = 0;
+           boundary_id < simulation_parameters.boundary_conditions.size;
+           ++boundary_id)
+        {
+          std::pair<double, double> boundary_flow_rate =
+            calculate_flow_rate(this->dof_handler,
+                                this->present_solution,
+                                boundary_id,
+                                *this->face_quadrature,
+                                *this->mapping);
+          this->flow_rate_table.add_value(
+            "time", simulation_control->get_current_time());
+          this->flow_rate_table.add_value("flow-rate-" +
+                                            std::to_string(boundary_id),
+                                          boundary_flow_rate.first);
+          if (this->simulation_parameters.post_processing.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              this->pcout << "Flow rate at boundary " +
+                               std::to_string(boundary_id) + ": "
+                          << std::setprecision(
+                               simulation_control->get_log_precision())
+                          << boundary_flow_rate.first << " m^3/s" << std::endl;
+            }
+        }
+
+      // Output flow rate to a text file from processor 0
+      if ((simulation_control->get_step_number() %
+             this->simulation_parameters.post_processing.output_frequency ==
+           0) &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            simulation_parameters.simulation_control.output_folder +
+            simulation_parameters.post_processing.flow_rate_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          flow_rate_table.set_precision("time", 12);
+          for (unsigned int boundary_id = 0;
+               boundary_id < simulation_parameters.boundary_conditions.size;
+               ++boundary_id)
+            flow_rate_table.set_precision("flow-rate-" +
+                                            std::to_string(boundary_id),
+                                          12);
+          this->flow_rate_table.write_text(output);
+        }
+    }
 
   // Calculate inlet flow rate and area
   if (this->simulation_parameters.flow_control.enable_flow_control)

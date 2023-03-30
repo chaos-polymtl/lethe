@@ -1657,17 +1657,16 @@ GLSVANSSolver<dim>::post_processing()
   Assert(this->cfd_dem_simulation_parameters.cfd_parameters
            .physical_properties_manager.density_is_constant(),
          RequiresConstantDensity("Pressure drop calculation"));
-  pressure_drop =
-    calculate_pressure_drop(
-      this->dof_handler,
-      this->mapping,
-      this->evaluation_point,
-      cell_quadrature_formula,
-      face_quadrature_formula,
-      this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
-      this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
-    this->cfd_dem_simulation_parameters.cfd_parameters
-      .physical_properties_manager.get_density_scale();
+  std::tie(pressure_drop, std::ignore) = calculate_pressure_drop(
+    this->dof_handler,
+    this->mapping,
+    this->evaluation_point,
+    cell_quadrature_formula,
+    face_quadrature_formula,
+    this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
+    this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id);
+  pressure_drop *= this->cfd_dem_simulation_parameters.cfd_parameters
+                     .physical_properties_manager.get_density_scale();
 
   this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"

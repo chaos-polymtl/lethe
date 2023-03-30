@@ -43,7 +43,9 @@
 #  include <solvers/physical_properties_manager.h>
 
 /**
- * @brief Calculate the pressure drop between two boundaries. The pressure drop thus calculated has units of Length^2/Time^2.
+ * @brief Calculate the pressure drop and total pressure drop between two boundaries.
+ * The pressure drop thus calculated has units of Length^2/Time^2.
+ *
  * @return Pressure drop of the flow between two boundaries of the domain
  *
  * @param dof_handler The dof_handler used for the calculation
@@ -61,7 +63,7 @@
  * @param outlet_boundary_id The id of the outlet boundary
  */
 template <int dim, typename VectorType>
-double
+std::pair<double, double>
 calculate_pressure_drop(const DoFHandler<dim> &       dof_handler,
                         std::shared_ptr<Mapping<dim>> mapping,
                         const VectorType &            evaluation_point,

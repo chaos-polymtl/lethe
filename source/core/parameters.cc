@@ -1124,10 +1124,11 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
-      prm.declare_entry("calculate pressure drop",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of between two boundaries.");
+      prm.declare_entry(
+        "calculate pressure drop",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of pressure drop between two boundaries.");
 
       prm.declare_entry("inlet boundary id",
                         "0",
@@ -1138,6 +1139,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Outlet boundary ID for pressure drop calculation");
+
+      prm.declare_entry("calculate flow rate",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of flow rate at boundaries.");
 
       prm.declare_entry(
         "initial time",
@@ -1154,6 +1160,11 @@ namespace Parameters
                         "pressure_drop",
                         Patterns::FileName(),
                         "File output pressure drop");
+
+      prm.declare_entry("flow rate name",
+                        "flow_rate",
+                        Patterns::FileName(),
+                        "File output volumetric flux");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -1256,9 +1267,11 @@ namespace Parameters
       calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
+      calculate_flow_rate            = prm.get_bool("calculate flow rate");
       initial_time                   = prm.get_double("initial time");
       kinetic_energy_output_name     = prm.get("kinetic energy name");
       pressure_drop_output_name      = prm.get("pressure drop name");
+      flow_rate_output_name          = prm.get("flow rate name");
       enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       output_frequency               = prm.get_integer("output frequency");
