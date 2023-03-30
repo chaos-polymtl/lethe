@@ -1,13 +1,9 @@
 #include <core/grids.h>
 #include <core/solutions_output.h>
 
-#include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
-#include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
-#include <dem/particle_wall_linear_force.h>
-#include <dem/particle_wall_nonlinear_force.h>
 #include <dem/post_processing.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
@@ -135,6 +131,7 @@ template <int dim>
 CFDDEMSolver<dim>::CFDDEMSolver(CFDDEMSimulationParameters<dim> &nsparam)
   : GLSVANSSolver<dim>(nsparam)
   , has_periodic_boundaries(false)
+  , has_disabled_contacts(false)
   , this_mpi_process(Utilities::MPI::this_mpi_process(this->mpi_communicator))
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(this->mpi_communicator))
 {}
@@ -660,6 +657,14 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       periodic_offset = periodic_boundaries_object.get_constant_offset();
     }
 
+  if (dem_parameters.model_parameters.disable_particle_contacts)
+    {
+      has_disabled_contacts = true;
+      disable_contacts_object.set_threshold_values(
+        dem_parameters.model_parameters.granular_temperature_threshold,
+        dem_parameters.model_parameters.solid_fraction_threshold);
+    }
+
   // Finding cell neighbors
   container_manager.execute_cell_neighbors_search(*parallel_triangulation,
                                                   has_periodic_boundaries);
@@ -792,7 +797,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step
   // time
-
   if (this->simulation_control->get_step_number() == 0)
     {
       integrator_object->integrate_half_step_location(
@@ -805,13 +809,31 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
     }
   else
     {
-      integrator_object->integrate(
-        this->particle_handler,
-        dem_parameters.lagrangian_physical_properties.g,
-        dem_time_step,
-        torque,
-        force,
-        MOI);
+      if (!contacts_are_disabled(counter))
+        {
+          integrator_object->integrate(
+            this->particle_handler,
+            dem_parameters.lagrangian_physical_properties.g,
+            dem_time_step,
+            torque,
+            force,
+            MOI);
+        }
+      else // contacts are disabled
+        {
+          const auto parallel_triangulation =
+            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+              &*this->triangulation);
+          integrator_object->integrate(
+            this->particle_handler,
+            dem_parameters.lagrangian_physical_properties.g,
+            dem_time_step,
+            torque,
+            force,
+            MOI,
+            *parallel_triangulation,
+            disable_contacts_object.get_mobility_status());
+        }
     }
 
   // Particles displacement if passing through a periodic boundary
@@ -849,6 +871,21 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
+      if (has_disabled_contacts && !this->simulation_control->is_at_start())
+        {
+          // Update the active and ghost cells set (this should be done after a
+          // load balance or a checkpoint, but since the fem-dem code do not
+          // have a specific step for that we do it also when the contact search
+          // is done)
+          disable_contacts_object.update_local_and_ghost_cell_set(
+            this->void_fraction_dof_handler);
+          disable_contacts_object.identify_mobility_status(
+            this->void_fraction_dof_handler,
+            this->particle_handler,
+            (*this->triangulation).n_active_cells(),
+            this->mpi_communicator);
+        }
+
       displacement.resize(
         this->particle_handler.get_max_local_particle_index());
       force.resize(displacement.size());
@@ -868,18 +905,34 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   if (load_balance_step || checkpoint_step || contact_detection_step ||
       (this->simulation_control->is_at_start() && (counter == 0)))
     {
-      // Execute board search by filling containers of particle-particle
+      // Execute broad search by filling containers of particle-particle
+      // contact pair candidates and containers of particle-wall
       // contact pair candidates
-      container_manager.execute_particle_particle_broad_search(
-        this->particle_handler, has_periodic_boundaries);
+      if (!contacts_are_disabled(counter))
+        {
+          container_manager.execute_particle_particle_broad_search(
+            this->particle_handler, has_periodic_boundaries);
 
-      // Execute board search by filling containers of particle-wall
-      // contact pair candidates
-      container_manager.execute_particle_wall_broad_search(
-        this->particle_handler,
-        boundary_cell_object,
-        dem_parameters.floating_walls,
-        this->simulation_control->get_current_time());
+          container_manager.execute_particle_wall_broad_search(
+            this->particle_handler,
+            boundary_cell_object,
+            dem_parameters.floating_walls,
+            this->simulation_control->get_current_time());
+        }
+      else // disabling particle contacts are enabled & counter > 1
+        {
+          container_manager.execute_particle_particle_broad_search(
+            this->particle_handler,
+            disable_contacts_object,
+            has_periodic_boundaries);
+
+          container_manager.execute_particle_wall_broad_search(
+            this->particle_handler,
+            boundary_cell_object,
+            dem_parameters.floating_walls,
+            this->simulation_control->get_current_time(),
+            disable_contacts_object);
+        }
 
       // Update contacts, remove replicates and add new contact pairs
       // to the contact containers when particles are exchanged between
@@ -1003,11 +1056,13 @@ CFDDEMSolver<dim>::dem_post_process_results()
   dem_post_processing_object.write_post_processing_results(
     *parallel_triangulation,
     grid_pvdhandler,
+    this->dof_handler,
     this->particle_handler,
     dem_parameters,
     this->simulation_control->get_current_time(),
     this->simulation_control->get_step_number(),
-    this->mpi_communicator);
+    this->mpi_communicator,
+    disable_contacts_object);
 }
 
 template <int dim>
@@ -1158,7 +1213,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
               << "% of Rayleigh time step" << std::endl;
 
-  // Initilize contact detection step
+  // Initialize contact detection step
   contact_detection_step = false;
   load_balance_step      = false;
 

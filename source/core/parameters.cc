@@ -1933,6 +1933,13 @@ namespace Parameters
         "Enable testing mode of a solver. Some solvers have a specific"
         "testing mode which enables the output of debug variables. This"
         "testing mode is generally used only for the automatic testing bench using ctest.");
+      prm.declare_entry(
+        "type",
+        "particles",
+        Patterns::Selection("particles|mobility_status|subdomain"),
+        "Output type for testing mode. Currently, particles type will output "
+        "each particle with some information and mobility_status or subdomain output results "
+        "in deal.II format.");
     }
     prm.leave_subsection();
   }
@@ -1943,6 +1950,20 @@ namespace Parameters
     prm.enter_subsection("test");
     {
       enabled = prm.get_bool("enable");
+      if (enabled)
+        {
+          const std::string op = prm.get("type");
+          if (op == "particles")
+            test_type = TestType::particles;
+          else if (op == "mobility_status")
+            test_type = TestType::mobility_status;
+          else if (op == "subdomain")
+            test_type = TestType::subdomain;
+          else
+            throw std::logic_error(
+              "Error, invalid testing type. Current choices are particles, "
+              "mobility_status or subdomain");
+        }
     }
     prm.leave_subsection();
   }

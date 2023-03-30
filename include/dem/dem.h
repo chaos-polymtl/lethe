@@ -21,6 +21,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
@@ -100,6 +101,31 @@ private:
     const;
 
   /**
+   * Similar to the cell_weight() function, this function is used when the cell
+   * weight is adapted to the mobility status. For instance, if the
+   * cell is inactive, its computational load will be significantly lower than
+   * if it is a mobile cell since there is no force calculation and no velocity
+   * integration for the particles that lie within it. The weight of the cells
+   * must thus be adapted to the status of the cell.
+   *
+   * cell load = cell weight + load balancing factor * n particles * particle
+   * weight
+   *
+   * @param cell The cell for which the load is calculated
+   *
+   * @param status The status of the cell used to inform functions in derived
+   * classes how the cell with the given cell iterator is going to change
+   *
+   * @param mobility_status The mobility status of the cell
+   */
+  unsigned int
+  cell_weight_with_mobility_status(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+
+  /**
    * Finds contact search steps for constant contact search method
    */
   inline bool
@@ -134,6 +160,12 @@ private:
    */
   inline bool
   check_load_balance_dynamic();
+
+  /**
+   * Finds load-balance step for dynamic load-balance with disabled contact
+   */
+  inline bool
+  check_load_balance_with_disabled_contacts();
 
   /**
    * @brief Manages the call to the load balancing. Returns true if
@@ -218,11 +250,25 @@ private:
     const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * Sets the background degree of freedom used for paralle grid output
+   * Sets the background degree of freedom used for parallel grid output
    *
    */
   void
   setup_background_dofs();
+
+  /**
+   * @brief Check if the contacts are disabled and the contact build
+   * number is at least 2. To allow the disabling of contacts in broad search,
+   * we need a first full solved iteration to execute the mobility status
+   * identification, meaning that the first application of the mobility status
+   * in broad search is at after the second contact search.
+   *
+   */
+  inline bool
+  contacts_are_disabled() const
+  {
+    return has_disabled_contacts && contact_build_number > 1;
+  }
 
   /**
    * @brief write_output_results
@@ -310,6 +356,10 @@ private:
 
   // Solid DEM objects
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids;
+
+  // Dynamic disabling of particle contacts in cells object
+  DisableContacts<dim> disable_contacts_object;
+  bool                 has_disabled_contacts;
 };
 
 #endif

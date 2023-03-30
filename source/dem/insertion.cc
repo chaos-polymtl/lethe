@@ -170,7 +170,7 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   if constexpr (dim == 3)
     {
       axis_list.push_back(insertion_information.axis_2);
-    };
+    }
 
   // Assigning the minimum and maximum positions of the insertion box in respect
   // to the axis order

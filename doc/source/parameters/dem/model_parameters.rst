@@ -15,9 +15,12 @@ In this subsection, DEM simulation parameters are defined. These parameters incl
   set contact detection frequency                       = 20
 
   # Load balancing method and its subsequent information
+  # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
   set load balance method                               = frequent
   set load balance frequency                            = 200000
   set load balance particle weight                      = 10000
+  set load balance active weight factor                 = 1.0
+  set load balance inactive weight factor               = 1.0
 
   # Particle-particle contact neighborhood size
   set neighborhood threshold                            = 1.6
@@ -37,6 +40,13 @@ In this subsection, DEM simulation parameters are defined. These parameters incl
   # Rolling resistance method
   # choices are no_resistance|constant_resistance|viscous_resistance
   set rolling resistance torque method                  = constant_resistance
+
+  # Disabling particle contacts
+  subsection dynamic disabling contacts
+    set enable dynamic disabling contacts               = false
+    set granular temperature threshold                  = 1e-4
+    set solid fraction threshold                        = 0.4
+  end
  end
 
 
@@ -86,4 +96,7 @@ it calls load-balancing. :math:`{L}` and :math:`{\beta}` denote computational lo
 
 * Three rolling resistance models are available in Lethe-DEM: ``no_resistance``, ``constant_resistance``, ``viscous_resistance``.
 
-
+* ``dynamic disabling contacts`` subsection controls the disabling contact mechanism for performance enhancement. This feature dynamically searches for cells with low particle motion (granular temperature), disabling the computation of contacts for particles within these cells.
+  ``enable dynamic disabling contacts`` enables the feature, ``granular temperature threshold`` is the threshold of the granular temperature below which the contacts are disabled, and ``solid fraction threshold`` is the minimum solid fraction of the cell in which the contacts may be disabled.
+  Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
+  Note: The ``load balance method`` may be set to ``dynamic_with_disabling_contacts`` and factors of the weight of the cells by mobility status (only active and inactive, mobile factor is always 1) may be adjusted using the ``load balance active weight factor`` and ``load balance inactive weight factor`` parameters.

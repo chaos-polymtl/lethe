@@ -20,7 +20,9 @@
 #include <core/dem_properties.h>
 #include <core/pvd_handler.h>
 
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -66,11 +68,13 @@ public:
   write_post_processing_results(
     const parallel::distributed::Triangulation<dim> &triangulation,
     PVDHandler &                                     grid_pvdhandler,
+    const DoFHandler<dim> &                          background_dh,
     const Particles::ParticleHandler<dim> &          particle_handler,
     const DEMSolverParameters<dim> &                 dem_parameters,
     const double                                     current_time,
     const unsigned int                               step_number,
-    const MPI_Comm &                                 mpi_communicator);
+    const MPI_Comm &                                 mpi_communicator,
+    DisableContacts<dim> &                           disable_contacts_object);
 
 private:
   /**
