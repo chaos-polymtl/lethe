@@ -5,20 +5,15 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
+  set method            = steady
   set number mesh adapt = 0
-  set output name       = result_
-  set output frequency  = 1
-  set time end          = 0.5
-  set time step         = 0.002
-  set subdivision       = 1
+  set output name       = result
   set output path       = ./output/
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-
 subsection FEM
   set velocity order = 1
   set pressure order = 1
@@ -71,7 +66,6 @@ subsection cfd-dem
   set shear force                   = false
   set pressure force                = false
   set drag model                    = rong
-  set post processing               = true
   set vans model                    = modelB
 end
 
@@ -141,7 +135,7 @@ end
 
 subsection non-linear solver
   set tolerance      = 1e-9
-  set max iterations = 10
+  set max iterations = 20
   set verbosity      = verbose
 end
 
