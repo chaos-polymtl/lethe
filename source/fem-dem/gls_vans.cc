@@ -228,6 +228,8 @@ void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time,
                                             bool         load_balance_step)
 {
+  announce_string(this->pcout, "Void Fraction");
+
   TimerOutput::Scope t(this->computing_timer, "calculate_void_fraction");
   if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
@@ -1097,6 +1099,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
 {
+  announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
@@ -1302,8 +1305,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -1410,8 +1413,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
