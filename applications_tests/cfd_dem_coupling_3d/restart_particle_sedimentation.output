@@ -13,15 +13,26 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
-DEM time-step is 5e-05 s 
+DEM time-step is 5e-05 s --------------
+Void Fraction
+--------------
+
 *****************************************************************
 Transient iteration : 51       Time : 0.255    Time step : 0.005    CFL : 0.000114045
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.06929782869,  y: 0.0004939955127,  z: -0.0004939902445,  v_x: -0.2329750933,  v_y: -6.279450013e-05,  vz: 6.284156326e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 51
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -32,21 +43,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.102603355e-14 s^-1
 Max Local Mass Source: 5.779583296e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684143823e-07
+Total particles kinetic energy: 2.842071912e-07
 
 *****************************************************************
 Transient iteration : 52       Time : 0.26     Time step : 0.005    CFL : 0.0001142797093
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07046271593,  y: 0.000493683999,  z: -0.0004936784948,  v_x: -0.2329797578,  v_y: -6.182073734e-05,  vz: 6.186805619e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 52
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -57,21 +78,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.113172288e-14 s^-1
 Max Local Mass Source: 5.935990369e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684332475e-07
+Total particles kinetic energy: 2.842166237e-07
 
 *****************************************************************
 Transient iteration : 53       Time : 0.265    Time step : 0.005    CFL : 0.0001145688307
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07162762449,  y: 0.0004933770654,  z: -0.0004933713241,  v_x: -0.2329836244,  v_y: -6.096129694e-05,  vz: 6.100878363e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 53
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -82,21 +113,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.128002014e-14 s^-1
 Max Local Mass Source: 6.094668952e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684470113e-07
+Total particles kinetic energy: 2.842235057e-07
 
 *****************************************************************
 Transient iteration : 54       Time : 0.27     Time step : 0.005    CFL : 0.000114900963
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07279254973,  y: 0.0004930738791,  z: -0.0004930679003,  v_x: -0.2329864454,  v_y: -6.031963494e-05,  vz: 6.036717268e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 54
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -107,21 +148,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.146300113e-14 s^-1
 Max Local Mass Source: 6.251812607e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684564558e-07
+Total particles kinetic energy: 2.842282279e-07
 
 *****************************************************************
 Transient iteration : 55       Time : 0.275    Time step : 0.005    CFL : 0.0001152684144
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07395748685,  y: 0.0004927731662,  z: -0.0004927669497,  v_x: -0.2329883811,  v_y: -5.996901907e-05,  vz: 6.001655067e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 55
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -132,21 +183,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.167421561e-14 s^-1
 Max Local Mass Source: 6.405022803e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684622706e-07
+Total particles kinetic energy: 2.842311353e-07
 
 *****************************************************************
 Transient iteration : 56       Time : 0.28     Time step : 0.005    CFL : 0.0001156659753
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07512243176,  y: 0.0004924733246,  z: -0.0004924668704,  v_x: -0.2329895727,  v_y: -5.996764783e-05,  vz: 6.001521289e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 56
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -157,21 +218,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.190851617e-14 s^-1
 Max Local Mass Source: 6.552751465e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684650425e-07
+Total particles kinetic energy: 2.842325213e-07
 
 *****************************************************************
 Transient iteration : 57       Time : 0.285    Time step : 0.005    CFL : 0.0001173368775
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07628738106,  y: 0.0004921724925,  z: -0.0004921658001,  v_x: -0.2329901406,  v_y: -6.036123731e-05,  vz: 6.040897546e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 57
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -182,21 +253,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.216183438e-14 s^-1
 Max Local Mass Source: 6.693977077e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684652637e-07
+Total particles kinetic energy: 2.842326319e-07
 
 *****************************************************************
 Transient iteration : 58       Time : 0.29     Time step : 0.005    CFL : 0.0001201933821
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07745233187,  y: 0.0004918686062,  z: -0.000491861674,  v_x: -0.2329901855,  v_y: -6.118506018e-05,  vz: 6.123319164e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 58
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -207,21 +288,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.243095978e-14 s^-1
 Max Local Mass Source: 6.828008949e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684633455e-07
+Total particles kinetic energy: 2.842316728e-07
 
 *****************************************************************
 Transient iteration : 59       Time : 0.295    Time step : 0.005    CFL : 0.0001230294829
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07861728181,  y: 0.0004915594476,  z: -0.0004915522731,  v_x: -0.2329897917,  v_y: -6.246559143e-05,  vz: 6.251438434e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 59
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -232,21 +323,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.271334267e-14 s^-1
 Max Local Mass Source: 6.954370889e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684596336e-07
+Total particles kinetic energy: 2.842298168e-07
 
 *****************************************************************
 Transient iteration : 60       Time : 0.3      Time step : 0.005    CFL : 0.0001258465801
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.07978222884,  y: 0.0004912426851,  z: -0.0004912352642,  v_x: -0.23298903,  v_y: -6.422184992e-05,  vz: 6.427158603e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 60
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -257,21 +358,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.30069354e-14 s^-1
 Max Local Mass Source: 7.072735069e-09 s^-1
 Average Void Fraction in Bed: 0.9999926104
-Total particles kinetic energy: 5.684544206e-07
+Total particles kinetic energy: 2.842272103e-07
 
 *****************************************************************
 Transient iteration : 61       Time : 0.305    Time step : 0.005    CFL : 0.0001286456381
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08094717129,  y: 0.000490915908,  z: -0.0004909082355,  v_x: -0.2329879605,  v_y: -6.646650463e-05,  vz: 6.651745424e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 61
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -282,21 +393,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 1.512963371e-14 s^-1
 Max Local Mass Source: 2.129122947e-08 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.684598893e-07
+Total particles kinetic energy: 2.842299446e-07
 
 *****************************************************************
 Transient iteration : 62       Time : 0.31     Time step : 0.005    CFL : 0.0001325750778
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08211211392,  y: 0.0004905781495,  z: -0.0004905702185,  v_x: -0.2329890799,  v_y: -6.861544298e-05,  vz: 6.866781473e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 62
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -307,21 +428,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.454700246e-14 s^-1
 Max Local Mass Source: 9.217689261e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.681638905e-07
+Total particles kinetic energy: 2.840819452e-07
 
 *****************************************************************
 Transient iteration : 63       Time : 0.315    Time step : 0.005    CFL : 0.0001345749993
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08327690613,  y: 0.0004902244884,  z: -0.0004902162904,  v_x: -0.2329284104,  v_y: -7.280706479e-05,  vz: 7.286148849e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 63
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -332,21 +463,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.551189516e-14 s^-1
 Max Local Mass Source: 6.211132091e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.681473259e-07
+Total particles kinetic energy: 2.84073663e-07
 
 *****************************************************************
 Transient iteration : 64       Time : 0.32     Time step : 0.005    CFL : 0.0001308014388
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08444153961,  y: 0.0004898595743,  z: -0.0004898510826,  v_x: -0.2329250147,  v_y: -7.315510749e-05,  vz: 7.321807067e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 64
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -357,21 +498,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.563841118e-14 s^-1
 Max Local Mass Source: 4.974498097e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.681781824e-07
+Total particles kinetic energy: 2.840890912e-07
 
 *****************************************************************
 Transient iteration : 65       Time : 0.325    Time step : 0.005    CFL : 0.0001284148098
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08560618065,  y: 0.0004894943991,  z: -0.0004894855892,  v_x: -0.23293134,  v_y: -7.291732069e-05,  vz: 7.29816446e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 65
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -382,21 +533,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.5902149e-14 s^-1
 Max Local Mass Source: 4.331404122e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.682091387e-07
+Total particles kinetic energy: 2.841045693e-07
 
 *****************************************************************
 Transient iteration : 66       Time : 0.33     Time step : 0.005    CFL : 0.000126952071
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08677085337,  y: 0.0004891303298,  z: -0.0004891211974,  v_x: -0.2329376854,  v_y: -7.271247552e-05,  vz: 7.277714074e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 66
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -407,21 +568,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.638657922e-14 s^-1
 Max Local Mass Source: 4.187176877e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.682284161e-07
+Total particles kinetic energy: 2.841142081e-07
 
 *****************************************************************
 Transient iteration : 67       Time : 0.335    Time step : 0.005    CFL : 0.0001259317182
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08793555178,  y: 0.0004887666821,  z: -0.0004887572198,  v_x: -0.2329416368,  v_y: -7.274624479e-05,  vz: 7.28135367e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 67
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -432,21 +603,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.708303629e-14 s^-1
 Max Local Mass Source: 4.060287497e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.682332875e-07
+Total particles kinetic energy: 2.841166437e-07
 
 *****************************************************************
 Transient iteration : 68       Time : 0.34     Time step : 0.005    CFL : 0.0001251409995
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.08910026248,  y: 0.0004884018973,  z: -0.0004883921003,  v_x: -0.232942635,  v_y: -7.316350281e-05,  vz: 7.323007151e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 68
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -457,21 +638,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.795528133e-14 s^-1
 Max Local Mass Source: 4.213503071e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.682236559e-07
+Total particles kinetic energy: 2.841118279e-07
 
 *****************************************************************
 Transient iteration : 69       Time : 0.345    Time step : 0.005    CFL : 0.0001244812907
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09026497067,  y: 0.0004880337877,  z: -0.0004880236661,  v_x: -0.2329406602,  v_y: -7.407128076e-05,  vz: 7.413456574e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 69
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -482,21 +673,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 2.89675675e-14 s^-1
 Max Local Mass Source: 4.433658412e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.682001998e-07
+Total particles kinetic energy: 2.841000999e-07
 
 *****************************************************************
 Transient iteration : 70       Time : 0.35     Time step : 0.005    CFL : 0.0001239049719
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09142966183,  y: 0.0004876596835,  z: -0.000487649257,  v_x: -0.2329358514,  v_y: -7.55555389e-05,  vz: 7.561429902e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 70
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -507,21 +708,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.009108322e-14 s^-1
 Max Local Mass Source: 4.650710799e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.681637638e-07
+Total particles kinetic energy: 2.840818819e-07
 
 *****************************************************************
 Transient iteration : 71       Time : 0.355    Time step : 0.005    CFL : 0.0001233875836
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09259432223,  y: 0.0004872765288,  z: -0.0004872658213,  v_x: -0.2329283813,  v_y: -7.768503307e-05,  vz: 7.773875011e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 71
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -532,21 +743,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.130394788e-14 s^-1
 Max Local Mass Source: 4.864359105e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.681151514e-07
+Total particles kinetic energy: 2.840575757e-07
 
 *****************************************************************
 Transient iteration : 72       Time : 0.36     Time step : 0.005    CFL : 0.0001229159362
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09375893897,  y: 0.0004868809624,  z: -0.0004868699994,  v_x: -0.2329184144,  v_y: -8.05132562e-05,  vz: 8.056177934e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 72
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -557,21 +778,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.258985657e-14 s^-1
 Max Local Mass Source: 5.074584275e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.680550653e-07
+Total particles kinetic energy: 2.840275326e-07
 
 *****************************************************************
 Transient iteration : 73       Time : 0.365    Time step : 0.005    CFL : 0.0001224825673
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09492349993,  y: 0.0004864693891,  z: -0.0004864581964,  v_x: -0.2329060944,  v_y: -8.408040561e-05,  vz: 8.412378942e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 73
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -582,21 +813,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.39367227e-14 s^-1
 Max Local Mass Source: 5.281461782e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.679840996e-07
+Total particles kinetic energy: 2.839920498e-07
 
 *****************************************************************
 Transient iteration : 74       Time : 0.37     Time step : 0.005    CFL : 0.0001220829982
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09608799366,  y: 0.0004860380414,  z: -0.0004860266443,  v_x: -0.2328915425,  v_y: -8.841532983e-05,  vz: 8.845375284e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 74
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -607,21 +848,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.533560754e-14 s^-1
 Max Local Mass Source: 5.485085351e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.679027511e-07
+Total particles kinetic energy: 2.839513756e-07
 
 *****************************************************************
 Transient iteration : 75       Time : 0.375    Time step : 0.005    CFL : 0.0001217143743
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09725240925,  y: 0.0004855830317,  z: -0.0004855714544,  v_x: -0.2328748602,  v_y: -9.353730843e-05,  vz: 9.357102996e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 75
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -632,21 +883,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.677990789e-14 s^-1
 Max Local Mass Source: 5.685537169e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 5.678114354e-07
+Total particles kinetic energy: 2.839057177e-07
 
 *****************************************************************
 Transient iteration : 76       Time : 0.38     Time step : 0.005    CFL : 0.0001223268883
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09841673626,  y: 0.0004851003964,  z: -0.0004850886616,  v_x: -0.232856132,  v_y: -9.945760547e-05,  vz: 9.948694374e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 76
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -657,21 +918,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.826474263e-14 s^-1
 Max Local Mass Source: 5.882879307e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.201152651e-08
+Total particles kinetic energy: 1.100576325e-08
 
 *****************************************************************
 Transient iteration : 77       Time : 0.385    Time step : 0.005    CFL : 0.0001251118149
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09893097572,  y: 0.0004846179252,  z: -0.0004846060616,  v_x: 0.04584675274,  v_y: -0.0001029735796,  vz: 0.0001029983249
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 77
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -682,21 +953,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.959128846e-14 s^-1
 Max Local Mass Source: 5.77938708e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.153360317e-09
+Total particles kinetic energy: 1.076680158e-09
 
 *****************************************************************
 Transient iteration : 78       Time : 0.39     Time step : 0.005    CFL : 0.0001245088231
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09878129889,  y: 0.0004840964936,  z: -0.0004840845091,  v_x: 0.0143390539,  v_y: -0.0001055730503,  vz: 0.0001055966987
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 78
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -707,21 +988,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.078956487e-14 s^-1
 Max Local Mass Source: 5.706451552e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.519465664e-09
+Total particles kinetic energy: 1.259732832e-09
 
 *****************************************************************
 Transient iteration : 79       Time : 0.395    Time step : 0.005    CFL : 0.0001240707848
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09878497316,  y: 0.0004835653917,  z: -0.0004835532916,  v_x: -0.01551026782,  v_y: -0.0001068548857,  vz: 0.000106877476
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 79
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -732,21 +1023,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.1892934e-14 s^-1
 Max Local Mass Source: 5.648901675e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.082921254e-08
+Total particles kinetic energy: 1.041460627e-08
 
 *****************************************************************
 Transient iteration : 80       Time : 0.4      Time step : 0.005    CFL : 0.0001237276043
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09893597211,  y: 0.0004830280515,  z: -0.0004830158416,  v_x: -0.04459842956,  v_y: -0.0001080690709,  vz: 0.000108090417
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 80
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -757,21 +1058,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.293538763e-14 s^-1
 Max Local Mass Source: 5.61125142e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 3.206717729e-10
+Total particles kinetic energy: 1.603358864e-10
 
 *****************************************************************
 Transient iteration : 81       Time : 0.405    Time step : 0.005    CFL : 0.0001235647792
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09899921736,  y: 0.0004825601647,  z: -0.0004825478677,  v_x: -0.00553213207,  v_y: -9.33016414e-05,  vz: 9.331788527e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 81
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -782,21 +1093,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.392310527e-14 s^-1
 Max Local Mass Source: 5.561428555e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.260641065e-13
+Total particles kinetic energy: 1.130320532e-13
 
 *****************************************************************
 Transient iteration : 82       Time : 0.41     Time step : 0.005    CFL : 0.000123225432
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09900192711,  y: 0.0004821555145,  z: -0.000482143148,  v_x: 7.003045659e-05,  v_y: -9.132489834e-05,  vz: 9.134018881e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 82
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -807,21 +1128,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.48499868e-14 s^-1
 Max Local Mass Source: 5.514808737e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.461405166e-13
+Total particles kinetic energy: 7.307025832e-14
 
 *****************************************************************
 Transient iteration : 83       Time : 0.415    Time step : 0.005    CFL : 0.0001228836608
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 id: 0,  x: -0.09900192283,  y: 0.0004817476724,  z: -0.0004817352384,  v_x: -4.87529618e-07,  v_y: -8.35250634e-05,  vz: 8.353871836e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 83
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -832,21 +1163,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.574545717e-14 s^-1
 Max Local Mass Source: 5.469960896e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.186618574e-13
+Total particles kinetic energy: 5.933092869e-14
 
 *****************************************************************
 Transient iteration : 84       Time : 0.42     Time step : 0.005    CFL : 0.0001225561526
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004813362213,  z: -0.0004813237211,  v_x: 1.492064614e-09,  v_y: -7.526479324e-05,  vz: 7.527671347e-05
+id: 0,  x: -0.09900192269,  y: 0.0004813362213,  z: -0.0004813237211,  v_x: 1.492064615e-09,  v_y: -7.526479324e-05,  vz: 7.527671347e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 84
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -857,21 +1198,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.661417677e-14 s^-1
 Max Local Mass Source: 5.426759647e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.017335415e-13
+Total particles kinetic energy: 5.086677076e-14
 
 *****************************************************************
 Transient iteration : 85       Time : 0.425    Time step : 0.005    CFL : 0.0001222393872
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004809210696,  z: -0.0004809085044,  v_x: 2.07156824e-11,  v_y: -6.968986998e-05,  vz: 6.970049949e-05
+id: 0,  x: -0.09900192269,  y: 0.0004809210696,  z: -0.0004809085044,  v_x: 2.071568308e-11,  v_y: -6.968986998e-05,  vz: 6.970049949e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 85
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -882,21 +1233,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.746273363e-14 s^-1
 Max Local Mass Source: 5.384808764e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 9.975537741e-14
+Total particles kinetic energy: 4.98776887e-14
 
 *****************************************************************
 Transient iteration : 86       Time : 0.43     Time step : 0.005    CFL : 0.0001220166316
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004805026143,  z: -0.0004804899854,  v_x: -3.634145582e-13,  v_y: -6.900919301e-05,  vz: 6.901933155e-05
+id: 0,  x: -0.09900192269,  y: 0.0004805026143,  z: -0.0004804899854,  v_x: -3.634140515e-13,  v_y: -6.900919301e-05,  vz: 6.901933155e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 86
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -907,21 +1268,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.829503878e-14 s^-1
 Max Local Mass Source: 5.343849377e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.135616052e-13
+Total particles kinetic energy: 5.678080258e-14
 
 *****************************************************************
 Transient iteration : 87       Time : 0.435    Time step : 0.005    CFL : 0.0001220109499
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004800816648,  z: -0.0004800689737,  v_x: -3.461451723e-13,  v_y: -7.363010967e-05,  vz: 7.364062353e-05
+id: 0,  x: -0.09900192269,  y: 0.0004800816648,  z: -0.0004800689737,  v_x: -3.461447708e-13,  v_y: -7.363010967e-05,  vz: 7.364062353e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 87
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -932,21 +1303,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.91137544e-14 s^-1
 Max Local Mass Source: 5.303919422e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.408829728e-13
+Total particles kinetic energy: 7.044148641e-14
 
 *****************************************************************
 Transient iteration : 88       Time : 0.44     Time step : 0.005    CFL : 0.0001220029997
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004796591715,  z: -0.0004796464198,  v_x: -7.673017042e-13,  v_y: -8.201050522e-05,  vz: 8.202200891e-05
+id: 0,  x: -0.09900192269,  y: 0.0004796591715,  z: -0.0004796464198,  v_x: -7.673011532e-13,  v_y: -8.201050522e-05,  vz: 8.202200891e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 88
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -957,21 +1338,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.992059669e-14 s^-1
 Max Local Mass Source: 5.264743716e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.743198711e-13
+Total particles kinetic energy: 8.715993557e-14
 
 *****************************************************************
 Transient iteration : 89       Time : 0.445    Time step : 0.005    CFL : 0.0001219927743
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004792358991,  z: -0.0004792230886,  v_x: -1.132778775e-12,  v_y: -9.122504243e-05,  vz: 9.123767389e-05
+id: 0,  x: -0.09900192269,  y: 0.0004792358991,  z: -0.0004792230886,  v_x: -1.132778225e-12,  v_y: -9.122504243e-05,  vz: 9.123767389e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 89
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -982,21 +1373,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 5.071672421e-14 s^-1
 Max Local Mass Source: 5.226090926e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.01330281e-13
+Total particles kinetic energy: 1.006651405e-13
 
 *****************************************************************
 Transient iteration : 90       Time : 0.45     Time step : 0.005    CFL : 0.0001219803605
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004788121657,  z: -0.0004787992984,  v_x: -1.27013912e-12,  v_y: -9.803826881e-05,  vz: 9.805163688e-05
+id: 0,  x: -0.09900192269,  y: 0.0004788121657,  z: -0.0004787992984,  v_x: -1.270138725e-12,  v_y: -9.803826881e-05,  vz: 9.805163688e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 90
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1007,21 +1408,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 5.150292555e-14 s^-1
 Max Local Mass Source: 5.187887773e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.098484524e-13
+Total particles kinetic energy: 1.049242262e-13
 
 *****************************************************************
 Transient iteration : 91       Time : 0.455    Time step : 0.005    CFL : 0.0001219658585
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.000478387747,  z: -0.0004783748245,  v_x: -1.093440109e-12,  v_y: -0.0001000909167,  vz: 0.0001001042431
+id: 0,  x: -0.09900192269,  y: 0.000478387747,  z: -0.0004783748245,  v_x: -1.093439467e-12,  v_y: -0.0001000909167,  vz: 0.0001001042431
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 91
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1032,21 +1443,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
 Mass Source: 5.227975242e-14 s^-1
 Max Local Mass Source: 5.150087303e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.961330432e-13
+Total particles kinetic energy: 9.806652162e-14
 
 *****************************************************************
 Transient iteration : 92       Time : 0.46     Time step : 0.005    CFL : 0.0001219493501
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004779619808,  z: -0.000477949005,  v_x: -5.813606638e-13,  v_y: -9.676498666e-05,  vz: 9.677739074e-05
+id: 0,  x: -0.09900192269,  y: 0.0004779619808,  z: -0.000477949005,  v_x: -5.813603722e-13,  v_y: -9.676498666e-05,  vz: 9.677739074e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 92
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1057,21 +1478,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.30476002e-14 s^-1
+Mass Source: 5.304760019e-14 s^-1
 Max Local Mass Source: 5.112661109e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.674531737e-13
+Total particles kinetic energy: 8.372658685e-14
 
 *****************************************************************
 Transient iteration : 93       Time : 0.465    Time step : 0.005    CFL : 0.0001219308885
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004775340335,  z: -0.0004775210058,  v_x: 2.092058327e-14,  v_y: -8.941103094e-05,  vz: 8.942185272e-05
+id: 0,  x: -0.09900192269,  y: 0.0004775340335,  z: -0.0004775210058,  v_x: 2.092087354e-14,  v_y: -8.941103094e-05,  vz: 8.942185272e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 93
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1082,21 +1513,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.38067671e-14 s^-1
+Mass Source: 5.380676707e-14 s^-1
 Max Local Mass Source: 5.075592648e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.36933008e-13
+Total particles kinetic energy: 6.846650398e-14
 
 *****************************************************************
 Transient iteration : 94       Time : 0.47     Time step : 0.005    CFL : 0.000121910504
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004771032251,  z: -0.0004770901469,  v_x: 4.668761224e-13,  v_y: -8.085380778e-05,  vz: 8.086285192e-05
+id: 0,  x: -0.09900192269,  y: 0.0004771032251,  z: -0.0004770901469,  v_x: 4.668766459e-13,  v_y: -8.085380778e-05,  vz: 8.086285192e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 94
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1107,21 +1548,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.455749542e-14 s^-1
+Mass Source: 5.455749543e-14 s^-1
 Max Local Mass Source: 5.038871814e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.158084838e-13
+Total particles kinetic energy: 5.790424188e-14
 
 *****************************************************************
 Transient iteration : 95       Time : 0.475    Time step : 0.005    CFL : 0.0001218882152
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004766692955,  z: -0.0004766561682,  v_x: 5.455319598e-13,  v_y: -7.435645168e-05,  vz: 7.436406175e-05
+id: 0,  x: -0.09900192269,  y: 0.0004766692955,  z: -0.0004766561682,  v_x: 5.455325861e-13,  v_y: -7.435645168e-05,  vz: 7.436406175e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 95
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1132,21 +1583,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.529999816e-14 s^-1
+Mass Source: 5.529999817e-14 s^-1
 Max Local Mass Source: 5.002490955e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.09863573e-13
+Total particles kinetic energy: 5.493178649e-14
 
 *****************************************************************
 Transient iteration : 96       Time : 0.48     Time step : 0.005    CFL : 0.0001218640407
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004762325175,  z: -0.0004762193424,  v_x: 3.061931888e-13,  v_y: -7.242304116e-05,  vz: 7.242997675e-05
+id: 0,  x: -0.09900192269,  y: 0.0004762325175,  z: -0.0004762193424,  v_x: 3.061938723e-13,  v_y: -7.242304116e-05,  vz: 7.242997675e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 96
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1157,21 +1618,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.60344725e-14 s^-1
+Mass Source: 5.603447255e-14 s^-1
 Max Local Mass Source: 4.966442461e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.206009896e-13
+Total particles kinetic energy: 6.030049478e-14
 
 *****************************************************************
 Transient iteration : 97       Time : 0.485    Time step : 0.005    CFL : 0.0001218380089
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004757936166,  z: -0.0004757803951,  v_x: -1.534572622e-13,  v_y: -7.587970501e-05,  vz: 7.588686675e-05
+id: 0,  x: -0.09900192269,  y: 0.0004757936166,  z: -0.0004757803951,  v_x: -1.534568913e-13,  v_y: -7.587970501e-05,  vz: 7.588686675e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 97
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1182,21 +1653,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.676110333e-14 s^-1
+Mass Source: 5.676110336e-14 s^-1
 Max Local Mass Source: 4.930717739e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.462920733e-13
+Total particles kinetic energy: 7.314603667e-14
 
 *****************************************************************
 Transient iteration : 98       Time : 0.49     Time step : 0.005    CFL : 0.0001218101644
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004753535234,  z: -0.0004753402568,  v_x: -6.366261449e-13,  v_y: -8.35718537e-05,  vz: 8.357995714e-05
+id: 0,  x: -0.09900192269,  y: 0.0004753535234,  z: -0.0004753402568,  v_x: -6.366255179e-13,  v_y: -8.35718537e-05,  vz: 8.357995714e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 98
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1207,21 +1688,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.748005999e-14 s^-1
+Mass Source: 5.748006003e-14 s^-1
 Max Local Mass Source: 4.899667809e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 1.80338411e-13
+Total particles kinetic energy: 9.016920551e-14
 
 *****************************************************************
 Transient iteration : 99       Time : 0.495    Time step : 0.005    CFL : 0.0001217805702
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004749130488,  z: -0.0004748997387,  v_x: -1.036202606e-12,  v_y: -9.278825473e-05,  vz: 9.279757276e-05
+id: 0,  x: -0.09900192269,  y: 0.0004749130488,  z: -0.0004748997387,  v_x: -1.036202157e-12,  v_y: -9.278825473e-05,  vz: 9.279757276e-05
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 99
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1232,21 +1723,31 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.819149168e-14 s^-1
+Mass Source: 5.819149169e-14 s^-1
 Max Local Mass Source: 4.877701141e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.105334527e-13
+Total particles kinetic energy: 1.052667264e-13
 
 *****************************************************************
 Transient iteration : 100      Time : 0.5      Time step : 0.005    CFL : 0.0001217493062
 *****************************************************************
+--------------
+Void Fraction
+--------------
+------------------------------
+Volume-Averaged Navier-Stokes
+------------------------------
 Particle Summary
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-id: 0,  x: -0.09900192269,  y: 0.0004744726003,  z: -0.0004744592481,  v_x: -1.31714321e-12,  v_y: -0.0001002556853,  vz: 0.0001002659533
+id: 0,  x: -0.09900192269,  y: 0.0004744726003,  z: -0.0004744592481,  v_x: -1.317142792e-12,  v_y: -0.0001002556853,  vz: 0.0001002659533
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-Starting DEM iterations at step 100
+----
+DEM
+----
 DEM contact search at dem step 0
 DEM contact search at dem step 10
 DEM contact search at dem step 20
@@ -1257,9 +1758,11 @@ DEM contact search at dem step 60
 DEM contact search at dem step 70
 DEM contact search at dem step 80
 DEM contact search at dem step 90
+-----------------------------
 Finished 100 DEM iterations 
+-----------------------------
 ---------------------------------------------------------------
-Mass Source: 5.889552371e-14 s^-1
+Mass Source: 5.889552378e-14 s^-1
 Max Local Mass Source: 4.856099419e-09 s^-1
 Average Void Fraction in Bed: 0.9999928036
-Total particles kinetic energy: 2.236823134e-13
+Total particles kinetic energy: 1.118411567e-13
