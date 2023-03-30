@@ -18,6 +18,7 @@
  */
 
 #include <dem/data_containers.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -67,6 +68,15 @@ public:
       std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
       &boundary_cells_with_points);
 
+  typename DEM::dem_data_structures<dim>::particle_point_candidates
+  find_particle_point_contact_pairs(
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const std::unordered_map<
+      std::string,
+      std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+      &                         boundary_cells_with_points,
+    const DisableContacts<dim> &disable_contacts_object);
+
   /**
    * Finds a map of tuples (tuple of particle and the locations of beginning and
    * ending vertices of the boundary lines) which shows the candidate
@@ -89,6 +99,16 @@ public:
       std::tuple<typename Triangulation<dim>::active_cell_iterator,
                  Point<dim>,
                  Point<dim>>> &boundary_cells_with_lines);
+
+  typename DEM::dem_data_structures<dim>::particle_line_candidates
+  find_particle_line_contact_pairs(
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const std::unordered_map<
+      std::string,
+      std::tuple<typename Triangulation<dim>::active_cell_iterator,
+                 Point<dim>,
+                 Point<dim>>> & boundary_cells_with_lines,
+    const DisableContacts<dim> &disable_contacts_object);
 };
 
 #endif /* particle_point_line_broad_search_h */

@@ -1,5 +1,7 @@
 #include <dem/visualization.h>
 
+#include <deal.II/numerics/data_out.h>
+
 using namespace dealii;
 
 template <int dim>
@@ -127,6 +129,54 @@ Visualization<dim>::print_xyz(
         }
       usleep(100);
       MPI_Barrier(mpi_communicator);
+    }
+}
+
+template <int dim>
+void
+Visualization<dim>::print_intermediate_format(
+  const Vector<float> &  data_to_print,
+  const DoFHandler<dim> &background_dh,
+  const MPI_Comm &       mpi_communicator)
+{
+  unsigned int n_mpi_processes(
+    Utilities::MPI::n_mpi_processes(mpi_communicator));
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
+
+  // Attach the data to the background mesh
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(background_dh);
+  data_out.add_data_vector(data_to_print,
+                           "print_from_processor_" +
+                             Utilities::int_to_string(this_mpi_process),
+                           DataOut<dim>::type_cell_data);
+  data_out.build_patches();
+
+  std::stringstream out;
+
+  // Add data in deal.II intermediate format to the stringstream buffer for each
+  // processor in order
+  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
+       ++processor_number)
+    {
+      usleep(100);
+      MPI_Barrier(mpi_communicator);
+      if (processor_number == this_mpi_process)
+        {
+          // Generate a string stream buffer to store the output
+          data_out.write_deal_II_intermediate(out);
+
+          // Print in terminal but remove part of the header since it
+          // contains some deal.II version information that may change
+          std::string  line;
+          unsigned int counter = 0;
+          while (std::getline(out, line))
+            {
+              if (counter++ > 4)
+                std::cout << line << std::endl;
+            }
+        }
     }
 }
 

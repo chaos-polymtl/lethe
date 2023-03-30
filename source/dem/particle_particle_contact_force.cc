@@ -24,7 +24,6 @@
 
 using namespace DEM;
 
-
 template <
   int                                                       dim,
   Parameters::Lagrangian::ParticleParticleContactForceModel contact_model,

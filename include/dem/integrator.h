@@ -17,7 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/data_containers.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_contacts.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -85,6 +87,17 @@ public:
             std::vector<Tensor<1, 3>> &      torque,
             std::vector<Tensor<1, 3>> &      force,
             const std::vector<double> &      MOI) = 0;
+
+  virtual void
+  integrate(Particles::ParticleHandler<dim> &                particle_handler,
+            const Tensor<1, 3> &                             body_force,
+            const double                                     time_step,
+            std::vector<Tensor<1, 3>> &                      torque,
+            std::vector<Tensor<1, 3>> &                      force,
+            const std::vector<double> &                      MOI,
+            const parallel::distributed::Triangulation<dim> &triangulation,
+            typename DEM::dem_data_structures<dim>::cell_index_int_map
+              &cell_mobility_status_map) = 0;
 };
 
 #endif /* integration_h */

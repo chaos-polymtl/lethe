@@ -1002,6 +1002,14 @@ namespace Parameters
   struct Testing
   {
     bool enabled;
+
+    enum class TestType
+    {
+      particles,
+      mobility_status,
+      subdomain
+    } test_type;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

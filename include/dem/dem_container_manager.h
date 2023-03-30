@@ -20,6 +20,7 @@
 
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -118,9 +119,9 @@ public:
     const bool                             has_periodic_boundaries = false);
 
   /**
-   * Particle-particle broad search which finds the particle-particle contact
-   * pairs candidates, local or ghost, which shows the collision pairs.
-   * These collision pairs will be used in the fine search
+   * Execute the particle-particle broad search which finds the local and ghost
+   * particle-particle contact pairs candidates. These contact pairs will be
+   * used in the fine search to investigate if they are in contact or not.
    * to investigate if they are in contact or not.
    *
    * @param particle_handler The particle handler of particles in the broad
@@ -131,6 +132,25 @@ public:
   void
   execute_particle_particle_broad_search(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
+    const bool                               has_periodic_boundaries = false);
+
+  /**
+   * Execute the particle-particle broad search which finds the local and ghost
+   * particle-particle contact pairs candidates. These contact pairs will be
+   * used in the fine search to investigate if they are in contact or not.
+   * This version of the function is used when disabling particle contacts
+   * regards mobility is enable.
+   *
+   * @param particle_handler The particle handler of particles in the broad
+   * search
+   * @param disable_particle_contact_object An object that handle all
+   * @param has_periodic_boundaries A boolean to allow periodic container manipulations
+   */
+
+  void
+  execute_particle_particle_broad_search(
+    dealii::Particles::ParticleHandler<dim> &particle_handler,
+    const DisableContacts<dim> &             disable_particle_contact_object,
     const bool                               has_periodic_boundaries = false);
 
   /**
@@ -153,6 +173,28 @@ public:
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
     const double                                      simulation_time,
     const bool has_floating_mesh = false);
+
+  /**
+   * Carries out the broad contact detection search using the
+   * background triangulation for particle-walls contact.
+   *
+   * @param particle_handler Particle handler of particles located in boundary
+   * cells
+   * @param boundary_cells_information Information of the boundary cells and
+   * faces. This is the output of the FindBoundaryCellsInformation class
+   * @param floating_wall Properties of the floating walls specified in the parameter handler file
+   * @param simulation_time Simulation time
+   * @param has_floating_mesh A boolean to allow dealing with floating mesh neighbors
+   */
+
+  void
+  execute_particle_wall_broad_search(
+    const Particles::ParticleHandler<dim> &           particle_handler,
+    BoundaryCellsInformation<dim> &                   boundary_cell_object,
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
+    const double                                      simulation_time,
+    const DisableContacts<dim> &disable_particle_contact_object,
+    const bool                  has_floating_mesh = false);
 
   /**
    * Iterates over a vector of maps to see if the particles

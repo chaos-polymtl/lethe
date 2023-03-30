@@ -185,7 +185,8 @@ namespace Parameters
         none,
         once,
         frequent,
-        dynamic
+        dynamic,
+        dynamic_with_disabling_contacts
       } load_balance_method;
 
       // Load balance step (for single step load-balancing)
@@ -205,6 +206,12 @@ namespace Parameters
 
       // The particle weight based on a default cell weight of 1000
       unsigned int load_balance_particle_weight;
+
+      // Factors applied on the particle weight in load balancing for active and
+      // inactive cells (factor of mobile cells is always 1), only available
+      // when dynamic disabling particle contacts is enable
+      double active_load_balancing_factor;
+      double inactive_load_balancing_factor;
 
       // Security factor for dynamic contact search
       double dynamic_contact_search_factor;
@@ -240,6 +247,17 @@ namespace Parameters
         explicit_euler,
         gear3
       } integration_method;
+
+      // Disable particle contacts to optimize performance
+      bool disable_particle_contacts;
+
+      // Minimal granular temperature value of cells where particle contacts
+      // are considered
+      double granular_temperature_threshold;
+
+      // Maximal solid fraction value of cells where particle contacts are
+      // considered no matter the granular temperature
+      double solid_fraction_threshold;
 
       static void
       declare_parameters(ParameterHandler &prm);

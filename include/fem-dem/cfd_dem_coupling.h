@@ -23,6 +23,7 @@
 #include <dem/data_containers.h>
 #include <dem/dem_container_manager.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/disable_contacts.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/periodic_boundaries_manipulator.h>
@@ -214,6 +215,16 @@ private:
   void
   post_processing() override;
 
+  /**
+   * @brief Check if the disabling contacts is enabled and that
+   *
+   */
+  inline bool
+  contacts_are_disabled(unsigned int counter) const
+  {
+    return has_disabled_contacts && counter > 1;
+  }
+
   unsigned int              coupling_frequency;
   bool                      contact_detection_step;
   bool                      checkpoint_step;
@@ -242,12 +253,14 @@ private:
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
 
+  DisableContacts<dim> disable_contacts_object;
+  bool                 has_disabled_contacts;
+
   DEM::DEMProperties<dim> properties_class;
 
   // Information for parallel grid processing
-  DoFHandler<dim> background_dh;
-  PVDHandler      grid_pvdhandler;
-  PVDHandler      particles_pvdhandler;
+  PVDHandler grid_pvdhandler;
+  PVDHandler particles_pvdhandler;
 
   DEMSolverParameters<dim>      dem_parameters;
   double                        dem_time_step;
