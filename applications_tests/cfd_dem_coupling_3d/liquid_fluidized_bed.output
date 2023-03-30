@@ -11,23 +11,13 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
-DEM time-step is 1e-05 s --------------
-Void Fraction
---------------
-
+DEM time-step is 1e-05 s 
 *****************************************************************
 Transient iteration : 1        Time : 0.0001   Time step : 0.0001   CFL : 0.001049466372
 *****************************************************************
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
-----
-DEM
-----
+Starting DEM iterations at step 1
 DEM contact search at dem step 0
-----------------------------
 Finished 10 DEM iterations 
-----------------------------
 ---------------------------------------------------------------
 Mass Source: -9.410572586e-13 s^-1
 Max Local Mass Source: 3.680942381e-07 s^-1
@@ -37,18 +27,8 @@ Total particles kinetic energy: 1.844818291e-07
 *****************************************************************
 Transient iteration : 2        Time : 0.0002   Time step : 0.0001   CFL : 0.004908663353
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
-----
-DEM
-----
-----------------------------
+Starting DEM iterations at step 2
 Finished 10 DEM iterations 
-----------------------------
 ---------------------------------------------------------------
 Mass Source: -2.734704185e-11 s^-1
 Max Local Mass Source: 3.488154464e-07 s^-1
@@ -58,18 +38,8 @@ Total particles kinetic energy: 0.0003054449179
 *****************************************************************
 Transient iteration : 3        Time : 0.0003   Time step : 0.0001   CFL : 0.00446056468
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
-----
-DEM
-----
-----------------------------
+Starting DEM iterations at step 3
 Finished 10 DEM iterations 
-----------------------------
 ---------------------------------------------------------------
 Mass Source: 1.130247818e-11 s^-1
 Max Local Mass Source: 3.26894259e-07 s^-1
@@ -79,18 +49,8 @@ Total particles kinetic energy: 0.0007911493991
 *****************************************************************
 Transient iteration : 4        Time : 0.0004   Time step : 0.0001   CFL : 0.004195189901
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
-----
-DEM
-----
-----------------------------
+Starting DEM iterations at step 4
 Finished 10 DEM iterations 
-----------------------------
 ---------------------------------------------------------------
 Mass Source: 4.748921509e-12 s^-1
 Max Local Mass Source: 3.134656066e-07 s^-1
@@ -100,18 +60,8 @@ Total particles kinetic energy: 0.001216186526
 *****************************************************************
 Transient iteration : 5        Time : 0.0005   Time step : 0.0001   CFL : 0.004015474146
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
-----
-DEM
-----
-----------------------------
+Starting DEM iterations at step 5
 Finished 10 DEM iterations 
-----------------------------
 ---------------------------------------------------------------
 Mass Source: 3.398615438e-13 s^-1
 Max Local Mass Source: 3.057397489e-07 s^-1

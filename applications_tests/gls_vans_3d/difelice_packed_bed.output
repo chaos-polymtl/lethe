@@ -8,12 +8,6 @@ Total pressure drop: 0 Pa
 *****************************************************************
 Transient iteration : 1        Time : 0.002    Time step : 0.002    CFL : 0.06743077177
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 31.910005 Pa
 Total pressure drop: 31.91000493 Pa
 Mass Source: 1.300659094e-11 s^-1
@@ -23,12 +17,6 @@ Average Void Fraction in Bed: 0.7930753133
 *****************************************************************
 Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.2154150631
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 21.89739127 Pa
 Total pressure drop: 21.89763353 Pa
 Mass Source: -2.851703489e-13 s^-1
@@ -38,12 +26,6 @@ Average Void Fraction in Bed: 0.7931023626
 *****************************************************************
 Transient iteration : 3        Time : 0.006    Time step : 0.002    CFL : 0.2216188764
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 22.23556987 Pa
 Total pressure drop: 22.23532674 Pa
 Mass Source: -7.005509515e-12 s^-1
@@ -53,12 +35,6 @@ Average Void Fraction in Bed: 0.7930753133
 *****************************************************************
 Transient iteration : 4        Time : 0.008    Time step : 0.002    CFL : 0.220408421
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 21.84124337 Pa
 Total pressure drop: 21.84148571 Pa
 Mass Source: -1.91531233e-11 s^-1
@@ -68,12 +44,6 @@ Average Void Fraction in Bed: 0.7931023626
 *****************************************************************
 Transient iteration : 5        Time : 0.01     Time step : 0.002    CFL : 0.218639659
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 22.2350376 Pa
 Total pressure drop: 22.23479442 Pa
 Mass Source: 3.07665259e-12 s^-1
@@ -83,12 +53,6 @@ Average Void Fraction in Bed: 0.7930753133
 *****************************************************************
 Transient iteration : 6        Time : 0.012    Time step : 0.002    CFL : 0.220702861
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 21.8413198 Pa
 Total pressure drop: 21.84156203 Pa
 Mass Source: -1.490154543e-11 s^-1
@@ -98,12 +62,6 @@ Average Void Fraction in Bed: 0.7931023626
 *****************************************************************
 Transient iteration : 7        Time : 0.014    Time step : 0.002    CFL : 0.2186236691
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 22.23504108 Pa
 Total pressure drop: 22.23479775 Pa
 Mass Source: 1.161380599e-11 s^-1
@@ -113,12 +71,6 @@ Average Void Fraction in Bed: 0.7930753133
 *****************************************************************
 Transient iteration : 8        Time : 0.016    Time step : 0.002    CFL : 0.2207217194
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 21.84133003 Pa
 Total pressure drop: 21.84157215 Pa
 Mass Source: -6.110179096e-11 s^-1
@@ -128,12 +80,6 @@ Average Void Fraction in Bed: 0.7931023626
 *****************************************************************
 Transient iteration : 9        Time : 0.018    Time step : 0.002    CFL : 0.2186346421
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 22.23505621 Pa
 Total pressure drop: 22.23481271 Pa
 Mass Source: 4.665082224e-11 s^-1
@@ -143,12 +89,6 @@ Average Void Fraction in Bed: 0.7930753133
 *****************************************************************
 Transient iteration : 10       Time : 0.02     Time step : 0.002    CFL : 0.22073094
 *****************************************************************
---------------
-Void Fraction
---------------
-------------------------------
-Volume-Averaged Navier-Stokes
-------------------------------
 Pressure drop: 21.8413349 Pa
 Total pressure drop: 21.84157687 Pa
 Mass Source: -5.769780433e-11 s^-1
