@@ -369,14 +369,15 @@ public:
                                    update_values | update_quadrature_points)
     , shape(shape)
   {}
+
   virtual void
-  evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
-                        std::vector<Vector<double>> &computed_quantities) const
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
   {
     const unsigned int n_quadrature_points = inputs.evaluation_points.size();
 
     Tensor<1, dim> levelset_gradient{};
-    Tensor<1, dim> properly_scaled_levelset_gradient{};
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
       {
         AssertDimension(computed_quantities[q].size(), dim);
@@ -385,10 +386,8 @@ public:
         const auto       cell             = inputs.template get_cell<dim>();
         levelset_gradient =
           shape->gradient_with_cell_guess(evaluation_point, cell);
-        properly_scaled_levelset_gradient =
-          levelset_gradient / levelset_gradient.norm();
         for (int d = 0; d < dim; d++)
-          computed_quantities[q][d] = properly_scaled_levelset_gradient[d];
+          computed_quantities[q][d] = levelset_gradient[d];
       }
   }
 
