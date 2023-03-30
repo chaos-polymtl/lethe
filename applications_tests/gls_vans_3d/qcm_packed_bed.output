@@ -17,15 +17,8 @@ Average Void Fraction in Bed: 0.7778631901
 *****************************************************************
 Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.2870529838
 *****************************************************************
-<<<<<<< HEAD
 Pressure drop: 30.94019474 Pa
 Total pressure drop: 30.94629198 Pa
-Mass Source: -9.405895239e-06 s^-1
-Max Local Mass Source: 2.558979598e-07 s^-1
-Average Void Fraction in Bed: 0.7786563358
-=======
-Pressure drop: 30.99354699 Pa
 Mass Source: 8.116488109e-08 s^-1
 Max Local Mass Source: 2.555457266e-07 s^-1
 Average Void Fraction in Bed: 0.7786563358
->>>>>>> ad273f60 (First work in refactoring parameters)
