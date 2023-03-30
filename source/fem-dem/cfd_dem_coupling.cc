@@ -16,8 +16,8 @@ template <int dim>
 bool
 check_contact_detection_method(
   unsigned int                          counter,
-  CFDDEMSimulationParameters<dim>      &param,
-  std::vector<double>                  &displacement,
+  CFDDEMSimulationParameters<dim> &     param,
+  std::vector<double> &                 displacement,
   Particles::ParticleHandler<dim, dim> &particle_handler,
   MPI_Comm                              mpi_communicator,
   std::shared_ptr<SimulationControl>    simulation_control,
@@ -67,9 +67,9 @@ check_contact_detection_method(
 template <int dim>
 bool
 check_load_balance_method(
-  CFDDEMSimulationParameters<dim>      &param,
+  CFDDEMSimulationParameters<dim> &     param,
   Particles::ParticleHandler<dim, dim> &particle_handler,
-  const MPI_Comm                       &mpi_communicator,
+  const MPI_Comm &                      mpi_communicator,
   const unsigned int                    n_mpi_processes,
   std::shared_ptr<SimulationControl>    simulation_control)
 { // Setting load-balance method (single-step, frequent or dynamic)
@@ -711,7 +711,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double>                     &MOI)
+  std::vector<double> &                    MOI)
 {
   MOI.resize(torque.size());
 
