@@ -111,7 +111,7 @@ Transient iteration : 1000     Time : 1        Time step : 0.001
 | Angular velocity magnitude   | 7.6730e-02 | 7.3711e+00 | 7.6061e-01 | 1.0040e+02 |
 | Translational kinetic energy | 6.0275e-10 | 1.4323e-04 | 1.2614e-05 | 1.6651e-03 |
 | Rotational kinetic energy    | 7.8917e-08 | 7.2829e-04 | 1.8637e-05 | 2.4601e-03 |
-**print_from_processor_0**
+print_from_processor_0
 48
 [deal.II intermediate Patch<3,3>]
 7

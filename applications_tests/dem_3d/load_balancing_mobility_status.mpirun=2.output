@@ -119,7 +119,7 @@ Transient iteration : 1000     Time : 1        Time step : 0.001
 Load balance finished
 Average, minimum and maximum number of particles on the processors are 66 , 53 and 79
 Minimum and maximum number of cells owned by the processors are 48 and 48
-**print_from_processor_0**
+print_from_processor_0
 16
 [deal.II intermediate Patch<3,3>]
 7
@@ -283,7 +283,7 @@ Minimum and maximum number of cells owned by the processors are 48 and 48
 
 0
 
-**print_from_processor_1**
+print_from_processor_1
 32
 [deal.II intermediate Patch<3,3>]
 7
