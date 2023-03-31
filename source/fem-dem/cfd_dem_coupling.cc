@@ -16,8 +16,8 @@ template <int dim>
 bool
 check_contact_detection_method(
   unsigned int                          counter,
-  CFDDEMSimulationParameters<dim>      &param,
-  std::vector<double>                  &displacement,
+  CFDDEMSimulationParameters<dim> &     param,
+  std::vector<double> &                 displacement,
   Particles::ParticleHandler<dim, dim> &particle_handler,
   MPI_Comm                              mpi_communicator,
   std::shared_ptr<SimulationControl>    simulation_control,
@@ -67,9 +67,9 @@ check_contact_detection_method(
 template <int dim>
 bool
 check_load_balance_method(
-  CFDDEMSimulationParameters<dim>      &param,
+  CFDDEMSimulationParameters<dim> &     param,
   Particles::ParticleHandler<dim, dim> &particle_handler,
-  const MPI_Comm                       &mpi_communicator,
+  const MPI_Comm &                      mpi_communicator,
   const unsigned int                    n_mpi_processes,
   std::shared_ptr<SimulationControl>    simulation_control)
 { // Setting load-balance method (single-step, frequent or dynamic)
@@ -714,7 +714,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double>                     &MOI)
+  std::vector<double> &                    MOI)
 {
   MOI.resize(torque.size());
 
@@ -871,6 +871,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       (this->simulation_control->is_at_start() && (counter == 0)))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
+      contact_build_number++;
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -1052,15 +1053,67 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_post_process_results()
 {
-  double particle_total_kinetic_energy =
-    calculate_granular_statistics<
-      dim,
-      DEM::dem_statistic_variable::translational_kinetic_energy>(
-      this->particle_handler, this->mpi_communicator)
-      .total;
+  // Update statistics on contact list
+  double number_of_list_built_since_last_log =
+    double(contact_build_number) - contact_list.total;
+  contact_list.max =
+    std::max(number_of_list_built_since_last_log, contact_list.max);
+  contact_list.min =
+    std::min(number_of_list_built_since_last_log, contact_list.min);
+  contact_list.total += number_of_list_built_since_last_log;
+  contact_list.average = contact_list.total /
+                         (this->simulation_control->get_step_number()) *
+                         this->simulation_control->get_log_frequency();
 
-  this->pcout << "Total particles kinetic energy: "
-              << particle_total_kinetic_energy << std::endl;
+  // Calculate statistics on the particles
+  statistics translational_kinetic_energy = calculate_granular_statistics<
+    dim,
+    DEM::dem_statistic_variable::translational_kinetic_energy>(
+    this->particle_handler, this->mpi_communicator);
+  statistics rotational_kinetic_energy = calculate_granular_statistics<
+    dim,
+    DEM::dem_statistic_variable::rotational_kinetic_energy>(
+    this->particle_handler, this->mpi_communicator);
+  statistics velocity =
+    calculate_granular_statistics<dim, DEM::dem_statistic_variable::velocity>(
+      this->particle_handler, this->mpi_communicator);
+  statistics omega =
+    calculate_granular_statistics<dim, DEM::dem_statistic_variable::omega>(
+      this->particle_handler, this->mpi_communicator);
+
+  if (this_mpi_process == 0)
+    {
+      TableHandler report;
+
+      report.declare_column("Variable");
+      report.declare_column("Min");
+      report.declare_column("Max");
+      report.declare_column("Average");
+      report.declare_column("Total");
+      add_statistics_to_table_handler("Contact list generation",
+                                      contact_list,
+                                      report);
+      add_statistics_to_table_handler("Velocity magnitude", velocity, report);
+      add_statistics_to_table_handler("Angular velocity magnitude",
+                                      omega,
+                                      report);
+      add_statistics_to_table_handler("Translational kinetic energy",
+                                      translational_kinetic_energy,
+                                      report);
+      add_statistics_to_table_handler("Rotational kinetic energy",
+                                      rotational_kinetic_energy,
+                                      report);
+
+
+
+      report.set_scientific("Min", true);
+      report.set_scientific("Max", true);
+      report.set_scientific("Average", true);
+      report.set_scientific("Total", true);
+
+      announce_string(this->pcout, "Particle statistics");
+      report.write_text(std::cout, dealii::TableHandler::org_mode_table);
+    }
 
   if (dem_parameters.post_processing.Lagrangian_post_processing &&
       this->simulation_control->is_output_iteration())

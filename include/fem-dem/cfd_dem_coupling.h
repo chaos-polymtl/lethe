@@ -79,7 +79,7 @@ public:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
+      &                                                                  cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 
@@ -152,7 +152,7 @@ private:
   void
   update_moment_of_inertia(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
+    std::vector<double> &                    MOI);
 
   /**
    * Sets the chosen integration method in the parameter handler file
@@ -252,6 +252,11 @@ private:
 
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;
+  unsigned int         contact_build_number;
+
+  // Storage of statistics about time and contact lists
+  statistics contact_list;
+  statistics simulation_time;
 
   DEM::DEMProperties<dim> properties_class;
 
