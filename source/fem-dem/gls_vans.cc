@@ -1305,8 +1305,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -1413,8 +1413,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -1525,8 +1525,8 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
   // source
   std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
 
-  double mass_source           = 0;
-  double max_local_mass_source = 0;
+  double continuity            = 0;
+  double max_local_continuity  = 0;
   double local_mass_source     = 0;
   double fluid_volume          = 0;
   double bed_volume            = 0;
@@ -1658,25 +1658,26 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
                   bed_volume += fe_values_void_fraction.JxW(q);
                 }
 
-              mass_source += local_mass_source;
+              continuity += local_mass_source;
             }
 
-          max_local_mass_source =
-            std::max(max_local_mass_source, abs(local_mass_source));
+          max_local_continuity =
+            std::max(max_local_continuity, abs(local_mass_source));
         }
     }
 
-  mass_source  = Utilities::MPI::sum(mass_source, this->mpi_communicator);
+  continuity   = Utilities::MPI::sum(continuity, this->mpi_communicator);
   fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
   bed_volume   = Utilities::MPI::sum(bed_volume, this->mpi_communicator);
 
   average_void_fraction = fluid_volume / bed_volume;
 
-  this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
-  this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"
+  this->pcout << "Global continuity equation error: " << continuity << " s^-1"
               << std::endl;
-  this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
-              << std::endl;
+  this->pcout << "Max local continuity error: " << max_local_continuity
+              << " s^-1" << std::endl;
+  this->pcout << "Average void fraction in regions with particles: "
+              << average_void_fraction << std::endl;
 }
 
 template <int dim>

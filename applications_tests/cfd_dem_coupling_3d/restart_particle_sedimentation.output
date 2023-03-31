@@ -13,7 +13,10 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters 
-DEM time-step is 5e-05 s 
+DEM time-step is 5e-05 s --------------
+Void Fraction
+--------------
+
 *****************************************************************
 Transient iteration : 51       Time : 0.255    Time step : 0.005    CFL : 0.000114045
 *****************************************************************

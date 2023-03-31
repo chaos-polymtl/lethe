@@ -214,7 +214,7 @@ end
 
 subsection non-linear solver
   set solver         = inexact_newton
-  set tolerance      = 1e-9
+  set tolerance      = 1e-7
   set max iterations = 20
   set matrix tolerance = 0.2
   set verbosity      = verbose

@@ -16,8 +16,8 @@ template <int dim>
 bool
 check_contact_detection_method(
   unsigned int                          counter,
-  CFDDEMSimulationParameters<dim> &     param,
-  std::vector<double> &                 displacement,
+  CFDDEMSimulationParameters<dim>      &param,
+  std::vector<double>                  &displacement,
   Particles::ParticleHandler<dim, dim> &particle_handler,
   MPI_Comm                              mpi_communicator,
   std::shared_ptr<SimulationControl>    simulation_control,
@@ -67,9 +67,9 @@ check_contact_detection_method(
 template <int dim>
 bool
 check_load_balance_method(
-  CFDDEMSimulationParameters<dim> &     param,
+  CFDDEMSimulationParameters<dim>      &param,
   Particles::ParticleHandler<dim, dim> &particle_handler,
-  const MPI_Comm &                      mpi_communicator,
+  const MPI_Comm                       &mpi_communicator,
   const unsigned int                    n_mpi_processes,
   std::shared_ptr<SimulationControl>    simulation_control)
 { // Setting load-balance method (single-step, frequent or dynamic)
@@ -629,6 +629,9 @@ CFDDEMSolver<dim>::load_balance()
 
   // Unpack particle handler after load balancing step
   this->particle_handler.unpack_after_coarsening_and_refinement();
+
+  // Regenerate vertex to cell map
+  this->vertices_cell_mapping();
 }
 
 template <int dim>
@@ -704,14 +707,14 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   update_moment_of_inertia(this->particle_handler, MOI);
 
   this->pcout << "Finished initializing DEM parameters " << std::endl
-              << "DEM time-step is " << dem_time_step << " s ";
+              << "DEM time-step is " << dem_time_step << " s " << std::endl;
 }
 
 template <int dim>
 void
 CFDDEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
@@ -1049,20 +1052,34 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_post_process_results()
 {
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
+  double particle_total_kinetic_energy =
+    calculate_granular_statistics<
+      dim,
+      DEM::dem_statistic_variable::translational_kinetic_energy>(
+      this->particle_handler, this->mpi_communicator)
+      .total;
 
-  dem_post_processing_object.write_post_processing_results(
-    *parallel_triangulation,
-    grid_pvdhandler,
-    this->dof_handler,
-    this->particle_handler,
-    dem_parameters,
-    this->simulation_control->get_current_time(),
-    this->simulation_control->get_step_number(),
-    this->mpi_communicator,
-    disable_contacts_object);
+  this->pcout << "Total particles kinetic energy: "
+              << particle_total_kinetic_energy << std::endl;
+
+  if (dem_parameters.post_processing.Lagrangian_post_processing &&
+      this->simulation_control->is_output_iteration())
+    {
+      const auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation);
+
+      dem_post_processing_object.write_post_processing_results(
+        *parallel_triangulation,
+        grid_pvdhandler,
+        this->dof_handler,
+        this->particle_handler,
+        dem_parameters,
+        this->simulation_control->get_current_time(),
+        this->simulation_control->get_step_number(),
+        this->mpi_communicator,
+        disable_contacts_object);
+    }
 }
 
 template <int dim>
@@ -1079,29 +1096,6 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
   if (this->simulation_control->is_output_iteration())
     {
       write_DEM_output_results();
-    }
-}
-
-template <int dim>
-void
-CFDDEMSolver<dim>::monitor_mass_conservation()
-{
-  this->GLSVANSSolver<dim>::monitor_mass_conservation();
-
-  double particle_total_kinetic_energy =
-    calculate_granular_statistics<
-      dim,
-      DEM::dem_statistic_variable::translational_kinetic_energy>(
-      this->particle_handler, this->mpi_communicator)
-      .total;
-
-  this->pcout << "Total particles kinetic energy: "
-              << particle_total_kinetic_energy << std::endl;
-
-  if (dem_parameters.post_processing.Lagrangian_post_processing &&
-      this->simulation_control->is_output_iteration())
-    {
-      dem_post_process_results();
     }
 }
 
@@ -1302,8 +1296,11 @@ CFDDEMSolver<dim>::solve()
   else
     checkpoint_step = false;
 
-  // Initilize DEM parameters
   initialize_dem_parameters();
+
+  // Calculate first instance of void fraction once particles are set-up
+  this->vertices_cell_mapping();
+  this->initialize_void_fraction();
 
   while (this->simulation_control->integrate())
     {
@@ -1321,21 +1318,16 @@ CFDDEMSolver<dim>::solve()
 
       this->dynamic_flow_control();
 
-      if (this->simulation_control->is_at_start())
-        {
-          this->vertices_cell_mapping();
-          this->initialize_void_fraction();
-          this->iterate();
-        }
-      else
+      if (!this->simulation_control->is_at_start())
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           this->vertices_cell_mapping();
-          this->calculate_void_fraction(
-            this->simulation_control->get_current_time(), load_balance_step);
-          this->iterate();
         }
+
+      this->calculate_void_fraction(
+        this->simulation_control->get_current_time(), load_balance_step);
+      this->iterate();
 
       if (this->cfd_dem_simulation_parameters.cfd_parameters.test.enabled)
         {
@@ -1362,7 +1354,9 @@ CFDDEMSolver<dim>::solve()
       this->postprocess(false);
       this->finish_time_step_fd();
 
-      monitor_mass_conservation();
+      this->GLSVANSSolver<dim>::monitor_mass_conservation();
+
+      dem_post_process_results();
 
       // Load balancing
       // The input argument to this function is set to zero as this integer is
