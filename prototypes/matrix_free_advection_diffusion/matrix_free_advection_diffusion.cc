@@ -284,49 +284,74 @@ private:
 };
 
 template <int dim>
-class AdvectionField : public TensorFunction<1, dim>
+class AdvectionField : public Function<dim>
 {
 public:
   AdvectionField(const Settings::ProblemType &test_case)
-    : TensorFunction<1, dim>()
-    , test_case(test_case)
+    : test_case(test_case)
   {}
 
-  Tensor<1, dim>
-  value(const Point<dim> &p) const override
-  {
-    (void)p;
-    Tensor<1, dim> result;
-    if (dim == 2)
-      {
-        if (test_case == Settings::boundary_layer)
-          {
-            result[0] = 0.0;
-            result[1] = 1.0;
-          }
-        else if (test_case == Settings::double_glazing)
-          {
-            result[0] = 2 * p[1] * (1 - p[0] * p[0]);
-            result[1] = -2 * p[0] * (1 - p[1] * p[1]);
-          }
-        else
-          {
-            result[0] = 1.0;
-            result[1] = 0.0;
-          }
-      }
-    else if (dim == 3)
-      {
-        result[0] = 1.0;
-        result[1] = 0.0;
-        result[2] = 0.0;
-      }
-    return result;
-  }
+  virtual double
+  value(const Point<dim> &p, const unsigned int component = 0) const override;
+
+  template <typename number>
+  number
+  value(const Point<dim, number> &p, const unsigned int component = 0) const;
 
 private:
   Settings::ProblemType test_case;
 };
+
+template <int dim>
+template <typename number>
+number
+AdvectionField<dim>::value(const Point<dim, number> &p,
+                           const unsigned int        component) const
+{
+  number result;
+  if (dim == 2)
+    {
+      if (test_case == Settings::boundary_layer)
+        {
+          if (component == 0)
+            result = 0.0;
+          else
+            result = 1.0;
+        }
+      else if (test_case == Settings::double_glazing)
+        {
+          if (component == 0)
+            result = 2 * p[1] * (1 - p[0] * p[0]);
+          else
+            result = -2 * p[0] * (1 - p[1] * p[1]);
+        }
+      else
+        {
+          if (component == 0)
+            result = 1.0;
+          else
+            result = 0.0;
+        }
+    }
+  else if (dim == 3)
+    {
+      if (component == 0)
+        result = 1.0;
+      else if (component == 1)
+        result = 0.0;
+      else
+        result = 0.0;
+    }
+  return result;
+}
+
+template <int dim>
+double
+AdvectionField<dim>::value(const Point<dim> & p,
+                           const unsigned int component) const
+{
+  return value<double>(p, component);
+}
 
 template <int dim>
 class BoundaryFunction : public Function<dim>
@@ -339,6 +364,39 @@ public:
     return p[0];
   }
 };
+
+template <int dim, typename Number>
+VectorizedArray<Number>
+evaluate_function(const Function<dim> &                      function,
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  VectorizedArray<Number> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+      result[v] = function.value(p);
+    }
+  return result;
+}
+
+template <int dim, typename Number, int components>
+Tensor<1, dim, VectorizedArray<Number>>
+evaluate_function(const Function<dim> &                      function,
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  Tensor<1, dim, VectorizedArray<Number>> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+      for (unsigned int d = 0; d < components; ++d)
+        result[d][v] = function.value(p, d);
+    }
+  return result;
+}
 
 template <int dim, int fe_degree, typename number>
 class AdvectionDiffusionOperator
@@ -471,15 +529,19 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
           // Get advection field vector
-          Point<dim, VectorizedArray<number>> point_batch =
+          Point<dim, VectorizedArray<double>> point_batch =
             phi.quadrature_point(q);
-          Tensor<1, dim> advection_vector;
-          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+          Tensor<1, dim, VectorizedArray<double>> advection_vector =
+            evaluate_function<dim, double, dim>(advection_field, point_batch);
+          VectorizedArray<double> advection_vector_norm =
+            VectorizedArray<double>(0.0);
+
+          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
             {
-              Point<dim> single_point;
+              Tensor<1, dim> temporary_vector;
               for (unsigned int d = 0; d < dim; ++d)
-                single_point[d] = point_batch[d][v];
-              advection_vector = advection_field.value(single_point);
+                temporary_vector[d] = advection_vector[d][v];
+              advection_vector_norm[v] = temporary_vector.norm();
             }
 
           if (parameters.stabilization)
@@ -498,7 +560,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
                 {
                   tau[v] = std::pow(
                     std::pow(4 / (parameters.peclet_number * h[v] * h[v]), 2) +
-                      std::pow(2 * advection_vector.norm() / h[v], 2),
+                      std::pow(2 * advection_vector_norm[v] / h[v], 2),
                     -0.5);
                 }
 
@@ -563,15 +625,20 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
       // Get advection field vector
-      Point<dim, VectorizedArray<number>> point_batch = phi.quadrature_point(q);
-      Tensor<1, dim>                      advection_vector;
-      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+      Point<dim, VectorizedArray<double>> point_batch = phi.quadrature_point(q);
+      Tensor<1, dim, VectorizedArray<double>> advection_vector =
+        evaluate_function<dim, double, dim>(advection_field, point_batch);
+      VectorizedArray<double> advection_vector_norm =
+        VectorizedArray<double>(0.0);
+
+      for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
         {
-          Point<dim> single_point;
+          Tensor<1, dim> temporary_vector;
           for (unsigned int d = 0; d < dim; ++d)
-            single_point[d] = point_batch[d][v];
-          advection_vector = advection_field.value(single_point);
+            temporary_vector[d] = advection_vector[d][v];
+          advection_vector_norm[v] = temporary_vector.norm();
         }
+
       if (parameters.stabilization)
         {
           VectorizedArray<number> tau = VectorizedArray<number>(0.0);
@@ -591,7 +658,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
               tau[v] =
                 std::pow(std::pow(4 / (parameters.peclet_number * h[v] * h[v]),
                                   2) +
-                           std::pow(2 * advection_vector.norm() / h[v], 2),
+                           std::pow(2 * advection_vector_norm[v] / h[v], 2),
                          -0.5);
             }
 
@@ -1086,30 +1153,26 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
         {
           VectorizedArray<double> source_value = VectorizedArray<double>(0.0);
 
-          if (parameters.source_term == Settings::mms)
-            {
-              Point<dim, VectorizedArray<double>> point_batch =
-                phi.quadrature_point(q);
-
-              for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-                {
-                  Point<dim> single_point;
-                  for (unsigned int d = 0; d < dim; ++d)
-                    single_point[d] = point_batch[d][v];
-                  source_value[v] = source_term_function.value(single_point);
-                }
-            }
-
           Point<dim, VectorizedArray<double>> point_batch =
             phi.quadrature_point(q);
+          if (parameters.source_term == Settings::mms)
+            {
+              source_value =
+                evaluate_function<dim, double>(source_term_function,
+                                               point_batch);
+            }
 
-          Tensor<1, dim> advection_vector;
+          Tensor<1, dim, VectorizedArray<double>> advection_vector =
+            evaluate_function<dim, double, dim>(advection_field, point_batch);
+          VectorizedArray<double> advection_vector_norm =
+            VectorizedArray<double>(0.0);
+
           for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
             {
-              Point<dim> single_point;
+              Tensor<1, dim> temporary_vector;
               for (unsigned int d = 0; d < dim; ++d)
-                single_point[d] = point_batch[d][v];
-              advection_vector = advection_field.value(single_point);
+                temporary_vector[d] = advection_vector[d][v];
+              advection_vector_norm[v] = temporary_vector.norm();
             }
 
           if (parameters.stabilization)
@@ -1131,7 +1194,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
                 {
                   tau[v] = std::pow(
                     std::pow(4 / (parameters.peclet_number * h[v] * h[v]), 2) +
-                      std::pow(2 * advection_vector.norm() / h[v], 2),
+                      std::pow(2 * advection_vector_norm[v] / h[v], 2),
                     -0.5);
                 }
 
