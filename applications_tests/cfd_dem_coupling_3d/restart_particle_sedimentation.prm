@@ -88,7 +88,7 @@ subsection cfd-dem
   set coupling frequency            = 100
   set implicit stabilization        = false
   set vans model                    = modelB
-  set output statistics             = false
+  set particle statistics             = false
 end
 
 #---------------------------------------------------

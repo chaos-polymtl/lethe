@@ -88,7 +88,7 @@ subsection cfd-dem
   set drag model                    = difelice
   set coupling frequency            = 10
   set vans model                    = modelB
-  set output statistics             = false
+  set particle statistics             = false
 end
 
 #---------------------------------------------------
