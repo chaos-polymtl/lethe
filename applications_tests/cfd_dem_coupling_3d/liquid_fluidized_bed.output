@@ -34,15 +34,6 @@ Finished 10 DEM iterations
 Global continuity equation error: -9.410572586e-13 s^-1
 Max local continuity error: 3.680942381e-07 s^-1
 Average void fraction in regions with particles: 0.7846025865
---------------------
-Particle statistics
---------------------
-| Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2668e+04 | 3.2668e+04 | 3.2668e+04 | 
-| Velocity magnitude           | 2.5805e-05 | 2.7380e-02 | 8.0844e-04 | 8.0844e+00 | 
-| Angular velocity magnitude   | 1.1818e-03 | 2.4729e+01 | 7.0439e-02 | 7.0439e+02 | 
-| Translational kinetic energy | 1.1791e-14 | 1.3274e-08 | 1.8448e-11 | 1.8448e-07 | 
-| Rotational kinetic energy    | 4.4511e-17 | 1.9490e-08 | 2.4916e-12 | 2.4916e-08 | 
 
 *****************************************************************
 Transient iteration : 2        Time : 0.0002   Time step : 0.0001   CFL : 0.004908663353
@@ -61,15 +52,6 @@ Finished 10 DEM iterations
 Global continuity equation error: -2.734704185e-11 s^-1
 Max local continuity error: 3.488154464e-07 s^-1
 Average void fraction in regions with particles: 0.7846025865
---------------------
-Particle statistics
---------------------
-| Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2668e+04 | 1.6334e+04 | 3.2668e+04 | 
-| Velocity magnitude           | 3.3847e-02 | 4.7774e-02 | 4.1504e-02 | 4.1504e+02 | 
-| Angular velocity magnitude   | 4.9060e-03 | 2.4709e+01 | 1.4960e-01 | 1.4960e+03 | 
-| Translational kinetic energy | 2.0285e-08 | 4.0413e-08 | 3.0544e-08 | 3.0544e-04 | 
-| Rotational kinetic energy    | 7.6712e-16 | 1.9459e-08 | 3.3896e-12 | 3.3896e-08 | 
 
 *****************************************************************
 Transient iteration : 3        Time : 0.0003   Time step : 0.0001   CFL : 0.00446056468
@@ -88,15 +70,6 @@ Finished 10 DEM iterations
 Global continuity equation error: 1.130247818e-11 s^-1
 Max local continuity error: 3.26894259e-07 s^-1
 Average void fraction in regions with particles: 0.7846025865
---------------------
-Particle statistics
---------------------
-| Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2668e+04 | 1.0889e+04 | 3.2668e+04 | 
-| Velocity magnitude           | 4.4615e-02 | 8.4063e-02 | 6.6569e-02 | 6.6569e+02 | 
-| Angular velocity magnitude   | 3.1521e-03 | 2.4759e+01 | 3.7023e-01 | 3.7023e+03 | 
-| Translational kinetic energy | 3.5246e-08 | 1.2513e-07 | 7.9115e-08 | 7.9115e-04 | 
-| Rotational kinetic energy    | 3.1667e-16 | 1.9538e-08 | 1.3636e-11 | 1.3636e-07 | 
 
 *****************************************************************
 Transient iteration : 4        Time : 0.0004   Time step : 0.0001   CFL : 0.004195189901
@@ -115,15 +88,6 @@ Finished 10 DEM iterations
 Global continuity equation error: 4.748921509e-12 s^-1
 Max local continuity error: 3.134656066e-07 s^-1
 Average void fraction in regions with particles: 0.7846025865
---------------------
-Particle statistics
---------------------
-| Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2668e+04 | 8.1670e+03 | 3.2668e+04 | 
-| Velocity magnitude           | 4.6281e-02 | 1.0967e-01 | 8.2114e-02 | 8.2114e+02 | 
-| Angular velocity magnitude   | 1.6217e-02 | 2.4896e+01 | 6.7508e-01 | 6.7508e+03 | 
-| Translational kinetic energy | 3.7926e-08 | 2.1296e-07 | 1.2162e-07 | 1.2162e-03 | 
-| Rotational kinetic energy    | 8.3824e-15 | 1.9755e-08 | 3.5856e-11 | 3.5856e-07 | 
 
 *****************************************************************
 Transient iteration : 5        Time : 0.0005   Time step : 0.0001   CFL : 0.004015474146
@@ -142,12 +106,3 @@ Finished 10 DEM iterations
 Global continuity equation error: 3.398615438e-13 s^-1
 Max local continuity error: 3.057397489e-07 s^-1
 Average void fraction in regions with particles: 0.7846025865
---------------------
-Particle statistics
---------------------
-| Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2668e+04 | 6.5336e+03 | 3.2668e+04 | 
-| Velocity magnitude           | 4.3695e-02 | 1.2668e-01 | 9.1930e-02 | 9.1930e+02 | 
-| Angular velocity magnitude   | 5.1695e-03 | 2.5105e+01 | 1.0583e+00 | 1.0583e+04 | 
-| Translational kinetic energy | 3.3806e-08 | 2.8417e-07 | 1.5409e-07 | 1.5409e-03 | 
-| Rotational kinetic energy    | 8.5173e-16 | 2.0088e-08 | 7.3507e-11 | 7.3507e-07 | 
