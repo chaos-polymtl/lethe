@@ -12,9 +12,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -2.32538e-17 s^-1
-Max Local Mass Source: 0.00226328 s^-1
-Average Void Fraction in Bed: 0.5
+Global continuity equation error: -2.32538e-17 s^-1
+Max local continuity error: 0.00226328 s^-1
+Average void fraction in regions with particles: 0.5
 
 *****************************************************************
 Steady iteration :        2/3
@@ -28,9 +28,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: 2.92656e-17 s^-1
-Max Local Mass Source: 0.000290049 s^-1
-Average Void Fraction in Bed: 0.5
+Global continuity equation error: 2.92656e-17 s^-1
+Max local continuity error: 0.000290049 s^-1
+Average void fraction in regions with particles: 0.5
 
 *****************************************************************
 Steady iteration :        3/3
@@ -44,9 +44,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -9.1371e-19 s^-1
-Max Local Mass Source: 3.65184e-05 s^-1
-Average Void Fraction in Bed: 0.5
+Global continuity equation error: -9.1371e-19 s^-1
+Max local continuity error: 3.65184e-05 s^-1
+Average void fraction in regions with particles: 0.5
 cells  error_velocity    error_pressure   
   256 6.359579e-02    - 4.459124e-01    - 
  1024 1.754816e-02 1.86 1.613414e-01 1.47 

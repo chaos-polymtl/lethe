@@ -12,9 +12,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: 1.14871e-10 s^-1
-Max Local Mass Source: 3.61405e-05 s^-1
-Average Void Fraction in Bed: 0.334219
+Global continuity equation error: 1.14871e-10 s^-1
+Max local continuity error: 3.61405e-05 s^-1
+Average void fraction in regions with particles: 0.334219
 
 *****************************************************************
 Transient iteration : 2        Time : 0.2      Time step : 0.1      CFL : 3.7299  
@@ -25,9 +25,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: 9.53448e-11 s^-1
-Max Local Mass Source: 1.46032e-05 s^-1
-Average Void Fraction in Bed: 0.355022
+Global continuity equation error: 9.53448e-11 s^-1
+Max local continuity error: 1.46032e-05 s^-1
+Average void fraction in regions with particles: 0.355022
 
 *****************************************************************
 Transient iteration : 3        Time : 0.3      Time step : 0.1      CFL : 1.38787 
@@ -38,9 +38,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -2.12197e-10 s^-1
-Max Local Mass Source: 1.47897e-05 s^-1
-Average Void Fraction in Bed: 0.380737
+Global continuity equation error: -2.12197e-10 s^-1
+Max local continuity error: 1.47897e-05 s^-1
+Average void fraction in regions with particles: 0.380737
 
 *****************************************************************
 Transient iteration : 4        Time : 0.4      Time step : 0.1      CFL : 1.30555 
@@ -51,9 +51,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -4.34767e-10 s^-1
-Max Local Mass Source: 3.9545e-05 s^-1
-Average Void Fraction in Bed: 0.40154
+Global continuity equation error: -4.34767e-10 s^-1
+Max local continuity error: 3.9545e-05 s^-1
+Average void fraction in regions with particles: 0.40154
 
 *****************************************************************
 Transient iteration : 5        Time : 0.5      Time step : 0.1      CFL : 3.45387 
@@ -64,9 +64,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -5.43854e-10 s^-1
-Max Local Mass Source: 4.94902e-05 s^-1
-Average Void Fraction in Bed: 0.409486
+Global continuity equation error: -5.43854e-10 s^-1
+Max local continuity error: 4.94902e-05 s^-1
+Average void fraction in regions with particles: 0.409486
 
 *****************************************************************
 Transient iteration : 6        Time : 0.6      Time step : 0.1      CFL : 4.3892  
@@ -77,9 +77,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: 2.12264e-10 s^-1
-Max Local Mass Source: 3.99936e-05 s^-1
-Average Void Fraction in Bed: 0.40154
+Global continuity equation error: 2.12264e-10 s^-1
+Max local continuity error: 3.99936e-05 s^-1
+Average void fraction in regions with particles: 0.40154
 
 *****************************************************************
 Transient iteration : 7        Time : 0.7      Time step : 0.1      CFL : 3.61979 
@@ -90,9 +90,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -2.98669e-10 s^-1
-Max Local Mass Source: 1.50891e-05 s^-1
-Average Void Fraction in Bed: 0.380737
+Global continuity equation error: -2.98669e-10 s^-1
+Max local continuity error: 1.50891e-05 s^-1
+Average void fraction in regions with particles: 0.380737
 
 *****************************************************************
 Transient iteration : 8        Time : 0.8      Time step : 0.1      CFL : 1.44135 
@@ -103,9 +103,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: 4.63716e-11 s^-1
-Max Local Mass Source: 1.45037e-05 s^-1
-Average Void Fraction in Bed: 0.355022
+Global continuity equation error: 4.63716e-11 s^-1
+Max local continuity error: 1.45037e-05 s^-1
+Average void fraction in regions with particles: 0.355022
 
 *****************************************************************
 Transient iteration : 9        Time : 0.9      Time step : 0.1      CFL : 1.34324 
@@ -116,9 +116,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -1.5259e-10 s^-1
-Max Local Mass Source: 3.71452e-05 s^-1
-Average Void Fraction in Bed: 0.334219
+Global continuity equation error: -1.5259e-10 s^-1
+Max local continuity error: 3.71452e-05 s^-1
+Average void fraction in regions with particles: 0.334219
 
 *****************************************************************
 Transient iteration : 10       Time : 1        Time step : 0.1      CFL : 3.38484 
@@ -129,9 +129,9 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Mass Source: -1.08571e-10 s^-1
-Max Local Mass Source: 4.52676e-05 s^-1
-Average Void Fraction in Bed: 0.326272
+Global continuity equation error: -1.08571e-10 s^-1
+Max local continuity error: 4.52676e-05 s^-1
+Average void fraction in regions with particles: 0.326272
  time  error_velocity 
 0.1000 3.907086e-01   
 0.2000 1.099941e-01   
