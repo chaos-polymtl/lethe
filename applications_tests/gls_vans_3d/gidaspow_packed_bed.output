@@ -18,6 +18,7 @@ Pressure drop: 61.34887012 Pa
 Total pressure drop: 61.34887044 Pa
 Global continuity equation error: -3.446202714e-12 s^-1
 Max local continuity error: 7.819604909e-08 s^-1
+Average void fraction in regions with particles: 0.7930753133
 
 *****************************************************************
 Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.2125517999
@@ -32,6 +33,7 @@ Pressure drop: 57.73463692 Pa
 Total pressure drop: 57.73487929 Pa
 Global continuity equation error: 6.919916136e-12 s^-1
 Max local continuity error: 7.359062306e-08 s^-1
+Average void fraction in regions with particles: 0.7931023626
 
 *****************************************************************
 Transient iteration : 3        Time : 0.006    Time step : 0.002    CFL : 0.2151095802
@@ -46,6 +48,7 @@ Pressure drop: 58.29805179 Pa
 Total pressure drop: 58.29780872 Pa
 Global continuity equation error: -1.336538909e-11 s^-1
 Max local continuity error: 7.449922631e-08 s^-1
+Average void fraction in regions with particles: 0.7930753133
 
 *****************************************************************
 Transient iteration : 4        Time : 0.008    Time step : 0.002    CFL : 0.2161313186
@@ -60,6 +63,7 @@ Pressure drop: 57.65325795 Pa
 Total pressure drop: 57.65350033 Pa
 Global continuity equation error: 4.051710627e-12 s^-1
 Max local continuity error: 7.363184839e-08 s^-1
+Average void fraction in regions with particles: 0.7931023626
 
 *****************************************************************
 Transient iteration : 5        Time : 0.01     Time step : 0.002    CFL : 0.214323852
@@ -74,6 +78,7 @@ Pressure drop: 58.29799117 Pa
 Total pressure drop: 58.29774806 Pa
 Global continuity equation error: -8.863234491e-12 s^-1
 Max local continuity error: 7.450847124e-08 s^-1
+Average void fraction in regions with particles: 0.7930753133
 
 *****************************************************************
 Transient iteration : 6        Time : 0.012    Time step : 0.002    CFL : 0.2163079556
@@ -88,6 +93,7 @@ Pressure drop: 57.65334064 Pa
 Total pressure drop: 57.65358294 Pa
 Global continuity equation error: 3.176687907e-12 s^-1
 Max local continuity error: 7.363458477e-08 s^-1
+Average void fraction in regions with particles: 0.7931023626
 
 *****************************************************************
 Transient iteration : 7        Time : 0.014    Time step : 0.002    CFL : 0.214315228
@@ -102,6 +108,7 @@ Pressure drop: 58.29809212 Pa
 Total pressure drop: 58.29784889 Pa
 Global continuity equation error: -3.206593132e-12 s^-1
 Max local continuity error: 7.450770028e-08 s^-1
+Average void fraction in regions with particles: 0.7930753133
 
 *****************************************************************
 Transient iteration : 8        Time : 0.016    Time step : 0.002    CFL : 0.2163260208
@@ -116,6 +123,7 @@ Pressure drop: 57.65341801 Pa
 Total pressure drop: 57.65366018 Pa
 Global continuity equation error: 3.450913096e-12 s^-1
 Max local continuity error: 7.36329697e-08 s^-1
+Average void fraction in regions with particles: 0.7931023626
 
 *****************************************************************
 Transient iteration : 9        Time : 0.018    Time step : 0.002    CFL : 0.2143247746
@@ -130,6 +138,7 @@ Pressure drop: 58.29816067 Pa
 Total pressure drop: 58.2979173 Pa
 Global continuity equation error: -3.068812241e-12 s^-1
 Max local continuity error: 7.450595544e-08 s^-1
+Average void fraction in regions with particles: 0.7930753133
 
 *****************************************************************
 Transient iteration : 10       Time : 0.02     Time step : 0.002    CFL : 0.216334791
@@ -144,3 +153,4 @@ Pressure drop: 57.65347866 Pa
 Total pressure drop: 57.65372068 Pa
 Global continuity equation error: 3.595273396e-12 s^-1
 Max local continuity error: 7.363133735e-08 s^-1
+Average void fraction in regions with particles: 0.7931023626
