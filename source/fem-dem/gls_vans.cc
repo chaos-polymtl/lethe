@@ -1525,13 +1525,9 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
   // source
   std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
 
-  double continuity            = 0;
-  double max_local_continuity  = 0;
-  double local_mass_source     = 0;
-  double fluid_volume          = 0;
-  double bed_volume            = 0;
-  double average_void_fraction = 0;
-  pressure_drop                = 0;
+  double continuity           = 0;
+  double max_local_continuity = 0;
+  double local_mass_source    = 0;
 
   Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
@@ -1649,15 +1645,6 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
                    bdf_coefs[3] * p3_void_fraction_values[q]) *
                   fe_values_void_fraction.JxW(q);
 
-              // Calculation of fluid and bed volumes in bed
-              if (present_void_fraction_values[q] < 1.0)
-                {
-                  fluid_volume += present_void_fraction_values[q] *
-                                  fe_values_void_fraction.JxW(q);
-
-                  bed_volume += fe_values_void_fraction.JxW(q);
-                }
-
               continuity += local_mass_source;
             }
 
@@ -1666,18 +1653,15 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
         }
     }
 
-  continuity   = Utilities::MPI::sum(continuity, this->mpi_communicator);
-  fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
-  bed_volume   = Utilities::MPI::sum(bed_volume, this->mpi_communicator);
+  continuity = Utilities::MPI::sum(continuity, this->mpi_communicator);
+  max_local_continuity =
+    Utilities::MPI::max(max_local_continuity, this->mpi_communicator);
 
-  average_void_fraction = fluid_volume / bed_volume;
 
   this->pcout << "Global continuity equation error: " << continuity << " s^-1"
               << std::endl;
   this->pcout << "Max local continuity error: " << max_local_continuity
               << " s^-1" << std::endl;
-  this->pcout << "Average void fraction in regions with particles: "
-              << average_void_fraction << std::endl;
 }
 
 template <int dim>

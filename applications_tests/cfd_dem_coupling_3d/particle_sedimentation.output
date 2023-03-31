@@ -46,7 +46,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 0 s^-1
 Max local continuity error: 0 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 2        Time : 0.01     Time step : 0.005    CFL : 0       
@@ -78,7 +77,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.507798368e-18 s^-1
 Max local continuity error: 1.562921799e-11 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 3        Time : 0.015    Time step : 0.005    CFL : 1.44013875e-07
@@ -110,7 +108,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.793820771e-18 s^-1
 Max local continuity error: 5.859416934e-11 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 4        Time : 0.02     Time step : 0.005    CFL : 5.413028059e-07
@@ -142,7 +139,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.381285092e-18 s^-1
 Max local continuity error: 1.361804828e-10 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 5        Time : 0.025    Time step : 0.005    CFL : 1.266447763e-06
@@ -174,7 +170,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -7.071751005e-19 s^-1
 Max local continuity error: 2.522486351e-10 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 6        Time : 0.03     Time step : 0.005    CFL : 2.336167281e-06
@@ -206,7 +201,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -7.394453411e-19 s^-1
 Max local continuity error: 4.04971564e-10 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 7        Time : 0.035    Time step : 0.005    CFL : 3.799779068e-06
@@ -238,7 +232,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.249894157e-18 s^-1
 Max local continuity error: 5.933878331e-10 s^-1
-Average void fraction in regions with particles: 0.9999926568
 
 *****************************************************************
 Transient iteration : 8        Time : 0.04     Time step : 0.005    CFL : 5.630592577e-06
@@ -270,7 +263,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.594978753e-15 s^-1
 Max local continuity error: 1.807514359e-08 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 9        Time : 0.045    Time step : 0.005    CFL : 4.011156635e-05
@@ -302,7 +294,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.346973412e-15 s^-1
 Max local continuity error: 6.803896335e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 10       Time : 0.05     Time step : 0.005    CFL : 1.088272137e-05
@@ -334,7 +325,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.078085215e-15 s^-1
 Max local continuity error: 3.30257737e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 11       Time : 0.055    Time step : 0.005    CFL : 1.015096562e-05
@@ -366,7 +356,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.512967822e-15 s^-1
 Max local continuity error: 1.859831722e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 12       Time : 0.06     Time step : 0.005    CFL : 1.248654837e-05
@@ -398,7 +387,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.988719672e-15 s^-1
 Max local continuity error: 1.5693307e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 13       Time : 0.065    Time step : 0.005    CFL : 1.571692141e-05
@@ -430,7 +418,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.569261542e-15 s^-1
 Max local continuity error: 1.554993879e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 14       Time : 0.07     Time step : 0.005    CFL : 1.952068368e-05
@@ -462,7 +449,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.245554725e-15 s^-1
 Max local continuity error: 1.616126739e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 15       Time : 0.075    Time step : 0.005    CFL : 2.324509343e-05
@@ -494,7 +480,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.001471992e-15 s^-1
 Max local continuity error: 1.973856856e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 16       Time : 0.08     Time step : 0.005    CFL : 2.695121139e-05
@@ -526,7 +511,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.819304597e-15 s^-1
 Max local continuity error: 2.357643719e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 17       Time : 0.085    Time step : 0.005    CFL : 3.066424768e-05
@@ -558,7 +542,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.684222255e-15 s^-1
 Max local continuity error: 2.727074057e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 18       Time : 0.09     Time step : 0.005    CFL : 3.439051449e-05
@@ -590,7 +573,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.584593637e-15 s^-1
 Max local continuity error: 3.085991405e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 19       Time : 0.095    Time step : 0.005    CFL : 3.81291136e-05
@@ -622,7 +604,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.51152875e-15 s^-1
 Max local continuity error: 3.436493829e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 20       Time : 0.1      Time step : 0.005    CFL : 4.187666748e-05
@@ -654,7 +635,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.458339895e-15 s^-1
 Max local continuity error: 3.77973295e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 21       Time : 0.105    Time step : 0.005    CFL : 4.562936961e-05
@@ -686,7 +666,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.420035161e-15 s^-1
 Max local continuity error: 4.116334227e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 22       Time : 0.11     Time step : 0.005    CFL : 4.938378153e-05
@@ -718,7 +697,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.392898669e-15 s^-1
 Max local continuity error: 4.446628039e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 23       Time : 0.115    Time step : 0.005    CFL : 5.313702655e-05
@@ -750,7 +728,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.374168179e-15 s^-1
 Max local continuity error: 4.770778936e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 24       Time : 0.12     Time step : 0.005    CFL : 5.688673624e-05
@@ -782,7 +759,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.361793603e-15 s^-1
 Max local continuity error: 5.088857686e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 25       Time : 0.125    Time step : 0.005    CFL : 6.063093141e-05
@@ -814,7 +790,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.354256538e-15 s^-1
 Max local continuity error: 5.400881542e-09 s^-1
-Average void fraction in regions with particles: 0.9999925455
 
 *****************************************************************
 Transient iteration : 26       Time : 0.13     Time step : 0.005    CFL : 6.436791536e-05
@@ -846,7 +821,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.278665508e-14 s^-1
 Max local continuity error: 2.272992315e-08 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 27       Time : 0.135    Time step : 0.005    CFL : 5.852258123e-05
@@ -878,7 +852,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.61588802e-14 s^-1
 Max local continuity error: 1.123006815e-08 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 28       Time : 0.14     Time step : 0.005    CFL : 6.5918004e-05
@@ -910,7 +883,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.630617916e-14 s^-1
 Max local continuity error: 7.595382832e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 29       Time : 0.145    Time step : 0.005    CFL : 6.675016099e-05
@@ -942,7 +914,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.602787827e-14 s^-1
 Max local continuity error: 6.077260157e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 30       Time : 0.15     Time step : 0.005    CFL : 6.905707972e-05
@@ -974,7 +945,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.577088426e-14 s^-1
 Max local continuity error: 5.67677063e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 31       Time : 0.155    Time step : 0.005    CFL : 7.28652092e-05
@@ -1006,7 +976,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.559407473e-14 s^-1
 Max local continuity error: 5.740040523e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 32       Time : 0.16     Time step : 0.005    CFL : 7.622030127e-05
@@ -1038,7 +1007,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.549121553e-14 s^-1
 Max local continuity error: 5.841170927e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 33       Time : 0.165    Time step : 0.005    CFL : 7.935749027e-05
@@ -1070,7 +1038,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.545109062e-14 s^-1
 Max local continuity error: 5.954020521e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 34       Time : 0.17     Time step : 0.005    CFL : 8.237677742e-05
@@ -1102,7 +1069,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.546137231e-14 s^-1
 Max local continuity error: 6.069001271e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 35       Time : 0.175    Time step : 0.005    CFL : 8.532386539e-05
@@ -1134,7 +1100,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.551119776e-14 s^-1
 Max local continuity error: 6.181822527e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 36       Time : 0.18     Time step : 0.005    CFL : 8.822200383e-05
@@ -1166,7 +1131,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.559197163e-14 s^-1
 Max local continuity error: 6.290224902e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 37       Time : 0.185    Time step : 0.005    CFL : 9.108408687e-05
@@ -1198,7 +1162,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.569713167e-14 s^-1
 Max local continuity error: 6.392881979e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 38       Time : 0.19     Time step : 0.005    CFL : 9.391776357e-05
@@ -1230,7 +1193,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.582168744e-14 s^-1
 Max local continuity error: 6.488963654e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 39       Time : 0.195    Time step : 0.005    CFL : 9.672782844e-05
@@ -1262,7 +1224,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.59618386e-14 s^-1
 Max local continuity error: 6.577929876e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 40       Time : 0.2      Time step : 0.005    CFL : 9.951747204e-05
@@ -1294,7 +1255,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.611469946e-14 s^-1
 Max local continuity error: 6.659420852e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 41       Time : 0.205    Time step : 0.005    CFL : 0.0001022889669
@@ -1326,7 +1286,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.62780903e-14 s^-1
 Max local continuity error: 6.733196435e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 42       Time : 0.21     Time step : 0.005    CFL : 0.0001050440169
@@ -1358,7 +1317,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.645037042e-14 s^-1
 Max local continuity error: 6.799103197e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 43       Time : 0.215    Time step : 0.005    CFL : 0.000108493278
@@ -1390,7 +1348,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.663029925e-14 s^-1
 Max local continuity error: 6.857056394e-09 s^-1
-Average void fraction in regions with particles: 0.9999925708
 
 *****************************************************************
 Transient iteration : 44       Time : 0.22     Time step : 0.005    CFL : 0.0001120180113
@@ -1422,7 +1379,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.653049011e-14 s^-1
 Max local continuity error: 2.155745229e-08 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 45       Time : 0.225    Time step : 0.005    CFL : 0.0001127042298
@@ -1454,7 +1410,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.104314974e-14 s^-1
 Max local continuity error: 1.0045055e-08 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 46       Time : 0.23     Time step : 0.005    CFL : 0.0001148399669
@@ -1486,7 +1441,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.13311668e-14 s^-1
 Max local continuity error: 6.98252355e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 47       Time : 0.235    Time step : 0.005    CFL : 0.0001136618737
@@ -1518,7 +1472,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.118687645e-14 s^-1
 Max local continuity error: 5.544131957e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 48       Time : 0.24     Time step : 0.005    CFL : 0.0001137595883
@@ -1550,7 +1503,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.105398192e-14 s^-1
 Max local continuity error: 5.417103131e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 49       Time : 0.245    Time step : 0.005    CFL : 0.0001137881233
@@ -1582,7 +1534,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.097986511e-14 s^-1
 Max local continuity error: 5.503378335e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 50       Time : 0.25     Time step : 0.005    CFL : 0.0001138772371
@@ -1614,7 +1565,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.097225851e-14 s^-1
 Max local continuity error: 5.631707052e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 51       Time : 0.255    Time step : 0.005    CFL : 0.0001140445868
@@ -1646,7 +1596,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.10260336e-14 s^-1
 Max local continuity error: 5.779582178e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 52       Time : 0.26     Time step : 0.005    CFL : 0.0001142797059
@@ -1678,7 +1627,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.113172301e-14 s^-1
 Max local continuity error: 5.935989786e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 53       Time : 0.265    Time step : 0.005    CFL : 0.0001145688295
@@ -1710,7 +1658,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.128002008e-14 s^-1
 Max local continuity error: 6.094668903e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 54       Time : 0.27     Time step : 0.005    CFL : 0.000114900963
@@ -1742,7 +1689,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.14630007e-14 s^-1
 Max local continuity error: 6.251812944e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 55       Time : 0.275    Time step : 0.005    CFL : 0.0001152684151
@@ -1774,7 +1720,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.167421503e-14 s^-1
 Max local continuity error: 6.405023405e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 56       Time : 0.28     Time step : 0.005    CFL : 0.0001156659766
@@ -1806,7 +1751,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.190851537e-14 s^-1
 Max local continuity error: 6.552752241e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 57       Time : 0.285    Time step : 0.005    CFL : 0.0001173368866
@@ -1838,7 +1782,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.216183338e-14 s^-1
 Max local continuity error: 6.693977961e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 58       Time : 0.29     Time step : 0.005    CFL : 0.0001201933932
@@ -1870,7 +1813,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.243095861e-14 s^-1
 Max local continuity error: 6.828009892e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 59       Time : 0.295    Time step : 0.005    CFL : 0.0001230294957
@@ -1902,7 +1844,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.271334135e-14 s^-1
 Max local continuity error: 6.954371854e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 60       Time : 0.3      Time step : 0.005    CFL : 0.0001258465941
@@ -1934,7 +1875,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.300693401e-14 s^-1
 Max local continuity error: 7.07273603e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 
 *****************************************************************
 Transient iteration : 61       Time : 0.305    Time step : 0.005    CFL : 0.000128645653
@@ -1966,7 +1906,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.512963674e-14 s^-1
 Max local continuity error: 2.129123016e-08 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 62       Time : 0.31     Time step : 0.005    CFL : 0.000132575081
@@ -1998,7 +1937,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.454700595e-14 s^-1
 Max local continuity error: 9.217689819e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 63       Time : 0.315    Time step : 0.005    CFL : 0.000134575014
@@ -2030,7 +1968,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.551189918e-14 s^-1
 Max local continuity error: 6.211132506e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 64       Time : 0.32     Time step : 0.005    CFL : 0.0001308014533
@@ -2062,7 +1999,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.563841556e-14 s^-1
 Max local continuity error: 4.974498406e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 65       Time : 0.325    Time step : 0.005    CFL : 0.0001284148241
@@ -2094,7 +2030,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.590215379e-14 s^-1
 Max local continuity error: 4.331404253e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 66       Time : 0.33     Time step : 0.005    CFL : 0.0001269520853
@@ -2126,7 +2061,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.638658427e-14 s^-1
 Max local continuity error: 4.187176995e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 67       Time : 0.335    Time step : 0.005    CFL : 0.0001259317324
@@ -2158,7 +2092,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.708304166e-14 s^-1
 Max local continuity error: 4.060287605e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 68       Time : 0.34     Time step : 0.005    CFL : 0.0001251410136
@@ -2190,7 +2123,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.795528704e-14 s^-1
 Max local continuity error: 4.213504135e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 69       Time : 0.345    Time step : 0.005    CFL : 0.0001244813047
@@ -2222,7 +2154,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.896757348e-14 s^-1
 Max local continuity error: 4.433659476e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 70       Time : 0.35     Time step : 0.005    CFL : 0.0001239049859
@@ -2254,7 +2185,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.009108954e-14 s^-1
 Max local continuity error: 4.65071186e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 71       Time : 0.355    Time step : 0.005    CFL : 0.0001233875975
@@ -2286,7 +2216,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.130395444e-14 s^-1
 Max local continuity error: 4.864360161e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 72       Time : 0.36     Time step : 0.005    CFL : 0.0001229159501
@@ -2318,7 +2247,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.258986332e-14 s^-1
 Max local continuity error: 5.074585325e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 73       Time : 0.365    Time step : 0.005    CFL : 0.0001224825812
@@ -2350,7 +2278,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.393672968e-14 s^-1
 Max local continuity error: 5.281462824e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 74       Time : 0.37     Time step : 0.005    CFL : 0.0001220830121
@@ -2382,7 +2309,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.533561473e-14 s^-1
 Max local continuity error: 5.485086385e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 75       Time : 0.375    Time step : 0.005    CFL : 0.0001217143882
@@ -2414,7 +2340,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.67799154e-14 s^-1
 Max local continuity error: 5.685538193e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 76       Time : 0.38     Time step : 0.005    CFL : 0.000122326909
@@ -2446,7 +2371,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.826475039e-14 s^-1
 Max local continuity error: 5.882880321e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 77       Time : 0.385    Time step : 0.005    CFL : 0.0001251118355
@@ -2478,7 +2402,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.959129631e-14 s^-1
 Max local continuity error: 5.779387894e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 78       Time : 0.39     Time step : 0.005    CFL : 0.0001245088414
@@ -2510,7 +2433,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.078957283e-14 s^-1
 Max local continuity error: 5.706452273e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 79       Time : 0.395    Time step : 0.005    CFL : 0.0001240708021
@@ -2542,7 +2464,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.189294195e-14 s^-1
 Max local continuity error: 5.648902308e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 80       Time : 0.4      Time step : 0.005    CFL : 0.0001237276205
@@ -2574,7 +2495,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.29353955e-14 s^-1
 Max local continuity error: 5.611251899e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 81       Time : 0.405    Time step : 0.005    CFL : 0.0001235647935
@@ -2606,7 +2526,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.39231133e-14 s^-1
 Max local continuity error: 5.561429041e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 82       Time : 0.41     Time step : 0.005    CFL : 0.0001232254468
@@ -2638,7 +2557,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.484999521e-14 s^-1
 Max local continuity error: 5.514809195e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 83       Time : 0.415    Time step : 0.005    CFL : 0.0001228836757
@@ -2670,7 +2588,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.574546585e-14 s^-1
 Max local continuity error: 5.469961345e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 84       Time : 0.42     Time step : 0.005    CFL : 0.0001225561674
@@ -2702,7 +2619,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.661418548e-14 s^-1
 Max local continuity error: 5.426760101e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 85       Time : 0.425    Time step : 0.005    CFL : 0.0001222394019
@@ -2734,7 +2650,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.746274222e-14 s^-1
 Max local continuity error: 5.384809236e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 86       Time : 0.43     Time step : 0.005    CFL : 0.0001220166483
@@ -2766,7 +2681,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.829504724e-14 s^-1
 Max local continuity error: 5.34384987e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 87       Time : 0.435    Time step : 0.005    CFL : 0.0001220109665
@@ -2798,7 +2712,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.911376277e-14 s^-1
 Max local continuity error: 5.303919935e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 88       Time : 0.44     Time step : 0.005    CFL : 0.0001220030162
@@ -2830,7 +2743,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.992060515e-14 s^-1
 Max local continuity error: 5.264744234e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 89       Time : 0.445    Time step : 0.005    CFL : 0.0001219927907
@@ -2862,7 +2774,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.071673279e-14 s^-1
 Max local continuity error: 5.226091432e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 90       Time : 0.45     Time step : 0.005    CFL : 0.0001219803768
@@ -2894,7 +2805,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.150293455e-14 s^-1
 Max local continuity error: 5.187888254e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 91       Time : 0.455    Time step : 0.005    CFL : 0.0001219658748
@@ -2926,7 +2836,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.227976184e-14 s^-1
 Max local continuity error: 5.150087755e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 92       Time : 0.46     Time step : 0.005    CFL : 0.0001219493664
@@ -2958,7 +2867,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.304760996e-14 s^-1
 Max local continuity error: 5.112661535e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 93       Time : 0.465    Time step : 0.005    CFL : 0.0001219309047
@@ -2990,7 +2898,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.380677709e-14 s^-1
 Max local continuity error: 5.075593058e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 94       Time : 0.47     Time step : 0.005    CFL : 0.0001219105202
@@ -3022,7 +2929,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.455750553e-14 s^-1
 Max local continuity error: 5.038872223e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 95       Time : 0.475    Time step : 0.005    CFL : 0.0001218882313
@@ -3054,7 +2960,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.530000818e-14 s^-1
 Max local continuity error: 5.002491378e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 96       Time : 0.48     Time step : 0.005    CFL : 0.0001218640567
@@ -3086,7 +2991,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.603448245e-14 s^-1
 Max local continuity error: 4.966442905e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 97       Time : 0.485    Time step : 0.005    CFL : 0.0001218380248
@@ -3118,7 +3022,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.676111319e-14 s^-1
 Max local continuity error: 4.930718201e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 98       Time : 0.49     Time step : 0.005    CFL : 0.0001218101802
@@ -3150,7 +3053,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.748006984e-14 s^-1
 Max local continuity error: 4.89966814e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 99       Time : 0.495    Time step : 0.005    CFL : 0.0001217805858
@@ -3182,7 +3084,6 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.819150169e-14 s^-1
 Max local continuity error: 4.877701486e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 
 *****************************************************************
 Transient iteration : 100      Time : 0.5      Time step : 0.005    CFL : 0.0001217493218
@@ -3214,4 +3115,3 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.889553401e-14 s^-1
 Max local continuity error: 4.856099789e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
