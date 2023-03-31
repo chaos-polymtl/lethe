@@ -110,6 +110,7 @@ namespace Parameters
     bool         interpolated_void_fraction;
     double       cstar;
     bool         implicit_stabilization;
+    bool         particle_statistics;
 
     static void
     declare_parameters(ParameterHandler &prm);

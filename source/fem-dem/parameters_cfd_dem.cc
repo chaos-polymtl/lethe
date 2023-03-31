@@ -155,6 +155,13 @@ namespace Parameters
       "true",
       Patterns::Bool(),
       "Choose whether or not to use implicit or explicit stabilization");
+
+    prm.declare_entry(
+      "particle statistics",
+      "true",
+      Patterns::Bool(),
+      "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
+
     prm.leave_subsection();
   }
 
@@ -176,6 +183,7 @@ namespace Parameters
     coupling_frequency         = prm.get_integer("coupling frequency");
     cstar                      = prm.get_double("grad-div length scale");
     implicit_stabilization     = prm.get_bool("implicit stabilization");
+    particle_statistics        = prm.get_bool("particle statistics");
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")

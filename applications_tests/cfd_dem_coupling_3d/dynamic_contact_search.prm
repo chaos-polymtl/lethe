@@ -77,16 +77,17 @@ end
 #---------------------------------------------------
 
 subsection cfd-dem
-   set grad div = true
-   set void fraction time derivative = true
-   set drag force = true
-   set buoyancy force = true
-   set shear force = false
-   set pressure force = false
-   set drag model = difelice
-   set coupling frequency = 100
-   set implicit stabilization = false
-   set vans model = modelB
+  set grad div                      = true
+  set void fraction time derivative = true
+  set drag force                    = true
+  set buoyancy force                = true
+  set shear force                   = false
+  set pressure force                = false
+  set drag model                    = difelice
+  set coupling frequency            = 100
+  set implicit stabilization        = false
+  set vans model                    = modelB
+  set output statistics             = false
 end
 
 #---------------------------------------------------
