@@ -48,12 +48,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.102603355e-14 s^-1
 Max local continuity error: 5.779583296e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 6.3878e+02 | 3.2578e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 6.4204e+02 | 3.2744e+04 | 
 | Velocity magnitude           | 2.3298e-01 | 2.3298e-01  | 2.3298e-01 | 2.3298e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8421e-07 | 2.8421e-07  | 2.8421e-07 | 2.8421e-07 | 
@@ -89,12 +88,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.113172288e-14 s^-1
 Max local continuity error: 5.935990369e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 6.2669e+02 | 3.2588e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 6.2988e+02 | 3.2754e+04 | 
 | Velocity magnitude           | 2.3298e-01 | 2.3298e-01  | 2.3298e-01 | 2.3298e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8422e-07 | 2.8422e-07  | 2.8422e-07 | 2.8422e-07 | 
@@ -130,12 +128,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.128002014e-14 s^-1
 Max local continuity error: 6.094668952e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 6.1506e+02 | 3.2598e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 6.1819e+02 | 3.2764e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8422e-07 | 2.8422e-07  | 2.8422e-07 | 2.8422e-07 | 
@@ -171,12 +168,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.146300113e-14 s^-1
 Max local continuity error: 6.251812607e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 6.0385e+02 | 3.2608e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 6.0693e+02 | 3.2774e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -212,12 +208,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.167421561e-14 s^-1
 Max local continuity error: 6.405022803e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.9305e+02 | 3.2618e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.9607e+02 | 3.2784e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -253,12 +248,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.190851617e-14 s^-1
 Max local continuity error: 6.552751465e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.8264e+02 | 3.2628e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.8561e+02 | 3.2794e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -294,12 +288,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.216183438e-14 s^-1
 Max local continuity error: 6.693977077e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.7260e+02 | 3.2638e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.7551e+02 | 3.2804e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -335,12 +328,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.243095978e-14 s^-1
 Max local continuity error: 6.828008949e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.6290e+02 | 3.2648e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.6576e+02 | 3.2814e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -376,12 +368,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.271334267e-14 s^-1
 Max local continuity error: 6.954370889e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.5353e+02 | 3.2658e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.5634e+02 | 3.2824e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -417,12 +408,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.30069354e-14 s^-1
 Max local continuity error: 7.072735069e-09 s^-1
-Average void fraction in regions with particles: 0.9999926104
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.4447e+02 | 3.2668e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.4723e+02 | 3.2834e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -458,12 +448,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.512963371e-14 s^-1
 Max local continuity error: 2.129122947e-08 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.3570e+02 | 3.2678e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.3843e+02 | 3.2844e+04 | 
 | Velocity magnitude           | 2.3299e-01 | 2.3299e-01  | 2.3299e-01 | 2.3299e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8423e-07 | 2.8423e-07  | 2.8423e-07 | 2.8423e-07 | 
@@ -499,12 +488,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.454700246e-14 s^-1
 Max local continuity error: 9.217689261e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.2723e+02 | 3.2688e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.2990e+02 | 3.2854e+04 | 
 | Velocity magnitude           | 2.3293e-01 | 2.3293e-01  | 2.3293e-01 | 2.3293e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8408e-07 | 2.8408e-07  | 2.8408e-07 | 2.8408e-07 | 
@@ -540,12 +528,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.551189516e-14 s^-1
 Max local continuity error: 6.211132091e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.1902e+02 | 3.2698e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.2165e+02 | 3.2864e+04 | 
 | Velocity magnitude           | 2.3293e-01 | 2.3293e-01  | 2.3293e-01 | 2.3293e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8407e-07 | 2.8407e-07  | 2.8407e-07 | 2.8407e-07 | 
@@ -581,12 +568,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.563841118e-14 s^-1
 Max local continuity error: 4.974498097e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.1106e+02 | 3.2708e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.1366e+02 | 3.2874e+04 | 
 | Velocity magnitude           | 2.3293e-01 | 2.3293e-01  | 2.3293e-01 | 2.3293e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8409e-07 | 2.8409e-07  | 2.8409e-07 | 2.8409e-07 | 
@@ -622,12 +608,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.5902149e-14 s^-1
 Max local continuity error: 4.331404122e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 5.0335e+02 | 3.2718e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 5.0591e+02 | 3.2884e+04 | 
 | Velocity magnitude           | 2.3294e-01 | 2.3294e-01  | 2.3294e-01 | 2.3294e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8410e-07 | 2.8410e-07  | 2.8410e-07 | 2.8410e-07 | 
@@ -663,12 +648,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.638657922e-14 s^-1
 Max local continuity error: 4.187176877e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.9588e+02 | 3.2728e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.9839e+02 | 3.2894e+04 | 
 | Velocity magnitude           | 2.3294e-01 | 2.3294e-01  | 2.3294e-01 | 2.3294e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8411e-07 | 2.8411e-07  | 2.8411e-07 | 2.8411e-07 | 
@@ -704,12 +688,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.708303629e-14 s^-1
 Max local continuity error: 4.060287497e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.8863e+02 | 3.2738e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.9110e+02 | 3.2904e+04 | 
 | Velocity magnitude           | 2.3294e-01 | 2.3294e-01  | 2.3294e-01 | 2.3294e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8412e-07 | 2.8412e-07  | 2.8412e-07 | 2.8412e-07 | 
@@ -745,12 +728,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.795528133e-14 s^-1
 Max local continuity error: 4.213503071e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.8159e+02 | 3.2748e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.8403e+02 | 3.2914e+04 | 
 | Velocity magnitude           | 2.3294e-01 | 2.3294e-01  | 2.3294e-01 | 2.3294e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8411e-07 | 2.8411e-07  | 2.8411e-07 | 2.8411e-07 | 
@@ -786,12 +768,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.89675675e-14 s^-1
 Max local continuity error: 4.433658412e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.7475e+02 | 3.2758e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.7716e+02 | 3.2924e+04 | 
 | Velocity magnitude           | 2.3294e-01 | 2.3294e-01  | 2.3294e-01 | 2.3294e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8410e-07 | 2.8410e-07  | 2.8410e-07 | 2.8410e-07 | 
@@ -827,12 +808,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.009108322e-14 s^-1
 Max local continuity error: 4.650710799e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.6811e+02 | 3.2768e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.7049e+02 | 3.2934e+04 | 
 | Velocity magnitude           | 2.3293e-01 | 2.3293e-01  | 2.3293e-01 | 2.3293e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8408e-07 | 2.8408e-07  | 2.8408e-07 | 2.8408e-07 | 
@@ -868,12 +848,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.130394788e-14 s^-1
 Max local continuity error: 4.864359105e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.6166e+02 | 3.2778e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.6400e+02 | 3.2944e+04 | 
 | Velocity magnitude           | 2.3292e-01 | 2.3292e-01  | 2.3292e-01 | 2.3292e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8406e-07 | 2.8406e-07  | 2.8406e-07 | 2.8406e-07 | 
@@ -909,12 +888,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.258985657e-14 s^-1
 Max local continuity error: 5.074584275e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.5539e+02 | 3.2788e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.5769e+02 | 3.2954e+04 | 
 | Velocity magnitude           | 2.3291e-01 | 2.3291e-01  | 2.3291e-01 | 2.3291e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8403e-07 | 2.8403e-07  | 2.8403e-07 | 2.8403e-07 | 
@@ -950,12 +928,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.39367227e-14 s^-1
 Max local continuity error: 5.281461782e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.4929e+02 | 3.2798e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.5156e+02 | 3.2964e+04 | 
 | Velocity magnitude           | 2.3289e-01 | 2.3289e-01  | 2.3289e-01 | 2.3289e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8399e-07 | 2.8399e-07  | 2.8399e-07 | 2.8399e-07 | 
@@ -991,12 +968,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.533560754e-14 s^-1
 Max local continuity error: 5.485085351e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.4335e+02 | 3.2808e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.4559e+02 | 3.2974e+04 | 
 | Velocity magnitude           | 2.3287e-01 | 2.3287e-01  | 2.3287e-01 | 2.3287e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8395e-07 | 2.8395e-07  | 2.8395e-07 | 2.8395e-07 | 
@@ -1032,12 +1008,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.677990789e-14 s^-1
 Max local continuity error: 5.685537169e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max         | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04  | 4.3757e+02 | 3.2818e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04  | 4.3979e+02 | 3.2984e+04 | 
 | Velocity magnitude           | 2.3286e-01 | 2.3286e-01  | 2.3286e-01 | 2.3286e-01 | 
 | Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 | Translational kinetic energy | 2.8391e-07 | 2.8391e-07  | 2.8391e-07 | 2.8391e-07 | 
@@ -1073,12 +1048,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.826474263e-14 s^-1
 Max local continuity error: 5.882879307e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.3195e+02 | 3.2828e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.3413e+02 | 3.2994e+04 | 
 | Velocity magnitude           | 4.5847e-02 | 4.5847e-02 | 4.5847e-02 | 4.5847e-02 | 
 | Angular velocity magnitude   | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 
 | Translational kinetic energy | 1.1006e-08 | 1.1006e-08 | 1.1006e-08 | 1.1006e-08 | 
@@ -1114,12 +1088,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.959128846e-14 s^-1
 Max local continuity error: 5.77938708e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.2647e+02 | 3.2838e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.2862e+02 | 3.3004e+04 | 
 | Velocity magnitude           | 1.4340e-02 | 1.4340e-02 | 1.4340e-02 | 1.4340e-02 | 
 | Angular velocity magnitude   | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 
 | Translational kinetic energy | 1.0767e-09 | 1.0767e-09 | 1.0767e-09 | 1.0767e-09 | 
@@ -1155,12 +1128,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.078956487e-14 s^-1
 Max local continuity error: 5.706451552e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.2113e+02 | 3.2848e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.2326e+02 | 3.3014e+04 | 
 | Velocity magnitude           | 1.5511e-02 | 1.5511e-02 | 1.5511e-02 | 1.5511e-02 | 
 | Angular velocity magnitude   | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 
 | Translational kinetic energy | 1.2597e-09 | 1.2597e-09 | 1.2597e-09 | 1.2597e-09 | 
@@ -1196,12 +1168,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.1892934e-14 s^-1
 Max local continuity error: 5.648901675e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.1592e+02 | 3.2858e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.1803e+02 | 3.3024e+04 | 
 | Velocity magnitude           | 4.4599e-02 | 4.4599e-02 | 4.4599e-02 | 4.4599e-02 | 
 | Angular velocity magnitude   | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 1.1340e-02 | 
 | Translational kinetic energy | 1.0415e-08 | 1.0415e-08 | 1.0415e-08 | 1.0415e-08 | 
@@ -1237,12 +1208,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.293538763e-14 s^-1
 Max local continuity error: 5.61125142e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.1085e+02 | 3.2868e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.1293e+02 | 3.3034e+04 | 
 | Velocity magnitude           | 5.5337e-03 | 5.5337e-03 | 5.5337e-03 | 5.5337e-03 | 
 | Angular velocity magnitude   | 7.0360e-02 | 7.0360e-02 | 7.0360e-02 | 7.0360e-02 | 
 | Translational kinetic energy | 1.6034e-10 | 1.6034e-10 | 1.6034e-10 | 1.6034e-10 | 
@@ -1278,12 +1248,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.392310527e-14 s^-1
 Max local continuity error: 5.561428555e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.0590e+02 | 3.2878e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.0795e+02 | 3.3044e+04 | 
 | Velocity magnitude           | 1.4693e-04 | 1.4693e-04 | 1.4693e-04 | 1.4693e-04 | 
 | Angular velocity magnitude   | 8.1025e-02 | 8.1025e-02 | 8.1025e-02 | 8.1025e-02 | 
 | Translational kinetic energy | 1.1303e-13 | 1.1303e-13 | 1.1303e-13 | 1.1303e-13 | 
@@ -1319,12 +1288,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.48499868e-14 s^-1
 Max local continuity error: 5.514808737e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 4.0107e+02 | 3.2888e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 4.0310e+02 | 3.3054e+04 | 
 | Velocity magnitude           | 1.1813e-04 | 1.1813e-04 | 1.1813e-04 | 1.1813e-04 | 
 | Angular velocity magnitude   | 1.1063e-01 | 1.1063e-01 | 1.1063e-01 | 1.1063e-01 | 
 | Translational kinetic energy | 7.3070e-14 | 7.3070e-14 | 7.3070e-14 | 7.3070e-14 | 
@@ -1360,12 +1328,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.574545717e-14 s^-1
 Max local continuity error: 5.469960896e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.9636e+02 | 3.2898e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.9836e+02 | 3.3064e+04 | 
 | Velocity magnitude           | 1.0645e-04 | 1.0645e-04 | 1.0645e-04 | 1.0645e-04 | 
 | Angular velocity magnitude   | 1.4204e-01 | 1.4204e-01 | 1.4204e-01 | 1.4204e-01 | 
 | Translational kinetic energy | 5.9331e-14 | 5.9331e-14 | 5.9331e-14 | 5.9331e-14 | 
@@ -1401,12 +1368,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.661417677e-14 s^-1
 Max local continuity error: 5.426759647e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.9176e+02 | 3.2908e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.9374e+02 | 3.3074e+04 | 
 | Velocity magnitude           | 9.8564e-05 | 9.8564e-05 | 9.8564e-05 | 9.8564e-05 | 
 | Angular velocity magnitude   | 1.6420e-01 | 1.6420e-01 | 1.6420e-01 | 1.6420e-01 | 
 | Translational kinetic energy | 5.0867e-14 | 5.0867e-14 | 5.0867e-14 | 5.0867e-14 | 
@@ -1442,12 +1408,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.746273363e-14 s^-1
 Max local continuity error: 5.384808764e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.8727e+02 | 3.2918e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.8922e+02 | 3.3084e+04 | 
 | Velocity magnitude           | 9.7601e-05 | 9.7601e-05 | 9.7601e-05 | 9.7601e-05 | 
 | Angular velocity magnitude   | 1.6921e-01 | 1.6921e-01 | 1.6921e-01 | 1.6921e-01 | 
 | Translational kinetic energy | 4.9878e-14 | 4.9878e-14 | 4.9878e-14 | 4.9878e-14 | 
@@ -1483,12 +1448,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.829503878e-14 s^-1
 Max local continuity error: 5.343849377e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.8288e+02 | 3.2928e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.8481e+02 | 3.3094e+04 | 
 | Velocity magnitude           | 1.0414e-04 | 1.0414e-04 | 1.0414e-04 | 1.0414e-04 | 
 | Angular velocity magnitude   | 1.5545e-01 | 1.5545e-01 | 1.5545e-01 | 1.5545e-01 | 
 | Translational kinetic energy | 5.6781e-14 | 5.6781e-14 | 5.6781e-14 | 5.6781e-14 | 
@@ -1524,12 +1488,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.91137544e-14 s^-1
 Max local continuity error: 5.303919422e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.7860e+02 | 3.2938e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.8051e+02 | 3.3104e+04 | 
 | Velocity magnitude           | 1.1599e-04 | 1.1599e-04 | 1.1599e-04 | 1.1599e-04 | 
 | Angular velocity magnitude   | 1.2817e-01 | 1.2817e-01 | 1.2817e-01 | 1.2817e-01 | 
 | Translational kinetic energy | 7.0441e-14 | 7.0441e-14 | 7.0441e-14 | 7.0441e-14 | 
@@ -1565,12 +1528,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.992059669e-14 s^-1
 Max local continuity error: 5.264743716e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.7441e+02 | 3.2948e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.7630e+02 | 3.3114e+04 | 
 | Velocity magnitude           | 1.2902e-04 | 1.2902e-04 | 1.2902e-04 | 1.2902e-04 | 
 | Angular velocity magnitude   | 9.7609e-02 | 9.7609e-02 | 9.7609e-02 | 9.7609e-02 | 
 | Translational kinetic energy | 8.7160e-14 | 8.7160e-14 | 8.7160e-14 | 8.7160e-14 | 
@@ -1606,12 +1568,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.071672421e-14 s^-1
 Max local continuity error: 5.226090926e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.7031e+02 | 3.2958e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.7218e+02 | 3.3124e+04 | 
 | Velocity magnitude           | 1.3866e-04 | 1.3866e-04 | 1.3866e-04 | 1.3866e-04 | 
 | Angular velocity magnitude   | 7.5165e-02 | 7.5165e-02 | 7.5165e-02 | 7.5165e-02 | 
 | Translational kinetic energy | 1.0067e-13 | 1.0067e-13 | 1.0067e-13 | 1.0067e-13 | 
@@ -1647,12 +1608,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.150292555e-14 s^-1
 Max local continuity error: 5.187887773e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.6631e+02 | 3.2968e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.6816e+02 | 3.3134e+04 | 
 | Velocity magnitude           | 1.4156e-04 | 1.4156e-04 | 1.4156e-04 | 1.4156e-04 | 
 | Angular velocity magnitude   | 6.9274e-02 | 6.9274e-02 | 6.9274e-02 | 6.9274e-02 | 
 | Translational kinetic energy | 1.0492e-13 | 1.0492e-13 | 1.0492e-13 | 1.0492e-13 | 
@@ -1688,12 +1648,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.227975242e-14 s^-1
 Max local continuity error: 5.150087303e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.6240e+02 | 3.2978e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.6422e+02 | 3.3144e+04 | 
 | Velocity magnitude           | 1.3686e-04 | 1.3686e-04 | 1.3686e-04 | 1.3686e-04 | 
 | Angular velocity magnitude   | 8.2290e-02 | 8.2290e-02 | 8.2290e-02 | 8.2290e-02 | 
 | Translational kinetic energy | 9.8067e-14 | 9.8067e-14 | 9.8067e-14 | 9.8067e-14 | 
@@ -1729,12 +1688,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.304760019e-14 s^-1
 Max local continuity error: 5.112661109e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.5857e+02 | 3.2988e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.6037e+02 | 3.3154e+04 | 
 | Velocity magnitude           | 1.2645e-04 | 1.2645e-04 | 1.2645e-04 | 1.2645e-04 | 
 | Angular velocity magnitude   | 1.0963e-01 | 1.0963e-01 | 1.0963e-01 | 1.0963e-01 | 
 | Translational kinetic energy | 8.3727e-14 | 8.3727e-14 | 8.3727e-14 | 8.3727e-14 | 
@@ -1770,12 +1728,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.380676707e-14 s^-1
 Max local continuity error: 5.075592648e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.5482e+02 | 3.2998e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.5660e+02 | 3.3164e+04 | 
 | Velocity magnitude           | 1.1435e-04 | 1.1435e-04 | 1.1435e-04 | 1.1435e-04 | 
 | Angular velocity magnitude   | 1.4144e-01 | 1.4144e-01 | 1.4144e-01 | 1.4144e-01 | 
 | Translational kinetic energy | 6.8467e-14 | 6.8467e-14 | 6.8467e-14 | 6.8467e-14 | 
@@ -1811,12 +1768,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.455749543e-14 s^-1
 Max local continuity error: 5.038871814e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.5115e+02 | 3.3008e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.5291e+02 | 3.3174e+04 | 
 | Velocity magnitude           | 1.0516e-04 | 1.0516e-04 | 1.0516e-04 | 1.0516e-04 | 
 | Angular velocity magnitude   | 1.6623e-01 | 1.6623e-01 | 1.6623e-01 | 1.6623e-01 | 
 | Translational kinetic energy | 5.7904e-14 | 5.7904e-14 | 5.7904e-14 | 5.7904e-14 | 
@@ -1852,12 +1808,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.529999817e-14 s^-1
 Max local continuity error: 5.002490955e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.4756e+02 | 3.3018e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.4931e+02 | 3.3184e+04 | 
 | Velocity magnitude           | 1.0243e-04 | 1.0243e-04 | 1.0243e-04 | 1.0243e-04 | 
 | Angular velocity magnitude   | 1.7508e-01 | 1.7508e-01 | 1.7508e-01 | 1.7508e-01 | 
 | Translational kinetic energy | 5.4932e-14 | 5.4932e-14 | 5.4932e-14 | 5.4932e-14 | 
@@ -1893,12 +1848,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.603447255e-14 s^-1
 Max local continuity error: 4.966442461e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.4404e+02 | 3.3028e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.4577e+02 | 3.3194e+04 | 
 | Velocity magnitude           | 1.0732e-04 | 1.0732e-04 | 1.0732e-04 | 1.0732e-04 | 
 | Angular velocity magnitude   | 1.6490e-01 | 1.6490e-01 | 1.6490e-01 | 1.6490e-01 | 
 | Translational kinetic energy | 6.0300e-14 | 6.0300e-14 | 6.0300e-14 | 6.0300e-14 | 
@@ -1934,12 +1888,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.676110336e-14 s^-1
 Max local continuity error: 4.930717739e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.4060e+02 | 3.3038e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.4231e+02 | 3.3204e+04 | 
 | Velocity magnitude           | 1.1819e-04 | 1.1819e-04 | 1.1819e-04 | 1.1819e-04 | 
 | Angular velocity magnitude   | 1.3959e-01 | 1.3959e-01 | 1.3959e-01 | 1.3959e-01 | 
 | Translational kinetic energy | 7.3146e-14 | 7.3146e-14 | 7.3146e-14 | 7.3146e-14 | 
@@ -1975,12 +1928,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.748006003e-14 s^-1
 Max local continuity error: 4.899667809e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.3722e+02 | 3.3048e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.3892e+02 | 3.3214e+04 | 
 | Velocity magnitude           | 1.3123e-04 | 1.3123e-04 | 1.3123e-04 | 1.3123e-04 | 
 | Angular velocity magnitude   | 1.0858e-01 | 1.0858e-01 | 1.0858e-01 | 1.0858e-01 | 
 | Translational kinetic energy | 9.0169e-14 | 9.0169e-14 | 9.0169e-14 | 9.0169e-14 | 
@@ -2016,12 +1968,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.819149169e-14 s^-1
 Max local continuity error: 4.877701141e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.3392e+02 | 3.3058e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.3560e+02 | 3.3224e+04 | 
 | Velocity magnitude           | 1.4179e-04 | 1.4179e-04 | 1.4179e-04 | 1.4179e-04 | 
 | Angular velocity magnitude   | 8.3404e-02 | 8.3404e-02 | 8.3404e-02 | 8.3404e-02 | 
 | Translational kinetic energy | 1.0527e-13 | 1.0527e-13 | 1.0527e-13 | 1.0527e-13 | 
@@ -2057,12 +2008,11 @@ Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.889552378e-14 s^-1
 Max local continuity error: 4.856099419e-09 s^-1
-Average void fraction in regions with particles: 0.9999928036
 --------------------
 Particle statistics
 --------------------
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.2578e+04 | 3.3068e+02 | 3.3068e+04 | 
+| Contact list generation      | 0.0000e+00 | 3.2744e+04 | 3.3234e+02 | 3.3234e+04 | 
 | Velocity magnitude           | 1.4615e-04 | 1.4615e-04 | 1.4615e-04 | 1.4615e-04 | 
 | Angular velocity magnitude   | 7.3440e-02 | 7.3440e-02 | 7.3440e-02 | 7.3440e-02 | 
 | Translational kinetic energy | 1.1184e-13 | 1.1184e-13 | 1.1184e-13 | 1.1184e-13 | 

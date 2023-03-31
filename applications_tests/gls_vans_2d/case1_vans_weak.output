@@ -14,7 +14,6 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Global continuity equation error: 3.3669e-10 s^-1
 Max local continuity error: 0.00226521 s^-1
-Average void fraction in regions with particles: 0.5
 
 *****************************************************************
 Steady iteration :        2/3
@@ -30,7 +29,6 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Global continuity equation error: -1.00045e-10 s^-1
 Max local continuity error: 0.000290082 s^-1
-Average void fraction in regions with particles: 0.5
 
 *****************************************************************
 Steady iteration :        3/3
@@ -46,7 +44,6 @@ Volume-Averaged Fluid Dynamics
 -------------------------------
 Global continuity equation error: -5.98101e-10 s^-1
 Max local continuity error: 3.65189e-05 s^-1
-Average void fraction in regions with particles: 0.5
 cells  error_velocity    error_pressure   
   256 6.250710e-02    - 4.226925e-01    - 
  1024 1.734783e-02 1.85 1.568298e-01 1.43 
