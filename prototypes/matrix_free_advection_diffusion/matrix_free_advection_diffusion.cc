@@ -417,10 +417,6 @@ public:
   void
   reinit_operator_parameters(const Settings &parameters);
 
-  void
-  evaluate_newton_step(
-    const LinearAlgebra::distributed::Vector<number> &newton_step);
-
   virtual void
   compute_diagonal() override;
 
@@ -442,7 +438,6 @@ private:
   void
   local_compute(FECellIntegrator &integrator) const;
 
-  Table<2, VectorizedArray<number>>      nonlinear_values;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   Settings                               parameters;
 };
@@ -451,7 +446,6 @@ template <int dim, int fe_degree, typename number>
 AdvectionDiffusionOperator<dim, fe_degree, number>::AdvectionDiffusionOperator()
   : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
 {
-  nonlinear_values.reinit(0, 0);
   system_matrix.clear();
 }
 
@@ -460,7 +454,6 @@ template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::clear()
 {
-  nonlinear_values.reinit(0, 0);
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
     clear();
 }
@@ -471,29 +464,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::reinit_operator_parameters(
   const Settings &parameters)
 {
   this->parameters = parameters;
-}
-
-template <int dim, int fe_degree, typename number>
-void
-AdvectionDiffusionOperator<dim, fe_degree, number>::evaluate_newton_step(
-  const LinearAlgebra::distributed::Vector<number> &newton_step)
-{
-  const unsigned int n_cells = this->data->n_cell_batches();
-  FECellIntegrator   phi(*this->data);
-
-  nonlinear_values.reinit(n_cells, phi.n_q_points);
-
-  for (unsigned int cell = 0; cell < n_cells; ++cell)
-    {
-      phi.reinit(cell);
-      phi.read_dof_values_plain(newton_step);
-      phi.evaluate(EvaluationFlags::values);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          nonlinear_values(cell, q) = 0.0; // std::exp(phi.get_value(q));
-        }
-    }
 }
 
 template <int dim, int fe_degree, typename number>
@@ -510,10 +480,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
-      AssertDimension(nonlinear_values.size(0),
-                      phi.get_matrix_free().n_cell_batches());
-      AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
       phi.reinit(cell);
 
       if (parameters.stabilization)
@@ -533,16 +499,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
             phi.quadrature_point(q);
           Tensor<1, dim, VectorizedArray<double>> advection_vector =
             evaluate_function<dim, double, dim>(advection_field, point_batch);
-          VectorizedArray<double> advection_vector_norm =
-            VectorizedArray<double>(0.0);
-
-          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-            {
-              Tensor<1, dim> temporary_vector;
-              for (unsigned int d = 0; d < dim; ++d)
-                temporary_vector[d] = advection_vector[d][v];
-              advection_vector_norm[v] = temporary_vector.norm();
-            }
 
           if (parameters.stabilization)
             {
@@ -556,6 +512,9 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
                   h[lane] = data.get_cell_iterator(cell, lane)->measure();
                 }
 
+              VectorizedArray<double> advection_vector_norm =
+                advection_vector.norm();
+
               for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
                 {
                   tau[v] = std::pow(
@@ -564,9 +523,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
                     -0.5);
                 }
 
-              phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                                 advection_vector * phi.get_gradient(q),
-                               q);
+              phi.submit_value(advection_vector * phi.get_gradient(q), q);
               phi.submit_gradient(
                 1 / parameters.peclet_number * phi.get_gradient(q) +
                   (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
@@ -576,9 +533,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
             }
           else
             {
-              phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                                 advection_vector * phi.get_gradient(q),
-                               q);
+              phi.submit_value(advection_vector * phi.get_gradient(q), q);
               phi.submit_gradient(1 / parameters.peclet_number *
                                     phi.get_gradient(q),
                                   q);
@@ -608,10 +563,6 @@ void
 AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
   FECellIntegrator &phi) const
 {
-  AssertDimension(nonlinear_values.size(0),
-                  phi.get_matrix_free().n_cell_batches());
-  AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
   const unsigned int cell = phi.get_current_cell_index();
 
   if (parameters.stabilization)
@@ -628,16 +579,6 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
       Point<dim, VectorizedArray<double>> point_batch = phi.quadrature_point(q);
       Tensor<1, dim, VectorizedArray<double>> advection_vector =
         evaluate_function<dim, double, dim>(advection_field, point_batch);
-      VectorizedArray<double> advection_vector_norm =
-        VectorizedArray<double>(0.0);
-
-      for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-        {
-          Tensor<1, dim> temporary_vector;
-          for (unsigned int d = 0; d < dim; ++d)
-            temporary_vector[d] = advection_vector[d][v];
-          advection_vector_norm[v] = temporary_vector.norm();
-        }
 
       if (parameters.stabilization)
         {
@@ -653,6 +594,9 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
                           ->get_cell_iterator(cell, lane)
                           ->measure();
             }
+          VectorizedArray<double> advection_vector_norm =
+            advection_vector.norm();
+
           for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
             {
               tau[v] =
@@ -662,9 +606,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
                          -0.5);
             }
 
-          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                             advection_vector * phi.get_gradient(q),
-                           q);
+          phi.submit_value(advection_vector * phi.get_gradient(q), q);
           phi.submit_gradient(
             1 / parameters.peclet_number * phi.get_gradient(q) +
               (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
@@ -674,9 +616,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
         }
       else
         {
-          phi.submit_value(-nonlinear_values(cell, q) * phi.get_value(q) +
-                             advection_vector * phi.get_gradient(q),
-                           q);
+          phi.submit_value(advection_vector * phi.get_gradient(q), q);
           phi.submit_gradient(1 / parameters.peclet_number *
                                 phi.get_gradient(q),
                               q);
@@ -1164,16 +1104,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
           Tensor<1, dim, VectorizedArray<double>> advection_vector =
             evaluate_function<dim, double, dim>(advection_field, point_batch);
-          VectorizedArray<double> advection_vector_norm =
-            VectorizedArray<double>(0.0);
-
-          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-            {
-              Tensor<1, dim> temporary_vector;
-              for (unsigned int d = 0; d < dim; ++d)
-                temporary_vector[d] = advection_vector[d][v];
-              advection_vector_norm[v] = temporary_vector.norm();
-            }
 
           if (parameters.stabilization)
             {
@@ -1189,6 +1119,9 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
                               ->get_cell_iterator(cell, lane)
                               ->measure();
                 }
+
+              VectorizedArray<double> advection_vector_norm =
+                advection_vector.norm();
 
               for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
                 {
@@ -1268,8 +1201,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
   solution.update_ghost_values();
 
-  system_matrix.evaluate_newton_step(solution);
-
   SolverControl solver_control(1000, 1.e-12);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
@@ -1316,7 +1247,6 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
                   smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
                 }
 
-              mg_matrices[level].evaluate_newton_step(mg_solution[level]);
               mg_matrices[level].compute_diagonal();
               smoother_data[level].preconditioner =
                 mg_matrices[level].get_matrix_diagonal_inverse();
