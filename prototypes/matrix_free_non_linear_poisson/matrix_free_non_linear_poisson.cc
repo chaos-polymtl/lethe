@@ -557,10 +557,12 @@ MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
             }
           repetitions[dim - 1] = parameters.repetitions;
 
-          GridGenerator::subdivided_hyper_rectangle(triangulation,
-                                                    repetitions,
-                                                    Point<dim>(),
-                                                    Point<dim>(1., 1., 1.));
+          GridGenerator::subdivided_hyper_rectangle(
+            triangulation,
+            repetitions,
+            Point<dim>(),
+            (dim == 2) ? Point<dim>(1., parameters.repetitions) :
+                         Point<dim>(1., 1., parameters.repetitions));
           break;
         }
     }
