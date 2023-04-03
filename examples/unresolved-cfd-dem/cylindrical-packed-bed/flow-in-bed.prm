@@ -6,7 +6,6 @@
 
 subsection simulation control
   set method            = steady
-  set number mesh adapt = 0
   set output name       = result
   set output path       = ./output/
 end
