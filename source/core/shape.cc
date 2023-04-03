@@ -924,18 +924,25 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
   // We align and center the evaluation point according to the shape referential
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  // The levelset value of all constituent shapes is computed
-  std::map<unsigned int, double>         components_value;
-  std::map<unsigned int, Tensor<1, dim>> dummy_components_gradient;
+  // The levelset value of all constituent shapes is computed.
+  std::map<unsigned int, double>         constituent_shapes_values;
+  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
   for (auto const &[component_id, component] : constituents)
     {
-      components_value[component_id] = component->value(centered_point);
-      dummy_components_gradient[component_id] = Tensor<1, dim>{};
+      constituent_shapes_values[component_id] =
+        component->value(centered_point);
+      // A dummy gradient is used here because apply_boolean_operations requires
+      // a gradient map as an argument.
+      // This design choice of not duplicating apply_boolean_operations
+      // was made for brevity of the code, at a negligible
+      // additional computing cost.
+      constituent_shapes_gradients[component_id] = Tensor<1, dim>{};
     }
 
   double levelset;
   std::tie(levelset, std::ignore) =
-    apply_boolean_operations(components_value, dummy_components_gradient);
+    apply_boolean_operations(constituent_shapes_values,
+                             constituent_shapes_gradients);
   return levelset;
 }
 
@@ -950,18 +957,24 @@ CompositeShape<dim>::value_with_cell_guess(
   Point<dim> centered_point = this->align_and_center(evaluation_point);
 
   // The levelset value of all component shapes is computed
-  std::map<unsigned int, double>         components_value;
-  std::map<unsigned int, Tensor<1, dim>> dummy_components_gradient;
+  std::map<unsigned int, double>         constituent_shapes_values;
+  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
   for (auto const &[component_id, component] : constituents)
     {
-      components_value[component_id] =
+      constituent_shapes_values[component_id] =
         component->value_with_cell_guess(centered_point, cell);
-      dummy_components_gradient[component_id] = Tensor<1, dim>{};
+      // A dummy gradient is used here because apply_boolean_operations requires
+      // a gradient map as an argument.
+      // This design choice of not duplicating apply_boolean_operations
+      // was made for brevity of the code, at a negligible
+      // additional computing cost.
+      constituent_shapes_gradients[component_id] = Tensor<1, dim>{};
     }
 
   double levelset;
   std::tie(levelset, std::ignore) =
-    apply_boolean_operations(components_value, dummy_components_gradient);
+    apply_boolean_operations(constituent_shapes_values,
+                             constituent_shapes_gradients);
   return levelset;
 }
 
@@ -972,18 +985,21 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
 {
   // We align and center the evaluation point according to the shape referential
   Point<dim> centered_point = this->align_and_center(evaluation_point);
-  // The levelset value of all component shapes is computed
-  std::map<unsigned int, double>         components_value;
-  std::map<unsigned int, Tensor<1, dim>> components_gradient;
+  // The levelset value and gradient of all component shapes is computed
+  std::map<unsigned int, double>         constituent_shapes_values;
+  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
   for (auto const &[component_id, component] : constituents)
     {
-      components_value[component_id]    = component->value(centered_point);
-      components_gradient[component_id] = component->gradient(centered_point);
+      constituent_shapes_values[component_id] =
+        component->value(centered_point);
+      constituent_shapes_gradients[component_id] =
+        component->gradient(centered_point);
     }
 
   Tensor<1, dim> gradient;
   std::tie(std::ignore, gradient) =
-    apply_boolean_operations(components_value, components_gradient);
+    apply_boolean_operations(constituent_shapes_values,
+                             constituent_shapes_gradients);
   return gradient;
 }
 
@@ -996,20 +1012,21 @@ CompositeShape<dim>::gradient_with_cell_guess(
 {
   // We align and center the evaluation point according to the shape referential
   Point<dim> centered_point = this->align_and_center(evaluation_point);
-  // The levelset value of all component shapes is computed
-  std::map<unsigned int, double>         components_value;
-  std::map<unsigned int, Tensor<1, dim>> components_gradient;
+  // The levelset value and gradient of all component shapes is computed
+  std::map<unsigned int, double>         constituent_shapes_values;
+  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
   for (auto const &[component_id, component] : constituents)
     {
-      components_value[component_id] =
+      constituent_shapes_values[component_id] =
         component->value_with_cell_guess(centered_point, cell);
-      components_gradient[component_id] =
+      constituent_shapes_gradients[component_id] =
         component->gradient_with_cell_guess(centered_point, cell);
     }
 
   Tensor<1, dim> gradient;
   std::tie(std::ignore, gradient) =
-    apply_boolean_operations(components_value, components_gradient);
+    apply_boolean_operations(constituent_shapes_values,
+                             constituent_shapes_gradients);
   return gradient;
 }
 
@@ -1048,13 +1065,13 @@ CompositeShape<dim>::update_precalculations(
 template <int dim>
 std::pair<double, Tensor<1, dim>>
 CompositeShape<dim>::apply_boolean_operations(
-  std::map<unsigned int, double>         components_value,
-  std::map<unsigned int, Tensor<1, dim>> components_gradient) const
+  std::map<unsigned int, double>         constituent_shapes_values,
+  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients) const
 {
   // The boolean operations between the shapes are applied in order
   // The last computed values are considered to be the correct values to return
-  double         levelset = components_value[0];
-  Tensor<1, dim> gradient = components_gradient[0];
+  double         levelset = constituent_shapes_values[0];
+  Tensor<1, dim> gradient = constituent_shapes_gradients[0];
   for (auto const &[operation_id, op_triplet] : operations)
     {
       BooleanOperation operation;
@@ -1065,50 +1082,60 @@ CompositeShape<dim>::apply_boolean_operations(
       double         value_first_component, value_second_component;
       Tensor<1, dim> gradient_first_component{};
       Tensor<1, dim> gradient_second_component{};
-      value_first_component     = components_value.at(first_id);
-      value_second_component    = components_value.at(second_id);
-      gradient_first_component  = components_gradient.at(first_id);
-      gradient_second_component = components_gradient.at(second_id);
+      value_first_component     = constituent_shapes_values.at(first_id);
+      value_second_component    = constituent_shapes_values.at(second_id);
+      gradient_first_component  = constituent_shapes_gradients.at(first_id);
+      gradient_second_component = constituent_shapes_gradients.at(second_id);
       switch (operation)
         {
           case BooleanOperation::Union:
             if (value_first_component < value_second_component)
               {
-                components_value[operation_id]    = value_first_component;
-                components_gradient[operation_id] = gradient_first_component;
+                constituent_shapes_values[operation_id] = value_first_component;
+                constituent_shapes_gradients[operation_id] =
+                  gradient_first_component;
               }
             else
               {
-                components_value[operation_id]    = value_second_component;
-                components_gradient[operation_id] = gradient_second_component;
+                constituent_shapes_values[operation_id] =
+                  value_second_component;
+                constituent_shapes_gradients[operation_id] =
+                  gradient_second_component;
               }
             break;
           case BooleanOperation::Difference:
             if (-value_first_component > value_second_component)
               {
-                components_value[operation_id]    = -value_first_component;
-                components_gradient[operation_id] = -gradient_first_component;
+                constituent_shapes_values[operation_id] =
+                  -value_first_component;
+                constituent_shapes_gradients[operation_id] =
+                  -gradient_first_component;
               }
             else
               {
-                components_value[operation_id]    = value_second_component;
-                components_gradient[operation_id] = gradient_second_component;
+                constituent_shapes_values[operation_id] =
+                  value_second_component;
+                constituent_shapes_gradients[operation_id] =
+                  gradient_second_component;
               }
             break;
           default: // BooleanOperation::Intersection
             if (value_first_component > value_second_component)
               {
-                components_value[operation_id]    = value_first_component;
-                components_gradient[operation_id] = gradient_first_component;
+                constituent_shapes_values[operation_id] = value_first_component;
+                constituent_shapes_gradients[operation_id] =
+                  gradient_first_component;
               }
             else
               {
-                components_value[operation_id]    = value_second_component;
-                components_gradient[operation_id] = gradient_second_component;
+                constituent_shapes_values[operation_id] =
+                  value_second_component;
+                constituent_shapes_gradients[operation_id] =
+                  gradient_second_component;
               }
         }
-      levelset = components_value[operation_id];
-      gradient = components_gradient[operation_id];
+      levelset = constituent_shapes_values[operation_id];
+      gradient = constituent_shapes_gradients[operation_id];
     }
   return {levelset, gradient};
 }

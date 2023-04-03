@@ -848,13 +848,13 @@ public:
 
   /**
    * @brief Computes the assigned boolean operations
-   * @param components_value map containing the computed values for the component shapes
-   * @param components_gradient map containing the computed gradients for the component shapes
+   * @param constituent_shapes_values map containing the computed values for the component shapes
+   * @param constituent_shapes_gradients map containing the computed gradients for the component shapes
    */
   inline std::pair<double, Tensor<1, dim>>
   apply_boolean_operations(
-    std::map<unsigned int, double>         components_value,
-    std::map<unsigned int, Tensor<1, dim>> components_gradient) const;
+    std::map<unsigned int, double>         constituent_shapes_values,
+    std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients) const;
 
 private:
   // The members of this class are all the constituent and operations that are
