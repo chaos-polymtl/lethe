@@ -1521,7 +1521,7 @@ GLSVANSSolver<dim>::monitor_mass_conservation()
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
 
-  // Values of the force function, the last component of which is the mass
+  // Values of the force function, the last component of which is the external mass
   // source
   std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
 
