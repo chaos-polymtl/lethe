@@ -356,7 +356,7 @@ Non-linear solver control
     subsection non-linear solver
       set solver           = inexact_newton
       set tolerance        = 1e-8
-      set max iterations   = 10
+      set max iterations   = 20
       set verbosity        = verbose
       set matrix tolerance = 0.75
     end
@@ -371,13 +371,12 @@ Linear solver control
     subsection linear solver
       set method                                = gmres
       set max iters                             = 1000
-      set relative residual                     = 1e-2
+      set relative residual                     = 1e-3
       set minimum residual                      = 1e-10
-      set ilu preconditioner fill               = 2
+      set ilu preconditioner fill               = 1
       set ilu preconditioner absolute tolerance = 1e-12
       set ilu preconditioner relative tolerance = 1
       set verbosity                             = verbose
-      set max krylov vectors                    = 200
     end
 
 For more information about the non-linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
