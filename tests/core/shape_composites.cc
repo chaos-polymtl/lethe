@@ -90,6 +90,39 @@ test()
   deallog << " Position of copy composite[2] = "
           << copy_composite_union->get_position()[2] << std::endl;
   deallog << "OK" << std::endl;
+
+
+  deallog << "Testing a hollow sphere: inside radius = 0.5, outside radius = 1"
+          << std::endl;
+  std::shared_ptr<Shape<3>> sphere_1 =
+    std::make_shared<Sphere<3>>(1, Point<3>(), Point<3>());
+  std::shared_ptr<Shape<3>> sphere_2 =
+    std::make_shared<Sphere<3>>(0.5, Point<3>(), Point<3>());
+
+  std::map<unsigned int, std::shared_ptr<Shape<3>>> spheres;
+  spheres[0] = sphere_1;
+  spheres[1] = sphere_2;
+  op_map operation_hollow_sphere;
+  operation_hollow_sphere[2] =
+    std::make_tuple(bool_op::Difference, 1, 0); // We substract 1 from 0
+
+  std::shared_ptr<CompositeShape<3>> composite_hollow_sphere =
+    std::make_shared<CompositeShape<3>>(spheres,
+                                        operation_hollow_sphere,
+                                        Point<3>(),
+                                        Point<3>());
+  Point<3> p_2({0.25, 0.25, 0.25});
+  deallog << "Testing value" << std::endl;
+  deallog << " Value at P(0.25,0.25,0.25) = "
+          << composite_hollow_sphere->value(p_2) << std::endl;
+  deallog << " Value of substractor sphere at P(0.25,0.25,0.25) = "
+          << sphere_2->value(p_2) << std::endl;
+  deallog << "Testing gradient" << std::endl;
+  deallog << " Gradient at P(0.25,0.25,0.25) = "
+          << composite_hollow_sphere->gradient(p_2) << std::endl;
+  deallog << " Gradient of substractor sphere at P(0.25,0.25,0.25) = "
+          << sphere_2->gradient(p_2) << std::endl;
+  deallog << "OK" << std::endl;
 }
 
 int
