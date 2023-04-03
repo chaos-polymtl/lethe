@@ -194,9 +194,6 @@ or in parallel (where 8 represents the number of processors)
 
   mpirun -np 8 dem_3d dem-packing-in-spouted-bed.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
-
-
 .. note::
     Running the packing should take approximatively 10-15 minutes on 8 cores.
 
