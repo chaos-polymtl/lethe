@@ -48,7 +48,7 @@ This subsection includes parameters related to multiphase flow simulations using
    :header-rows: 1
    :align: center
 
-* The ``particle statistics`` parameter, when enabled, outputs statistics about the particles velocity, kinetic energy and the amount of contact detection.
+* The ``particle statistics`` parameter, when enabled, outputs statistics about the particles' velocity, kinetic energy, and the amount of contact detection.
 * The ``coupling frequency`` determines the number of DEM iterations per 1 CFD iteration.
 
 .. note::
