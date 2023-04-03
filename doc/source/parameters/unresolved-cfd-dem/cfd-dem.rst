@@ -39,7 +39,10 @@ This subsection includes parameters related to multiphase flow simulations using
     .. math::
         \Omega = \frac{d_p \omega}{2 \left | u - v \right |}
 
-    where :math:`\omega` is the angular velocity of the particle. We do not recommend using the Magnus lift force.
+    where :math:`\omega` is the angular velocity of the particle.
+
+ .. warning:: 
+   We do not recommend using the Magnus lift force. The current model does include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
 
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
