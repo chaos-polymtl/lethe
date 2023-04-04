@@ -239,19 +239,11 @@ create_output_folder(const std::string &dirname);
 inline void
 announce_string(const ConditionalOStream &pcout,
                 const std::string         expression,
-                const char                del = '-')
+                const char                delimiter = '-')
 {
-  for (unsigned int c = 0; c < expression.size() + 1; ++c)
-    {
-      pcout << del;
-    }
-  pcout << std::endl;
+  pcout << std::string(expression.size() + 1, delimiter) << std::endl;
   pcout << expression << std::endl;
-  for (unsigned int c = 0; c < expression.size() + 1; ++c)
-    {
-      pcout << del;
-    }
-  pcout << std::endl;
+  pcout << std::string(expression.size() + 1, delimiter) << std::endl;
 }
 
 
