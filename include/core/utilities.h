@@ -231,20 +231,25 @@ create_output_folder(const std::string &dirname);
  * -------
  * Tracer
  * -------
- * * @param expression string that will be printed
+ *
+ * @param pcout the parallel cout used to print the information
+ * @param expression string that will be printed
+ * @param delimiter the character used to delimit the printing. Default value is "-"
  */
 inline void
-announce_string(const ConditionalOStream &pcout, const std::string expression)
+announce_string(const ConditionalOStream &pcout,
+                const std::string         expression,
+                const char                del = '-')
 {
   for (unsigned int c = 0; c < expression.size() + 1; ++c)
     {
-      pcout << "-";
+      pcout << del;
     }
   pcout << std::endl;
   pcout << expression << std::endl;
   for (unsigned int c = 0; c < expression.size() + 1; ++c)
     {
-      pcout << "-";
+      pcout << del;
     }
   pcout << std::endl;
 }

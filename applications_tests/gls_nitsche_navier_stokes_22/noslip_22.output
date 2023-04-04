@@ -3,9 +3,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 75
    Volume of triangulation:      1
 
-*****************************************************************
+******************************
 Steady iteration :        1/4
-*****************************************************************
+******************************
 
 +------------------------------------------+
 |  Force  summary                          |
@@ -20,9 +20,9 @@ Boundary ID    f_x       f_y      f_xv      f_yv      f_xp     f_yp
 Solid ID    f_x       f_y    
        0 -1.744798 -0.000012 
 
-*****************************************************************
+******************************
 Steady iteration :        2/4
-*****************************************************************
+******************************
    Number of active cells:       64
    Number of degrees of freedom: 243
    Volume of triangulation:      1
@@ -40,9 +40,9 @@ Boundary ID    f_x       f_y      f_xv      f_yv      f_xp     f_yp
 Solid ID    f_x       f_y    
        0 -1.967666 -0.000001 
 
-*****************************************************************
+******************************
 Steady iteration :        3/4
-*****************************************************************
+******************************
    Number of active cells:       256
    Number of degrees of freedom: 867
    Volume of triangulation:      1
@@ -60,9 +60,9 @@ Boundary ID    f_x       f_y      f_xv      f_yv      f_xp     f_yp
 Solid ID    f_x       f_y    
        0 -1.989746 0.000000 
 
-*****************************************************************
+******************************
 Steady iteration :        4/4
-*****************************************************************
+******************************
    Number of active cells:       1024
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
