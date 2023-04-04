@@ -89,7 +89,7 @@ The section on model parameters is explained in the DEM examples. We show the ch
       set load balance method                    = dynamic
       set load balance threshold                 = 0.5
       set dynamic load balance check frequency   = 10000
-      set neighborhood threshold                 = 1.5
+      set neighborhood threshold                 = 1.3
       set particle particle contact force method = hertz_mindlin_limit_overlap
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
@@ -327,9 +327,6 @@ We also enable grad_div stabilization in order to improve local mass conservatio
         set shear force                   = false
         set pressure force                = false
         set drag model                    = difelice
-        set post processing               = true
-        set inlet boundary id             = 2
-        set outlet boundary id            = 3
         set coupling frequency            = 100
         set vans model                    = modelB
     end
@@ -341,13 +338,17 @@ Finally, the linear and non-linear solver controls are defined.
 Non-linear solver control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+We use the inexact Newton non-linear solver to minimize the number of time the matrix of the system is assembled. This is used to increase the speed of the simulation, since the matrix assembly requires significant computations.
+
 .. code-block:: text
 
-    subsection non-linear solver
-      set tolerance      = 1e-9
-      set max iterations = 10
-      set verbosity      = verbose
-    end
+  subsection non-linear solver
+    set solver           = inexact_newton
+    set tolerance        = 1e-7
+    set max iterations   = 20
+    set matrix tolerance = 0.2
+    set verbosity        = verbose
+  end
     
 Linear solver control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

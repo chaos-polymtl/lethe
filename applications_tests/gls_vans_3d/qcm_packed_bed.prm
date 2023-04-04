@@ -81,7 +81,6 @@ end
 subsection cfd-dem
    set grad div = true
    set drag model = rong
-   set post processing = true
    set vans model = modelB
    set pressure force = false
    set shear force = false

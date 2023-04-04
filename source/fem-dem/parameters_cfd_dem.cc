@@ -137,18 +137,6 @@ namespace Parameters
                       Patterns::Selection(
                         "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
-    prm.declare_entry("post processing",
-                      "false",
-                      Patterns::Bool(),
-                      "Choose whether or not to apply post_processing");
-    prm.declare_entry("inlet boundary id",
-                      "1",
-                      Patterns::Integer(),
-                      "The inlet boundary of the bed");
-    prm.declare_entry("outlet boundary id",
-                      "2",
-                      Patterns::Integer(),
-                      "The outlet boundary of the bed");
     prm.declare_entry("coupling frequency",
                       "100",
                       Patterns::Integer(),
@@ -167,6 +155,13 @@ namespace Parameters
       "true",
       Patterns::Bool(),
       "Choose whether or not to use implicit or explicit stabilization");
+
+    prm.declare_entry(
+      "particle statistics",
+      "true",
+      Patterns::Bool(),
+      "Outputs statistics about the particles such as their total kinetic energy, angular momentum, etc.");
+
     prm.leave_subsection();
   }
 
@@ -185,12 +180,10 @@ namespace Parameters
     pressure_force             = prm.get_bool("pressure force");
     saffman_lift_force         = prm.get_bool("saffman lift force");
     magnus_lift_force          = prm.get_bool("magnus lift force");
-    post_processing            = prm.get_bool("post processing");
-    inlet_boundary_id          = prm.get_integer("inlet boundary id");
-    outlet_boundary_id         = prm.get_integer("outlet boundary id");
     coupling_frequency         = prm.get_integer("coupling frequency");
     cstar                      = prm.get_double("grad-div length scale");
     implicit_stabilization     = prm.get_bool("implicit stabilization");
+    particle_statistics        = prm.get_bool("particle statistics");
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")

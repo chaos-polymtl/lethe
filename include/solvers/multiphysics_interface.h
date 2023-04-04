@@ -77,15 +77,15 @@ public:
   {
     if (physics_id == PhysicsID::heat_transfer)
       {
-        pcout << "Heat Transfer" << std::endl << "--------------" << std::endl;
+        announce_string(pcout, "Heat Transfer");
       }
     else if (physics_id == PhysicsID::tracer)
       {
-        pcout << "Tracer" << std::endl << "-------" << std::endl;
+        announce_string(pcout, "Tracer");
       }
     else if (physics_id == PhysicsID::VOF)
       {
-        pcout << "VOF" << std::endl << "-------------" << std::endl;
+        announce_string(pcout, "VOF");
       }
   }
 
@@ -158,10 +158,6 @@ public:
     physics[physics_id]->time_stepping_method = time_stepping_method;
     physics[physics_id]->solve_non_linear_system(false);
     physics[physics_id]->modify_solution();
-
-    // Embellish the console output
-    if (verbosity != Parameters::Verbosity::quiet)
-      pcout << "-----------------------" << std::endl;
   }
 
   /**
@@ -186,10 +182,6 @@ public:
     block_physics[physics_id]->time_stepping_method = time_stepping_method;
     block_physics[physics_id]->solve_non_linear_system(false);
     block_physics[physics_id]->modify_solution();
-
-    // Embellish the console output
-    if (verbosity != Parameters::Verbosity::quiet)
-      pcout << "-----------------------" << std::endl;
   }
 
 

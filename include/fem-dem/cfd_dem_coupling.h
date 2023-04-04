@@ -212,9 +212,6 @@ private:
   void
   postprocess_fd(bool first_iteration) override;
 
-  void
-  post_processing() override;
-
   /**
    * @brief Check if the disabling contacts is enabled and that
    *
@@ -255,6 +252,11 @@ private:
 
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;
+  unsigned int         contact_build_number;
+
+  // Storage of statistics about time and contact lists
+  statistics contact_list;
+  statistics simulation_time;
 
   DEM::DEMProperties<dim> properties_class;
 

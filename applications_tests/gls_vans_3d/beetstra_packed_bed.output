@@ -8,89 +8,139 @@ Total pressure drop: 0 Pa
 *****************************************************************
 Transient iteration : 1        Time : 0.002    Time step : 0.002    CFL : 0.06743077177
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 40.47276122 Pa
 Total pressure drop: 40.47276154 Pa
-Mass Source: 8.527914948e-13 s^-1
-Max Local Mass Source: 8.141667298e-08 s^-1
-Average Void Fraction in Bed: 0.7930753133
+Global continuity equation error: 8.527914948e-13 s^-1
+Max local continuity error: 8.141667298e-08 s^-1
 
 *****************************************************************
 Transient iteration : 2        Time : 0.004    Time step : 0.002    CFL : 0.2194770617
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.08585282 Pa
 Total pressure drop: 26.08609517 Pa
-Mass Source: -3.432880331e-07 s^-1
-Max Local Mass Source: 7.964573385e-08 s^-1
-Average Void Fraction in Bed: 0.7931023626
+Global continuity equation error: 6.641035467e-12 s^-1
+Max local continuity error: 7.969176395e-08 s^-1
 
 *****************************************************************
 Transient iteration : 3        Time : 0.006    Time step : 0.002    CFL : 0.2196560133
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.46432352 Pa
 Total pressure drop: 26.46408043 Pa
-Mass Source: 3.432967504e-07 s^-1
-Max Local Mass Source: 8.066553916e-08 s^-1
-Average Void Fraction in Bed: 0.7930753133
+Global continuity equation error: 2.076263376e-12 s^-1
+Max local continuity error: 8.061950905e-08 s^-1
 
 *****************************************************************
 Transient iteration : 4        Time : 0.008    Time step : 0.002    CFL : 0.221619556
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.03064416 Pa
 Total pressure drop: 26.03088653 Pa
-Mass Source: -3.433050155e-07 s^-1
-Max Local Mass Source: 7.974216631e-08 s^-1
-Average Void Fraction in Bed: 0.7931023626
+Global continuity equation error: -1.034134712e-11 s^-1
+Max local continuity error: 7.978819641e-08 s^-1
 
 *****************************************************************
 Transient iteration : 5        Time : 0.01     Time step : 0.002    CFL : 0.2195549911
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.4641568 Pa
 Total pressure drop: 26.46391367 Pa
-Mass Source: 3.432996425e-07 s^-1
-Max Local Mass Source: 8.068671768e-08 s^-1
-Average Void Fraction in Bed: 0.7930753133
+Global continuity equation error: 4.968384004e-12 s^-1
+Max local continuity error: 8.064068757e-08 s^-1
 
 *****************************************************************
 Transient iteration : 6        Time : 0.012    Time step : 0.002    CFL : 0.2216697475
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.03063816 Pa
 Total pressure drop: 26.03088047 Pa
-Mass Source: -3.433007706e-07 s^-1
-Max Local Mass Source: 7.974885069e-08 s^-1
-Average Void Fraction in Bed: 0.7931023626
+Global continuity equation error: -6.096446399e-12 s^-1
+Max local continuity error: 7.97948808e-08 s^-1
 
 *****************************************************************
 Transient iteration : 7        Time : 0.014    Time step : 0.002    CFL : 0.2195735936
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.46416159 Pa
 Total pressure drop: 26.46391838 Pa
-Mass Source: 3.433010221e-07 s^-1
-Max Local Mass Source: 8.068816679e-08 s^-1
-Average Void Fraction in Bed: 0.7930753133
+Global continuity equation error: 6.347970192e-12 s^-1
+Max local continuity error: 8.064213668e-08 s^-1
 
 *****************************************************************
 Transient iteration : 8        Time : 0.016    Time step : 0.002    CFL : 0.2216842662
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.0306456 Pa
 Total pressure drop: 26.03088781 Pa
-Mass Source: -3.433029575e-07 s^-1
-Max Local Mass Source: 7.974819213e-08 s^-1
-Average Void Fraction in Bed: 0.7931023626
+Global continuity equation error: -8.283402851e-12 s^-1
+Max local continuity error: 7.979422223e-08 s^-1
 
 *****************************************************************
 Transient iteration : 9        Time : 0.018    Time step : 0.002    CFL : 0.2195840306
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.46417131 Pa
 Total pressure drop: 26.46392798 Pa
-Mass Source: 3.433019734e-07 s^-1
-Max Local Mass Source: 8.068683777e-08 s^-1
-Average Void Fraction in Bed: 0.7930753133
+Global continuity equation error: 7.299308275e-12 s^-1
+Max local continuity error: 8.064080767e-08 s^-1
 
 *****************************************************************
 Transient iteration : 10       Time : 0.02     Time step : 0.002    CFL : 0.2216923848
 *****************************************************************
+--------------
+Void Fraction
+--------------
+-------------------------------
+Volume-Averaged Fluid Dynamics
+-------------------------------
 Pressure drop: 26.0306562 Pa
 Total pressure drop: 26.03089828 Pa
-Mass Source: -3.433010813e-07 s^-1
-Max Local Mass Source: 7.974663741e-08 s^-1
-Average Void Fraction in Bed: 0.7931023626
+Global continuity equation error: -6.407214236e-12 s^-1
+Max local continuity error: 7.979266751e-08 s^-1
