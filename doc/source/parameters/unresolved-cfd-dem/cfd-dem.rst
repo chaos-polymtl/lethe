@@ -17,12 +17,10 @@ This subsection includes parameters related to multiphase flow simulations using
       set buoyancy force = true
       set shear force = true
       set pressure force = true
-      set post processing = false
       set coupling frequency = 100
-      set inlet boundary id = 2
-      set outlet boundary id = 3
       set implicit stabilization = true
       set grad-div length scale = 1
+      set particle statistics = true
    end
 
 
@@ -43,6 +41,9 @@ This subsection includes parameters related to multiphase flow simulations using
 
     where :math:`\omega` is the angular velocity of the particle.
 
+ .. warning:: 
+   We do not recommend using the Magnus lift force. The current model does include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
+
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
 .. csv-table::
@@ -50,8 +51,8 @@ This subsection includes parameters related to multiphase flow simulations using
    :header-rows: 1
    :align: center
 
-* The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
-* The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
+* The ``particle statistics`` parameter, when enabled, outputs statistics about the particles' velocity, kinetic energy, and the amount of contact detection.
+* The ``coupling frequency`` determines the number of DEM iterations per 1 CFD iteration.
 
 .. note::
    The ``coupling frequency`` parameter is used to calculate the dem time step as it is not explicitly determined in the parameter file. It is calculated as: 
@@ -59,7 +60,6 @@ This subsection includes parameters related to multiphase flow simulations using
    .. math::
       \Delta t_{DEM} = \frac{\Delta t_{CFD}}{coupling frequency}
 
-* The ``inlet boundary`` and ``outlet boundary`` parameters allow us to specify the ID of the inlet and outlet for pressure drop calculations.
 * The ``implicit stabilization`` parameter determines whether or not we calculate the :math:`\tau` for the SUPG/PSPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
 * The ``grad-div length scale`` parameter determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`.
 

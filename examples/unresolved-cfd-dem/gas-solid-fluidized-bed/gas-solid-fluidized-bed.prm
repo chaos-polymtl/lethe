@@ -67,9 +67,6 @@ end
 subsection cfd-dem
   set grad div           = true
   set drag model         = difelice
-  set post processing    = true
-  set inlet boundary id  = 2
-  set outlet boundary id = 3
   set coupling frequency = 40
 end
 
@@ -216,8 +213,10 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-9
-  set max iterations = 10
+  set solver         = inexact_newton
+  set tolerance      = 1e-7
+  set max iterations = 20
+  set matrix tolerance = 0.2
   set verbosity      = verbose
 end
 
@@ -234,5 +233,4 @@ subsection linear solver
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
   set verbosity                             = verbose
-  set max krylov vectors                    = 1000
 end
