@@ -15,9 +15,9 @@ Load balance finished
 Average, minimum and maximum number of particles on the processors are 5 , 4 and 6
 Minimum and maximum number of cells owned by the processors are 64 and 64
 
-*****************************************************************
+********************************************************************
 Transient iteration : 10000    Time : 0.15     Time step : 1.5e-05 
-*****************************************************************
+********************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.0000e+02  | 2.0000e+02 | 2.0000e+02 | 
 | Velocity magnitude           | 1.4998e-01 | 1.4998e-01  | 1.4998e-01 | 1.4998e+00 | 

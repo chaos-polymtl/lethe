@@ -1,26 +1,26 @@
 Running on 1 rank(s)
-*****************************************************************
+***************************************************************** 
 
 DEM time-step is 2.57029% of Rayleigh time step
-Reading triangulation
+Reading triangulation 
 
-Finished reading triangulation
-Warning: expansion of particle-wall contact list is disabled.
-This feature is useful in geometries with concave boundaries.
-*****************************************************************
+Finished reading triangulation 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
+***************************************************************** 
 5 particles of type 0 were inserted, 0 particles of type 0 remaining
-*****************************************************************
+***************************************************************** 
 
-*****************************************************************
-Transient iteration : 10000    Time : 0.1      Time step : 1e-05
-*****************************************************************
-| Variable                     | Min        | Max        | Average    | Total      |
-| Contact list generation      | 0.0000e+00 | 1.0990e+03 | 1.0990e+03 | 1.0990e+03 |
-| Velocity magnitude           | 7.2477e-04 | 1.0263e-01 | 3.3677e-02 | 1.6839e-01 |
-| Angular velocity magnitude   | 3.4144e-02 | 6.7221e+00 | 1.3954e+00 | 6.9768e+00 |
-| Translational kinetic energy | 8.9774e-12 | 1.8000e-07 | 4.2085e-08 | 2.1043e-07 |
-| Rotational kinetic energy    | 6.3759e-14 | 2.4712e-09 | 4.9445e-10 | 2.4723e-09 |
-id, type, dp, x, y, z
+********************************************************************
+Transient iteration : 10000    Time : 0.1      Time step : 1e-05   
+********************************************************************
+| Variable                     | Min        | Max        | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 1.0990e+03 | 1.0990e+03 | 1.0990e+03 | 
+| Velocity magnitude           | 7.2477e-04 | 1.0263e-01 | 3.3677e-02 | 1.6839e-01 | 
+| Angular velocity magnitude   | 3.4144e-02 | 6.7221e+00 | 1.3954e+00 | 6.9768e+00 | 
+| Translational kinetic energy | 8.9774e-12 | 1.8000e-07 | 4.2085e-08 | 2.1043e-07 | 
+| Rotational kinetic energy    | 6.3759e-14 | 2.4712e-09 | 4.9445e-10 | 2.4723e-09 | 
+id, type, dp, x, y, z 
 0 0 0.00400 -0.0095 -0.0180 0.0010
 1 0 0.00400 0.0051 -0.0180 0.0010
 2 0 0.00400 -0.0041 -0.0179 0.0010
