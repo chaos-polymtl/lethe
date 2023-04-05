@@ -28,7 +28,6 @@
 #include <dem/non_uniform_insertion.h>
 #include <dem/particle_wall_nonlinear_force.h>
 #include <dem/post_processing.h>
-//#include <dem/print_initial_information.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/set_particle_particle_contact_force_model.h>
