@@ -11,9 +11,9 @@ This feature is useful in geometries with concave boundaries.
 10 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***************************************************************** 
 
-*****************************************************************
+********************************************************************
 Transient iteration : 10000    Time : 0.15     Time step : 1.5e-05 
-*****************************************************************
+********************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.0000e+02  | 2.0000e+02 | 2.0000e+02 | 
 | Velocity magnitude           | 1.4998e-01 | 1.4998e-01  | 1.4998e-01 | 1.4998e+00 | 

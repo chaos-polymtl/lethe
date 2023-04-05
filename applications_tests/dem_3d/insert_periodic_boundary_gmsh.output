@@ -2,7 +2,7 @@ Running on 1 rank(s)
 ***************************************************************** 
 
 DEM time-step is 7.71088% of Rayleigh time step
-Reading triangulation
+Reading triangulation 
 
 Finished reading triangulation 
 
@@ -10,9 +10,9 @@ Warning: There are diamond-shaped cells in the input triangulation. It is strong
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 
-*****************************************************************
+********************************************************************
 Transient iteration : 1        Time : 1.5e-06  Time step : 1.5e-06 
-*****************************************************************
+********************************************************************
 | Variable                     | Min         | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00  | 0.0000e+00  | 0.0000e+00 | 0.0000e+00 | 
 | Velocity magnitude           | 1.7977e+308 | 2.2251e-308 | -nan       | 0.0000e+00 | 
