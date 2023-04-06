@@ -9,9 +9,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 38540
    Volume of triangulation:      1600
 
-*************************************************************************************
-Transient iteration : 2        Time : 0.005    Time step : 0.0025   CFL : 0.00378095
-*************************************************************************************
+********************************************************************************
+Transient iteration: 2        Time: 0.005    Time step: 0.0025   CFL: 0.00378095
+********************************************************************************
    Number of active cells:       6815
    Number of degrees of freedom: 33652
    Volume of triangulation:      1600
