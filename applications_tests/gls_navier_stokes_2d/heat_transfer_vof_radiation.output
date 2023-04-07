@@ -5,9 +5,9 @@ Running on 1 MPI rank(s)...
    Number of thermal degrees of freedom: 2050
    Number of VOF degrees of freedom: 2050
 
-****************************
+*****************************
 Steady iteration:        1/1
-****************************
+*****************************
 L2 error velocity : 0
 L2 error temperature : 0.0176832
 L2 error phase : 0.000325521

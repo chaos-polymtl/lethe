@@ -1,7 +1,7 @@
 
-********************
+*********************
 Running on 1 rank(s)
-********************
+*********************
 DEM time-step is 15.7495% of Rayleigh time step
 Warning: It is recommended to decrease the time-step
 Reading triangulation
@@ -10,9 +10,9 @@ Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Warning: the requested number of particles for insertion (20000) is higher than maximum expected number of particles (78)
-***********************************************************************
+************************************************************************
 78 particles of type 0 were inserted, 422 particles of type 0 remaining
-***********************************************************************
+************************************************************************
 -->Repartitionning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 78 , 78 and 78

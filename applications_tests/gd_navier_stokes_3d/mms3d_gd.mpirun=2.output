@@ -3,13 +3,13 @@ Running on 2 MPI rank(s)...
    Number of degrees of freedom: 2312
    Volume of triangulation:      8
 
-****************************
+*****************************
 Steady iteration:        1/2
-****************************
+*****************************
 
-****************************
+*****************************
 Steady iteration:        2/2
-****************************
+*****************************
    Number of active cells:       512
    Number of degrees of freedom: 15468
    Volume of triangulation:      8

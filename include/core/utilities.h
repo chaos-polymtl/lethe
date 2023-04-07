@@ -241,9 +241,9 @@ announce_string(const ConditionalOStream &pcout,
                 const std::string         expression,
                 const char                delimiter = '-')
 {
-  pcout << std::string(expression.size(), delimiter) << std::endl;
+  pcout << std::string(expression.size() + 1, delimiter) << std::endl;
   pcout << expression << std::endl;
-  pcout << std::string(expression.size(), delimiter) << std::endl;
+  pcout << std::string(expression.size() + 1, delimiter) << std::endl;
 }
 
 

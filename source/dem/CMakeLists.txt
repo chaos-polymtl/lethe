@@ -32,7 +32,7 @@ add_library(lethe-dem
   particle_wall_nonlinear_force.cc
   periodic_boundaries_manipulator.cc
   post_processing.cc
-        read_checkpoint.cc
+  read_checkpoint.cc
   read_mesh.cc
   set_particle_particle_contact_force_model.cc
   set_particle_wall_contact_force_model.cc
