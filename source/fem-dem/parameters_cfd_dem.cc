@@ -132,6 +132,10 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply Magnus lift force");
+    prm.declare_entry("viscous torque",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply one way coupled viscous torque on particles");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection(

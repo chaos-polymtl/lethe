@@ -48,9 +48,12 @@ namespace DEM
     fem_force_x             = 8,
     fem_force_y             = 9,
     fem_force_z             = 10,
-    volumetric_contribution = 11,
-    mass                    = 12,
-    n_properties            = 13,
+    fem_torque_x            = 11,
+    fem_torque_y            = 12,
+    fem_torque_z            = 13,
+    volumetric_contribution = 14,
+    mass                    = 15,
+    n_properties            = 16,
   };
 
   unsigned int

@@ -106,6 +106,7 @@ namespace Parameters
     bool         pressure_force;
     bool         saffman_lift_force;
     bool         magnus_lift_force;
+    bool         viscous_torque;
     bool         void_fraction_time_derivative;
     bool         interpolated_void_fraction;
     double       cstar;

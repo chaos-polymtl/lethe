@@ -497,6 +497,40 @@ public:
     lagrangian_physical_properties;
 };
 
+/**
+ * @brief Class that assembles the one way coupled Viscous Torque dissipation as defined by Lightfoot, Bird & Stewart (2002) - Transport Phenomena, 2nd Ed. - Example 3.6.5
+ * M_viscous = 8 * MPI * mu * dp^3 * omega
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerOneWayViscousTorque
+  : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerOneWayViscousTorque(
+    Parameters::Lagrangian::LagrangianPhysicalProperties
+      lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
+};
 
 /**
  * @brief Class that assembles the Buoyancy force  for the

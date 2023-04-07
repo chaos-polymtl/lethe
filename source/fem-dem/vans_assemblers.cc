@@ -1589,6 +1589,70 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 template class GLSVansAssemblerMagnus<2>;
 template class GLSVansAssemblerMagnus<3>;
 
+template <int dim>
+void
+GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+{
+  // particle_number is an increment that goes from 0 to n_particles_in_cell.
+  // It is incremented at the end of the loop over particles
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions"));
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions"));
+
+  const double density = scratch_data.properties_manager.get_density_scale();
+  const double viscosity =
+    scratch_data.properties_manager.get_viscosity_scale();
+
+  // auto &velocity_curls_2d =
+  // scratch_data.fluid_velocity_curls_at_particle_location_2d;
+  auto &velocity_curls_3d =
+    scratch_data.fluid_velocity_curls_at_particle_location_3d;
+
+  const auto   pic             = scratch_data.pic;
+  unsigned int particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      for (int d = 0; d < dim; d++)
+        {
+          // Calculate viscous torque
+          double viscous_torque =
+            8.0 * M_PI * viscosity * density *
+            Utilities::fixed_power<3, double>(
+              particle_properties[DEM::PropertiesIndex::dp]) *
+            (velocity_curls_3d[particle_number][d] -
+             particle_properties[DEM::PropertiesIndex::omega_x + d]);
+
+          particle_properties[DEM::PropertiesIndex::fem_torque_x + d] -= viscous_torque;
+
+          // Calculate particle's moment of inertia
+          //double MOI =
+          //  0.1 * particle_properties[DEM::PropertiesIndex::mass] *
+          // particle_properties[DEM::PropertiesIndex::dp];
+
+          // Calculate new rotational velocity
+          //particle_properties[DEM::PropertiesIndex::omega_x + d] = 0.1;
+            //particle_properties[DEM::PropertiesIndex::omega_x + d] *
+            //exp(-viscous_torque / MOI * simulation_control->get_time_step());
+        }
+      particle_number += 1;
+    }
+}
+
+template class GLSVansAssemblerOneWayViscousTorque<2>;
+template class GLSVansAssemblerOneWayViscousTorque<3>;
 
 template <int dim>
 void

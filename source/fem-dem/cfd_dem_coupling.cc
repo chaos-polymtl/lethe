@@ -774,6 +774,10 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
         particle_properties[DEM::PropertiesIndex::fem_force_y];
       force[particle_id][2] +=
         particle_properties[DEM::PropertiesIndex::fem_force_z];
+
+      torque[particle_id][0] += particle_properties[DEM::PropertiesIndex::fem_torque_x];
+      torque[particle_id][0] += particle_properties[DEM::PropertiesIndex::fem_torque_y];
+      torque[particle_id][0] += particle_properties[DEM::PropertiesIndex::fem_torque_z];
     }
 }
 
