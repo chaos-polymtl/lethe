@@ -170,6 +170,13 @@ private:
   add_fluid_particle_interaction_force();
 
   /**
+   * Adds fluid-particle interaction torque to the "torque" container
+   *
+   */
+  void
+  add_fluid_particle_interaction_torque();
+
+  /**
    * Sets the chosen particle-particle contact force model in the parameter
    * handler file
    *

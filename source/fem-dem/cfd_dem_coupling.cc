@@ -774,12 +774,26 @@ CFDDEMSolver<dim>::add_fluid_particle_interaction_force()
         particle_properties[DEM::PropertiesIndex::fem_force_y];
       force[particle_id][2] +=
         particle_properties[DEM::PropertiesIndex::fem_force_z];
+    }
+}
+
+template <int dim>
+void
+CFDDEMSolver<dim>::add_fluid_particle_interaction_torque()
+{
+  for (auto particle = this->particle_handler.begin();
+       particle != this->particle_handler.end();
+       ++particle)
+    {
+      auto particle_properties = particle->get_properties();
+
+      types::particle_index particle_id = particle->get_local_index();
 
       torque[particle_id][0] +=
         particle_properties[DEM::PropertiesIndex::fem_torque_x];
-      torque[particle_id][0] +=
+      torque[particle_id][1] +=
         particle_properties[DEM::PropertiesIndex::fem_torque_y];
-      torque[particle_id][0] +=
+      torque[particle_id][2] +=
         particle_properties[DEM::PropertiesIndex::fem_torque_z];
     }
 }
@@ -803,6 +817,10 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
   // Add fluid-particle interaction force to the force container
   add_fluid_particle_interaction_force();
+
+  // Add fluid-particle interaction torque to the torque container
+  if (this->cfd_dem_simulation_parameters.cfd_dem.viscous_torque)
+    add_fluid_particle_interaction_torque();
 
   // Integration correction step (after force calculation)
   // In the first step, we have to obtain location of particles at half-step

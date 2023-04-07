@@ -1608,17 +1608,13 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
     RequiresConstantDensity(
       "GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
+  double viscous_torque = 0.0;
+
   const double density = scratch_data.properties_manager.get_density_scale();
   const double viscosity =
     scratch_data.properties_manager.get_viscosity_scale();
 
-  // auto &velocity_curls_2d =
-  // scratch_data.fluid_velocity_curls_at_particle_location_2d;
-  auto &velocity_curls_3d =
-    scratch_data.fluid_velocity_curls_at_particle_location_3d;
-
-  const auto   pic             = scratch_data.pic;
-  unsigned int particle_number = 0;
+  const auto   pic = scratch_data.pic;
 
   // Loop over particles in cell
   for (auto &particle : pic)
@@ -1628,27 +1624,15 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
       for (int d = 0; d < dim; d++)
         {
           // Calculate viscous torque
-          double viscous_torque =
+          viscous_torque =
             8.0 * M_PI * viscosity * density *
-            Utilities::fixed_power<3, double>(
-              particle_properties[DEM::PropertiesIndex::dp]) *
-            (velocity_curls_3d[particle_number][d] -
-             particle_properties[DEM::PropertiesIndex::omega_x + d]);
+            pow(particle_properties[DEM::PropertiesIndex::dp] / 2, 3) *
+            (particle_properties[DEM::PropertiesIndex::omega_x +
+                                 d]); // velocity_curls_3d[particle_number][d] -
 
           particle_properties[DEM::PropertiesIndex::fem_torque_x + d] -=
             viscous_torque;
-
-          // Calculate particle's moment of inertia
-          // double MOI =
-          //  0.1 * particle_properties[DEM::PropertiesIndex::mass] *
-          // particle_properties[DEM::PropertiesIndex::dp];
-
-          // Calculate new rotational velocity
-          // particle_properties[DEM::PropertiesIndex::omega_x + d] = 0.1;
-          // particle_properties[DEM::PropertiesIndex::omega_x + d] *
-          // exp(-viscous_torque / MOI * simulation_control->get_time_step());
         }
-      particle_number += 1;
     }
 }
 

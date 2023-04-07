@@ -697,8 +697,9 @@ public:
           // Set the particle_fluid_interactions properties and vectors to 0
           for (int d = 0; d < dim; ++d)
             {
-              particle_properties[DEM::PropertiesIndex::fem_force_x + d] = 0;
-              undisturbed_flow_force[d]                                  = 0;
+              particle_properties[DEM::PropertiesIndex::fem_force_x + d]  = 0;
+              particle_properties[DEM::PropertiesIndex::fem_torque_x + d] = 0;
+              undisturbed_flow_force[d]                                   = 0;
             }
 
           fluid_velocity_at_particle_location[particle_no] = 0;
