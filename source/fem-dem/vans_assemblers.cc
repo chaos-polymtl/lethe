@@ -1635,17 +1635,18 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
             (velocity_curls_3d[particle_number][d] -
              particle_properties[DEM::PropertiesIndex::omega_x + d]);
 
-          particle_properties[DEM::PropertiesIndex::fem_torque_x + d] -= viscous_torque;
+          particle_properties[DEM::PropertiesIndex::fem_torque_x + d] -=
+            viscous_torque;
 
           // Calculate particle's moment of inertia
-          //double MOI =
+          // double MOI =
           //  0.1 * particle_properties[DEM::PropertiesIndex::mass] *
           // particle_properties[DEM::PropertiesIndex::dp];
 
           // Calculate new rotational velocity
-          //particle_properties[DEM::PropertiesIndex::omega_x + d] = 0.1;
-            //particle_properties[DEM::PropertiesIndex::omega_x + d] *
-            //exp(-viscous_torque / MOI * simulation_control->get_time_step());
+          // particle_properties[DEM::PropertiesIndex::omega_x + d] = 0.1;
+          // particle_properties[DEM::PropertiesIndex::omega_x + d] *
+          // exp(-viscous_torque / MOI * simulation_control->get_time_step());
         }
       particle_number += 1;
     }
