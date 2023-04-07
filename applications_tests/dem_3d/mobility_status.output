@@ -9,11 +9,9 @@ Reading triangulation
 Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-
-***********************************************************************
+**********************************************************************
 132 particles of type 0 were inserted, 0 particles of type 0 remaining
-
-***********************************************************************
+**********************************************************************
 
 ****************************************************************
 Transient iteration: 100      Time: 0.1      Time step: 0.001   

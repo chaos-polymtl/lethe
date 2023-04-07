@@ -8,11 +8,9 @@ Reading triangulation
 Finished reading triangulation
 Warning: expansion of particle-wall contact list is enabled. 
 This feature should only be activated in geometries with concave boundaries. (For example, for particles flow inside a cylinder or sphere). In geometries with convex boundaries, this feature MUST NOT be activated.
-
-**********************************************************************
+*********************************************************************
 10 particles of type 0 were inserted, 0 particles of type 0 remaining
-
-**********************************************************************
+*********************************************************************
 id, type, dp, x, y, z 
 0 0 0.00500 -0.0249 -0.0938
 1 0 0.00500 -0.0152 -0.0960

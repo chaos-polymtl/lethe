@@ -29,12 +29,11 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
                                      const unsigned int &particle_type,
                                      const ConditionalOStream &pcout)
 {
-  pcout << std::endl;
   std::stringstream ss;
 
   ss << inserted_this_step << " particles of type " << particle_type
      << " were inserted, " << remained_particles << " particles of type "
-     << particle_type << " remaining" << std::endl;
+     << particle_type << " remaining";
 
   announce_string(pcout, ss.str(), '*');
 }
