@@ -1614,7 +1614,7 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
   const double viscosity =
     scratch_data.properties_manager.get_viscosity_scale();
 
-  const auto   pic = scratch_data.pic;
+  const auto pic = scratch_data.pic;
 
   // Loop over particles in cell
   for (auto &particle : pic)
