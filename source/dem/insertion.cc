@@ -83,9 +83,9 @@ Insertion<dim>::assign_particle_properties(
       double fem_force_x             = 0.;
       double fem_force_y             = 0.;
       double fem_force_z             = 0.;
-      double fem_torque_x;//            = 1e-14;
-      double fem_torque_y;//            = 1e-14;
-      double fem_torque_z;//            = 1e-14;
+      double fem_torque_x            = 0.;
+      double fem_torque_y            = 0.;
+      double fem_torque_z            = 0.;
       double volumetric_contribution = 0.;
       double mass                    = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);

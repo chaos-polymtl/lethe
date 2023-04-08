@@ -2025,19 +2025,19 @@ namespace Parameters
 
       prm.declare_entry(
         "omega_x",
-        "0 ",
+        "0. ",
         Patterns::Double(),
         "X component of the angular velocity vector of the frame of reference");
 
       prm.declare_entry(
         "omega_y",
-        "0 ",
+        "0. ",
         Patterns::Double(),
         "Y component of the angular velocity vector of the frame of reference");
 
       prm.declare_entry(
         "omega_z",
-        "0 ",
+        "0. ",
         Patterns::Double(),
         "Z component of the angular velocity vector of the frame of reference");
     }
