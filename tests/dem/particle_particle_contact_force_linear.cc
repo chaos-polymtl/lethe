@@ -116,12 +116,12 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0.01;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0.;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0.;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0.;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0.;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0.;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1.;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =

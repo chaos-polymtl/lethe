@@ -527,7 +527,6 @@ public:
   calculate_particle_fluid_interactions(
     NavierStokesScratchData<dim> &scratch_data) override;
 
-  std::shared_ptr<SimulationControl> simulation_control;
   Parameters::Lagrangian::LagrangianPhysicalProperties
     lagrangian_physical_properties;
 };

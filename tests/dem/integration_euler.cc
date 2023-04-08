@@ -62,7 +62,7 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining general simulation parameters
-  Tensor<1, dim> g{{0, 0, -9.81}};
+  Tensor<1, dim> g{{0., 0., -9.81}};
   double         dt = 0.00001;
 
   // Defining particle handler
@@ -72,7 +72,7 @@ test()
   // inserting one particle at x = 0 , y = 0 and z = 0 m
   // initial velocity of particles = 0, 0, 0 m/s
   // gravitational acceleration = 0, 0, -9.81 m/s2
-  Point<3> position1 = {0, 0, 0};
+  Point<3> position1 = {0., 0., 0.};
   int      id        = 0;
 
   DEMSolverParameters<dim> dem_parameters;
@@ -89,15 +89,15 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::type] = 1;
   pit->get_properties()[DEM::PropertiesIndex::dp]   = 0.005;
   // Velocity
-  pit->get_properties()[DEM::PropertiesIndex::v_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::v_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::v_z] = 0;
+  pit->get_properties()[DEM::PropertiesIndex::v_x] = 0.;
+  pit->get_properties()[DEM::PropertiesIndex::v_y] = 0.;
+  pit->get_properties()[DEM::PropertiesIndex::v_z] = 0.;
   // Angular velocity
-  pit->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit->get_properties()[DEM::PropertiesIndex::omega_x] = 0.;
+  pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0.;
+  pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0.;
   // mass and moment of inertia
-  pit->get_properties()[DEM::PropertiesIndex::mass] = 1;
+  pit->get_properties()[DEM::PropertiesIndex::mass] = 1.;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
