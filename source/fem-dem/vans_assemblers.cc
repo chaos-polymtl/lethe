@@ -1456,7 +1456,7 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
   // This implementation follows the formulation in the book "Multiphase Flows
   // with Droplets and Particles" by Crowe et al. (2011).
-  double C_m = 0;
+  double C_m = 0.;
 
   const auto &relative_velocity =
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
@@ -1482,10 +1482,13 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
         {
           auto particle_properties = particle.get_properties();
 
+          // Add factor to rotational velocity to avoid divisions by zero
+          double omega_z =
+            particle_properties[DEM::PropertiesIndex::omega_z] + 1e-15;
+
           // Spin parameter
           double spin_parameter =
-            particle_properties[DEM::PropertiesIndex::dp] *
-            abs(particle_properties[DEM::PropertiesIndex::omega_z]) /
+            particle_properties[DEM::PropertiesIndex::dp] * abs(omega_z) /
             (2.0 * relative_velocity[particle_number].norm());
 
           // Magnus lift coefficient
@@ -1504,16 +1507,12 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           lift_force[0] =
             0.5 * C_m * particle_properties[DEM::PropertiesIndex::dp] *
             density * relative_velocity[particle_number].norm() *
-            (particle_properties[DEM::PropertiesIndex::omega_z] /
-             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
-             relative_velocity[particle_number][1]);
+            (omega_z / abs(omega_z) * relative_velocity[particle_number][1]);
 
           lift_force[1] =
             0.5 * C_m * particle_properties[DEM::PropertiesIndex::dp] *
             density * relative_velocity[particle_number].norm() *
-            (particle_properties[DEM::PropertiesIndex::omega_z] /
-             abs(particle_properties[DEM::PropertiesIndex::omega_z]) *
-             relative_velocity[particle_number][0]);
+            (omega_z / abs(omega_z) * relative_velocity[particle_number][0]);
 
 
           for (int d = 0; d < dim; ++d)
@@ -1540,7 +1539,8 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
 
           for (int d = 0; d < dim; ++d)
             {
-              omega[d] = particle_properties[DEM::PropertiesIndex::omega_x + d];
+              omega[d] =
+                particle_properties[DEM::PropertiesIndex::omega_x + d] + 1e-15;
             }
 
           // Spin parameter
@@ -1631,7 +1631,8 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
           // Calculate viscous torque
           viscous_torque =
             8.0 * M_PI * viscosity * density *
-            pow(particle_properties[DEM::PropertiesIndex::dp] / 2, 3) *
+            Utilities::fixed_power<3, double>(
+              particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
             (velocity_curls_3d[particle_number][d] -
              particle_properties[DEM::PropertiesIndex::omega_x + d]);
 

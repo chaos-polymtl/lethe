@@ -90,7 +90,6 @@ Insertion<dim>::assign_particle_properties(
       double mass                    = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
 
-
       std::vector<double> properties_of_one_particle{type,
                                                      diameter,
                                                      vel_x,

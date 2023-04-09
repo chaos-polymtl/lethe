@@ -97,7 +97,7 @@ protected:
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles
    * @param current_inserting_particle_type Type of inserting particles
-   * @param particle_propertis Properties of all inserted particles at each insertion step
+   * @param particle_properties Properties of all inserted particles at each insertion step
    */
   void
   assign_particle_properties(
