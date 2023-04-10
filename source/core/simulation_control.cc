@@ -205,11 +205,10 @@ SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
   std::stringstream ss;
 
   // Copy information into a string stream
-  ss << "Transient iteration : " << std::setw(8) << std::left
-     << iteration_number << " Time : " << std::setw(8) << std::left
-     << current_time << " Time step : " << std::setw(8) << std::left
-     << time_step << " CFL : " << std::setw(8) << std::left
-     << SimulationControl::get_CFL();
+  ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
+     << " Time: " << std::setw(8) << std::left << current_time
+     << " Time step: " << std::setw(8) << std::left << time_step
+     << " CFL: " << std::setw(8) << std::left << SimulationControl::get_CFL();
 
   // Announce string
   announce_string(pcout, ss.str(), '*');
@@ -276,10 +275,9 @@ SimulationControlTransientDEM::print_progression(
   std::stringstream ss;
 
   // Copy information into a string stream
-  ss << "Transient iteration : " << std::setw(8) << std::left
-     << iteration_number << " Time : " << std::setw(8) << std::left
-     << current_time << " Time step : " << std::setw(8) << std::left
-     << time_step;
+  ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
+     << " Time: " << std::setw(8) << std::left << current_time
+     << " Time step: " << std::setw(8) << std::left << time_step;
 
   // Announce string
   announce_string(pcout, ss.str(), '*');
@@ -363,12 +361,11 @@ SimulationControlSteady::print_progression(const ConditionalOStream &pcout)
   if (!is_verbose_iteration())
     return;
 
-
   pcout << std::endl;
   std::stringstream ss;
 
   // Copy information into a string stream
-  ss << "Steady iteration : " << std::setw(8) << std::right << iteration_number
+  ss << "Steady iteration: " << std::setw(8) << std::right << iteration_number
      << "/" << number_mesh_adapt + 1;
 
   // Announce string
@@ -392,11 +389,10 @@ SimulationControlAdjointSteady::print_progression(
   std::stringstream ss;
 
   // Copy information into a string stream
-  ss << "Pseudo steady-state iteration : " << std::setw(8) << std::left
-     << iteration_number << " Time : " << std::setw(8) << std::left
-     << current_time << " Time step : " << std::setw(8) << std::left
-     << time_step << " CFL : " << std::setw(8) << std::left
-     << SimulationControl::get_CFL();
+  ss << "Pseudo steady-state iteration: " << std::setw(8) << std::left
+     << iteration_number << " Time: " << std::setw(8) << std::left
+     << current_time << " Time step: " << std::setw(8) << std::left << time_step
+     << " CFL: " << std::setw(8) << std::left << SimulationControl::get_CFL();
 
   // Announce string
   announce_string(pcout, ss.str(), '*');

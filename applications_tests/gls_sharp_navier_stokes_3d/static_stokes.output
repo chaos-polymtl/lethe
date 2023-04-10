@@ -15,9 +15,9 @@ Initial refinement in box - Step  3 of 3
    Number of degrees of freedom: 29476
    Volume of triangulation:      64
 
-******************************
-Steady iteration :        1/1
-******************************
+*****************************
+Steady iteration:        1/1
+*****************************
 div u : 3.52314e-13
 error at the weak BC : 0.00157712
 L2 error velocity : 0.0349147 L2 error pressure: 0.170314
