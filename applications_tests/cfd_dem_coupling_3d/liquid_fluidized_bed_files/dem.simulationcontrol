@@ -1,8 +1,8 @@
 Simulation control
-dt_0 5e-06
-dt_1 5e-06
-dt_2 5e-06
-dt_3 5e-06
+dt_0 5e-05
+dt_1 5e-05
+dt_2 5e-05
+dt_3 5e-05
 CFL  0
 Time 0.4
-Iter 80000
+Iter 8000
