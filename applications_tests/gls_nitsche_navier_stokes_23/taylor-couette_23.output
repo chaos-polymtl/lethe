@@ -3,9 +3,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3204
    Volume of triangulation:      6.12293
 
-******************************
-Steady iteration :        1/2
-******************************
+*****************************
+Steady iteration:        1/2
+*****************************
 
 +------------------------------------------+
 |  Torque summary                          |
@@ -16,9 +16,9 @@ Boundary ID   T_x       T_y       T_z
           2 0.000125  0.001196 -0.001253 
 L2 error velocity : 0.0522007
 
-******************************
-Steady iteration :        2/2
-******************************
+*****************************
+Steady iteration:        2/2
+*****************************
    Number of active cells:       5120
    Number of degrees of freedom: 22916
    Volume of triangulation:      6.24289

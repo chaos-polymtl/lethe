@@ -11,6 +11,7 @@
 #include <fem-dem/cfd_dem_coupling.h>
 
 #include <fstream>
+#include <sstream>
 
 template <int dim>
 bool
@@ -1160,22 +1161,19 @@ CFDDEMSolver<dim>::print_particles_summary()
   for (auto &particle : this->particle_handler)
     {
       auto particle_properties = particle.get_properties();
-      this->pcout
-        << "Particle Summary"
-        << "\n"
-        << "--------------------------------------------------------------------------"
-        << "--------------------------------------------------------------------------"
-        << "\n"
-        << "id: " << particle.get_id() << ",  "
-        << "x: " << particle.get_location()[0] << ",  "
-        << "y: " << particle.get_location()[1] << ",  "
-        << "z: " << particle.get_location()[2] << ",  "
-        << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x] << ",  "
-        << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y] << ",  "
-        << "vz: " << particle_properties[DEM::PropertiesIndex::v_z] << "\n"
-        << "--------------------------------------------------------------------------"
-        << "--------------------------------------------------------------------------"
-        << std::endl;
+      this->pcout << "Particle Summary" << std::endl;
+
+      std::stringstream ss;
+
+      ss << "id: " << particle.get_id() << ",  "
+         << "x: " << particle.get_location()[0] << ",  "
+         << "y: " << particle.get_location()[1] << ",  "
+         << "z: " << particle.get_location()[2] << ",  "
+         << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x] << ",  "
+         << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y] << ",  "
+         << "vz: " << particle_properties[DEM::PropertiesIndex::v_z];
+
+      announce_string(this->pcout, ss.str(), '-');
     }
 }
 

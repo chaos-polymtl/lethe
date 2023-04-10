@@ -1,10 +1,11 @@
+
+*********************
 Running on 1 rank(s)
-***************************************************************** 
-
+*********************
 DEM time-step is 1.46845% of Rayleigh time step
-Reading triangulation 
+Reading triangulation
 
-Finished reading triangulation 
+Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 id, type, dp, x, y, z 
