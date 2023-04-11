@@ -1,7 +1,6 @@
 #!/usr/bin/env txr
-;;; Copyright (C) 2021 The Lethe Authors
-;;;
-;;; SPDX-License-Identifier: LGPL-3.0-only
+;;; SPDX-FileCopyrightText: Copyright (C) 2021 The Lethe Authors
+;;; SPDX-License-Identifier: LGPL-2.1-or-later
 
 (define-option-struct opts nil
   (n dry-run :bool "Don't copy any files, just show what would be done.")
