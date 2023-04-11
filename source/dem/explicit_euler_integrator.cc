@@ -69,10 +69,10 @@ ExplicitEulerIntegrator<dim>::integrate(
         }
 
       // Reinitialize force
-      particle_force = 0.;
+      particle_force = 0;
 
       // Reinitialize torque
-      particle_torque = 0.;
+      particle_torque = 0;
 
       if constexpr (dim == 3)
         particle->set_location(particle_position);

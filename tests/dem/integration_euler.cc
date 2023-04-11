@@ -97,7 +97,7 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   // mass and moment of inertia
-  pit->get_properties()[DEM::PropertiesIndex::mass] = 1.;
+  pit->get_properties()[DEM::PropertiesIndex::mass] = 1;
 
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;

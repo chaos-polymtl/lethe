@@ -115,8 +115,8 @@ VelocityVerletIntegrator<dim>::integrate(
       }
 
       // Reinitialize force and torque of particle
-      particle_force  = 0.;
-      particle_torque = 0.;
+      particle_force  = 0;
+      particle_torque = 0;
 
       if constexpr (dim == 3)
         particle.set_location(particle_position);
@@ -217,8 +217,8 @@ VelocityVerletIntegrator<dim>::integrate(
                   }
 
                   // Reinitialize force and torque of particle
-                  particle_force  = 0.;
-                  particle_torque = 0.;
+                  particle_force  = 0;
+                  particle_torque = 0;
 
                   if constexpr (dim == 3)
                     particle.set_location(particle_position);

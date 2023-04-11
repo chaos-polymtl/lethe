@@ -14,13 +14,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 28.63397969 Pa
-Total pressure drop: 28.63398026 Pa
-Global continuity equation error: -4.594943014e-12 s^-1
-Max local continuity error: 6.851388698e-08 s^-1
+Pressure drop: 28.71334362 Pa
+Total pressure drop: 28.71334366 Pa
+Global continuity equation error: -2.563746876e-12 s^-1
+Max local continuity error: 7.084867511e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.004    Time step: 0.002    CFL: 0.217357
+Transient iteration: 2        Time: 0.004    Time step: 0.002    CFL: 0.220644
 *******************************************************************************
 --------------
 Void Fraction
@@ -28,13 +28,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 20.74391847 Pa
-Total pressure drop: 20.7441765 Pa
-Global continuity equation error: -3.654428242e-11 s^-1
-Max local continuity error: 6.447784688e-08 s^-1
+Pressure drop: 20.87238299 Pa
+Total pressure drop: 20.87264037 Pa
+Global continuity equation error: -1.18476984e-11 s^-1
+Max local continuity error: 6.567875747e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.006    Time step: 0.002    CFL: 0.21363 
+Transient iteration: 3        Time: 0.006    Time step: 0.002    CFL: 0.213801
 *******************************************************************************
 --------------
 Void Fraction
@@ -42,13 +42,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 21.06641286 Pa
-Total pressure drop: 21.06615303 Pa
-Global continuity equation error: -5.171517979e-11 s^-1
-Max local continuity error: 6.508300692e-08 s^-1
+Pressure drop: 21.19378799 Pa
+Total pressure drop: 21.19352881 Pa
+Global continuity equation error: -3.044029354e-12 s^-1
+Max local continuity error: 6.663374941e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.008    Time step: 0.002    CFL: 0.215646
+Transient iteration: 4        Time: 0.008    Time step: 0.002    CFL: 0.216508
 *******************************************************************************
 --------------
 Void Fraction
@@ -56,13 +56,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 20.67209965 Pa
-Total pressure drop: 20.67235773 Pa
-Global continuity equation error: -1.211688326e-11 s^-1
-Max local continuity error: 6.466963172e-08 s^-1
+Pressure drop: 20.79966781 Pa
+Total pressure drop: 20.79992541 Pa
+Global continuity equation error: -2.206846785e-12 s^-1
+Max local continuity error: 6.63012113e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.01     Time step: 0.002    CFL: 0.213644
+Transient iteration: 5        Time: 0.01     Time step: 0.002    CFL: 0.214488
 *******************************************************************************
 --------------
 Void Fraction
@@ -70,13 +70,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 21.06588281 Pa
-Total pressure drop: 21.06562297 Pa
-Global continuity equation error: 1.540912835e-11 s^-1
-Max local continuity error: 6.540385705e-08 s^-1
+Pressure drop: 21.19316547 Pa
+Total pressure drop: 21.19290644 Pa
+Global continuity equation error: -1.733654706e-12 s^-1
+Max local continuity error: 6.712591881e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 6        Time: 0.012    Time step: 0.002    CFL: 0.215652
+Transient iteration: 6        Time: 0.012    Time step: 0.002    CFL: 0.216497
 *******************************************************************************
 --------------
 Void Fraction
@@ -84,13 +84,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 20.67188302 Pa
-Total pressure drop: 20.67214108 Pa
-Global continuity equation error: 6.513331356e-11 s^-1
-Max local continuity error: 6.487796822e-08 s^-1
+Pressure drop: 20.79939361 Pa
+Total pressure drop: 20.79965132 Pa
+Global continuity equation error: -1.243938612e-11 s^-1
+Max local continuity error: 6.660976713e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 7        Time: 0.014    Time step: 0.002    CFL: 0.213657
+Transient iteration: 7        Time: 0.014    Time step: 0.002    CFL: 0.21453 
 *******************************************************************************
 --------------
 Void Fraction
@@ -98,13 +98,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 21.06576535 Pa
-Total pressure drop: 21.0655055 Pa
-Global continuity equation error: 5.830474921e-11 s^-1
-Max local continuity error: 6.555628599e-08 s^-1
+Pressure drop: 21.19301758 Pa
+Total pressure drop: 21.19275863 Pa
+Global continuity equation error: -3.920776432e-11 s^-1
+Max local continuity error: 6.734507985e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 8        Time: 0.016    Time step: 0.002    CFL: 0.215662
+Transient iteration: 8        Time: 0.016    Time step: 0.002    CFL: 0.216519
 *******************************************************************************
 --------------
 Void Fraction
@@ -112,13 +112,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 20.67179906 Pa
-Total pressure drop: 20.67205715 Pa
-Global continuity equation error: 1.5197143e-11 s^-1
-Max local continuity error: 6.499330282e-08 s^-1
+Pressure drop: 20.79931221 Pa
+Total pressure drop: 20.79956988 Pa
+Global continuity equation error: 5.584181098e-11 s^-1
+Max local continuity error: 6.677502535e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 9        Time: 0.018    Time step: 0.002    CFL: 0.213665
+Transient iteration: 9        Time: 0.018    Time step: 0.002    CFL: 0.214547
 *******************************************************************************
 --------------
 Void Fraction
@@ -126,13 +126,13 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 21.06572156 Pa
-Total pressure drop: 21.0654617 Pa
-Global continuity equation error: 4.729177409e-11 s^-1
-Max local continuity error: 6.564695985e-08 s^-1
+Pressure drop: 21.19295384 Pa
+Total pressure drop: 21.19269482 Pa
+Global continuity equation error: 2.09730087e-11 s^-1
+Max local continuity error: 6.747569947e-08 s^-1
 
 *******************************************************************************
-Transient iteration: 10       Time: 0.02     Time step: 0.002    CFL: 0.215668
+Transient iteration: 10       Time: 0.02     Time step: 0.002    CFL: 0.216532
 *******************************************************************************
 --------------
 Void Fraction
@@ -140,7 +140,7 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 20.67177555 Pa
-Total pressure drop: 20.67203359 Pa
-Global continuity equation error: 4.572705886e-11 s^-1
-Max local continuity error: 6.506711977e-08 s^-1
+Pressure drop: 20.79926867 Pa
+Total pressure drop: 20.79952628 Pa
+Global continuity equation error: 6.315317495e-11 s^-1
+Max local continuity error: 6.688216574e-08 s^-1
