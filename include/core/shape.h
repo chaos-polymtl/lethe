@@ -931,7 +931,20 @@ public:
     // distance tool with just the shell.
     if (shells.size() > 0)
       {
-        if (shells.size() > 1)
+        if (solids.size() == 1)
+          {
+            shape = solids[0];
+            OpenCASCADE::extract_compound_shapes(
+              shape, compounds, compsolids, solids, shells, wires);
+            std::cout << "nb shell of solid 0" << shells.size() << std::endl;
+            std::cout << "nb compounds of solid 0" << compounds.size()
+                      << std::endl;
+            std::cout << "nb compsolids of solid 0" << compsolids.size()
+                      << std::endl;
+            distancetool = BRepExtrema_DistShapeShape(shells[0], vertex);
+            point_classifier.Load(shape);
+          }
+        else if (shells.size() > 1)
           {
             throw std::runtime_error(
               "Error!: The shape has more than one shell. The code does not support shapes with multiple shells or solids. If your shape has more than one shell or solid, it is usually possible to recombine them into one. Otherwise, it is possible to split the shape into sub-shells and sub-solids and then define one particle for each of them.");
