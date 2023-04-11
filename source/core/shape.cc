@@ -931,8 +931,8 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
     {
       constituent_shapes_values[component_id] =
         component->value(centered_point);
-      // A dummy gradient is used here because apply_boolean_operations requires
-      // a gradient map as an argument.
+      // A dummy gradient is used here because apply_boolean_operations
+      // requires a gradient map as an argument.
       // This design choice of not duplicating apply_boolean_operations
       // was made for brevity of the code, at a negligible
       // additional computing cost.

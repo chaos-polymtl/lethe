@@ -22,3 +22,15 @@ DEAL::Testing gradient
 DEAL:: Gradient at P(0.25,0.25,0.25) = -0.577350 -0.577350 -0.577350
 DEAL:: Gradient of substractor sphere at P(0.25,0.25,0.25) = 0.577350 0.577350 0.577350
 DEAL::OK
+DEAL::Testing an intersection of spheres: radius = 1
+DEAL::Testing value
+DEAL:: Value at P(1.25, 0.5, 0) = 0.346291
+DEAL::Testing gradient
+DEAL:: Gradient at P(1.25, 0.5, 0) = 0.928477 0.371391 0.00000
+DEAL::OK
+DEAL::Testing an union of spheres: radius = 1
+DEAL::Testing value
+DEAL:: Value at P(1.25, 0.5, 0) = -0.440983
+DEAL::Testing gradient
+DEAL:: Gradient at P(1.25, 0.5, 0) = 0.447214 0.894427 0.00000
+DEAL::OK

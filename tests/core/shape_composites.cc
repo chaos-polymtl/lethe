@@ -33,16 +33,18 @@ test()
   typedef std::map<
     unsigned int,
     std::tuple<CompositeShape<3>::BooleanOperation, unsigned int, unsigned int>>
-                                              op_map;
-  typedef CompositeShape<3>::BooleanOperation bool_op;
+                                              operation_map;
+  typedef CompositeShape<3>::BooleanOperation boolean_operation;
 
-  op_map operation_union;
-  operation_union[2] = std::make_tuple(bool_op::Union, 0, 1);
-  op_map operation_difference;
-  operation_difference[2] =
-    std::make_tuple(bool_op::Difference, 0, 1); // We substract 0 from 1
-  op_map operation_intersection;
-  operation_intersection[2] = std::make_tuple(bool_op::Intersection, 0, 1);
+  operation_map operation_union;
+  operation_union[2] = std::make_tuple(boolean_operation::Union, 0, 1);
+  operation_map operation_difference;
+  operation_difference[2] = std::make_tuple(boolean_operation::Difference,
+                                            0,
+                                            1); // We substract 0 from 1
+  operation_map operation_intersection;
+  operation_intersection[2] =
+    std::make_tuple(boolean_operation::Intersection, 0, 1);
 
   // Initialization of composite shapes
   std::shared_ptr<CompositeShape<3>> composite_union =
@@ -102,9 +104,10 @@ test()
   std::map<unsigned int, std::shared_ptr<Shape<3>>> spheres;
   spheres[0] = sphere_1;
   spheres[1] = sphere_2;
-  op_map operation_hollow_sphere;
-  operation_hollow_sphere[2] =
-    std::make_tuple(bool_op::Difference, 1, 0); // We substract 1 from 0
+  operation_map operation_hollow_sphere;
+  operation_hollow_sphere[2] = std::make_tuple(boolean_operation::Difference,
+                                               1,
+                                               0); // We substract 1 from 0
 
   std::shared_ptr<CompositeShape<3>> composite_hollow_sphere =
     std::make_shared<CompositeShape<3>>(spheres,
@@ -122,6 +125,55 @@ test()
           << composite_hollow_sphere->gradient(p_2) << std::endl;
   deallog << " Gradient of substractor sphere at P(0.25,0.25,0.25) = "
           << sphere_2->gradient(p_2) << std::endl;
+  deallog << "OK" << std::endl;
+
+
+  deallog << "Testing an intersection of spheres: radius = 1" << std::endl;
+  std::shared_ptr<Shape<3>> sphere_3 =
+    std::make_shared<Sphere<3>>(1, Point<3>(), Point<3>());
+  std::shared_ptr<Shape<3>> sphere_4 =
+    std::make_shared<Sphere<3>>(1, Point<3>({1, 0, 0}), Point<3>());
+
+  spheres[0] = sphere_3;
+  spheres[1] = sphere_4;
+  operation_map operation_spheres_intersection;
+  operation_spheres_intersection[2] =
+    std::make_tuple(boolean_operation::Intersection,
+                    1,
+                    0); // We intersect 0 and 1
+
+  std::shared_ptr<CompositeShape<3>> composite_spheres_intersection =
+    std::make_shared<CompositeShape<3>>(spheres,
+                                        operation_spheres_intersection,
+                                        Point<3>(),
+                                        Point<3>());
+  Point<3> p_3({1.25, 0.5, 0});
+  deallog << "Testing value" << std::endl;
+  deallog << " Value at P(1.25, 0.5, 0) = "
+          << composite_spheres_intersection->value(p_3) << std::endl;
+  deallog << "Testing gradient" << std::endl;
+  deallog << " Gradient at P(1.25, 0.5, 0) = "
+          << composite_spheres_intersection->gradient(p_3) << std::endl;
+  deallog << "OK" << std::endl;
+
+  deallog << "Testing an union of spheres: radius = 1" << std::endl;
+
+  operation_map operation_spheres_union;
+  operation_spheres_union[2] = std::make_tuple(boolean_operation::Union,
+                                               1,
+                                               0); // We intersect 0 and 1
+
+  std::shared_ptr<CompositeShape<3>> composite_spheres_union =
+    std::make_shared<CompositeShape<3>>(spheres,
+                                        operation_spheres_union,
+                                        Point<3>(),
+                                        Point<3>());
+  deallog << "Testing value" << std::endl;
+  deallog << " Value at P(1.25, 0.5, 0) = "
+          << composite_spheres_union->value(p_3) << std::endl;
+  deallog << "Testing gradient" << std::endl;
+  deallog << " Gradient at P(1.25, 0.5, 0) = "
+          << composite_spheres_union->gradient(p_3) << std::endl;
   deallog << "OK" << std::endl;
 }
 
