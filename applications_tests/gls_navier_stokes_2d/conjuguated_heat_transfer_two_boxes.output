@@ -4,9 +4,9 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 1168
 
-******************************
-Steady iteration :        1/1
-******************************
+*****************************
+Steady iteration:        1/1
+*****************************
 L2 error velocity : 1.75055e-05
 L2 error temperature : 0.00764557
 cells error_velocity error_pressure 

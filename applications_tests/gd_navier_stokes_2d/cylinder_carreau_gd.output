@@ -3,9 +3,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 10918
    Volume of triangulation:      511.219
 
-******************************
-Steady iteration :        1/1
-******************************
+*****************************
+Steady iteration:        1/1
+*****************************
 
 +------------------------------------------+
 |  Force  summary                          |

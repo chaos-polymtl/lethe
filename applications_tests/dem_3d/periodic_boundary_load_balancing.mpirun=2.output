@@ -1,23 +1,24 @@
+
+*********************
 Running on 2 rank(s)
-***************************************************************** 
-
+*********************
 DEM time-step is 1.31342% of Rayleigh time step
-Reading triangulation 
+Reading triangulation
 
-Finished reading triangulation 
+Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-***************************************************************** 
+**********************************************************************
 10 particles of type 0 were inserted, 0 particles of type 0 remaining
-***************************************************************** 
+**********************************************************************
 -->Repartitionning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 5 , 4 and 6
 Minimum and maximum number of cells owned by the processors are 64 and 64
 
-********************************************************************
-Transient iteration : 10000    Time : 0.15     Time step : 1.5e-05 
-********************************************************************
+*****************************************************************
+Transient iteration: 10000    Time: 0.15     Time step: 1.5e-05 
+*****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.0000e+02  | 2.0000e+02 | 2.0000e+02 | 
 | Velocity magnitude           | 1.4998e-01 | 1.4998e-01  | 1.4998e-01 | 1.4998e+00 | 

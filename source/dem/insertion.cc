@@ -19,6 +19,8 @@
 
 #include <dem/insertion.h>
 
+#include <sstream>
+
 // Prints the insertion information
 template <int dim>
 void
@@ -27,13 +29,13 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
                                      const unsigned int &particle_type,
                                      const ConditionalOStream &pcout)
 {
-  pcout << "***************************************************************** "
-           "\n";
-  pcout << inserted_this_step << " particles of type " << particle_type
-        << " were inserted, " << remained_particles << " particles of type "
-        << particle_type << " remaining" << std::endl;
-  pcout << "***************************************************************** "
-           "\n";
+  std::stringstream ss;
+
+  ss << inserted_this_step << " particles of type " << particle_type
+     << " were inserted, " << remained_particles << " particles of type "
+     << particle_type << " remaining";
+
+  announce_string(pcout, ss.str(), '*');
 }
 
 // Carries out assigning the properties of inserted particles. The output vector
