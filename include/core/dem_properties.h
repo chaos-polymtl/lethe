@@ -51,8 +51,8 @@ namespace DEM
     fem_torque_x            = 11,
     fem_torque_y            = 12,
     fem_torque_z            = 13,
-    volumetric_contribution = 14,
-    mass                    = 15,
+    mass                    = 14,
+    volumetric_contribution = 15,
     n_properties            = 16,
   };
 

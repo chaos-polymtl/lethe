@@ -42,9 +42,10 @@ namespace DEM
       std::make_pair("FemTorque", dim);
     properties[PropertiesIndex::fem_torque_y] = std::make_pair("FemTorque", 1);
     properties[PropertiesIndex::fem_torque_z] = std::make_pair("FemTorque", 1);
+    properties[PropertiesIndex::mass] = std::make_pair("Mass", 1);
     properties[PropertiesIndex::volumetric_contribution] =
       std::make_pair("Volumetric Contribution", 1);
-    properties[PropertiesIndex::mass] = std::make_pair("Mass", 1);
+
 
     return properties;
   }

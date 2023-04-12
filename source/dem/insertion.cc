@@ -88,9 +88,9 @@ Insertion<dim>::assign_particle_properties(
       double fem_torque_x            = 0.;
       double fem_torque_y            = 0.;
       double fem_torque_z            = 0.;
-      double volumetric_contribution = 0.;
       double mass                    = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
+      double volumetric_contribution = 0.;
 
       std::vector<double> properties_of_one_particle{type,
                                                      diameter,
@@ -106,8 +106,8 @@ Insertion<dim>::assign_particle_properties(
                                                      fem_torque_x,
                                                      fem_torque_y,
                                                      fem_torque_z,
-                                                     volumetric_contribution,
-                                                     mass};
+                                                     mass,
+                                                     volumetric_contribution};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
