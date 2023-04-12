@@ -202,11 +202,29 @@ defined as a circle with a radius :math:`R= 0.5` at :math:`(x,y)=(0.0, 0.0)`. We
       end
     end
 
+""""""""""""""""""""""""""""""""
+Analytical solution
+""""""""""""""""""""""""""""""""
 
+.. code-block:: text
+
+    #---------------------------------------------------
+    # Analytical solution
+    #---------------------------------------------------
+
+    subsection analytical solution
+      set enable                = true
+      set verbosity             = quiet
+      set filename              = L2Error.dat
+      subsection uvwp
+       set Function expression = 0; 0; if (x * x + (y-2.5) * (y-2.5) < 0.50 * 0.5 , 2, 0)
+      end
+    end
 
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ Brackbill, J.U., Kothe, D.B. and Zemach, C., 1992. A continuum method for modeling surface tension. Journal of computational physics, 100(2), pp.335-354.
 
 `[2] <https://doi.org/10.1002/fld.2643>`_ Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.
