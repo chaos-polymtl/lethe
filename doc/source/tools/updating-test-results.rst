@@ -24,6 +24,7 @@ Setup
 TXR can be installed to file:`/usr/local/bin` as follows:
 
 .. code-block:: shell
+
    curl 'https://www.kylheku.com/cgit/txr/snapshot/txr-285.tar.gz' | tar -xzf -
    cd txr-285
    make
@@ -34,6 +35,7 @@ If Lethe's build was configured before TXR was installed, then the
 In this situation, the build has to be reconfigured, for example with:
 
 .. code-block:: shell
+
    cmake -S. -Bbuild
 
 assuming the current directory is Lethe's root directory, and the build
@@ -46,4 +48,5 @@ Assuming the build directory is file:`build`, the following command
 updates the golden files:
 
 .. code-block:: shell
+   
    cmake --build build --target update-golden
