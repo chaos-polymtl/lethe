@@ -1,7 +1,6 @@
 #!/usr/bin/env txr
-;;; Copyright (C) 2021 The Lethe Authors
-;;;
-;;; SPDX-License-Identifier: LGPL-3.0-only
+;;; SPDX-FileCopyrightText: Copyright (C) 2021, 2023 The Lethe Authors
+;;; SPDX-License-Identifier: LGPL-2.1-or-later
 
 (define-option-struct opts nil
   (n dry-run :bool "Don't copy any files, just show what would be done.")
@@ -15,9 +14,9 @@
 
 (defun get-dest (path build-dir lethe-dir)
   (match-case path
-    (`@{build-dir}/applications_tests/@app/@test.release/@mpirun/output`
+    (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/@mpirun/output`
      `@{lethe-dir}/applications_tests/@app/@test.@mpirun.output`)
-    (`@{build-dir}/applications_tests/@app/@test.release/output`
+    (`@{build-dir}/applications_tests/@app/@test.@{nil #/release|debug/}/output`
      `@{lethe-dir}/applications_tests/@app/@test.output`)
     (@otherwise nil)))
 

@@ -7,5 +7,6 @@ Tools
     :glob:
     :titlesonly:
 
+    updating-test-results
     gmsh/gmsh
     automatic_launch/automatic_launch
