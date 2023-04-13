@@ -1355,7 +1355,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           // Saffman-Mei coefficient
           alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
                   relative_velocity[particle_number].norm() *
-                  abs(vorticity_2d[particle_number][0] + 1e-9);
+                  abs(vorticity_2d[particle_number][0] + 1e-12);
 
           if (Re_p[particle_number] <= 40)
             C_s =
@@ -1380,7 +1380,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           lift_force[1] =
             C_s * 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
             particle_properties[DEM::PropertiesIndex::dp] * density *
-            sqrt(viscosity + DBL_MIN) / sqrt(vorticity.norm() + 1e-9) *
+            sqrt(viscosity + DBL_MIN) / sqrt(vorticity.norm() + 1e-12) *
             (relative_velocity[particle_number][1] * vorticity[0]);
 
 
@@ -1407,7 +1407,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           // Saffman-Mei coefficient C_s
           alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
                   relative_velocity[particle_number].norm() *
-                  (vorticity_3d[particle_number].norm() + 1e-9);
+                  (vorticity_3d[particle_number].norm() + 1e-12);
 
           if (Re_p[particle_number] <= 40)
             C_s =
@@ -1422,7 +1422,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           lift_force =
             C_s * 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
             particle_properties[DEM::PropertiesIndex::dp] * density *
-            sqrt(viscosity + DBL_MIN) / sqrt(vorticity.norm() + 1e-9) *
+            sqrt(viscosity + DBL_MIN) / sqrt(vorticity.norm() + 1e-12) *
             (cross_product_3d(relative_velocity[particle_number], vorticity));
 
           for (int d = 0; d < dim; ++d)

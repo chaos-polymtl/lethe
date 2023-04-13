@@ -63,7 +63,7 @@ namespace DEM
   class DEMProperties
   {
   public:
-    std::vector<std::pair<std::string, int>>
+    static std::vector<std::pair<std::string, int>>
     get_properties_name();
   };
 

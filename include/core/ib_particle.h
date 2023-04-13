@@ -15,6 +15,7 @@
  *
  */
 
+#include <core/dem_properties.h>
 #include <core/shape.h>
 
 #include <deal.II/base/auto_derivative_function.h>
@@ -35,30 +36,6 @@ template <int dim>
 class IBParticle
 {
 public:
-  // Function to initialise the value associated with each particle.
-
-  // Properties Index is necessary to interface with some DEM functions and
-  // simplify the creation of vtu output file.
-  enum PropertiesIndex : int
-  {
-    id           = 0,
-    dp           = 1,
-    vx           = 2,
-    vy           = 3,
-    vz           = 4,
-    ox           = 5,
-    oy           = 6,
-    oz           = 7,
-    fx           = 8,
-    fy           = 9,
-    fz           = 10,
-    tx           = 11,
-    ty           = 12,
-    tz           = 13,
-    m            = 14,
-    n_properties = 15,
-  };
-
   /**
    * @brief
    * initialised the particle
@@ -95,7 +72,7 @@ public:
   inline unsigned int
   get_number_properties()
   {
-    return PropertiesIndex::n_properties;
+    return DEM::PropertiesIndex::n_properties;
   }
 
   /**
