@@ -1647,7 +1647,7 @@ template class GLSVansAssemblerViscousTorque<3>;
 
 template <int dim>
 void
-GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions(
+GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -1657,12 +1657,12 @@ GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions"));
 
   double viscous_torque = 0.0;
 
@@ -1698,8 +1698,8 @@ GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions(
   particle_number += 1;
 }
 
-template class GLSVansAssemblerVorticityTorque<2>;
-template class GLSVansAssemblerVorticityTorque<3>;
+template class GLSVansAssemblerVorticalTorque<2>;
+template class GLSVansAssemblerVorticalTorque<3>;
 
 template <int dim>
 void

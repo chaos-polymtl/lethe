@@ -504,7 +504,7 @@ public:
  * M_viscous_rotation = pi * pow(dp, 3) * mu * (- omega_p)
  *
  * The complete model described by Derksen is composed of
- * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticityTorque
+ * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticalTorque
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -541,7 +541,7 @@ public:
  * M_viscous_vorticity = pi * pow(dp, 3) * mu * (0.5 * vorticity)
  *
  * The complete model described by Derksen is composed of
- * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticityTorque
+ * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticalTorque
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -549,10 +549,10 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerVorticityTorque : public ParticleFluidAssemblerBase<dim>
+class GLSVansAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerVorticityTorque(
+  GLSVansAssemblerVorticalTorque(
     Parameters::Lagrangian::LagrangianPhysicalProperties
       lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
