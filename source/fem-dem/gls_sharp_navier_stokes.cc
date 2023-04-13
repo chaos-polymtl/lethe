@@ -1455,6 +1455,11 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
         }
       data_out.add_data_vector(cell_cuts, "cell_cut");
       data_out.add_data_vector(cell_overconstrained, "cell_overconstrained");
+
+      levelset_gradient_postprocessor =
+        std::make_shared<LevelsetGradientPostprocessor<dim>>(combined_shapes);
+      data_out.add_data_vector(this->present_solution,
+                               *levelset_gradient_postprocessor);
     }
 }
 

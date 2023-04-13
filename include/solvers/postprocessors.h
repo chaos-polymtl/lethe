@@ -19,7 +19,7 @@
 using namespace dealii;
 
 /**
- * @brief VorticityPostprocessor Post-processor class used to calculate
+ * @class VorticityPostprocessor Post-processor class used to calculate
  * the vorticity field within the domain. The vorticity is defined
  * as $\mathbf{\omega} = \nabla \times \mathbf{u}$ or, in other notation,
  * $\mathbf{\omega} = rot(\mathbf{u})$.
@@ -64,7 +64,7 @@ public:
 };
 
 /**
- * @brief QCriterionPostprocessor Post-processor class used to calculate
+ * @class QCriterionPostprocessor Post-processor class used to calculate
  * the QCriterion field within the domain. The Q Criterion is defined as
  * as $Q = ||\Omega||^2 -||S||^2$ where $S$ is the symetric deformation tensor
  */
@@ -115,7 +115,7 @@ public:
 };
 
 /**
- * @brief DivergencePostprocessor Post-processor class used to calculate
+ * @class DivergencePostprocessor Post-processor class used to calculate
  * the divergence of the velocity field within the domain. The divergence is
  * defined as $\nabla \cdot \mathbf{u}$.
  */
@@ -147,7 +147,7 @@ public:
 
 
 /**
- * @brief Calculates the velocity in the Eulerian frame of reference
+ * @class Calculates the velocity in the Eulerian frame of reference
  * for simulations which are carried out in a rotating frame.
  * The velocity in the Eulerian frame is $\mathbf{u}_E=\mathbf{u}_L+
  * \mathbf{\Omega} \times \mathbf{R}$ where $\Omega$ is the velocity of the
@@ -205,8 +205,8 @@ private:
 };
 
 /**
- * @brief Calculates de viscosity on each quadrature point for a non Newtonian flow.
- * The equation of the viscosity depends on the used rheological model.
+ * @class Calculates de viscosity on each quadrature point for a non Newtonian
+ * flow. The equation of the viscosity depends on the used rheological model.
  */
 template <int dim>
 class NonNewtonianViscosityPostprocessor : public DataPostprocessorScalar<dim>
@@ -252,7 +252,7 @@ private:
 
 
 /**
- * @brief Calculates the shear rate on post-processing points
+ * @class Calculates the shear rate on post-processing points
  */
 template <int dim>
 class ShearRatePostprocessor : public DataPostprocessorScalar<dim>
@@ -285,7 +285,7 @@ public:
 };
 
 /**
- * @brief ScalarFunctionPostprocessor Post-processor class used to calculate
+ * @class ScalarFunctionPostprocessor Post-processor class used to calculate
  * the scalar field for a given function within the domain.
  */
 template <int dim>
@@ -321,7 +321,7 @@ private:
 };
 
 /**
- * @brief LevelsetPostprocessor Post-processor class used to calculate
+ * @class LevelsetPostprocessor Post-processor class used to calculate
  * the levelset field for a given shape within the domain.
  */
 template <int dim>
@@ -356,6 +356,56 @@ private:
   std::shared_ptr<Shape<dim>> shape;
 };
 
+/**
+ * @brief Postprocessor for levelset gradient of a shape
+ * @class LevelsetGradientPostprocessor Post-processor class used to calculate
+ * the levelset gradient field for a given shape within the domain.
+ */
+template <int dim>
+class LevelsetGradientPostprocessor : public DataPostprocessorVector<dim>
+{
+public:
+  /**
+   * Constructor for the postprocessor
+   * @param shape the shape for which the levelset gradient field will be
+   * computed
+   */
+  LevelsetGradientPostprocessor(const std::shared_ptr<Shape<dim>> shape)
+    : DataPostprocessorVector<dim>(std::string("levelset_gradient"),
+                                   update_values | update_quadrature_points)
+    , shape(shape)
+  {}
 
+  /**
+   * @brief function that computes the gradient at each point associated to the
+   * computed_quantities vector and fills that vector accordingly.
+   * @param inputs the arguments used as basis for the postprocessing
+   * @param computed_quantities the variable to fill with levelset gradient
+   * information
+   */
+  virtual void
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    const unsigned int n_quadrature_points = inputs.evaluation_points.size();
+
+    Tensor<1, dim> levelset_gradient{};
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        AssertDimension(computed_quantities[q].size(), dim);
+
+        const Point<dim> evaluation_point = inputs.evaluation_points[q];
+        const auto       cell             = inputs.template get_cell<dim>();
+        levelset_gradient =
+          shape->gradient_with_cell_guess(evaluation_point, cell);
+        for (int d = 0; d < dim; d++)
+          computed_quantities[q][d] = levelset_gradient[d];
+      }
+  }
+
+private:
+  std::shared_ptr<Shape<dim>> shape;
+};
 
 #endif

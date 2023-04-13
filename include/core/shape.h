@@ -809,6 +809,27 @@ public:
     const unsigned int /*component = 0*/) override;
 
   /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+  /**
    * @brief Return a pointer to a copy of the Shape
    */
   std::shared_ptr<Shape<dim>>
@@ -824,6 +845,16 @@ public:
   void
   update_precalculations(DoFHandler<dim> &  updated_dof_handler,
                          const unsigned int levels_not_precalculated);
+
+  /**
+   * @brief Computes the assigned boolean operations
+   * @param constituent_shapes_values map containing the computed values for the component shapes
+   * @param constituent_shapes_gradients map containing the computed gradients for the component shapes
+   */
+  inline std::pair<double, Tensor<1, dim>>
+  apply_boolean_operations(
+    std::map<unsigned int, double>         constituent_shapes_values,
+    std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients) const;
 
 private:
   // The members of this class are all the constituent and operations that are
