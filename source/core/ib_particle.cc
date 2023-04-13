@@ -108,16 +108,16 @@ IBParticle<dim>::get_properties_name()
   properties[PropertiesIndex::vx] = std::make_pair("Velocity", 3);
   properties[PropertiesIndex::vy] = std::make_pair("Velocity", 1);
   properties[PropertiesIndex::vz] = std::make_pair("Velocity", 1);
-  properties[PropertiesIndex::fx] = std::make_pair("Force", 3);
-  properties[PropertiesIndex::fy] = std::make_pair("Force", 1);
-  properties[PropertiesIndex::fz] = std::make_pair("Force", 1);
-  properties[PropertiesIndex::m]  = std::make_pair("Mass", 1);
   properties[PropertiesIndex::ox] = std::make_pair("Omega", 3);
   properties[PropertiesIndex::oy] = std::make_pair("Omega", 1);
   properties[PropertiesIndex::oz] = std::make_pair("Omega", 1);
+  properties[PropertiesIndex::fx] = std::make_pair("Force", 3);
+  properties[PropertiesIndex::fy] = std::make_pair("Force", 1);
+  properties[PropertiesIndex::fz] = std::make_pair("Force", 1);
   properties[PropertiesIndex::tx] = std::make_pair("Torques", 3);
   properties[PropertiesIndex::ty] = std::make_pair("Torques", 1);
   properties[PropertiesIndex::tz] = std::make_pair("Torques", 1);
+  properties[PropertiesIndex::m]  = std::make_pair("Mass", 1);
 
   return properties;
 }
@@ -131,24 +131,25 @@ IBParticle<dim>::get_properties()
   properties[1]  = radius * 2.0;
   properties[2]  = velocity[0];
   properties[3]  = velocity[1];
-  properties[5]  = fluid_forces[0];
-  properties[6]  = fluid_forces[1];
-  properties[8]  = omega[0];
-  properties[9]  = omega[1];
-  properties[10] = omega[2];
-  properties[11] = mass;
-  properties[12] = fluid_torque[0];
-  properties[13] = fluid_torque[1];
-  properties[14] = fluid_torque[2];
+  properties[5]  = omega[0];
+  properties[6]  = omega[1];
+  properties[7]  = omega[2];
+  properties[8]  = fluid_forces[0];
+  properties[9]  = fluid_forces[1];
+  properties[11] = fluid_torque[0];
+  properties[12] = fluid_torque[1];
+  properties[13] = fluid_torque[2];
+  properties[14] = mass;
+
   if (dim == 2)
     {
-      properties[4] = 0;
-      properties[7] = 0;
+      properties[4]  = 0;
+      properties[10] = 0;
     }
   if (dim == 3)
     {
-      properties[4] = velocity[2];
-      properties[7] = fluid_forces[2];
+      properties[4]  = velocity[2];
+      properties[10] = fluid_forces[2];
     }
 
   return properties;

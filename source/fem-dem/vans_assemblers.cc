@@ -1321,9 +1321,9 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
     scratch_data.fluid_particle_relative_velocity_at_particle_location;
   const auto &Re_p = scratch_data.Re_particle;
 
-  auto &velocity_curls_2d =
+  auto &vorticity_2d =
     scratch_data.fluid_velocity_curls_at_particle_location_2d;
-  auto &velocity_curls_3d =
+  auto &vorticity_3d =
     scratch_data.fluid_velocity_curls_at_particle_location_3d;
   auto &undisturbed_flow_force = scratch_data.undisturbed_flow_force;
 
@@ -1355,7 +1355,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           // Saffman-Mei coefficient
           alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
                   relative_velocity[particle_number].norm() *
-                  abs(velocity_curls_2d[particle_number][0] + 1e-9);
+                  abs(vorticity_2d[particle_number][0] + 1e-9);
 
           if (Re_p[particle_number] <= 40)
             C_s =
@@ -1366,15 +1366,15 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
 
           // Vorticity vector
           Tensor<1, 2> vorticity;
-          vorticity[0] = velocity_curls_2d[particle_number][0];
-          vorticity[1] = -velocity_curls_2d[particle_number][1];
+          vorticity[0] = vorticity_2d[particle_number][0];
+          vorticity[1] = -vorticity_2d[particle_number][1];
 
           // Saffman Lift force
           lift_force[0] =
             C_s * 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
             particle_properties[DEM::PropertiesIndex::dp] * density *
             sqrt(viscosity + DBL_MIN) /
-            sqrt(velocity_curls_2d[particle_number].norm()) *
+            sqrt(vorticity_2d[particle_number].norm()) *
             (relative_velocity[particle_number][0] * vorticity[1]);
 
           lift_force[1] =
@@ -1407,7 +1407,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           // Saffman-Mei coefficient C_s
           alpha = 0.5 * particle_properties[DEM::PropertiesIndex::dp] /
                   relative_velocity[particle_number].norm() *
-                  (velocity_curls_3d[particle_number].norm() + 1e-9);
+                  (vorticity_3d[particle_number].norm() + 1e-9);
 
           if (Re_p[particle_number] <= 40)
             C_s =
@@ -1417,7 +1417,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
             C_s = 0.0524 * sqrt(alpha * Re_p[particle_number]);
 
           // Vorticity tensor
-          Tensor<1, 3> vorticity = velocity_curls_3d[particle_number];
+          Tensor<1, 3> vorticity = vorticity_3d[particle_number];
 
           lift_force =
             C_s * 1.61 * particle_properties[DEM::PropertiesIndex::dp] *
@@ -1486,9 +1486,11 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           double omega_z =
             particle_properties[DEM::PropertiesIndex::omega_z] + 1e-15;
 
+          double omega_norm = abs(omega_z);
+
           // Spin parameter
           double spin_parameter =
-            particle_properties[DEM::PropertiesIndex::dp] * abs(omega_z) /
+            particle_properties[DEM::PropertiesIndex::dp] * omega_norm /
             (2.0 * relative_velocity[particle_number].norm());
 
           // Magnus lift coefficient
@@ -1507,12 +1509,12 @@ GLSVansAssemblerMagnus<dim>::calculate_particle_fluid_interactions(
           lift_force[0] =
             0.5 * C_m * particle_properties[DEM::PropertiesIndex::dp] *
             density * relative_velocity[particle_number].norm() *
-            (omega_z / abs(omega_z) * relative_velocity[particle_number][1]);
+            (omega_z / omega_norm * relative_velocity[particle_number][1]);
 
           lift_force[1] =
             0.5 * C_m * particle_properties[DEM::PropertiesIndex::dp] *
             density * relative_velocity[particle_number].norm() *
-            (omega_z / abs(omega_z) * relative_velocity[particle_number][0]);
+            (omega_z / omega_norm * relative_velocity[particle_number][0]);
 
 
           for (int d = 0; d < dim; ++d)
@@ -1614,7 +1616,7 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
   const double viscosity =
     scratch_data.properties_manager.get_viscosity_scale();
 
-  auto &velocity_curls_3d =
+  auto &vorticity_3d =
     scratch_data.fluid_velocity_curls_at_particle_location_3d;
 
   const auto pic = scratch_data.pic;
@@ -1630,10 +1632,11 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
         {
           // Calculate viscous torque
           viscous_torque =
-            8.0 * M_PI * viscosity * density *
+            M_PI *
             Utilities::fixed_power<3, double>(
-              particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
-            (velocity_curls_3d[particle_number][d] -
+              particle_properties[DEM::PropertiesIndex::dp]) *
+            viscosity * density *
+            (0.5 * vorticity_3d[particle_number][d] -
              particle_properties[DEM::PropertiesIndex::omega_x + d]);
 
           particle_properties[DEM::PropertiesIndex::fem_torque_x + d] +=

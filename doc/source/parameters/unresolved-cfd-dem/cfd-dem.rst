@@ -47,11 +47,14 @@ This subsection includes parameters related to multiphase flow simulations using
 
 * The ``viscous torque`` parameter controls whether the fluid-particle contact dissipates or not the particles' angular momentum due to viscosity.
 
-..note::
-   By setting ``set viscous torque = true``, the model applied is the one described on the Example 3.6-5 of the book by Bird et al. (2006) [6].
-   
-..warning::
-   The analytical model used to describe the viscous dissipative torque is obtained under important simplifications, which can lead to unphysical results.
+.. note::
+
+    When ``set viscous torque = true``, the applied torque (:math:`\bf{M}_{viscous}`) is the one described by Derksen (2004) `[6] <https://doi.org/10.1002/aic.690491104>`_:
+
+    .. math::
+        \bf{M}_{viscous} = \pi d_p^3 \mu \left ( 0.5 \bf{\omega}_f - \bf{\omega}_p \right )
+
+    where :math:`\bf{\omega}_f` is the fluid vorticity at particle's position and :math:`\bf{\omega}_p` is the particle's rotational velocity.
 
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
@@ -85,7 +88,7 @@ This subsection includes parameters related to multiphase flow simulations using
 
 `[5] <https://doi.org/10.1007/s003480050203>`_ B. Oesterlé, T. Dinh, Experiments on the lift of a spinning sphere in a range of intermediate Reynolds numbers. Experiments in Fluids 25, 16–22, 1998.
 
-`[6] <https://www.wiley.com/en-br/Transport+Phenomena%2C+Revised+2nd+Edition-p-9780470115398>`_ R. B. Bird, W. E. Stewart, E. N. Lightfoot. Transport Phenomena (2nd edition). Wiley, 2006.
+`[6] <https://doi.org/10.1002/aic.690491104>`_ J. J. Derksen. Numerical simulation of solids suspension in a stirred tank. AIChE Journal, v. 49, n. 11, p. 2700-2714, 2003.
 
 `[7] <https://doi.org/10.1016/0301-9322(94)90011-6>`_ R. Di Felice, The voidage function for fluid-particle interaction systems. International journal of multiphase flow 20 (1), 153–159, 1994.
 

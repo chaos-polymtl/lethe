@@ -46,7 +46,6 @@ namespace DEM
     properties[PropertiesIndex::volumetric_contribution] =
       std::make_pair("Volumetric Contribution", 1);
 
-
     return properties;
   }
 

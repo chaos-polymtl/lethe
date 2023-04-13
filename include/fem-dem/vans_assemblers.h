@@ -498,8 +498,9 @@ public:
 };
 
 /**
- * @brief Class that assembles the one way coupled Viscous Torque dissipation as defined by Lightfoot, Bird & Stewart (2002) - Transport Phenomena, 2nd Ed. - Example 3.6.5
- * M_viscous = 8 * MPI * mu * dp^3 * omega
+ * @brief Class that assembles the one way coupled Viscous Torque dissipation as defined
+ * by Derksen (2004).
+ * M_viscous = pi * pow(dp, 3) * mu * (0.5 * vorticity - omega)
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
