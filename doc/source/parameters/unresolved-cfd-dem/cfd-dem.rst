@@ -54,7 +54,7 @@ This subsection includes parameters related to multiphase flow simulations using
     .. math::
         \bf{M}_{viscous} = \pi d_p^3 \mu \left ( 0.5 \bf{\omega}_f - \bf{\omega}_p \right )
 
-    where :math:`\bf{\omega}_f` is the fluid vorticity at particle's position and :math:`\bf{\omega}_p` is the particle's rotational velocity.
+    where :math:`\bf{\omega}_f` is the fluid vorticity at particle's position and :math:`\bf{\omega}_p` is the particle's angular velocity.
 
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
