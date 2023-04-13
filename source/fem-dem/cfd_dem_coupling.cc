@@ -820,7 +820,8 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   add_fluid_particle_interaction_force();
 
   // Add fluid-particle interaction torque to the torque container
-  if (this->cfd_dem_simulation_parameters.cfd_dem.viscous_torque)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.rotational_viscous_torque ||
+      this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque)
     add_fluid_particle_interaction_torque();
 
   // Integration correction step (after force calculation)

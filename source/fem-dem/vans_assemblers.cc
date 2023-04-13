@@ -1593,7 +1593,7 @@ template class GLSVansAssemblerMagnus<3>;
 
 template <int dim>
 void
-GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
+GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
   NavierStokesScratchData<dim> &scratch_data)
 {
   // particle_number is an increment that goes from 0 to n_particles_in_cell.
@@ -1603,12 +1603,66 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions"));
+
+  double viscous_torque = 0.0;
+
+  const double density = scratch_data.properties_manager.get_density_scale();
+  const double viscosity =
+    scratch_data.properties_manager.get_viscosity_scale();
+
+  const auto pic = scratch_data.pic;
+
+  unsigned int particle_number = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      for (unsigned int d = 0; d < dim; d++)
+        {
+          // Calculate viscous torque
+          viscous_torque =
+            M_PI *
+            Utilities::fixed_power<3, double>(
+              particle_properties[DEM::PropertiesIndex::dp]) *
+            viscosity * density *
+            (-particle_properties[DEM::PropertiesIndex::omega_x + d]);
+
+          particle_properties[DEM::PropertiesIndex::fem_torque_x + d] +=
+            viscous_torque;
+        }
+    }
+  particle_number += 1;
+}
+
+template class GLSVansAssemblerViscousTorque<2>;
+template class GLSVansAssemblerViscousTorque<3>;
+
+template <int dim>
+void
+GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+{
+  // particle_number is an increment that goes from 0 to n_particles_in_cell.
+  // It is incremented at the end of the loop over particles
+
+  // Physical Properties
+  Assert(
+    !scratch_data.properties_manager.is_non_newtonian(),
+    RequiresConstantViscosity(
+      "GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions"));
+
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSVansAssemblerVorticityTorque<dim>::calculate_particle_fluid_interactions"));
 
   double viscous_torque = 0.0;
 
@@ -1631,13 +1685,11 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
       for (unsigned int d = 0; d < dim; d++)
         {
           // Calculate viscous torque
-          viscous_torque =
-            M_PI *
-            Utilities::fixed_power<3, double>(
-              particle_properties[DEM::PropertiesIndex::dp]) *
-            viscosity * density *
-            (0.5 * vorticity_3d[particle_number][d] -
-             particle_properties[DEM::PropertiesIndex::omega_x + d]);
+          viscous_torque = M_PI *
+                           Utilities::fixed_power<3, double>(
+                             particle_properties[DEM::PropertiesIndex::dp]) *
+                           viscosity * density *
+                           (0.5 * vorticity_3d[particle_number][d]);
 
           particle_properties[DEM::PropertiesIndex::fem_torque_x + d] +=
             viscous_torque;
@@ -1646,8 +1698,8 @@ GLSVansAssemblerOneWayViscousTorque<dim>::calculate_particle_fluid_interactions(
   particle_number += 1;
 }
 
-template class GLSVansAssemblerOneWayViscousTorque<2>;
-template class GLSVansAssemblerOneWayViscousTorque<3>;
+template class GLSVansAssemblerVorticityTorque<2>;
+template class GLSVansAssemblerVorticityTorque<3>;
 
 template <int dim>
 void
@@ -1760,14 +1812,14 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
   Assert(
     !scratch_data.properties_manager.is_non_newtonian(),
     RequiresConstantViscosity(
-      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
   const double viscosity =
     scratch_data.properties_manager.get_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
     RequiresConstantDensity(
-      "GLSVansAssemblerDallavalle<dim>::calculate_particle_fluid_interactions"));
+      "GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
   const double density = scratch_data.properties_manager.get_density_scale();
 
   // Loop over particles in cell

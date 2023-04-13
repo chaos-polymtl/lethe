@@ -14,7 +14,8 @@ This subsection includes parameters related to multiphase flow simulations using
       set drag model = difelice
       set saffman lift force = false
       set magnus lift force = false
-      set viscous torque = false
+      set rotational viscous torque = false
+      set vortical viscous torque = false
       set buoyancy force = true
       set shear force = true
       set pressure force = true
@@ -43,18 +44,25 @@ This subsection includes parameters related to multiphase flow simulations using
     where :math:`\omega` is the angular velocity of the particle.
 
  .. warning:: 
-   We do not recommend using the Magnus lift force, especially without enabling `viscous torque`. The Magnus lift force model does include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
+   We do not recommend using the Magnus lift force. The Magnus lift force model does include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
 
-* The ``viscous torque`` parameter controls whether the fluid-particle contact dissipates or not the particles' angular momentum due to viscosity.
+* The ``rotational viscous torque`` and ``vortical viscous torque`` parameter controls whether the fluid-particle contact generates torque on the particles due to viscosity.
 
 .. note::
 
-    When ``set viscous torque = true``, the applied torque (:math:`\bf{M}_{viscous}`) is the one described by Derksen (2004) `[6] <https://doi.org/10.1002/aic.690491104>`_:
+    When ``set rotational viscous torque = true`` and ``set vortical viscous torque = true``, the applied torque (:math:`\bf{M}_{viscous}`) is the one described by Derksen (2004) `[6] <https://doi.org/10.1002/aic.690491104>`_:
 
     .. math::
         \bf{M}_{viscous} = \pi d_p^3 \mu \left ( 0.5 \bf{\omega}_f - \bf{\omega}_p \right )
 
-    where :math:`\bf{\omega}_f` is the fluid vorticity at particle's position and :math:`\bf{\omega}_p` is the particle's angular velocity.
+    where :math:`\bf{\omega}_f` is the fluid vorticity at particle's position and :math:`\bf{\omega}_p` is the particle's angular velocity. The rotational and vortical torques can be applied separately by setting one of them to `false`.
+
+    In case ``set rotational viscous torque = false``, the particle's angular velocity :math:`\bf{\omega}_p` is removed from the equation.
+    In case ``set vortical viscous torque = false``, :math:`0.5 \bf{\omega}_f` is removed from the equation.
+
+.. warning::
+    We do not recommend the use of ``vortical viscous torque`` with coarse meshes, especially when Q1 elements are used. In such case, the space resolution may not be enough to properly capture vorticity.
+    Since the viscous torque model is not complete without the vortical component, ``rotational viscous torque`` should be used with caution.
 
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 

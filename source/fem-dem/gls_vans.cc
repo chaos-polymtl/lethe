@@ -1216,10 +1216,19 @@ GLSVANSSolver<dim>::setup_assemblers()
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
-  if (this->cfd_dem_simulation_parameters.cfd_dem.viscous_torque == true)
+  if (this->cfd_dem_simulation_parameters.cfd_dem.rotational_viscous_torque ==
+      true)
     // Viscous Torque Assembler
     particle_fluid_assemblers.push_back(
-      std::make_shared<GLSVansAssemblerOneWayViscousTorque<dim>>(
+      std::make_shared<GLSVansAssemblerViscousTorque<dim>>(
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque ==
+      true)
+    // Viscous Torque Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerVorticalTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 

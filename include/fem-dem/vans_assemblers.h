@@ -498,9 +498,13 @@ public:
 };
 
 /**
- * @brief Class that assembles the one way coupled Viscous Torque dissipation as defined
+ * @brief Class that assembles the Viscous dissipative torque due to particle's rotation
+ * as defined
  * by Derksen (2004).
- * M_viscous = pi * pow(dp, 3) * mu * (0.5 * vorticity - omega)
+ * M_viscous_rotation = pi * pow(dp, 3) * mu * (- omega_p)
+ *
+ * The complete model described by Derksen is composed of
+ * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticityTorque
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -508,11 +512,47 @@ public:
  */
 
 template <int dim>
-class GLSVansAssemblerOneWayViscousTorque
-  : public ParticleFluidAssemblerBase<dim>
+class GLSVansAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerOneWayViscousTorque(
+  GLSVansAssemblerViscousTorque(
+    Parameters::Lagrangian::LagrangianPhysicalProperties
+      lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
+};
+
+/**
+ * @brief Class that assembles the Viscous dissipative torque due to fluid vorticity as defined
+ * by Derksen (2004).
+ * M_viscous_vorticity = pi * pow(dp, 3) * mu * (0.5 * vorticity)
+ *
+ * The complete model described by Derksen is composed of
+ * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticityTorque
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerVorticityTorque : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerVorticityTorque(
     Parameters::Lagrangian::LagrangianPhysicalProperties
       lagrangian_physical_properties)
     : lagrangian_physical_properties(lagrangian_physical_properties)
