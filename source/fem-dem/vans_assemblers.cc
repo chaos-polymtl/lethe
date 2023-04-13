@@ -1367,7 +1367,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           // Vorticity vector
           Tensor<1, 2> vorticity;
           vorticity[0] = vorticity_2d[particle_number][0];
-          vorticity[1] = -vorticity_2d[particle_number][1];
+          vorticity[1] = vorticity_2d[particle_number][1];
 
           // Saffman Lift force
           lift_force[0] =
