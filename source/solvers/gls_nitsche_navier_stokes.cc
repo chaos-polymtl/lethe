@@ -100,6 +100,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       Function<spacedim> *solid_velocity =
         solids[i_solid]->get_solid_velocity();
 
+      solid_velocity->set_time(this->simulation_control->get_current_time());
+
       // Penalization terms
       const double beta =
         this->simulation_parameters.nitsche->nitsche_solids[i_solid]->beta;
