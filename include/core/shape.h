@@ -936,11 +936,6 @@ public:
             shape = solids[0];
             OpenCASCADE::extract_compound_shapes(
               shape, compounds, compsolids, solids, shells, wires);
-            std::cout << "nb shell of solid 0" << shells.size() << std::endl;
-            std::cout << "nb compounds of solid 0" << compounds.size()
-                      << std::endl;
-            std::cout << "nb compsolids of solid 0" << compsolids.size()
-                      << std::endl;
             distancetool = BRepExtrema_DistShapeShape(shells[0], vertex);
             point_classifier.Load(shape);
           }
