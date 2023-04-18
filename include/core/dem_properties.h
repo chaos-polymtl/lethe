@@ -48,9 +48,12 @@ namespace DEM
     fem_force_x             = 8,
     fem_force_y             = 9,
     fem_force_z             = 10,
-    volumetric_contribution = 11,
-    mass                    = 12,
-    n_properties            = 13,
+    fem_torque_x            = 11,
+    fem_torque_y            = 12,
+    fem_torque_z            = 13,
+    mass                    = 14,
+    volumetric_contribution = 15,
+    n_properties            = 16,
   };
 
   unsigned int
@@ -60,7 +63,7 @@ namespace DEM
   class DEMProperties
   {
   public:
-    std::vector<std::pair<std::string, int>>
+    static std::vector<std::pair<std::string, int>>
     get_properties_name();
   };
 

@@ -132,6 +132,16 @@ namespace Parameters
                       "false",
                       Patterns::Bool(),
                       "Choose whether or not to apply Magnus lift force");
+    prm.declare_entry(
+      "rotational viscous torque",
+      "false",
+      Patterns::Bool(),
+      "Choose whether or not to apply rotational viscous torque on particles");
+    prm.declare_entry(
+      "vortical viscous torque",
+      "false",
+      Patterns::Bool(),
+      "Choose whether or not to apply vortical viscous torque on particles");
     prm.declare_entry("drag model",
                       "difelice",
                       Patterns::Selection(
@@ -180,6 +190,8 @@ namespace Parameters
     pressure_force             = prm.get_bool("pressure force");
     saffman_lift_force         = prm.get_bool("saffman lift force");
     magnus_lift_force          = prm.get_bool("magnus lift force");
+    rotational_viscous_torque  = prm.get_bool("rotational viscous torque");
+    vortical_viscous_torque    = prm.get_bool("vortical viscous torque");
     coupling_frequency         = prm.get_integer("coupling frequency");
     cstar                      = prm.get_double("grad-div length scale");
     implicit_stabilization     = prm.get_bool("implicit stabilization");
