@@ -44,7 +44,7 @@ This subsection includes parameters related to multiphase flow simulations using
     where :math:`\omega` is the angular velocity of the particle.
 
  .. warning:: 
-   We do not recommend using the Magnus lift force. The Magnus lift force model does include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
+   We do not recommend using the Magnus lift force. The Magnus lift force model does not include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
 
 * The ``rotational viscous torque`` and ``vortical viscous torque`` parameter controls whether the fluid-particle contact generates torque on the particles due to viscosity.
 
