@@ -393,11 +393,22 @@ class lethe_pyvista_tools():
                     exec(f'global v; v = self.df[i]["Velocity"][:, 1]')
                     exec(f'global w; w = self.df[i]["Velocity"][:, 2]')
 
-                # In case of FemForce
+                # In case of FemForce or fem_force
                 if "FemForce" in self.df[0].array_names:
                     exec(f'global f_x; f_x = self.df[i]["FemForce"][:, 0]')
                     exec(f'global f_y; f_y = self.df[i]["FemForce"][:, 1]')
                     exec(f'global f_z; f_z = self.df[i]["FemForce"][:, 2]')
+
+                elif "fem_force" in self.df[0].array_names:
+                    exec(f'global f_x; f_x = self.df[i]["fem_force"][:, 0]')
+                    exec(f'global f_y; f_y = self.df[i]["fem_force"][:, 1]')
+                    exec(f'global f_z; f_z = self.df[i]["fem_force"][:, 2]')
+
+                # In case of fem_torque
+                if "fem_torque" in self.df[0].array_names:
+                    exec(f'global t_x; t_x = self.df[i]["fem_torque"][:, 0]')
+                    exec(f'global t_y; t_y = self.df[i]["fem_torque"][:, 1]')
+                    exec(f'global t_z; t_z = self.df[i]["fem_torque"][:, 2]')
 
                 # Update lists used either in "condition" or "array_value":
                 for variable in new_variables:
@@ -451,11 +462,22 @@ class lethe_pyvista_tools():
                 exec(f'global v; v = self.df[reference_time_step]["Velocity"][:, 1]')
                 exec(f'global w; w = self.df[reference_time_step]["Velocity"][:, 2]')
 
-            # In case of FemForce
+            # In case of FemForce or fem_force
             if "FemForce" in self.df[0].array_names:
-                exec(f'global f_x; f_x = self.df[reference_time_step]["FemForce"][:, 0]')
-                exec(f'global f_y; f_y = self.df[reference_time_step]["FemForce"][:, 1]')
-                exec(f'global f_z; f_z = self.df[reference_time_step]["FemForce"][:, 2]')
+                exec(f'global f_x; f_x = self.df[i]["FemForce"][:, 0]')
+                exec(f'global f_y; f_y = self.df[i]["FemForce"][:, 1]')
+                exec(f'global f_z; f_z = self.df[i]["FemForce"][:, 2]')
+
+            elif "fem_force" in self.df[0].array_names:
+                exec(f'global f_x; f_x = self.df[i]["fem_force"][:, 0]')
+                exec(f'global f_y; f_y = self.df[i]["fem_force"][:, 1]')
+                exec(f'global f_z; f_z = self.df[i]["fem_force"][:, 2]')
+
+            # In case of fem_torque
+            if "fem_torque" in self.df[0].array_names:
+                exec(f'global t_x; t_x = self.df[i]["fem_torque"][:, 0]')
+                exec(f'global t_y; t_y = self.df[i]["fem_torque"][:, 1]')
+                exec(f'global t_z; t_z = self.df[i]["fem_torque"][:, 2]')
 
             # Fill new_array with array_value
             print(f"Creating new array named: {array_name}")

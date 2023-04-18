@@ -76,19 +76,21 @@ Insertion<dim>::assign_particle_properties(
         -particle_sizes[particle_counter];
       double density =
         physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x                   = dem_parameters.insertion_info.vel_x;
-      double vel_y                   = dem_parameters.insertion_info.vel_y;
-      double vel_z                   = dem_parameters.insertion_info.vel_z;
-      double omega_x                 = dem_parameters.insertion_info.omega_x;
-      double omega_y                 = dem_parameters.insertion_info.omega_y;
-      double omega_z                 = dem_parameters.insertion_info.omega_z;
-      double fem_force_x             = 0.;
-      double fem_force_y             = 0.;
-      double fem_force_z             = 0.;
-      double volumetric_contribution = 0.;
-      double mass                    = density * 4. / 3. * M_PI *
+      double vel_x        = dem_parameters.insertion_info.vel_x;
+      double vel_y        = dem_parameters.insertion_info.vel_y;
+      double vel_z        = dem_parameters.insertion_info.vel_z;
+      double omega_x      = dem_parameters.insertion_info.omega_x;
+      double omega_y      = dem_parameters.insertion_info.omega_y;
+      double omega_z      = dem_parameters.insertion_info.omega_z;
+      double fem_force_x  = 0.;
+      double fem_force_y  = 0.;
+      double fem_force_z  = 0.;
+      double fem_torque_x = 0.;
+      double fem_torque_y = 0.;
+      double fem_torque_z = 0.;
+      double mass         = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
-
+      double volumetric_contribution = 0.;
 
       std::vector<double> properties_of_one_particle{type,
                                                      diameter,
@@ -101,8 +103,11 @@ Insertion<dim>::assign_particle_properties(
                                                      fem_force_x,
                                                      fem_force_y,
                                                      fem_force_z,
-                                                     volumetric_contribution,
-                                                     mass};
+                                                     fem_torque_x,
+                                                     fem_torque_y,
+                                                     fem_torque_z,
+                                                     mass,
+                                                     volumetric_contribution};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
