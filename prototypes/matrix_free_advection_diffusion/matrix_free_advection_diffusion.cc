@@ -83,7 +83,8 @@ struct Settings
   enum GeometryType
   {
     hyperball,
-    hypercube
+    hypercube,
+    hypercube_with_hole
   };
 
   enum SourceTermType
@@ -95,7 +96,8 @@ struct Settings
   enum ProblemType
   {
     boundary_layer,
-    double_glazing
+    double_glazing,
+    boundary_layer_with_hole
   };
 
   PreconditionerType preconditioner;
@@ -134,8 +136,9 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hyperball",
-                    Patterns::Selection("hyperball|hypercube"),
-                    "Geometry <hyperball|hypercube>");
+                    Patterns::Selection(
+                      "hyperball|hypercube|hypercube with hole"),
+                    "Geometry <hyperball|hypercube|hypercube with hole>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -165,10 +168,12 @@ Settings::try_parse(const std::string &prm_filename)
                     "zero",
                     Patterns::Selection("zero|mms"),
                     "Source term <zero|mms>");
-  prm.declare_entry("problem type",
-                    "boundary layer",
-                    Patterns::Selection("boundary layer|double glazing"),
-                    "Problem type <boundary layer|double glazing>");
+  prm.declare_entry(
+    "problem type",
+    "boundary layer",
+    Patterns::Selection(
+      "boundary layer|double glazing|boundary layer with hole"),
+    "Problem type <boundary layer|double glazing|boundary layer with hole>");
 
   if (prm_filename.size() == 0)
     {
@@ -208,6 +213,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->geometry = hyperball;
   else if (prm.get("geometry") == "hypercube")
     this->geometry = hypercube;
+  else if (prm.get("geometry") == "hypercube with hole")
+    this->geometry = hypercube_with_hole;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -222,6 +229,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->problem_type = boundary_layer;
   else if (prm.get("problem type") == "double glazing")
     this->problem_type = double_glazing;
+  else if (prm.get("problem type") == "boundary layer with hole")
+    this->problem_type = boundary_layer_with_hole;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -325,6 +334,13 @@ AdvectionField<dim>::value(const Point<dim, number> &p,
           else
             result = -2 * p[0] * (1 - p[1] * p[1]);
         }
+      else if (test_case == Settings::boundary_layer_with_hole)
+        {
+          if (component == 0)
+            result = -std::sin(numbers::PI / 6);
+          else
+            result = std::cos(numbers::PI / 6);
+        }
       else
         {
           if (component == 0)
@@ -364,6 +380,51 @@ public:
     return p[0];
   }
 };
+
+// For hypercube with hole case
+template <int dim>
+class BoundaryValues : public Function<dim>
+{
+public:
+  virtual double
+  value(const Point<dim> &p, const unsigned int component = 0) const override;
+
+  virtual void
+  value_list(const std::vector<Point<dim>> &points,
+             std::vector<double> &          values,
+             const unsigned int             component = 0) const override;
+};
+
+template <int dim>
+double
+BoundaryValues<dim>::value(const Point<dim> & p,
+                           const unsigned int component) const
+{
+  Assert(component == 0, ExcIndexRange(component, 0, 1));
+  (void)component;
+
+  // Set boundary to 1 if $x=1$, or if $x>0.5$ and $y=-1$.
+  if (std::fabs(p[0] - 1) < 1e-8 || (std::fabs(p[1] + 1) < 1e-8 && p[0] >= 0.5))
+    {
+      return 1.0;
+    }
+  else
+    {
+      return 0.0;
+    }
+}
+
+template <int dim>
+void
+BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
+                                std::vector<double> &          values,
+                                const unsigned int             component) const
+{
+  AssertDimension(values.size(), points.size());
+
+  for (unsigned int i = 0; i < points.size(); ++i)
+    values[i] = BoundaryValues<dim>::value(points[i], component);
+}
 
 template <int dim, typename Number>
 VectorizedArray<Number>
@@ -503,13 +564,13 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
           if (parameters.stabilization)
             {
               VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-              std::array<number, VectorizedArray<number>::size()> h;
+              std::array<number, VectorizedArray<number>::size()> h_k;
 
               for (auto lane = 0u;
                    lane < data.n_active_entries_per_cell_batch(cell);
                    lane++)
                 {
-                  h[lane] = data.get_cell_iterator(cell, lane)->measure();
+                  h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
                 }
 
               VectorizedArray<double> advection_vector_norm =
@@ -517,10 +578,22 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 
               for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
                 {
-                  tau[v] = std::pow(
-                    std::pow(4 / (parameters.peclet_number * h[v] * h[v]), 2) +
-                      std::pow(2 * advection_vector_norm[v] / h[v], 2),
-                    -0.5);
+                  double h = 0;
+                  if (dim == 2)
+                    {
+                      h = std::sqrt(4. * h_k[v] / M_PI) /
+                          parameters.element_order;
+                    }
+                  else if (dim == 3)
+                    {
+                      h = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                          parameters.element_order;
+                    }
+                  tau[v] =
+                    std::pow(std::pow(4 / (parameters.peclet_number * h * h),
+                                      2) +
+                               std::pow(2 * advection_vector_norm[v] / h, 2),
+                             -0.5);
                 }
 
               phi.submit_value(advection_vector * phi.get_gradient(q), q);
@@ -583,26 +656,36 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
       if (parameters.stabilization)
         {
           VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-          std::array<number, VectorizedArray<number>::size()> h;
+          std::array<number, VectorizedArray<number>::size()> h_k;
 
           for (auto lane = 0u;
                lane <
                this->get_matrix_free()->n_active_entries_per_cell_batch(cell);
                lane++)
             {
-              h[lane] = this->get_matrix_free()
-                          ->get_cell_iterator(cell, lane)
-                          ->measure();
+              h_k[lane] = this->get_matrix_free()
+                            ->get_cell_iterator(cell, lane)
+                            ->measure();
             }
           VectorizedArray<double> advection_vector_norm =
             advection_vector.norm();
 
           for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
             {
+              double h = 0;
+              if (dim == 2)
+                {
+                  h = std::sqrt(4. * h_k[v] / M_PI) / parameters.element_order;
+                }
+              else if (dim == 3)
+                {
+                  h = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                      parameters.element_order;
+                }
+
               tau[v] =
-                std::pow(std::pow(4 / (parameters.peclet_number * h[v] * h[v]),
-                                  2) +
-                           std::pow(2 * advection_vector_norm[v] / h[v], 2),
+                std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                           std::pow(2 * advection_vector_norm[v] / h, 2),
                          -0.5);
             }
 
@@ -749,8 +832,11 @@ private:
   MGConstrainedDoFs mg_constrained_dofs;
   using LevelMatrixType = AdvectionDiffusionOperator<dim, fe_degree, double>;
   MGLevelObject<LevelMatrixType>                            mg_matrices;
+  MGLevelObject<LevelMatrixType>                            mg_interface_in;
+  MGLevelObject<LevelMatrixType>                            mg_interface_out;
   MGLevelObject<LinearAlgebra::distributed::Vector<double>> mg_solution;
   MGTransferMatrixFree<dim, double>                         mg_transfer;
+  MGLevelObject<AffineConstraints<double>>                  level_constraints;
 
   LinearAlgebra::distributed::Vector<double> solution;
   LinearAlgebra::distributed::Vector<double> newton_update;
@@ -809,6 +895,15 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
           GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
           break;
         }
+        case Settings::hypercube_with_hole: {
+          GridGenerator::hyper_cube_with_cylindrical_hole(triangulation,
+                                                          0.3,
+                                                          1.0);
+
+          const SphericalManifold<dim> manifold_description(Point<dim>(0, 0));
+          triangulation.set_manifold(1, manifold_description);
+          break;
+        }
     }
 
   triangulation.refine_global(parameters.initial_refinement);
@@ -831,6 +926,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
 
   constraints.clear();
   constraints.reinit(locally_relevant_dofs);
+  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
   // Set homogeneous constraints for the matrix-free operator
   if (parameters.problem_type == Settings::boundary_layer)
@@ -877,6 +973,19 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
       // Bottom wall
       VectorTools::interpolate_boundary_values(dof_handler,
                                                2,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
+    }
+  else if (parameters.problem_type == Settings::boundary_layer_with_hole)
+    {
+      // Left wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
+                                               constraints);
+      // Right wall
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
                                                Functions::ZeroFunction<dim>(),
                                                constraints);
     }
@@ -993,6 +1102,27 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
         if (solution.locally_owned_elements().is_element(boundary_value.first))
           solution(boundary_value.first) = boundary_value.second;
     }
+  else if (parameters.problem_type == Settings::boundary_layer_with_hole)
+    {
+      // Set boundary values for the initial newton iteration
+      std::map<types::global_dof_index, double> boundary_values_left_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               BoundaryValues<dim>(),
+                                               boundary_values_left_wall);
+      for (auto &boundary_value : boundary_values_left_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+
+      std::map<types::global_dof_index, double> boundary_values_right_wall;
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               1,
+                                               BoundaryValues<dim>(),
+                                               boundary_values_right_wall);
+      for (auto &boundary_value : boundary_values_right_wall)
+        if (solution.locally_owned_elements().is_element(boundary_value.first))
+          solution(boundary_value.first) = boundary_value.second;
+    }
 }
 
 template <int dim, int fe_degree>
@@ -1004,12 +1134,17 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
   dof_handler.distribute_mg_dofs();
 
   mg_matrices.clear_elements();
+  mg_interface_in.clear_elements();
+  mg_interface_out.clear_elements();
 
   const unsigned int nlevels = triangulation.n_global_levels();
   mg_matrices.resize(0, nlevels - 1);
+  mg_interface_in.resize(0, nlevels - 1);
+  mg_interface_out.resize(0, nlevels - 1);
   mg_solution.resize(0, nlevels - 1);
+  level_constraints.resize(0, nlevels - 1);
 
-  const std::set<types::boundary_id> dirichlet_boundary_ids = {0};
+  const std::set<types::boundary_id> dirichlet_boundary_ids = {0, 1, 2, 3};
   mg_constrained_dofs.initialize(dof_handler);
   mg_constrained_dofs.make_zero_boundary_constraints(dof_handler,
                                                      dirichlet_boundary_ids);
@@ -1023,11 +1158,11 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
-      AffineConstraints<double> level_constraints;
-      level_constraints.reinit(relevant_dofs);
-      level_constraints.add_lines(
+      // AffineConstraints<double> level_constraints;
+      level_constraints[level].reinit(relevant_dofs);
+      level_constraints[level].add_lines(
         mg_constrained_dofs.get_boundary_indices(level));
-      level_constraints.close();
+      level_constraints[level].close();
 
       typename MatrixFree<dim, double>::AdditionalData additional_data;
       additional_data.tasks_parallel_scheme =
@@ -1039,7 +1174,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
       auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, double>>();
       mg_mf_storage_level->reinit(mapping,
                                   dof_handler,
-                                  level_constraints,
+                                  level_constraints[level],
                                   QGauss<1>(fe.degree + 1),
                                   additional_data);
 
@@ -1047,6 +1182,13 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
                                     mg_constrained_dofs,
                                     level);
       mg_matrices[level].initialize_dof_vector(mg_solution[level]);
+
+      mg_interface_in[level].initialize(mg_mf_storage_level,
+                                        mg_constrained_dofs,
+                                        level);
+      mg_interface_out[level].initialize(mg_mf_storage_level,
+                                         mg_constrained_dofs,
+                                         level);
     }
 }
 
@@ -1108,16 +1250,16 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
           if (parameters.stabilization)
             {
               VectorizedArray<double> tau = VectorizedArray<double>(0.0);
-              std::array<double, VectorizedArray<double>::size()> h;
+              std::array<double, VectorizedArray<double>::size()> h_k;
 
               for (auto lane = 0u;
                    lane < system_matrix.get_matrix_free()
                             ->n_active_entries_per_cell_batch(cell);
                    lane++)
                 {
-                  h[lane] = system_matrix.get_matrix_free()
-                              ->get_cell_iterator(cell, lane)
-                              ->measure();
+                  h_k[lane] = system_matrix.get_matrix_free()
+                                ->get_cell_iterator(cell, lane)
+                                ->measure();
                 }
 
               VectorizedArray<double> advection_vector_norm =
@@ -1125,10 +1267,23 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
               for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
                 {
-                  tau[v] = std::pow(
-                    std::pow(4 / (parameters.peclet_number * h[v] * h[v]), 2) +
-                      std::pow(2 * advection_vector_norm[v] / h[v], 2),
-                    -0.5);
+                  double h = 0;
+                  if (dim == 2)
+                    {
+                      h = std::sqrt(4. * h_k[v] / M_PI) /
+                          parameters.element_order;
+                    }
+                  else if (dim == 3)
+                    {
+                      h = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                          parameters.element_order;
+                    }
+
+                  tau[v] =
+                    std::pow(std::pow(4 / (parameters.peclet_number * h * h),
+                                      2) +
+                               std::pow(2 * advection_vector_norm[v] / h, 2),
+                             -0.5);
                 }
 
               phi.submit_value(advection_vector * phi.get_gradient(q) -
@@ -1201,7 +1356,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl solver_control(1000, 1.e-12);
+  SolverControl solver_control(200, 1.e-8 * system_rhs.l2_norm(), true, true);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
@@ -1222,58 +1377,51 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
         }
         case Settings::gmg: {
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
-          // Set up smoother
-          using SmootherType =
-            PreconditionChebyshev<LevelMatrixType,
-                                  LinearAlgebra::distributed::Vector<double>>;
-          mg::SmootherRelaxation<SmootherType,
+
+          // Set up smoother: Jacobi Smoother
+          using SmootherTypeJacobi = PreconditionJacobi<LevelMatrixType>;
+          MGSmootherPrecondition<LevelMatrixType,
+                                 SmootherTypeJacobi,
                                  LinearAlgebra::distributed::Vector<double>>
-                                                               mg_smoother;
-          MGLevelObject<typename SmootherType::AdditionalData> smoother_data;
-          smoother_data.resize(0, triangulation.n_global_levels() - 1);
+            mg_smoother_jacobi;
           for (unsigned int level = 0; level < triangulation.n_global_levels();
                ++level)
             {
-              if (level > 0)
-                {
-                  smoother_data[level].smoothing_range     = 15.;
-                  smoother_data[level].degree              = 4;
-                  smoother_data[level].eig_cg_n_iterations = 10;
-                }
-              else
-                {
-                  smoother_data[0].smoothing_range = 1e-3;
-                  smoother_data[0].degree = numbers::invalid_unsigned_int;
-                  smoother_data[0].eig_cg_n_iterations = mg_matrices[0].m();
-                }
-
               mg_matrices[level].compute_diagonal();
-              smoother_data[level].preconditioner =
-                mg_matrices[level].get_matrix_diagonal_inverse();
             }
-          mg_smoother.initialize(mg_matrices, smoother_data);
+          mg_smoother_jacobi.initialize(
+            mg_matrices, typename SmootherTypeJacobi::AdditionalData(0.6667));
+          mg_smoother_jacobi.set_steps(6);
 
           // Set up preconditioned coarse-grid solver
-          SolverControl coarse_solver_control(1000, 1e-6, false, false);
+          SolverControl coarse_solver_control(200,
+                                              1.e-8 * system_rhs.l2_norm(),
+                                              true,
+                                              true);
+
           SolverGMRES<LinearAlgebra::distributed::Vector<double>> coarse_solver(
-            coarse_solver_control);
+            coarse_solver_control,
+            SolverGMRES<LinearAlgebra::distributed::Vector<double>>::
+              AdditionalData(50, true));
 
-          TrilinosWrappers::PreconditionAMG                 precondition_amg;
-          TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-          precondition_amg.initialize(
-            mg_matrices[0].get_system_matrix(constraints), amg_data);
+          // TrilinosWrappers::PreconditionAMG                 precondition_amg;
+          // TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+          // precondition_amg.initialize(
+          //   mg_matrices[0].get_system_matrix(constraints), amg_data);
 
+          PreconditionIdentity identity;
           MGCoarseGridIterativeSolver<
             LinearAlgebra::distributed::Vector<double>,
             SolverGMRES<LinearAlgebra::distributed::Vector<double>>,
             LevelMatrixType,
-            TrilinosWrappers::PreconditionAMG>
-            mg_coarse(coarse_solver, mg_matrices[0], precondition_amg);
+            PreconditionIdentity>
+            mg_coarse(coarse_solver, mg_matrices[0], identity);
 
           // Set up multigrid
           mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_matrix(
             mg_matrices);
 
+          // TODO correct mg interface matrices for adaptive meshes
           MGLevelObject<
             MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
             mg_interface_matrices;
@@ -1287,7 +1435,11 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
             mg_interface_matrices);
 
           Multigrid<LinearAlgebra::distributed::Vector<double>> mg(
-            mg_matrix, mg_coarse, mg_transfer, mg_smoother, mg_smoother);
+            mg_matrix,
+            mg_coarse,
+            mg_transfer,
+            mg_smoother_jacobi,
+            mg_smoother_jacobi);
           mg.set_edge_matrices(mg_interface, mg_interface);
 
 
@@ -1450,6 +1602,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
     test_case = "_boundary_layer";
   else if (parameters.problem_type == Settings::double_glazing)
     test_case = "_double_glazing";
+  else if (parameters.problem_type == Settings::boundary_layer_with_hole)
+    test_case = "_boundary_layer_with_hole";
 
   data_out.write_vtu_with_pvtu_record(
     parameters.output_path,
@@ -1512,6 +1666,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
       PROBLEM_TYPE_header = "Test problem: boundary layer";
     else if (parameters.problem_type == Settings::double_glazing)
       PROBLEM_TYPE_header = "Test problem: double glazing";
+    else if (parameters.problem_type == Settings::boundary_layer_with_hole)
+      PROBLEM_TYPE_header = "Test problem: boundary layer with hole";
     std::string STABILIZATION_header = "";
     if (parameters.stabilization)
       STABILIZATION_header = "Stabilization: true";
@@ -1569,7 +1725,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
         for (unsigned int level = 0; level < triangulation.n_global_levels();
              ++level)
           pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
-                << " DoFs" << std::endl;
+                << " DoFs, " << triangulation.n_cells(level) << " cells"
+                << std::endl;
 
       pcout << std::endl;
 
