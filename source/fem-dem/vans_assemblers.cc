@@ -874,7 +874,8 @@ GLSVansAssemblerDiFelice<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
-      cell_void_fraction = scratch_data.cell_void_fraction[particle_number];
+      cell_void_fraction =
+        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Di Felice Drag Model CD Calculation
       C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
@@ -941,7 +942,8 @@ GLSVansAssemblerRong<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
-      cell_void_fraction = scratch_data.cell_void_fraction[particle_number];
+      cell_void_fraction =
+        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Rong Drag Model CD Calculation
       C_d = pow((0.63 + 4.8 / sqrt(Re_p[particle_number])), 2) *
@@ -1076,14 +1078,15 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
-      cell_void_fraction = scratch_data.cell_void_fraction[particle_number];
+      cell_void_fraction =
+        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Koch and Hill Drag Model Calculation
       if ((1 - cell_void_fraction) < 0.4)
         {
-          f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) +
+          f0 = (1 + 3 * sqrt((1 - cell_void_fraction + DBL_MIN) / 2) +
                 (135.0 / 64) * (1 - cell_void_fraction) *
-                  log(1 - cell_void_fraction) +
+                  log(1 - cell_void_fraction + DBL_MIN) +
                 16.14 * (1 - cell_void_fraction)) /
                (1 + 0.681 * (1 - cell_void_fraction) -
                 8.48 * pow(1 - cell_void_fraction, 2) +
@@ -1104,7 +1107,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
         (f0 + 0.5 * f3 * Re_p[particle_number]) *
         (M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
          (2 * dim)) /
-        (1 - cell_void_fraction);
+        (1 - cell_void_fraction + DBL_MIN);
 
       beta_drag += momentum_transfer_coefficient;
 
@@ -1165,12 +1168,13 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
-      cell_void_fraction = scratch_data.cell_void_fraction[particle_number];
+      cell_void_fraction =
+        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Beetstra drag coefficient
       F0 = 10 * (1 - cell_void_fraction) / pow(cell_void_fraction, 2) +
            pow(cell_void_fraction, 2) *
-             (1 + 1.5 * sqrt((1 - cell_void_fraction))) +
+             (1 + 1.5 * sqrt((1 - cell_void_fraction + DBL_MIN))) +
            0.413 * (Re_p[particle_number]) / (24 * pow(cell_void_fraction, 2)) *
              ((1 / cell_void_fraction) +
               3 * (1 - cell_void_fraction) * cell_void_fraction +
@@ -1247,7 +1251,8 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
     {
       auto particle_properties = particle.get_properties();
 
-      cell_void_fraction = scratch_data.cell_void_fraction[particle_number];
+      cell_void_fraction =
+        std::min(scratch_data.cell_void_fraction[particle_number], 1.0);
 
       // Gidaspow Drag Model
       double particle_density =
