@@ -119,11 +119,12 @@ The default values of the VOF parameters are given in the text box below.
   * ``type``: defines the filter type, either ``none`` or ``tanh``
 
     * ``set type = none``: the phase fraction is not filtered
-    * ``set type = tanh``: the following filter function is applied to the phase fraction in order to get a better definition of the interface between the fluids
+    * ``set type = tanh``: the following filter function is applied to the phase fraction :math:`\phi` in order to get a better definition of the interface between the fluids
 
     .. math::
-        \psi = 0.5 \tanh[\beta(\phi-0.5)] + 0.5
+        \phi' = 0.5 \tanh[\beta(\phi-0.5)] + 0.5
 
+    where :math:`\phi'` is the filtered phase fraction value.
   * ``beta``: value of the :math:`\beta` parameter of the ``tanh`` filter
   * ``verbosity``: enables the display of filtered phase fraction values. Choices are ``quiet`` (no output) and ``verbose`` (displays values)
 
@@ -147,12 +148,12 @@ The default values of the VOF parameters are given in the text box below.
     where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, and :math:`\phi` is the phase fraction.
 
 
-  * ``curvature filter factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_k = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature (:math:`k`), following the equation:
+  * ``curvature filter factor``: value of the factor :math:`\beta` applied in the filter :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
 
     .. math:: 
-        \int_\Omega \left( v k + \eta_k \nabla v \cdot \nabla k \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
+        \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
-    where :math:`v` is a test function, :math:`k` is the filtered curvature, and :math:`\bf{\psi}` is the filtered phase fraction gradient.
+    where :math:`v` is a test function, :math:`\kappa` is the filtered curvature, and :math:`\bf{\psi}` is the filtered phase fraction gradient.
 
   .. tip::
 
