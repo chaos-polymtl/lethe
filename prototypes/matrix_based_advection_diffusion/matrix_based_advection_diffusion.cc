@@ -82,7 +82,8 @@ struct Settings
   {
     hyperball,
     hypercube,
-    hypercube_with_hole
+    hypercube_with_hole,
+    hyperrectangle
   };
 
   enum SourceTermType
@@ -107,6 +108,7 @@ struct Settings
   unsigned int element_order;
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
+  unsigned int repetitions;
   double       peclet_number;
   bool         stabilization;
   bool         nonlinearity;
@@ -133,15 +135,20 @@ Settings::try_parse(const std::string &prm_filename)
                     "1",
                     Patterns::Integer(),
                     "Number of cycles <1 up to 9-dim >");
-  prm.declare_entry("geometry",
-                    "hyperball",
-                    Patterns::Selection(
-                      "hyperball|hypercube|hypercube with hole"),
-                    "Geometry <hyperball|hypercube|hypercube with hole>");
+  prm.declare_entry(
+    "geometry",
+    "hyperball",
+    Patterns::Selection(
+      "hyperball|hypercube|hypercube with hole|hyperrectangle"),
+    "Geometry <hyperball|hypercube|hypercube with hole|hyperrectangle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
                     "Global refinement 1st cycle");
+  prm.declare_entry("repetitions",
+                    "1",
+                    Patterns::Integer(),
+                    "Repetitions in one direction for the hyperrectangle");
   prm.declare_entry("peclet number", "10", Patterns::Double(), "Peclet number");
   prm.declare_entry("stabilization",
                     "false",
@@ -218,6 +225,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->geometry = hypercube;
   else if (prm.get("geometry") == "hypercube with hole")
     this->geometry = hypercube_with_hole;
+  else if (prm.get("geometry") == "hyperrectangle")
+    this->geometry = hyperrectangle;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -241,6 +250,7 @@ Settings::try_parse(const std::string &prm_filename)
   this->element_order      = prm.get_integer("element order");
   this->number_of_cycles   = prm.get_integer("number of cycles");
   this->initial_refinement = prm.get_integer("initial refinement");
+  this->repetitions        = prm.get_integer("repetitions");
   this->peclet_number      = prm.get_double("peclet number");
   this->stabilization      = prm.get_bool("stabilization");
   this->nonlinearity       = prm.get_bool("nonlinearity");
@@ -310,33 +320,30 @@ public:
   {
     (void)p;
     Tensor<1, dim> result;
-    if (dim == 2)
+
+    if (test_case == Settings::boundary_layer)
       {
-        if (test_case == Settings::boundary_layer)
-          {
-            result[0] = 0.0;
-            result[1] = 1.0;
-          }
-        else if (test_case == Settings::double_glazing)
-          {
-            result[0] = 2 * p[1] * (1 - p[0] * p[0]);
-            result[1] = -2 * p[0] * (1 - p[1] * p[1]);
-          }
-        else if (test_case == Settings::boundary_layer_with_hole)
-          {
-            result[0] = -std::sin(numbers::PI / 6);
-            result[1] = std::cos(numbers::PI / 6);
-          }
-        else
-          {
-            result[0] = 1.0;
-            result[1] = 0.0;
-          }
+        result[0] = 0.0;
+        result[1] = 1.0;
       }
-    else if (dim == 3)
+    else if (test_case == Settings::double_glazing)
+      {
+        result[0] = 2 * p[1] * (1 - p[0] * p[0]);
+        result[1] = -2 * p[0] * (1 - p[1] * p[1]);
+      }
+    else if (test_case == Settings::boundary_layer_with_hole)
+      {
+        result[0] = -std::sin(numbers::PI / 6);
+        result[1] = std::cos(numbers::PI / 6);
+      }
+    else
       {
         result[0] = 1.0;
         result[1] = 0.0;
+      }
+
+    if (dim == 3)
+      {
         result[2] = 0.0;
       }
     return result;
@@ -539,6 +546,24 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::make_grid()
 
           const SphericalManifold<dim> manifold_description(Point<dim>(0, 0));
           triangulation.set_manifold(1, manifold_description);
+          break;
+        }
+        case Settings::hyperrectangle: {
+          std::vector<unsigned int> repetitions(dim);
+          for (unsigned int i = 0; i < dim - 1; i++)
+            {
+              repetitions[i] = 1;
+            }
+          repetitions[dim - 1] = parameters.repetitions;
+
+          GridGenerator::subdivided_hyper_rectangle(
+            triangulation,
+            repetitions,
+            (dim == 2) ? Point<dim>(-1., -1.) : Point<dim>(-1., -1., -1.),
+            // Point<dim>(),
+            (dim == 2) ? Point<dim>(1., parameters.repetitions) :
+                         Point<dim>(1., 1., parameters.repetitions),
+            true);
           break;
         }
     }
@@ -1383,7 +1408,10 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
           using Smoother = TrilinosWrappers::PreconditionJacobi;
           MGSmootherPrecondition<MatrixType, Smoother, VectorType> smoother;
           smoother.initialize(mg_matrix,
-                              typename Smoother::AdditionalData(0.6667));
+                              typename Smoother::AdditionalData(
+                                fe.degree == 1 ?
+                                  0.6667 :
+                                  (fe.degree == 2 ? 0.56 : 0.47)));
           smoother.set_steps(6);
 
           // Set up multigrid
@@ -1622,6 +1650,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       GEOMETRY_header = "Geometry: hypercube";
     else if (parameters.geometry == Settings::hypercube_with_hole)
       GEOMETRY_header = "Geometry: hypercube with hole";
+    else if (parameters.geometry == Settings::hyperrectangle)
+      GEOMETRY_header = "Geometry: hyperrectangle";
     std::string SOURCE_header = "";
     if (parameters.source_term == Settings::zero)
       SOURCE_header = "Source term: zero";
@@ -1650,6 +1680,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       NONLINEARITY_header = "Nonlinearity: true";
     else
       NONLINEARITY_header = "Nonlinearity: false";
+    std::string REPETITIONS_header =
+      "Repetitions in one direction: " + std::to_string(parameters.repetitions);
 
     pcout << std::string(80, '=') << std::endl;
     pcout << DAT_header << std::endl;
@@ -1667,6 +1699,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
     pcout << PROBLEM_TYPE_header << std::endl;
     pcout << STABILIZATION_header << std::endl;
     pcout << NONLINEARITY_header << std::endl;
+    pcout << REPETITIONS_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }
@@ -1729,7 +1762,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
       pcout << "  H1 seminorm: " << norm << std::endl;
       pcout << std::endl;
 
-      if (parameters.problem_type == Settings::boundary_layer)
+      if (parameters.problem_type == Settings::boundary_layer &&
+          parameters.geometry == Settings::hypercube)
         {
           pcout << "  L2 norm: " << compute_l2_error() << std::endl;
         }
