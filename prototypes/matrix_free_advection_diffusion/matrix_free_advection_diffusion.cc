@@ -565,6 +565,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
             {
               VectorizedArray<number> tau = VectorizedArray<number>(0.0);
               std::array<number, VectorizedArray<number>::size()> h_k;
+              std::array<number, VectorizedArray<number>::size()> h;
 
               for (auto lane = 0u;
                    lane < data.n_active_entries_per_cell_batch(cell);
@@ -578,22 +579,20 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 
               for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
                 {
-                  double h = 0;
                   if (dim == 2)
                     {
-                      h = std::sqrt(4. * h_k[v] / M_PI) /
-                          parameters.element_order;
+                      h[v] = std::sqrt(4. * h_k[v] / M_PI) /
+                             parameters.element_order;
                     }
                   else if (dim == 3)
                     {
-                      h = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
-                          parameters.element_order;
+                      h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                             parameters.element_order;
                     }
-                  tau[v] =
-                    std::pow(std::pow(4 / (parameters.peclet_number * h * h),
-                                      2) +
-                               std::pow(2 * advection_vector_norm[v] / h, 2),
-                             -0.5);
+                  tau[v] = std::pow(
+                    std::pow(1 / (parameters.peclet_number * h[v] * h[v]), 2) +
+                      std::pow(2 * advection_vector_norm[v] / h[v], 2),
+                    -0.5);
                 }
 
               phi.submit_value(advection_vector * phi.get_gradient(q), q);
@@ -657,6 +656,8 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
         {
           VectorizedArray<number> tau = VectorizedArray<number>(0.0);
           std::array<number, VectorizedArray<number>::size()> h_k;
+          std::array<number, VectorizedArray<number>::size()> h;
+
 
           for (auto lane = 0u;
                lane <
@@ -672,20 +673,21 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
 
           for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
             {
-              double h = 0;
               if (dim == 2)
                 {
-                  h = std::sqrt(4. * h_k[v] / M_PI) / parameters.element_order;
+                  h[v] =
+                    std::sqrt(4. * h_k[v] / M_PI) / parameters.element_order;
                 }
               else if (dim == 3)
                 {
-                  h = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
-                      parameters.element_order;
+                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                         parameters.element_order;
                 }
 
               tau[v] =
-                std::pow(std::pow(4 / (parameters.peclet_number * h * h), 2) +
-                           std::pow(2 * advection_vector_norm[v] / h, 2),
+                std::pow(std::pow(1 / (parameters.peclet_number * h[v] * h[v]),
+                                  2) +
+                           std::pow(2 * advection_vector_norm[v] / h[v], 2),
                          -0.5);
             }
 
@@ -1251,6 +1253,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
             {
               VectorizedArray<double> tau = VectorizedArray<double>(0.0);
               std::array<double, VectorizedArray<double>::size()> h_k;
+              std::array<double, VectorizedArray<double>::size()> h;
 
               for (auto lane = 0u;
                    lane < system_matrix.get_matrix_free()
@@ -1267,23 +1270,21 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
               for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
                 {
-                  double h = 0;
                   if (dim == 2)
                     {
-                      h = std::sqrt(4. * h_k[v] / M_PI) /
-                          parameters.element_order;
+                      h[v] = std::sqrt(4. * h_k[v] / M_PI) /
+                             parameters.element_order;
                     }
                   else if (dim == 3)
                     {
-                      h = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
-                          parameters.element_order;
+                      h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                             parameters.element_order;
                     }
 
-                  tau[v] =
-                    std::pow(std::pow(4 / (parameters.peclet_number * h * h),
-                                      2) +
-                               std::pow(2 * advection_vector_norm[v] / h, 2),
-                             -0.5);
+                  tau[v] = std::pow(
+                    std::pow(1 / (parameters.peclet_number * h[v] * h[v]), 2) +
+                      std::pow(2 * advection_vector_norm[v] / h[v], 2),
+                    -0.5);
                 }
 
               phi.submit_value(advection_vector * phi.get_gradient(q) -
@@ -1650,6 +1651,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
       GEOMETRY_header = "Geometry: hyperball";
     else if (parameters.geometry == Settings::hypercube)
       GEOMETRY_header = "Geometry: hypercube";
+    else if (parameters.geometry == Settings::hypercube_with_hole)
+      GEOMETRY_header = "Geometry: hypercube with hole";
     std::string SOURCE_header = "";
     if (parameters.source_term == Settings::zero)
       SOURCE_header = "Source term: zero";
