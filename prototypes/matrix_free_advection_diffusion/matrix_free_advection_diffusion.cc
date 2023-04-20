@@ -1371,6 +1371,9 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           if (fe_degree > 1)
             data.higher_order_elements = true;
 
+          data.elliptic      = false;
+          data.smoother_type = "Jacobi";
+
           preconditioner.initialize(
             system_matrix.get_system_matrix(constraints), data);
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
