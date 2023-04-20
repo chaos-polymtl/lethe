@@ -3,6 +3,7 @@
 #include <cfloat>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 
 
 SimulationControl::SimulationControl(const Parameters::SimulationControl param)
@@ -200,15 +201,17 @@ SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
     return;
 
   pcout << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
-  pcout << "Transient iteration : " << std::setw(8) << std::left
-        << iteration_number << " Time : " << std::setw(8) << std::left
-        << current_time << " Time step : " << std::setw(8) << std::left
-        << time_step << " CFL : " << std::setw(8) << std::left
-        << SimulationControl::get_CFL() << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
+
+  std::stringstream ss;
+
+  // Copy information into a string stream
+  ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
+     << " Time: " << std::setw(8) << std::left << current_time
+     << " Time step: " << std::setw(8) << std::left << time_step
+     << " CFL: " << std::setw(8) << std::left << SimulationControl::get_CFL();
+
+  // Announce string
+  announce_string(pcout, ss.str(), '*');
 }
 
 bool
@@ -269,14 +272,15 @@ SimulationControlTransientDEM::print_progression(
     return;
 
   pcout << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
-  pcout << "Transient iteration : " << std::setw(8) << std::left
-        << iteration_number << " Time : " << std::setw(8) << std::left
-        << current_time << " Time step : " << std::setw(8) << std::left
-        << time_step << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
+  std::stringstream ss;
+
+  // Copy information into a string stream
+  ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
+     << " Time: " << std::setw(8) << std::left << current_time
+     << " Time step: " << std::setw(8) << std::left << time_step;
+
+  // Announce string
+  announce_string(pcout, ss.str(), '*');
 }
 
 
@@ -358,12 +362,14 @@ SimulationControlSteady::print_progression(const ConditionalOStream &pcout)
     return;
 
   pcout << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
-  pcout << "Steady iteration : " << std::setw(8) << std::right
-        << iteration_number << "/" << number_mesh_adapt + 1 << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
+  std::stringstream ss;
+
+  // Copy information into a string stream
+  ss << "Steady iteration: " << std::setw(8) << std::right << iteration_number
+     << "/" << number_mesh_adapt + 1;
+
+  // Announce string
+  announce_string(pcout, ss.str(), '*');
 }
 
 bool
@@ -380,15 +386,16 @@ SimulationControlAdjointSteady::print_progression(
     return;
 
   pcout << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
-  pcout << "Pseudo steady-state iteration : " << std::setw(8) << std::left
-        << iteration_number << " Time : " << std::setw(8) << std::left
-        << current_time << " Time step : " << std::setw(8) << std::left
-        << time_step << " CFL : " << std::setw(8) << std::left
-        << SimulationControl::get_CFL() << std::endl;
-  pcout << "*****************************************************************"
-        << std::endl;
+  std::stringstream ss;
+
+  // Copy information into a string stream
+  ss << "Pseudo steady-state iteration: " << std::setw(8) << std::left
+     << iteration_number << " Time: " << std::setw(8) << std::left
+     << current_time << " Time step: " << std::setw(8) << std::left << time_step
+     << " CFL: " << std::setw(8) << std::left << SimulationControl::get_CFL();
+
+  // Announce string
+  announce_string(pcout, ss.str(), '*');
 }
 
 bool

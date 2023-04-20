@@ -9,9 +9,9 @@ Temperature statistics on fluid :
 	 Average : 1000
 	 Std-Dev : 8.03887e-14
 
-*****************************************************************
-Transient iteration : 1        Time : 0.01     Time step : 0.01     CFL : 0       
-*****************************************************************
+*******************************************************************************
+Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
+*******************************************************************************
 L2 error velocity : 0
 L2 error temperature : 0.000338465
 Temperature statistics on fluid : 
@@ -20,6 +20,6 @@ Temperature statistics on fluid :
 	 Average : 979.157
 	 Std-Dev : 0.0527873
  time  error_velocity 
-0.0100 0.000000e+00   
+0.0100   0.000000e+00 
 cells error_temperature 
-4     3.384650e-04      
+    4      3.384650e-04 

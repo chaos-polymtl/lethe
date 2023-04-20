@@ -11,9 +11,9 @@ Thermal energy in fluid : 0
 Heat flux at the nitsche immersed boundary : 
 	 Nitsche boundary 0 : 1000
 
-*****************************************************************
-Steady iteration :        1/1
-*****************************************************************
+*****************************
+Steady iteration:        1/1
+*****************************
 L2 error velocity : 0
 L2 error temperature : 0.000255471
 Total heat flux at the heat transfer boundary conditions : 

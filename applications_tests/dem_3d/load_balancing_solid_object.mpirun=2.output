@@ -1,22 +1,23 @@
+
+*********************
 Running on 2 rank(s)
-***************************************************************** 
-
+*********************
 DEM time-step is 2.29954% of Rayleigh time step
-Reading triangulation 
+Reading triangulation
 
-Finished reading triangulation 
+Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-***************************************************************** 
+************************************************************************
 1000 particles of type 0 were inserted, 0 particles of type 0 remaining
-***************************************************************** 
+************************************************************************
 -->Repartitionning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 265 and 735
 Minimum and maximum number of cells owned by the processors are 647 and 5085
 
 *****************************************************************
-Transient iteration : 1000     Time : 0.01     Time step : 1e-05   
+Transient iteration: 1000     Time: 0.01     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.0000e+00  | 2.0000e+00 | 2.0000e+00 | 
@@ -30,7 +31,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 265
 Minimum and maximum number of cells owned by the processors are 647 and 5085
 
 *****************************************************************
-Transient iteration : 2000     Time : 0.02     Time step : 1e-05   
+Transient iteration: 2000     Time: 0.02     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 5.0000e+00  | 3.5000e+00 | 7.0000e+00 | 
@@ -44,7 +45,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 259
 Minimum and maximum number of cells owned by the processors are 647 and 5085
 
 *****************************************************************
-Transient iteration : 3000     Time : 0.03     Time step : 1e-05   
+Transient iteration: 3000     Time: 0.03     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 7.0000e+00  | 4.6667e+00 | 1.4000e+01 | 
@@ -58,7 +59,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 292
 Minimum and maximum number of cells owned by the processors are 633 and 5085
 
 *****************************************************************
-Transient iteration : 4000     Time : 0.04     Time step : 1e-05   
+Transient iteration: 4000     Time: 0.04     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+01 | 6.0000e+00 | 2.4000e+01 | 
@@ -72,7 +73,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 302
 Minimum and maximum number of cells owned by the processors are 612 and 5085
 
 *****************************************************************
-Transient iteration : 5000     Time : 0.05     Time step : 1e-05   
+Transient iteration: 5000     Time: 0.05     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.3000e+01 | 7.4000e+00 | 3.7000e+01 | 
@@ -86,7 +87,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 266
 Minimum and maximum number of cells owned by the processors are 612 and 5085
 
 *****************************************************************
-Transient iteration : 6000     Time : 0.06     Time step : 1e-05   
+Transient iteration: 6000     Time: 0.06     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.5000e+01 | 8.6667e+00 | 5.2000e+01 | 
@@ -100,7 +101,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 277
 Minimum and maximum number of cells owned by the processors are 591 and 5085
 
 *****************************************************************
-Transient iteration : 7000     Time : 0.07     Time step : 1e-05   
+Transient iteration: 7000     Time: 0.07     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.8000e+01 | 1.0000e+01 | 7.0000e+01 | 
@@ -114,7 +115,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 298
 Minimum and maximum number of cells owned by the processors are 535 and 5099
 
 *****************************************************************
-Transient iteration : 8000     Time : 0.08     Time step : 1e-05   
+Transient iteration: 8000     Time: 0.08     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.1000e+01 | 1.1375e+01 | 9.1000e+01 | 
@@ -128,7 +129,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 271
 Minimum and maximum number of cells owned by the processors are 507 and 5099
 
 *****************************************************************
-Transient iteration : 9000     Time : 0.09     Time step : 1e-05   
+Transient iteration: 9000     Time: 0.09     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.4000e+01 | 1.2778e+01 | 1.1500e+02 | 
@@ -142,7 +143,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 277
 Minimum and maximum number of cells owned by the processors are 486 and 5099
 
 *****************************************************************
-Transient iteration : 10000    Time : 0.1      Time step : 1e-05   
+Transient iteration: 10000    Time: 0.1      Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.6000e+01 | 1.4100e+01 | 1.4100e+02 | 
@@ -156,7 +157,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 293
 Minimum and maximum number of cells owned by the processors are 381 and 5113
 
 *****************************************************************
-Transient iteration : 11000    Time : 0.11     Time step : 1e-05   
+Transient iteration: 11000    Time: 0.11     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.0000e+01 | 1.5545e+01 | 1.7100e+02 | 
@@ -170,7 +171,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 279
 Minimum and maximum number of cells owned by the processors are 367 and 5113
 
 *****************************************************************
-Transient iteration : 12000    Time : 0.12     Time step : 1e-05   
+Transient iteration: 12000    Time: 0.12     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.1000e+01 | 1.6833e+01 | 2.0200e+02 | 
@@ -184,7 +185,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 340
 Minimum and maximum number of cells owned by the processors are 332 and 5113
 
 *****************************************************************
-Transient iteration : 13000    Time : 0.13     Time step : 1e-05   
+Transient iteration: 13000    Time: 0.13     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.4000e+01 | 1.8154e+01 | 2.3600e+02 | 
@@ -198,7 +199,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 289
 Minimum and maximum number of cells owned by the processors are 332 and 5113
 
 *****************************************************************
-Transient iteration : 14000    Time : 0.14     Time step : 1e-05   
+Transient iteration: 14000    Time: 0.14     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.7000e+01 | 1.9500e+01 | 2.7300e+02 | 
@@ -212,7 +213,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 287
 Minimum and maximum number of cells owned by the processors are 332 and 5113
 
 *****************************************************************
-Transient iteration : 15000    Time : 0.15     Time step : 1e-05   
+Transient iteration: 15000    Time: 0.15     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.0800e+01 | 3.1200e+02 | 
@@ -226,7 +227,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 294
 Minimum and maximum number of cells owned by the processors are 332 and 5113
 
 *****************************************************************
-Transient iteration : 16000    Time : 0.16     Time step : 1e-05   
+Transient iteration: 16000    Time: 0.16     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.1875e+01 | 3.5000e+02 | 
@@ -240,7 +241,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 333
 Minimum and maximum number of cells owned by the processors are 332 and 5113
 
 *****************************************************************
-Transient iteration : 17000    Time : 0.17     Time step : 1e-05   
+Transient iteration: 17000    Time: 0.17     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2176e+01 | 3.7700e+02 | 
@@ -254,7 +255,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 248
 Minimum and maximum number of cells owned by the processors are 367 and 5113
 
 *****************************************************************
-Transient iteration : 18000    Time : 0.18     Time step : 1e-05   
+Transient iteration: 18000    Time: 0.18     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2500e+01 | 4.0500e+02 | 
@@ -268,7 +269,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 201
 Minimum and maximum number of cells owned by the processors are 409 and 5113
 
 *****************************************************************
-Transient iteration : 19000    Time : 0.19     Time step : 1e-05   
+Transient iteration: 19000    Time: 0.19     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2789e+01 | 4.3300e+02 | 
@@ -282,7 +283,7 @@ Average, minimum and maximum number of particles on the processors are 500 , 275
 Minimum and maximum number of cells owned by the processors are 409 and 5113
 
 *****************************************************************
-Transient iteration : 20000    Time : 0.2      Time step : 1e-05   
+Transient iteration: 20000    Time: 0.2      Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.3000e+01 | 4.6000e+02 | 

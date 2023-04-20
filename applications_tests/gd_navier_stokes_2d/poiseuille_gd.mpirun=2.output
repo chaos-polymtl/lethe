@@ -3,8 +3,8 @@ Running on 2 MPI rank(s)...
    Number of degrees of freedom: 4262
    Volume of triangulation:      10
 
-*****************************************************************
-Steady iteration :        1/1
-*****************************************************************
+*****************************
+Steady iteration:        1/1
+*****************************
 cells error_velocity error_pressure 
   441 3.879810e-09 - 4.872482e-08 - 

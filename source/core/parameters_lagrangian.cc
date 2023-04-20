@@ -428,11 +428,13 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        prm.declare_entry("load balance method",
-                          "none",
-                          Patterns::Selection("none|once|frequent|dynamic"),
-                          "Choosing load-balance method"
-                          "Choices are <none|once|frequent|dynamic>.");
+        prm.declare_entry(
+          "load balance method",
+          "none",
+          Patterns::Selection(
+            "none|once|frequent|dynamic|dynamic_with_disabling_contacts"),
+          "Choosing load-balance method"
+          "Choices are <none|once|frequent|dynamic|dynamic_with_disabling_contacts>.");
 
         prm.declare_entry(
           "load balance step",
@@ -463,6 +465,18 @@ namespace Parameters
           "10000",
           Patterns::Integer(),
           "The particle weight based on a default cell weight of 1000");
+
+        prm.declare_entry(
+          "load balance active weight factor",
+          "1.0",
+          Patterns::Double(),
+          "Factor applied on the particle weight in load balancing if the cell is active");
+
+        prm.declare_entry(
+          "load balance inactive weight factor",
+          "1.0",
+          Patterns::Double(),
+          "Factor applied on the particle weight in load balancing if the cell is inactive");
 
         prm.declare_entry("contact detection method",
                           "dynamic",
@@ -514,6 +528,30 @@ namespace Parameters
           Patterns::Selection("velocity_verlet|explicit_euler|gear3"),
           "Choosing integration method"
           "Choices are <velocity_verlet|explicit_euler|gear3>.");
+
+        prm.enter_subsection("dynamic disabling contacts");
+        {
+          prm.declare_entry(
+            "enable dynamic disabling contacts",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the dynamic search for disabling particle contacts"
+            "Choices are <true|false>.");
+
+          prm.declare_entry(
+            "granular temperature threshold",
+            "1e-4",
+            Patterns::Double(),
+            "Minimum granular temperature where particle contacts are considered");
+
+          prm.declare_entry(
+            "solid fraction threshold",
+            "0.4",
+            Patterns::Double(),
+            "Maximum solid fraction where particle contacts are considered "
+            "no matter the granular temperature");
+        }
+        prm.leave_subsection();
       }
       prm.leave_subsection();
     }
@@ -524,6 +562,18 @@ namespace Parameters
       prm.enter_subsection("model parameters");
       {
         const std::string load_balance = prm.get("load balance method");
+
+        prm.enter_subsection("dynamic disabling contacts");
+        {
+          disable_particle_contacts =
+            prm.get_bool("enable dynamic disabling contacts");
+
+          // Thresholds for disabling contacts
+          granular_temperature_threshold =
+            prm.get_double("granular temperature threshold");
+          solid_fraction_threshold = prm.get_double("solid fraction threshold");
+        }
+        prm.leave_subsection();
 
         load_balance_particle_weight =
           prm.get_integer("load balance particle weight");
@@ -545,6 +595,33 @@ namespace Parameters
             load_balance_threshold = prm.get_double("load balance threshold");
             dynamic_load_balance_check_frequency =
               prm.get_integer("dynamic load balance check frequency");
+          }
+        else if (load_balance == "dynamic_with_disabling_contacts")
+          {
+            // Check if dynamic disabling contacts is enabled, otherwise throw
+            // an error message indicating that the user should use dynamic
+            // load balancing instead or enable dynamic disabling contacts
+            if (disable_particle_contacts)
+              {
+                load_balance_method =
+                  LoadBalanceMethod::dynamic_with_disabling_contacts;
+                load_balance_threshold =
+                  prm.get_double("load balance threshold");
+                dynamic_load_balance_check_frequency =
+                  prm.get_integer("dynamic load balance check frequency");
+
+                // Weights for load balancing of active and inactive cells
+                active_load_balancing_factor =
+                  prm.get_double("load balance active weight factor");
+                inactive_load_balancing_factor =
+                  prm.get_double("load balance inactive weight factor");
+              }
+            else
+              {
+                throw(std::runtime_error(
+                  "Invalid contact detection method: dynamic disabling contacts is not enabled "
+                  "while dynamic_with_disabling_contacts is selected, use dynamic instead"));
+              }
           }
         else if (load_balance == "none")
           {
@@ -627,7 +704,7 @@ namespace Parameters
         else
           {
             throw(
-              std::runtime_error("Invalid rolling resistance toruqe method "));
+              std::runtime_error("Invalid rolling resistance torque method "));
           }
 
         const std::string integration = prm.get("integration method");

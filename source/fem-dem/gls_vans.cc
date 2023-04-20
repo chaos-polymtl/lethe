@@ -228,6 +228,8 @@ void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time,
                                             bool         load_balance_step)
 {
+  announce_string(this->pcout, "Void Fraction");
+
   TimerOutput::Scope t(this->computing_timer, "calculate_void_fraction");
   if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
@@ -1097,6 +1099,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
 {
+  announce_string(this->pcout, "Volume-Averaged Fluid Dynamics");
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
 
@@ -1210,6 +1213,22 @@ GLSVANSSolver<dim>::setup_assemblers()
     // Magnus Lift Force Assembler
     particle_fluid_assemblers.push_back(
       std::make_shared<GLSVansAssemblerMagnus<dim>>(
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.rotational_viscous_torque ==
+      true)
+    // Viscous Torque Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerViscousTorque<dim>>(
+        this->cfd_dem_simulation_parameters.dem_parameters
+          .lagrangian_physical_properties));
+
+  if (this->cfd_dem_simulation_parameters.cfd_dem.vortical_viscous_torque ==
+      true)
+    // Viscous Torque Assembler
+    particle_fluid_assemblers.push_back(
+      std::make_shared<GLSVansAssemblerVorticalTorque<dim>>(
         this->cfd_dem_simulation_parameters.dem_parameters
           .lagrangian_physical_properties));
 
@@ -1485,7 +1504,7 @@ GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
 template <int dim>
 void
-GLSVANSSolver<dim>::post_processing()
+GLSVANSSolver<dim>::monitor_mass_conservation()
 {
   QGauss<dim> quadrature_formula(this->number_quadrature_points);
 
@@ -1518,13 +1537,13 @@ GLSVANSSolver<dim>::post_processing()
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
 
-  double mass_source           = 0;
-  double max_local_mass_source = 0;
-  double local_mass_source     = 0;
-  double fluid_volume          = 0;
-  double bed_volume            = 0;
-  double average_void_fraction = 0;
-  pressure_drop                = 0;
+  // Values of the force function, the last component of which is the external
+  // mass source
+  std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
+
+  double continuity           = 0;
+  double max_local_continuity = 0;
+  double local_mass_source    = 0;
 
   Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
@@ -1567,6 +1586,13 @@ GLSVANSSolver<dim>::post_processing()
           fe_values[velocities].get_function_gradients(
             evaluation_point, present_velocity_gradients);
 
+          // Gather the external mass source at the quadrature point location
+          std::vector<Point<dim>> quadrature_points =
+            fe_values.get_quadrature_points();
+
+          this->forcing_function->vector_value_list(quadrature_points,
+                                                    rhs_force);
+
           // Gather the previous time steps depending on the number of
           // stages of the time integration scheme for the void fraction
 
@@ -1591,16 +1617,23 @@ GLSVANSSolver<dim>::post_processing()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
+              // Calculate external mass source
+              const unsigned int component_mass =
+                this->fe->system_to_component_index(dim).first;
+              double external_mass_source = rhs_force[q](component_mass);
+
               // Calculate the divergence of the velocity
               const double present_velocity_divergence =
                 trace(present_velocity_gradients[q]);
 
+
               // Evaluation of global mass conservation
-              local_mass_source = (present_velocity_values[q] *
-                                     present_void_fraction_gradients[q] +
-                                   present_void_fraction_values[q] *
-                                     present_velocity_divergence) *
-                                  fe_values_void_fraction.JxW(q);
+              local_mass_source =
+                (present_velocity_values[q] *
+                   present_void_fraction_gradients[q] +
+                 present_void_fraction_values[q] * present_velocity_divergence -
+                 external_mass_source) *
+                fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                     Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
@@ -1628,52 +1661,23 @@ GLSVANSSolver<dim>::post_processing()
                    bdf_coefs[3] * p3_void_fraction_values[q]) *
                   fe_values_void_fraction.JxW(q);
 
-              // Calculation of fluid and bed volumes in bed
-              if (present_void_fraction_values[q] < 1.0)
-                {
-                  fluid_volume += present_void_fraction_values[q] *
-                                  fe_values_void_fraction.JxW(q);
-
-                  bed_volume += fe_values_void_fraction.JxW(q);
-                }
-
-              mass_source += local_mass_source;
+              continuity += local_mass_source;
             }
 
-          max_local_mass_source =
-            std::max(max_local_mass_source, abs(local_mass_source));
+          max_local_continuity =
+            std::max(max_local_continuity, abs(local_mass_source));
         }
     }
 
-  mass_source  = Utilities::MPI::sum(mass_source, this->mpi_communicator);
-  fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
-  bed_volume   = Utilities::MPI::sum(bed_volume, this->mpi_communicator);
+  continuity = Utilities::MPI::sum(continuity, this->mpi_communicator);
+  max_local_continuity =
+    Utilities::MPI::max(max_local_continuity, this->mpi_communicator);
 
-  average_void_fraction = fluid_volume / bed_volume;
 
-  QGauss<dim>     cell_quadrature_formula(this->number_quadrature_points);
-  QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
-
-  Assert(this->cfd_dem_simulation_parameters.cfd_parameters
-           .physical_properties_manager.density_is_constant(),
-         RequiresConstantDensity("Pressure drop calculation"));
-  pressure_drop =
-    calculate_pressure_drop(
-      this->dof_handler,
-      this->mapping,
-      this->evaluation_point,
-      cell_quadrature_formula,
-      face_quadrature_formula,
-      this->cfd_dem_simulation_parameters.cfd_dem.inlet_boundary_id,
-      this->cfd_dem_simulation_parameters.cfd_dem.outlet_boundary_id) *
-    this->cfd_dem_simulation_parameters.cfd_parameters
-      .physical_properties_manager.get_density_scale();
-
-  this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
-  this->pcout << "Max Local Mass Source: " << max_local_mass_source << " s^-1"
+  this->pcout << "Global continuity equation error: " << continuity << " s^-1"
               << std::endl;
-  this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
-              << std::endl;
+  this->pcout << "Max local continuity error: " << max_local_continuity
+              << " s^-1" << std::endl;
 }
 
 template <int dim>
@@ -1740,10 +1744,8 @@ GLSVANSSolver<dim>::solve()
         }
 
       this->postprocess(false);
+      monitor_mass_conservation();
       finish_time_step_fd();
-
-      if (this->cfd_dem_simulation_parameters.cfd_dem.post_processing)
-        post_processing();
     }
 
   this->finish_simulation();

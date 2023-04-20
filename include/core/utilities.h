@@ -20,6 +20,7 @@
 #ifndef lethe_utilities_h
 #define lethe_utilities_h
 
+#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -222,6 +223,28 @@ fill_vectors_from_file(std::map<std::string, std::vector<double>> &map,
  */
 void
 create_output_folder(const std::string &dirname);
+
+/**
+ * @brief Prints a string and then adds a line above and below made with dashes containing as many dashes as the string has characters+1
+ *
+ * For example, if the string to be printed is "Tracer" the result will be:
+ * -------
+ * Tracer
+ * -------
+ *
+ * @param pcout the parallel cout used to print the information
+ * @param expression string that will be printed
+ * @param delimiter the character used to delimit the printing. Default value is "-"
+ */
+inline void
+announce_string(const ConditionalOStream &pcout,
+                const std::string         expression,
+                const char                delimiter = '-')
+{
+  pcout << std::string(expression.size() + 1, delimiter) << std::endl;
+  pcout << expression << std::endl;
+  pcout << std::string(expression.size() + 1, delimiter) << std::endl;
+}
 
 
 

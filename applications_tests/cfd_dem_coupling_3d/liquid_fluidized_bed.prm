@@ -3,268 +3,278 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set number mesh adapt       = 0
-  set output name              = result_
-  set output frequency	  	= 0
-  set startup time scaling         = 0.6
-  set time end                     = 0.0005
-  set time step                    = 0.0001
-  set subdivision             = 1 
-  set log precision     = 10 
-#  set output boundaries    = true
+  set method               = bdf1
+  set number mesh adapt    = 0
+  set output name          = result_
+  set output frequency     = 0
+  set startup time scaling = 0.6
+  set time end             = 0.0005
+  set time step            = 0.0001
+  set subdivision          = 1
+  set log precision        = 10
+  #  set output boundaries    = true
 end
 
 #---------------------------------------------------
 # Restart
 #---------------------------------------------------
+
 subsection restart
-	set checkpoint					 = false
-	set frequency 					 = 100
-	set restart       				 = false
-	set filename      				 = case
+  set checkpoint = false
+  set frequency  = 100
+  set restart    = false
+  set filename   = case
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-end
 
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 0.0000008379
-    set density                        = 996.7775
+    set kinematic viscosity = 0.0000008379
+    set density             = 996.7775
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type            				= subdivided_hyper_rectangle
-    set grid arguments       				= 15,20,15:-0.05,-0.05,-0.05:0.05,0.05,0.05:true 
-    set initial refinement   				= 0
-    set expand particle-wall contact search		= false
+  set type                                = dealii
+  set grid type                           = subdivided_hyper_rectangle
+  set grid arguments                      = 15,20,15:-0.05,-0.05,-0.05:0.05,0.05,0.05:true
+  set initial refinement                  = 0
+  set expand particle-wall contact search = false
 end
 
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
+
 subsection void fraction
-   set mode = pcm
-   set read dem = true
-   set dem file name = dem
-   set l2 smoothing factor = 0.00000125
-   set l2 lower bound = 0
-   set l2 upper bound = 1
-   set bound void fraction = false
+  set mode                = pcm
+  set read dem            = true
+  set dem file name       = dem
+  set l2 smoothing factor = 0.00000125
+  set l2 lower bound      = 0
+  set l2 upper bound      = 1
+  set bound void fraction = false
 end
 
 #---------------------------------------------------
 # CFD-DEM
 #---------------------------------------------------
+
 subsection cfd-dem
-   set grad div = false
-   set void fraction time derivative  = false
-   set drag force = true
-   set buoyancy force = true
-   set shear force = true
-   set pressure force = true
-   set drag model = difelice
-   set post processing = true
-   set inlet boundary id = 2
-   set outlet boundary id = 3
-   set coupling frequency = 10
-   set vans model = modelB
+  set grad div                      = false
+  set void fraction time derivative = false
+  set drag force                    = true
+  set buoyancy force                = true
+  set shear force                   = true
+  set pressure force                = true
+  set drag model                    = difelice
+  set coupling frequency            = 10
+  set vans model                    = modelB
+  set particle statistics             = false
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
- subsection initial conditions
-#    set type = nodal
-#    set viscosity = 0.005
-    subsection uvwp
-            set Function expression = 0; 0; 0; 0
-    end
- end
+
+subsection initial conditions
+  #    set type = nodal
+  #    set viscosity = 0.005
+  subsection uvwp
+    set Function expression = 0; 0; 0; 0
+  end
+end
 
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
+
 subsection post-processing
   # Enable calculation of pressure drop
-  set calculate pressure drop     = false
+  set calculate pressure drop = false
 
   # Boundary id of the inlet for the pressure drop calculation
-  set inlet boundary id           = 2
+  set inlet boundary id = 2
 
   # Boundary id of the outlet for the pressure drop calculation
-  set outlet boundary id          = 3
-  
+  set outlet boundary id = 3
+
   set output frequency = 1
 
   set verbosity = verbose
 end
 
-
-
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-set time dependent         = true
-  set number                  = 5
-   subsection bc 0
-     set id		   = 0
-     set type              = slip
-    end
-   subsection bc 1
-     set id		   = 1
-     set type              = slip
-    end
-   subsection bc 2
-     set id		   = 4
-     set type              = slip
-    end
-   subsection bc 3
-     set id		   = 5
-     set type              = slip
-    end
-   subsection bc 4
-     set id		   = 2
-     set type              = function
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0.1
-        end
-        subsection w
-            set Function expression = 0
-        end
-    end
 
+subsection boundary conditions
+  set time dependent = true
+  set number         = 5
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 4
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 5
+    set type = slip
+  end
+  subsection bc 4
+    set id   = 2
+    set type = function
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0.1
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = false
-    subsection xyz
-            set Function expression = 0; 0; 0; 0
-    end
+  set enable = false
+  subsection xyz
+    set Function expression = 0; 0; 0; 0
+  end
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-  set type  = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = dynamic
-  set contact detection frequency                 	 = 10
-  set dynamic contact search size coefficient	 	 = 0.9
-  set load balance method				 = dynamic
-  set load balance threshold				 = 0.5
-  set dynamic load balance check frequency		 = 10000
-  set neighborhood threshold				 = 1.8
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set integration method				 = velocity_verlet
-  set rolling resistance torque method                  = no_resistance
+  set contact detection method                = dynamic
+  set contact detection frequency             = 10
+  set dynamic contact search size coefficient = 0.9
+  set load balance method                     = dynamic
+  set load balance threshold                  = 0.5
+  set dynamic load balance check frequency    = 10000
+  set neighborhood threshold                  = 1.8
+  set particle particle contact force method  = hertz_mindlin_limit_overlap
+  set particle wall contact force method      = nonlinear
+  set integration method                      = velocity_verlet
+  set rolling resistance torque method        = no_resistance
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0
-    set gy            		 			= -9.81
-    set gz						= 0
-    set number of particle types	                = 1
-    subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.003
-    		set number				= 10000
-    		set density particles         	        = 2505
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.97
-    		set friction coefficient particles      = 0.1
-    		set rolling friction particles        	= 0.2
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.33
-    set friction coefficient wall         		= 0.3
-    set rolling friction wall         	      	  	= 0.3
+  set gx                       = 0
+  set gy                       = -9.81
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.003
+    set number                            = 10000
+    set density particles                 = 2505
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.97
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.33
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.3
 end
 
 #---------------------------------------------------
 # Floating walls
 #---------------------------------------------------
-subsection floating walls
-    set number of floating walls	                = 1
-    	subsection wall 0
-		subsection point on wall
-			set x				= 0
-			set y				= -0.04
-			set z				= 0
-		end
-		subsection normal vector
-			set nx				= 0
-			set ny				= 1
- 			set nz 				= 0
-		end
-		set start time				= 0
-		set end time				= 50
-   	end
 
+subsection floating walls
+  set number of floating walls = 1
+  subsection wall 0
+    subsection point on wall
+      set x = 0
+      set y = -0.04
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 0
+      set ny = 1
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 50
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-9
-  set max iterations          = 10
-  set verbosity               = quiet
+  set tolerance      = 1e-9
+  set max iterations = 10
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
-subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 5000
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-12
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-14
-  set ilu preconditioner relative tolerance  = 1
-  set verbosity               = quiet
 
+subsection linear solver
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-12
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-14
+  set ilu preconditioner relative tolerance = 1
+  set verbosity                             = quiet
 end

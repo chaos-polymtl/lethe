@@ -1,18 +1,19 @@
+
+*********************
 Running on 1 rank(s)
-***************************************************************** 
-
+*********************
 DEM time-step is 4.82056% of Rayleigh time step
-Reading triangulation 
+Reading triangulation
 
-Finished reading triangulation 
+Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-***************************************************************** 
+*********************************************************************
 5 particles of type 0 were inserted, 0 particles of type 0 remaining
-***************************************************************** 
+*********************************************************************
 
 *****************************************************************
-Transient iteration : 10000    Time : 0.5      Time step : 5e-05   
+Transient iteration: 10000    Time: 0.5      Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.7000e+01  | 2.7000e+01 | 2.7000e+01 | 
@@ -22,7 +23,7 @@ Transient iteration : 10000    Time : 0.5      Time step : 5e-05
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 
 *****************************************************************
-Transient iteration : 20000    Time : 1        Time step : 5e-05   
+Transient iteration: 20000    Time: 1        Time step: 5e-05   
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.7000e+01  | 2.3000e+01 | 4.6000e+01 | 

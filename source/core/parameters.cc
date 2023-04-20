@@ -1124,10 +1124,11 @@ namespace Parameters
                         Patterns::Bool(),
                         "Enable calculation of average velocities.");
 
-      prm.declare_entry("calculate pressure drop",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of between two boundaries.");
+      prm.declare_entry(
+        "calculate pressure drop",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of pressure drop between two boundaries.");
 
       prm.declare_entry("inlet boundary id",
                         "0",
@@ -1138,6 +1139,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Outlet boundary ID for pressure drop calculation");
+
+      prm.declare_entry("calculate flow rate",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of flow rate at boundaries.");
 
       prm.declare_entry(
         "initial time",
@@ -1154,6 +1160,11 @@ namespace Parameters
                         "pressure_drop",
                         Patterns::FileName(),
                         "File output pressure drop");
+
+      prm.declare_entry("flow rate name",
+                        "flow_rate",
+                        Patterns::FileName(),
+                        "File output volumetric flux");
 
       prm.declare_entry("enstrophy name",
                         "enstrophy",
@@ -1256,9 +1267,11 @@ namespace Parameters
       calculate_pressure_drop        = prm.get_bool("calculate pressure drop");
       inlet_boundary_id              = prm.get_integer("inlet boundary id");
       outlet_boundary_id             = prm.get_integer("outlet boundary id");
+      calculate_flow_rate            = prm.get_bool("calculate flow rate");
       initial_time                   = prm.get_double("initial time");
       kinetic_energy_output_name     = prm.get("kinetic energy name");
       pressure_drop_output_name      = prm.get("pressure drop name");
+      flow_rate_output_name          = prm.get("flow rate name");
       enstrophy_output_name          = prm.get("enstrophy name");
       apparent_viscosity_output_name = prm.get("apparent viscosity name");
       output_frequency               = prm.get_integer("output frequency");
@@ -1920,6 +1933,13 @@ namespace Parameters
         "Enable testing mode of a solver. Some solvers have a specific"
         "testing mode which enables the output of debug variables. This"
         "testing mode is generally used only for the automatic testing bench using ctest.");
+      prm.declare_entry(
+        "type",
+        "particles",
+        Patterns::Selection("particles|mobility_status|subdomain"),
+        "Output type for testing mode. Currently, particles type will output "
+        "each particle with some information and mobility_status or subdomain output results "
+        "in deal.II format.");
     }
     prm.leave_subsection();
   }
@@ -1930,6 +1950,20 @@ namespace Parameters
     prm.enter_subsection("test");
     {
       enabled = prm.get_bool("enable");
+      if (enabled)
+        {
+          const std::string op = prm.get("type");
+          if (op == "particles")
+            test_type = TestType::particles;
+          else if (op == "mobility_status")
+            test_type = TestType::mobility_status;
+          else if (op == "subdomain")
+            test_type = TestType::subdomain;
+          else
+            throw std::logic_error(
+              "Error, invalid testing type. Current choices are particles, "
+              "mobility_status or subdomain");
+        }
     }
     prm.leave_subsection();
   }

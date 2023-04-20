@@ -3,9 +3,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 187
    Volume of triangulation:      1
 
-*****************************************************************
-Steady iteration :        1/4
-*****************************************************************
+*****************************
+Steady iteration:        1/4
+*****************************
 
 +------------------------------------------+
 |  Force  summary                          |
@@ -15,9 +15,9 @@ Boundary ID    f_x       f_y      f_xv      f_yv      f_xp     f_yp
           3  0.253044  0.000002  0.253044  0.000000 0.000000  0.000001 
 L2 error velocity : 0.000675189
 
-*****************************************************************
-Steady iteration :        2/4
-*****************************************************************
+*****************************
+Steady iteration:        2/4
+*****************************
    Number of active cells:       64
    Number of degrees of freedom: 659
    Volume of triangulation:      1
@@ -30,9 +30,9 @@ Boundary ID    f_x       f_y      f_xv      f_yv      f_xp     f_yp
           3  0.251533  0.000000  0.251533  0.000000 0.000000  0.000000 
 L2 error velocity : 0.000326591
 
-*****************************************************************
-Steady iteration :        3/4
-*****************************************************************
+*****************************
+Steady iteration:        3/4
+*****************************
    Number of active cells:       256
    Number of degrees of freedom: 2467
    Volume of triangulation:      1
@@ -45,9 +45,9 @@ Boundary ID    f_x       f_y      f_xv      f_yv      f_xp     f_yp
           3  0.250769  0.000000  0.250769  0.000000 0.000000  0.000000 
 L2 error velocity : 0.000160372
 
-*****************************************************************
-Steady iteration :        4/4
-*****************************************************************
+*****************************
+Steady iteration:        4/4
+*****************************
    Number of active cells:       1024
    Number of degrees of freedom: 9539
    Volume of triangulation:      1

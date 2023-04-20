@@ -4,15 +4,15 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 25
 
-*****************************************************************
-Steady iteration :        1/4
-*****************************************************************
+*****************************
+Steady iteration:        1/4
+*****************************
 L2 error velocity : 0
 L2 error temperature : 0.00065151
 
-*****************************************************************
-Steady iteration :        2/4
-*****************************************************************
+*****************************
+Steady iteration:        2/4
+*****************************
    Number of active cells:       64
    Number of degrees of freedom: 243
    Volume of triangulation:      1
@@ -20,9 +20,9 @@ Steady iteration :        2/4
 L2 error velocity : 0
 L2 error temperature : 4.11281e-05
 
-*****************************************************************
-Steady iteration :        3/4
-*****************************************************************
+*****************************
+Steady iteration:        3/4
+*****************************
    Number of active cells:       256
    Number of degrees of freedom: 867
    Volume of triangulation:      1
@@ -30,9 +30,9 @@ Steady iteration :        3/4
 L2 error velocity : 0
 L2 error temperature : 2.5779e-06
 
-*****************************************************************
-Steady iteration :        4/4
-*****************************************************************
+*****************************
+Steady iteration:        4/4
+*****************************
    Number of active cells:       1024
    Number of degrees of freedom: 3267
    Volume of triangulation:      1

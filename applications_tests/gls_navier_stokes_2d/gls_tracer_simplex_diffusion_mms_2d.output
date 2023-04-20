@@ -4,9 +4,9 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      1
    Number of tracer degrees of freedom: 289
 
-*****************************************************************
-Steady iteration :        1/1
-*****************************************************************
+*****************************
+Steady iteration:        1/1
+*****************************
 L2 error velocity : 0
 L2 error tracer : 2.20927e-05
 cells error_velocity error_pressure 

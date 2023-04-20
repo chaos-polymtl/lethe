@@ -1,18 +1,19 @@
+
+*********************
 Running on 1 rank(s)
-***************************************************************** 
-
+*********************
 DEM time-step is 13.1342% of Rayleigh time step
-Reading triangulation 
+Reading triangulation
 
-Finished reading triangulation 
+Finished reading triangulation
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
-***************************************************************** 
+*********************************************************************
 1 particles of type 0 were inserted, 0 particles of type 0 remaining
-***************************************************************** 
+*********************************************************************
 
 *****************************************************************
-Transient iteration : 2        Time : 0.0002   Time step : 0.0001  
+Transient iteration: 2        Time: 0.0002   Time step: 0.0001  
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 1.0000e+00 | 
@@ -22,7 +23,7 @@ Transient iteration : 2        Time : 0.0002   Time step : 0.0001
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 
 *****************************************************************
-Transient iteration : 4        Time : 0.0004   Time step : 0.0001  
+Transient iteration: 4        Time: 0.0004   Time step: 0.0001  
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 2.0000e+00 | 
@@ -32,7 +33,7 @@ Transient iteration : 4        Time : 0.0004   Time step : 0.0001
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 
 *****************************************************************
-Transient iteration : 6        Time : 0.0006   Time step : 0.0001  
+Transient iteration: 6        Time: 0.0006   Time step: 0.0001  
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 3.0000e+00 | 
@@ -42,7 +43,7 @@ Transient iteration : 6        Time : 0.0006   Time step : 0.0001
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 
 *****************************************************************
-Transient iteration : 8        Time : 0.0008   Time step : 0.0001  
+Transient iteration: 8        Time: 0.0008   Time step: 0.0001  
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 4.0000e+00 | 
@@ -52,7 +53,7 @@ Transient iteration : 8        Time : 0.0008   Time step : 0.0001
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 
 *****************************************************************
-Transient iteration : 10       Time : 0.001    Time step : 0.0001  
+Transient iteration: 10       Time: 0.001    Time step: 0.0001  
 *****************************************************************
 | Variable                     | Min        | Max         | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+00  | 1.0000e+00 | 5.0000e+00 | 

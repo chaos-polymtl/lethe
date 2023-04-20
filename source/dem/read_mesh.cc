@@ -12,7 +12,7 @@ read_mesh(const Parameters::Mesh &  mesh_parameters,
           double &                             triangulation_cell_diameter,
           const Parameters::Lagrangian::BCDEM &bc_params)
 {
-  pcout << "Reading triangulation " << std::endl;
+  pcout << "Reading triangulation" << std::endl;
 
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
@@ -33,10 +33,10 @@ read_mesh(const Parameters::Mesh &  mesh_parameters,
           double       target_size = mesh_parameters.target_size;
           unsigned int number_refinement =
             floor(std::log(minimal_cell_size / target_size) / std::log(2));
-          pcout << "Automatically refining grid until target size : "
+          pcout << "Automatically refining grid until target size: "
                 << target_size << std::endl;
           triangulation.refine_global(number_refinement);
-          pcout << "Mesh was automatically refined : " << number_refinement
+          pcout << "Mesh was automatically refined: " << number_refinement
                 << " times" << std::endl;
         }
       else
@@ -46,7 +46,7 @@ read_mesh(const Parameters::Mesh &  mesh_parameters,
         }
     }
 
-  pcout << std::endl << "Finished reading triangulation " << std::endl;
+  pcout << std::endl << "Finished reading triangulation" << std::endl;
 }
 
 template <int dim, int spacedim>

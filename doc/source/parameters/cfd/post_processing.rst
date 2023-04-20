@@ -26,6 +26,10 @@ This subsection controls the post-processing other than the forces and torque on
     set inlet boundary id           = 0
     set outlet boundary id          = 1
 
+    # Flow rate at boundaries calculation
+    set calculate flow rate         = false
+    set flow rate name              = flow_rate
+
     # Enstrophy calculation
     set calculate enstrophy         = false
     set enstrophy name              = enstrophy
@@ -70,9 +74,23 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate average velocities``: controls if calculation of time-averaged velocities is enabled.
     * ``initial time``: initial time used for the average velocities calculations.
 
-* ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled. 
+* ``calculate pressure drop``: controls if calculation of the pressure drop from the inlet boundary to the outlet boundary is enabled.
     * ``inlet boundary id`` and ``outlet boundary id``: define the IDs for inlet and outlet boundaries, respectively. 
     * ``pressure drop name``: output filename for pressure drop calculations.
+    * The pressure drop :math:`\Delta P` and total pressure drop :math:`\Delta P_\text{total}` are calculated as such, with :math:`\Gamma` representing the boundary, :math:`\pmb{u}` the velocity  and :math:`P` the pressure:
+
+.. math::
+    \Delta P =  \frac{ \int_{\Gamma_\text{inlet}} P d \Gamma}{\int_{\Gamma_\text{inlet}} 1 d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} P d \Gamma}{\int_{\Gamma_\text{outlet}} 1 d \Gamma}
+
+.. math::
+    \Delta P_\text{total} =  \frac{ \int_{\Gamma_\text{inlet}} (P + \frac{1}{2} \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{inlet}} d \Gamma} - \frac{ \int_{\Gamma_\text{outlet}} (P + \frac{1}{2} \pmb{u} \cdot \pmb{u}) d \Gamma}{\int_{\Gamma_\text{outlet}} d \Gamma}
+
+* ``calculate flow rate``: controls if calculation of the volumetric flow rates at every boundary is enabled.
+    * ``flow rate name``: output filename for flow rate calculations.
+    * The flow rate :math:`Q` is calculated as such, with :math:`\Gamma` representing the boundary, :math:`\pmb{u}` the velocity and :math:`\pmb{n}` the vector normal to the surface:
+
+.. math::
+    Q =  \int_{\Gamma} \pmb{n} \cdot \pmb{u} d \Gamma
 
 * ``calculate enstrophy``: controls if calculation of total enstrophy, which corresponds to dissipation effects in the fluid, is enabled. 
     * ``enstrophy name``: output filename for enstrophy calculations.

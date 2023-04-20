@@ -235,6 +235,10 @@ namespace DEM
     typedef std::unordered_map<types::global_cell_index,
                                periodic_boundaries_cells_info_struct<dim>>
       periodic_boundaries_cells_info;
+
+    // <cell id, integer value>
+    typedef std::unordered_map<types::global_cell_index, unsigned int>
+      cell_index_int_map;
   };
 
 } // namespace DEM

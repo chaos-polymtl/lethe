@@ -497,6 +497,80 @@ public:
     lagrangian_physical_properties;
 };
 
+/**
+ * @brief Class that assembles the Viscous dissipative torque due to particle's rotation
+ * as defined
+ * by Derksen (2004).
+ * M_viscous_rotation = pi * pow(dp, 3) * mu * (- omega_p)
+ *
+ * The complete model described by Derksen is composed of
+ * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticalTorque
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerViscousTorque : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerViscousTorque(
+    Parameters::Lagrangian::LagrangianPhysicalProperties
+      lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
+};
+
+/**
+ * @brief Class that assembles the Viscous dissipative torque due to fluid vorticity as defined
+ * by Derksen (2004).
+ * M_viscous_vorticity = pi * pow(dp, 3) * mu * (0.5 * vorticity)
+ *
+ * The complete model described by Derksen is composed of
+ * GLSVansAssemblerViscousTorque + GLSVansAssemblerVorticalTorque
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerVorticalTorque : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerVorticalTorque(
+    Parameters::Lagrangian::LagrangianPhysicalProperties
+      lagrangian_physical_properties)
+    : lagrangian_physical_properties(lagrangian_physical_properties)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculates the viscous torque dissipation
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties
+    lagrangian_physical_properties;
+};
 
 /**
  * @brief Class that assembles the Buoyancy force  for the

@@ -4,10 +4,10 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 			 = 0.000005
+  set time step                 			 = 0.00005
   set time end       					 = 0.4
-  set log frequency				         = 10000
-  set output frequency            			 = 10000
+  set log frequency				         = 1000
+  set output frequency            			 = 1000
   set output path                                      = ./output_dem/
 end
 
@@ -23,7 +23,7 @@ end
 #---------------------------------------------------
 subsection restart
 	set checkpoint					 = true
-	set frequency 					 = 10000
+	set frequency 					 = 1000
 	set restart       				 = false
 	set filename      				 = dem
 end
@@ -77,7 +77,7 @@ end
 subsection insertion info
     set insertion method				= non_uniform
     set inserted number of particles at each time step  = 10000
-    set insertion frequency            		 	= 2000
+    set insertion frequency            		 	= 200
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.04
     set insertion box minimum z            	        = -0.05

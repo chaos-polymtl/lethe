@@ -14,15 +14,15 @@ This subsection includes parameters related to multiphase flow simulations using
       set drag model = difelice
       set saffman lift force = false
       set magnus lift force = false
+      set rotational viscous torque = false
+      set vortical viscous torque = false
       set buoyancy force = true
       set shear force = true
       set pressure force = true
-      set post processing = false
       set coupling frequency = 100
-      set inlet boundary id = 2
-      set outlet boundary id = 3
       set implicit stabilization = true
       set grad-div length scale = 1
+      set particle statistics = true
    end
 
 
@@ -43,6 +43,27 @@ This subsection includes parameters related to multiphase flow simulations using
 
     where :math:`\omega` is the angular velocity of the particle.
 
+ .. warning:: 
+   We do not recommend using the Magnus lift force. The Magnus lift force model does not include any angular momentum dissipation mechanism in the solid-fluid coupling. Using the Magnus force may lead to unphysical results.
+
+* The ``rotational viscous torque`` and ``vortical viscous torque`` parameter controls whether the fluid-particle contact generates torque on the particles due to viscosity.
+
+.. note::
+
+    When ``set rotational viscous torque = true`` and ``set vortical viscous torque = true``, the applied torque (:math:`\bf{M}_{viscous}`) is the one described by Derksen (2004) `[6] <https://doi.org/10.1002/aic.690491104>`_:
+
+    .. math::
+        \bf{M}_{viscous} = \pi d_p^3 \mu \left ( 0.5 \bf{\omega}_f - \bf{\omega}_p \right )
+
+    where :math:`\bf{\omega}_f` is the fluid vorticity at particle's position and :math:`\bf{\omega}_p` is the particle's angular velocity. The rotational and vortical torques can be applied separately by setting one of them to `false`.
+
+    In case ``set rotational viscous torque = false``, the particle's angular velocity :math:`\bf{\omega}_p` is removed from the equation.
+    In case ``set vortical viscous torque = false``, :math:`0.5 \bf{\omega}_f` is removed from the equation.
+
+.. warning::
+    We do not recommend the use of ``vortical viscous torque`` with coarse meshes, especially when Q1 elements are used. In such case, the space resolution may not be enough to properly capture vorticity.
+    Since the viscous torque model is not complete without the vortical component, ``rotational viscous torque`` should be used with caution.
+
 * The ``drag model`` parameter allows one to choose the type of drag model to be implemented for the calculation of the drag force between the particles and the fluids. Given :math:`F_d = \beta (\bf{u} - \bf{v})`, the available drag models at the time are:
 
 .. csv-table::
@@ -50,8 +71,8 @@ This subsection includes parameters related to multiphase flow simulations using
    :header-rows: 1
    :align: center
 
-* The ``post processing`` parameter, when enabled, allows the calculation of the pressure drop, void fraction in the packed region, and the mass conservation in a packed bed at each time step.
-* The ``coupling frequency`` parameter is only applicable for the cfd-dem solver and it determines the number of DEM iterations per 1 CFD iteration.
+* The ``particle statistics`` parameter, when enabled, outputs statistics about the particles' velocity, kinetic energy, and the amount of contact detection.
+* The ``coupling frequency`` determines the number of DEM iterations per 1 CFD iteration.
 
 .. note::
    The ``coupling frequency`` parameter is used to calculate the dem time step as it is not explicitly determined in the parameter file. It is calculated as: 
@@ -59,7 +80,6 @@ This subsection includes parameters related to multiphase flow simulations using
    .. math::
       \Delta t_{DEM} = \frac{\Delta t_{CFD}}{coupling frequency}
 
-* The ``inlet boundary`` and ``outlet boundary`` parameters allow us to specify the ID of the inlet and outlet for pressure drop calculations.
 * The ``implicit stabilization`` parameter determines whether or not we calculate the :math:`\tau` for the SUPG/PSPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
 * The ``grad-div length scale`` parameter determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`.
 
@@ -76,14 +96,16 @@ This subsection includes parameters related to multiphase flow simulations using
 
 `[5] <https://doi.org/10.1007/s003480050203>`_ B. Oesterlé, T. Dinh, Experiments on the lift of a spinning sphere in a range of intermediate Reynolds numbers. Experiments in Fluids 25, 16–22, 1998.
 
-`[6] <https://doi.org/10.1016/0301-9322(94)90011-6>`_ R. Di Felice, The voidage function for fluid-particle interaction systems. International journal of multiphase flow 20 (1), 153–159, 1994.
+`[6] <https://doi.org/10.1002/aic.690491104>`_ J. J. Derksen. Numerical simulation of solids suspension in a stirred tank. AIChE Journal, v. 49, n. 11, p. 2700-2714, 2003.
 
-`[7] <https://doi.org/10.1016/j.ces.2013.05.036>`_ L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99, 44–58, 2013.
+`[7] <https://doi.org/10.1016/0301-9322(94)90011-6>`_ R. Di Felice, The voidage function for fluid-particle interaction systems. International journal of multiphase flow 20 (1), 153–159, 1994.
 
-`[8] <https://doi.org/10.1080/07373937.2010.482714>`_ W. Sobieski. Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model. Drying Technology, 29, 111-125, 2011.
+`[8] <https://doi.org/10.1016/j.ces.2013.05.036>`_ L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99, 44–58, 2013.
 
-`[9] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems. Chemical Engineering Science 98, 298–310, 2013.
+`[9] <https://doi.org/10.1080/07373937.2010.482714>`_ W. Sobieski. Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model. Drying Technology, 29, 111-125, 2011.
 
-`[10] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ Tim M.J. Nijssen, Hans A.M. Kuipers, Jan van der Stel, Allert T. Adema, Kay A. Buist, Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations, International Journal of Multiphase Flow, Volume 132, 2020.
+`[10] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems. Chemical Engineering Science 98, 298–310, 2013.
 
-`[11] <https://doi.org/10.1016/j.powtec.2019.10.058>`_ F. Marchelli, Q. Hou, B.Bosio, E. Arato, & A. Yu, Comparison of different drag models in CFD-DEM simulations of spouted beds. Powder Technology, 360, 1253-1270, 2020.
+`[11] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ Tim M.J. Nijssen, Hans A.M. Kuipers, Jan van der Stel, Allert T. Adema, Kay A. Buist, Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations, International Journal of Multiphase Flow, Volume 132, 2020.
+
+`[12] <https://doi.org/10.1016/j.powtec.2019.10.058>`_ F. Marchelli, Q. Hou, B.Bosio, E. Arato, & A. Yu, Comparison of different drag models in CFD-DEM simulations of spouted beds. Powder Technology, 360, 1253-1270, 2020.
