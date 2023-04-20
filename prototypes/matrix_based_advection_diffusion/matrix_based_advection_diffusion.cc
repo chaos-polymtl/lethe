@@ -366,8 +366,6 @@ public:
              const unsigned int             component = 0) const override;
 };
 
-
-
 template <int dim>
 double
 BoundaryValues<dim>::value(const Point<dim> & p,
@@ -398,7 +396,6 @@ BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
   for (unsigned int i = 0; i < points.size(); ++i)
     values[i] = BoundaryValues<dim>::value(points[i], component);
 }
-
 
 template <int dim, int fe_degree>
 class MatrixBasedAdvectionDiffusion
@@ -593,6 +590,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                constraints);
 
       // Set boundary values for the initial newton iteration
+      VectorType local_solution(system_rhs);
+
       std::map<types::global_dof_index, double> boundary_values_left_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
                                                0,
@@ -600,7 +599,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                  -1.0),
                                                boundary_values_left_wall);
       for (auto &boundary_value : boundary_values_left_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_right_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -609,7 +608,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                  1.0),
                                                boundary_values_right_wall);
       for (auto &boundary_value : boundary_values_right_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_top_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -617,7 +616,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                Functions::ZeroFunction<dim>(),
                                                boundary_values_top_wall);
       for (auto &boundary_value : boundary_values_top_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_bottom_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -625,7 +624,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                BoundaryFunction<dim>(),
                                                boundary_values_bottom_wall);
       for (auto &boundary_value : boundary_values_bottom_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
+
+      solution = local_solution;
     }
   else if (parameters.problem_type == Settings::double_glazing)
     {
@@ -651,13 +652,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                constraints);
 
       // Set boundary values for the initial newton iteration
+      VectorType local_solution(system_rhs);
+
       std::map<types::global_dof_index, double> boundary_values_left_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
                                                0,
                                                Functions::ZeroFunction<dim>(),
                                                boundary_values_left_wall);
       for (auto &boundary_value : boundary_values_left_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_right_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -666,7 +669,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                  1.0),
                                                boundary_values_right_wall);
       for (auto &boundary_value : boundary_values_right_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_top_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -674,7 +677,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                Functions::ZeroFunction<dim>(),
                                                boundary_values_top_wall);
       for (auto &boundary_value : boundary_values_top_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_bottom_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -682,7 +685,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                Functions::ZeroFunction<dim>(),
                                                boundary_values_bottom_wall);
       for (auto &boundary_value : boundary_values_bottom_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
+
+      solution = local_solution;
     }
   else if (parameters.problem_type == Settings::boundary_layer_with_hole)
     {
@@ -698,13 +703,15 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                constraints);
 
       // Set boundary values for the initial newton iteration
+      VectorType local_solution(system_rhs);
+
       std::map<types::global_dof_index, double> boundary_values_left_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
                                                0,
                                                BoundaryValues<dim>(),
                                                boundary_values_left_wall);
       for (auto &boundary_value : boundary_values_left_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
 
       std::map<types::global_dof_index, double> boundary_values_right_wall;
       VectorTools::interpolate_boundary_values(dof_handler,
@@ -712,7 +719,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_system()
                                                BoundaryValues<dim>(),
                                                boundary_values_right_wall);
       for (auto &boundary_value : boundary_values_right_wall)
-        solution(boundary_value.first) = boundary_value.second;
+        local_solution(boundary_value.first) = boundary_value.second;
+
+      solution = local_solution;
     }
 
   constraints.close();
@@ -742,8 +751,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::setup_gmg()
   mg_constrained_dofs.clear();
   mg_constrained_dofs.initialize(dof_handler);
 
-  const std::set<types::boundary_id> boundary_ids = {types::boundary_id(0)};
-  mg_constrained_dofs.make_zero_boundary_constraints(dof_handler, boundary_ids);
+  mg_constrained_dofs.make_zero_boundary_constraints(dof_handler, {0, 1, 2, 3});
 
   const unsigned int n_levels = triangulation.n_global_levels();
 
@@ -876,9 +884,20 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
                   if (parameters.stabilization)
                     {
-                      double h   = cell->measure();
+                      double h = 0;
+                      if (dim == 2)
+                        {
+                          h = std::sqrt(4. * cell->measure() / M_PI) /
+                              parameters.element_order;
+                        }
+                      else if (dim == 3)
+                        {
+                          h = std::pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                              parameters.element_order;
+                        }
+
                       double tau = std::pow(
-                        std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                        std::pow(1 / (parameters.peclet_number * h * h), 2) +
                           std::pow(2 * advection_term_values[q].norm() / h, 2),
                         -0.5);
 
@@ -964,13 +983,26 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
 
                       if (parameters.stabilization)
                         {
-                          double h   = cell->measure();
+                          double h = 0;
+                          if (dim == 2)
+                            {
+                              h = std::sqrt(4. * cell->measure() / M_PI) /
+                                  parameters.element_order;
+                            }
+                          else if (dim == 3)
+                            {
+                              h =
+                                std::pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                                parameters.element_order;
+                            }
+
                           double tau = std::pow(
-                            std::pow(4 / (parameters.peclet_number * h * h),
+                            std::pow(1 / (parameters.peclet_number * h * h),
                                      2) +
                               std::pow(2 * advection_term_values[q].norm() / h,
                                        2),
                             -0.5);
+
                           auto shape_hessian_j = fe_values.shape_hessian(j, q);
                           auto shape_laplacian_j = trace(shape_hessian_j);
                           cell_matrix(i, j) +=
@@ -1066,12 +1098,24 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
 
                     if (parameters.stabilization)
                       {
-                        double h   = cell->measure();
+                        double h = 0;
+                        if (dim == 2)
+                          {
+                            h = std::sqrt(4. * cell->measure() / M_PI) /
+                                parameters.element_order;
+                          }
+                        else if (dim == 3)
+                          {
+                            h = std::pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                                parameters.element_order;
+                          }
+
                         double tau = std::pow(
-                          std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                          std::pow(1 / (parameters.peclet_number * h * h), 2) +
                             std::pow(2 * advection_term_values[q].norm() / h,
                                      2),
                           -0.5);
+
                         auto shape_hessian_j   = fe_values.shape_hessian(j, q);
                         auto shape_laplacian_j = trace(shape_hessian_j);
                         cell_matrix(i, j) +=
@@ -1209,11 +1253,23 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
                   if (parameters.stabilization)
                     {
-                      double h   = cell->measure();
+                      double h = 0;
+                      if (dim == 2)
+                        {
+                          h = std::sqrt(4. * cell->measure() / M_PI) /
+                              parameters.element_order;
+                        }
+                      else if (dim == 3)
+                        {
+                          h = std::pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                              parameters.element_order;
+                        }
+
                       double tau = std::pow(
-                        std::pow(4 / (parameters.peclet_number * h * h), 2) +
+                        std::pow(1 / (parameters.peclet_number * h * h), 2) +
                           std::pow(2 * advection_term_values[q].norm() / h, 2),
                         -0.5);
+
                       cell_residual(i) +=
                         ((-1 / parameters.peclet_number * laplacians[q]) +
                          (advection_term_values[q] * gradients[q])) *
@@ -1281,16 +1337,18 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
             coarse_solver_control,
             SolverGMRES<VectorType>::AdditionalData(50, true));
 
-          TrilinosWrappers::PreconditionAMG                 precondition_amg;
-          TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-          precondition_amg.initialize(mg_matrix[0], amg_data);
+          // TrilinosWrappers::PreconditionAMG                 precondition_amg;
+          // TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+          // precondition_amg.initialize(mg_matrix[0], amg_data);
 
           TrilinosWrappers::PreconditionIdentity precondition_identity;
           MGCoarseGridIterativeSolver<VectorType,
                                       SolverGMRES<VectorType>,
                                       MatrixType,
-                                      TrilinosWrappers::PreconditionAMG>
-            coarse_grid_solver(coarse_solver, mg_matrix[0], precondition_amg);
+                                      TrilinosWrappers::PreconditionIdentity>
+            coarse_grid_solver(coarse_solver,
+                               mg_matrix[0],
+                               precondition_identity);
 
           // Set up smoother
           using Smoother = TrilinosWrappers::PreconditionJacobi;
