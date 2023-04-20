@@ -111,6 +111,7 @@ struct Settings
   unsigned int initial_refinement;
   double       peclet_number;
   bool         stabilization;
+  bool         nonlinearity;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -148,6 +149,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "false",
                     Patterns::Bool(),
                     "Enable stabilization <true|false>");
+  prm.declare_entry("nonlinearity",
+                    "false",
+                    Patterns::Bool(),
+                    "Add exponential nonlinearity <true|false>");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -240,6 +245,7 @@ Settings::try_parse(const std::string &prm_filename)
   this->initial_refinement = prm.get_integer("initial refinement");
   this->peclet_number      = prm.get_double("peclet number");
   this->stabilization      = prm.get_bool("stabilization");
+  this->nonlinearity       = prm.get_bool("nonlinearity");
   this->output             = prm.get_bool("output");
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
@@ -478,6 +484,10 @@ public:
   void
   reinit_operator_parameters(const Settings &parameters);
 
+  void
+  evaluate_newton_step(
+    const LinearAlgebra::distributed::Vector<number> &newton_step);
+
   virtual void
   compute_diagonal() override;
 
@@ -501,6 +511,7 @@ private:
 
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   Settings                               parameters;
+  Table<2, VectorizedArray<number>>      nonlinear_values;
 };
 
 template <int dim, int fe_degree, typename number>
@@ -515,6 +526,7 @@ template <int dim, int fe_degree, typename number>
 void
 AdvectionDiffusionOperator<dim, fe_degree, number>::clear()
 {
+  nonlinear_values.reinit(0, 0);
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
     clear();
 }
@@ -525,6 +537,32 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::reinit_operator_parameters(
   const Settings &parameters)
 {
   this->parameters = parameters;
+}
+
+template <int dim, int fe_degree, typename number>
+void
+AdvectionDiffusionOperator<dim, fe_degree, number>::evaluate_newton_step(
+  const LinearAlgebra::distributed::Vector<number> &newton_step)
+{
+  const unsigned int n_cells = this->data->n_cell_batches();
+  FECellIntegrator   phi(*this->data);
+
+  nonlinear_values.reinit(n_cells, phi.n_q_points);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      phi.reinit(cell);
+      phi.read_dof_values_plain(newton_step);
+      phi.evaluate(EvaluationFlags::values);
+
+      for (unsigned int q = 0; q < phi.n_q_points; ++q)
+        {
+          if (parameters.nonlinearity)
+            nonlinear_values(cell, q) = std::exp(phi.get_value(q));
+          else
+            nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
+        }
+    }
 }
 
 template <int dim, int fe_degree, typename number>
@@ -541,6 +579,10 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
+      AssertDimension(nonlinear_values.size(0),
+                      phi.get_matrix_free().n_cell_batches());
+      AssertDimension(nonlinear_values.size(1), phi.n_q_points);
+
       phi.reinit(cell);
 
       if (parameters.stabilization)
@@ -595,17 +637,22 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
                     -0.5);
                 }
 
-              phi.submit_value(advection_vector * phi.get_gradient(q), q);
+              phi.submit_value(advection_vector * phi.get_gradient(q) -
+                                 nonlinear_values(cell, q) * phi.get_value(q),
+                               q);
               phi.submit_gradient(
                 1 / parameters.peclet_number * phi.get_gradient(q) +
                   (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-                    (advection_vector * phi.get_gradient(q))) *
+                    (advection_vector * phi.get_gradient(q)) -
+                    nonlinear_values(cell, q)) *
                    tau * advection_vector),
                 q);
             }
           else
             {
-              phi.submit_value(advection_vector * phi.get_gradient(q), q);
+              phi.submit_value(advection_vector * phi.get_gradient(q) -
+                                 nonlinear_values(cell, q) * phi.get_value(q),
+                               q);
               phi.submit_gradient(1 / parameters.peclet_number *
                                     phi.get_gradient(q),
                                   q);
@@ -635,6 +682,10 @@ void
 AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
   FECellIntegrator &phi) const
 {
+  AssertDimension(nonlinear_values.size(0),
+                  phi.get_matrix_free().n_cell_batches());
+  AssertDimension(nonlinear_values.size(1), phi.n_q_points);
+
   const unsigned int cell = phi.get_current_cell_index();
 
   if (parameters.stabilization)
@@ -691,17 +742,22 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
                          -0.5);
             }
 
-          phi.submit_value(advection_vector * phi.get_gradient(q), q);
+          phi.submit_value(advection_vector * phi.get_gradient(q) -
+                             nonlinear_values(cell, q) * phi.get_value(q),
+                           q);
           phi.submit_gradient(
             1 / parameters.peclet_number * phi.get_gradient(q) +
               (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-                (advection_vector * phi.get_gradient(q))) *
+                (advection_vector * phi.get_gradient(q) -
+                 nonlinear_values(cell, q))) *
                tau * advection_vector),
             q);
         }
       else
         {
-          phi.submit_value(advection_vector * phi.get_gradient(q), q);
+          phi.submit_value(advection_vector * phi.get_gradient(q) -
+                             nonlinear_values(cell, q) * phi.get_value(q),
+                           q);
           phi.submit_gradient(1 / parameters.peclet_number *
                                 phi.get_gradient(q),
                               q);
@@ -1249,6 +1305,9 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
           Tensor<1, dim, VectorizedArray<double>> advection_vector =
             evaluate_function<dim, double, dim>(advection_field, point_batch);
 
+          VectorizedArray<double> nonlinearity =
+            (parameters.nonlinearity ? std::exp(phi.get_value(q)) : 0.0);
+
           if (parameters.stabilization)
             {
               VectorizedArray<double> tau = VectorizedArray<double>(0.0);
@@ -1288,19 +1347,19 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
                 }
 
               phi.submit_value(advection_vector * phi.get_gradient(q) -
-                                 source_value,
+                                 source_value - nonlinearity,
                                q);
               phi.submit_gradient(
                 1 / parameters.peclet_number * phi.get_gradient(q) +
                   (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-                    (advection_vector * phi.get_gradient(q))) *
+                    (advection_vector * phi.get_gradient(q)) - nonlinearity) *
                    tau * advection_vector),
                 q);
             }
           else
             {
               phi.submit_value(advection_vector * phi.get_gradient(q) -
-                                 source_value,
+                                 source_value - nonlinearity,
                                q);
               phi.submit_gradient(1 / parameters.peclet_number *
                                     phi.get_gradient(q),
@@ -1374,12 +1433,16 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           data.elliptic      = false;
           data.smoother_type = "Jacobi";
 
+          system_matrix.evaluate_newton_step(solution);
+
           preconditioner.initialize(
             system_matrix.get_system_matrix(constraints), data);
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
         case Settings::gmg: {
+          system_matrix.evaluate_newton_step(solution);
+
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
 
           // Set up smoother: Jacobi Smoother
@@ -1391,6 +1454,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           for (unsigned int level = 0; level < triangulation.n_global_levels();
                ++level)
             {
+              mg_matrices[level].evaluate_newton_step(mg_solution[level]);
               mg_matrices[level].compute_diagonal();
             }
           mg_smoother_jacobi.initialize(
@@ -1679,6 +1743,12 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
       STABILIZATION_header = "Stabilization: true";
     else
       STABILIZATION_header = "Stabilization: false";
+    std::string NONLINEARITY_header = "";
+    if (parameters.nonlinearity)
+      NONLINEARITY_header = "Nonlinearity: true";
+    else
+      NONLINEARITY_header = "Nonlinearity: false";
+
 
     pcout << std::string(80, '=') << std::endl;
     pcout << DAT_header << std::endl;
@@ -1695,6 +1765,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
     pcout << PECLET_header << std::endl;
     pcout << PROBLEM_TYPE_header << std::endl;
     pcout << STABILIZATION_header << std::endl;
+    pcout << NONLINEARITY_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }
