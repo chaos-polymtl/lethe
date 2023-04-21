@@ -586,6 +586,11 @@ private:
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, int>>
     overconstrained_fluid_cell_map;
+  /*
+   * These vectors are used to keep track of the DOFs that are overconstraint
+   */
+  TrilinosWrappers::MPI::Vector local_dof_over_constraint;
+  TrilinosWrappers::MPI::Vector dof_over_constraint;
 
   /*
    * This map is used to keep information about the vertices that are
