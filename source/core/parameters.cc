@@ -373,6 +373,15 @@ namespace Parameters
         Patterns::Selection("pspg_supg|gls|grad_div"),
         "Type of stabilization used for the Navier-Stokes equations"
         "Choices are <pspg_supg|gls|grad_div>.");
+
+      prm.declare_entry(
+        "pressure scaling factor",
+        "1",
+        Patterns::Double(),
+        "This parameter can be used to change the scale of pressure in the "
+        "equations to solve. When the velocity and pressure scales are very "
+        "different, using this parameter allows to reduce the condition number"
+        " and reach a solution.");
     }
     prm.leave_subsection();
   }
@@ -392,6 +401,8 @@ namespace Parameters
         stabilization = NavierStokesStabilization::grad_div;
       else
         throw(std::runtime_error("Invalid stabilization strategy"));
+
+      pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
     prm.leave_subsection();
   }
@@ -716,7 +727,6 @@ namespace Parameters
       // Kinematic viscosity is in L^2 T^-1, rescale
       viscosity *= dimensions.viscosity_scaling;
       non_newtonian_parameters.parse_parameters(prm, dimensions);
-
 
       //--------------
       // Specific heat

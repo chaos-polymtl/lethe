@@ -395,6 +395,10 @@ namespace Parameters
   {
     bool use_default_stabilization;
 
+    // pressure scaling factor used to facilitate the joint solving of velocity
+    // and pressure
+    double pressure_scaling_factor;
+
     enum class NavierStokesStabilization
     {
       pspg_supg,

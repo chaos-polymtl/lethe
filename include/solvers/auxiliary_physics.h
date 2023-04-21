@@ -46,9 +46,9 @@
  * vector type that is used to manage their data.
  *
  *
- * Current limitatitations:
+ * Current limitations:
  *
- * - Auxiliary physics are currently expected to be used in conjuction with a
+ * - Auxiliary physics are currently expected to be used in conjunction with a
  * flow solver which can provide a velocity field.
  * - Support for feedback from the auxiliary physics to the core physics is
  * there but presently not used anywhere

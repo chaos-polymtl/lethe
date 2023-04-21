@@ -446,7 +446,7 @@ protected:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
-  // Assemblers for the matrix
+  // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers;
 
   // Multiphysics interface

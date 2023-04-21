@@ -279,8 +279,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto density_model = properties_manager.get_density();
           density_model->vector_value(fields, density);
 
-
-
           if (properties_manager.is_non_newtonian())
             {
               // Calculate derivative of viscosity with respect to shear rate

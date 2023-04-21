@@ -3303,7 +3303,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
-
   if (!cell->is_locally_owned())
     return;
 
@@ -3350,7 +3349,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
-  // check if we assemble the NS eqaution inside the particle or the Laplacien
+  // check if we assemble the NS equation inside the particle or the Laplacian
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -3445,7 +3444,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
-  // check if we assemble the NS eqaution inside the particle or the Laplacien
+  // check if we assemble the NS equation inside the particle or the Laplacian
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -3464,8 +3463,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
           assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
-
-
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
