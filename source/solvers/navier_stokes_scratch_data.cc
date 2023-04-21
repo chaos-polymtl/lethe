@@ -49,8 +49,9 @@ NavierStokesScratchData<dim>::allocate()
 
 
   // Pressure
-  this->pressure_values    = std::vector<double>(n_q_points);
-  this->pressure_gradients = std::vector<Tensor<1, dim>>(n_q_points);
+  this->pressure_values         = std::vector<double>(n_q_points);
+  this->pressure_gradients      = std::vector<Tensor<1, dim>>(n_q_points);
+  this->pressure_scaling_factor = 1;
 
   // Initialize arrays related to shape functions
   // Velocity shape functions
@@ -360,6 +361,14 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
       default:
         throw std::runtime_error("Unsupported number of fluids (>2)");
     }
+}
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::set_pressure_scaling_factor(
+  const double pressure_scaling_factor)
+{
+  this->pressure_scaling_factor = pressure_scaling_factor;
 }
 
 template class NavierStokesScratchData<2>;

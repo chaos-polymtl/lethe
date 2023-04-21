@@ -908,6 +908,13 @@ public:
   void
   calculate_physical_properties();
 
+  /**
+   * @brief Set the pressure scaling factor.
+   * @param pressure_scaling_factor the value parsed from parameters
+   */
+  void
+  set_pressure_scaling_factor(const double pressure_scaling_factor);
+
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
@@ -917,6 +924,10 @@ public:
   std::vector<double>                  thermal_expansion;
   std::vector<double>                  grad_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;
+
+  // Pressure scaling factor to facility different scales between velocity and
+  // pressure
+  double pressure_scaling_factor;
 
   // For VOF simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;

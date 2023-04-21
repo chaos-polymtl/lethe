@@ -394,6 +394,27 @@ protected:
   void
   write_output_torques();
 
+  /**
+   * @brief rescale_pressure_dofs_in_newton_update
+   * This function is used to rescale pressure DOFs in the newton correction
+   */
+  void
+  rescale_pressure_dofs_in_newton_update();
+
+  /**
+   * @brief Changes the pressure scaling in the evaluation point
+   * @param scaling_factor the scaling factor to use
+   */
+  void
+  rescale_evaluation_point(const double scaling_factor);
+
+  /**
+   * @brief Returns whether the DOF is locally owned
+   * @param global_id the global id of the DOF
+   */
+  inline bool
+  is_locally_owned_dof(const unsigned int global_id);
+
   // Member variables
 protected:
   DofsType locally_owned_dofs;
@@ -440,6 +461,10 @@ protected:
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
+
+  // Pressure scaling factor to allow solving problems with different pressure
+  // and velocity scales
+  double pressure_scaling_factor;
 
   // Mappings and Quadratures
   std::shared_ptr<Mapping<dim>>        mapping;
