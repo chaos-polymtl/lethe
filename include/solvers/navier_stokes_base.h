@@ -448,6 +448,7 @@ protected:
   VectorType evaluation_point;
   VectorType local_evaluation_point;
   VectorType newton_update;
+  VectorType rescaled_newton_update;
   VectorType present_solution;
   VectorType system_rhs;
 

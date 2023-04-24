@@ -1372,6 +1372,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
                                                   this->dof_handler,
                                                   void_fraction_dof_handler);
   scratch_data.calculate_physical_properties();
+  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)
@@ -1481,6 +1482,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
                                                   void_fraction_dof_handler);
 
   scratch_data.calculate_physical_properties();
+  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
   for (auto &pf_assembler : particle_fluid_assemblers)

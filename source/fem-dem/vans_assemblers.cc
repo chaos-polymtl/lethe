@@ -100,6 +100,10 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
                              viscosity * velocity_laplacian -
                              force * void_fraction + strong_residual_vec[q];
 
+      // Pressure scaling factor
+      const double pressure_scaling_factor =
+        scratch_data.pressure_scaling_factor;
+
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -108,7 +112,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j * void_fraction +
@@ -135,7 +140,8 @@ GLSVansAssemblerCoreModelB<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -433,6 +439,10 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
                              void_fraction * viscosity * velocity_laplacian -
                              force * void_fraction + strong_residual_vec[q];
 
+      // Pressure scaling factor
+      const double pressure_scaling_factor =
+        scratch_data.pressure_scaling_factor;
+
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
       for (unsigned int j = 0; j < n_dofs; ++j)
@@ -441,7 +451,8 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j * void_fraction +
@@ -468,7 +479,8 @@ GLSVansAssemblerCoreModelA<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -1896,7 +1908,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
         {
           strong_residual[q] += // Drag Force
             (beta_drag * (velocity - average_particles_velocity) +
-             undisturbed_flow_force);
+             scratch_data.pressure_scaling_factor * undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {

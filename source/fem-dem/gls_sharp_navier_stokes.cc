@@ -3354,6 +3354,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
     }
 
   scratch_data.calculate_physical_properties();
+  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
   // check if we assemble the NS equation inside the particle or the Laplacian
@@ -3449,6 +3450,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
     }
 
   scratch_data.calculate_physical_properties();
+  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
   // check if we assemble the NS equation inside the particle or the Laplacian

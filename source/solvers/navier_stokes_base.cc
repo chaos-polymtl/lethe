@@ -2121,6 +2121,18 @@ NavierStokesBase<dim, VectorType, DofsType>::
   if (abs(pressure_scaling_factor - 1) < 1e-8)
     return;
 
+  // We check if the vectors are the same, which would mean the newton_update
+  // was already rescaled
+  VectorType temp;
+  temp.reinit(this->locally_owned_dofs, this->mpi_communicator);
+
+  temp = rescaled_newton_update;
+  temp -= newton_update;
+  if (temp.norm_sqr() < 1e-8)
+    {
+      newton_update = rescaled_newton_update;
+      return;
+    }
   TimerOutput::Scope t(this->computing_timer, "rescale_pressure");
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -2153,6 +2165,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
             }
         }
     }
+  rescaled_newton_update = newton_update;
 }
 
 template <int dim, typename VectorType, typename DofsType>

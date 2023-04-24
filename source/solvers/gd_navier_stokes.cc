@@ -249,6 +249,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
     }
 
   scratch_data.calculate_physical_properties();
+  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
 
@@ -383,6 +384,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
     }
 
   scratch_data.calculate_physical_properties();
+  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
   for (auto &assembler : this->assemblers)
     {
@@ -680,6 +682,8 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->rescaled_newton_update.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
@@ -845,6 +849,7 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                      renewed_matrix);
   else
     throw(std::runtime_error("This solver is not allowed"));
+  this->rescale_pressure_dofs_in_newton_update();
 }
 
 template <int dim>
