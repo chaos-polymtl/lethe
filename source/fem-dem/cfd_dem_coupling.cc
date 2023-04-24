@@ -424,13 +424,6 @@ CFDDEMSolver<dim>::read_checkpoint()
   if (this->simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
-
-      this->flow_rate = calculate_flow_rate(
-        this->dof_handler,
-        this->present_solution,
-        this->simulation_parameters.flow_control.boundary_flow_id,
-        *this->face_quadrature,
-        *this->mapping);
     }
 
   this->multiphysics->read_checkpoint();
@@ -713,7 +706,6 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
   force.resize(displacement.size());
   torque.resize(displacement.size());
 
-
   this->particle_handler.exchange_ghost_particles(true);
 
   // Updating moment of inertia container
@@ -842,24 +834,14 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   if (this->simulation_control->get_step_number() == 0)
     {
       integrator_object->integrate_half_step_location(
-        this->particle_handler,
-        dem_parameters.lagrangian_physical_properties.g,
-        dem_time_step,
-        torque,
-        force,
-        MOI);
+        this->particle_handler, g, dem_time_step, torque, force, MOI);
     }
   else
     {
       if (!contacts_are_disabled(counter))
         {
           integrator_object->integrate(
-            this->particle_handler,
-            dem_parameters.lagrangian_physical_properties.g,
-            dem_time_step,
-            torque,
-            force,
-            MOI);
+            this->particle_handler, g, dem_time_step, torque, force, MOI);
         }
       else // contacts are disabled
         {
@@ -868,7 +850,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
               &*this->triangulation);
           integrator_object->integrate(
             this->particle_handler,
-            dem_parameters.lagrangian_physical_properties.g,
+            g,
             dem_time_step,
             torque,
             force,
@@ -1193,6 +1175,71 @@ CFDDEMSolver<dim>::postprocess_fd(bool first_iteration)
 
 template <int dim>
 void
+CFDDEMSolver<dim>::dynamic_flow_control()
+{
+  if (this->simulation_parameters.flow_control.enable_flow_control &&
+      this->simulation_parameters.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady)
+    {
+      // Calculate the average velocity according to the void fraction
+      unsigned int flow_direction =
+        this->simulation_parameters.flow_control.flow_direction;
+      double average_velocity =
+        calculate_average_velocity(this->dof_handler,
+                                   this->void_fraction_dof_handler,
+                                   this->present_solution,
+                                   this->nodal_void_fraction_relevant,
+                                   flow_direction,
+                                   *this->cell_quadrature,
+                                   *this->mapping);
+
+      // Calculate the beta force for fluid
+      this->flow_control.calculate_beta(
+        average_velocity,
+        this->simulation_control->get_time_step(),
+        this->simulation_control->get_step_number());
+
+      Tensor<1, 3> beta_particle;
+      if (this->simulation_parameters.flow_control.enable_beta_particle)
+        {
+          // Calculate the beta for particles and add it to force tensor g
+          AssertThrow(
+            dem_parameters.lagrangian_physical_properties
+                .particle_type_number == 1,
+            ExcMessage(std::string(
+              "Beta force calculation for particles is not implemented for multiple particle types.")));
+
+          double fluid_density =
+            this->simulation_parameters.physical_properties_manager
+              .get_density_scale();
+          double particle_density =
+            dem_parameters.lagrangian_physical_properties.density_particle[0];
+          beta_particle =
+            this->flow_control.get_beta_particles(fluid_density,
+                                                  particle_density);
+          g = dem_parameters.lagrangian_physical_properties.g + beta_particle;
+        }
+
+      // Showing results
+      if (this->simulation_parameters.flow_control.verbosity ==
+            Parameters::Verbosity::verbose &&
+          this->simulation_control->get_step_number() > 0 &&
+          this->this_mpi_process == 0)
+        {
+          announce_string(this->pcout, "Flow control summary");
+          this->pcout << "Fluid space-average velocity: " << average_velocity
+                      << std::endl;
+          this->pcout << "Fluid beta force: "
+                      << this->flow_control.get_beta()[flow_direction]
+                      << std::endl;
+          this->pcout << "Particle beta force: "
+                      << beta_particle[flow_direction] << std::endl;
+        }
+    }
+}
+
+template <int dim>
+void
 CFDDEMSolver<dim>::print_particles_summary()
 {
   // Write particle Velocity
@@ -1228,6 +1275,7 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
   dem_parameters.lagrangian_physical_properties =
     this->cfd_dem_simulation_parameters.dem_parameters
       .lagrangian_physical_properties;
+  g = dem_parameters.lagrangian_physical_properties.g;
   dem_parameters.boundary_conditions =
     this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
   dem_parameters.floating_walls =

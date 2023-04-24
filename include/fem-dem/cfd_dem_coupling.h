@@ -220,6 +220,14 @@ private:
   postprocess_fd(bool first_iteration) override;
 
   /**
+   * @brief dynamic_flow_control
+   * Dynamic flow control calculation that take into account the void fraction
+   * for the average velocity calculation
+   */
+  void
+  dynamic_flow_control() override;
+
+  /**
    * @brief Check if the disabling contacts is enabled and that
    *
    */
@@ -233,6 +241,7 @@ private:
   bool                      contact_detection_step;
   bool                      checkpoint_step;
   bool                      load_balance_step;
+  Tensor<1, 3>              g;
   std::vector<Tensor<1, 3>> torque;
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       displacement;

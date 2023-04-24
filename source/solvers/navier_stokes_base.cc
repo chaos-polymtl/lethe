@@ -214,46 +214,39 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
-  const VectorType &evaluation_point)
-{
-  this->flow_rate =
-    calculate_flow_rate(this->dof_handler,
-                        evaluation_point,
-                        simulation_parameters.flow_control.boundary_flow_id,
-                        *this->face_quadrature,
-                        *this->mapping);
-
-  // Showing results (area and flow rate)
-  if (simulation_parameters.flow_control.verbosity ==
-        Parameters::Verbosity::verbose &&
-      simulation_control->get_step_number() > 0 && this->this_mpi_process == 0)
-    {
-      std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|  Flow control summary                    |" << std::endl;
-      std::cout << "+------------------------------------------+" << std::endl;
-      this->pcout << "Inlet area : " << flow_rate.second << std::endl;
-      this->pcout << "Flow rate : " << flow_rate.first << std::endl;
-      this->pcout << "Beta applied : "
-                  << beta[simulation_parameters.flow_control.flow_direction]
-                  << std::endl;
-    }
-}
-
-
-template <int dim, typename VectorType, typename DofsType>
-void
 NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 {
   if (simulation_parameters.flow_control.enable_flow_control &&
       simulation_parameters.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->flow_control.calculate_beta(flow_rate,
+      // Calculate the average velocity
+      double average_velocity = calculate_average_velocity(
+        this->dof_handler,
+        this->present_solution,
+        simulation_parameters.flow_control.boundary_flow_id,
+        *this->face_quadrature,
+        *this->mapping);
+
+      this->flow_control.calculate_beta(average_velocity,
                                         simulation_control->get_time_step(),
                                         simulation_control->get_step_number());
 
-      this->beta = flow_control.get_beta();
+      // Showing results
+      if (simulation_parameters.flow_control.verbosity ==
+            Parameters::Verbosity::verbose &&
+          simulation_control->get_step_number() > 0 &&
+          this->this_mpi_process == 0)
+        {
+          announce_string(this->pcout, "Flow control summary");
+          this->pcout << "Space-average velocity: " << average_velocity
+                      << std::endl;
+          this->pcout
+            << "Beta force:  "
+            << flow_control
+                 .get_beta()[simulation_parameters.flow_control.flow_direction]
+            << std::endl;
+        }
     }
 }
 
@@ -1376,12 +1369,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
 
-  // Calculate inlet flow rate and area
-  if (this->simulation_parameters.flow_control.enable_flow_control)
-    {
-      this->postprocessing_flow_rate(this->present_solution);
-    }
-
   if (!firstIter)
     {
       // Calculate forces on the boundary conditions
@@ -1598,13 +1585,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   if (simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
-
-      this->flow_rate =
-        calculate_flow_rate(this->dof_handler,
-                            present_solution,
-                            simulation_parameters.flow_control.boundary_flow_id,
-                            *this->face_quadrature,
-                            *this->mapping);
     }
 
 
