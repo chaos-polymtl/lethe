@@ -1,5 +1,5 @@
 # Set the output to a png file
-set terminal pngcairo  enhanced font "arial,10" fontscale 1.0 size 600, 400
+set terminal pngcairo  enhanced font "arial,14" fontscale 1.0 size 600, 400
 
 
 # The file we'll write to

@@ -27,7 +27,7 @@ Files used in this example
 Description of the case
 -----------------------------
 
-A circular bubble of radius :math:`R=0.5` is in equilibrium in the center of a two-dimensional squared domain of side length :math:`L=5.0` filled with air. The gravitational force is neglected, such as in a microgravity environment, and the ratio of density between the droplet and the air is 1, meaning that buoyancy is also neglected. Therefore, without any external force, the bubble and the air are at rest and only the surface tension effects are involved, maintaining the droplet in its circular shape. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
+A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a two-dimensional squared domain of side length :math:`L=5.0` filled with air. The gravitational force is neglected, such as in a microgravity environment, and the ratio of density between the droplet and the air is 1, meaning that buoyancy is also neglected. Therefore, without any external force, the bubble and the air are at rest and only the surface tension effects are involved, maintaining the droplet in its circular shape. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
 .. image:: images/static-bubble.png
     :alt: Schematic
@@ -183,7 +183,7 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the defined co
         set Function expression = 0; 0; 0
       end
       subsection VOF
-        set Function expression = if (x * x + y * y < 0.5 * 0.5 , 1, 0)
+        set Function expression = if (x^2 + y^2 < 0.5^2 , 1, 0)
         subsection projection step
           set enable = true
           set diffusion factor = 1
@@ -266,7 +266,7 @@ When providing the analytical solution in the ``analytical solution`` subsection
       set verbosity             = quiet
       set filename              = L2Error
       subsection uvwp
-       set Function expression = 0; 0; if (x * x + y * y < 0.5 * 0.5 , 2, 0)
+       set Function expression = 0; 0; if (x^2 + y^2 < 0.5^2 , 2, 0)
       end
     end
 
@@ -292,7 +292,15 @@ Results
 
 Using Paraview, we can visualize the evolution of the velocity field over the time:
 
-.. image:: images/static-bubble.gif
++------------------------------------------+------------------------------------------+
+| t = 0 s                                  | t = 0.1 s                                |
+|                                          |                                          |
+| .. image:: images/static-bubble-t0p0.png | .. image:: images/static-bubble-t0p1.png |
++------------------------------------------+------------------------------------------+
+| t = .5 s                                 | t = 3.0 s                                |
+|                                          |                                          |
+| .. image:: images/static-bubble-t1p5.png | .. image:: images/static-bubble-t3p0.png |
++------------------------------------------+------------------------------------------+
 
 The time evolution of the :math:`\mathcal{L}^2` norm of the error on the velocity magnitude is obtained from a Gnuplot script available in the example folder by launching in the same directory the following command:
 
