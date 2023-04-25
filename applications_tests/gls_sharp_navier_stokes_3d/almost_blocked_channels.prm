@@ -100,6 +100,6 @@ subsection non-linear solver
 end
 
 subsection linear solver
-  set verbosity = quiet
+  set verbosity         = quiet
+  set relative residual = 1e-1
 end
-
