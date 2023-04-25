@@ -1158,6 +1158,9 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::direct)
     solve_system_direct(initial_step, absolute_residual, relative_residual);
+  else if (this->simulation_parameters.linear_solver.solver ==
+           Parameters::LinearSolver::SolverType::gcr)
+    solve_system_gcr_iterative(initial_step, absolute_residual, relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
@@ -1169,7 +1172,9 @@ GLSNavierStokesSolver<dim>::setup_preconditioner()
   if (this->simulation_parameters.linear_solver.solver ==
         Parameters::LinearSolver::SolverType::gmres ||
       this->simulation_parameters.linear_solver.solver ==
-        Parameters::LinearSolver::SolverType::bicgstab)
+        Parameters::LinearSolver::SolverType::bicgstab||
+      this->simulation_parameters.linear_solver.solver ==
+        Parameters::LinearSolver::SolverType::gcr )
     setup_ILU();
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::amg)
@@ -1261,6 +1266,264 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
   amg_preconditioner->initialize(system_matrix, parameter_ml);
 }
+
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(const bool   initial_step,
+                                               const double absolute_residual,
+                                               const double relative_residual)
+{
+  // This function implementation of a (Generalized Conjugate Residual) GCR
+  // iterative solver with optimal alpha calculation. This implementation aims
+  // to have an open iterative solver for debugging and learning purposes. This
+  // scheme solves matrices in a similar number of iterations and time as GMRES.
+  TimerOutput::Scope t(this->computing_timer, "solve matrix");
+
+  TrilinosWrappers::MPI::Vector solution(this->locally_owned_dofs,
+                                         this->mpi_communicator);
+  TrilinosWrappers::MPI::Vector residual(this->locally_owned_dofs,
+                                         this->mpi_communicator);
+
+  std::vector<TrilinosWrappers::MPI::Vector> previous_direction;
+  std::vector<TrilinosWrappers::MPI::Vector> previous_direction_matrix_prod;
+  std::vector<std::vector<double>> previous_variation_vector_prod_matrix;
+  std::vector<double> previous_variation_vector_prod_matrix_temp_line;
+
+  TrilinosWrappers::MPI::Vector direction(this->locally_owned_dofs,
+                                          this->mpi_communicator);
+  TrilinosWrappers::MPI::Vector variation_in_direction(this->locally_owned_dofs,
+                                                       this->mpi_communicator);
+
+  // tol of solution
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  // Define initial solution guess assuming diagonal matrix.
+  solution = 0;
+
+  // Initialize residual
+  this->system_matrix.vmult(residual, solution);
+  residual.add(-1, this->system_rhs);
+
+  int iter                               = 0;
+  bool         abort_resolution_and_keep_solution = false;
+  double       current_residual                   = residual.l2_norm();
+  double       previous_residual                  = DBL_MAX;
+  while (current_residual > linear_solver_tolerance &&
+         iter < this->simulation_parameters.linear_solver.max_iterations)
+    {
+      // Select a direction that is orthogonal to all previous direction based
+      // on the preconditioner.
+      if (iter % this->simulation_parameters.linear_solver.max_krylov_vectors !=
+          0)
+        {
+          // Define the direction with the ILU preconditioner
+          ilu_preconditioner->vmult(direction, residual);
+          // Orthogonalalized direction with previous direction for numerical stability.
+          for (unsigned int vect_id_i = 0;
+               vect_id_i < previous_direction.size();
+               ++vect_id_i)
+            {
+              // Calculate the projection vector of the new direction with the
+              // previous direction and remove the associated components.
+              double alpha = direction * previous_direction[vect_id_i];
+              direction.add(-alpha, previous_direction[vect_id_i]);
+            }
+        }
+      else
+        {
+          previous_direction.clear();
+          previous_direction_matrix_prod.clear();
+          previous_variation_vector_prod_matrix.clear();
+          // ILU preconditioner
+          ilu_preconditioner->vmult(direction, residual);
+        }
+
+      // Normalized the direction for numerical stability
+      double    direction_norm = 1.0 / direction.l2_norm();
+      direction.operator*=(direction_norm);
+      previous_direction.push_back(direction);
+      this->system_matrix.vmult(variation_in_direction, direction);
+      previous_direction_matrix_prod.push_back(variation_in_direction);
+
+      // Initialized matrix used to find the optimal combination of alphas with
+      // the set of direction.
+      FullMatrix<double> variation_vector_dot_product(
+        previous_direction.size(), previous_direction.size());
+      FullMatrix<double> inv_variation_vector_dot_product(
+        previous_direction.size(), previous_direction.size());
+      Vector<double> alphas(previous_direction.size());
+      Vector<double> variation_vector_residue_dot(previous_direction.size());
+      previous_variation_vector_prod_matrix_temp_line.clear();
+
+      // Assemble the matrix and rhs to find the optimal combination of alphas
+      // with the set of directions.
+      for (unsigned int vect_id_i = 0; vect_id_i < previous_direction.size();
+           ++vect_id_i)
+        {
+          for (unsigned int vect_id_j = 0; vect_id_j < vect_id_i + 1;
+               ++vect_id_j)
+            {
+              // Since the new matrix entries are identical to the previous
+              // iteration matrix, we can calculate only the entry related to
+              // the new direction and reuse the old entries of the matrix.
+              if (vect_id_i == previous_direction.size() - 1)
+                {
+                  // If we are here it is a new entry.
+                  // Calculate the matrix entry, which is the dot product of the
+                  // variation vector associated with the i direction with the
+                  // variation vector associated with the j direction.
+                  double alpha = previous_direction_matrix_prod[vect_id_i] *
+                                 previous_direction_matrix_prod[vect_id_j];
+                  // Calculate RHS which is the dot product of the variation
+                  // vector i with the residual vector.
+                  variation_vector_residue_dot[vect_id_i] =
+                    previous_direction_matrix_prod[vect_id_i] * residual;
+                  variation_vector_dot_product[vect_id_i][vect_id_j] = alpha;
+                  // The matrix is symetric, so we only do the calculation once
+                  // and stores both matrix entries.
+                  if (vect_id_i != vect_id_j)
+                    {
+                      variation_vector_dot_product[vect_id_j][vect_id_i] =
+                        alpha;
+                    }
+                  // Store the matrix entries for future iterations.
+                  if (previous_variation_vector_prod_matrix.size() <
+                      previous_direction.size())
+                    {
+                      previous_variation_vector_prod_matrix.push_back(
+                        std::vector<double>());
+                      previous_variation_vector_prod_matrix[vect_id_i]
+                        .push_back(alpha);
+                    }
+                  else
+                    {
+                      previous_variation_vector_prod_matrix[vect_id_i]
+                        .push_back(alpha);
+                    }
+                }
+              else
+                {
+                  // Use previously stored matrix entries.
+                  variation_vector_dot_product[vect_id_i][vect_id_j] =
+                    previous_variation_vector_prod_matrix[vect_id_i][vect_id_j];
+                  if (vect_id_i != vect_id_j)
+                    {
+                      variation_vector_dot_product[vect_id_j][vect_id_i] =
+                        previous_variation_vector_prod_matrix[vect_id_i]
+                                                             [vect_id_j];
+                    }
+                }
+            }
+        }
+
+      // Invert the matrix and calculate the optimal alphas.
+      inv_variation_vector_dot_product.invert(variation_vector_dot_product);
+      inv_variation_vector_dot_product.vmult(alphas,
+                                             variation_vector_residue_dot);
+
+      // Applied the optimal alpha with the previous direction.
+      for (unsigned int vect_id = 0; vect_id < previous_direction.size();
+           ++vect_id)
+        {
+          if (alphas[vect_id] == alphas[vect_id])
+            {
+              solution.add(-alphas[vect_id] * 1, previous_direction[vect_id]);
+              residual.add(-alphas[vect_id] * 1,
+                           previous_direction_matrix_prod[vect_id]);
+            }
+          else
+            {
+              // At least one of the alpha is a Nan, which means that at least
+              // two correction vectors are almost collinear, and the matrix
+              // inversion has a very high condition number. This means that
+              // either the preconditioner or the matrix is close to being
+              // singular.
+              if (this->simulation_parameters.linear_solver
+                    .force_linear_solver_continuation)
+                {
+                  this->pcout
+                    << "The linear solver failed. This means that either the matrix or the preconditioner is singular. Since the parameter: force linear solver continuation is set to true, the solver returns the current solution."
+                    << std::endl;
+                  abort_resolution_and_keep_solution = true;
+                  break;
+                }
+              else
+                {
+                  throw std::runtime_error(
+                    "Error!: At least two correction vectors are almost collinear, and the matrix inversion has a very high condition number. This means that either the preconditioner or the matrix is close to being singular");
+                }
+            }
+        }
+
+      // Reupdate residual with matrix to eliminate accumulation of
+      // floating point operations error once every 100 iteration.
+      if (iter % 100 == 0)
+        {
+          this->system_matrix.vmult(residual, solution);
+          residual.add(-1, this->system_rhs);
+        }
+
+      previous_residual = current_residual;
+      current_residual  = residual.l2_norm();
+      if (current_residual > previous_residual)
+        {
+          // The residual is larger than the previous residual. This indicates
+          // that the solution found for the alphas contains a large amount of
+          // numerical error that will lead to a divergence of the solution.
+          if (this->simulation_parameters.linear_solver
+                .force_linear_solver_continuation)
+            {
+              abort_resolution_and_keep_solution = true;
+              this->pcout
+                << "The linear solver failed. This means that either the matrix or the preconditioner is singular. Since the parameter: force linear solver continuation is set to true, the solver returns the current solution."
+                << std::endl;
+              break;
+            }
+          else
+            {
+              throw std::runtime_error(
+                "Error!: At least two correction vectors are almost collinear, and the matrix inversion has a very high condition number. This means that either the preconditioner or the matrix is close to being singular");
+            }
+        }
+
+      // The resolution is aborted and the solution is return.
+      if (abort_resolution_and_keep_solution)
+        {
+          break;
+        }
+
+      if (this->simulation_parameters.linear_solver.verbosity ==
+          Parameters::Verbosity::extra_verbose)
+        {
+          this->pcout << "    iteration i= " << iter << " residual "
+                      << current_residual << std::endl;
+        }
+
+      ++iter;
+    }
+  constraints_used.distribute(solution);
+  auto &newton_update = this->newton_update;
+  newton_update       = solution;
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << iter << " steps "
+                  << std::endl;
+    }
+}
+
 
 template <int dim>
 void

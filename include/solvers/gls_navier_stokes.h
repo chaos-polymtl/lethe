@@ -259,6 +259,14 @@ private:
                       const double relative_residual);
 
   /**
+   * @brief Generalized Conjugate Residual (GCR) iterative solver with optimal alpha calculation. This implementation aims to have an open iterative solver for debugging and learning purposes. This scheme solves matrices in a similar number of iterations and time as GMRES.
+   */
+  void
+  solve_system_gcr_iterative(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual);
+
+  /**
    * @brief  Set-up AMG preconditioner
    */
   void
