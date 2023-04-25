@@ -527,7 +527,7 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "must be defined");
     prm.declare_entry(
       "beta",
-      "20",
+      "10",
       Patterns::Double(),
       "This parameter appears in the tanh filter function. It influence "
       "the thickness and the shape of the interface. For higher values of "
