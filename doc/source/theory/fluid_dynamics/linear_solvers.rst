@@ -152,24 +152,26 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
 * Step 1: Define a correction vector with a preconditioner :math:`d_i=\mathcal{M}^{-1} r_0`.
 
-* Step 2: Store the vector :math:`d_i` in the list of correction directions :math:`D`.
+* Step 1.1 (optional): Orthogonalized :math:`d_i=\mathcal{M}^{-1} r_0` with the set of correction directions :math:`D` and normalized the orthogonalized vector. This helps the conditioning of the matrix used in step 5.
+
+* Step 2: Store the vector :math:`d_i` in the set of correction directions :math:`D`.
 
 * Step 3: Calculate the variation vector in the direction of :math:`d_i`, :math:`s_i=\mathcal{A} d_i`.
 
-* Step 4: Store the vector :math:`s_i` in the list of residual variation in a given direction :math:`S`.
+* Step 4: Store the vector :math:`s_i` in the set of residual variation in a given direction :math:`S`.
 
-* Step 4: Calculate the weight  :math:`\alpha_i` of the optimal linear combination of all correction vectors stored in :math:`D` that minimize :math:`r_{i+1}`.
+* Step 5: Calculate the weight  :math:`\alpha_i` of the optimal linear combination of all correction vectors stored in :math:`D` that minimize :math:`r_{i+1}`.
 
-* Step 4.1: Assemble the matrix and right-hand side of the following form:
+* Step 5.1: Assemble the matrix and right-hand side of the following form:
 
 .. math::
 
     \left[ \begin{matrix} 	s_0 \cdot s_0 & s_0 \cdot s_1 & ... & s_0 \cdot s_i  \\[0.3em]	s_1 \cdot s_0 & s_1 \cdot s_1 & ... & s_1 \cdot s_i \\ ... & ...& ...& ... \\ s_i \cdot s_0 & s_i \cdot s_1 & ... & s_i \cdot s_i  \end{matrix} \right] \left[ \begin{matrix} \alpha_0 \\[0.3em] \alpha_1 \\ ...\\  \alpha_i  \end{matrix} \right]  &= \left[ \begin{matrix} s_0 \cdot r_i    \\[0.3em]		s_1 \cdot r_i    \\ ... \\ s_i \cdot r_i    \\ \end{matrix} \right]
 
 
-* Step 4.2: Solve this system using a direct solver to find the :math:`\alpha_i`.
+* Step 5.2: Solve this system using a direct solver to find the :math:`\alpha_i`.
 
-* Step 5: Update the solution and the residual with the optimal linear combination of the set of vectors :math:`D`.
+* Step 6: Update the solution and the residual with the optimal linear combination of the set of vectors :math:`D`.
 
 .. math::
 
@@ -179,7 +181,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
    r_{i+1}=r_{i}-\alpha_0 s_0-\alpha_1 s_1-...-\alpha_i s_i
    
-* Step 6: Check if the residual is sufficiently small; otherwise, go back to step 1.
+* Step 7: Check if the residual is sufficiently small; otherwise, go back to step 1.
 
 
 
