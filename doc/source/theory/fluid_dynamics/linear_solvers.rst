@@ -152,7 +152,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
 * Step 1: Define a correction vector with a preconditioner :math:`d_i=\mathcal{M}^{-1} r_i`.
 
-* Step 1.1 (optional): Orthogonalized :math:`d_i` with the set of correction directions :math:`D` and normalized it. This helps the conditioning of the matrix used in step 5 but does not affect the convergence otherwise since the subspace defined by the set of vector :math:`D` is unchanged. To orthogonalized :math:`d_i` with the set of correction directions :math:`D`, we project :math:`d_i` over all the vectors in :math:`D` and remove the projected components of :math:`d_i`.
+* Step 1.1 (optional): Orthogonalized :math:`d_i` with the set of correction directions :math:`D` and normalized it. This helps the conditioning of the matrix used in step 5 but does not affect the convergence otherwise since the subspace defined by the set of vector :math:`D` (including  :math:`d_i`) is unchanged. To orthogonalized :math:`d_i` with the set of correction directions :math:`D`, we project :math:`d_i` over all the vectors in :math:`D` and remove the resulting projected components from :math:`d_i`.
 
 * Step 2: Store the vector :math:`d_i` in the set of correction directions :math:`D`.
 
@@ -160,7 +160,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
 * Step 4: Store the vector :math:`s_i` in the set of residual variation in a given direction :math:`S`.
 
-* Step 5: Calculate the vecotr of weights :math:`\alpha` of the optimal linear combination of all correction vectors stored in :math:`D` that minimize :math:`r_{i+1}`.
+* Step 5: Calculate the vector of weights :math:`\alpha` of the optimal linear combination of all correction vectors stored in :math:`D` that minimize :math:`r_{i+1}`.
 
 * Step 5.1: Assemble the matrix and right-hand side of the following form:
 
@@ -182,7 +182,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
    r_{i+1}=r_{i}-\alpha_0 s_0-\alpha_1 s_1-...-\alpha_i s_i
    
 .. note:: 
-   The matrix used to find :math:`\alpha` of the optimal linear combination is obtained by taking the partial derivative of the Euclidean norm squared of the vector :math:`r_{i+1}` with respect to each weight of :math:`\alpha` and setting it equal to 0. This generates the :math:`i` linear equations with :math:`i` unknown that is solved in step 5.1.
+   The matrix used to find the vector :math:`\alpha` is obtained by taking the partial derivative of the Euclidean norm squared of the vector :math:`r_{i+1}` with respect to each weight of :math:`\alpha` and setting it equal to 0. This generates the :math:`i` linear equations with :math:`i` unknown that is solved in step 5.1.
    
 * Step 7: Check if the residual is sufficiently small; otherwise, go back to step 1.
 
