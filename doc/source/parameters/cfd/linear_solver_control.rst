@@ -79,6 +79,7 @@ In this subsection, the control options of linear solvers are specified. These c
 	* ``gmres`` (default parameter value), a GMRES iterative solver with ILU preconditioning.
 	* ``amg``, a GMRES iterative solver with AMG preconditioning and an ILU coarsener and smoother.
 	* ``bicgstab``, a BICGSTAB iterative solver with ILU preconditioning.
+	* ``gcr``, a General conjugate residual iterative solver with ILU preconditioning. This solver is directly implemented in Lethe. It is experimental and should only be used for development purposes
 	* ``direct``, a direct solver using `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_.
 
 	.. hint::
@@ -143,7 +144,7 @@ In this subsection, the control options of linear solvers are specified. These c
 .. warning::
 	With this mode on, errors on the linear solver convergence are not thrown. Forcing the solver to continue can be useful for debugging purposes if a given iteration is hard to pass, but use with caution!
 
-* ``max krylov vectors`` sets the maximum number of krylov vectors for ``GMRES`` and ``AMG`` solvers.
+* ``max krylov vectors`` sets the maximum number of krylov vectors for ``GMRES``, ``GCR`` and ``AMG`` solvers.
 
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
