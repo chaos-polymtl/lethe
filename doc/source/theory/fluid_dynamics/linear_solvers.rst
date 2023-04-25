@@ -160,7 +160,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
 * Step 4: Store the vector :math:`s_i` in the set of residual variation in a given direction :math:`S`.
 
-* Step 5: Calculate the weight  :math:`\alpha_i` of the optimal linear combination of all correction vectors stored in :math:`D` that minimize :math:`r_{i+1}`.
+* Step 5: Calculate the vecotr of weights :math:`\alpha` of the optimal linear combination of all correction vectors stored in :math:`D` that minimize :math:`r_{i+1}`.
 
 * Step 5.1: Assemble the matrix and right-hand side of the following form:
 
@@ -169,7 +169,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
     \left[ \begin{matrix} 	s_0 \cdot s_0 & s_0 \cdot s_1 & ... & s_0 \cdot s_i  \\[0.3em]	s_1 \cdot s_0 & s_1 \cdot s_1 & ... & s_1 \cdot s_i \\[0.3em] ... & ...& ...& ... \\[0.3em] s_i \cdot s_0 & s_i \cdot s_1 & ... & s_i \cdot s_i  \end{matrix} \right] \left[ \begin{matrix} \alpha_0 \\[0.3em] \alpha_1 \\[0.3em] ...\\[0.3em]  \alpha_i  \end{matrix} \right]  &= \left[ \begin{matrix} s_0 \cdot r_i    \\[0.3em]		s_1 \cdot r_i    \\[0.3em] ... \\[0.3em] s_i \cdot r_i   \end{matrix} \right]
 
 
-* Step 5.2: Solve this system using a direct solver to find the :math:`\alpha_i`.
+* Step 5.2: Solve this system using a direct solver to find :math:`\alpha`.
 
 * Step 6: Update the solution and the residual with the optimal linear combination of the set of vectors :math:`D`.
 
@@ -182,7 +182,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
    r_{i+1}=r_{i}-\alpha_0 s_0-\alpha_1 s_1-...-\alpha_i s_i
    
 .. note:: 
-   The matrix used to find the weight :math:`\alpha_i` of the optimal linear combination is obtained by taking the partial derivative of the Euclidean norm squared of the vector :math:`r_{i+1}` with respect to the :math:`\alpha_i` and setting it equal to 0. This generates the :math:`i` linear equations with :math:`i` unknown that is solved in step 5.1.
+   The matrix used to find :math:`\alpha` of the optimal linear combination is obtained by taking the partial derivative of the Euclidean norm squared of the vector :math:`r_{i+1}` with respect to each weight of :math:`\alpha` and setting it equal to 0. This generates the :math:`i` linear equations with :math:`i` unknown that is solved in step 5.1.
    
 * Step 7: Check if the residual is sufficiently small; otherwise, go back to step 1.
 
