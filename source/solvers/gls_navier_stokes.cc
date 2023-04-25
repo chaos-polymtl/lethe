@@ -1298,7 +1298,7 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
   TrilinosWrappers::MPI::Vector variation_in_direction(this->locally_owned_dofs,
                                                        this->mpi_communicator);
 
-  // tol of solution
+  // Tol of solution
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
@@ -1311,7 +1311,7 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
                   << linear_solver_tolerance << std::endl;
     }
 
-  // Define initial solution guess assuming diagonal matrix.
+  // Define initial solution guess.
   solution = 0;
 
   // Initialize residual
@@ -1361,7 +1361,7 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
       previous_direction_matrix_prod.push_back(variation_in_direction);
 
       // Initialized matrix used to find the optimal combination of alphas with
-      // the set of direction.
+      // the set of directions.
       FullMatrix<double> variation_vector_dot_product(
         previous_direction.size(), previous_direction.size());
       FullMatrix<double> inv_variation_vector_dot_product(
@@ -1394,7 +1394,7 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
                   variation_vector_residue_dot[vect_id_i] =
                     previous_direction_matrix_prod[vect_id_i] * residual;
                   variation_vector_dot_product[vect_id_i][vect_id_j] = alpha;
-                  // The matrix is symetric, so we only do the calculation once
+                  // The matrix is symmetric, so we only do the calculation once
                   // and stores both matrix entries.
                   if (vect_id_i != vect_id_j)
                     {
@@ -1436,7 +1436,8 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
       inv_variation_vector_dot_product.vmult(alphas,
                                              variation_vector_residue_dot);
 
-      // Applied the optimal alpha with the previous direction.
+      // Applied the optimal alpha with the previous direction. to update the
+      // solution and the residual.
       for (unsigned int vect_id = 0; vect_id < previous_direction.size();
            ++vect_id)
         {
@@ -1450,7 +1451,7 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
             {
               // At least one of the alpha is a Nan, which means that at least
               // two correction vectors are almost collinear, and the matrix
-              // inversion has a very high condition number. This means that
+              // inversion as failed. This means that
               // either the preconditioner or the matrix is close to being
               // singular.
               if (this->simulation_parameters.linear_solver
