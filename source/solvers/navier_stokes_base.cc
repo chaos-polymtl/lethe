@@ -628,6 +628,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // the fluid dynamics
       multiphysics->solve(false,
                           simulation_parameters.simulation_control.method);
+      this->rescale_pressure_dofs_in_newton_update();
       multiphysics->percolate_time_vectors(false);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
@@ -636,6 +637,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // the fluid dynamics
       multiphysics->solve(true,
                           simulation_parameters.simulation_control.method);
+      this->rescale_pressure_dofs_in_newton_update();
       // Dear future Bruno, percolating auxiliary physics before fluid dynamics
       // is necessary because of the checkpointing mechanism. You spent an
       // evening debugging this, trust me.
