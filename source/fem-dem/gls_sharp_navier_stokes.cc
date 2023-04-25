@@ -1431,7 +1431,9 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
   Vector<float> cell_overconstrained(this->triangulation->n_active_cells());
-
+  Vector<float> cell_has_singular_dof(this->triangulation->n_active_cells());
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   // If the enable extra verbose output is activated we add an output field to
   // the results where we identify which particle cuts each cell of the domain.
   if (this->simulation_parameters.particlesParameters
@@ -1440,28 +1442,48 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
       // Define cell iterator
       const auto & cell_iterator = this->dof_handler.active_cell_iterators();
       unsigned int i             = 0;
+      double       dr =
+        GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(2);
+
       for (const auto &cell : cell_iterator)
         {
-          bool cell_is_cut;
-          int  particle_id;
-          std::tie(cell_is_cut, particle_id, std::ignore) = cut_cells_map[cell];
-          if (cell_is_cut)
-            cell_cuts(i) = particle_id;
-          else
-            cell_cuts(i) = -1;
+          if (cell->is_locally_owned())
+            {
+              cell->get_dof_indices(local_dof_indices);
+              cell_has_singular_dof(i) = 0.0;
+              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+                {
+                  if (abs(this->system_matrix.el(local_dof_indices[j],
+                                                 local_dof_indices[j])) <=
+                        1e-16 * dr &&
+                      this->locally_owned_dofs.is_element(local_dof_indices[j]))
+                    {
+                      cell_has_singular_dof(i) = 1.0;
+                    }
+                }
 
-          bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, particle_id) =
-            overconstrained_fluid_cell_map[cell];
-          if (cell_is_overconstrained)
-            cell_overconstrained(i) = particle_id;
-          else
-            cell_overconstrained(i) = -1;
+              bool cell_is_cut;
+              int  particle_id;
+              std::tie(cell_is_cut, particle_id, std::ignore) =
+                cut_cells_map[cell];
+              if (cell_is_cut)
+                cell_cuts(i) = particle_id;
+              else
+                cell_cuts(i) = -1;
 
+              bool cell_is_overconstrained;
+              std::tie(cell_is_overconstrained, particle_id) =
+                overconstrained_fluid_cell_map[cell];
+              if (cell_is_overconstrained)
+                cell_overconstrained(i) = particle_id;
+              else
+                cell_overconstrained(i) = -1;
+            }
           i += 1;
         }
       data_out.add_data_vector(cell_cuts, "cell_cut");
       data_out.add_data_vector(cell_overconstrained, "cell_overconstrained");
+      data_out.add_data_vector(cell_has_singular_dof, "cell_is_singular");
 
       levelset_gradient_postprocessor =
         std::make_shared<LevelsetGradientPostprocessor<dim>>(combined_shapes);
