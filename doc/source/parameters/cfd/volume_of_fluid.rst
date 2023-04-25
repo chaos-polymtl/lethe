@@ -38,7 +38,7 @@ The default values of the VOF parameters are given in the text box below.
       set verbosity       = quiet
 
       # parameter for the tanh filter
-      set beta            = 10
+      set beta            = 20
     end
 
     subsection surface tension force
