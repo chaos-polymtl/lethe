@@ -263,8 +263,8 @@ private:
    */
   void
   solve_system_gcr_iterative(const bool   initial_step,
-                      const double absolute_residual,
-                      const double relative_residual);
+                             const double absolute_residual,
+                             const double relative_residual);
 
   /**
    * @brief  Set-up AMG preconditioner

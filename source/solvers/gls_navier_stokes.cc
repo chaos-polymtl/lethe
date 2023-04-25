@@ -1160,7 +1160,9 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
     solve_system_direct(initial_step, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::gcr)
-    solve_system_gcr_iterative(initial_step, absolute_residual, relative_residual);
+    solve_system_gcr_iterative(initial_step,
+                               absolute_residual,
+                               relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
@@ -1172,9 +1174,9 @@ GLSNavierStokesSolver<dim>::setup_preconditioner()
   if (this->simulation_parameters.linear_solver.solver ==
         Parameters::LinearSolver::SolverType::gmres ||
       this->simulation_parameters.linear_solver.solver ==
-        Parameters::LinearSolver::SolverType::bicgstab||
+        Parameters::LinearSolver::SolverType::bicgstab ||
       this->simulation_parameters.linear_solver.solver ==
-        Parameters::LinearSolver::SolverType::gcr )
+        Parameters::LinearSolver::SolverType::gcr)
     setup_ILU();
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::amg)
@@ -1270,9 +1272,10 @@ GLSNavierStokesSolver<dim>::setup_AMG()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(const bool   initial_step,
-                                               const double absolute_residual,
-                                               const double relative_residual)
+GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual)
 {
   // This function implementation of a (Generalized Conjugate Residual) GCR
   // iterative solver with optimal alpha calculation. This implementation aims
@@ -1315,10 +1318,10 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(const bool   initial_step
   this->system_matrix.vmult(residual, solution);
   residual.add(-1, this->system_rhs);
 
-  int iter                               = 0;
-  bool         abort_resolution_and_keep_solution = false;
-  double       current_residual                   = residual.l2_norm();
-  double       previous_residual                  = DBL_MAX;
+  int    iter                               = 0;
+  bool   abort_resolution_and_keep_solution = false;
+  double current_residual                   = residual.l2_norm();
+  double previous_residual                  = DBL_MAX;
   while (current_residual > linear_solver_tolerance &&
          iter < this->simulation_parameters.linear_solver.max_iterations)
     {
@@ -1329,7 +1332,8 @@ GLSNavierStokesSolver<dim>::solve_system_gcr_iterative(const bool   initial_step
         {
           // Define the direction with the ILU preconditioner
           ilu_preconditioner->vmult(direction, residual);
-          // Orthogonalalized direction with previous direction for numerical stability.
+          // Orthogonalalized direction with previous direction for numerical
+          // stability.
           for (unsigned int vect_id_i = 0;
                vect_id_i < previous_direction.size();
                ++vect_id_i)
