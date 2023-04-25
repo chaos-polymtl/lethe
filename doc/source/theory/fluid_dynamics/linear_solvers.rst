@@ -150,9 +150,9 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
 * Step 0: Calculate the residual  :math:`r_0=b - \mathcal{A} x_0`.
 
-* Step 1: Define a correction vector with a preconditioner :math:`d_i=\mathcal{M}^{-1} r_0`.
+* Step 1: Define a correction vector with a preconditioner :math:`d_i=\mathcal{M}^{-1} r_i`.
 
-* Step 1.1 (optional): Orthogonalized :math:`d_i=\mathcal{M}^{-1} r_0` with the set of correction directions :math:`D` and normalized the orthogonalized vector. This helps the conditioning of the matrix used in step 5 but does not affect the convergence otherwise. To orthogonalized :math:`d_i` with the set of correction directions :math:`D`, we project :math:`d_i` over all the vectors in :math:`D` and remove the projected components of :math:`d_i`.
+* Step 1.1 (optional): Orthogonalized :math:`d_i=\mathcal{M}^{-1} r_i` with the set of correction directions :math:`D` and normalized the orthogonalized vector. This helps the conditioning of the matrix used in step 5 but does not affect the convergence otherwise. To orthogonalized :math:`d_i` with the set of correction directions :math:`D`, we project :math:`d_i` over all the vectors in :math:`D` and remove the projected components of :math:`d_i`.
 
 * Step 2: Store the vector :math:`d_i` in the set of correction directions :math:`D`.
 
