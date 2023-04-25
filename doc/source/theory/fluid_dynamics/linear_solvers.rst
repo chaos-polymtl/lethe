@@ -143,16 +143,16 @@ Some remarks:
 
 * In Lethe we use the Trilinos implementation of the AMG method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionAMG <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_. One must specify several parameters related to the number of cycles, the type of cycle and smoother parameters.
 
-Generale Conjugate Residual
+General Conjugate Residual
 ___________________________
 
 In Lethe we have implemented an experimental iterative solver to test possible modifications to the iterative resolution process. The solver is based on the General Conjugate Residual method (GCR). This section presents the current implementation of the solver.
 
-* Step 0: Calculate the residual  :math:`r_0=b - \mathcal{A} x_0`.
+* Step 0: Calculate the residual  :math:`r_0=\mathcal{A} x_0-b`.
 
 * Step 1: Define a correction vector with a preconditioner :math:`d_i=\mathcal{M}^{-1} r_i`.
 
-* Step 1.1 (optional): Orthogonalized :math:`d_i=\mathcal{M}^{-1} r_i` with the set of correction directions :math:`D` and normalized the orthogonalized vector. This helps the conditioning of the matrix used in step 5 but does not affect the convergence otherwise. To orthogonalized :math:`d_i` with the set of correction directions :math:`D`, we project :math:`d_i` over all the vectors in :math:`D` and remove the projected components of :math:`d_i`.
+* Step 1.1 (optional): Orthogonalized :math:`d_i` with the set of correction directions :math:`D` and normalized it. This helps the conditioning of the matrix used in step 5 but does not affect the convergence otherwise since the subspace defined by the set of vector :math:`D` is unchanged. To orthogonalized :math:`d_i` with the set of correction directions :math:`D`, we project :math:`d_i` over all the vectors in :math:`D` and remove the projected components of :math:`d_i`.
 
 * Step 2: Store the vector :math:`d_i` in the set of correction directions :math:`D`.
 
@@ -171,7 +171,7 @@ In Lethe we have implemented an experimental iterative solver to test possible m
 
 * Step 5.2: Solve this system using a direct solver to find :math:`\alpha`.
 
-* Step 6: Update the solution and the residual with the optimal linear combination of the set of vectors :math:`D`.
+* Step 6: Update the solution with the optimal linear combination of the set of vectors :math:`D` and the residual with the set of residual variation  :math:`S`.
 
 .. math::
 
