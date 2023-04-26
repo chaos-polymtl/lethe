@@ -184,7 +184,7 @@ Save "naca0.msh"; //Change the name of the .msh file if needed. Make sur eit is 
 
 // gmsh cTypeMesh.geo -
 
-//The name 
+
 
 
 
