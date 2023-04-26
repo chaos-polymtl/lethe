@@ -3208,6 +3208,17 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::add);
+
+  unsigned int n_dof = this->dof_handler.n_dofs();
+  for (unsigned int i = 0; i < n_dof; ++i)
+    {
+      if (abs(this->system_matrix.el(i, i)) <= 1e-16 * dr &&
+          this->locally_owned_dofs.is_element(i))
+        {
+          std::cout << "DOF index : " << i << " has a 0 on the diagonal"
+                    << std::endl;
+        }
+    }
 }
 
 
