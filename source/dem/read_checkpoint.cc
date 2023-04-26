@@ -8,6 +8,7 @@ read_checkpoint(TimerOutput &                              computing_timer,
                 const DEMSolverParameters<dim> &           parameters,
                 std::shared_ptr<SimulationControl> &       simulation_control,
                 PVDHandler &                               particles_pvdhandler,
+                PVDHandler &                               grid_pvdhandler,
                 parallel::distributed::Triangulation<dim> &triangulation,
                 Particles::ParticleHandler<dim> &          particle_handler)
 {
@@ -15,6 +16,11 @@ read_checkpoint(TimerOutput &                              computing_timer,
   std::string        prefix = parameters.restart.filename;
   simulation_control->read(prefix);
   particles_pvdhandler.read(prefix);
+
+  if (parameters.post_processing.Lagrangian_post_processing)
+    {
+      grid_pvdhandler.read(prefix + "_postprocess_data");
+    }
 
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
@@ -59,6 +65,7 @@ read_checkpoint(TimerOutput &                            computing_timer,
                 const DEMSolverParameters<2> &           parameters,
                 std::shared_ptr<SimulationControl> &     simulation_control,
                 PVDHandler &                             particles_pvdhandler,
+                PVDHandler &                             grid_pvdhandler,
                 parallel::distributed::Triangulation<2> &triangulation,
                 Particles::ParticleHandler<2> &          particle_handler);
 
@@ -67,5 +74,6 @@ read_checkpoint(TimerOutput &                            computing_timer,
                 const DEMSolverParameters<3> &           parameters,
                 std::shared_ptr<SimulationControl> &     simulation_control,
                 PVDHandler &                             particles_pvdhandler,
+                PVDHandler &                             grid_pvdhandler,
                 parallel::distributed::Triangulation<3> &triangulation,
                 Particles::ParticleHandler<3> &          particle_handler);
