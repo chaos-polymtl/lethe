@@ -2565,6 +2565,7 @@ namespace Parameters
       // Set the target value for the flow control and flow direction
       average_velocity_0 = prm.get_double("average velocity target");
       flow_direction     = prm.get_integer("flow direction");
+      boundary_flow_id   = prm.get_integer("boundary id");
 
       // Tuning parameters for the flow controller (initial beta value and
       // relaxation coefficient)

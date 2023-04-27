@@ -82,6 +82,12 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
       // the average velocity close to the target value but not enough to get in
       // the threshold.
       beta_n1 = 0.5 * alpha * (average_velocity_n - average_velocity_0) / dt;
+
+      // If desired flow rate is reached, new beta only maintains the force to
+      // keep the flow at the desired value. Is so, if calculated beta is
+      // negative it's set to 0 to avoided +/- pressure.
+      if (average_velocity_0 * beta_n1 > 0)
+        beta_n1 = 0.0;
     }
   else
     {
