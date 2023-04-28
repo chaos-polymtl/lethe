@@ -8,6 +8,7 @@ FlowControl<dim>::FlowControl(
   : average_velocity_0(flow_control.average_velocity_0)
   , beta_0(flow_control.beta_0)
   , alpha(flow_control.alpha)
+  , beta_threshold(flow_control.beta_threshold)
   , flow_direction(flow_control.flow_direction)
   , no_force(true)
   , threshold_factor(1.01)
@@ -93,6 +94,13 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
       // Main controller
       beta_n1 = main_flow_controller(average_velocity_n, dt);
     }
+
+  // If the new beta is in the used difined threshold of the old beta, the
+  // new beta is set to the old beta. This prevents reassembly of the matrix
+  // because of the force term when reuse matrix is used for the non-linear
+  // solver
+  if (abs((beta_n1 - beta_n) / beta_n) < beta_threshold)
+    beta_n1 = beta_n;
 
   // Setting beta coefficient to the tensor according to the flow direction.
   beta[flow_direction] = beta_n1;

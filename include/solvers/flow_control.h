@@ -146,6 +146,7 @@ private:
   // User defined parameters to improve convergence
   double beta_0;
   double alpha;
+  double beta_threshold;
 
   // Average velocity and beta history
   double beta_n;

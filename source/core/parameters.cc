@@ -2544,6 +2544,10 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable beta force for particles");
+      prm.declare_entry("beta threshold",
+                        "0.0",
+                        Patterns::Double(),
+                        "Enable beta force for particles");
       prm.declare_entry(
         "verbosity",
         "quiet",
@@ -2567,10 +2571,10 @@ namespace Parameters
       flow_direction     = prm.get_integer("flow direction");
       boundary_flow_id   = prm.get_integer("inlet boundary id");
 
-      // Tuning parameters for the flow controller (initial beta value and
-      // relaxation coefficient)
-      beta_0 = prm.get_double("initial beta");
-      alpha  = prm.get_double("alpha");
+      // Tuning parameters for the flow controller
+      beta_0         = prm.get_double("initial beta");
+      alpha          = prm.get_double("alpha");
+      beta_threshold = prm.get_double("beta threshold");
 
       // Enable printing of flow control information
       const std::string op = prm.get("verbosity");

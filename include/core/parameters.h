@@ -1134,6 +1134,10 @@ namespace Parameters
     // beta_n+1 = beta_n + alpha * (...)
     double alpha;
 
+    // If beta at n+1 step is in this threshold over beta at n step, beta n+1
+    // is kept as beta n. This avoid a new term of force in the matrix
+    double beta_threshold;
+
     // Type of verbosity for the flow control
     Verbosity verbosity;
 
