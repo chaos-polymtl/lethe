@@ -62,6 +62,42 @@ public:
                  const unsigned int &step_number);
 
   /**
+   * @brief proportional_flow_controller. This function calculates a beta only
+   * with the last step average velocity. It is used to initialize the beta
+   * if there's no initial beta value at 1st time step and the 2nd time step.
+   */
+  inline double
+  proportional_flow_controller(const double &average_velocity_n,
+                               const double &dt)
+  {
+    return 0.5 * alpha * (average_velocity_n - average_velocity_0) / dt;
+  }
+
+  /**
+   * @brief main_flow_controller. This function calculates a beta coefficient
+   * based on a formula described by Wang, 2009 in "A non-body conformal grid
+   * method for simulations
+   * of laminar and turbulent flows with a compressible
+   * large eddy simulation solver"
+   */
+  inline double
+  main_flow_controller(const double &average_velocity_n, const double &dt)
+  {
+    double beta_n1 = beta_n - alpha *
+                                (average_velocity_0 - 2 * average_velocity_n +
+                                 average_velocity_1n) /
+                                dt;
+
+    // If desired average velocity is reached, new beta only maintains the force
+    // to keep the flow at the desired value. Is so, if calculated beta is
+    // negative it is set to 0 to avoided +/- force.
+    if (average_velocity_0 * beta_n1 > 0 && no_force == false)
+      return 0.0;
+    else
+      return beta_n1;
+  }
+
+  /**
    * @brief get_beta. This function gives the beta forceof the step time
    */
   Tensor<1, dim>
@@ -112,7 +148,6 @@ private:
   double alpha;
 
   // Average velocity and beta history
-  double beta_n1;
   double beta_n;
   double average_velocity_1n;
 

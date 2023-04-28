@@ -8,7 +8,6 @@ FlowControl<dim>::FlowControl(
   : average_velocity_0(flow_control.average_velocity_0)
   , beta_0(flow_control.beta_0)
   , alpha(flow_control.alpha)
-  , beta_n1(0)
   , flow_direction(flow_control.flow_direction)
   , no_force(true)
   , threshold_factor(1.01)
@@ -20,6 +19,7 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
                                  const double &      dt,
                                  const unsigned int &step_number)
 {
+  double beta_n1;
   // Check if disabling no_force and modify threshold factor (> step time 1):
   // If average velocity target is reached without any beta force applied,
   // the "no_force" is
@@ -63,8 +63,11 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
     }
   else if (step_number == 1)
     {
-      // Initial beta
-      beta_n1 = beta_0;
+      // Apply initial beta force if user defined (> than 0)
+      // otherwise, it is calculated by the proportional controller
+      beta_n1 = (abs(beta_0) > 1e-6 ?
+                   beta_0 :
+                   proportional_flow_controller(average_velocity_n, dt));
     }
   else if (abs(average_velocity_n) > abs(average_velocity_0) &&
            abs(average_velocity_n) <
@@ -72,39 +75,23 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
            no_force == true)
     {
       // If the average velocity is between targeted value and the threshold
-      // and if it didn't reached it the value (no_force is enable), it
-      // decreases by itself (pressure drop).
+      // (meaning it is sightly over the value) and it have not reached once the
+      // value during the simulation (no_force is enable), it decreases by
+      // itself (pressure drop).
       beta_n1 = 0.0;
     }
   else if (step_number == 2)
     {
-      // The calculated beta at time step 2 is small if the initial beta brings
-      // the average velocity close to the target value but not enough to get in
-      // the threshold.
-      beta_n1 = 0.5 * alpha * (average_velocity_n - average_velocity_0) / dt;
-
-      // If desired flow rate is reached, new beta only maintains the force to
-      // keep the flow at the desired value. Is so, if calculated beta is
-      // negative it's set to 0 to avoided +/- pressure.
-      if (average_velocity_0 * beta_n1 > 0)
-        beta_n1 = 0.0;
+      // Since the main controller take the previous beta value, it is better
+      // to use the proportional controller for this second time step since
+      // it won't be affected by the first beta value that may cause overshoot
+      // or undershoot.
+      beta_n1 = proportional_flow_controller(average_velocity_n, dt);
     }
   else
     {
-      // Standard flow controller.
-      // See "A non-body conformal grid method for simulations
-      // of laminar and turbulent flows with a compressible
-      // large eddy simulation solver" by Wang, 2009
-      beta_n1 = beta_n - alpha *
-                           (average_velocity_0 - 2 * average_velocity_n +
-                            average_velocity_1n) /
-                           dt;
-
-      // If desired flow rate is reached, new beta only maintains the force to
-      // keep the flow at the desired value. Is so, if calculated beta is
-      // negative it's set to 0 to avoided +/- pressure.
-      if (average_velocity_0 * beta_n1 > 0 && no_force == false)
-        beta_n1 = 0.0;
+      // Main controller
+      beta_n1 = main_flow_controller(average_velocity_n, dt);
     }
 
   // Setting beta coefficient to the tensor according to the flow direction.
