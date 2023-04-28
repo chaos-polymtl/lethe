@@ -2520,11 +2520,11 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable flow rate control");
-      prm.declare_entry("average velocity target",
+      prm.declare_entry("average velocity",
                         "0",
                         Patterns::Double(),
                         "The target average velocity");
-      prm.declare_entry("boundary id",
+      prm.declare_entry("inlet boundary id",
                         "0",
                         Patterns::Integer(),
                         "Boundary id of the inlet flow");
@@ -2563,9 +2563,9 @@ namespace Parameters
       enable_flow_control = prm.get_bool("enable");
 
       // Set the target value for the flow control and flow direction
-      average_velocity_0 = prm.get_double("average velocity target");
+      average_velocity_0 = prm.get_double("average velocity");
       flow_direction     = prm.get_integer("flow direction");
-      boundary_flow_id   = prm.get_integer("boundary id");
+      boundary_flow_id   = prm.get_integer("inlet boundary id");
 
       // Tuning parameters for the flow controller (initial beta value and
       // relaxation coefficient)

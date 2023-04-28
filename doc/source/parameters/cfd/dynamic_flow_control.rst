@@ -4,11 +4,7 @@ Dynamic flow control
 The purpose of this subsection is to enable dynamic flow control. It is important when we want to simulate an average
 velocity on a specific boundary (CFD) or the whole domain (for CFD-DEM). To control the average velocity of the flow, the code
 calculates a :math:`\beta` coefficient at each time step that is used to keep the average velocity in an acceptable
-threshold. If the boundary on which an average velocity is imposed is an inlet, the average velocity
-targeted must be negative since the outward normal vector is used for the calculation. If the 
-boundary is an outlet, average velocity must be positive. In other to keep the sign consistency, the targeted
-velocity should have an negative sign when used with CFD-DEM even if no normal vector is used since the
-whole domain is taken into account.
+threshold.
 
 The main controller of the average velocity is the following equation and is based on approach of Wang [1]:
 
@@ -20,31 +16,27 @@ The default parameters are:
 .. code-block:: text
 
   subsection flow control
-    set enable                  = false
-    set enable beta particle    = false
-    set average velocity target = 0
-    set boundary id             = 0
-    set flow direction          = 0
-    set initial beta            = 0
-    set alpha                   = 1.0
-    set verbosity               = quiet
+    set enable               = false
+    set enable beta particle = false
+    set average velocity     = 0
+    set inlet boundary id    = 0
+    set flow direction       = 0
+    set initial beta         = 0
+    set alpha                = 1.0
+    set verbosity            = quiet
   end
 
 * The ``enable`` parameter is set to ``true`` to enable an imposed average velocity.
 
 * The ``enable beta particle`` parameter is set to ``true`` to apply a proportional beta force on particles.
 
-* The ``average velocity target`` parameter specifies the average velocity (:math:`m/s`). The value is compared to the calculated value at a boundary (for CFD solvers) or the whole domain (for CFD-DEM solver).
-
-.. warning::
-
-  This value should be negative if imposed on an the inlet boundary (or CFD-DEM), and positive if imposed on an outlet boundary.
+* The ``average velocity`` parameter specifies the targeted average velocity (:math:`m/s`). The value is compared to the calculated value at a boundary (for CFD solvers) or the whole domain (for CFD-DEM solver).
 
 .. note::
 
-  If you are simulating a problem with periodic boundary conditions, it is important to control the average velocity by specifying the boundary id that corresponds to the inlet only (where the flow would have a negative value).
+  If you are simulating a problem with periodic boundary conditions, it is important to control the average velocity by specifying the boundary id that corresponds to the inlet only.
 
-* The ``boundary id`` parameter is the boundary where the average velocity intended is controlled (for CFD solvers only).
+* The ``inlet boundary id`` parameter is the boundary where the average velocity intended is controlled (for CFD solvers only).
 
 * The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`z` direction.
 

@@ -1128,7 +1128,10 @@ calculate_average_velocity(const DoFHandler<dim> &    dof_handler,
                         face_quadrature_formula,
                         mapping);
 
-  return flow_rate_and_area.first / flow_rate_and_area.second;
+  // In dynamic flow control, the flow rate is negative if the velocity is
+  // positive when calculated at inlet boundary because of the normal vector
+  // direction. Hence, we need to invert the sign to get the average velocity.
+  return -flow_rate_and_area.first / flow_rate_and_area.second;
 }
 
 template double
@@ -1238,9 +1241,10 @@ calculate_average_velocity(const DoFHandler<dim> &dof_handler,
   average_velocity = Utilities::MPI::sum(average_velocity, mpi_communicator);
   volume           = Utilities::MPI::sum(volume, mpi_communicator);
 
+  // Calculate the average velocity
   average_velocity /= volume;
 
-  return -average_velocity / volume;
+  return average_velocity;
 }
 
 template double

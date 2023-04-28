@@ -70,7 +70,7 @@ public:
   proportional_flow_controller(const double &average_velocity_n,
                                const double &dt)
   {
-    return 0.5 * alpha * (average_velocity_n - average_velocity_0) / dt;
+    return 0.5 * alpha * (average_velocity_0 - average_velocity_n) / dt;
   }
 
   /**
@@ -83,7 +83,7 @@ public:
   inline double
   main_flow_controller(const double &average_velocity_n, const double &dt)
   {
-    double beta_n1 = beta_n - alpha *
+    double beta_n1 = beta_n + alpha *
                                 (average_velocity_0 - 2 * average_velocity_n +
                                  average_velocity_1n) /
                                 dt;
@@ -91,7 +91,7 @@ public:
     // If desired average velocity is reached, new beta only maintains the force
     // to keep the flow at the desired value. Is so, if calculated beta is
     // negative it is set to 0 to avoided +/- force.
-    if (average_velocity_0 * beta_n1 > 0 && no_force == false)
+    if (average_velocity_0 * beta_n1 < 0 && no_force == false)
       return 0.0;
     else
       return beta_n1;
