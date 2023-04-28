@@ -35,7 +35,7 @@ test()
 {
   Parameters::DynamicFlowControl flow_control_parameters;
   flow_control_parameters.flow_direction     = 0;
-  flow_control_parameters.average_velocity_0 = -10;
+  flow_control_parameters.average_velocity_0 = 10;
   flow_control_parameters.beta_0             = 20;
   flow_control_parameters.alpha              = 0.5;
 
@@ -65,7 +65,7 @@ test()
       // Average velocity is decreased by 1 % (fake pressure drop)
       // Force applied is 25% of beta (fake force)
       average_velocity *= 0.99;
-      average_velocity -= 0.25 * beta[flow_control_parameters.flow_direction];
+      average_velocity += 0.25 * beta[flow_control_parameters.flow_direction];
       deallog << "" << std::endl;
       deallog << " Step number:  " << step_number << std::endl;
       deallog << " Average velocity:    " << average_velocity << std::endl;

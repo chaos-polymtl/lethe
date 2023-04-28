@@ -48,10 +48,9 @@ end
 
 subsection flow control
   set enable                  = true
-  set boundary id             = 1
-  set average velocity target = -3.20364
+  set inlet boundary id             = 1
+  set average velocity = 3.20364
   set flow direction          = 0
-  set initial beta            = 50
   set verbosity               = verbose
 end
 

@@ -2,7 +2,7 @@
 DEAL::*************************************************
 DEAL:: Time step:         0.100000
 DEAL:: Initial beta:      20.0000
-DEAL:: Desired average velocity: -10.0000
+DEAL:: Desired average velocity: 10.0000
 DEAL::*************************************************
 DEAL::
 DEAL:: Step number:  0
@@ -10,97 +10,97 @@ DEAL:: Average velocity:    0.00000
 DEAL:: Beta applied: 0.00000
 DEAL::
 DEAL:: Step number:  1
-DEAL:: Average velocity:    -5.00000
+DEAL:: Average velocity:    5.00000
 DEAL:: Beta applied: 20.0000
 DEAL::
 DEAL:: Step number:  2
-DEAL:: Average velocity:    -8.07500
+DEAL:: Average velocity:    8.07500
 DEAL:: Beta applied: 12.5000
 DEAL::
 DEAL:: Step number:  3
-DEAL:: Average velocity:    -9.68175
+DEAL:: Average velocity:    9.68175
 DEAL:: Beta applied: 6.75000
 DEAL::
 DEAL:: Step number:  4
-DEAL:: Average velocity:    -9.66181
+DEAL:: Average velocity:    9.66181
 DEAL:: Beta applied: 0.307500
 DEAL::
 DEAL:: Step number:  5
-DEAL:: Average velocity:    -10.0897
+DEAL:: Average velocity:    10.0897
 DEAL:: Beta applied: 2.09818
 DEAL::
 DEAL:: Step number:  6
-DEAL:: Average velocity:    -9.98884
+DEAL:: Average velocity:    9.98884
 DEAL:: Beta applied: 0.00000
 DEAL::
 DEAL:: Step number:  7
-DEAL:: Average velocity:    -10.0290
+DEAL:: Average velocity:    10.0290
 DEAL:: Beta applied: 0.560307
 DEAL::
 DEAL:: Step number:  8
-DEAL:: Average velocity:    -9.98229
+DEAL:: Average velocity:    9.98229
 DEAL:: Beta applied: 0.214243
 DEAL::
 DEAL:: Step number:  9
-DEAL:: Average velocity:    -10.0166
+DEAL:: Average velocity:    10.0166
 DEAL:: Beta applied: 0.536416
 DEAL::
 DEAL:: Step number:  10
-DEAL:: Average velocity:    -9.98694
+DEAL:: Average velocity:    9.98694
 DEAL:: Beta applied: 0.282131
 DEAL::
 DEAL:: Step number:  11
-DEAL:: Average velocity:    -10.0110
+DEAL:: Average velocity:    10.0110
 DEAL:: Beta applied: 0.495581
 DEAL::
 DEAL:: Step number:  12
-DEAL:: Average velocity:    -9.99101
+DEAL:: Average velocity:    9.99101
 DEAL:: Beta applied: 0.320608
 DEAL::
 DEAL:: Step number:  13
-DEAL:: Average velocity:    -10.0074
+DEAL:: Average velocity:    10.0074
 DEAL:: Beta applied: 0.465341
 DEAL::
 DEAL:: Step number:  14
-DEAL:: Average velocity:    -9.99387
+DEAL:: Average velocity:    9.99387
 DEAL:: Beta applied: 0.346034
 DEAL::
 DEAL:: Step number:  15
-DEAL:: Average velocity:    -10.0051
+DEAL:: Average velocity:    10.0051
 DEAL:: Beta applied: 0.444511
 DEAL::
 DEAL:: Step number:  16
-DEAL:: Average velocity:    -9.99583
+DEAL:: Average velocity:    9.99583
 DEAL:: Beta applied: 0.363268
 DEAL::
 DEAL:: Step number:  17
-DEAL:: Average velocity:    -10.0034
+DEAL:: Average velocity:    10.0034
 DEAL:: Beta applied: 0.430306
 DEAL::
 DEAL:: Step number:  18
-DEAL:: Average velocity:    -9.99716
+DEAL:: Average velocity:    9.99716
 DEAL:: Beta applied: 0.374993
 DEAL::
 DEAL:: Step number:  19
-DEAL:: Average velocity:    -10.0023
+DEAL:: Average velocity:    10.0023
 DEAL:: Beta applied: 0.420633
 DEAL::
 DEAL:: Step number:  20
-DEAL:: Average velocity:    -9.99807
+DEAL:: Average velocity:    9.99807
 DEAL:: Beta applied: 0.382975
 DEAL::
 DEAL:: Step number:  21
-DEAL:: Average velocity:    -10.0016
+DEAL:: Average velocity:    10.0016
 DEAL:: Beta applied: 0.414047
 DEAL::
 DEAL:: Step number:  22
-DEAL:: Average velocity:    -9.99868
+DEAL:: Average velocity:    9.99868
 DEAL:: Beta applied: 0.388410
 DEAL::
 DEAL:: Step number:  23
-DEAL:: Average velocity:    -10.0011
+DEAL:: Average velocity:    10.0011
 DEAL:: Beta applied: 0.409563
 DEAL::
 DEAL:: Step number:  24
-DEAL:: Average velocity:    -9.99910
+DEAL:: Average velocity:    9.99910
 DEAL:: Beta applied: 0.392109
