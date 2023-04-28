@@ -1111,7 +1111,7 @@ namespace Parameters
 
   /**
    * @brief FlowControl - Set volumetric flow rate or average velocity on a
-   * boundary id toward the normal direction of this wall.
+   * boundary id toward the normal direction of this boundary.
    */
   struct DynamicFlowControl
   {

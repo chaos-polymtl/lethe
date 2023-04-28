@@ -4,13 +4,13 @@ Dynamic flow control
 The purpose of this subsection is to enable dynamic flow control. It is important when we want to simulate an average
 velocity on a specific boundary (CFD) or the whole domain (for CFD-DEM). To control the average velocity of the flow, the code
 calculates a :math:`\beta` coefficient at each time step that is used to keep the average velocity in an acceptable
-threshold. If the chosen wall boundary on which a average velocity is imposed is an inlet, the average velocity
-targeted must be negative since the outward normal vector is used for the calculation. Thereby, if the chosen wall
+threshold. If the boundary on which an average velocity is imposed is an inlet, the average velocity
+targeted must be negative since the outward normal vector is used for the calculation. If the 
 boundary is an outlet, average velocity must be positive. In other to keep the sign consistency, the targeted
 velocity should have an negative sign when used with CFD-DEM even if no normal vector is used since the
 whole domain is taken into account.
 
-The main controller of the average velocity is the following equation and is based on Wang [1]:
+The main controller of the average velocity is the following equation and is based on approach of Wang [1]:
 
 .. math::
     \beta^{n+1} = \beta^n - \frac{\alpha}{\Delta t} \left[ (\bar{U})^{0} - 2(\bar{U})^{n} + (\bar{U})^{n-1} \right]
@@ -42,9 +42,9 @@ The default parameters are:
 
 .. note::
 
-  If you are simulating a problem with periodic boundary conditions at inlet and outlet walls, it is important to control the average velocity specifying the boundary id that corresponds to the inlet only (where the flow would have a negative value).
+  If you are simulating a problem with periodic boundary conditions, it is important to control the average velocity by specifying the boundary id that corresponds to the inlet only (where the flow would have a negative value).
 
-* The ``boundary id`` parameter is the wall boundary where the average velocity intended is controlled (for CFD solvers only).
+* The ``boundary id`` parameter is the boundary where the average velocity intended is controlled (for CFD solvers only).
 
 * The ``flow direction`` parameter sets the absolute direction. It should be ``0`` if the flow is in the :math:`x` direction, ``1`` in the :math:`y` direction and ``2`` in the :math:`z` direction.
 
@@ -52,7 +52,7 @@ The default parameters are:
 
 .. tip:: 
 
-  A good method to find a reasonable initial beta is to test two or three different initial beta parameters, write down the given flow rate at the first time step in the simulation and do a regression. The correlation is linear and giving a proper value will greatly speed up the convergence.
+  A good method to find a reasonable initial beta is to test two or three different initial beta parameters, write down the given flow rate at the first time step in the simulation and do a regression. The correlation is linear and giving a proper value will reduce the time it takes to reach the target velocity.
 
 * The ``alpha`` parameter is a relaxation coefficient that is used to control the convergence speed or stability. The higher the value, the faster the convergence. However, if the value is too high, the convergence may be unstable.
 
