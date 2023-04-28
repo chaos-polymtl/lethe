@@ -314,9 +314,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   double current_particle_distance(
                     std::numeric_limits<double>::max());
 
-                  unsigned int potential_particle_candidate(0);
-                  double       potential_particle_distance(
-                          std::numeric_limits<double>::max());
+                  double potential_particle_distance(
+                    std::numeric_limits<double>::max());
 
                   unsigned int id;
                   // We count the number of vertices that are constrained while
