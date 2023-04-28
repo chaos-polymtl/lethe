@@ -46,6 +46,7 @@ using namespace std;
  * @param dem_parameters Input DEM parameters in the parameter handler file
  * @param simulation_control Simulation control
  * @param particles_pvdhandler PVD handler
+ * @param grid_pvdhandler PVD handler for post-processing
  * @param triangulation Triangulation
  * @param particle_handler Particle handler
  */
@@ -55,6 +56,7 @@ read_checkpoint(TimerOutput &                              computing_timer,
                 const DEMSolverParameters<dim> &           dem_parameters,
                 std::shared_ptr<SimulationControl> &       simulation_control,
                 PVDHandler &                               particles_pvdhandler,
+                PVDHandler &                               grid_pvdhandler,
                 parallel::distributed::Triangulation<dim> &triangulation,
                 Particles::ParticleHandler<dim> &          particle_handler);
 
