@@ -47,13 +47,13 @@ As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface f
 
     {\bf{f_{\sigma}}} = \sigma \kappa {\bf{n}}
 
-where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the curvature and :math:`\bf{n}` is the unit normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force :math:`\bf{F_{\sigma}}` using the continuous surface force (CSF) model [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_], that is :
+where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the curvature and :math:`\bf{n}` is the unit normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force :math:`\bf{F_{\sigma}}` using the continuous surface force (CSF) model [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_], that is:
 
 .. math::
 
     {\bf{F_{\sigma}}} = \bf{f_{\sigma}} \delta = \sigma \kappa {\bf{n}}\delta
 
-where :math:`\delta` is a Dirac delta measure with support on the interface. A good approximation for the term :math:`{\bf{n}}\delta` is :math:`{\bf{n}}\delta = \nabla \phi`, where :math:`\phi` is the phase fraction. Thus, the volumetric surface force is given by :
+where :math:`\delta` is a Dirac delta measure with support on the interface. A good approximation for the term :math:`{\bf{n}}\delta` is :math:`{\bf{n}}\delta = \nabla \phi`, where :math:`\phi` is the phase fraction. Thus, the volumetric surface force is given by:
 
 .. math::
 
@@ -73,7 +73,7 @@ and the unit normal vector of the free surface is obtained with:
 
 When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps, as presented in section :ref:`Normal and curvature computations`.
 
-The static bubble case is a relevant case to study the spurious currents, since the analytical solution is zero for the velocity. Therefore, nonzero velocities in the computed velocity field are considered as spurious currents [`2 <https://doi.org/10.1002/fld.2643>`_]. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
+The static bubble case is a relevant case to study the spurious currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered as spurious currents [`2 <https://doi.org/10.1002/fld.2643>`_]. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
 
 .. math::
 
@@ -115,7 +115,7 @@ where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` i
 Parameter file
 --------------
 
-Time integration is handled by a 1st order backward differentiation scheme (BDF1), for a :math:`6~\text{s}` simulation time with an constant time step of :math:`0.005~\text{s}`.
+Time integration is handled by a 1st order backward differentiation scheme (BDF1), for a :math:`6~\text{s}` simulation time with a constant time step of :math:`0.005~\text{s}`.
 
 .. code-block:: text
 
@@ -196,7 +196,7 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the defined co
 Volume of Fluid (VOF)
 """"""""""""""""""""""""""""""""
 
-The surface tension force computation is enable in the ``VOF`` subsection. The surface tension coefficient :math:`\sigma` is set to :math:`1.0` with the parameter ``surface tension coefficient``. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+The surface tension force computation is enabled in the ``VOF`` subsection. The surface tension coefficient :math:`\sigma` is set to :math:`1.0` with the parameter ``surface tension coefficient``. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
 
 .. code-block:: text
 
@@ -274,7 +274,7 @@ When providing the analytical solution in the ``analytical solution`` subsection
 Running the simulation
 ---------------------------
 
-Call the gls_navier_stokes_2d by invoking:
+Call the ``gls_navier_stokes_2d`` by invoking:
 
 ``mpirun -np 8 gls_navier_stokes_2d static-bubble.prm``
 
@@ -282,7 +282,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
 
 
 .. warning::
-    Make sure to compile lethe in `Release` mode and
+    Make sure to compile Lethe in `Release` mode and
     run in parallel using mpirun. This simulation takes
     :math:`\approx` 10 mins on 8 processes.
 
@@ -316,7 +316,7 @@ Four levels of refinement are studied (6 to 9) by changing the parameter ``initi
 
 .. image:: images/mesh-convergence-study-order.png
 
-Finally, the time evolution of the :math:`\mathcal{L}^2` norm of the error on the velocity magnitude for each refinement level can be plot :
+Finally, the time evolution of the :math:`\mathcal{L}^2` norm of the error on the velocity magnitude for each refinement level can be plotted:
 
 .. image:: images/mesh-convergence-study-time.png
 
