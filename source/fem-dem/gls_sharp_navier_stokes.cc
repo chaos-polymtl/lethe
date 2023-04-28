@@ -2816,6 +2816,130 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                            ->assemble_navier_stokes_inside == false) &&
                         count_particles < 2;
 
+                      // Reapply the zero and nonzero constraints.
+                      if ((this->zero_constraints.is_constrained(
+                             local_dof_indices[i]) ||
+                           this->nonzero_constraints.is_constrained(
+                             local_dof_indices[i])) &&
+                          this->locally_owned_dofs.is_element(
+                            global_index_overwrite))
+                        {
+                          if (this->zero_constraints.is_constrained(
+                                local_dof_indices[i]))
+                            {
+                              // Clear the line if there is something on it
+                              this->system_matrix.clear_row(
+                                global_index_overwrite);
+                              // Get the constraint equations
+                              auto local_entries =
+                                *this->zero_constraints.get_constraint_entries(
+                                  local_dof_indices[i]);
+                              double interpolation = 0;
+                              // Write the equation
+                              for (unsigned int j = 0; j < local_entries.size();
+                                   ++j)
+                                {
+                                  unsigned int col = local_entries[j].first;
+                                  double entries   = local_entries[j].second;
+
+                                  interpolation +=
+                                    this->evaluation_point(col) * entries;
+
+                                  try
+                                    {
+                                      this->system_matrix.add(
+                                        local_dof_indices[i],
+                                        col,
+                                        entries * sum_line);
+                                    }
+                                  catch (...)
+                                    {
+                                      //  If we are here, an error happens
+                                      //  when trying to fill the line in
+                                      //  the matrix.
+                                      // For example, this can occur if a
+                                      // particle is close to a wall and we
+                                      // are trying to impose the equation
+                                      // on a DOF that as a boundary
+                                      // condition applied to it. As such,
+                                      // we discard these errors.
+                                    }
+                                }
+                              this->system_matrix.add(local_dof_indices[i],
+                                                      local_dof_indices[i],
+                                                      sum_line);
+
+                              // Write the RHS
+                              this->system_rhs(local_dof_indices[i]) =
+                                -this->evaluation_point(local_dof_indices[i]) *
+                                  sum_line +
+                                interpolation * sum_line +
+                                this->zero_constraints.get_inhomogeneity(
+                                  local_dof_indices[i]) *
+                                  sum_line;
+                            }
+                          if (this->nonzero_constraints.is_constrained(
+                                local_dof_indices[i]))
+                            {
+                              // Clear the line if there is something on it
+                              this->system_matrix.clear_row(
+                                global_index_overwrite);
+                              // Get the constraint equations
+
+                              auto local_entries_non_zero =
+                                *this->nonzero_constraints
+                                   .get_constraint_entries(
+                                     local_dof_indices[i]);
+
+                              double interpolation = 0;
+                              // Write the equation
+                              for (unsigned int j = 0;
+                                   j < local_entries_non_zero.size();
+                                   ++j)
+                                {
+                                  unsigned int col_non_zero =
+                                    local_entries_non_zero[j].first;
+                                  double entries_non_zero =
+                                    local_entries_non_zero[j].second;
+
+                                  interpolation +=
+                                    this->evaluation_point(col_non_zero) *
+                                    entries_non_zero;
+                                  try
+                                    {
+                                      this->system_matrix.add(
+                                        local_dof_indices[i],
+                                        col_non_zero,
+                                        entries_non_zero * sum_line);
+                                    }
+                                  catch (...)
+                                    {
+                                      //  If we are here, an error happens
+                                      //  when trying to fill the line in
+                                      //  the matrix.
+                                      // For example, this can occur if a
+                                      // particle is close to a wall and we
+                                      // are trying to impose the equation
+                                      // on a DOF that as a boundary
+                                      // condition applied to it. As such,
+                                      // we discard these errors.
+                                    }
+                                }
+                              this->system_matrix.add(local_dof_indices[i],
+                                                      local_dof_indices[i],
+                                                      sum_line);
+
+                              // Write the RHS
+                              this->system_rhs(local_dof_indices[i]) =
+                                -this->evaluation_point(local_dof_indices[i]) *
+                                  sum_line +
+                                interpolation * sum_line +
+                                this->nonzero_constraints.get_inhomogeneity(
+                                  local_dof_indices[i]) *
+                                  sum_line;
+                            }
+                        }
+
                       // Check if the DOfs is owned and if it's not a hanging
                       // node.
                       if (((component_i < dim) || use_ib_for_pressure) &&
@@ -2824,8 +2948,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           (this->zero_constraints.is_constrained(
                              local_dof_indices[i]) ||
                            this->nonzero_constraints.is_constrained(
-                             local_dof_indices[i])) == false &&
-                          cell_is_overconstrained == false)
+                             local_dof_indices[i])) == false)
                         {
                           // We are working on the DOFs of cells cut by a
                           // particle. We clear the current equation associated
@@ -2927,7 +3050,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                             }
 
                           if (dof_is_dummy || use_ib_for_pressure ||
-                              particle_close_to_wall)
+                              cell_is_overconstrained || particle_close_to_wall)
                             {
                               // Give the DOF an approximated value. This help
                               // with pressure shock when the DOF passes from
@@ -3125,7 +3248,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 sum_line;
                         }
 
-
                       if (component_i == dim &&
                           this->locally_owned_dofs.is_element(
                             global_index_overwrite))
@@ -3175,9 +3297,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                    std::ignore,
                                                    std::ignore) =
                                             cut_cells_map[neighbor_cell];
-
-
-                                          if (cell_is_cut == false)
+                                          bool cell_is_overconstrained;
+                                          std::tie(cell_is_overconstrained,
+                                                   std::ignore) =
+                                            overconstrained_fluid_cell_map
+                                              [neighbor_cell];
+                                          if (cell_is_cut == false &&
+                                              cell_is_overconstrained == false)
                                             {
                                               dummy_dof = false;
                                               break;
@@ -3360,7 +3486,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
-  if (cell_is_cut || cell_is_overconstrained)
+  if (cell_is_cut)
     return;
   scratch_data.reinit(cell,
                       this->evaluation_point,
@@ -3456,7 +3582,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
-  if (cell_is_cut || cell_is_overconstrained)
+  if (cell_is_cut)
     return;
   scratch_data.reinit(cell,
                       this->evaluation_point,
