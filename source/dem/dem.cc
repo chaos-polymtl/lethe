@@ -1017,6 +1017,7 @@ DEMSolver<dim>::solve()
                       parameters,
                       simulation_control,
                       particles_pvdhandler,
+                      grid_pvdhandler,
                       triangulation,
                       particle_handler);
 
@@ -1347,6 +1348,7 @@ DEMSolver<dim>::solve()
                            parameters,
                            simulation_control,
                            particles_pvdhandler,
+                           grid_pvdhandler,
                            triangulation,
                            particle_handler,
                            pcout,

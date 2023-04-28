@@ -212,11 +212,17 @@ CFDDEMSolver<dim>::write_checkpoint()
 
   std::string prefix = this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
+  std::string prefix_grid      = prefix + "_postprocess_data";
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       this->simulation_control->save(prefix);
       this->pvdhandler.save(prefix);
       particles_pvdhandler.save(prefix_particles);
+
+      if (this->dem_parameters.post_processing.Lagrangian_post_processing)
+        {
+          grid_pvdhandler.save(prefix_grid);
+        }
 
       if (this->simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
@@ -288,10 +294,16 @@ CFDDEMSolver<dim>::read_checkpoint()
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
   std::string prefix = this->simulation_parameters.restart_parameters.filename;
   std::string prefix_particles = prefix + "_particles";
+  std::string prefix_grid      = prefix + "_postprocess_data";
 
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
   particles_pvdhandler.read(prefix_particles);
+
+  if (this->dem_parameters.post_processing.Lagrangian_post_processing)
+    {
+      grid_pvdhandler.read(prefix_grid);
+    }
 
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
