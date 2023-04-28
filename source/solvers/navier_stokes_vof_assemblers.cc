@@ -544,17 +544,17 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
         scratch_data.phase_gradient_values[q];
       const double JxW_value = JxW[q];
 
-      const Tensor<1, dim> tmp_STF =
+      const Tensor<1, dim> surface_tension_force =
         -surface_tension_coef * curvature_value * phase_gradient_value;
 
-      strong_residual[q] += tmp_STF;
+      strong_residual[q] += surface_tension_force;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
 
-          local_rhs_i -= tmp_STF * phi_u_i;
+          local_rhs_i -= surface_tension_force * phi_u_i;
           local_rhs(i) += local_rhs_i * JxW_value;
         }
     }
@@ -577,6 +577,9 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  // Surface tension coefficient
+  const double surface_tension_coef = STF_properties.surface_tension_coef;
+
   // Surface tension gradient
   const double surface_tension_gradient =
     STF_properties.surface_tension_gradient;
@@ -585,9 +588,6 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
-
-  const double phase_0_density = scratch_data.density_0[0];
-  const double phase_1_density = scratch_data.density_1[0];
 
   // Loop and quadrature informations
   const auto &       JxW        = scratch_data.JxW;
@@ -601,19 +601,19 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Gather density
-      double density_eq = scratch_data.density[q];
+      const double &curvature_value = scratch_data.curvature_values[q];
 
-      // Gather filtered phase fraction gradient
-      const Tensor<1, dim> &filtered_phase_fraction_gradient_value =
-        scratch_data.filtered_phase_fraction_gradient_values[q];
+      // Gather phase fraction gradient
+      const Tensor<1, dim> &phase_gradient_value =
+        scratch_data.phase_gradient_values[q];
 
-      const double filtered_phase_fraction_gradient_norm =
-        filtered_phase_fraction_gradient_value.norm();
+      const double phase_gradient_norm = phase_gradient_value.norm();
 
-      const Tensor<1, dim> normalized_filtered_phase_fraction_gradient =
-        filtered_phase_fraction_gradient_value /
-        (filtered_phase_fraction_gradient_norm + DBL_MIN);
+      const Tensor<1, dim> normalized_phase_fraction_gradient =
+        phase_gradient_value / (phase_gradient_norm + DBL_MIN);
+
+      // Gather temperature
+      const double temperature = scratch_data.temperature_values[q];
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
@@ -621,22 +621,26 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
       const double JxW_value = JxW[q];
 
-      const Tensor<1, dim> marangoni_effect =
-        -2.0 * surface_tension_gradient *
-        (temperature_gradient - normalized_filtered_phase_fraction_gradient *
-                                  (normalized_filtered_phase_fraction_gradient *
-                                   temperature_gradient)) *
-        filtered_phase_fraction_gradient_norm *
-        (density_eq / (phase_0_density + phase_1_density));
 
-      strong_residual[q] += marangoni_effect;
+      const Tensor<1, dim> surface_tension_force =
+        -(surface_tension_coef + surface_tension_gradient * temperature) *
+        curvature_value * phase_gradient_value;
+
+      const Tensor<1, dim> marangoni_effect =
+        -surface_tension_gradient *
+        (temperature_gradient -
+         normalized_phase_fraction_gradient *
+           (normalized_phase_fraction_gradient * temperature_gradient)) *
+        phase_gradient_norm;
+
+      strong_residual[q] += marangoni_effect + surface_tension_force;
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
           double     local_rhs_i = 0;
 
-          local_rhs_i -= marangoni_effect * phi_u_i;
+          local_rhs_i -= (marangoni_effect + surface_tension_force) * phi_u_i;
           local_rhs(i) += local_rhs_i * JxW_value;
         }
     }
