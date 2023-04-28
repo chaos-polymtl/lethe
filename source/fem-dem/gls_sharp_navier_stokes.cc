@@ -295,7 +295,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          overconstrained_fluid_cell_map[cell] = {false, -1};
+          overconstrained_fluid_cell_map[cell] = {false, -1, -1};
           if (this->simulation_parameters.fem_parameters.velocity_order == 1)
             {
               bool cell_is_cut;
@@ -309,10 +309,16 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   unsigned int number_of_vertices_in_cell =
                     local_dof_indices.size();
                   unsigned int number_of_vertices_cut = 0;
-                  size_t       current_particle_candidate =
+                  unsigned int current_particle_candidate =
                     std::numeric_limits<int>::max();
-                  size_t potential_particle_candidate(0);
-                  size_t id;
+                  double current_particle_distance(
+                    std::numeric_limits<double>::max());
+
+                  unsigned int potential_particle_candidate(0);
+                  double       potential_particle_distance(
+                          std::numeric_limits<double>::max());
+
+                  unsigned int id;
                   // We count the number of vertices that are constrained while
                   // keeping track of the lowest particle ID.
                   for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
@@ -321,15 +327,26 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                       if (dof_over_constraint(id) > 0)
                         {
                           number_of_vertices_cut += 1;
-                          current_particle_candidate =
-                            std::min(current_particle_candidate,
-                                     potential_particle_candidate);
                         }
                     }
                   if (number_of_vertices_in_cell == number_of_vertices_cut)
                     {
+                      for (unsigned int p = 0; p < particles.size(); p++)
+                        {
+                          potential_particle_distance =
+                            particles[p].get_levelset(cell->barycenter(), cell);
+                          if (abs(potential_particle_distance) <
+                              abs(current_particle_distance))
+                            {
+                              current_particle_candidate = p;
+                              current_particle_distance =
+                                potential_particle_distance;
+                            }
+                        }
                       overconstrained_fluid_cell_map[cell] = {
-                        true, current_particle_candidate};
+                        true,
+                        current_particle_candidate,
+                        current_particle_distance};
                     }
                 }
             }
@@ -1472,7 +1489,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
                 cell_cuts(i) = -1;
 
               bool cell_is_overconstrained;
-              std::tie(cell_is_overconstrained, particle_id) =
+              std::tie(cell_is_overconstrained, particle_id, std::ignore) =
                 overconstrained_fluid_cell_map[cell];
               if (cell_is_overconstrained)
                 cell_overconstrained(i) = particle_id;
@@ -1633,7 +1650,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
           bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore) =
+          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
             overconstrained_fluid_cell_map[cell];
 
           if ((!cell_is_cut && !cell_is_inside) && !cell_is_overconstrained)
@@ -1686,7 +1703,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
           bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore) =
+          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
             overconstrained_fluid_cell_map[cell];
 
           bool cell_is_inside;
@@ -2777,8 +2794,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           std::tie(cell_is_cut, ib_particle_id, count_particles) =
             cut_cells_map[cell_cut];
           bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore) =
+          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
             overconstrained_fluid_cell_map[cell_cut];
+          if (cell_is_overconstrained)
+            std::tie(cell_is_overconstrained, ib_particle_id, std::ignore) =
+              overconstrained_fluid_cell_map[cell_cut];
 
           if (cell_is_cut || cell_is_overconstrained)
             {
@@ -3299,6 +3319,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                             cut_cells_map[neighbor_cell];
                                           bool cell_is_overconstrained;
                                           std::tie(cell_is_overconstrained,
+                                                   std::ignore,
                                                    std::ignore) =
                                             overconstrained_fluid_cell_map
                                               [neighbor_cell];
@@ -3474,14 +3495,11 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
   // Check if the cell is cut or not by the IB and what the particle the
   // cut the cell. If the particle is cut
-  bool cell_is_cut = false;
-  // The id of the particle that cut the cell. Returns 0 if the cell is
-  // not cut.
-  unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  bool cell_is_cut                                = false;
+  std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
   bool cell_is_overconstrained;
-  std::tie(cell_is_overconstrained, std::ignore) =
+  std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
     overconstrained_fluid_cell_map[cell];
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
@@ -3570,14 +3588,11 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   // Check if the cell is cut or not by the IB and what the particle the
   // cut the cell. If the particle is cut
-  bool cell_is_cut = false;
-  // The id of the particle that cut the cell. Returns 0 if the cell is
-  // not cut.
-  unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  bool cell_is_cut                                = false;
+  std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
   bool cell_is_overconstrained;
-  std::tie(cell_is_overconstrained, std::ignore) =
+  std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
     overconstrained_fluid_cell_map[cell];
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;

@@ -580,11 +580,12 @@ private:
   /*
    * This map uses the cell as the key, and stores the following information:
    * if the cell is overconstrained (bool), what particle overconstrains this
-   * cell (unsigned int). The id of the particle that overconstrains the cell
+   * cell (unsigned int), and the distance to the closest surface.
+   * The id of the particle that overconstrains the cell
    * is the id of the particle with the lowest particle index.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, int>>
+           std::tuple<bool, unsigned int, double>>
     overconstrained_fluid_cell_map;
   /*
    * These vectors are used to keep track of the DOFs that are overconstraint
