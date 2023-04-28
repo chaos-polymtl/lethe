@@ -47,11 +47,11 @@ end
 #---------------------------------------------------
 
 subsection flow control
-  set enable                  = true
-  set inlet boundary id             = 1
-  set average velocity = 3.20364
-  set flow direction          = 0
-  set verbosity               = verbose
+  set enable            = true
+  set inlet boundary id = 1
+  set average velocity  = 3.20364
+  set flow direction    = 0
+  set verbosity         = verbose
 end
 
 #---------------------------------------------------
