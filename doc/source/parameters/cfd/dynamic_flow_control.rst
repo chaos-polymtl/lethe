@@ -9,7 +9,7 @@ threshold.
 The main controller of the average velocity is the following equation and is based on approach of Wang [1]:
 
 .. math::
-    \beta^{n+1} = \beta^n - \frac{\alpha}{\Delta t} \left[ (\bar{U})^{0} - 2(\bar{U})^{n} + (\bar{U})^{n-1} \right]
+    \beta^{n+1} = \beta^n + \frac{\alpha}{\Delta t} \left[ (\bar{U})^{0} - 2(\bar{U})^{n} + (\bar{U})^{n-1} \right]
 
 The default parameters are:
 
