@@ -24,14 +24,13 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
   double beta_n1;
   // Check if disabling no_force and modify threshold factor (> step time 1):
   // If average velocity target is reached without any beta force applied,
-  // the "no_force" is
-  // disabled. It means that the average velocity is now reached the
-  // target value without force OR that slowing down the flow with the only
-  // pressure drop (no force applied) is ineffective (too big pressure drop).
-  // In case the average velocity is in the initial threshold but the
+  // the "no_force" is disabled. It means that the average velocity is now
+  // reached the target value without force OR that slowing down the flow with
+  // the only pressure drop (no force applied) is ineffective (too big pressure
+  // drop). In case the average velocity is in the initial threshold but the
   // pressure drop is too small to slow down the flow, the threshold factor
-  // decreases by 2. Otherwise, the average velocity may take a lot time to
-  // reached the target value only with pressure drop.
+  // decreases by 2. Otherwise, the average velocity may take a lot of time to
+  // reach the target value only with pressure drop.
   if (abs(beta_n) < 1e-6 && step_number > 1)
     {
       if (abs(average_velocity_n) < abs(average_velocity_0))
@@ -41,19 +40,6 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
                threshold_factor > 1.00125)
         threshold_factor = 0.5 * (1 + threshold_factor);
     }
-
-  // Check if disabling no_force is needed (step 3):
-  // If average velocity is over the target value at time step 1 and beta
-  // force applied at time step 2 decreased it under the value, "no_force" is
-  // disabled.
-  // If average velocity is below the target value after the small beta
-  // applied at time step 2, it means the pressure drop is significative.
-  // That means attempting to let the flow slowing down by itself is going to be
-  // ineffective. This early disabling prevents setting beta to 0 that could
-  // ruins a good flow convergence after many step time.
-  if (step_number == 3 && abs(average_velocity_1n) > abs(average_velocity_0) &&
-      abs(average_velocity_n) < abs(average_velocity_0))
-    no_force = false;
 
   if (step_number == 0)
     {
@@ -74,7 +60,7 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
   else if (abs(average_velocity_n) > abs(average_velocity_0) &&
            abs(average_velocity_n) <
              threshold_factor * abs(average_velocity_0) &&
-           no_force == true)
+           no_force)
     {
       // If the average velocity is between targeted value and the threshold
       // (meaning it is sightly over the value) and it has not reached once the
@@ -97,9 +83,9 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
     }
 
   // If the new beta is in the user defined threshold of the old beta, the new
-  // beta is kept as the previous beta. This prevents the reassembly of the
-  // matrix because of the force term when reuse matrix is used for the
-  // non-linear solver
+  // beta is kept as the previous beta. This could allow avoiding unnecessary
+  // reassembly of the matrix because of the force term when reuse matrix option
+  // is enable for the non-linear solver
   if (abs(beta_n1 - beta_n) < abs(beta_threshold * beta_n))
     beta_n1 = beta_n;
 

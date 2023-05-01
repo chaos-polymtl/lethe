@@ -1110,8 +1110,8 @@ namespace Parameters
   };
 
   /**
-   * @brief FlowControl - Set volumetric flow rate or average velocity on a
-   * boundary id toward the normal direction of this boundary.
+   * @brief FlowControl - Set average velocity on a boundary (CFD) or the domain
+   * (CFD-DEM).
    */
   struct DynamicFlowControl
   {

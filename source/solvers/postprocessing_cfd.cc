@@ -1188,7 +1188,7 @@ calculate_average_velocity(const DoFHandler<dim> &dof_handler,
                           fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
-                            update_JxW_values | update_normal_vectors);
+                            update_JxW_values);
 
   // Set up for void fraction fe values
   const FESystem<dim, dim> fe_void_fraction =
@@ -1199,8 +1199,7 @@ calculate_average_velocity(const DoFHandler<dim> &dof_handler,
   FEValues<dim> fe_vf_values(mapping,
                              fe_void_fraction,
                              quadrature_formula,
-                             update_values | update_quadrature_points |
-                               update_JxW_values | update_normal_vectors);
+                             update_values | update_quadrature_points);
 
   // Initialize variables for summation
   double average_velocity = 0;
