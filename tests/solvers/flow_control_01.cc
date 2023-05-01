@@ -61,7 +61,6 @@ test()
       beta = flow_control.get_beta();
 
       // Calculating a fake new average velocity (fake pressure drop and force)
-      // Note : velocity is negative because of the outward normal vector.
       // Average velocity is decreased by 1 % (fake pressure drop)
       // Force applied is 25% of beta (fake force)
       average_velocity *= 0.99;

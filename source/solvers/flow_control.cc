@@ -45,7 +45,7 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
   // Check if disabling no_force is needed (step 3):
   // If average velocity is over the target value at time step 1 and beta
   // force applied at time step 2 decreased it under the value, "no_force" is
-  // disable.
+  // disabled.
   // If average velocity is below the target value after the small beta
   // applied at time step 2, it means the pressure drop is significative.
   // That means attempting to let the flow slowing down by itself is going to be

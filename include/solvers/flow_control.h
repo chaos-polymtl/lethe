@@ -89,7 +89,7 @@ public:
                                 dt;
 
     // If desired average velocity is reached, new beta only maintains the force
-    // to keep the flow at the desired value. Is so, if calculated beta is
+    // to keep the flow at the desired value. If calculated beta is
     // negative it is set to 0 to avoided +/- force.
     if (average_velocity_0 * beta_n1 < 0 && no_force == false)
       return 0.0;
@@ -98,7 +98,7 @@ public:
   }
 
   /**
-   * @brief get_beta. This function gives the beta forceof the step time
+   * @brief get_beta. This function gives the beta force of the step time
    */
   Tensor<1, dim>
   get_beta()
@@ -114,7 +114,7 @@ public:
   get_beta_particles(const double &fluid_density,
                      const double &particle_density)
   {
-    // The beta force for particle must have a tensor of dim = 3 since the body
+    // The beta force for particles must have a tensor of dim = 3 since the body
     // force g parameters is a tensor of dim 3 (those forces will add up)
     Tensor<1, 3> beta_particle;
     beta_particle[0] = beta[0];
