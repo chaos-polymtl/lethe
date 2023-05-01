@@ -233,7 +233,7 @@ Shape<dim>::closest_surface_point(
   Point<dim> &                                          closest_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  Tensor<1, dim> actual_gradient, vector_to_closest_point;
+  Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
   actual_gradient       = this->gradient_with_cell_guess(p, cell_guess);
   distance_from_surface = this->value_with_cell_guess(p, cell_guess);

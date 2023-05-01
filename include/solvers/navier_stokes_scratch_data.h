@@ -925,7 +925,7 @@ public:
   std::vector<double>                  grad_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;
 
-  // Pressure scaling factor to facility different scales between velocity and
+  // Pressure scaling factor to facilitate different scales between velocity and
   // pressure
   double pressure_scaling_factor;
 

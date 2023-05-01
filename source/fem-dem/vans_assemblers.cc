@@ -1908,7 +1908,7 @@ GLSVansAssemblerFPI<dim>::assemble_matrix(
         {
           strong_residual[q] += // Drag Force
             (beta_drag * (velocity - average_particles_velocity) +
-             scratch_data.pressure_scaling_factor * undisturbed_flow_force);
+             undisturbed_flow_force);
         }
       else if (cfd_dem.vans_model == Parameters::VANSModel::modelA)
         {
