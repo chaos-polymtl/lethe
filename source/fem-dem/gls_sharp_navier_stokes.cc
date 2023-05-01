@@ -3248,23 +3248,36 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 -local_interp_sol[k] * ib_coef[k] * sum_line;
                             }
                           this->system_rhs(global_index_overwrite) =
-                            v_ib * sum_line + rhs_add;
+                            component_i == dim ?
+                              (v_ib * sum_line + rhs_add) /
+                                this->pressure_scaling_factor :
+                              v_ib * sum_line + rhs_add;
 
                           if (dof_on_ib)
                             // Dof is on the immersed boundary
                             this->system_rhs(global_index_overwrite) =
-                              v_ib * sum_line -
-                              this->evaluation_point(global_index_overwrite) *
-                                sum_line;
+                              component_i == dim ?
+                                (v_ib * sum_line - this->evaluation_point(
+                                                     global_index_overwrite) *
+                                                     sum_line) /
+                                  this->pressure_scaling_factor :
+                                (v_ib * sum_line - this->evaluation_point(
+                                                     global_index_overwrite) *
+                                                     sum_line);
 
                           if (skip_stencil && dof_on_ib == false)
                             // Impose the value of the dummy dof. This help
                             // with pressure variation when the IB is
                             // moving.
                             this->system_rhs(global_index_overwrite) =
-                              sum_line * v_ib -
-                              this->evaluation_point(global_index_overwrite) *
-                                sum_line;
+                              component_i == dim ?
+                                (sum_line * v_ib - this->evaluation_point(
+                                                     global_index_overwrite) *
+                                                     sum_line) /
+                                  this->pressure_scaling_factor :
+                                sum_line * v_ib - this->evaluation_point(
+                                                    global_index_overwrite) *
+                                                    sum_line;
                         }
 
                       if (component_i == dim &&

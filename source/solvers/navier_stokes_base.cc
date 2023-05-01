@@ -2128,7 +2128,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
   VectorType temp;
   temp.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
-  temp = rescaled_newton_update;
+  temp += rescaled_newton_update;
   temp -= newton_update;
   if (temp.norm_sqr() < 1e-8)
     {
@@ -2168,55 +2168,6 @@ NavierStokesBase<dim, VectorType, DofsType>::
         }
     }
   rescaled_newton_update = newton_update;
-}
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::rescale_evaluation_point(
-  const double scaling_factor)
-{
-  // We skip the function if the factor has a value of 1
-  if (abs(pressure_scaling_factor - 1) < 1e-8)
-    return;
-
-  local_evaluation_point = evaluation_point;
-  TimerOutput::Scope t(this->computing_timer, "rescale_pressure");
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  // Map used to keep track of which DOFs have been looped over
-  std::map<unsigned int, bool> rescaled_dofs_map;
-  rescaled_dofs_map.clear();
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned() || cell->is_ghost())
-        {
-          cell->get_dof_indices(local_dof_indices);
-          for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-            {
-              const unsigned int global_id = local_dof_indices[j];
-              // We check if we have already checked this DOF
-              auto iterator = rescaled_dofs_map.find(global_id);
-              if (iterator == rescaled_dofs_map.end())
-                {
-                  const unsigned int component_index =
-                    this->fe->system_to_component_index(j).first;
-                  if (is_locally_owned_dof(global_id))
-                    {
-                      if (component_index == dim)
-                        {
-                          this->local_evaluation_point(global_id) =
-                            this->local_evaluation_point(global_id) *
-                            scaling_factor;
-                        }
-                    }
-                  rescaled_dofs_map[global_id] = true;
-                }
-            }
-        }
-    }
-  evaluation_point = 0;
-  evaluation_point = local_evaluation_point;
-  evaluation_point.compress(VectorOperation::insert);
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur

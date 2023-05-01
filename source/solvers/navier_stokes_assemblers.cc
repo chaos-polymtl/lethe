@@ -1615,9 +1615,6 @@ LaplaceAssembly<dim>::assemble_matrix(
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
-  // Pressure scaling factor
-  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1632,8 +1629,7 @@ LaplaceAssembly<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &grad_phi_p_j =
-                pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
+              const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
               // Units are not consistent for the following line, but it is
               // better that way for the problem scaling and it doesn't affect
@@ -1710,6 +1706,8 @@ LaplaceAssembly<dim>::assemble_rhs(
           local_rhs_i += -1 / viscosity * h *
                          scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
+          if (scratch_data.components[i] == dim)
+            local_rhs_i /= scratch_data.pressure_scaling_factor;
           local_rhs(i) += local_rhs_i;
         }
     }

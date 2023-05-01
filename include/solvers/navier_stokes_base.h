@@ -402,13 +402,6 @@ protected:
   rescale_pressure_dofs_in_newton_update();
 
   /**
-   * @brief Changes the pressure scaling in the evaluation point
-   * @param scaling_factor the scaling factor to use
-   */
-  void
-  rescale_evaluation_point(const double scaling_factor);
-
-  /**
    * @brief Returns whether the DOF is locally owned
    * @param global_id the global id of the DOF
    */
