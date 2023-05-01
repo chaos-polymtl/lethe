@@ -9,6 +9,7 @@ FlowControl<dim>::FlowControl(
   , beta_0(flow_control.beta_0)
   , alpha(flow_control.alpha)
   , beta_threshold(flow_control.beta_threshold)
+  , beta_n(0.0)
   , flow_direction(flow_control.flow_direction)
   , no_force(true)
   , threshold_factor(1.01)
@@ -76,7 +77,7 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
            no_force == true)
     {
       // If the average velocity is between targeted value and the threshold
-      // (meaning it is sightly over the value) and it have not reached once the
+      // (meaning it is sightly over the value) and it has not reached once the
       // value during the simulation (no_force is enable), it decreases by
       // itself (pressure drop).
       beta_n1 = 0.0;
@@ -99,7 +100,7 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
   // new beta is set to the old beta. This prevents reassembly of the matrix
   // because of the force term when reuse matrix is used for the non-linear
   // solver
-  if (abs((beta_n1 - beta_n) / beta_n) < beta_threshold)
+  if (abs(beta_n1 - beta_n) < abs(beta_threshold * beta_n))
     beta_n1 = beta_n;
 
   // Setting beta coefficient to the tensor according to the flow direction.
