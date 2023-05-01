@@ -18,11 +18,12 @@ The default parameters are:
   subsection flow control
     set enable               = false
     set enable beta particle = false
-    set average velocity     = 0
+    set average velocity     = 0.0
     set inlet boundary id    = 0
     set flow direction       = 0
-    set initial beta         = 0
+    set initial beta         = 0.0
     set alpha                = 1.0
+    set beta threshold       = 0.0
     set verbosity            = quiet
   end
 
@@ -47,6 +48,8 @@ The default parameters are:
   A good method to find a reasonable initial beta is to test two or three different initial beta parameters, write down the given flow rate at the first time step in the simulation and do a regression. The correlation is linear and giving a proper value will reduce the time it takes to reach the target velocity.
 
 * The ``alpha`` parameter is a relaxation coefficient that is used to control the convergence speed or stability. The higher the value, the faster the convergence. However, if the value is too high, the convergence may be unstable.
+
+* The ``beta threshold`` parameter is the threshold of the previous calculated beta force where the new calculated beta doesn't need to be updated. This prevents the reassembly of the matrix because of the force term when reuse matrix is used for the non-linear solver
 
 Reference
 ---------

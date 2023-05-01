@@ -96,10 +96,10 @@ FlowControl<dim>::calculate_beta(const double &      average_velocity_n,
       beta_n1 = main_flow_controller(average_velocity_n, dt);
     }
 
-  // If the new beta is in the used difined threshold of the old beta, the
-  // new beta is set to the old beta. This prevents reassembly of the matrix
-  // because of the force term when reuse matrix is used for the non-linear
-  // solver
+  // If the new beta is in the user defined threshold of the old beta, the new
+  // beta is kept as the previous beta. This prevents the reassembly of the
+  // matrix because of the force term when reuse matrix is used for the
+  // non-linear solver
   if (abs(beta_n1 - beta_n) < abs(beta_threshold * beta_n))
     beta_n1 = beta_n;
 
