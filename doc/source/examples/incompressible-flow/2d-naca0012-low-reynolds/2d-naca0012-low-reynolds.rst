@@ -24,7 +24,7 @@ In this example, a two-dimensional flow around a NACA airfoil is studied. Accord
 
 .. image:: image/explanations_BC.png
 
-These airfoils, though created almost 100 years ago, are still very popular in aerodynamic fields where they often serve as a *base* choice, which is then modified to fit the constructor's constraints. The literature on numerical simulations of NACAs with high Reynolds numbers (:math:`Re>10^6`) is abundant. However recent technological developments in the field of Micro Air Vehicles (MAVs) created a need for low Reynolds simulations (:math:`Re<10^4`) since these vehicles operate at Reynolds numbers much smaller than usual aircraft. In this example, a 2D simulation around a 0012NACA at :math:`Re=1000` will be performed in order to retrieve significant quantities such as drag, lift and pressure coefficients, respectively denoted by :math:`C_D`, :math:`C_L` and :math:`C_p`. A spectral analysis will then be performed to analyze the vortex shedding frequency. 
+These airfoils, though created almost 100 years ago, are still very popular in aerodynamic fields where they often serve as a *base* choice, which is then modified to fit the constructor's constraints. The literature on numerical simulations of NACAs with high Reynolds numbers (:math:`Re>10^6`) is abundant. However recent technological developments in the field of Micro Air Vehicles (MAVs) created a need for low Reynolds simulations (:math:`Re<10^4`) since these vehicles operate at Reynolds numbers much smaller than usual aircraft. In this example, a 2D simulation around a 0012NACA at :math:`Re=1000` will be performed in order to retrieve significant quantities such as drag, lift and pressure coefficients, respectively denoted by :math:`C_D`, :math:`C_L` and :math:`C_p`. Elements of order 1 will be used for pressure and velocity. A spectral analysis will then be performed to analyze the vortex shedding frequency. 
 
 Parameter file
 ----------------
@@ -120,18 +120,6 @@ Mesh adaptation is used to get a higher resolution in areas of interest, that is
       set fraction coarsening  = 0.16
     end
     
-    
-FEM
-~~~
-
-In this example, the interpolation orders are set to one for both velocity and pressure.
-
-.. code-block:: text
-
-    subsection FEM
-      set pressure order = 1
-      set velocity order = 1
-    end
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -229,9 +217,9 @@ Results and discussion
 
 The following average pressure and velocity fields are obtained for an angle of attack :math:`\alpha` such that :math:`\alpha \in \{0,5,7,9,11,15\}` : 
 
-.. image:: image/pressure_mean.png
+.. image:: image/average_pressure.png
 
-.. image:: image/velocity_mean.png
+.. image:: image/average_velocity.png
 
 
 It is already noticeable that the higher the angle of attack, the greater the pressure gradient. Following this observation, the lift coefficient :math:`C_L` is expected to increase with the angle of attack, until stall is reached. The variation of the lift and drag coefficients are given below with a comparison to the work of Kouser et al. `[1] <https://doi.org/10.1177/17568293211055656>`_. Both coefficients are computed using the following formula : 
@@ -249,23 +237,22 @@ One can also see the low velocity zones on the upper part of the airfoil which c
 
 .. image:: image/naca_streamline_angles.png
 
-It can be observed that zones of recirculation form on the airfoil. This is due to two phenomena : first the flow outside of the boundary layer tends to "pull" it in its direction and the ``noslip`` boundary condition slows the fluid, then a positive pressure gradient, commonly referred to as adverse pressure gradient, on the upper surface pushes the fluid backwards. Following this, the boundary layer separates and a recirculation zone is formed. Below is represented the mean pressure coefficient :math:`C_p` on the airfoil with comparison to the literature right below. It is computed using the following formula : 
+It can be observed that zones of recirculation form on the airfoil. This is due to two phenomena : first the flow outside of the boundary layer tends to "pull" it in its direction and the ``noslip`` boundary condition slows the fluid, then a positive pressure gradient, commonly referred to as adverse pressure gradient, on the upper surface pushes the fluid backwards. Following this, the boundary layer separates and a recirculation zone is formed. Below is represented the mean pressure coefficient :math:`C_p` on the airfoil with comparison to the literature. It is computed using the following formula : 
 
 .. math::
         C_p = \frac{p-p_{\infty}}{0.5\rho_{\infty}u_{\infty}^2}
         
 with :math:`p_{\infty}` the static pressure in the freestream (equal to 0 in this case), :math:`\rho_{\infty}` the freestream fluid density, equal to the fluid density since we are solving an incompressible flow and :math:`u_{\infty}` the freestream velocity of the fluid, equal to ``1.0`` in this case.
 
-.. image:: image/cp_plot.png
+.. image:: image/cp_comparison.png
 
-.. image:: image/cp_plot_ref.png
 
 The important pressure at the leading edge of the airfoil is what allows the incoming flow to be deflected to the upper and lower surfaces. Then, if we look at the upper surface (be careful about the reversed y-axis since :math:`-C_p` is plotted) the adverse pressure gradient is visible. Then at the trailing edge, the mesh is not precise enough. A slight discontinuity ensues which, though not physically accurate, do not invalidate the whole result.
 
 
 For angles of attack :math:`\alpha\geq 9°`, the vortices start to detach from the airfoil. It can be seen using the instantaneous velocity fields. The velocit fields for each angle of attack, at t = 40 seconds are shown below :  
 
-.. image:: image/velocity_instantaneous.png
+.. image:: image/instantaneous_velocity.png
 
 In order to retrieve the frequency of the vortex shedding, one can look at the fluctuations of :math:`C_L`, as presented below for the case where :math:`\alpha=15°` was considered: 
 
@@ -273,7 +260,7 @@ In order to retrieve the frequency of the vortex shedding, one can look at the f
 
 The best mathematical tool available to make a spectral analysis is a Fourier transform, which is performed below, with literature results (Kouser et al. (2021) `[1] <https://doi.org/10.1177/17568293211055656>`_) for comparison:
 
-.. image:: image/fft_comparison.png
+.. image:: image/fft_cl_comparison.png
 
 The fundamental frequency is :math:`f_1 = 0.72` Hz which gives a shedding period :math:`T = 1.39` s that is coherent with the instantaneous velocity field above.
 
@@ -281,7 +268,7 @@ The fundamental frequency is :math:`f_1 = 0.72` Hz which gives a shedding period
 Possibilities for extension
 ------------------------------
 
-- **High-order elements** : In order to get more precise results on the forces and the coefficients, Q2-Q2 elements may be used. It can be modified by setting ``set velocity order = 2`` and ``set pressure order = 2`` in the ``FEM``subsection of ``naca.prm`` .
+- **High-order elements** : In order to get more precise results on the forces and the coefficients, Q2-Q2 elements may be used. It can be modified by setting ``set velocity order = 2`` and ``set pressure order = 2`` in the ``FEM`` subsection of ``naca.prm`` .
 
 - **Going 3D** : the mesh can be extruded into the third dimension. Some modifications will be required in the boundary conditions and getting the correct boundaries id is not trivial. However with periodic boundary conditions set on the sides of the box, spanwise effects can be taken into account, which should yield much better results. 
 

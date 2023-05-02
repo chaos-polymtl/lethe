@@ -120,15 +120,15 @@ def read_my_data(results_path):
 
 def printClCd():
 
-    pathList = ["./simuBatch/naca_0.00/force.00.dat",
-                "./simuBatch/naca_1.00/force.00.dat",
-                "./simuBatch/naca_3.00/force.00.dat",
-                "./simuBatch/naca_5.00/force.00.dat",
-                "./simuBatch/naca_7.00/force.00.dat",
-                "./simuBatch/naca_9.00/force.00.dat",
-                "./simuBatch/naca_11.00/force.00.dat",
-                "./simuBatch/naca_13.00/force.00.dat",
-                "./simuBatch/naca_15.00/force.00.dat"]
+    pathList = ["./simu_batch/naca_0.00/force.00.dat",
+                "./simu_batch/naca_1.00/force.00.dat",
+                "./simu_batch/naca_3.00/force.00.dat",
+                "./simu_batch/naca_5.00/force.00.dat",
+                "./simu_batch/naca_7.00/force.00.dat",
+                "./simu_batch/naca_9.00/force.00.dat",
+                "./simu_batch/naca_11.00/force.00.dat",
+                "./simu_batch/naca_13.00/force.00.dat",
+                "./simu_batch/naca_15.00/force.00.dat"]
 
     angleList = [0, 1, 3, 5, 7, 9, 11, 13,15]
 
@@ -185,6 +185,8 @@ def printClCd():
     axis[0].set_title("Lift coefficient, Re = 1000",fontsize=20)
     axis[0].set_xlabel("Angle of attack (°)",fontsize=20)
     axis[0].set_ylabel("RMS value of lift coefficient",fontsize=20)
+    axis[0].tick_params(axis='y', labelsize=20)
+    axis[0].tick_params(axis='x', labelsize=20)
 
     axis[1].plot(angleList,rmsCd,marker="o",label="Simulated drag coefficient")
     #axis[1].plot(angleList, meanCd, marker="o", label="Simulated drag coefficient") #Uncomment to plot the mean Cd
@@ -194,6 +196,10 @@ def printClCd():
     axis[1].set_title("Drag coefficient, Re = 1000",fontsize=20)
     axis[1].set_xlabel("Angle of attack (°)",fontsize=20)
     axis[1].set_ylabel("RMS value of drag coefficient",fontsize=20)
+    axis[1].tick_params(axis='y', labelsize=20)
+    axis[1].tick_params(axis='x', labelsize=20)
+    axis[1].yaxis.set_label_position("right")
+    axis[1].yaxis.tick_right()
 
     plt.show()
 
@@ -204,15 +210,15 @@ printClCd()
 #simply replace angleIndex =8 by the index of the desired angle.
 def spectralAnalysis():
 
-    pathList = ["./simuBatch/naca_0.00/force.00.dat",
-                "./simuBatch/naca_1.00/force.00.dat",
-                "./simuBatch/naca_3.00/force.00.dat",
-                "./simuBatch/naca_5.00/force.00.dat",
-                "./simuBatch/naca_7.00/force.00.dat",
-                "./simuBatch/naca_9.00/force.00.dat",
-                "./simuBatch/naca_11.00/force.00.dat",
-                "./simuBatch/naca_13.00/force.00.dat",
-                "./simuBatch/naca_15.00/force.00.dat"]
+    pathList = ["./simu_batch/naca_0.00/force.00.dat",
+                "./simu_batch/naca_1.00/force.00.dat",
+                "./simu_batch/naca_3.00/force.00.dat",
+                "./simu_batch/naca_5.00/force.00.dat",
+                "./simu_batch/naca_7.00/force.00.dat",
+                "./simu_batch/naca_9.00/force.00.dat",
+                "./simu_batch/naca_11.00/force.00.dat",
+                "./simu_batch/naca_13.00/force.00.dat",
+                "./simu_batch/naca_15.00/force.00.dat"]
 
     angleList = [0, 1, 3, 5, 7, 9, 11, 13,15]
 
