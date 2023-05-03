@@ -2140,7 +2140,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   // Map used to keep track of which DOFs have been looped over
-  std::map<unsigned int, bool> rescaled_dofs_map;
+  std::unordered_map<unsigned int, bool> rescaled_dofs_map;
   rescaled_dofs_map.clear();
   for (const auto &cell : dof_handler.active_cell_iterators())
     {

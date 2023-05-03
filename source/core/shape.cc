@@ -1321,7 +1321,7 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
   Tensor<1, dim> dr_dx_derivative{};
   Tensor<1, dim> gradient{};
 
-  if (iterable_nodes.size() < 1)
+  if (iterable_nodes.size() == 0)
     {
       throw std::logic_error(
         "Every location inside the bounding box should be covered by the radius "

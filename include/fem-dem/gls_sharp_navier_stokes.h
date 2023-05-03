@@ -582,7 +582,7 @@ private:
    * if the cell is overconstrained (bool), what particle overconstrains this
    * cell (unsigned int), and the distance to the closest surface (double).
    * The id of the particle that overconstrains the cell
-   * is the id of the particle with the lowest particle index.
+   * is the id of the particle closest to the cell barycenter.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int, double>>
@@ -593,14 +593,6 @@ private:
    */
   TrilinosWrappers::MPI::Vector local_dof_over_constraint;
   TrilinosWrappers::MPI::Vector dof_over_constraint;
-
-  /*
-   * This map is used to keep information about the vertices that are
-   * constrained. This information is used to convert cells that are not
-   * considered cut at first, but that have all their vertices constrained, into
-   * overconstrained cells.
-   */
-  std::map<size_t, std::tuple<bool, unsigned int>> vertices_cut;
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>
