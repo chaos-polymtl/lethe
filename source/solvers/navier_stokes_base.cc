@@ -2104,14 +2104,14 @@ inline bool
 NavierStokesBase<2, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
   is_locally_owned_dof(const unsigned int global_id)
 {
-  return this->locally_owned_dofs[0].is_element(global_id);
+  return this->dof_handler.locally_owned_dofs().is_element(global_id);
 }
 template <>
 inline bool
 NavierStokesBase<3, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
   is_locally_owned_dof(const unsigned int global_id)
 {
-  return this->locally_owned_dofs[0].is_element(global_id);
+  return this->dof_handler.locally_owned_dofs().is_element(global_id);
 }
 
 template <int dim, typename VectorType, typename DofsType>
