@@ -1,7 +1,7 @@
 subsection simulation control
   set method            = steady
   set number mesh adapt = 1
-  set output frequency  = 1
+  set output frequency  = 0
   set output name       = almost_blocked_channels
 end
 
@@ -57,17 +57,17 @@ end
 subsection source term
   set enable = true
   subsection xyz
-    set Function expression = 1; 0; 0; 0
+    set Function expression = 0.01; 0; 0; 0
   end
 end
 
 subsection particles
-  set number of particles               = 3
-  set stencil order                     = 1
-  set length ratio                      = 2
-  set refine mesh inside radius factor  = 0
-  set refine mesh outside radius factor = 1.5
-  set initial refinement                = 0
+  set number of particles                           = 3
+  set stencil order                                 = 1
+  set length ratio                                  = 1
+  set refine mesh inside radius factor              = 0
+  set refine mesh outside radius factor             = 1.5
+  set initial refinement                            = 0
   subsection particle info 0
     set type            = cylinder
     set shape arguments = 0.35;1.1
@@ -97,9 +97,9 @@ end
 
 subsection non-linear solver
   set verbosity = quiet
+  set tolerance = 1e-9
 end
 
 subsection linear solver
-  set verbosity         = quiet
-  set relative residual = 1e-1
+  set verbosity = quiet
 end
