@@ -25,6 +25,6 @@ There are three choices of stabilization strategy:
 
 * ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div Navier-Stokes solver (``gd_navier_stokes_2d`` and ``gd_navier_stokes_3d``)
 
-The ``pressure scaling factor`` parameter is used as a multiplier for the pressure that is used in the equations to be solved; the inverse of the factor is applied on the pressure after solving, so the output values should be properly scaled. It helps convergence in the cases where pressure and velocity have very different scales, which would normally result in a very stiff system of equations.
+The ``pressure scaling factor`` parameter is used as a multiplier for the pressure that is used in the equations to be solved; the inverse of the factor is applied to the pressure after solving, so the output values should be properly scaled. It helps the convergence for cases where pressure and velocity have very different scales, which would normally result in a very stiff system of equations.
 
 
