@@ -221,7 +221,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->previous_solutions,
                       this->solution_stages,
                       this->forcing_function,
-                      this->beta);
+                      this->flow_control.get_beta());
   if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_vof =
@@ -347,7 +347,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
                       this->previous_solutions,
                       this->solution_stages,
                       this->forcing_function,
-                      this->beta);
+                      this->flow_control.get_beta());
 
   if (this->simulation_parameters.multiphysics.VOF)
     {

@@ -92,6 +92,23 @@ GLSVANSSolver<dim>::setup_dofs()
                                       locally_relevant_dofs_voidfraction,
                                       this->mpi_communicator);
 
+  // Define constraints for periodic boundary conditions
+  auto &boundary_conditions =
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions;
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            void_fraction_dof_handler,
+            boundary_conditions.id[i_bc],
+            boundary_conditions.periodic_id[i_bc],
+            boundary_conditions.periodic_direction[i_bc],
+            void_fraction_constraints);
+        }
+    }
+
   for (unsigned int i = 0; i < previous_void_fraction.size(); ++i)
     {
       previous_void_fraction[i].reinit(locally_owned_dofs_voidfraction,
@@ -1333,7 +1350,7 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
                       this->previous_solutions,
                       this->solution_stages,
                       this->forcing_function,
-                      this->beta);
+                      this->flow_control.get_beta());
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
@@ -1441,7 +1458,7 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
                       this->previous_solutions,
                       this->solution_stages,
                       this->forcing_function,
-                      this->beta);
+                      this->flow_control.get_beta());
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
