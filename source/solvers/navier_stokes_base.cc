@@ -2143,8 +2143,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   // Map used to keep track of which DOFs have been looped over
-  std::unordered_map<unsigned int, bool> rescaled_dofs_map;
-  rescaled_dofs_map.clear();
+  std::unordered_set<unsigned int> rescaled_dofs_set;
+  rescaled_dofs_set.clear();
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
@@ -2154,8 +2154,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
             {
               const unsigned int global_id = local_dof_indices[j];
               // We check if we have already checked this DOF
-              auto iterator = rescaled_dofs_map.find(global_id);
-              if (iterator == rescaled_dofs_map.end())
+              auto iterator = rescaled_dofs_set.find(global_id);
+              if (iterator == rescaled_dofs_set.end())
                 {
                   const unsigned int component_index =
                     this->fe->system_to_component_index(j).first;
@@ -2165,7 +2165,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
                         this->newton_update(global_id) *
                         pressure_scaling_factor;
                     }
-                  rescaled_dofs_map[global_id] = true;
+                  rescaled_dofs_set.insert(global_id);
                 }
             }
         }

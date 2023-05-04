@@ -591,8 +591,8 @@ private:
   /*
    * These vectors are used to keep track of the DOFs that are overconstrained
    */
-  TrilinosWrappers::MPI::Vector local_dof_over_constraint;
-  TrilinosWrappers::MPI::Vector dof_over_constraint;
+  TrilinosWrappers::MPI::Vector local_dof_overconstrained;
+  TrilinosWrappers::MPI::Vector dof_overconstrained;
 
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>

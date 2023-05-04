@@ -105,9 +105,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   cut_cells_map.clear();
   cells_inside_map.clear();
   overconstrained_fluid_cell_map.clear();
-  local_dof_over_constraint.reinit(this->locally_owned_dofs,
+  local_dof_overconstrained.reinit(this->locally_owned_dofs,
                                    this->mpi_communicator);
-  dof_over_constraint.reinit(this->locally_owned_dofs,
+  dof_overconstrained.reinit(this->locally_owned_dofs,
                              this->locally_relevant_dofs,
                              this->mpi_communicator);
 
@@ -255,7 +255,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
                   id                            = local_dof_indices[j];
-                  local_dof_over_constraint(id) = 1;
+                  local_dof_overconstrained(id) = 1;
                 }
             }
 
@@ -273,7 +273,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                        ++v)
                     {
                       id                            = local_face_dof_indices[v];
-                      local_dof_over_constraint(id) = 1;
+                      local_dof_overconstrained(id) = 1;
                     }
                 }
             }
@@ -285,8 +285,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                     particle_id_in_which_this_cell_is_embedded};
         }
     }
-  dof_over_constraint = local_dof_over_constraint;
-  dof_over_constraint.compress(VectorOperation::insert);
+  dof_overconstrained = local_dof_overconstrained;
+  dof_overconstrained.compress(VectorOperation::insert);
 
   // We loop over every fluid cell, and if all of its DOFs are cut we change the
   // status of the cell itself.
@@ -324,7 +324,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                   for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
                     {
                       global_dof_id = local_dof_indices[j];
-                      if (dof_over_constraint(global_dof_id) > 0)
+                      if (dof_overconstrained(global_dof_id) > 0)
                         {
                           number_of_vertices_cut += 1;
                         }
@@ -1464,6 +1464,9 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
         {
           if (cell->is_locally_owned())
             {
+              // Here we identify all cut cells, and if a cell is cut we output
+              // the ID of the cell that cuts it. If the cell is not cut, a
+              // default value of -1 is output.
               bool cell_is_cut;
               int  particle_id;
               std::tie(cell_is_cut, particle_id, std::ignore) =
@@ -1473,6 +1476,11 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
               else
                 cell_cuts(i) = -1;
 
+              // Here we identify all overconstrained cells. If a cell is
+              // overconstrained, we output the ID of the closest particle (the
+              // one used for extrapolation of the velocity immersed boundary
+              // condition). If the cell is not overconstrained, a default value
+              // of -1 is output.
               bool cell_is_overconstrained;
               std::tie(cell_is_overconstrained, particle_id, std::ignore) =
                 overconstrained_fluid_cell_map[cell];

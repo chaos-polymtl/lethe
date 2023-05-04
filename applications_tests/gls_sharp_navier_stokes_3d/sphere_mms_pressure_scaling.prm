@@ -1,6 +1,6 @@
 subsection simulation control
   set method            = steady
-  set number mesh adapt = 2
+  set number mesh adapt = 1
   set output name       = output
   set output frequency  = 0
   set log precision     = 4
@@ -24,7 +24,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1:1:true
-  set initial refinement = 2
+  set initial refinement = 3
 end
 
 subsection boundary conditions
