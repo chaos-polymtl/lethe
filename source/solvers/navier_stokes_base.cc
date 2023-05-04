@@ -2092,6 +2092,7 @@ NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>::
 {
   return this->locally_owned_dofs.is_element(global_id);
 }
+
 template <>
 inline bool
 NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>::
@@ -2099,6 +2100,7 @@ NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>::
 {
   return this->locally_owned_dofs.is_element(global_id);
 }
+
 template <>
 inline bool
 NavierStokesBase<2, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
@@ -2106,6 +2108,7 @@ NavierStokesBase<2, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
 {
   return this->dof_handler.locally_owned_dofs().is_element(global_id);
 }
+
 template <>
 inline bool
 NavierStokesBase<3, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::

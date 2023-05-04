@@ -589,7 +589,7 @@ private:
     overconstrained_fluid_cell_map;
 
   /*
-   * These vectors are used to keep track of the DOFs that are overconstraint
+   * These vectors are used to keep track of the DOFs that are overconstrained
    */
   TrilinosWrappers::MPI::Vector local_dof_over_constraint;
   TrilinosWrappers::MPI::Vector dof_over_constraint;
