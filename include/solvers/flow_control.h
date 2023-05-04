@@ -47,28 +47,84 @@ public:
   /**
    * @brief calculate_beta. This function calculates a beta coefficient which
    * applies a force to the flow in order to adjust the flow rate to a desired
-   * value through the previous flow rate. Once the flow rate is reached, the
-   * algorithm calculates a new beta to keep a constant flow rate.
+   * average velocity through the previous flow rate. Once the flow rate is
+   * reached, the algorithm calculates a new beta to keep a constant flow rate.
    *
-   * @param flow_rate. The last step flow rate
+   * @param average_velocity. The last step average_velocity
    *
    * @param dt. The current time step
    *
    * @param step_number. The current step
    */
   void
-  calculate_beta(const std::pair<double, double> &flow_rate,
-                 const double &                   dt,
-                 const unsigned int &             step_number);
+  calculate_beta(const double &      average_velocity,
+                 const double &      dt,
+                 const unsigned int &step_number);
 
   /**
-   * @brief get_beta. This function gives the beta coefficient of the
-   * step time
+   * @brief proportional_flow_controller. This function calculates a beta only
+   * with the last step average velocity. It is used to initialize the beta
+   * if there's no initial beta value at 1st time step and the 2nd time step.
+   */
+  inline double
+  proportional_flow_controller(const double &average_velocity_n,
+                               const double &dt)
+  {
+    return 0.5 * alpha * (average_velocity_0 - average_velocity_n) / dt;
+  }
+
+  /**
+   * @brief main_flow_controller. This function calculates a beta coefficient
+   * based on a formula described by Wang, 2009 in "A non-body conformal grid
+   * method for simulations
+   * of laminar and turbulent flows with a compressible
+   * large eddy simulation solver"
+   */
+  inline double
+  main_flow_controller(const double &average_velocity_n, const double &dt)
+  {
+    double beta_n1 = beta_n + alpha *
+                                (average_velocity_0 - 2 * average_velocity_n +
+                                 average_velocity_1n) /
+                                dt;
+
+    // If desired average velocity is reached, new beta only maintains the force
+    // to keep the flow at the desired value. If calculated beta is
+    // negative it is set to 0 to avoided +/- force.
+    if (average_velocity_0 * beta_n1 < 0 && no_force == false)
+      return 0.0;
+    else
+      return beta_n1;
+  }
+
+  /**
+   * @brief get_beta. This function gives the beta force of the step time
    */
   Tensor<1, dim>
   get_beta()
   {
     return beta;
+  }
+
+  /**
+   * @brief get_beta_particle. This function gives the beta force of the
+   * CFD time step scaled for particles.
+   */
+  inline Tensor<1, 3>
+  get_beta_particles(const double &fluid_density,
+                     const double &particle_density)
+  {
+    // The beta force for particles must have a tensor of dim = 3 since the body
+    // force g parameters is a tensor of dim 3 (those forces will add up)
+    Tensor<1, 3> beta_particle;
+    beta_particle[0] = beta[0];
+    beta_particle[1] = beta[1];
+
+    if constexpr (dim == 3)
+      beta_particle[2] = beta[2];
+
+    // From beta_p * rho_p = beta_f * rho_f [=] M/(T²L²) units of ΔP/L
+    return beta_particle * fluid_density / particle_density;
   }
 
   void
@@ -79,18 +135,27 @@ public:
 
 private:
   // The coefficients are stored in the following fashion :
-  // 0 - flow rate intended, n - n, 1n - n-1, n1 - n+1
-  Tensor<1, dim> beta;
-  double         beta_0;
-  double         beta_n;
-  double         beta_n1;
-  double         flow_rate_0;
-  double         flow_rate_1n;
-  double         flow_rate_n;
-  double         area;
-  unsigned int   flow_direction;
+  // 0 - target average velocity, n - n, 1n - n-1, n1 - n+1
 
-  // Variables used to improve convergence
+  // Beta value as tensor for force application
+  Tensor<1, dim> beta;
+
+  // Target average velocity
+  double average_velocity_0;
+
+  // User defined parameters to improve convergence
+  double beta_0;
+  double alpha;
+  double beta_threshold;
+
+  // Average velocity and beta history
+  double beta_n;
+  double average_velocity_1n;
+
+  // Flow direction
+  unsigned int flow_direction;
+
+  // Parameters of class to improve convergence
   bool   no_force;
   double threshold_factor;
 };

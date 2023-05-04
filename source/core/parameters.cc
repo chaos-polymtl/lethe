@@ -2516,21 +2516,15 @@ namespace Parameters
   {
     prm.enter_subsection("flow control");
     {
-      prm.declare_entry(
-        "verbosity",
-        "quiet",
-        Patterns::Selection("quiet|verbose"),
-        "State whether from the flow control information should be printed "
-        "Choices are <quiet|verbose>.");
       prm.declare_entry("enable",
                         "false",
                         Patterns::Bool(),
                         "Enable flow rate control");
-      prm.declare_entry("volumetric flow rate",
+      prm.declare_entry("average velocity",
                         "0",
                         Patterns::Double(),
-                        "Volumetric flow rate");
-      prm.declare_entry("boundary id",
+                        "The target average velocity");
+      prm.declare_entry("inlet boundary id",
                         "0",
                         Patterns::Integer(),
                         "Boundary id of the inlet flow");
@@ -2542,6 +2536,24 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "Beta coefficient value for the first step time");
+      prm.declare_entry("alpha",
+                        "1",
+                        Patterns::Double(),
+                        "Relaxation coefficient for flow controller");
+      prm.declare_entry("enable beta particle",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable beta force for particles");
+      prm.declare_entry("beta threshold",
+                        "0.0",
+                        Patterns::Double(),
+                        "Enable beta force for particles");
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the flow control information should be printed "
+        "Choices are <quiet|verbose>.");
     }
     prm.leave_subsection();
   }
@@ -2551,17 +2563,30 @@ namespace Parameters
   {
     prm.enter_subsection("flow control");
     {
+      // Enable flow control
+      enable_flow_control = prm.get_bool("enable");
+
+      // Set the target value for the flow control and flow direction
+      average_velocity_0 = prm.get_double("average velocity");
+      flow_direction     = prm.get_integer("flow direction");
+      boundary_flow_id   = prm.get_integer("inlet boundary id");
+
+      // Tuning parameters for the flow controller
+      beta_0         = prm.get_double("initial beta");
+      alpha          = prm.get_double("alpha");
+      beta_threshold = prm.get_double("beta threshold");
+
+      // Enable printing of flow control information
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      enable_flow_control = prm.get_bool("enable");
-      flow_rate_0         = prm.get_double("volumetric flow rate");
-      boundary_flow_id    = prm.get_integer("boundary id");
-      flow_direction      = prm.get_integer("flow direction");
-      beta_0              = prm.get_double("initial beta");
+
+      // Enable beta force for particles (CFD-DEM)
+      enable_beta_particle = prm.get_bool("enable beta particle");
     }
+
     prm.leave_subsection();
   }
 

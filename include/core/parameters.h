@@ -1110,19 +1110,16 @@ namespace Parameters
   };
 
   /**
-   * @brief FlowControl - Set volumetric flow rate on a boundary id
-   * toward the normal direction of this wall.
+   * @brief FlowControl - Set average velocity on a boundary (CFD) or the domain
+   * (CFD-DEM).
    */
   struct DynamicFlowControl
   {
-    // Type of verbosity for the flow control
-    Verbosity verbosity;
-
     // Enable flow control
     bool enable_flow_control;
 
-    // Volumetric flow rate (L^3/t)
-    double flow_rate_0;
+    // Average velocity target (L/t)
+    double average_velocity_0;
 
     // Boundary id at flow inlet
     unsigned int boundary_flow_id;
@@ -1132,6 +1129,20 @@ namespace Parameters
 
     // Initial beta
     double beta_0;
+
+    // Relaxation coefficient for beta force controller
+    // beta_n+1 = beta_n + alpha * (...)
+    double alpha;
+
+    // If beta at n+1 step is in this threshold over beta at n step, beta n+1
+    // is kept as beta n. This avoid a new term of force in the matrix
+    double beta_threshold;
+
+    // Type of verbosity for the flow control
+    Verbosity verbosity;
+
+    // Apply scaled beta force to particles
+    bool enable_beta_particle;
 
     static void
     declare_parameters(ParameterHandler &prm);

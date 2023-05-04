@@ -1112,3 +1112,156 @@ calculate_flow_rate(const DoFHandler<3> &                     dof_handler,
                     const unsigned int &                      boundary_id,
                     const Quadrature<2> &face_quadrature_formula,
                     const Mapping<3> &   mapping);
+
+template <int dim, typename VectorType>
+double
+calculate_average_velocity(const DoFHandler<dim> &    dof_handler,
+                           const VectorType &         present_solution,
+                           const unsigned int &       boundary_id,
+                           const Quadrature<dim - 1> &face_quadrature_formula,
+                           const Mapping<dim> &       mapping)
+{
+  std::pair<double, double> flow_rate_and_area =
+    calculate_flow_rate(dof_handler,
+                        present_solution,
+                        boundary_id,
+                        face_quadrature_formula,
+                        mapping);
+
+  // In dynamic flow control, the flow rate is negative if the velocity is
+  // positive when calculated at inlet boundary because of the normal vector
+  // direction. Hence, we need to invert the sign to get the average velocity.
+  return -flow_rate_and_area.first / flow_rate_and_area.second;
+}
+
+template double
+calculate_average_velocity(
+  const DoFHandler<2> &                dof_handler,
+  const TrilinosWrappers::MPI::Vector &present_solution,
+  const unsigned int &                 boundary_id,
+  const Quadrature<1> &                face_quadrature_formula,
+  const Mapping<2> &                   mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<3> &                dof_handler,
+  const TrilinosWrappers::MPI::Vector &present_solution,
+  const unsigned int &                 boundary_id,
+  const Quadrature<2> &                face_quadrature_formula,
+  const Mapping<3> &                   mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<2> &                     dof_handler,
+  const TrilinosWrappers::MPI::BlockVector &present_solution,
+  const unsigned int &                      boundary_id,
+  const Quadrature<1> &                     face_quadrature_formula,
+  const Mapping<2> &                        mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<3> &                     dof_handler,
+  const TrilinosWrappers::MPI::BlockVector &present_solution,
+  const unsigned int &                      boundary_id,
+  const Quadrature<2> &                     face_quadrature_formula,
+  const Mapping<3> &                        mapping);
+
+template <int dim, typename VectorType>
+double
+calculate_average_velocity(const DoFHandler<dim> &dof_handler,
+                           const DoFHandler<dim> &void_fraction_dof_handler,
+                           const VectorType &     present_solution,
+                           const VectorType &  present_void_fraction_solution,
+                           const unsigned int &flow_direction,
+                           const Quadrature<dim> &quadrature_formula,
+                           const Mapping<dim> &   mapping)
+{
+  // Set up for velocity fe values
+  const auto &                     tria       = dof_handler.get_triangulation();
+  const FESystem<dim, dim>         fe         = dof_handler.get_fe();
+  const unsigned int               n_q_points = quadrature_formula.size();
+  const FEValuesExtractors::Vector velocities(0);
+  std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
+  Tensor<1, dim>                   normal_vector;
+
+  FEValues<dim> fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
+
+  // Set up for void fraction fe values
+  const FESystem<dim, dim> fe_void_fraction =
+    void_fraction_dof_handler.get_fe();
+  const FEValuesExtractors::Scalar void_fraction(0);
+  std::vector<double>              void_fraction_values(n_q_points);
+
+  FEValues<dim> fe_vf_values(mapping,
+                             fe_void_fraction,
+                             quadrature_formula,
+                             update_values | update_quadrature_points);
+
+  // Initialize variables for summation
+  double average_velocity = 0;
+  double volume           = 0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          typename DoFHandler<dim>::active_cell_iterator vf_cell(
+            &tria, cell->level(), cell->index(), &void_fraction_dof_handler);
+          fe_vf_values.reinit(vf_cell);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              // Get the void fraction at the quadrature point
+              fe_vf_values[void_fraction].get_function_values(
+                present_void_fraction_solution, void_fraction_values);
+
+              // Add the area of the face on boundary
+              // weighted by void fraction
+              volume += void_fraction_values[q] * fe_values.JxW(q);
+
+              // Add the flow rate at the face on boundary weighted
+              // by void fraction
+              fe_values[velocities].get_function_values(present_solution,
+                                                        velocity_values);
+              average_velocity += void_fraction_values[q] *
+                                  velocity_values[q][flow_direction] *
+                                  fe_values.JxW(q);
+            }
+        }
+    }
+
+  const MPI_Comm mpi_communicator = dof_handler.get_communicator();
+  average_velocity = Utilities::MPI::sum(average_velocity, mpi_communicator);
+  volume           = Utilities::MPI::sum(volume, mpi_communicator);
+
+  // Calculate the average velocity
+  average_velocity /= volume;
+
+  return average_velocity;
+}
+
+template double
+calculate_average_velocity(
+  const DoFHandler<2> &                dof_handler,
+  const DoFHandler<2> &                void_fraction_dof_handler,
+  const TrilinosWrappers::MPI::Vector &present_solution,
+  const TrilinosWrappers::MPI::Vector &present_void_fraction_solution,
+  const unsigned int &                 flow_direction,
+  const Quadrature<2> &                quadrature_formula,
+  const Mapping<2> &                   mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<3> &                dof_handler,
+  const DoFHandler<3> &                void_fraction_dof_handler,
+  const TrilinosWrappers::MPI::Vector &present_solution,
+  const TrilinosWrappers::MPI::Vector &present_void_fraction_solution,
+  const unsigned int &                 flow_direction,
+  const Quadrature<3> &                quadrature_formula,
+  const Mapping<3> &                   mapping);
