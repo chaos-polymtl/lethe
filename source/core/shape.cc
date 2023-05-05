@@ -1337,9 +1337,17 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
       if (distance > 1e-16)
         dr_dx_derivative = relative_position / distance;
       else
-        for (int d = 0; d < dim; d++)
-          // Can be proved by taking the limit (definition of a derivative)
-          dr_dx_derivative[d] = 1.0;
+        {
+          // If the evaluation point overlaps with the node position, we assume
+          // that the contribution of this node is 0. This assumption can be
+          // made because radial basis functions are symmetrical. If the basis
+          // function is not differentiable at its node (e.g. linear function),
+          // this approximation will still hold since the approximated distance
+          // field is already imperfect and neighboring nodes will add their
+          // contribution at the evaluation point.
+          for (int d = 0; d < dim; d++)
+            dr_dx_derivative[d] = 0;
+        }
       // Calculation of the dr_norm/dr
       drnorm_dr_derivative = 1.0 / support_radii[node_id];
       // Calculation of the d(basis)/dr

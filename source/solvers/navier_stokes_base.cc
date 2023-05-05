@@ -74,7 +74,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
-  , pressure_scaling_factor(p_nsparam.stabilization.pressure_scaling_factor)
 {
   if (simulation_parameters.mesh.simplex)
     {
@@ -2122,6 +2121,9 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::
   rescale_pressure_dofs_in_newton_update()
 {
+  const double pressure_scaling_factor =
+    simulation_parameters.stabilization.pressure_scaling_factor;
+
   // We skip the function if the factor has a value of 1
   if (abs(pressure_scaling_factor - 1) < 1e-8)
     return;

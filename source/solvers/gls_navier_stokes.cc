@@ -620,12 +620,14 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -692,7 +694,6 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
     }
 
   scratch_data.calculate_physical_properties();
-  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
 
   copy_data.reset();
 
@@ -806,12 +807,14 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -875,7 +878,6 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
     }
 
   scratch_data.calculate_physical_properties();
-  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
 
   copy_data.reset();
 

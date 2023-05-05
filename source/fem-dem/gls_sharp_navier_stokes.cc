@@ -3248,11 +3248,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // dummy and non-dummy pressure dofs. Since this
                           // case is only applicable to this solver, the
                           // choice was made to modify the rhs itself.
+                          const double pressure_scaling_factor =
+                            this->simulation_parameters.stabilization
+                              .pressure_scaling_factor;
                           this->system_rhs(global_index_overwrite) =
-                            component_i == dim ?
-                              (v_ib * sum_line + rhs_add) /
-                                this->pressure_scaling_factor :
-                              v_ib * sum_line + rhs_add;
+                            component_i == dim ? (v_ib * sum_line + rhs_add) /
+                                                   pressure_scaling_factor :
+                                                 v_ib * sum_line + rhs_add;
 
                           if (dof_on_ib)
                             // Dof is on the immersed boundary
@@ -3261,7 +3263,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 (v_ib * sum_line - this->evaluation_point(
                                                      global_index_overwrite) *
                                                      sum_line) /
-                                  this->pressure_scaling_factor :
+                                  pressure_scaling_factor :
                                 (v_ib * sum_line - this->evaluation_point(
                                                      global_index_overwrite) *
                                                      sum_line);
@@ -3275,7 +3277,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 (sum_line * v_ib - this->evaluation_point(
                                                      global_index_overwrite) *
                                                      sum_line) /
-                                  this->pressure_scaling_factor :
+                                  pressure_scaling_factor :
                                 sum_line * v_ib - this->evaluation_point(
                                                     global_index_overwrite) *
                                                     sum_line;
@@ -3508,12 +3510,14 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
   if (cell_is_cut)
     return;
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -3533,7 +3537,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
     }
 
   scratch_data.calculate_physical_properties();
-  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
   // check if we assemble the NS equation inside the particle or the Laplacian
@@ -3602,12 +3605,14 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   if (cell_is_cut)
     return;
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -3627,7 +3632,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
     }
 
   scratch_data.calculate_physical_properties();
-  scratch_data.set_pressure_scaling_factor(this->pressure_scaling_factor);
   copy_data.reset();
 
   // check if we assemble the NS equation inside the particle or the Laplacian

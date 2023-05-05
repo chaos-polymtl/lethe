@@ -363,13 +363,5 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
     }
 }
 
-template <int dim>
-void
-NavierStokesScratchData<dim>::set_pressure_scaling_factor(
-  const double pressure_scaling_factor)
-{
-  this->pressure_scaling_factor = pressure_scaling_factor;
-}
-
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;

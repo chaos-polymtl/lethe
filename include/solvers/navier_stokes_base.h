@@ -456,10 +456,6 @@ protected:
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
 
-  // Pressure scaling factor to allow solving problems with different pressure
-  // and velocity scales
-  double pressure_scaling_factor;
-
   // Mappings and Quadratures
   std::shared_ptr<Mapping<dim>>        mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;

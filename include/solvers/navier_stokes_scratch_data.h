@@ -220,7 +220,8 @@ public:
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
          Function<dim> *                forcing_function,
-         Tensor<1, dim>                 beta_force)
+         Tensor<1, dim>                 beta_force,
+         const double                   pressure_scaling_factor)
   {
     this->fe_values.reinit(cell);
 
@@ -294,6 +295,7 @@ public:
                                             this->pressure_values);
     fe_values[pressure].get_function_gradients(current_solution,
                                                this->pressure_gradients);
+    this->pressure_scaling_factor = pressure_scaling_factor;
 
 
     for (unsigned int q = 0; q < n_q_points; ++q)
@@ -907,13 +909,6 @@ public:
    */
   void
   calculate_physical_properties();
-
-  /**
-   * @brief Set the pressure scaling factor.
-   * @param pressure_scaling_factor the value parsed from parameters
-   */
-  void
-  set_pressure_scaling_factor(const double pressure_scaling_factor);
 
   // Physical properties
   PhysicalPropertiesManager            properties_manager;
