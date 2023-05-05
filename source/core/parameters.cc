@@ -379,7 +379,7 @@ namespace Parameters
         "1",
         Patterns::Double(),
         "This parameter can be used to change the scale of pressure in the "
-        "equations to solve. When the velocity and pressure scales are very "
+        "Navier-Stokes equations. When the velocity and pressure scales are very "
         "different, using this parameter allows to reduce the condition number"
         " and reach a solution.");
     }
