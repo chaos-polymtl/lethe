@@ -37,8 +37,12 @@ void
 Compartmentalization<dim>::generate_cylindrical_grid()
 {
   GridOut grid_out;
-  GridGenerator::subdivided_cylinder(triangulation, 1, 0.03, 0.06);
-  triangulation.refine_global(1);
+  GridGenerator::subdivided_cylinder(
+    triangulation,
+    cp_parameters.cp_param.subdivisions,
+    cp_parameters.cp_param.cylinder_radius,
+    cp_parameters.cp_param.cylinder_half_length);
+  triangulation.refine_global(cp_parameters.cp_param.initial_refinement);
   std::ofstream output("triangulation.vtk");
   grid_out.write_vtk(triangulation, output);
   std::vector<double>     cell_index_output;
@@ -189,7 +193,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
 
   // tol is the threshold of the clustering for difference between the
   // physical property values
-  double Tol = 1;
+  double Tol = cp_parameters.cp_param.electric_field_tolerance;
   vector.push_back(vector_cell[0]);
 
   // max is the highest physical property
@@ -378,7 +382,7 @@ Compartmentalization<dim>::overlaid_map()
 
       // tol is the threshold of the clustering for difference between the
       // physical property values
-      double Tol = 0.7;
+      double Tol = cp_parameters.cp_param.velocity_tolerance;
       vector.push_back(vector_cell[0]);
 
       // max is the highest physical property
@@ -519,8 +523,8 @@ Compartmentalization<dim>::overlaid_map()
 template <int dim>
 void
 Compartmentalization<dim>::write_file_compartments_first_field(
-  Vector<double> &    compartments_final,
-  const double &      time,
+  Vector<double>     &compartments_final,
+  const double       &time,
   const unsigned int &step_number)
 {
   // This function visualize the clusters
@@ -550,8 +554,8 @@ Compartmentalization<dim>::write_file_compartments_first_field(
 template <int dim>
 void
 Compartmentalization<dim>::write_ultimate_file(
-  Vector<double> &    compartments_ultimate,
-  const double &      time,
+  Vector<double>     &compartments_ultimate,
+  const double       &time,
   const unsigned int &step_number)
 {
   const std::string folder = "./";
