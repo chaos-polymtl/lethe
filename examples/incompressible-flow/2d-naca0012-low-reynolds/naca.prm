@@ -6,14 +6,14 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf2
-  set output name       = naca-output
-  set output path 	= ./output/
-  set output frequency  = 50
-  set adapt          = true
-  set max cfl        = 10
-  set time end         	= 40
-  set time step        	= 0.01
+  set method           = bdf2
+  set output name      = naca-output
+  set output path      = ./output/
+  set output frequency = 50
+  set adapt            = true
+  set max cfl          = 10
+  set time end         = 40
+  set time step        = 0.01
 end
 
 #---------------------------------------------------
@@ -35,10 +35,10 @@ subsection restart
   set frequency  = 30
 
   #Output/input files
-  set filename   = restart
+  set filename = restart
 
   #Restarting parameters
-  set restart    = false
+  set restart = false
 end
 
 #---------------------------------------------------
@@ -46,7 +46,7 @@ end
 #---------------------------------------------------
 
 subsection timer
-  set type = iteration 
+  set type = iteration
 end
 
 #---------------------------------------------------
@@ -54,10 +54,10 @@ end
 #---------------------------------------------------
 
 subsection forces
-  set verbosity             = verbose
-  set calculate force       = true
-  set calculate torque      = false
-  set force name            = force
+  set verbosity        = verbose
+  set calculate force  = true
+  set calculate torque = false
+  set force name       = force
 end
 
 #---------------------------------------------------
@@ -84,24 +84,22 @@ end
 #---------------------------------------------------
 # Post-Processing
 #---------------------------------------------------
-subsection post-processing
 
-  set verbosity                   = quiet
-  set output frequency            = 1
+subsection post-processing
+  set verbosity        = quiet
+  set output frequency = 1
 
   #---------------------------------------------------
   # Fluid dynamic post-processing
   #---------------------------------------------------
   # Kinetic energy calculation
-  set calculate kinetic energy    = true
-  set kinetic energy name         = kinetic_energy
+  set calculate kinetic energy = true
+  set kinetic energy name      = kinetic_energy
 
   # Average velocities calculation
-  set calculate average velocities  = true
-  set initial time                  = 5
-
+  set calculate average velocities = true
+  set initial time                 = 5
 end
-  
 
 #---------------------------------------------------
 # Mesh
@@ -137,12 +135,10 @@ subsection boundary conditions
     set type = slip
   end
   subsection bc 3
-  	set type = outlet
-  	set beta = 1.3
+    set type = outlet
+    set beta = 1.3
   end
-  
 end
-
 
 # --------------------------------------------------
 # Mesh Adaptation Control
@@ -170,6 +166,7 @@ subsection non-linear solver
   set max iterations = 10
   set verbosity      = verbose
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------

@@ -162,10 +162,6 @@ def printClCd():
         axisCl[i].plot(list_of_list_of_vars[0][0][cut:-cutLast],list_var_interet[1])
         axisCl[i].set_title(str(angleList[i]) + "degrees" + "//Cl_rms = " + str(np.sqrt(np.mean(list_var_interet[1]**2))))
 
-    #For the sake of comparison, the reference lift/drag coefficient for Re = 10000 are given below. Those results come from Yamaguchi et al. (2013)
-
-    #RefAngles10000 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    #RefCl10000 = [0,0.045,0.079,0.13,0.193,0.271,0.343,0.409,0.602,0.700,0.739,0.662,0.571,0.554,0.521,0.500]
 
     #The following data come from Kouser et al. (2021)
 
@@ -268,7 +264,7 @@ def spectralAnalysis():
 
     plt.show()
 
-#spectralAnalysis()
+
 
 
 
