@@ -121,8 +121,6 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->rescaled_newton_update.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
@@ -1433,7 +1431,6 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
               }
             constraints_used.distribute(completely_distributed_solution);
             this->newton_update = completely_distributed_solution;
-            this->rescale_pressure_dofs_in_newton_update();
           }
           success = true;
         }
@@ -1522,8 +1519,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             constraints_used.distribute(completely_distributed_solution);
 
             this->newton_update = completely_distributed_solution;
-            this->rescale_pressure_dofs_in_newton_update();
-            success = true;
+            success             = true;
           }
         }
       catch (std::exception &e)
@@ -1573,7 +1569,6 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->newton_update;
   newton_update       = completely_distributed_solution;
-  this->rescale_pressure_dofs_in_newton_update();
 }
 
 template <int dim>

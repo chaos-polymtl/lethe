@@ -627,7 +627,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // the fluid dynamics
       multiphysics->solve(false,
                           simulation_parameters.simulation_control.method);
-      this->rescale_pressure_dofs_in_newton_update();
       multiphysics->percolate_time_vectors(false);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
@@ -636,7 +635,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // the fluid dynamics
       multiphysics->solve(true,
                           simulation_parameters.simulation_control.method);
-      this->rescale_pressure_dofs_in_newton_update();
       // Dear future Bruno, percolating auxiliary physics before fluid dynamics
       // is necessary because of the checkpointing mechanism. You spent an
       // evening debugging this, trust me.
@@ -2128,18 +2126,6 @@ NavierStokesBase<dim, VectorType, DofsType>::
   if (abs(pressure_scaling_factor - 1) < 1e-8)
     return;
 
-  // We check if the vectors are the same, which would mean the newton_update
-  // was already rescaled
-  VectorType temp;
-  temp.reinit(this->locally_owned_dofs, this->mpi_communicator);
-
-  temp += rescaled_newton_update;
-  temp -= newton_update;
-  if (temp.norm_sqr() < 1e-8)
-    {
-      newton_update = rescaled_newton_update;
-      return;
-    }
   TimerOutput::Scope t(this->computing_timer, "rescale_pressure");
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -2172,7 +2158,6 @@ NavierStokesBase<dim, VectorType, DofsType>::
             }
         }
     }
-  rescaled_newton_update = newton_update;
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur
