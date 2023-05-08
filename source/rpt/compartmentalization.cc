@@ -523,8 +523,8 @@ Compartmentalization<dim>::overlaid_map()
 template <int dim>
 void
 Compartmentalization<dim>::write_file_compartments_first_field(
-  Vector<double>     &compartments_final,
-  const double       &time,
+  Vector<double> &    compartments_final,
+  const double &      time,
   const unsigned int &step_number)
 {
   // This function visualize the clusters
@@ -554,8 +554,8 @@ Compartmentalization<dim>::write_file_compartments_first_field(
 template <int dim>
 void
 Compartmentalization<dim>::write_ultimate_file(
-  Vector<double>     &compartments_ultimate,
-  const double       &time,
+  Vector<double> &    compartments_ultimate,
+  const double &      time,
   const unsigned int &step_number)
 {
   const std::string folder = "./";
