@@ -52,7 +52,6 @@
 #include <deal.II/multigrid/mg_smoother.h>
 #include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer.h>
-#include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -65,7 +64,7 @@
 
 using namespace dealii;
 
-// We use a parameter file for all the settings
+// Define all the parameters that can be specified in the .prm file
 struct Settings
 {
   bool
@@ -103,8 +102,6 @@ struct Settings
   std::string  output_name;
   std::string  output_path;
 };
-
-
 
 bool
 Settings::try_parse(const std::string &prm_filename)
@@ -212,7 +209,6 @@ Settings::try_parse(const std::string &prm_filename)
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
 
-
   return true;
 }
 
@@ -251,6 +247,7 @@ public:
   }
 };
 
+// Structure created to use the cell worker approach to assemble mg
 template <int dim>
 struct ScratchData
 {
@@ -272,6 +269,7 @@ struct ScratchData
   std::vector<double> old_solution_values;
 };
 
+// Structure created to use the cell worker approach to assemble mg
 struct CopyData
 {
   unsigned int                         level;
@@ -292,6 +290,9 @@ struct CopyData
   }
 };
 
+// Main class for the nonlinear Poisson problem given by
+// -Laplacian(u) = exp(u) using Newton's method, the matrix-based
+// approach and zero Dirichlet boundary conditions.
 template <int dim, int fe_degree>
 class MatrixBasedPoissonProblem
 {
@@ -450,8 +451,6 @@ MatrixBasedPoissonProblem<dim, fe_degree>::make_grid()
   triangulation.refine_global(parameters.initial_refinement);
 }
 
-
-
 template <int dim, int fe_degree>
 void
 MatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
@@ -487,7 +486,6 @@ MatrixBasedPoissonProblem<dim, fe_degree>::setup_system()
                                              mpi_communicator,
                                              locally_relevant_dofs);
   constraints.condense(dsp);
-  // sparsity_pattern.copy_from(dsp);
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
                        dsp,
@@ -1096,11 +1094,9 @@ MatrixBasedPoissonProblem<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
-  // tolerances after a few steps.
   const unsigned int itmax = 10;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
-
 
   Timer solver_timer;
   solver_timer.start();
@@ -1289,7 +1285,6 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
     pcout << std::string(80, '=') << std::endl;
   }
 
-
   for (unsigned int cycle = 0; cycle < parameters.number_of_cycles; ++cycle)
     {
       pcout << std::string(80, '-') << std::endl;
@@ -1326,11 +1321,9 @@ MatrixBasedPoissonProblem<dim, fe_degree>::run()
         }
       pcout << std::endl;
 
-
       pcout << "Solve using Newton's method..." << std::endl;
       solve();
       pcout << std::endl;
-
 
       timer.stop();
       pcout << "Time for setup+solve (CPU/Wall) " << timer.cpu_time() << '/'

@@ -13,7 +13,6 @@
  *
  * ---------------------------------------------------------------------*/
 
-
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -61,7 +60,7 @@
 
 using namespace dealii;
 
-// We use a parameter file for all the settings
+// Define all the parameters that can be specified in the .prm file
 struct Settings
 {
   bool
@@ -98,8 +97,6 @@ struct Settings
   std::string  output_name;
   std::string  output_path;
 };
-
-
 
 bool
 Settings::try_parse(const std::string &prm_filename)
@@ -205,7 +202,6 @@ Settings::try_parse(const std::string &prm_filename)
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
 
-
   return true;
 }
 
@@ -244,6 +240,7 @@ public:
   }
 };
 
+// Matrix-free differential operator for a nonlinear Poisson problem
 template <int dim, int fe_degree, typename number>
 class JacobianOperator
   : public MatrixFreeOperators::Base<dim,
@@ -285,13 +282,10 @@ private:
   Table<2, VectorizedArray<number>> nonlinear_values;
 };
 
-
 template <int dim, int fe_degree, typename number>
 JacobianOperator<dim, fe_degree, number>::JacobianOperator()
   : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
 {}
-
-
 
 template <int dim, int fe_degree, typename number>
 void
@@ -301,7 +295,6 @@ JacobianOperator<dim, fe_degree, number>::clear()
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
     clear();
 }
-
 
 template <int dim, int fe_degree, typename number>
 void
@@ -325,8 +318,6 @@ JacobianOperator<dim, fe_degree, number>::evaluate_newton_step(
         }
     }
 }
-
-
 
 template <int dim, int fe_degree, typename number>
 void
@@ -362,8 +353,6 @@ JacobianOperator<dim, fe_degree, number>::local_apply(
     }
 }
 
-
-
 template <int dim, int fe_degree, typename number>
 void
 JacobianOperator<dim, fe_degree, number>::apply_add(
@@ -372,8 +361,6 @@ JacobianOperator<dim, fe_degree, number>::apply_add(
 {
   this->data->cell_loop(&JacobianOperator::local_apply, this, dst, src);
 }
-
-
 
 template <int dim, int fe_degree, typename number>
 void
@@ -397,8 +384,6 @@ JacobianOperator<dim, fe_degree, number>::local_compute_diagonal(
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
-
-
 template <int dim, int fe_degree, typename number>
 void
 JacobianOperator<dim, fe_degree, number>::compute_diagonal()
@@ -421,8 +406,9 @@ JacobianOperator<dim, fe_degree, number>::compute_diagonal()
     }
 }
 
-
-
+// Main class for the nonlinear Poisson problem given by
+// -Laplacian(u) = exp(u) using Newton's method, the matrix-free
+// approach and zero Dirichlet boundary conditions.
 template <int dim, int fe_degree>
 class MatrixFreePoissonProblem
 {
@@ -520,7 +506,6 @@ MatrixFreePoissonProblem<dim, fe_degree>::MatrixFreePoissonProblem(
   , parameters(parameters)
 {}
 
-
 template <int dim, int fe_degree>
 void
 MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
@@ -569,8 +554,6 @@ MatrixFreePoissonProblem<dim, fe_degree>::make_grid()
 
   triangulation.refine_global(parameters.initial_refinement);
 }
-
-
 
 template <int dim, int fe_degree>
 void
@@ -851,18 +834,15 @@ MatrixFreePoissonProblem<dim, fe_degree>::compute_update()
   solution.zero_out_ghost_values();
 }
 
-
 template <int dim, int fe_degree>
 void
 MatrixFreePoissonProblem<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
-  // tolerances after a few steps.
   const unsigned int itmax = 10;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
-
 
   Timer solver_timer;
   solver_timer.start();
@@ -1116,7 +1096,6 @@ main(int argc, char *argv[])
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-
   Settings parameters;
   if (!parameters.try_parse((argc > 1) ? (argv[1]) : ""))
     return 0;
@@ -1187,7 +1166,6 @@ main(int argc, char *argv[])
               ExcMessage(
                 "This program only works in 2d and 3d and for element orders equal to 1, 2 or 3."));
         }
-
 
       pcout << "MEMORY STATS: " << std::endl;
       const auto print = [&pcout](const double value) {
