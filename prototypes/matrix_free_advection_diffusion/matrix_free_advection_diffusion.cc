@@ -650,7 +650,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_apply(
                 1 / parameters.peclet_number * phi.get_gradient(q) +
                   (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
                     (advection_vector * phi.get_gradient(q)) -
-                    nonlinear_values(cell, q)) *
+                    (nonlinear_values(cell, q) * phi.get_value(q))) *
                    tau * advection_vector),
                 q);
             }
@@ -755,7 +755,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::local_compute(
             1 / parameters.peclet_number * phi.get_gradient(q) +
               (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
                 (advection_vector * phi.get_gradient(q) -
-                 nonlinear_values(cell, q))) *
+                 (nonlinear_values(cell, q) * phi.get_value(q)))) *
                tau * advection_vector),
             q);
         }
@@ -1518,15 +1518,24 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           // TODO correct mg interface matrices for adaptive meshes
           MGLevelObject<
             MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
-            mg_interface_matrices;
-          mg_interface_matrices.resize(0, triangulation.n_global_levels() - 1);
+            mg_interface_matrices_in;
+          MGLevelObject<
+            MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
+            mg_interface_matrices_out;
+          mg_interface_matrices_in.resize(0,
+                                          triangulation.n_global_levels() - 1);
+          mg_interface_matrices_out.resize(0,
+                                           triangulation.n_global_levels() - 1);
           for (unsigned int level = 0; level < triangulation.n_global_levels();
                ++level)
             {
-              mg_interface_matrices[level].initialize(mg_matrices[level]);
+              mg_interface_matrices_in[level].initialize(mg_matrices[level]);
+              mg_interface_matrices_out[level].initialize(mg_matrices[level]);
             }
-          mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_interface(
-            mg_interface_matrices);
+          mg::Matrix<LinearAlgebra::distributed::Vector<double>>
+            mg_interface_in(mg_interface_matrices_in);
+          mg::Matrix<LinearAlgebra::distributed::Vector<double>>
+            mg_interface_out(mg_interface_matrices_out);
 
           Multigrid<LinearAlgebra::distributed::Vector<double>> mg(
             mg_matrix,
@@ -1534,8 +1543,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
             mg_transfer,
             mg_smoother_jacobi,
             mg_smoother_jacobi);
-          mg.set_edge_matrices(mg_interface, mg_interface);
-
+          mg.set_edge_matrices(mg_interface_in, mg_interface_out);
 
           PreconditionMG<dim,
                          LinearAlgebra::distributed::Vector<double>,

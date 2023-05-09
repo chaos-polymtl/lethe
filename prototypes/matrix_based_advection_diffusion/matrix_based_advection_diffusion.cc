@@ -1049,8 +1049,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
                           cell_matrix(i, j) +=
                             ((-1 / parameters.peclet_number *
                               shape_laplacian_j) +
-                             (advection_term_values[q] * grad_phi_j) -
-                             nonlinearity) *
+                             (advection_term_values[q] * grad_phi_j) +
+                             (phi_j * nonlinearity)) *
                             (tau * (advection_term_values[q] * grad_phi_i)) *
                             dx;
                         }
@@ -1166,8 +1166,8 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
                         auto shape_laplacian_j = trace(shape_hessian_j);
                         cell_matrix(i, j) +=
                           ((-1 / parameters.peclet_number * shape_laplacian_j) +
-                           (advection_term_values[q] * grad_phi_j) -
-                           nonlinearity) *
+                           (advection_term_values[q] * grad_phi_j) +
+                           (phi_j * nonlinearity)) *
                           (tau * (advection_term_values[q] * grad_phi_i)) * dx;
                       }
                   }
