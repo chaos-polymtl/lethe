@@ -65,7 +65,7 @@
 
 using namespace dealii;
 
-// We use a parameter file for all the settings
+// Define all the parameters that can be specified in the .prm file
 struct Settings
 {
   bool
@@ -116,8 +116,6 @@ struct Settings
   std::string  output_name;
   std::string  output_path;
 };
-
-
 
 bool
 Settings::try_parse(const std::string &prm_filename)
@@ -258,7 +256,6 @@ Settings::try_parse(const std::string &prm_filename)
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
 
-
   return true;
 }
 
@@ -280,6 +277,7 @@ public:
   }
 };
 
+// Only available for the boundary layer case in 2D
 template <int dim>
 class AnalyticalSolution : public Function<dim>
 {
@@ -294,7 +292,6 @@ public:
   {
     if (dim == 2)
       {
-        // Boundary layer case
         double eps = 1 / Pe;
         return p[0] *
                ((1 - std::exp((p[1] - 1) / eps)) / (1 - std::exp(-2 / eps)));
@@ -410,6 +407,9 @@ BoundaryValues<dim>::value_list(const std::vector<Point<dim>> &points,
     values[i] = BoundaryValues<dim>::value(points[i], component);
 }
 
+// Main class for the advection-diffusion problem given by
+// −ϵ∆u + w · ∇u = f using Newton's method, the matrix-based
+// approach and different test problems.
 template <int dim, int fe_degree>
 class MatrixBasedAdvectionDiffusion
 {
@@ -1391,6 +1391,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_update()
             coarse_solver_control,
             SolverGMRES<VectorType>::AdditionalData(50, true));
 
+          // Coarse-grid solver optional AMG preconditioner
           // TrilinosWrappers::PreconditionAMG                 precondition_amg;
           // TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
           // precondition_amg.initialize(mg_matrix[0], amg_data);
@@ -1466,11 +1467,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
-  // tolerances after a few steps.
   const unsigned int itmax = 10;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
-
 
   Timer solver_timer;
   solver_timer.start();
@@ -1703,7 +1702,6 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::run()
 
     pcout << std::string(80, '=') << std::endl;
   }
-
 
   for (unsigned int cycle = 0; cycle < parameters.number_of_cycles; ++cycle)
     {
