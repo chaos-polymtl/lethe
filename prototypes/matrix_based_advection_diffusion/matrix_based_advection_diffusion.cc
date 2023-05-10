@@ -52,7 +52,6 @@
 #include <deal.II/multigrid/mg_smoother.h>
 #include <deal.II/multigrid/mg_tools.h>
 #include <deal.II/multigrid/mg_transfer.h>
-#include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
 
 #include <deal.II/numerics/data_out.h>
@@ -894,8 +893,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
             {
               const double dx = fe_values.JxW(q);
               const double nonlinearity =
-                (parameters.nonlinearity ? std::exp(newton_step_values[q]) :
-                                           0.0);
+                (parameters.nonlinearity ?
+                   1e-01 * std::exp(newton_step_values[q]) :
+                   0.0);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -1001,8 +1001,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_matrix()
             {
               const double dx = fe_values.JxW(q);
               const double nonlinearity =
-                (parameters.nonlinearity ? std::exp(newton_step_values[q]) :
-                                           0.0);
+                (parameters.nonlinearity ?
+                   1e-01 * std::exp(newton_step_values[q]) :
+                   0.0);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -1123,7 +1124,9 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::assemble_gmg()
           {
             const double dx = fe_values.JxW(q);
             const double nonlinearity =
-              (parameters.nonlinearity ? std::exp(newton_step_values[q]) : 0.0);
+              (parameters.nonlinearity ?
+                 1e-01 * std::exp(newton_step_values[q]) :
+                 0.0);
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
               {
@@ -1279,7 +1282,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::compute_residual(
             {
               const double dx = fe_values.JxW(q);
               const double nonlinearity =
-                (parameters.nonlinearity ? std::exp(values[q]) : 0.0);
+                (parameters.nonlinearity ? 1e-01 * std::exp(values[q]) : 0.0);
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -1467,7 +1470,7 @@ MatrixBasedAdvectionDiffusion<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
-  const unsigned int itmax = 10;
+  const unsigned int itmax = 14;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
 

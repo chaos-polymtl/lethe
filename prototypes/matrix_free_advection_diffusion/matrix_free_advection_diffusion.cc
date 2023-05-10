@@ -563,7 +563,7 @@ AdvectionDiffusionOperator<dim, fe_degree, number>::evaluate_newton_step(
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
           if (parameters.nonlinearity)
-            nonlinear_values(cell, q) = std::exp(phi.get_value(q));
+            nonlinear_values(cell, q) = 1e-01 * std::exp(phi.get_value(q));
           else
             nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
         }
@@ -1332,7 +1332,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
             evaluate_function<dim, double, dim>(advection_field, point_batch);
 
           VectorizedArray<double> nonlinearity =
-            (parameters.nonlinearity ? std::exp(phi.get_value(q)) : 0.0);
+            (parameters.nonlinearity ? 1e-01 * std::exp(phi.get_value(q)) :
+                                       0.0);
 
           if (parameters.stabilization)
             {
@@ -1586,7 +1587,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
-  const unsigned int itmax = 10;
+  const unsigned int itmax = 14;
   const double       TOLf  = 1e-12;
   const double       TOLx  = 1e-10;
 
