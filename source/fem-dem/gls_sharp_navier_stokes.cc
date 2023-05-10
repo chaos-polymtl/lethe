@@ -102,14 +102,25 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
+
+  // When the finite element order > 1, overconstrained cells are impossible
+  // since there is always at least a DOF inside the element that is not
+  // overconstrained. We therefore only have to check when the velocity order
+  // == 1.
+  const bool mapping_overconstrained_cells =
+    this->simulation_parameters.fem_parameters.velocity_order == 1;
+
   cut_cells_map.clear();
   cells_inside_map.clear();
   overconstrained_fluid_cell_map.clear();
-  local_dof_overconstrained.reinit(this->locally_owned_dofs,
-                                   this->mpi_communicator);
-  dof_overconstrained.reinit(this->locally_owned_dofs,
-                             this->locally_relevant_dofs,
-                             this->mpi_communicator);
+  if (mapping_overconstrained_cells)
+    {
+      local_dof_overconstrained.reinit(this->locally_owned_dofs,
+                                       this->mpi_communicator);
+      dof_overconstrained.reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 this->mpi_communicator);
+    }
 
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
@@ -246,34 +257,38 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 }
             }
 
-          // If a cell is cut, we register its DOFs as "cut" also. This will
-          // allow us to detect fluid cells that have all their DOFs cut, and
-          // consider them as cut cells.
-          if (cell_is_cut)
+          if (mapping_overconstrained_cells)
             {
-              size_t id;
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+              // If a cell is cut, we register its DOFs as "cut" also. This
+              // will allow us to detect fluid cells that have all their DOFs
+              // cut, and consider them as cut cells.
+              if (cell_is_cut)
                 {
-                  id                            = local_dof_indices[j];
-                  local_dof_overconstrained(id) = 1;
-                }
-            }
-
-          // We loop on every face of the cell, and if the face is at a boundary
-          // we count it as constrained.
-          size_t nb_faces = cell->n_faces();
-          for (unsigned int f = 0; f < nb_faces; ++f)
-            {
-              const auto face = cell->face(f);
-              if (face->at_boundary())
-                {
-                  face->get_dof_indices(local_face_dof_indices);
                   size_t id;
-                  for (unsigned int v = 0; v < local_face_dof_indices.size();
-                       ++v)
+                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                     {
-                      id                            = local_face_dof_indices[v];
+                      id                            = local_dof_indices[j];
                       local_dof_overconstrained(id) = 1;
+                    }
+                }
+
+              // We loop on every face of the cell, and if the face is at a
+              // boundary we count it as constrained.
+              size_t nb_faces = cell->n_faces();
+              for (unsigned int f = 0; f < nb_faces; ++f)
+                {
+                  const auto face = cell->face(f);
+                  if (face->at_boundary())
+                    {
+                      face->get_dof_indices(local_face_dof_indices);
+                      size_t id;
+                      for (unsigned int v = 0;
+                           v < local_face_dof_indices.size();
+                           ++v)
+                        {
+                          id = local_face_dof_indices[v];
+                          local_dof_overconstrained(id) = 1;
+                        }
                     }
                 }
             }
@@ -285,17 +300,12 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                     particle_id_in_which_this_cell_is_embedded};
         }
     }
-  dof_overconstrained = local_dof_overconstrained;
-  dof_overconstrained.compress(VectorOperation::insert);
 
-  // We loop over every fluid cell, and if all of its DOFs are cut we change the
-  // status of the cell itself.
-  // When the finite element order > 1, overconstrained cells are impossible
-  // since there is always at least a DOF inside the element that is not
-  // overconstrained. We therefore only have to check when the velocity order
-  // == 1.
-  if (this->simulation_parameters.fem_parameters.velocity_order == 1)
+  if (mapping_overconstrained_cells)
     {
+      dof_overconstrained = local_dof_overconstrained;
+      dof_overconstrained.compress(VectorOperation::insert);
+
       for (const auto &cell : cell_iterator)
         {
           if (cell->is_locally_owned() || cell->is_ghost())
@@ -329,9 +339,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                           number_of_vertices_cut += 1;
                         }
                     }
-                  // We check which particle is the closest to the cell, so that
-                  // we know which one to use for applying the immersed boundary
-                  // constraints.
+                  // We check which particle is the closest to the cell, so
+                  // that we know which one to use for applying the immersed
+                  // boundary constraints.
                   if (number_of_vertices_in_cell == number_of_vertices_cut)
                     {
                       for (unsigned int p = 0; p < particles.size(); p++)
