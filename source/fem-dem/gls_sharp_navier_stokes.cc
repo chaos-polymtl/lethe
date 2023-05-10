@@ -3056,13 +3056,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           std::tie(cell2_is_cut,
                                    ib_particle_id_2,
                                    std::ignore) = cut_cells_map[stencil_cell];
+                          bool cell2_is_overconstrained;
+                          std::tie(cell2_is_overconstrained,
+                                   std::ignore,
+                                   std::ignore) =
+                            overconstrained_fluid_cell_map[stencil_cell];
                           if (cell2_is_cut || point_in_cell)
                             {
                               dof_is_dummy = true;
                             }
 
                           if (dof_is_dummy || use_ib_for_pressure ||
-                              cell_is_overconstrained || particle_close_to_wall)
+                              cell2_is_overconstrained ||
+                              particle_close_to_wall)
                             {
                               // Give the DOF an approximated value. This help
                               // with pressure shock when the DOF passes from
