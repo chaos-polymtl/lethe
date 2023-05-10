@@ -3508,7 +3508,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
-  if (cell_is_cut)
+  if (copy_data.cell_is_cut)
     return;
   scratch_data.reinit(
     cell,
@@ -3603,7 +3603,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
-  if (cell_is_cut)
+  if (copy_data.cell_is_cut)
     return;
   scratch_data.reinit(
     cell,
