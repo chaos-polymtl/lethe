@@ -401,13 +401,6 @@ protected:
   void
   rescale_pressure_dofs_in_newton_update();
 
-  /**
-   * @brief Returns whether the DOF is locally owned
-   * @param global_id the global id of the DOF
-   */
-  inline bool
-  is_locally_owned_dof(const unsigned int global_id);
-
   // Member variables
 protected:
   DofsType locally_owned_dofs;

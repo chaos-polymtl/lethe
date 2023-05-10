@@ -2082,38 +2082,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 }
 
-template <>
-inline bool
-NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>::
-  is_locally_owned_dof(const unsigned int global_id)
-{
-  return this->locally_owned_dofs.is_element(global_id);
-}
-
-template <>
-inline bool
-NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>::
-  is_locally_owned_dof(const unsigned int global_id)
-{
-  return this->locally_owned_dofs.is_element(global_id);
-}
-
-template <>
-inline bool
-NavierStokesBase<2, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
-  is_locally_owned_dof(const unsigned int global_id)
-{
-  return this->dof_handler.locally_owned_dofs().is_element(global_id);
-}
-
-template <>
-inline bool
-NavierStokesBase<3, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
-  is_locally_owned_dof(const unsigned int global_id)
-{
-  return this->dof_handler.locally_owned_dofs().is_element(global_id);
-}
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::
@@ -2147,7 +2115,9 @@ NavierStokesBase<dim, VectorType, DofsType>::
                 {
                   const unsigned int component_index =
                     this->fe->system_to_component_index(j).first;
-                  if (is_locally_owned_dof(global_id) && component_index == dim)
+                  if (this->dof_handler.locally_owned_dofs().is_element(
+                        global_id) &&
+                      component_index == dim)
                     {
                       this->newton_update(global_id) =
                         this->newton_update(global_id) *
