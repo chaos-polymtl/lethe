@@ -255,7 +255,7 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
   // Filter phase fraction
   if (!simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-         .enable)
+         .enable) // the filter is already applied during STF calculation
     apply_phase_filter();
   data_out.add_data_vector(this->dof_handler,
                            this->filtered_solution,

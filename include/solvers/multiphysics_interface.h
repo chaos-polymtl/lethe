@@ -626,7 +626,7 @@ public:
    *
    * @param physics_id The physics of the DOF handler being requested
    *
-   * @param filtered_solution_vector The reference to the filtered solution vector of the physics, this was
+   * @param filtered_solution_vector The reference to the filtered solution vector of the physics; this was
    * specifically implemented for VOF
    */
   void
