@@ -18,9 +18,9 @@
 #define lethe_compartmentalization_h
 
 /**
- * This class compartmentalizes the geometry/reactor based on physical
- * values such as velocity, magnetic field, etc., and calculates the
- * flux between each compartment based on the velocity.
+ * Compartmentalizes a reactor geometry based on physical values such as
+ * velocity, magnetic field, etc. It calculates the flux between each
+ * compartment based on the velocity between compartments.
  */
 
 #include <deal.II/base/config.h>
@@ -56,26 +56,50 @@ public:
   Compartmentalization<dim>(CPCalculatingParameters &CPparameters);
 
   /**
-   * @brief Set up grid and compartmentalize first based on electric values
-   * and then find the final pattern based on velocity
+   * @brief Compartmentalizes the cells based on electric field values
+   * and determines the overlaid pattern using cell velocity magnitude
+   * print out the volume of each compartment
+   * print out the average of electric field at each compartment
+   * print out the matrix of inlet/outlet flux for the cylinder and flux between
+   * compartments
    */
   void
   test();
 
 private:
   /**
-   * @brief Read the physical property (in this problem, the electric field)
-   * and write it into a vector of a vector.
+   * @brief Read the electric field at each cell, derived from COMSOL,
+   * and write the pair of cell_index and electric field into a vector of a
+   * vector to use it for compartmentalization
    */
   auto
-  read_electric_field() -> std::vector<std::vector<double>>;
+  electric_field_stored_in_vector() -> std::vector<std::vector<double>>;
 
   /**
-   * @brief Read the velocity magnitude and write it into a map.
+   * @brief Read the electric field at each cell, derived from COMSOL
+   * and write each cell as key and the associated electric field in a map
+   * to use it for calculating the average electric field at the final
+   * compartments
+   */
+  auto
+  electric_field_stored_in_map()
+    -> std::map<typename Triangulation<dim>::active_cell_iterator, double>;
+
+  /**
+   * @brief Read the velocity magnitude and write the pair of cell and associated velocity to that cell into a map
    */
   auto
   read_velocity_magnitude()
     -> std::map<typename Triangulation<dim>::active_cell_iterator, double>;
+
+  /**
+   * @brief Read the velocity vector at the center point of cells and write it into a vector
+   * add the cell as the key and associated velocity vector to a map
+   */
+  auto
+  read_velocity_vector()
+    -> std::map<typename Triangulation<dim>::active_cell_iterator,
+                std::vector<double>>;
 
   /**
    * @brief Generate subdivided_cylinder mesh
@@ -84,12 +108,10 @@ private:
   generate_cylindrical_grid();
 
   /**
-   * @brief 1) Sorts the cell based on their
-   *  values of the physical properties
-   *  (average physical values, in particular, electric field)
-   *  2) agglomerates cell within tolerance and then 3) break the
-   * clusters that are not connected but are in one group
-   * because of their tolerance.
+   * @brief First, sorts the cell based on their values of the electric field
+   * Then, agglomerates cell within a certain tolerance
+   * Next, break the clusters that are not connected but are in same group
+   * because of they are in a certain tolerance
    */
   auto
   sort_agglomeration_deagglomeration_emw()
@@ -97,20 +119,20 @@ private:
                 std::vector<typename Triangulation<dim>::active_cell_iterator>>;
 
   /**
-   * @brief this function gets the first set of compartments based on one
-   * of the physical values (for example, electric field) from
-   * "sort_agglomeration_deagglomeration_emw()" for each compartment
-   * this function treats each compartment as a new problem to be
-   * compartmentalized and based on the second physical property (velocity) it
-   * 1) sorts the cell, 2) agglomerate within the tolerance, 3) deagglomerate
-   * the not connected parts
+   * @brief This function performs a two-step compartmentalization process. Firstly,
+   * it obtains the initial set of compartments by analyzing the electric field
+   * values of each cell, utilizing the
+   * "sort_agglomeration_deagglomeration_emw()" function. Subsequently, each
+   * compartment is treated as a separate problem to be compartmentalized
+   * further. The second physical property, velocity, is employed to carry out
+   * the following steps within each compartment: 1) sorts the cell, 2)
+   * agglomerate within the tolerance, 3) deagglomerate the not connected parts
    */
   void
   overlaid_map();
 
   /**
-   * @brief Write the pvd file of the set of compartments based on first
-   * physical property
+   * @brief Write the pvd file of the set of compartments based on electric field
    */
   void
   write_file_compartments_first_field(Vector<double> &    compartments_final,
@@ -118,39 +140,76 @@ private:
                                       const unsigned int &step_number);
 
   /**
-   * @brief Write the pvd file of the final set of compartments
+   * @brief Write the pvd file of the final set of compartments (overlaid map)
    */
   void
   write_ultimate_file(Vector<double> &    compartments_ultimate,
                       const double &      time,
                       const unsigned int &step_number);
 
+  /**
+   * @brief Calculate the flux between the compartments based on their shared
+   * surface and velocity
+   */
+  void
+  flux_calculation_between_compartments();
 
-  // Vector of vector to store cell_index and the average physical value of the
-  // cell
+  /**
+   * @brief Calculate the inlet at outlet flux at the two boundaries
+   */
+  void
+  inlet_outlet_flux();
+
+  /**
+   * @brief Prepare a matrix of fluxes (inlet,outlet,interconnecting fluxes) inorder to use as the input to python code
+   * write it in a txt file
+   */
+  void
+  output_flux();
+
+  // Map contains cell as the key and the associated value of the electric field
+  // at each cell
+  std::map<typename Triangulation<dim>::active_cell_iterator, double>
+    primer_map_cell_emw;
+
+  // Vector of vector to store cell_index and the average value of electric
+  // field in each cell
   std::vector<std::vector<double>> primer_matrix_index_emw;
+
   // Vector of vector to store cell_index and the average velocity magnitude of
   // the cell
   std::map<typename Triangulation<dim>::active_cell_iterator, double>
     primer_matrix_index_velocity;
+
+  // Map of cell (active_cell_iterator) as key and the associated velocity
+  // vector
+  std::map<typename Triangulation<dim>::active_cell_iterator,
+           std::vector<double>>
+    map_of_all_cells_and_velocity_vectors;
+
   // Map of final set to store the compartment_id and the cells that each
   // compartment includes
   std::map<int, std::vector<typename Triangulation<dim>::active_cell_iterator>>
     final_set;
 
+  // Define the map that will contain the elements for flux calculation
+  std::map<std::string, double> flux;
+
+  // Map containing the final compartment_ids as key and a vector of cell
+  // inside each compartment
   std::map<int, std::vector<typename Triangulation<dim>::active_cell_iterator>>
     overlaid_set;
 
-  std::map<int, std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    ultimate_map;
+  // Vector of inlet flux
+  std::map<std::string, double> inlet_flux;
 
+  // Vector of outlet flux
+  std::map<std::string, double> outlet_flux;
 
-  std::map<typename Triangulation<dim>::active_cell_iterator,
-           std::vector<double>>
-    map_of_all_cells_and_velocity_vectors;
-  // Map of paris of cell and cell_index
+  // Map of paris of cell_index (int) and cell (active_cell_iterator)
   std::map<int, typename Triangulation<dim>::active_cell_iterator>
-                                            cells_and_indices;
+    cells_and_indices;
+
   TimerOutput                               computing_timer;
   PVDHandler                                grid_pvdhandler;
   MPI_Comm                                  mpi_communicator;
