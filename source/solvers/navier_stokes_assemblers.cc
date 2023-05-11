@@ -33,6 +33,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -86,7 +88,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
@@ -122,7 +125,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
               const auto &phi_u_j = scratch_data.phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -308,6 +312,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -361,7 +367,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
@@ -395,7 +402,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -566,6 +574,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -640,7 +650,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           const auto &grad_phi_u_j_non_newtonian =
             grad_phi_u_j + transpose(grad_phi_u_j);
@@ -681,7 +692,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j_non_newtonian =
                 grad_phi_u_j + transpose(grad_phi_u_j);
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -876,7 +888,6 @@ GLSNavierStokesAssemblerSRF<dim>::assemble_matrix(
   omega_vector[1] = velocity_sources.omega_y;
   if (dim == 3)
     omega_vector[2] = velocity_sources.omega_z;
-
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1172,7 +1183,6 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
   if (is_sdirk3(method))
     sdirk_coefs = sdirk_coefficients(3, dt);
 
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1291,6 +1301,9 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
   std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1331,7 +1344,8 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &grad_phi_u_j_non_newtonian =
                 grad_phi_u_j + transpose(grad_phi_u_j);
@@ -1447,6 +1461,9 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
   std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1489,7 +1506,8 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               double local_matrix_ij =
                 viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
@@ -1597,7 +1615,6 @@ LaplaceAssembly<dim>::assemble_matrix(
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1689,6 +1706,8 @@ LaplaceAssembly<dim>::assemble_rhs(
           local_rhs_i += -1 / viscosity * h *
                          scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
+          if (scratch_data.components[i] == dim)
+            local_rhs_i /= scratch_data.pressure_scaling_factor;
           local_rhs(i) += local_rhs_i;
         }
     }
@@ -1778,8 +1797,6 @@ PressureBoundaryCondition<dim>::assemble_matrix(
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces_q_points,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_dofs)));
-
-
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -1948,6 +1965,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_matrix = copy_data.local_matrix;
+
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
@@ -2158,6 +2176,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_matrix = copy_data.local_matrix;
+
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
@@ -2415,6 +2434,7 @@ OutletBoundaryCondition<dim>::assemble_matrix(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_matrix = copy_data.local_matrix;
+
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {

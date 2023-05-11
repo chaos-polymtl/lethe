@@ -193,7 +193,6 @@ public:
     return density_scale;
   }
 
-
   void
   set_rheology(std::shared_ptr<RheologicalModel> p_rheology,
                const unsigned int                fluid_id = 0)

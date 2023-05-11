@@ -49,8 +49,9 @@ NavierStokesScratchData<dim>::allocate()
 
 
   // Pressure
-  this->pressure_values    = std::vector<double>(n_q_points);
-  this->pressure_gradients = std::vector<Tensor<1, dim>>(n_q_points);
+  this->pressure_values         = std::vector<double>(n_q_points);
+  this->pressure_gradients      = std::vector<Tensor<1, dim>>(n_q_points);
+  this->pressure_scaling_factor = 1;
 
   // Initialize arrays related to shape functions
   // Velocity shape functions
@@ -278,8 +279,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           viscosity_scale          = rheology_model->get_viscosity_scale();
           const auto density_model = properties_manager.get_density();
           density_model->vector_value(fields, density);
-
-
 
           if (properties_manager.is_non_newtonian())
             {
