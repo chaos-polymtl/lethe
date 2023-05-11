@@ -1152,7 +1152,6 @@ VolumeOfFluid<dim>::find_filtered_phase_fraction_gradient()
 {
   apply_phase_filter();
   assemble_filtered_phase_fraction_gradient_matrix_and_rhs(filtered_solution);
-  //  assemble_filtered_phase_fraction_gradient_matrix_and_rhs(present_solution);
   solve_filtered_phase_fraction_gradient();
 }
 
@@ -1968,6 +1967,10 @@ VolumeOfFluid<dim>::setup_dofs()
                                 this->locally_relevant_dofs,
                                 mpi_communicator);
 
+  this->filtered_solution.reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 mpi_communicator);
+
   // Previous solutions for transient schemes
   for (auto &solution : this->previous_solutions)
     {
@@ -2056,6 +2059,7 @@ VolumeOfFluid<dim>::setup_dofs()
   // multiphysics interface
   multiphysics->set_dof_handler(PhysicsID::VOF, &this->dof_handler);
   multiphysics->set_solution(PhysicsID::VOF, &this->present_solution);
+  multiphysics->set_filtered_solution(PhysicsID::VOF, &this->filtered_solution);
   multiphysics->set_previous_solutions(PhysicsID::VOF,
                                        &this->previous_solutions);
 

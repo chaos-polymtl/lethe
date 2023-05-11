@@ -386,6 +386,7 @@ public:
   void
   reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType &current_solution,
+             const VectorType &current_filtered_solution,
              const std::vector<VectorType> & /*solution_stages*/)
   {
     this->fe_values_vof->reinit(cell);
@@ -394,6 +395,10 @@ public:
                                              this->phase_values);
     this->fe_values_vof->get_function_gradients(current_solution,
                                                 this->phase_gradient_values);
+
+    // for STF calculation
+    this->fe_values_vof->get_function_gradients(
+      current_filtered_solution, this->filtered_phase_gradient_values);
   }
 
 
@@ -471,6 +476,7 @@ public:
   unsigned int                n_dofs_vof;
   std::vector<double>         phase_values;
   std::vector<Tensor<1, dim>> phase_gradient_values;
+  std::vector<Tensor<1, dim>> filtered_phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>>           fe_values_vof;
   std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter

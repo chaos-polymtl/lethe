@@ -637,11 +637,12 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
-                              *this->multiphysics->get_previous_solutions(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
+        std::vector<TrilinosWrappers::MPI::Vector>());
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
@@ -824,11 +825,12 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
-                              *this->multiphysics->get_previous_solutions(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
+        std::vector<TrilinosWrappers::MPI::Vector>());
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)

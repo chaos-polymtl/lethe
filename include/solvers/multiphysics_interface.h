@@ -424,6 +424,21 @@ public:
   }
 
   /**
+   * @brief Request the present filtered solution of a given physics (used in VOF physics for STF calculation)
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_filtered_solution(const PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return physics_filtered_solutions[physics_id];
+  }
+
+  /**
    * @brief Request the present block solution of a given physics
    *
    * @param physics_id The physics of the solution being requested
@@ -605,6 +620,26 @@ public:
                 ExcInternalError());
     physics_solutions[physics_id] = solution_vector;
   }
+
+  /**
+   * @brief Sets the reference to the filtered solution of the physics in the multiphysics interface (used in VOF physics for STF calculation)
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param filtered_solution_vector The reference to the filtered solution vector of the physics, this was
+   * specifically implemented for VOF
+   */
+  void
+  set_filtered_solution(const PhysicsID                physics_id,
+                        TrilinosWrappers::MPI::Vector *filtered_solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_filtered_solutions[physics_id] = filtered_solution_vector;
+  }
+
 
   /**
    * @brief Sets the reference to the time-average solution of the physics in the multiphysics interface
@@ -809,6 +844,11 @@ private:
   std::vector<std::shared_ptr<SolidBase<dim, dim>>> *solids;
 
 
+  // present filtered solution (VOF->STF)
+  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *>
+    physics_filtered_solutions;
+  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
+    block_physics_filtered_solutions;
 
   // present solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;
