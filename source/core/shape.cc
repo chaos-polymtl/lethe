@@ -237,9 +237,9 @@ Shape<dim>::closest_surface_point(
   double         distance_from_surface;
   actual_gradient       = this->gradient_with_cell_guess(p, cell_guess);
   distance_from_surface = this->value_with_cell_guess(p, cell_guess);
-  // Check if the gradient is well defined. If the point is on the surface, the
-  // gradient can be badly defined for some shapes. We return the point directly
-  // in these cases since it would be on the surface.
+  // Check if the gradient is well-defined. If the point is on the surface,
+  // the gradient can be badly defined for some shapes. We return the point
+  // directly in these cases since it would be on the surface.
   closest_point = p - (actual_gradient / (actual_gradient.norm() + 1e-16)) *
                         distance_from_surface;
 }
@@ -255,9 +255,9 @@ Shape<dim>::closest_surface_point(const Point<dim> &p,
   actual_gradient       = this->gradient(p);
   distance_from_surface = this->value(p);
 
-  // Check if the gradient is well defined. If the point is on the surface, the
-  // gradient can be badly defined for some shapes. We return the point directly
-  // in these cases since it would be on the surface.
+  // Check if the gradient is well-defined. If the point is on the surface,
+  // the gradient can be badly defined for some shapes. We return the point
+  // directly in these cases since it would be on the surface.
   closest_point = p - (actual_gradient / (actual_gradient.norm() + 1e-16)) *
                         distance_from_surface;
 }
@@ -1321,34 +1321,43 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
   Tensor<1, dim> dr_dx_derivative{};
   Tensor<1, dim> gradient{};
 
-  if (iterable_nodes.size() > 0)
+  if (iterable_nodes.size() == 0)
     {
-      for (const size_t &node_id : iterable_nodes)
-        {
-          // Calculation of the dr/dx
-          relative_position =
-            (evaluation_point - rotated_nodes_positions[node_id]);
-          distance            = (relative_position).norm();
-          normalized_distance = distance / support_radii[node_id];
-          if (distance > 0.0)
-            dr_dx_derivative = relative_position / distance;
-          else
-            for (int d = 0; d < dim; d++)
-              // Can be proved by taking the limit (definition of a derivative)
-              dr_dx_derivative[d] = 1.0;
-          // Calculation of the dr_norm/dr
-          drnorm_dr_derivative = 1.0 / support_radii[node_id];
-          // Calculation of the d(basis)/dr
-          dbasis_drnorm_derivative =
-            evaluate_basis_function_derivative(basis_functions[node_id],
-                                               normalized_distance);
-          // Sum
-          gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
-                      dr_dx_derivative * weights[node_id];
-        }
+      throw std::logic_error(
+        "Every location inside the bounding box should be covered by the radius "
+        "of at least one RBF node. It this isn't the case, an error has been "
+        "introduced in the code. ");
     }
-  else
-    gradient = bounding_box_gradient;
+  for (const size_t &node_id : iterable_nodes)
+    {
+      // Calculation of the dr/dx
+      relative_position = (evaluation_point - rotated_nodes_positions[node_id]);
+      distance          = (relative_position).norm();
+      normalized_distance = distance / support_radii[node_id];
+      if (distance > 1e-16)
+        dr_dx_derivative = relative_position / distance;
+      else
+        {
+          // If the evaluation point overlaps with the node position, we assume
+          // that the contribution of this node is 0. This assumption can be
+          // made because radial basis functions are symmetrical. If the basis
+          // function is not differentiable at its node (e.g. linear function),
+          // this approximation will still hold since the approximated distance
+          // field is already imperfect and neighboring nodes will add their
+          // contribution at the evaluation point.
+          for (int d = 0; d < dim; d++)
+            dr_dx_derivative[d] = 0;
+        }
+      // Calculation of the dr_norm/dr
+      drnorm_dr_derivative = 1.0 / support_radii[node_id];
+      // Calculation of the d(basis)/dr
+      dbasis_drnorm_derivative =
+        evaluate_basis_function_derivative(basis_functions[node_id],
+                                           normalized_distance);
+      // Sum
+      gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
+                  dr_dx_derivative * weights[node_id];
+    }
   return gradient;
 }
 

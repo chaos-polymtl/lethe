@@ -220,7 +220,8 @@ public:
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
          Function<dim> *                forcing_function,
-         Tensor<1, dim>                 beta_force)
+         Tensor<1, dim>                 beta_force,
+         const double                   pressure_scaling_factor)
   {
     this->fe_values.reinit(cell);
 
@@ -294,6 +295,7 @@ public:
                                             this->pressure_values);
     fe_values[pressure].get_function_gradients(current_solution,
                                                this->pressure_gradients);
+    this->pressure_scaling_factor = pressure_scaling_factor;
 
 
     for (unsigned int q = 0; q < n_q_points; ++q)
@@ -917,6 +919,10 @@ public:
   std::vector<double>                  thermal_expansion;
   std::vector<double>                  grad_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;
+
+  // Pressure scaling factor to facilitate different scales between velocity and
+  // pressure
+  double pressure_scaling_factor;
 
   // For VOF simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;

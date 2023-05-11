@@ -38,6 +38,7 @@ test()
   flow_control_parameters.average_velocity_0 = 10;
   flow_control_parameters.beta_0             = 20;
   flow_control_parameters.alpha              = 0.5;
+  flow_control_parameters.beta_threshold     = 0;
 
   double average_velocity = 0.0;
   double dt               = 0.1;

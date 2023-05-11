@@ -102,10 +102,26 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
+
+  // When the finite element order > 1, overconstrained cells are impossible
+  // since there is always at least a DOF inside the element that is not
+  // overconstrained. We therefore only have to check when the velocity order
+  // == 1.
+  const bool mapping_overconstrained_cells =
+    this->simulation_parameters.fem_parameters.velocity_order == 1;
+
   cut_cells_map.clear();
   cells_inside_map.clear();
   overconstrained_fluid_cell_map.clear();
-  vertices_cut.clear();
+  if (mapping_overconstrained_cells)
+    {
+      local_dof_overconstrained.reinit(this->locally_owned_dofs,
+                                       this->mpi_communicator);
+      dof_overconstrained.reinit(this->locally_owned_dofs,
+                                 this->locally_relevant_dofs,
+                                 this->mpi_communicator);
+    }
+
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
@@ -241,34 +257,38 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                 }
             }
 
-          // If a cell is cut, we register its DOFs as "cut" also. This will
-          // allow us to detect fluid cells that have all their DOFs cut, and
-          // consider them as cut cells.
-          if (cell_is_cut)
+          if (mapping_overconstrained_cells)
             {
-              size_t id;
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+              // If a cell is cut, we register its DOFs as "cut" also. This
+              // will allow us to detect fluid cells that have all their DOFs
+              // cut, and consider them as cut cells.
+              if (cell_is_cut)
                 {
-                  id               = local_dof_indices[j];
-                  vertices_cut[id] = {true, particle_id_which_cuts_this_cell};
-                }
-            }
-
-          // We loop on every face of the cell, and if the face is at a boundary
-          // we count it as constrained.
-          size_t nb_faces = cell->n_faces();
-          for (unsigned int f = 0; f < nb_faces; ++f)
-            {
-              const auto face = cell->face(f);
-              if (face->at_boundary())
-                {
-                  face->get_dof_indices(local_face_dof_indices);
                   size_t id;
-                  for (unsigned int v = 0; v < local_face_dof_indices.size();
-                       ++v)
+                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                     {
-                      id               = local_face_dof_indices[v];
-                      vertices_cut[id] = {true, 0};
+                      id                            = local_dof_indices[j];
+                      local_dof_overconstrained(id) = 1;
+                    }
+                }
+
+              // We loop on every face of the cell, and if the face is at a
+              // boundary we count it as constrained.
+              size_t nb_faces = cell->n_faces();
+              for (unsigned int f = 0; f < nb_faces; ++f)
+                {
+                  const auto face = cell->face(f);
+                  if (face->at_boundary())
+                    {
+                      face->get_dof_indices(local_face_dof_indices);
+                      size_t id;
+                      for (unsigned int v = 0;
+                           v < local_face_dof_indices.size();
+                           ++v)
+                        {
+                          id = local_face_dof_indices[v];
+                          local_dof_overconstrained(id) = 1;
+                        }
                     }
                 }
             }
@@ -281,49 +301,64 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
         }
     }
 
-  // We loop over every fluid cell, and if all of its DOFs are cut we change the
-  // status of the cell itself.
-  for (const auto &cell : cell_iterator)
+  if (mapping_overconstrained_cells)
     {
-      if (cell->is_locally_owned() || cell->is_ghost())
+      dof_overconstrained = local_dof_overconstrained;
+      dof_overconstrained.compress(VectorOperation::insert);
+
+      for (const auto &cell : cell_iterator)
         {
-          overconstrained_fluid_cell_map[cell] = {false, -1};
-
-          bool cell_is_cut;
-          bool cell_is_inside;
-          cell->get_dof_indices(local_dof_indices);
-          std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
-          std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-          if (!cell_is_cut && !cell_is_inside)
+          if (cell->is_locally_owned() || cell->is_ghost())
             {
-              unsigned int number_of_vertices_in_cell =
-                local_dof_indices.size();
-              unsigned int number_of_vertices_cut = 0;
-              size_t       current_particle_candidate =
-                std::numeric_limits<int>::max();
-              size_t potential_particle_candidate;
-              size_t id;
+              bool cell_is_cut;
+              bool cell_is_inside;
+              cell->get_dof_indices(local_dof_indices);
+              std::tie(cell_is_cut, std::ignore, std::ignore) =
+                cut_cells_map[cell];
+              std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+              if (!cell_is_cut && !cell_is_inside)
+                {
+                  unsigned int number_of_vertices_in_cell =
+                    local_dof_indices.size();
+                  unsigned int number_of_vertices_cut = 0;
+                  unsigned int particle_current_id =
+                    std::numeric_limits<int>::max();
 
-              // We count the number of vertices that are constrained while
-              // keeping track of the lowest particle ID.
-              for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
-                {
-                  id = local_dof_indices[j];
-                  bool vertex_cut;
-                  std::tie(vertex_cut, potential_particle_candidate) =
-                    vertices_cut[id];
-                  if (vertex_cut)
+                  double particle_current_distance(
+                    std::numeric_limits<double>::max());
+                  double particle_candidate_distance(
+                    std::numeric_limits<double>::max());
+
+                  unsigned int global_dof_id;
+                  // We count the number of vertices that are constrained.
+                  for (unsigned int j = 0; j < number_of_vertices_in_cell; ++j)
                     {
-                      number_of_vertices_cut += 1;
-                      current_particle_candidate =
-                        std::min(current_particle_candidate,
-                                 potential_particle_candidate);
+                      global_dof_id = local_dof_indices[j];
+                      if (dof_overconstrained(global_dof_id) > 0)
+                        {
+                          number_of_vertices_cut += 1;
+                        }
                     }
-                }
-              if (number_of_vertices_in_cell == number_of_vertices_cut)
-                {
-                  overconstrained_fluid_cell_map[cell] = {
-                    true, current_particle_candidate};
+                  // We check which particle is the closest to the cell, so
+                  // that we know which one to use for applying the immersed
+                  // boundary constraints.
+                  if (number_of_vertices_in_cell == number_of_vertices_cut)
+                    {
+                      for (unsigned int p = 0; p < particles.size(); p++)
+                        {
+                          particle_candidate_distance =
+                            particles[p].get_levelset(cell->barycenter(), cell);
+                          if (abs(particle_candidate_distance) <
+                              abs(particle_current_distance))
+                            {
+                              particle_current_id = p;
+                              particle_current_distance =
+                                particle_candidate_distance;
+                            }
+                        }
+                      overconstrained_fluid_cell_map[cell] = {
+                        true, particle_current_id, particle_current_distance};
+                    }
                 }
             }
         }
@@ -1424,7 +1459,8 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
   data_out.add_data_vector(this->present_solution, *levelset_postprocessor);
   Vector<float> cell_cuts(this->triangulation->n_active_cells());
   Vector<float> cell_overconstrained(this->triangulation->n_active_cells());
-
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   // If the enable extra verbose output is activated we add an output field to
   // the results where we identify which particle cuts each cell of the domain.
   if (this->simulation_parameters.particlesParameters
@@ -1433,24 +1469,36 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
       // Define cell iterator
       const auto & cell_iterator = this->dof_handler.active_cell_iterators();
       unsigned int i             = 0;
+
       for (const auto &cell : cell_iterator)
         {
-          bool cell_is_cut;
-          int  particle_id;
-          std::tie(cell_is_cut, particle_id, std::ignore) = cut_cells_map[cell];
-          if (cell_is_cut)
-            cell_cuts(i) = particle_id;
-          else
-            cell_cuts(i) = -1;
+          if (cell->is_locally_owned())
+            {
+              // Here we identify all cut cells, and if a cell is cut we output
+              // the ID of the cell that cuts it. If the cell is not cut, a
+              // default value of -1 is output.
+              bool cell_is_cut;
+              int  particle_id;
+              std::tie(cell_is_cut, particle_id, std::ignore) =
+                cut_cells_map[cell];
+              if (cell_is_cut)
+                cell_cuts(i) = particle_id;
+              else
+                cell_cuts(i) = -1;
 
-          bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, particle_id) =
-            overconstrained_fluid_cell_map[cell];
-          if (cell_is_overconstrained)
-            cell_overconstrained(i) = particle_id;
-          else
-            cell_overconstrained(i) = -1;
-
+              // Here we identify all overconstrained cells. If a cell is
+              // overconstrained, we output the ID of the closest particle (the
+              // one used for extrapolation of the velocity immersed boundary
+              // condition). If the cell is not overconstrained, a default value
+              // of -1 is output.
+              bool cell_is_overconstrained;
+              std::tie(cell_is_overconstrained, particle_id, std::ignore) =
+                overconstrained_fluid_cell_map[cell];
+              if (cell_is_overconstrained)
+                cell_overconstrained(i) = particle_id;
+              else
+                cell_overconstrained(i) = -1;
+            }
           i += 1;
         }
       data_out.add_data_vector(cell_cuts, "cell_cut");
@@ -1604,7 +1652,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           bool cell_is_inside;
           std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
           bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore) =
+          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
             overconstrained_fluid_cell_map[cell];
 
           if ((!cell_is_cut && !cell_is_inside) && !cell_is_overconstrained)
@@ -1657,7 +1705,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
           bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore) =
+          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
             overconstrained_fluid_cell_map[cell];
 
           bool cell_is_inside;
@@ -2748,8 +2796,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           std::tie(cell_is_cut, ib_particle_id, count_particles) =
             cut_cells_map[cell_cut];
           bool cell_is_overconstrained;
-          std::tie(cell_is_overconstrained, std::ignore) =
+          std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
             overconstrained_fluid_cell_map[cell_cut];
+          if (cell_is_overconstrained)
+            std::tie(cell_is_overconstrained, ib_particle_id, std::ignore) =
+              overconstrained_fluid_cell_map[cell_cut];
 
           if (cell_is_cut || cell_is_overconstrained)
             {
@@ -2787,6 +2838,130 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                            ->assemble_navier_stokes_inside == false) &&
                         count_particles < 2;
 
+                      // Reapply the zero and nonzero constraints.
+                      if ((this->zero_constraints.is_constrained(
+                             local_dof_indices[i]) ||
+                           this->nonzero_constraints.is_constrained(
+                             local_dof_indices[i])) &&
+                          this->locally_owned_dofs.is_element(
+                            global_index_overwrite))
+                        {
+                          if (this->zero_constraints.is_constrained(
+                                local_dof_indices[i]))
+                            {
+                              // Clear the line if there is something on it
+                              this->system_matrix.clear_row(
+                                global_index_overwrite);
+                              // Get the constraint equations
+                              auto local_entries =
+                                *this->zero_constraints.get_constraint_entries(
+                                  local_dof_indices[i]);
+                              double interpolation = 0;
+                              // Write the equation
+                              for (unsigned int j = 0; j < local_entries.size();
+                                   ++j)
+                                {
+                                  unsigned int col = local_entries[j].first;
+                                  double entries   = local_entries[j].second;
+
+                                  interpolation +=
+                                    this->evaluation_point(col) * entries;
+
+                                  try
+                                    {
+                                      this->system_matrix.add(
+                                        local_dof_indices[i],
+                                        col,
+                                        entries * sum_line);
+                                    }
+                                  catch (...)
+                                    {
+                                      //  If we are here, an error happens
+                                      //  when trying to fill the line in
+                                      //  the matrix.
+                                      // For example, this can occur if a
+                                      // particle is close to a wall and we
+                                      // are trying to impose the equation
+                                      // on a DOF that as a boundary
+                                      // condition applied to it. As such,
+                                      // we discard these errors.
+                                    }
+                                }
+                              this->system_matrix.add(local_dof_indices[i],
+                                                      local_dof_indices[i],
+                                                      sum_line);
+
+                              // Write the RHS
+                              this->system_rhs(local_dof_indices[i]) =
+                                -this->evaluation_point(local_dof_indices[i]) *
+                                  sum_line +
+                                interpolation * sum_line +
+                                this->zero_constraints.get_inhomogeneity(
+                                  local_dof_indices[i]) *
+                                  sum_line;
+                            }
+                          if (this->nonzero_constraints.is_constrained(
+                                local_dof_indices[i]))
+                            {
+                              // Clear the line if there is something on it
+                              this->system_matrix.clear_row(
+                                global_index_overwrite);
+                              // Get the constraint equations
+
+                              auto local_entries_non_zero =
+                                *this->nonzero_constraints
+                                   .get_constraint_entries(
+                                     local_dof_indices[i]);
+
+                              double interpolation = 0;
+                              // Write the equation
+                              for (unsigned int j = 0;
+                                   j < local_entries_non_zero.size();
+                                   ++j)
+                                {
+                                  unsigned int col_non_zero =
+                                    local_entries_non_zero[j].first;
+                                  double entries_non_zero =
+                                    local_entries_non_zero[j].second;
+
+                                  interpolation +=
+                                    this->evaluation_point(col_non_zero) *
+                                    entries_non_zero;
+                                  try
+                                    {
+                                      this->system_matrix.add(
+                                        local_dof_indices[i],
+                                        col_non_zero,
+                                        entries_non_zero * sum_line);
+                                    }
+                                  catch (...)
+                                    {
+                                      //  If we are here, an error happens
+                                      //  when trying to fill the line in
+                                      //  the matrix.
+                                      // For example, this can occur if a
+                                      // particle is close to a wall and we
+                                      // are trying to impose the equation
+                                      // on a DOF that as a boundary
+                                      // condition applied to it. As such,
+                                      // we discard these errors.
+                                    }
+                                }
+                              this->system_matrix.add(local_dof_indices[i],
+                                                      local_dof_indices[i],
+                                                      sum_line);
+
+                              // Write the RHS
+                              this->system_rhs(local_dof_indices[i]) =
+                                -this->evaluation_point(local_dof_indices[i]) *
+                                  sum_line +
+                                interpolation * sum_line +
+                                this->nonzero_constraints.get_inhomogeneity(
+                                  local_dof_indices[i]) *
+                                  sum_line;
+                            }
+                        }
+
                       // Check if the DOfs is owned and if it's not a hanging
                       // node.
                       if (((component_i < dim) || use_ib_for_pressure) &&
@@ -2795,8 +2970,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           (this->zero_constraints.is_constrained(
                              local_dof_indices[i]) ||
                            this->nonzero_constraints.is_constrained(
-                             local_dof_indices[i])) == false &&
-                          cell_is_overconstrained == false)
+                             local_dof_indices[i])) == false)
                         {
                           // We are working on the DOFs of cells cut by a
                           // particle. We clear the current equation associated
@@ -2892,12 +3066,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           std::tie(cell2_is_cut,
                                    ib_particle_id_2,
                                    std::ignore) = cut_cells_map[stencil_cell];
+                          bool cell2_is_overconstrained;
+                          std::tie(cell2_is_overconstrained,
+                                   std::ignore,
+                                   std::ignore) =
+                            overconstrained_fluid_cell_map[stencil_cell];
                           if (cell2_is_cut || point_in_cell)
                             {
                               dof_is_dummy = true;
                             }
 
                           if (dof_is_dummy || use_ib_for_pressure ||
+                              cell2_is_overconstrained ||
                               particle_close_to_wall)
                             {
                               // Give the DOF an approximated value. This help
@@ -3076,26 +3256,48 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               rhs_add +=
                                 -local_interp_sol[k] * ib_coef[k] * sum_line;
                             }
+                          // The rhs contribution where the component would
+                          // correspond to a pressure dof are divided by the
+                          // pressure_scaling_factor. This is because when the
+                          // pressure dofs are rescaled in the newton
+                          // correction, there is no distinction between
+                          // dummy and non-dummy pressure dofs. Since this
+                          // case is only applicable to this solver, the
+                          // choice was made to modify the rhs itself.
+                          const double pressure_scaling_factor =
+                            this->simulation_parameters.stabilization
+                              .pressure_scaling_factor;
                           this->system_rhs(global_index_overwrite) =
-                            v_ib * sum_line + rhs_add;
+                            component_i == dim ? (v_ib * sum_line + rhs_add) /
+                                                   pressure_scaling_factor :
+                                                 v_ib * sum_line + rhs_add;
 
                           if (dof_on_ib)
                             // Dof is on the immersed boundary
                             this->system_rhs(global_index_overwrite) =
-                              v_ib * sum_line -
-                              this->evaluation_point(global_index_overwrite) *
-                                sum_line;
+                              component_i == dim ?
+                                (v_ib * sum_line - this->evaluation_point(
+                                                     global_index_overwrite) *
+                                                     sum_line) /
+                                  pressure_scaling_factor :
+                                (v_ib * sum_line - this->evaluation_point(
+                                                     global_index_overwrite) *
+                                                     sum_line);
 
                           if (skip_stencil && dof_on_ib == false)
                             // Impose the value of the dummy dof. This help
                             // with pressure variation when the IB is
                             // moving.
                             this->system_rhs(global_index_overwrite) =
-                              sum_line * v_ib -
-                              this->evaluation_point(global_index_overwrite) *
-                                sum_line;
+                              component_i == dim ?
+                                (sum_line * v_ib - this->evaluation_point(
+                                                     global_index_overwrite) *
+                                                     sum_line) /
+                                  pressure_scaling_factor :
+                                sum_line * v_ib - this->evaluation_point(
+                                                    global_index_overwrite) *
+                                                    sum_line;
                         }
-
 
                       if (component_i == dim &&
                           this->locally_owned_dofs.is_element(
@@ -3103,7 +3305,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         {
                           // Applied equation on dof that have no equation
                           // defined for them. those DOF become Dummy dof. This
-                          // is usefull for high order cells or when a dof is
+                          // is useful for high order cells or when a dof is
                           // only element of cells that are cut.
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
@@ -3146,9 +3348,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                    std::ignore,
                                                    std::ignore) =
                                             cut_cells_map[neighbor_cell];
-
-
-                                          if (cell_is_cut == false)
+                                          bool cell_is_overconstrained;
+                                          std::tie(cell_is_overconstrained,
+                                                   std::ignore,
+                                                   std::ignore) =
+                                            overconstrained_fluid_cell_map
+                                              [neighbor_cell];
+                                          if (cell_is_cut == false &&
+                                              cell_is_overconstrained == false)
                                             {
                                               dummy_dof = false;
                                               break;
@@ -3303,32 +3510,30 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
-
   if (!cell->is_locally_owned())
     return;
 
-  // Check if the cell is cut or not by the IB and what the particle the
-  // cut the cell. If the particle is cut
-  bool cell_is_cut = false;
-  // The id of the particle that cut the cell. Returns 0 if the cell is
-  // not cut.
-  unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
-
+  // We check if the cell is cut by the IB and if it is overconstrained. If the
+  // cell is cut or overconstrained, we adjust the copy data so that the
+  // assemblers don't execute work on this cell.
+  bool cell_is_cut                                = false;
+  std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
   bool cell_is_overconstrained;
-  std::tie(cell_is_overconstrained, std::ignore) =
+  std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
     overconstrained_fluid_cell_map[cell];
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
-  if (cell_is_cut || cell_is_overconstrained)
+  if (copy_data.cell_is_cut)
     return;
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -3350,7 +3555,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
-  // check if we assemble the NS eqaution inside the particle or the Laplacien
+  // check if we assemble the NS equation inside the particle or the Laplacian
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -3402,28 +3607,28 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  // Check if the cell is cut or not by the IB and what the particle the
-  // cut the cell. If the particle is cut
-  bool cell_is_cut = false;
-  // The id of the particle that cut the cell. Returns 0 if the cell is
-  // not cut.
-  unsigned int ib_particle_id;
-  std::tie(cell_is_cut, ib_particle_id, std::ignore) = cut_cells_map[cell];
+  // We check if the cell is cut by the IB and if it is overconstrained. If the
+  // cell is cut or overconstrained, we adjust the copy data so that the
+  // assemblers don't execute work on this cell.
+  bool cell_is_cut                                = false;
+  std::tie(cell_is_cut, std::ignore, std::ignore) = cut_cells_map[cell];
 
   bool cell_is_overconstrained;
-  std::tie(cell_is_overconstrained, std::ignore) =
+  std::tie(cell_is_overconstrained, std::ignore, std::ignore) =
     overconstrained_fluid_cell_map[cell];
 
   copy_data.cell_is_cut = cell_is_cut || cell_is_overconstrained;
 
-  if (cell_is_cut || cell_is_overconstrained)
+  if (copy_data.cell_is_cut)
     return;
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -3445,7 +3650,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   scratch_data.calculate_physical_properties();
   copy_data.reset();
 
-  // check if we assemble the NS eqaution inside the particle or the Laplacien
+  // check if we assemble the NS equation inside the particle or the Laplacian
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
@@ -3464,8 +3669,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
           assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
-
-
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }

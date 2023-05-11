@@ -1345,12 +1345,14 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),
@@ -1453,12 +1455,14 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
     &(*(this->triangulation)),

@@ -37,7 +37,6 @@ PhysicalPropertiesManager::initialize(
   number_of_fluids = physical_properties.number_of_fluids;
   number_of_solids = physical_properties.number_of_solids;
 
-
   viscosity_scale = physical_properties.fluids[0].viscosity;
   density_scale   = physical_properties.fluids[0].density;
 
