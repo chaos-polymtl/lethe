@@ -4,11 +4,11 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
+  set method           = bdf1
   set time end         = 6.0
   set time step        = 0.005
   set output name      = static-bubble
-  set output frequency = 0
+  set output frequency = 20
   set output path      = ./output/
   set subdivision      = 3
 end

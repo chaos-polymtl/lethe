@@ -37,7 +37,7 @@ subsection VOF
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
-    set beta = 10
+    set beta      = 20
   end
 
   subsection surface tension force
