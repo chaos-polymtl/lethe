@@ -40,7 +40,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 .. note:: 
     On the upper and bottom walls ``slip`` boundary conditions are applied, and on side walls the boundary conditions are ``noslip``.
-    Also, an external gravity field of :math:`-0.98` is applied in the y direction.
+   An external gravity field of :math:`-0.98` is applied in the y direction.
 
 
 --------------
