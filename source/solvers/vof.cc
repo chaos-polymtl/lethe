@@ -909,7 +909,7 @@ VolumeOfFluid<dim>::modify_solution()
   if (vof_parameters.surface_tension_force.enable)
     {
       find_projected_phase_fraction_gradient();
-      find_filtered_interface_curvature();
+      find_projected_interface_curvature();
     }
 }
 
@@ -1154,7 +1154,7 @@ VolumeOfFluid<dim>::find_projected_phase_fraction_gradient()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::find_filtered_interface_curvature()
+VolumeOfFluid<dim>::find_projected_interface_curvature()
 {
   assemble_curvature_matrix_and_rhs(
     present_projected_phase_fraction_gradient_solution);
@@ -1757,7 +1757,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
         .surface_tension_force.enable)
     {
       find_projected_phase_fraction_gradient();
-      find_filtered_interface_curvature();
+      find_projected_interface_curvature();
     }
 }
 

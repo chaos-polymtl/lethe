@@ -640,7 +640,7 @@ private:
   solve_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
 
   /**
-   * @brief Assembles the matrix and rhs for calculation of projected phase gradient (fpg).
+   * @brief Assembles the matrix and rhs for calculation of projected phase fraction gradient (pfg).
    *
    * Solves:
    * $$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi $$
