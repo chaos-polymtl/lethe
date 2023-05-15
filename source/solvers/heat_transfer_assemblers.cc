@@ -968,7 +968,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
       const double temperature = scratch_data.present_temperature_values[q];
 
       const Tensor<1, dim> phase_gradient_q =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.filtered_phase_gradient_values[q];
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
 
@@ -1023,7 +1023,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
       const double temperature = scratch_data.present_temperature_values[q];
 
       const Tensor<1, dim> phase_gradient_q =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.filtered_phase_gradient_values[q];
       // Store JxW in local variable for faster access
       const double JxW = scratch_data.fe_values_T.JxW(q);
 
