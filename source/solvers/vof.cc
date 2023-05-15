@@ -254,9 +254,6 @@ VolumeOfFluid<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   data_out.add_data_vector(this->dof_handler, this->present_solution, "phase");
 
   // Filter phase fraction
-  if (!simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-         .enable) // the filter is already applied during STF calculation
-    apply_phase_filter();
   data_out.add_data_vector(this->dof_handler,
                            this->filtered_solution,
                            "filtered_phase");
@@ -907,7 +904,8 @@ VolumeOfFluid<dim>::modify_solution()
           handle_interface_sharpening();
         }
     }
-
+  // Apply filter to phase fraction
+  apply_phase_filter();
   if (vof_parameters.surface_tension_force.enable)
     {
       find_filtered_phase_fraction_gradient();
@@ -1150,7 +1148,6 @@ template <int dim>
 void
 VolumeOfFluid<dim>::find_filtered_phase_fraction_gradient()
 {
-  apply_phase_filter();
   assemble_filtered_phase_fraction_gradient_matrix_and_rhs(filtered_solution);
   solve_filtered_phase_fraction_gradient();
 }
