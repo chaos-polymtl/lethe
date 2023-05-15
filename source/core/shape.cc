@@ -953,29 +953,39 @@ CompositeShape<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  // We align and center the evaluation point according to the shape referential
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-
-  // The levelset value of all component shapes is computed
-  std::map<unsigned int, double>         constituent_shapes_values;
-  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
-  for (auto const &[component_id, component] : constituents)
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end())
     {
-      constituent_shapes_values[component_id] =
-        component->value_with_cell_guess(centered_point, cell);
-      // A dummy gradient is used here because apply_boolean_operations requires
-      // a gradient map as an argument.
-      // This design choice of not duplicating apply_boolean_operations
-      // was made for brevity of the code, at a negligible
-      // additional computing cost.
-      constituent_shapes_gradients[component_id] = Tensor<1, dim>{};
-    }
+      // We align and center the evaluation point according to the shape
+      // referential
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-  double levelset;
-  std::tie(levelset, std::ignore) =
-    apply_boolean_operations(constituent_shapes_values,
-                             constituent_shapes_gradients);
-  return levelset;
+      // The levelset value of all component shapes is computed
+      std::map<unsigned int, double>         constituent_shapes_values;
+      std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
+      for (auto const &[component_id, component] : constituents)
+        {
+          constituent_shapes_values[component_id] =
+            component->value_with_cell_guess(centered_point, cell);
+          // A dummy gradient is used here because apply_boolean_operations
+          // requires a gradient map as an argument. This design choice of not
+          // duplicating apply_boolean_operations was made for brevity of the
+          // code, at a negligible additional computing cost.
+          constituent_shapes_gradients[component_id] = Tensor<1, dim>{};
+        }
+
+      double levelset;
+      std::tie(levelset, std::ignore) =
+        apply_boolean_operations(constituent_shapes_values,
+                                 constituent_shapes_gradients);
+      this->value_cache[point_in_string] = levelset;
+      return levelset;
+    }
+  else
+    {
+      return this->value_cache[point_in_string];
+    }
 }
 
 template <int dim>
@@ -1010,24 +1020,35 @@ CompositeShape<dim>::gradient_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator cell,
   const unsigned int /*component*/)
 {
-  // We align and center the evaluation point according to the shape referential
-  Point<dim> centered_point = this->align_and_center(evaluation_point);
-  // The levelset value and gradient of all component shapes is computed
-  std::map<unsigned int, double>         constituent_shapes_values;
-  std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
-  for (auto const &[component_id, component] : constituents)
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end())
     {
-      constituent_shapes_values[component_id] =
-        component->value_with_cell_guess(centered_point, cell);
-      constituent_shapes_gradients[component_id] =
-        component->gradient_with_cell_guess(centered_point, cell);
-    }
+      // We align and center the evaluation point according to the shape
+      // referential
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      // The levelset value and gradient of all component shapes is computed
+      std::map<unsigned int, double>         constituent_shapes_values;
+      std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients;
+      for (auto const &[component_id, component] : constituents)
+        {
+          constituent_shapes_values[component_id] =
+            component->value_with_cell_guess(centered_point, cell);
+          constituent_shapes_gradients[component_id] =
+            component->gradient_with_cell_guess(centered_point, cell);
+        }
 
-  Tensor<1, dim> gradient;
-  std::tie(std::ignore, gradient) =
-    apply_boolean_operations(constituent_shapes_values,
-                             constituent_shapes_gradients);
-  return gradient;
+      Tensor<1, dim> gradient;
+      std::tie(std::ignore, gradient) =
+        apply_boolean_operations(constituent_shapes_values,
+                                 constituent_shapes_gradients);
+      this->gradient_cache[point_in_string] = gradient;
+      return gradient;
+    }
+  else
+    {
+      return this->gradient_cache[point_in_string];
+    }
 }
 
 template <int dim>
