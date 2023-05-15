@@ -520,10 +520,10 @@ public:
 
 
   /**
-   * @brief Request the present solution of the filtered phase fraction gradient (PFG)
+   * @brief Request the present solution of the projected phase fraction gradient (PFG)
    */
   TrilinosWrappers::MPI::Vector *
-  get_filtered_phase_fraction_gradient_solution();
+  get_projected_phase_fraction_gradient_solution();
 
   /**
    * @brief Request the present solution of the curvature
@@ -532,16 +532,16 @@ public:
   get_curvature_solution();
 
   /**
-   * @brief Request the filtered curvature DOF handler
+   * @brief Request the projected curvature DOF handler
    */
   DoFHandler<dim> *
   get_curvature_dof_handler();
 
   /**
-   * @brief Request the filtered phase fraction gradient (pfg) DOF handler
+   * @brief Request the projected phase fraction gradient (pfg) DOF handler
    */
   DoFHandler<dim> *
-  get_filtered_phase_fraction_gradient_dof_handler();
+  get_projected_phase_fraction_gradient_dof_handler();
 
 
   /**

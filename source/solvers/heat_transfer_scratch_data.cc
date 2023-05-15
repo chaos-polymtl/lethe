@@ -91,7 +91,7 @@ HeatTransferScratchData<dim>::enable_vof(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values          = std::vector<double>(this->n_q_points);
+  phase_values = std::vector<double>(this->n_q_points);
   filtered_phase_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 
@@ -125,9 +125,9 @@ HeatTransferScratchData<dim>::enable_vof(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values          = std::vector<double>(this->n_q_points);
-    filtered_phase_gradient_values =
-      std::vector<Tensor<1, dim>>(this->n_q_points);
+  phase_values = std::vector<double>(this->n_q_points);
+  filtered_phase_gradient_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   specific_heat_0                  = std::vector<double>(n_q_points);

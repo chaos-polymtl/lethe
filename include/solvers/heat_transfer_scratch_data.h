@@ -393,7 +393,6 @@ public:
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
                                              this->phase_values);
-    // for STF calculation
     this->fe_values_vof->get_function_gradients(
       current_filtered_solution, this->filtered_phase_gradient_values);
   }

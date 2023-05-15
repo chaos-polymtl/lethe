@@ -66,7 +66,7 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , filtered_phase_fraction_gradient_dof_handler(*triangulation)
+    , projected_phase_fraction_gradient_dof_handler(*triangulation)
     , curvature_dof_handler(*triangulation)
     , sharpening_threshold(
         simulation_parameters.multiphysics.vof_parameters.sharpening.threshold)
@@ -88,12 +88,12 @@ public:
           simulation_parameters.fem_parameters.VOF_order);
         mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
-        fe_filtered_phase_fraction_gradient =
+        fe_projected_phase_fraction_gradient =
           std::make_shared<FESystem<dim>>(FE_Q<dim>(fe->degree), dim);
         fe_curvature = std::make_shared<FE_Q<dim>>(fe->degree);
-        filtered_phase_fraction_gradient_mapping =
+        projected_phase_fraction_gradient_mapping =
           std::make_shared<MappingQ<dim>>(
-            fe_filtered_phase_fraction_gradient->degree,
+            fe_projected_phase_fraction_gradient->degree,
             simulation_parameters.fem_parameters.qmapping_all);
         curvature_mapping = std::make_shared<MappingQ<dim>>(
           fe_curvature->degree,
@@ -357,9 +357,9 @@ public:
     return nonzero_constraints;
   }
   DoFHandler<dim> *
-  get_filtered_phase_fraction_gradient_dof_handler()
+  get_projected_phase_fraction_gradient_dof_handler()
   {
-    return &filtered_phase_fraction_gradient_dof_handler;
+    return &projected_phase_fraction_gradient_dof_handler;
   }
   DoFHandler<dim> *
   get_curvature_dof_handler()
@@ -367,9 +367,9 @@ public:
     return &curvature_dof_handler;
   }
   TrilinosWrappers::MPI::Vector *
-  get_filtered_phase_fraction_gradient_solution()
+  get_projected_phase_fraction_gradient_solution()
   {
-    return &present_filtered_phase_fraction_gradient_solution;
+    return &present_projected_phase_fraction_gradient_solution;
   }
   TrilinosWrappers::MPI::Vector *
   get_curvature_solution()
@@ -616,7 +616,7 @@ private:
    * curvature (k).
    */
   void
-  find_filtered_phase_fraction_gradient();
+  find_projected_phase_fraction_gradient();
 
   /**
    * @brief Carries out finding the interface curvature.
@@ -640,7 +640,7 @@ private:
   solve_projection_phase_fraction(TrilinosWrappers::MPI::Vector &solution);
 
   /**
-   * @brief Assembles the matrix and rhs for calculation of filtered phase gradient (fpg).
+   * @brief Assembles the matrix and rhs for calculation of projected phase gradient (fpg).
    *
    * Solves:
    * $$ v . \psi + \eta * \nabla v . \nabla \psi = v . \nabla \phi $$
@@ -650,14 +650,14 @@ private:
    * @param solution VOF solution (phase fraction)
    */
   void
-  assemble_filtered_phase_fraction_gradient_matrix_and_rhs(
+  assemble_projected_phase_fraction_gradient_matrix_and_rhs(
     TrilinosWrappers::MPI::Vector &solution);
 
   /**
    * @brief Solves phase fraction gradient system.
    */
   void
-  solve_filtered_phase_fraction_gradient();
+  solve_projected_phase_fraction_gradient();
 
   /**
    * @brief Assembles the matrix and rhs for calculation of the curvature.
@@ -667,12 +667,12 @@ private:
    * where $$v$$, $$psi$$, $$eta$$, and $$k$$ are test function, fpg, filter
    * value, and curvature.
    *
-   * @param present_filtered_phase_fraction_gradient_solution
+   * @param present_projected_phase_fraction_gradient_solution
    */
   void
   assemble_curvature_matrix_and_rhs(
     TrilinosWrappers::MPI::Vector
-      &present_filtered_phase_fraction_gradient_solution);
+      &present_projected_phase_fraction_gradient_solution);
 
   /**
    * @brief Solves curvature system.
@@ -696,18 +696,18 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
-  DoFHandler<dim> filtered_phase_fraction_gradient_dof_handler;
+  DoFHandler<dim> projected_phase_fraction_gradient_dof_handler;
   DoFHandler<dim> curvature_dof_handler;
   std::shared_ptr<FiniteElement<dim>> fe;
-  std::shared_ptr<FESystem<dim>>      fe_filtered_phase_fraction_gradient;
+  std::shared_ptr<FESystem<dim>>      fe_projected_phase_fraction_gradient;
   std::shared_ptr<FiniteElement<dim>> fe_curvature;
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        mapping;
-  std::shared_ptr<Mapping<dim>>        filtered_phase_fraction_gradient_mapping;
-  std::shared_ptr<Mapping<dim>>        curvature_mapping;
-  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
+  std::shared_ptr<Mapping<dim>>    mapping;
+  std::shared_ptr<Mapping<dim>>    projected_phase_fraction_gradient_mapping;
+  std::shared_ptr<Mapping<dim>>    curvature_mapping;
+  std::shared_ptr<Quadrature<dim>> cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   // Solution storage
@@ -750,19 +750,21 @@ private:
   unsigned int                  nb_cells_wet;
   unsigned int                  nb_cells_peeled;
 
-  // Filtered phase fraction gradient (pfg) solution
+  // Projected phase fraction gradient (pfg) solution
   TrilinosWrappers::MPI::Vector
-           present_filtered_phase_fraction_gradient_solution;
-  IndexSet locally_owned_dofs_filtered_phase_fraction_gradient;
-  IndexSet locally_relevant_dofs_filtered_phase_fraction_gradient;
-  AffineConstraints<double>     filtered_phase_fraction_gradient_constraints;
-  TrilinosWrappers::MPI::Vector nodal_filtered_phase_fraction_gradient_relevant;
-  TrilinosWrappers::MPI::Vector nodal_filtered_phase_fraction_gradient_owned;
+           present_projected_phase_fraction_gradient_solution;
+  IndexSet locally_owned_dofs_projected_phase_fraction_gradient;
+  IndexSet locally_relevant_dofs_projected_phase_fraction_gradient;
+  AffineConstraints<double> projected_phase_fraction_gradient_constraints;
+  TrilinosWrappers::MPI::Vector
+                                nodal_projected_phase_fraction_gradient_relevant;
+  TrilinosWrappers::MPI::Vector nodal_projected_phase_fraction_gradient_owned;
 
-  TrilinosWrappers::SparseMatrix system_matrix_filtered_phase_fraction_gradient;
-  TrilinosWrappers::MPI::Vector  system_rhs_filtered_phase_fraction_gradient;
+  TrilinosWrappers::SparseMatrix
+                                system_matrix_projected_phase_fraction_gradient;
+  TrilinosWrappers::MPI::Vector system_rhs_projected_phase_fraction_gradient;
 
-  // Filtered curvature solution
+  // Projected curvature solution
   TrilinosWrappers::MPI::Vector present_curvature_solution;
   IndexSet                      locally_owned_dofs_curvature;
   IndexSet                      locally_relevant_dofs_curvature;
@@ -770,7 +772,7 @@ private:
   TrilinosWrappers::MPI::Vector nodal_curvature_relevant;
   TrilinosWrappers::MPI::Vector nodal_curvature_owned;
 
-  std::vector<Tensor<1, dim>> filtered_phase_fraction_gradient_values;
+  std::vector<Tensor<1, dim>> projected_phase_fraction_gradient_values;
   std::vector<double>         curvature_values;
 
   TrilinosWrappers::SparseMatrix                     system_matrix_curvature;

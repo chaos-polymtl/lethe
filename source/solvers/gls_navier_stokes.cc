@@ -570,14 +570,14 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
           const DoFHandler<dim> *curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
 
-          scratch_data.enable_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_dof_handler->get_fe(),
+          scratch_data.enable_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_dof_handler->get_fe(),
             *this->cell_quadrature,
             *this->mapping);
           scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
@@ -647,20 +647,20 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
 
           typename DoFHandler<dim>::active_cell_iterator
-            filtered_phase_fraction_gradient_cell(
+            projected_phase_fraction_gradient_cell(
               &(*(this->triangulation)),
               cell->level(),
               cell->index(),
-              filtered_phase_fraction_gradient_dof_handler);
-          scratch_data.reinit_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_cell,
+              projected_phase_fraction_gradient_dof_handler);
+          scratch_data.reinit_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_cell,
             *this->multiphysics
-               ->get_filtered_phase_fraction_gradient_solution());
+               ->get_projected_phase_fraction_gradient_solution());
 
 
 
@@ -753,14 +753,14 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
           const DoFHandler<dim> *curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
 
-          scratch_data.enable_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_dof_handler->get_fe(),
+          scratch_data.enable_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_dof_handler->get_fe(),
             *this->cell_quadrature,
             *this->mapping);
           scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
@@ -835,19 +835,19 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
           typename DoFHandler<dim>::active_cell_iterator
-            filtered_phase_fraction_gradient_cell(
+            projected_phase_fraction_gradient_cell(
               &(*(this->triangulation)),
               cell->level(),
               cell->index(),
-              filtered_phase_fraction_gradient_dof_handler);
-          scratch_data.reinit_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_cell,
+              projected_phase_fraction_gradient_dof_handler);
+          scratch_data.reinit_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_cell,
             *this->multiphysics
-               ->get_filtered_phase_fraction_gradient_solution());
+               ->get_projected_phase_fraction_gradient_solution());
 
           const DoFHandler<dim> *curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();

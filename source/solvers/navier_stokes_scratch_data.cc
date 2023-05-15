@@ -154,20 +154,20 @@ NavierStokesScratchData<dim>::enable_vof(
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_filtered_phase_fraction_gradient(
-  const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
+NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
+  const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
   const Quadrature<dim> &   quadrature,
   const Mapping<dim> &      mapping)
 {
-  gather_filtered_phase_fraction_gradient = true;
-  fe_values_filtered_phase_fraction_gradient =
+  gather_projected_phase_fraction_gradient = true;
+  fe_values_projected_phase_fraction_gradient =
     std::make_shared<FEValues<dim>>(mapping,
-                                    fe_filtered_phase_fraction_gradient,
+                                    fe_projected_phase_fraction_gradient,
                                     quadrature,
                                     update_values | update_gradients);
 
   // phase fraction gradient (PFG)
-  filtered_phase_fraction_gradient_values =
+  projected_phase_fraction_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 }
 
