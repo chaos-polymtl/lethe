@@ -612,7 +612,7 @@ private:
 
   /**
    * @brief Carries out finding the gradients of phase fraction. Obtained gradients of phase
-   * fraction is used in find_filtered_interface_curvature to find interface
+   * fraction is used in find_projected_interface_curvature to find interface
    * curvature (k).
    */
   void
@@ -622,7 +622,7 @@ private:
    * @brief Carries out finding the interface curvature.
    */
   void
-  find_filtered_interface_curvature();
+  find_projected_interface_curvature();
 
   /**
    * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.
