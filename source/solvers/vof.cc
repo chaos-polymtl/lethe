@@ -2083,6 +2083,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
                            this->newton_update);
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
+  apply_phase_filter();
 
   if (simulation_parameters.initial_condition->enable_projection_step)
     smooth_phase_fraction();

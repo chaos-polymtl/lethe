@@ -598,7 +598,7 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
         scratch_data.velocity_gradient_values[q];
 
       // Manage viscous dissipation application on specified fluid
-      const double phase_value_q = scratch_data.phase_values[q];
+      const double phase_value_q = scratch_data.filtered_phase_values[q];
       if (this->viscous_dissipative_fluid == Parameters::FluidIndicator::fluid1)
         {
           // if phase = 0, no viscous dissipation
@@ -893,8 +893,9 @@ HeatTransferAssemblerLaserVOF<dim>::assemble_rhs(
           // if the laser beam is in negative direction and
           // quadrature_point_depth is smaller than the laser_location_in_depth,
           // or the laser beam is in positive direction and
-          // quadrature_point_depth is larger then laser_location_in_depth we
-          // need to apply the laser on the quadrate point, otherwise it is zero
+          // quadrature_point_depth is larger than laser_location_in_depth we
+          // need to apply the laser on the quadrature point, otherwise it is
+          // zero
           double laser_quadrature_point_distance_in_depth = 0.0;
           if ((beam_direction == 0 &&
                quadrature_point_depth <= laser_location_in_depth) |
@@ -906,7 +907,7 @@ HeatTransferAssemblerLaserVOF<dim>::assemble_rhs(
           // Store JxW in local variable for faster access
           const double JxW = scratch_data.fe_values_T.JxW(q);
 
-          const double phase_value_q = scratch_data.phase_values[q];
+          const double phase_value_q = scratch_data.filtered_phase_values[q];
 
           // Calculate the strong residual for GLS stabilization
           const double laser_heat_source =

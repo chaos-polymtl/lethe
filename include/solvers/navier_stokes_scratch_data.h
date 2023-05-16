@@ -532,6 +532,8 @@ public:
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
                                              this->phase_values);
+    this->fe_values_vof->get_function_values(current_filtered_solution,
+                                             this->filtered_phase_values);
     this->fe_values_vof->get_function_gradients(
       current_filtered_solution, this->filtered_phase_gradient_values);
 
@@ -984,6 +986,7 @@ public:
   bool                             gather_vof;
   unsigned int                     n_dofs_vof;
   std::vector<double>              phase_values;
+  std::vector<double>              filtered_phase_values;
   std::vector<std::vector<double>> previous_phase_values;
   std::vector<Tensor<1, dim>>      filtered_phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed

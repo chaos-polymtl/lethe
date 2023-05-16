@@ -471,7 +471,6 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         dof_handler_vof);
 
       scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
                               *this->multiphysics->get_filtered_solution(
                                 PhysicsID::VOF),
                               std::vector<TrilinosWrappers::MPI::Vector>());
@@ -626,7 +625,6 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         dof_handler_vof);
 
       scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
                               *this->multiphysics->get_filtered_solution(
                                 PhysicsID::VOF),
                               std::vector<TrilinosWrappers::MPI::Vector>());
@@ -1176,7 +1174,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
   // Initialize VOF information
   const DoFHandler<dim> *        dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            phase_values(n_q_points);
+  std::vector<double>            filtered_phase_values(n_q_points);
 
   if (gather_vof)
     {
@@ -1221,8 +1219,8 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_solution(PhysicsID::VOF),
-                phase_values);
+                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                filtered_phase_values);
             }
 
           for (unsigned int q = 0; q < n_q_points; q++)
@@ -1230,7 +1228,7 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
               std::tie(phase_coefficient, point_is_in_postprocessed_fluid) =
                 set_phase_coefficient(gather_vof,
                                       monitored_fluid,
-                                      phase_values[q]);
+                                      filtered_phase_values[q]);
 
               if (point_is_in_postprocessed_fluid)
                 {
@@ -1279,16 +1277,17 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_solution(PhysicsID::VOF),
-                phase_values);
+                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                filtered_phase_values);
             }
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              phase_coefficient = set_phase_coefficient(gather_vof,
-                                                        monitored_fluid,
-                                                        phase_values[q])
-                                    .first;
+              phase_coefficient =
+                set_phase_coefficient(gather_vof,
+                                      monitored_fluid,
+                                      filtered_phase_values[q])
+                  .first;
 
               temperature_variance_integral +=
                 (local_temperature_values[q] - temperature_average) *
@@ -1375,7 +1374,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
   // Initialize VOF information
   DoFHandler<dim> *                  dof_handler_vof = NULL;
   std::shared_ptr<FEFaceValues<dim>> fe_face_values_vof;
-  std::vector<double>                phase_values(n_q_points_face);
+  std::vector<double>                filtered_phase_values(n_q_points_face);
 
   if (gather_vof)
     {
@@ -1516,8 +1515,9 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                           // Gather VOF information
                           fe_face_values_vof->reinit(cell_vof, face);
                           fe_face_values_vof->get_function_values(
-                            *this->multiphysics->get_solution(PhysicsID::VOF),
-                            phase_values);
+                            *this->multiphysics->get_filtered_solution(
+                              PhysicsID::VOF),
+                            filtered_phase_values);
                         }
 
                       // Loop on the quadrature points
@@ -1528,19 +1528,19 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                               // Blend the physical properties using the VOF
                               // field
                               thermal_conductivity = calculate_point_property(
-                                phase_values[q],
+                                filtered_phase_values[q],
                                 thermal_conductivity_0[q],
                                 thermal_conductivity_1[q]);
 
-                              density =
-                                calculate_point_property(phase_values[q],
-                                                         density_0[q],
-                                                         density_1[q]);
+                              density = calculate_point_property(
+                                filtered_phase_values[q],
+                                density_0[q],
+                                density_1[q]);
 
-                              specific_heat =
-                                calculate_point_property(phase_values[q],
-                                                         specific_heat_0[q],
-                                                         specific_heat_1[q]);
+                              specific_heat = calculate_point_property(
+                                filtered_phase_values[q],
+                                specific_heat_0[q],
+                                specific_heat_1[q]);
                             }
 
                           Tensor<1, dim> normal_vector_ht =
@@ -1674,7 +1674,7 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
   // Initialize VOF information
   const DoFHandler<dim> *        dof_handler_vof = NULL;
   std::shared_ptr<FEValues<dim>> fe_values_vof;
-  std::vector<double>            phase_values(n_q_points);
+  std::vector<double>            filtered_phase_values(n_q_points);
 
   if (gather_vof)
     {
@@ -1772,29 +1772,31 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
               // Gather VOF information
               fe_values_vof->reinit(cell_vof);
               fe_values_vof->get_function_values(
-                *this->multiphysics->get_solution(PhysicsID::VOF),
-                phase_values);
+                *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+                filtered_phase_values);
             }
 
           // Loop on the quadrature points
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              phase_coefficient = set_phase_coefficient(gather_vof,
-                                                        monitored_fluid,
-                                                        phase_values[q])
-                                    .first;
+              phase_coefficient =
+                set_phase_coefficient(gather_vof,
+                                      monitored_fluid,
+                                      filtered_phase_values[q])
+                  .first;
 
               if (properties_manager.get_number_of_fluids() == 2)
                 {
                   // Blend the physical properties using the VOF
                   // field
-                  density = calculate_point_property(phase_values[q],
+                  density = calculate_point_property(filtered_phase_values[q],
                                                      density_0[q],
                                                      density_1[q]);
 
-                  specific_heat = calculate_point_property(phase_values[q],
-                                                           specific_heat_0[q],
-                                                           specific_heat_1[q]);
+                  specific_heat =
+                    calculate_point_property(filtered_phase_values[q],
+                                             specific_heat_0[q],
+                                             specific_heat_1[q]);
                 }
 
               heat_in_domain +=
