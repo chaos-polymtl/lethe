@@ -67,6 +67,12 @@ MFGLSNavierStokesSolver<dim>::solve()
 
   this->setup_dofs();
 
+  while (this->simulation_control->integrate())
+    {
+      this->postprocess(false);
+      this->finish_time_step();
+    }
+
   this->finish_simulation();
 }
 
@@ -74,7 +80,70 @@ template <int dim>
 void
 MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
 {
-  // TODO
+  // Fill the dof handler and initialize vectors
+  this->dof_handler.distribute_dofs(*this->fe);
+  DoFRenumbering::Cuthill_McKee(this->dof_handler);
+
+  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
+                                          this->locally_relevant_dofs);
+
+  FEValuesExtractors::Vector velocities(0);
+
+  // Non Zero constraints
+  define_non_zero_constraints();
+
+  // Zero constraints
+  define_zero_constraints();
+
+  this->present_solution.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
+
+  this->evaluation_point.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
+
+  // Initialize vector of previous solutions
+  for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
+  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      this->average_velocities->initialize_vectors(
+        this->locally_owned_dofs,
+        this->locally_relevant_dofs,
+        this->fe->n_dofs_per_vertex(),
+        this->mpi_communicator);
+
+      if (this->simulation_parameters.restart_parameters.checkpoint)
+        {
+          this->average_velocities->initialize_checkpoint_vectors(
+            this->locally_owned_dofs,
+            this->locally_relevant_dofs,
+            this->mpi_communicator);
+        }
+    }
+
+  double global_volume =
+    GridTools::volume(*this->triangulation, *this->mapping);
+
+  this->pcout << "   Number of active cells:       "
+              << this->triangulation->n_global_active_cells() << std::endl
+              << "   Number of degrees of freedom: "
+              << this->dof_handler.n_dofs() << std::endl;
+  this->pcout << "   Volume of triangulation:      " << global_volume
+              << std::endl;
 }
 
 template <int dim>
