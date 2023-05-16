@@ -31,7 +31,7 @@ Files used in this example
 Description of the case
 -------------------------
 
-For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0` s, the gate opens instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00` m. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
+For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0 \ \text{s}`, the gate opens instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00 \ \text{m}`. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
 
 
 Along the x-axis, the water height is measured at 4 different positions. These positions are represented by red crosses in the figure below.
@@ -83,7 +83,7 @@ Parameter file
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6` s simulation time with an initial time step of :math:`0.001` s. Time-step adaptation is enabled using ``adapt=true``
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
 and the max CFL is :math:`0.5`.
 
 .. note::
@@ -271,10 +271,10 @@ The following video shows the results of the simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XGp7pxBQvWY" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/gaz4PiqhOzg"  frameborder="0" allowfullscreen></iframe>
 
 
-In the following figure, we compare the water height evolution at 4 the positions mentioned in the `<Description of the case_>`_ section with the experimental results obtained from MARIN (available `here <https://www.spheric-sph.org/tests/test-02>`_):
+In the following figure, we compare the water height evolution at the 4 positions mentioned in the `<Description of the case_>`_ section with the experimental results obtained from MARIN (available `here <https://www.spheric-sph.org/tests/test-02>`_):
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/H1_to_H4_evolution.png                                                                        |
