@@ -1,0 +1,2 @@
+add_executable(matrix_based_advection_diffusion matrix_based_advection_diffusion.cc)
+deal_ii_setup_target(matrix_based_advection_diffusion)
