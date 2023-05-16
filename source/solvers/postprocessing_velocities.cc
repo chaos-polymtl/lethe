@@ -114,6 +114,11 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
       k_dt           = &reynolds_normal_stress_dt.block(1);
       k_index        = [](unsigned int i) { return i / dim; };
     }
+  else if constexpr (std::is_same_v<VectorType,
+                                    LinearAlgebra::distributed::Vector<double>>)
+    {
+      // TODO
+    }
 
   for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
     {
@@ -312,3 +317,11 @@ template class AverageVelocities<2,
 template class AverageVelocities<3,
                                  TrilinosWrappers::MPI::BlockVector,
                                  std::vector<IndexSet>>;
+
+template class AverageVelocities<2,
+                                 LinearAlgebra::distributed::Vector<double>,
+                                 IndexSet>;
+
+template class AverageVelocities<3,
+                                 LinearAlgebra::distributed::Vector<double>,
+                                 IndexSet>;

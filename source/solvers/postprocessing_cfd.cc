@@ -203,6 +203,26 @@ calculate_pressure_drop<3, TrilinosWrappers::MPI::BlockVector>(
   const unsigned int                        inlet_boundary_id,
   const unsigned int                        outlet_boundary_id);
 
+template std::pair<double, double>
+calculate_pressure_drop<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                             dof_handler,
+  std::shared_ptr<Mapping<2>>                       mapping,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2> &                             cell_quadrature_formula,
+  const Quadrature<1> &                             face_quadrature_formula,
+  const unsigned int                                inlet_boundary_id,
+  const unsigned int                                outlet_boundary_id);
+
+template std::pair<double, double>
+calculate_pressure_drop<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                             dof_handler,
+  std::shared_ptr<Mapping<3>>                       mapping,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3> &                             cell_quadrature_formula,
+  const Quadrature<2> &                             face_quadrature_formula,
+  const unsigned int                                inlet_boundary_id,
+  const unsigned int                                outlet_boundary_id);
+
 template <int dim, typename VectorType>
 double
 calculate_CFL(const DoFHandler<dim> &dof_handler,
@@ -289,6 +309,21 @@ calculate_CFL<3, TrilinosWrappers::MPI::BlockVector>(
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping);
 
+template double
+calculate_CFL<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const double                                      time_step,
+  const Quadrature<2> &                             quadrature_formula,
+  const Mapping<2> &                                mapping);
+
+template double
+calculate_CFL<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const double                                      time_step,
+  const Quadrature<3> &                             quadrature_formula,
+  const Mapping<3> &                                mapping);
 
 
 template <int dim, typename VectorType>
@@ -384,6 +419,19 @@ calculate_enstrophy<3, TrilinosWrappers::MPI::BlockVector>(
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping);
 
+template double
+calculate_enstrophy<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2> &                             quadrature_formula,
+  const Mapping<2> &                                mapping);
+
+template double
+calculate_enstrophy<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3> &                             quadrature_formula,
+  const Mapping<3> &                                mapping);
 
 template <int dim, typename VectorType>
 double
@@ -465,6 +513,20 @@ calculate_kinetic_energy<3, TrilinosWrappers::MPI::BlockVector>(
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping);
+
+template double
+calculate_kinetic_energy<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2> &                             quadrature_formula,
+  const Mapping<2> &                                mapping);
+
+template double
+calculate_kinetic_energy<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3> &                             quadrature_formula,
+  const Mapping<3> &                                mapping);
 
 
 template <int dim, typename VectorType>
@@ -572,6 +634,22 @@ calculate_apparent_viscosity<3, TrilinosWrappers::MPI::BlockVector>(
   const Quadrature<3> &                     quadrature_formula,
   const Mapping<3> &                        mapping,
   PhysicalPropertiesManager &               properties_manager);
+
+template double
+calculate_apparent_viscosity<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<2> &                             quadrature_formula,
+  const Mapping<2> &                                mapping,
+  PhysicalPropertiesManager &                       properties_manager);
+
+template double
+calculate_apparent_viscosity<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &evaluation_point,
+  const Quadrature<3> &                             quadrature_formula,
+  const Mapping<3> &                                mapping,
+  PhysicalPropertiesManager &                       properties_manager);
 
 template <int dim, typename VectorType>
 std::vector<std::vector<Tensor<1, dim>>>
@@ -732,6 +810,23 @@ calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
   const Quadrature<2> &                              face_quadrature_formula,
   const Mapping<3> &                                 mapping);
 
+template std::vector<std::vector<Tensor<1, 2>>>
+calculate_forces<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                              dof_handler,
+  const LinearAlgebra::distributed::Vector<double> & evaluation_point,
+  PhysicalPropertiesManager &                        properties_manager,
+  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
+  const Quadrature<1> &                              face_quadrature_formula,
+  const Mapping<2> &                                 mapping);
+
+template std::vector<std::vector<Tensor<1, 3>>>
+calculate_forces<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                              dof_handler,
+  const LinearAlgebra::distributed::Vector<double> & evaluation_point,
+  PhysicalPropertiesManager &                        properties_manager,
+  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
+  const Quadrature<2> &                              face_quadrature_formula,
+  const Mapping<3> &                                 mapping);
 
 template <int dim, typename VectorType>
 std::vector<Tensor<1, 3>>
@@ -876,6 +971,24 @@ template std::vector<Tensor<1, 3>>
 calculate_torques<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
+  PhysicalPropertiesManager &                        properties_manager,
+  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
+  const Quadrature<2> &                              face_quadrature_formula,
+  const Mapping<3> &                                 mapping);
+
+template std::vector<Tensor<1, 3>>
+calculate_torques<2, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<2> &                              dof_handler,
+  const LinearAlgebra::distributed::Vector<double> & evaluation_point,
+  PhysicalPropertiesManager &                        properties_manager,
+  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
+  const Quadrature<1> &                              face_quadrature_formula,
+  const Mapping<2> &                                 mapping);
+
+template std::vector<Tensor<1, 3>>
+calculate_torques<3, LinearAlgebra::distributed::Vector<double>>(
+  const DoFHandler<3> &                              dof_handler,
+  const LinearAlgebra::distributed::Vector<double> & evaluation_point,
   PhysicalPropertiesManager &                        properties_manager,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const Quadrature<2> &                              face_quadrature_formula,
@@ -1026,6 +1139,22 @@ calculate_L2_error(const DoFHandler<3> &                     dof_handler,
                    const Quadrature<3> &                     quadrature_formula,
                    const Mapping<3> &                        mapping);
 
+template std::pair<double, double>
+calculate_L2_error(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const Function<2> *                               l_exact_solution,
+  const Quadrature<2> &                             quadrature_formula,
+  const Mapping<2> &                                mapping);
+
+template std::pair<double, double>
+calculate_L2_error(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const Function<3> *                               l_exact_solution,
+  const Quadrature<3> &                             quadrature_formula,
+  const Mapping<3> &                                mapping);
+
 template <int dim, typename VectorType>
 std::pair<double, double>
 calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
@@ -1113,6 +1242,22 @@ calculate_flow_rate(const DoFHandler<3> &                     dof_handler,
                     const Quadrature<2> &face_quadrature_formula,
                     const Mapping<3> &   mapping);
 
+template std::pair<double, double>
+calculate_flow_rate(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const unsigned int &                              boundary_id,
+  const Quadrature<1> &                             face_quadrature_formula,
+  const Mapping<2> &                                mapping);
+
+template std::pair<double, double>
+calculate_flow_rate(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const unsigned int &                              boundary_id,
+  const Quadrature<2> &                             face_quadrature_formula,
+  const Mapping<3> &                                mapping);
+
 template <int dim, typename VectorType>
 double
 calculate_average_velocity(const DoFHandler<dim> &    dof_handler,
@@ -1165,6 +1310,22 @@ calculate_average_velocity(
   const unsigned int &                      boundary_id,
   const Quadrature<2> &                     face_quadrature_formula,
   const Mapping<3> &                        mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<2> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const unsigned int &                              boundary_id,
+  const Quadrature<1> &                             face_quadrature_formula,
+  const Mapping<2> &                                mapping);
+
+template double
+calculate_average_velocity(
+  const DoFHandler<3> &                             dof_handler,
+  const LinearAlgebra::distributed::Vector<double> &present_solution,
+  const unsigned int &                              boundary_id,
+  const Quadrature<2> &                             face_quadrature_formula,
+  const Mapping<3> &                                mapping);
 
 template <int dim, typename VectorType>
 double
