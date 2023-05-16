@@ -64,3 +64,4 @@ cmake-build-release/*
 
 # Doc
 doc/build/*
+contrib/utilities/programs/*
