@@ -13,6 +13,12 @@ Title
 
 Each pull request should only either fix an issue, add a single feature or restructure the code for one aspect, plus a test, if needed, to certify it. If there are many aspects to change, it is better to create multiples branches and create multiple pull requests. The title should start with an action verb and only contain one idea.
 
+Format
+------
+
+Lethe uses clang-format to have a uniform indentation across all source files. You should always run the indentation script in the contrib folder before creating a PR: ``contrib/utilities/indent-all``. If there are compatibility issues, you can run before that script either ``./contrib/utilities/download_clang_format`` or  ``./contrib/utilities/compile_clang_format``. For parameter files, there is a specific script that can be run as follows:  ``prmindent -i name_of_file.prm``.
+
+
 Review process
 --------------
 
