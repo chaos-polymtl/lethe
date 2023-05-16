@@ -1192,7 +1192,7 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
   double h;
   double cell_volume;
 
-  const double phase_fraction_filter_factor =
+  const double phase_fraction_diffusion_factor =
     this->simulation_parameters.initial_condition
       ->projection_step_diffusion_factor;
 
@@ -1240,7 +1240,7 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
                     {
                       local_matrix_phase_fraction(i, j) +=
                         (phi_phase_fraction[j] * phi_phase_fraction[i] +
-                         phase_fraction_filter_factor * h * h *
+                         phase_fraction_diffusion_factor * h * h *
                            scalar_product(phi_phase_fraction_gradient[i],
                                           phi_phase_fraction_gradient[j])) *
                         fe_values_phase_fraction.JxW(q);
@@ -1364,9 +1364,9 @@ VolumeOfFluid<dim>::assemble_projected_phase_fraction_gradient_matrix_and_rhs(
 
   double h;
 
-  const double phase_fraction_gradient_filter_factor =
+  const double phase_fraction_gradient_diffusion_factor =
     this->simulation_parameters.multiphysics.vof_parameters
-      .surface_tension_force.phase_fraction_gradient_filter_factor;
+      .surface_tension_force.phase_fraction_gradient_diffusion_factor;
 
   for (const auto &projected_phase_fraction_gradient_cell :
        this->projected_phase_fraction_gradient_dof_handler
@@ -1436,7 +1436,7 @@ VolumeOfFluid<dim>::assemble_projected_phase_fraction_gradient_matrix_and_rhs(
                       local_matrix_projected_phase_fraction_gradient(i, j) +=
                         (phi_projected_phase_fraction_gradient[j] *
                            phi_projected_phase_fraction_gradient[i] +
-                         h * h * phase_fraction_gradient_filter_factor *
+                         h * h * phase_fraction_gradient_diffusion_factor *
                            scalar_product(
                              phi_projected_phase_fraction_gradient_gradient[i],
                              phi_projected_phase_fraction_gradient_gradient
@@ -1564,9 +1564,9 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
   system_rhs_curvature    = 0;
   system_matrix_curvature = 0;
 
-  double curvature_filter_factor =
+  double curvature_diffusion_factor =
     simulation_parameters.multiphysics.vof_parameters.surface_tension_force
-      .curvature_filter_factor;
+      .curvature_diffusion_factor;
 
   double h;
 
@@ -1632,7 +1632,7 @@ VolumeOfFluid<dim>::assemble_curvature_matrix_and_rhs(
                     {
                       local_matrix_curvature(i, j) +=
                         (phi_curvature[j] * phi_curvature[i] +
-                         h * h * curvature_filter_factor *
+                         h * h * curvature_diffusion_factor *
                            scalar_product(phi_curvature_gradient[i],
                                           phi_curvature_gradient[j])) *
                         fe_values_curvature.JxW(q);
