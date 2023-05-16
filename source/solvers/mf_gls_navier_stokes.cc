@@ -40,7 +40,8 @@
 template <int dim>
 MFGLSNavierStokesSolver<dim>::MFGLSNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam)
+  : NavierStokesBase<dim, LinearAlgebra::distributed::Vector<double>, IndexSet>(
+      p_nsparam)
 {
   // TODO
 }
@@ -55,7 +56,18 @@ template <int dim>
 void
 MFGLSNavierStokesSolver<dim>::solve()
 {
-  // TODO
+  MultithreadInfo::set_thread_limit(1);
+
+  read_mesh_and_manifolds(
+    *this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
+
+  this->setup_dofs();
+
+  this->finish_simulation();
 }
 
 template <int dim>
@@ -68,6 +80,32 @@ MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
 template <int dim>
 void
 MFGLSNavierStokesSolver<dim>::update_boundary_conditions()
+{
+  // TODO
+}
+
+/**
+ * Set the initial condition using a L2 or a viscous solver
+ **/
+template <int dim>
+void
+MFGLSNavierStokesSolver<dim>::set_initial_condition_fd(
+  Parameters::InitialConditionType /* initial_condition_type */,
+  bool /* restart */)
+{
+  // TODO
+}
+
+template <int dim>
+void
+MFGLSNavierStokesSolver<dim>::assemble_system_matrix()
+{
+  // TODO
+}
+
+template <int dim>
+void
+MFGLSNavierStokesSolver<dim>::assemble_system_rhs()
 {
   // TODO
 }
@@ -95,31 +133,14 @@ MFGLSNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
+MFGLSNavierStokesSolver<dim>::define_zero_constraints()
+{
+  // TODO
+}
+
+template <int dim>
+void
 MFGLSNavierStokesSolver<dim>::setup_operator()
-{}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::assemble_system_matrix()
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::assemble_system_rhs()
-{
-  // TODO
-}
-
-/**
- * Set the initial condition using a L2 or a viscous solver
- **/
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::set_initial_condition_fd(
-  Parameters::InitialConditionType /* initial_condition_type */,
-  bool /* restart */)
 {
   // TODO
 }
