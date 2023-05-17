@@ -64,6 +64,10 @@ MFGLSNavierStokesSolver<dim>::solve()
     this->simulation_parameters.boundary_conditions);
 
   this->setup_dofs();
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
+  this->update_multiphysics_time_average_solution();
 
   while (this->simulation_control->integrate())
     {
@@ -442,7 +446,8 @@ MFGLSNavierStokesSolver<dim>::setup_GMG()
   // TODO
 }
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
-// valid before we actually compile the solver This greatly helps with debugging
+// Pre-compile the 2D and 3D MF Navier-Stokes solver to ensure that the library
+// is valid before we actually compile the solver This greatly helps with
+// debugging
 template class MFGLSNavierStokesSolver<2>;
 template class MFGLSNavierStokesSolver<3>;
