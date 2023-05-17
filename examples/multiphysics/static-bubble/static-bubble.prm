@@ -56,11 +56,11 @@ end
 
 subsection VOF
   subsection surface tension force
-    set enable                                = true
-    set surface tension coefficient           = 1
+    set enable                                   = true
+    set surface tension coefficient              = 1
     set phase fraction gradient diffusion factor = 4
     set curvature diffusion factor               = 1
-    set output auxiliary fields               = true
+    set output auxiliary fields                  = true
   end
 end
 
@@ -142,8 +142,8 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                             = verbose
-  set method                                = gmres
-  set relative residual                     = 1e-3
-  set minimum residual                      = 1e-10
+  set verbosity         = verbose
+  set method            = gmres
+  set relative residual = 1e-3
+  set minimum residual  = 1e-10
 end

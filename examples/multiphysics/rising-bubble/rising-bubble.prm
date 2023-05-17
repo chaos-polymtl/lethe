@@ -41,11 +41,11 @@ subsection VOF
   end
 
   subsection surface tension force
-    set enable                                = true
-    set surface tension coefficient           = 24.5
+    set enable                                   = true
+    set surface tension coefficient              = 24.5
     set phase fraction gradient diffusion factor = 4
     set curvature diffusion factor               = 1
-    set output auxiliary fields               = true
+    set output auxiliary fields                  = true
   end
 end
 
