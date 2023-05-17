@@ -769,7 +769,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                this->sharpening_threshold);
 
           if (this->simulation_control->get_step_number() %
-              this->simulation_parameters.post_processing.output_frequency)
+              this->simulation_parameters.post_processing.output_frequency == 0)
             {
               // Save table to .dat
               std::string filename =
