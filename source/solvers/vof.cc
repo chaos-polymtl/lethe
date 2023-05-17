@@ -769,7 +769,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                this->sharpening_threshold);
 
           if (this->simulation_control->get_step_number() %
-              this->simulation_parameters.post_processing.output_frequency == 0)
+                this->simulation_parameters.post_processing.output_frequency ==
+              0)
             {
               // Save table to .dat
               std::string filename =
@@ -2068,28 +2069,28 @@ void
 VolumeOfFluid<dim>::define_zero_constraints()
 {
   // Zero constraints
-    this->zero_constraints.clear();
-    this->zero_constraints.reinit(this->locally_relevant_dofs);
+  this->zero_constraints.clear();
+  this->zero_constraints.reinit(this->locally_relevant_dofs);
 
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->zero_constraints);
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          this->zero_constraints);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::periodic)
-              {
-                DoFTools::make_periodicity_constraints(
-                  this->dof_handler,
-                  this->simulation_parameters.boundary_conditions.id[i_bc],
-                  this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-                  this->simulation_parameters.boundary_conditions
-                    .periodic_direction[i_bc],
-                  this->zero_constraints);
-              }
-      }
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+            this->simulation_parameters.boundary_conditions
+              .periodic_direction[i_bc],
+            this->zero_constraints);
+        }
+    }
   this->zero_constraints.close();
 }
 
@@ -2112,15 +2113,15 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
       {
         if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
             BoundaryConditions::BoundaryType::periodic)
-              {
-                DoFTools::make_periodicity_constraints(
-                  this->dof_handler,
-                  this->simulation_parameters.boundary_conditions.id[i_bc],
-                  this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
-                  this->simulation_parameters.boundary_conditions
-                    .periodic_direction[i_bc],
-                  this->nonzero_constraints);
-              }
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+              this->simulation_parameters.boundary_conditions
+                .periodic_direction[i_bc],
+              this->nonzero_constraints);
+          }
       }
   }
   nonzero_constraints.close();
