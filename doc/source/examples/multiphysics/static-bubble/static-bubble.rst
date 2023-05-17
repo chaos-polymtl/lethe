@@ -41,7 +41,7 @@ A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a t
 Surface tension force
 """"""""""""""""""""""""""""""""
 
-As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface force. It is applied at the interface between two immisible fluids and is given by :
+As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface force. It is applied at the interface between two immiscible fluids and is given by:
 
 .. math::
 
@@ -69,7 +69,7 @@ and the unit normal vector of the free surface is obtained with:
 
 .. math::
 
-    \bf{n} = \frac{\nabla \phi}{|\phi|}
+    \bf{n} = \frac{\nabla \phi}{|\nabla \phi|}
 
 When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps, as presented in section :ref:`Normal and curvature computations`.
 
@@ -169,7 +169,7 @@ Initial conditions
 """"""""""""""""""""""""""""""""
 
 In the ``initial condition`` subsection, the initial velocity and initial position of the droplet are defined. The droplet is initially
-defined as a circle with a radius :math:`R= 0.5` in the center of the defined computational domain at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution is sufficiently smooth and avoid a staircase respresentation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
+defined as a circle with a radius :math:`R= 0.5` in the center of the defined computational domain at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution is sufficiently smooth and avoid a staircase representation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
 
 .. code-block:: text
 
@@ -185,7 +185,7 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the defined co
       subsection VOF
         set Function expression = if (x^2 + y^2 < 0.5^2 , 1, 0)
         subsection projection step
-          set enable = true
+          set enable           = true
           set diffusion factor = 1
         end
       end
@@ -253,7 +253,7 @@ Analytical solution
 
 As presented in the section :ref:`Surface tension force`, the analytical solution for this case is zero for the velocity and the pressure drop is given by :math:`\Delta p = \sigma \kappa` whit :math:`\kappa = 1/R`. For :math:`\sigma = 1.0` and :math:`R=0.5`, we have :math:`\Delta p = 2.0`.
 
-When providing the analytical solution in the ``analytical solution`` subsection and setting the parameter ``enable`` to ``true``, we can monitor the :math:`\mathcal{L}^2` norm of the error on the velocity and pressure fields. They are ouputed in the file specify in the parameter ``filename``.
+When providing the analytical solution in the ``analytical solution`` subsection and setting the parameter ``enable`` to ``true``, we can monitor the :math:`\mathcal{L}^2` norm of the error on the velocity and pressure fields. They are outputted in the file specified in the parameter ``filename``.
 
 .. code-block:: text
 

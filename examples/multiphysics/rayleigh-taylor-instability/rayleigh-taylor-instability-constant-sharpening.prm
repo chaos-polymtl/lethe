@@ -118,7 +118,7 @@ subsection VOF
 
   subsection phase filtration
     set type  = tanh
-    set verbosity = verbose
+    set verbosity = quiet
     set beta = 10
   end
 end

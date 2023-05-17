@@ -39,8 +39,8 @@ The following schematic describes the geometry and dimensions of the simulation 
     :width: 400
 
 .. note:: 
-    All the four boundary conditions are ``noslip``, and an external 
-    gravity field of :math:`-0.98` is applied in the y direction.
+    On the upper and bottom walls ``slip`` boundary conditions are applied, and on side walls the boundary conditions are ``noslip``.
+    An external gravity field of :math:`-0.98` is applied in the y direction.
 
 
 --------------
@@ -138,7 +138,7 @@ Initial condition
 """"""""""""""""""""""""""""""""
 In the ``initial condition``, the initial velocity and initial position
 of the liquid phase are defined. The light phase is initially
-defined as a circle with a radius :math:`r= 0.25` at :math:`(x,y)=(0.5, 0.5)`. We enable the use of a projection step to ensure that the initial phase distribution
+defined as a circle with a radius :math:`r= 0.25` at :math:`(x,y)=(0.5, 0.5)`. We enable the use of a projection step to ensure that the initial phase distribution is
 sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` example.
 
 .. code-block:: text

@@ -91,8 +91,9 @@ HeatTransferScratchData<dim>::enable_vof(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values          = std::vector<double>(this->n_q_points);
-  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  filtered_phase_values = std::vector<double>(this->n_q_points);
+  filtered_phase_gradient_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   specific_heat_0                  = std::vector<double>(n_q_points);
@@ -124,8 +125,9 @@ HeatTransferScratchData<dim>::enable_vof(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values          = std::vector<double>(this->n_q_points);
-  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  filtered_phase_values = std::vector<double>(this->n_q_points);
+  filtered_phase_gradient_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   specific_heat_0                  = std::vector<double>(n_q_points);
@@ -227,32 +229,28 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  density[q] =
-                    calculate_point_property(filter->filter_phase(
-                                               this->phase_values[q]),
-                                             this->density_0[q],
-                                             this->density_1[q]);
+                  auto filtered_phase_value = this->filtered_phase_values[q];
+
+                  density[q] = calculate_point_property(filtered_phase_value,
+                                                        this->density_0[q],
+                                                        this->density_1[q]);
 
                   specific_heat[q] =
-                    calculate_point_property(filter->filter_phase(
-                                               this->phase_values[q]),
+                    calculate_point_property(filtered_phase_value,
                                              this->specific_heat_0[q],
                                              this->specific_heat_1[q]);
 
                   thermal_conductivity[q] =
-                    calculate_point_property(filter->filter_phase(
-                                               this->phase_values[q]),
+                    calculate_point_property(filtered_phase_value,
                                              this->thermal_conductivity_0[q],
                                              this->thermal_conductivity_1[q]);
 
-                  viscosity[q] =
-                    calculate_point_property(filter->filter_phase(
-                                               this->phase_values[q]),
-                                             this->viscosity_0[q],
-                                             this->viscosity_1[q]);
+                  viscosity[q] = calculate_point_property(filtered_phase_value,
+                                                          this->viscosity_0[q],
+                                                          this->viscosity_1[q]);
 
                   grad_specific_heat_temperature[q] = calculate_point_property(
-                    filter->filter_phase(this->phase_values[q]),
+                    filtered_phase_value,
                     this->grad_specific_heat_temperature_0[q],
                     this->grad_specific_heat_temperature_1[q]);
                 }
