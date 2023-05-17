@@ -121,7 +121,7 @@ protected:
 
 
   /**
-   * @brief  defined the non zero constraints used to solved the problem.
+   * @brief  defined the non zero constraints used to solve the problem.
    */
   void
   define_non_zero_constraints();

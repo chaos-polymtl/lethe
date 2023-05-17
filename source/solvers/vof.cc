@@ -1987,20 +1987,10 @@ VolumeOfFluid<dim>::setup_dofs()
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       mpi_communicator);
 
-  {
-    this->nonzero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->nonzero_constraints);
-  }
-  this->nonzero_constraints.close();
+  define_non_zero_constraints();
 
   // Boundary conditions for Newton correction
-  {
-    this->zero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->zero_constraints);
-  }
-  this->zero_constraints.close();
+  define_zero_constraints();
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(this->dof_handler.n_dofs());
@@ -2071,6 +2061,69 @@ VolumeOfFluid<dim>::setup_dofs()
                                     mpi_communicator);
 
   assemble_mass_matrix(mass_matrix_phase_fraction);
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::define_zero_constraints()
+{
+  // Zero constraints
+    this->zero_constraints.clear();
+    this->zero_constraints.reinit(this->locally_relevant_dofs);
+
+    DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                            this->zero_constraints);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::periodic)
+              {
+                DoFTools::make_periodicity_constraints(
+                  this->dof_handler,
+                  this->simulation_parameters.boundary_conditions.id[i_bc],
+                  this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+                  this->simulation_parameters.boundary_conditions
+                    .periodic_direction[i_bc],
+                  this->zero_constraints);
+              }
+      }
+  this->zero_constraints.close();
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::define_non_zero_constraints()
+{
+  // Non-zero constraints
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  {
+    nonzero_constraints.clear();
+    nonzero_constraints.reinit(this->locally_relevant_dofs);
+
+    DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                            nonzero_constraints);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::periodic)
+              {
+                DoFTools::make_periodicity_constraints(
+                  this->dof_handler,
+                  this->simulation_parameters.boundary_conditions.id[i_bc],
+                  this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+                  this->simulation_parameters.boundary_conditions
+                    .periodic_direction[i_bc],
+                  this->nonzero_constraints);
+              }
+      }
+  }
+  nonzero_constraints.close();
 }
 
 template <int dim>

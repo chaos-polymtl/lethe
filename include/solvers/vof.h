@@ -296,6 +296,18 @@ public:
   setup_dofs() override;
 
   /**
+   * @brief  defined the zero constraints used to solve the problem.
+   */
+  void
+  define_zero_constraints();
+
+  /**
+   * @brief  defined the non zero constraints used to solve the problem.
+   */
+  void
+  define_non_zero_constraints();
+
+  /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
    * only support imposing nodal values, but some physics additionnaly support
    * the use of L2 projection or steady-state solutions.

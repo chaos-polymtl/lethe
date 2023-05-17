@@ -55,7 +55,7 @@ namespace BoundaryConditions
     // for tracer
     tracer_dirichlet,
     // for vof
-    pw,
+    pw
   };
 
   /**
