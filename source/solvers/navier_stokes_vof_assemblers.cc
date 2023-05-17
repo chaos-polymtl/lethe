@@ -546,7 +546,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &phase_gradient_value =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.filtered_phase_gradient_values[q];
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> surface_tension_force =
@@ -610,7 +610,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
       // Gather phase fraction gradient
       const Tensor<1, dim> &phase_gradient_value =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.filtered_phase_gradient_values[q];
 
       const double phase_gradient_norm = phase_gradient_value.norm();
 
