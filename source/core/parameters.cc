@@ -2195,7 +2195,7 @@ namespace Parameters
         "number of particles",
         "1",
         Patterns::Integer(),
-        "Number of particles reprensented by IB max number of particles = 10000 ");
+        "Number of particles represented by IB (max number of particles = 10000)");
       prm.declare_entry(
         "initial refinement",
         "0",
