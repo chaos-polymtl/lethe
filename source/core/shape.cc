@@ -950,9 +950,7 @@ CompositeShape<dim>::value(const Point<dim> &evaluation_point,
       return levelset;
     }
   else
-    {
-      return iterator->second;
-    }
+    return iterator->second;
 }
 
 template <int dim>
@@ -992,9 +990,7 @@ CompositeShape<dim>::value_with_cell_guess(
       return levelset;
     }
   else
-    {
-      return this->value_cache[point_in_string];
-    }
+    return this->value_cache[point_in_string];
 }
 
 template <int dim>
@@ -1027,9 +1023,7 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
       return gradient;
     }
   else
-    {
-      return iterator->second;
-    }
+    return iterator->second;
 }
 
 template <int dim>
@@ -1065,9 +1059,7 @@ CompositeShape<dim>::gradient_with_cell_guess(
       return gradient;
     }
   else
-    {
-      return this->gradient_cache[point_in_string];
-    }
+    return this->gradient_cache[point_in_string];
 }
 
 template <int dim>
@@ -1086,20 +1078,12 @@ CompositeShape<dim>::update_precalculations(
   const unsigned int levels_not_precalculated)
 {
   for (auto const &[component_id, component] : constituents)
-    {
-      if (typeid(*component) == typeid(RBFShape<dim>))
-        {
-          std::static_pointer_cast<RBFShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler,
-                                     levels_not_precalculated);
-        }
-      else if (typeid(*component) == typeid(CompositeShape<dim>))
-        {
-          std::static_pointer_cast<CompositeShape<dim>>(component)
-            ->update_precalculations(updated_dof_handler,
-                                     levels_not_precalculated);
-        }
-    }
+    if (typeid(*component) == typeid(RBFShape<dim>))
+      std::static_pointer_cast<RBFShape<dim>>(component)
+        ->update_precalculations(updated_dof_handler, levels_not_precalculated);
+    else if (typeid(*component) == typeid(CompositeShape<dim>))
+      std::static_pointer_cast<CompositeShape<dim>>(component)
+        ->update_precalculations(updated_dof_handler, levels_not_precalculated);
 }
 
 template <int dim>

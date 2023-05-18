@@ -856,7 +856,6 @@ public:
     std::map<unsigned int, double>         constituent_shapes_values,
     std::map<unsigned int, Tensor<1, dim>> constituent_shapes_gradients) const;
 
-
   /**
    * @brief
    * Clear the cache of the shape
