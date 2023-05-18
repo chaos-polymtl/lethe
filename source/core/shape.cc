@@ -1181,6 +1181,18 @@ CompositeShape<dim>::apply_boolean_operations(
 }
 
 template <int dim>
+void
+CompositeShape<dim>::clear_cache()
+{
+  this->value_cache.clear();
+  this->gradient_cache.clear();
+  for (auto const &[component_id, component] : constituents)
+    {
+      component->clear_cache();
+    }
+}
+
+template <int dim>
 RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
                         const std::vector<RBFBasisFunction> &basis_functions,
                         const std::vector<double> &          weights,
