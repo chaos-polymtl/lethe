@@ -78,7 +78,8 @@ void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
-  // TODO: generalize this for the use of LinearAlegra::distributed::Vector<double>
+  // TODO: generalize this for the use of
+  // LinearAlegra::distributed::Vector<double>
   if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
                 std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
     {
