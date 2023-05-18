@@ -1980,11 +1980,19 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   if (simulation_control->get_output_boundaries() &&
       simulation_control->get_step_number() == 0)
     {
-      DataOutFaces<dim>          data_out_faces;
+      DataOutFaces<dim> data_out_faces;
+
+      // Add the additional flag to enable high-order cells output when the
+      // velocity interpolation order is larger than 1
+      DataOutBase::VtkFlags flags;
+      if (this->velocity_fem_degree > 1)
+        flags.write_higher_order_cells = true;
+      data_out_faces.set_flags(flags);
+
       BoundaryPostprocessor<dim> boundary_id;
       data_out_faces.attach_dof_handler(this->dof_handler);
       data_out_faces.add_data_vector(solution, boundary_id);
-      data_out_faces.build_patches(*this->mapping);
+      data_out_faces.build_patches(*this->mapping, subdivision);
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
