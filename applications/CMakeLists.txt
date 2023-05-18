@@ -15,6 +15,8 @@ foreach(_target IN ITEMS
     gls_sharp_navier_stokes_3d
     gls_vans_2d
     gls_vans_3d
+    mf_gls_navier_stokes_2d
+    mf_gls_navier_stokes_3d
     initial_conditions
     navier_stokes_parameter_template
     rpt_3d

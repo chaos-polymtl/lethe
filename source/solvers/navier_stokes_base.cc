@@ -1885,6 +1885,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     *this->triangulation,
     this->simulation_parameters,
     number_quadrature_points);
+
+  // TODO: generalize this to VectorType
   TrilinosWrappers::MPI::Vector qcriterion_field;
   TrilinosWrappers::MPI::Vector continuity_field;
 
@@ -2139,3 +2141,9 @@ template class NavierStokesBase<2,
 template class NavierStokesBase<3,
                                 TrilinosWrappers::MPI::BlockVector,
                                 std::vector<IndexSet>>;
+template class NavierStokesBase<2,
+                                LinearAlgebra::distributed::Vector<double>,
+                                IndexSet>;
+template class NavierStokesBase<3,
+                                LinearAlgebra::distributed::Vector<double>,
+                                IndexSet>;
