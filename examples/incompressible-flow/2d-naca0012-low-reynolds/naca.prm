@@ -11,7 +11,7 @@ subsection simulation control
   set output path      = ./output/
   set output frequency = 50
   set adapt            = true
-  set max cfl          = 10
+  set max cfl          = 50
   set time end         = 40
   set time step        = 0.01
 end
@@ -146,14 +146,14 @@ end
 
 subsection mesh adaptation
   set type                 = kelly
-  set variable             = velocity
+  set variable             = pressure
   set fraction type        = number
   set max number elements  = 700000
   set max refinement level = 2
   set min refinement level = 0
   set frequency            = 5
   set fraction refinement  = 0.02
-  set fraction coarsening  = 0.16
+  set fraction coarsening  = 0.05
 end
 
 # --------------------------------------------------
@@ -173,13 +173,16 @@ end
 
 subsection linear solver
   set verbosity                             = verbose
-  set method                                = gmres
-  set max iters                             = 5000
+  set method                                = amg
+  set max iters                             = 200
   set relative residual                     = 1e-3
   set minimum residual                      = 1e-8
   set ilu preconditioner fill               = 1
   set ilu preconditioner absolute tolerance = 1e-10
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 1000
+  set amg preconditioner ilu fill               = 2
+  set amg preconditioner ilu absolute tolerance = 1e-10
+  set amg preconditioner ilu relative tolerance = 1.00
 end
 
