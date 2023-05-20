@@ -1,7 +1,5 @@
 #include <core/lethe_grid_tools.h>
 
-#include "solvers/postprocessing_cfd.h"
-
 #include <fem-dem/gls_vans.h>
 
 #include <deal.II/base/work_stream.h>
@@ -9,42 +7,6 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-double
-particle_circle_intersection_2d(double r_particle,
-                                double R_sphere,
-                                double neighbor_distance)
-{
-  return pow(r_particle, 2) * Utilities::fixed_power<-1, double>(
-                                cos((pow(neighbor_distance, 2) +
-                                     pow(r_particle, 2) - pow(R_sphere, 2)) /
-                                    (2 * neighbor_distance * r_particle))) +
-         Utilities::fixed_power<2, double>(R_sphere) *
-           Utilities::fixed_power<-1, double>(
-             cos((pow(neighbor_distance, 2) - pow(r_particle, 2) +
-                  pow(R_sphere, 2)) /
-                 (2 * neighbor_distance * R_sphere))) -
-         0.5 * sqrt((-neighbor_distance + r_particle + R_sphere) *
-                    (neighbor_distance + r_particle - R_sphere) *
-                    (neighbor_distance - r_particle + R_sphere) *
-                    (neighbor_distance + r_particle + R_sphere));
-}
-
-double
-particle_sphere_intersection_3d(double r_particle,
-                                double R_sphere,
-                                double neighbor_distance)
-{
-  return M_PI *
-         Utilities::fixed_power<2, double>(R_sphere + r_particle -
-                                           neighbor_distance) *
-         (Utilities::fixed_power<2, double>(neighbor_distance) +
-          (2 * neighbor_distance * r_particle) -
-          (3 * Utilities::fixed_power<2, double>(r_particle)) +
-          (2 * neighbor_distance * R_sphere) + (6 * R_sphere * r_particle) -
-          (3 * Utilities::fixed_power<2, double>(R_sphere))) /
-         (12 * neighbor_distance);
-}
 
 // Constructor for class GLS_VANS
 template <int dim>
@@ -515,6 +477,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
   FullMatrix<double>  local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs_void_fraction(dofs_per_cell);
   std::vector<double> phi_vf(dofs_per_cell);
+  std::vector<Tensor<1, dim>> grad_phi_vf(dofs_per_cell);
 
   double R_sphere;
   double particles_volume_in_sphere;
@@ -815,7 +778,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
-                  phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
+                  phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
+                  grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
                 }
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -825,7 +789,10 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
                       local_matrix_void_fraction(i, j) +=
-                        (phi_vf[j] * phi_vf[i]) *
+                        ((phi_vf[j] * phi_vf[i]) +
+                         (this->cfd_dem_simulation_parameters.void_fraction
+                            ->l2_smoothing_factor *
+                          grad_phi_vf[j] * grad_phi_vf[i])) *
                         fe_values_void_fraction.JxW(q);
                     }
 

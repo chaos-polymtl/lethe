@@ -50,6 +50,62 @@
 using namespace dealii;
 
 /**
+ * @brief Calculates the area of intersection between a circular (2D) particle and a circle
+ *
+ * @param r_particle Radius of the particle
+ *
+ * @param r_circle Radius of the circle
+ *
+ * @param neighbor_distance Distance between the particle and the circle
+ */
+inline double
+particle_circle_intersection_2d(double r_particle,
+                                double r_circle,
+                                double neighbor_distance)
+{
+  return pow(r_particle, 2) * Utilities::fixed_power<-1, double>(
+                                cos((pow(neighbor_distance, 2) +
+                                     pow(r_particle, 2) - pow(r_circle, 2)) /
+                                    (2 * neighbor_distance * r_particle))) +
+         Utilities::fixed_power<2, double>(r_circle) *
+           Utilities::fixed_power<-1, double>(
+             cos((pow(neighbor_distance, 2) - pow(r_particle, 2) +
+                  pow(r_circle, 2)) /
+                 (2 * neighbor_distance * r_circle))) -
+         0.5 * sqrt((-neighbor_distance + r_particle + r_circle) *
+                    (neighbor_distance + r_particle - r_circle) *
+                    (neighbor_distance - r_particle + r_circle) *
+                    (neighbor_distance + r_particle + r_circle));
+}
+
+/**
+ * @brief Calculates the volume of intersection between a spherical (3D) particle and a sphere
+ *
+ * @param r_particle Radius of the particle
+ *
+ * @param r_sphere Radius of the sphere
+ *
+ * @param neighbor_distance Distance between the particle and the sphere
+ */
+
+inline double
+particle_sphere_intersection_3d(double r_particle,
+                                double r_sphere,
+                                double neighbor_distance)
+{
+  return M_PI *
+         Utilities::fixed_power<2, double>(r_sphere + r_particle -
+                                           neighbor_distance) *
+         (Utilities::fixed_power<2, double>(neighbor_distance) +
+          (2 * neighbor_distance * r_particle) -
+          (3 * Utilities::fixed_power<2, double>(r_particle)) +
+          (2 * neighbor_distance * r_sphere) + (6 * r_sphere * r_particle) -
+          (3 * Utilities::fixed_power<2, double>(r_sphere))) /
+         (12 * neighbor_distance);
+}
+
+
+/**
  * A solver class for the VANS equation using GLS stabilization
  *
  * @tparam dim An integer that denotes the dimension of the space in which
