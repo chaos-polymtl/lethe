@@ -1170,8 +1170,9 @@ CompositeShape<dim>::clear_cache()
 {
   this->value_cache.clear();
   this->gradient_cache.clear();
-  for (auto const &[component_id, component] : constituents)
-    component->clear_cache();
+  // The constituents themselves don't need to have their cache cleared, because
+  // everytime the value or gradient functions are called the evaluation point
+  // is modified (the relationships between the constituents don't change).
 }
 
 template <int dim>
