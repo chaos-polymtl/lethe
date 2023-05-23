@@ -146,7 +146,7 @@ def printClCd():
 
     for i in range(0,len(pathList)):
         list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(pathList[i])
-        list_var_interet = [(2 / 1.3) * list_of_list_of_vars[0][1][cut:-cutLast], (2 / 1.3) * list_of_list_of_vars[0][2][cut:-cutLast],
+        list_var_interet = [2 * list_of_list_of_vars[0][1][cut:-cutLast], 2 * list_of_list_of_vars[0][2][cut:-cutLast],
                             list_of_list_of_vars[0][4][cut:-cutLast],
                             list_of_list_of_vars[0][5][cut:-cutLast], list_of_list_of_vars[0][7][cut:-cutLast],
                             list_of_list_of_vars[0][8][cut:-cutLast]]
@@ -227,7 +227,7 @@ def spectralAnalysis():
 
     for i in range(8,9):
         list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(pathList[angleIndex])
-        list_var_interet = [(2 / 1.3) * list_of_list_of_vars[0][1][cut:], (2 / 1.3) * list_of_list_of_vars[0][2][cut:],
+        list_var_interet = [2 * list_of_list_of_vars[0][1][cut:], 2 * list_of_list_of_vars[0][2][cut:],
                             list_of_list_of_vars[0][4][cut:],
                             list_of_list_of_vars[0][5][cut:], list_of_list_of_vars[0][7][cut:],
                             list_of_list_of_vars[0][8][cut:]]
