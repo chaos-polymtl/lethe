@@ -16,6 +16,7 @@ add_library(lethe-solvers
   isothermal_compressible_navier_stokes_assembler.cc
   isothermal_compressible_navier_stokes_vof_assembler.cc
   mf_gls_navier_stokes.cc
+  mf_navier_stokes_operators.cc
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
   navier_stokes_base.cc
@@ -53,6 +54,7 @@ add_library(lethe-solvers
   ../../include/solvers/isothermal_compressible_navier_stokes_assembler.h
   ../../include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h
   ../../include/solvers/mf_gls_navier_stokes.h
+  ../../include/solvers/mf_navier_stokes_operators.h
   ../../include/solvers/multiphysics_interface.h
   ../../include/solvers/navier_stokes_assemblers.h
   ../../include/solvers/navier_stokes_base.h

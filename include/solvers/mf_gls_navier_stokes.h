@@ -18,6 +18,7 @@
 
 #include <core/exceptions.h>
 
+#include <solvers/mf_navier_stokes_operators.h>
 #include <solvers/navier_stokes_base.h>
 
 using namespace dealii;
@@ -169,7 +170,8 @@ private:
    * Members
    */
 protected:
-  // TODO create operator: NSOperator<dim, double> system_matrix;
+  // Matrix-free operator
+  NavierStokesOperator<dim> system_operator;
 };
 
 #endif
