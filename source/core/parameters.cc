@@ -826,6 +826,10 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
+      prm.declare_entry("cahn hilliard order",
+                        "1",
+                        Patterns::Integer(),
+                        "interpolation order cahn hilliard");
       prm.declare_entry("qmapping all",
                         "false",
                         Patterns::Bool(),
@@ -845,6 +849,7 @@ namespace Parameters
       temperature_order   = prm.get_integer("temperature order");
       tracer_order        = prm.get_integer("tracer order");
       VOF_order           = prm.get_integer("VOF order");
+      cahn_hilliard_order = prm.get_integer("cahn hilliard order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();

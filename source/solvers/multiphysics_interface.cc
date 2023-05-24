@@ -2,6 +2,7 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
 #include <solvers/vof.h>
+#include <solvers/cahn_hilliard.h>
 
 #include <deal.II/base/exceptions.h>
 #define _unused(x) ((void)(x))
@@ -97,6 +98,13 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     {
       active_physics.push_back(PhysicsID::VOF);
       physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
+    }
+
+  if (multiphysics_parameters.cahn_hilliard)
+    {
+      active_physics.push_back(PhysicsID::cahn_hilliard);
+      physics[PhysicsID::cahn_hilliard] = std::make_shared<CahnHilliard<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 }

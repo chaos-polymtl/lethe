@@ -54,6 +54,7 @@ namespace AnalyticalSolutions
       , uvwp(dim + 1)
       , temperature(1)
       , tracer(1)
+      , cahn_hilliard(2)
     {}
 
     virtual void
@@ -89,6 +90,8 @@ namespace AnalyticalSolutions
     Functions::ParsedFunction<dim> tracer;
 
     Functions::ParsedFunction<dim> phase;
+
+    Functions::ParsedFunction<dim> cahn_hilliard;
   };
 } // namespace AnalyticalSolutions
 

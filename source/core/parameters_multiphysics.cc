@@ -67,6 +67,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "VOF calculation <true|false>");
 
+    prm.declare_entry("cahn hilliard",
+                      "false",
+                      Patterns::Bool(),
+                      "Cahn-Hilliard calculation <true|false>");
+
     prm.declare_entry(
       "use time average velocity field",
       "false",
@@ -98,6 +103,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     VOF            = prm.get_bool("VOF");
+    cahn_hilliard  = prm.get_bool("cahn hilliard");
     use_time_average_velocity_field =
       prm.get_bool("use time average velocity field");
 

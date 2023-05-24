@@ -87,6 +87,11 @@ public:
       {
         announce_string(pcout, "VOF");
       }
+
+    else if (physics_id == PhysicsID::cahn_hilliard)
+      {
+        announce_string(pcout, "Cahn-Hilliard");
+      }
   }
 
   /**
