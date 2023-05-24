@@ -55,7 +55,8 @@ namespace BoundaryConditions
     // for tracer
     tracer_dirichlet,
     // for vof
-    pw
+    pw,
+    vof_dirichlet
   };
 
   /**
@@ -753,6 +754,9 @@ namespace BoundaryConditions
    *  - if bc type is "peeling/wetting", peeling/wetting of the free surface
    * will be applied. See vof.cc for further implementation details.
    *
+   * - if bc type is "dirichlet", the function is applied on the selected
+   * boundary
+   *
    * - if bc type is "none", nothing happens
    */
 
@@ -760,6 +764,8 @@ namespace BoundaryConditions
   class VOFBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> phase_fraction;
+
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
@@ -784,14 +790,20 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|peeling/wetting"),
+                      Patterns::Selection("none|dirichlet|peeling/wetting"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|peeling/wetting>.");
+                      "Choices are <none|dirichlet|peeling/wetting>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.enter_subsection("dirichlet");
+    phase_fraction[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    phase_fraction[i_bc]->declare_parameters(prm);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
   }
 
   /**
@@ -814,6 +826,7 @@ namespace BoundaryConditions
                         "Number of boundary conditions");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
+      phase_fraction.resize(this->max_size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -844,6 +857,13 @@ namespace BoundaryConditions
     if (op == "none")
       {
         this->type[i_bc] = BoundaryType::none;
+      }
+    else if (op == "dirichlet")
+      {
+        this->type[i_bc] = BoundaryType::vof_dirichlet;
+        prm.enter_subsection("dirichlet");
+        phase_fraction[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
       }
     else if (op == "peeling/wetting")
       {
