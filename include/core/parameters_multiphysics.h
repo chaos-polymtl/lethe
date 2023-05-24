@@ -238,6 +238,7 @@ namespace Parameters
     bool heat_transfer;
     bool tracer;
     bool VOF;
+    bool cahn_hilliard;
 
     bool use_time_average_velocity_field;
 

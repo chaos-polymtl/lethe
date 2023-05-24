@@ -699,6 +699,9 @@ namespace Parameters
     // Interpolation order vof model
     unsigned int VOF_order;
 
+    // Interpolation order Cahn-Hilliard
+    unsigned int cahn_hilliard_order;
+
     // Apply high order mapping everywhere
     bool qmapping_all;
 
