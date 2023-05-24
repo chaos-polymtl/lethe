@@ -164,6 +164,36 @@ NavierStokesScratchData<dim>::enable_vof(
 
 template <int dim>
 void
+NavierStokesScratchData<dim>::enable_cahn_hilliard(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
+{
+  gather_ch    = true;
+  fe_values_ch = std::make_shared<FEValues<dim>>(
+    mapping, fe, quadrature, update_values | update_gradients);
+
+  // Allocate CahnHilliard values
+  phase_order_ch_values     = std::vector<double>(this->n_q_points);
+  chemical_potential_values = std::vector<double>(this->n_q_points);
+
+  // Allocate CahnHilliard gradients
+  phase_order_ch_gradients     = std::vector<Tensor<1, dim>>(this->n_q_points);
+  chemical_potential_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
+
+  // Allocate physical properties
+  density_0           = std::vector<double>(n_q_points);
+  density_1           = std::vector<double>(n_q_points);
+  viscosity_0         = std::vector<double>(n_q_points);
+  viscosity_1         = std::vector<double>(n_q_points);
+  thermal_expansion_0 = std::vector<double>(n_q_points);
+  thermal_expansion_1 = std::vector<double>(n_q_points);
+}
+
+
+
+template <int dim>
+void
 NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
   const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
   const Quadrature<dim> &   quadrature,
@@ -357,40 +387,82 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                       thermal_expansion_1);
             }
 
-          // Blend the physical properties using the VOF field
-          for (unsigned int q = 0; q < this->n_q_points; ++q)
+          if (gather_ch)
             {
-              double filtered_phase_value = this->filtered_phase_values[q];
+              // Blend the physical properties using the CahnHilliard field
+              for (unsigned int q = 0; q < this->n_q_points; ++q)
+                {
+                  double phase_order_ch_value = this->phase_order_ch_values[q];
 
-              density[q] = calculate_point_property(filtered_phase_value,
-                                                    this->density_0[q],
-                                                    this->density_1[q]);
+                  density[q] = calculate_point_property_ch(phase_order_ch_value,
+                                                           this->density_0[q],
+                                                           this->density_1[q]);
 
-              viscosity[q] = calculate_point_property(filtered_phase_value,
-                                                      this->viscosity_0[q],
-                                                      this->viscosity_1[q]);
+                  viscosity[q] =
+                    calculate_point_property_ch(phase_order_ch_value,
+                                                this->viscosity_0[q],
+                                                this->viscosity_1[q]);
 
-              thermal_expansion[q] =
-                calculate_point_property(filtered_phase_value,
-                                         this->thermal_expansion_0[q],
-                                         this->thermal_expansion_1[q]);
+                  thermal_expansion[q] =
+                    calculate_point_property_ch(phase_order_ch_value,
+                                                this->thermal_expansion_0[q],
+                                                this->thermal_expansion_1[q]);
+                }
+
+
+              for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+                {
+                  // Blend the physical properties using the CahnHilliard field
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
+                    {
+                      // Calculate previous density (right now assumes constant
+                      // density model per phase)
+                      previous_density[p][q] = calculate_point_property_ch(
+                        this->previous_phase_ch_values[p][q],
+                        this->density_0[q],
+                        this->density_1[q]);
+                    }
+                }
+              break;
             }
 
-
-          for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+          else //VOF by default with two fluids
             {
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  // Calculate previous density (right now assumes constant
-                  // density model per phase)
-                  previous_density[p][q] = calculate_point_property(
-                    filter->filter_phase(this->previous_phase_values[p][q]),
-                    this->density_0[q],
-                    this->density_1[q]);
+                  double filtered_phase_value = this->filtered_phase_values[q];
+
+                  density[q] = calculate_point_property(filtered_phase_value,
+                                                        this->density_0[q],
+                                                        this->density_1[q]);
+
+                  viscosity[q] = calculate_point_property(filtered_phase_value,
+                                                          this->viscosity_0[q],
+                                                          this->viscosity_1[q]);
+
+                  thermal_expansion[q] =
+                    calculate_point_property(filtered_phase_value,
+                                             this->thermal_expansion_0[q],
+                                             this->thermal_expansion_1[q]);
                 }
+
+
+              for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+                {
+                  // Blend the physical properties using the VOF field
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
+                    {
+                      // Calculate previous density (right now assumes constant
+                      // density model per phase)
+                      previous_density[p][q] = calculate_point_property(
+                        filter->filter_phase(this->previous_phase_values[p][q]),
+                        this->density_0[q],
+                        this->density_1[q]);
+                    }
+                }
+              break;
             }
-          break;
         }
       default:
         throw std::runtime_error("Unsupported number of fluids (>2)");

@@ -473,6 +473,12 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_control, this->simulation_parameters));
         }
     }
+
+    if (this->simulation_parameters.multiphysics.cahn_hilliard)
+    {
+
+    }
+
   else
     {
       // Time-stepping schemes
