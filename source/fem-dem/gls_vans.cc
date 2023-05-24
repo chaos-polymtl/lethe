@@ -21,6 +21,28 @@ GLSVANSSolver<dim>::GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam)
                      DEM::get_number_properties())
 {
   previous_void_fraction.resize(maximum_number_of_previous_solutions());
+
+  // Check if the simulation has periodic boundaries for fluid.
+  std::vector<BoundaryConditions::BoundaryType> boundary_conditions_types =
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type;
+
+  unsigned int n_pbc = 0;
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions_types.size(); ++i_bc)
+    {
+      if (boundary_conditions_types[i_bc] ==
+          BoundaryConditions::BoundaryType::periodic)
+        {
+          if (n_pbc++ > 1)
+            {
+              throw std::runtime_error(
+                "More than one periodic boundary condition is not supported with GLS VANS solver.");
+            }
+          else
+            {
+              has_periodic_boundaries = true;
+            }
+        }
+    }
 }
 
 template <int dim>
@@ -41,7 +63,6 @@ GLSVANSSolver<dim>::setup_dofs()
     void_fraction_dof_handler.locally_owned_dofs();
 
   DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler,
-
                                           locally_relevant_dofs_voidfraction);
 
   void_fraction_constraints.clear();
@@ -62,12 +83,21 @@ GLSVANSSolver<dim>::setup_dofs()
       if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::periodic)
         {
+          periodic_direction = boundary_conditions.periodic_direction[i_bc];
           DoFTools::make_periodicity_constraints(
             void_fraction_dof_handler,
             boundary_conditions.id[i_bc],
             boundary_conditions.periodic_id[i_bc],
-            boundary_conditions.periodic_direction[i_bc],
+            periodic_direction,
             void_fraction_constraints);
+
+          // Get periodic offset if void fraction method is qcm
+          if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
+              Parameters::VoidFractionMode::qcm)
+            {
+              periodic_offset =
+                get_periodic_offset(boundary_conditions.id[i_bc]);
+            }
         }
     }
 
@@ -364,6 +394,10 @@ GLSVANSSolver<dim>::vertices_cell_mapping()
 
   LetheGridTools::vertices_cell_mapping(this->void_fraction_dof_handler,
                                         vertices_to_cell);
+
+  if (has_periodic_boundaries)
+    LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
+      this->void_fraction_dof_handler, vertices_to_periodic_cell);
 }
 
 template <int dim>
