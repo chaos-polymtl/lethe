@@ -29,8 +29,11 @@ class NavierStokesOperator
                                      LinearAlgebra::distributed::Vector<double>>
 {
 public:
-  using VectorType       = LinearAlgebra::distributed::Vector<double>;
-  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, double>;
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+
+  using FECellIntegratorVelocity = FEEvaluation<dim, -1, 0, dim, double>;
+
+  using FECellIntegratorPressure = FEEvaluation<dim, -1, 0, 1, double>;
 
   NavierStokesOperator();
 
@@ -67,7 +70,7 @@ private:
     const std::pair<unsigned int, unsigned int> &cell_range) const;
 
   void
-  local_compute(FECellIntegrator &integrator) const;
+  local_compute(FECellIntegratorVelocity &integrator_v) const;
 
   Table<2, VectorizedArray<double>> nonlinear_values;
 };

@@ -110,6 +110,9 @@ template <int dim>
 void
 MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
 {
+  // Clear matrix free operator
+  system_operator.clear();
+
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
@@ -118,32 +121,43 @@ MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
 
+  FEValuesExtractors::Vector velocities(0);
+
   // Non Zero constraints
   define_non_zero_constraints();
 
   // Zero constraints
   define_zero_constraints();
 
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  // Initialize matrix-free object
+  typename MatrixFree<dim, double>::AdditionalData additional_data;
 
-  this->evaluation_point.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  additional_data.tasks_parallel_scheme =
+    MatrixFree<dim, double>::AdditionalData::none;
+  additional_data.mapping_update_flags =
+    (update_values | update_gradients | update_JxW_values |
+     update_quadrature_points);
+  auto system_mf_storage = std::make_shared<MatrixFree<dim, double>>();
+  system_mf_storage->reinit(*this->mapping,
+                            this->dof_handler,
+                            this->zero_constraints,
+                            *this->cell_quadrature,
+                            additional_data);
 
-  // Initialize vector of previous solutions
+  system_operator.initialize(system_mf_storage);
+
+  // Initialize vectors using operator
+  system_operator.initialize_dof_vector(this->present_solution);
+  system_operator.initialize_dof_vector(this->evaluation_point);
+  system_operator.initialize_dof_vector(this->newton_update);
+  system_operator.initialize_dof_vector(this->system_rhs);
+  system_operator.initialize_dof_vector(this->local_evaluation_point);
+
+  // Initialize vectors of previous solutions
   for (auto &solution : this->previous_solutions)
     {
-      solution.reinit(this->locally_owned_dofs,
-                      this->locally_relevant_dofs,
-                      this->mpi_communicator);
+      system_operator.initialize_dof_vector(solution);
     }
-
-  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
@@ -205,9 +219,15 @@ template <int dim>
 void
 MFGLSNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType /* initial_condition_type */,
-  bool /* restart */)
+  bool restart)
 {
-  // TODO
+  if (restart)
+    {
+      this->pcout << "************************" << std::endl;
+      this->pcout << "---> Simulation Restart " << std::endl;
+      this->pcout << "************************" << std::endl;
+      this->read_checkpoint();
+    }
 }
 
 template <int dim>

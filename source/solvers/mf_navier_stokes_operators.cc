@@ -38,17 +38,23 @@ void
 NavierStokesOperator<dim>::evaluate_newton_step(const VectorType &newton_step)
 {
   const unsigned int n_cells = this->data->n_cell_batches();
-  FECellIntegrator   phi(*this->data);
 
-  nonlinear_values.reinit(n_cells, phi.n_q_points);
+  FECellIntegratorVelocity phi_v(*this->data, 0);
+  FECellIntegratorPressure phi_p(*this->data, 1);
+
+  nonlinear_values.reinit(n_cells, phi_v.n_q_points);
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
-      phi.reinit(cell);
-      phi.read_dof_values_plain(newton_step);
-      phi.evaluate(EvaluationFlags::values);
+      phi_v.reinit(cell);
+      phi_v.read_dof_values(newton_step);
+      phi_v.evaluate(EvaluationFlags::values);
 
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
+      phi_p.reinit(cell);
+      phi_p.read_dof_values(newton_step);
+      phi_p.evaluate(EvaluationFlags::values);
+
+      for (unsigned int q = 0; q < phi_v.n_q_points; ++q)
         {
           // TODO: Evaluate non-linearity
           nonlinear_values(cell, q) = VectorizedArray<double>(0.0);
@@ -105,21 +111,26 @@ NavierStokesOperator<dim>::local_apply(
   const VectorType & /* src */,
   const std::pair<unsigned int, unsigned int> &cell_range) const
 {
-  FECellIntegrator phi(data);
+  FECellIntegratorVelocity phi_v(data, 0);
+  FECellIntegratorPressure phi_p(data, 1);
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
       AssertDimension(nonlinear_values.size(0),
-                      phi.get_matrix_free().n_cell_batches());
-      AssertDimension(nonlinear_values.size(1), phi.n_q_points);
+                      phi_v.get_matrix_free().n_cell_batches());
+      AssertDimension(nonlinear_values.size(1), phi_v.n_q_points);
 
-      phi.reinit(cell);
+      phi_v.reinit(cell);
+      phi_p.reinit(cell);
 
       // TODO: implement operator
 
-      phi.integrate_scatter(EvaluationFlags::values |
-                              EvaluationFlags::gradients,
-                            dst);
+      phi_v.integrate_scatter(EvaluationFlags::values |
+                                EvaluationFlags::gradients,
+                              dst);
+      phi_p.integrate_scatter(EvaluationFlags::values |
+                                EvaluationFlags::gradients,
+                              dst);
     }
 }
 
@@ -131,38 +142,43 @@ NavierStokesOperator<dim>::local_apply_transpose(
   const VectorType & /* src */,
   const std::pair<unsigned int, unsigned int> &cell_range) const
 {
-  FECellIntegrator phi(data);
+  FECellIntegratorVelocity phi_v(data, 0);
+  FECellIntegratorPressure phi_p(data, 1);
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
       AssertDimension(nonlinear_values.size(0),
-                      phi.get_matrix_free().n_cell_batches());
-      AssertDimension(nonlinear_values.size(1), phi.n_q_points);
+                      phi_v.get_matrix_free().n_cell_batches());
+      AssertDimension(nonlinear_values.size(1), phi_v.n_q_points);
 
-      phi.reinit(cell);
+      phi_v.reinit(cell);
+      phi_p.reinit(cell);
 
       // TODO: implement operator
 
-      phi.integrate_scatter(EvaluationFlags::values |
-                              EvaluationFlags::gradients,
-                            dst);
+      phi_v.integrate_scatter(EvaluationFlags::values |
+                                EvaluationFlags::gradients,
+                              dst);
+      phi_p.integrate_scatter(EvaluationFlags::values |
+                                EvaluationFlags::gradients,
+                              dst);
     }
 }
 
 template <int dim>
 void
-NavierStokesOperator<dim>::local_compute(FECellIntegrator &phi) const
+NavierStokesOperator<dim>::local_compute(FECellIntegratorVelocity &phi_v) const
 {
   AssertDimension(nonlinear_values.size(0),
-                  phi.get_matrix_free().n_cell_batches());
-  AssertDimension(nonlinear_values.size(1), phi.n_q_points);
+                  phi_v.get_matrix_free().n_cell_batches());
+  AssertDimension(nonlinear_values.size(1), phi_v.n_q_points);
 
-  for (unsigned int q = 0; q < phi.n_q_points; ++q)
+  for (unsigned int q = 0; q < phi_v.n_q_points; ++q)
     {
       // TODO: implement
     }
 
-  phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  phi_v.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
 template class NavierStokesOperator<2>;
