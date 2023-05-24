@@ -42,8 +42,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      const auto phase_gradient      = scratch_data.phase_gradients[q];
-      const auto phase_gradient_norm = phase_gradient.norm();
+      const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
+      const double         phase_gradient_norm = phase_gradient.norm();
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter and the compression term for the phase
@@ -64,29 +64,28 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
                            pow(phase_gradient_norm * h, order);
 
-      const double tol = 1e-12;
+      const double tolerance = 1e-12;
+
+      Tensor<1, dim> gradient_unit_vector =
+        phase_gradient / (phase_gradient_norm + tolerance);
 
       // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article. We re-enable those
-      // terms if artificial diffusion becomes a problem
+      // as is done in the original article. This term generates poorer
+      // results than just using the vdcdd approach.
       // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
       // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
       // s);
+      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+      const Tensor<2, dim> gradient_unit_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector);
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor; // - k_corr;
 
-      // Calculate the unit vector associated with the phase gradient
-      Tensor<1, dim> r = phase_gradient / (phase_gradient_norm + tol);
-
-      // Calculate the dyadic product of this vector with itself
-      const Tensor<2, dim> rr = outer_product(r, r);
-      // Agglomerate this as a factor in case we want to remove
-      // the contribution aligned with the velocity
-      const Tensor<2, dim> dcdd_factor = rr; // - k_corr;
-
-      // Gradient of the shock capturing viscosity for the assembly
-      // of the jacobian matrix
-      const double d_vdcdd = order * (0.5 * h * h) *
-                             (velocity.norm() * velocity.norm()) *
-                             pow(phase_gradient_norm * h, order - 1);
+      // We neglect the gradient of the shock capturing viscosity in the
+      // jacobian matrix since it tends to destabilize the matrix Gradient of
+      // the shock capturing viscosity for the assembly of the jacobian matrix
+      // const double d_vdcdd = order * (0.5 * h * h) *
+      //                       (velocity.norm() * velocity.norm()) *
+      //                       pow(phase_gradient_norm * h, order - 1);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -144,10 +143,11 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                 {
                   local_matrix(i, j) +=
                     (vdcdd * scalar_product(grad_phi_phase_j,
-                                            dcdd_factor * grad_phi_phase_i) +
-                     d_vdcdd * grad_phi_phase_j.norm() *
-                       scalar_product(phase_gradient,
-                                      dcdd_factor * grad_phi_phase_i)) *
+                                            dcdd_factor * grad_phi_phase_i) //+
+                     // d_vdcdd * grad_phi_phase_j.norm() *
+                     //   scalar_product(phase_gradient,
+                     //                  dcdd_factor * grad_phi_phase_i)
+                     ) *
                     JxW;
                 }
             }
@@ -193,21 +193,38 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
-      const double JxW = JxW_vec[q];
+      const double JxW                 = JxW_vec[q];
+      const double phase_gradient_norm = phase_gradient.norm();
 
-      // Shock capturing viscosity term
-      const double order = scratch_data.fe_values_vof.get_fe().degree;
+      // Implementation of a DCDD shock capturing scheme.
+      // For more information see
+      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
+      // finite element formulations for nonlinear
+      // convection-diffusion-reaction equations. Computer methods in
+      // applied mechanics and engineering, 59(3), 307-325.
 
+      // Gather the order of the VOF interpolation
+      const double order = this->fem_parameters.VOF_order;
+
+      // Calculate the artificial viscosity of the shock capture
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
                            pow(phase_gradient.norm() * h, order);
 
-      const double   tolerance = 1e-12;
-      Tensor<1, dim> s         = velocity / (velocity.norm() + tolerance);
-      Tensor<1, dim> r = phase_gradient / (phase_gradient.norm() + tolerance);
+      const double tolerance = 1e-12;
 
-      const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
-      const Tensor<2, dim> rr          = outer_product(r, r);
-      const Tensor<2, dim> dcdd_factor = rr - k_corr;
+      Tensor<1, dim> gradient_unit_vector =
+        phase_gradient / (phase_gradient_norm + tolerance);
+
+      // We neglect to remove the diffusion aligned with the velocity
+      // as is done in the original article. This term generates poorer
+      // results than just using the vdcdd approach.
+      // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
+      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
+      // s);
+      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+      const Tensor<2, dim> gradient_unit_tensor =
+        outer_product(gradient_unit_vector, gradient_unit_vector);
+      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor; // - k_corr;
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
