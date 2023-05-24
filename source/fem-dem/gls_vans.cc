@@ -519,6 +519,20 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
   double qcm_sphere_diameter =
     this->cfd_dem_simulation_parameters.void_fraction->qcm_sphere_diameter;
 
+  // Check the way to handle the reference sphere diameter
+  // If the reference sphere diameter is user defined, the radius is calculated
+  // from it, otherwise, the value must be calculated while loop over the cells
+  bool calculate_reference_sphere_radius = false;
+  if (this->cfd_dem_simulation_parameters.void_fraction->qcm_sphere_diameter >
+      1e-16)
+    {
+      R_sphere = qcm_sphere_diameter / 2.0;
+    }
+  else
+    {
+      calculate_reference_sphere_radius = true;
+    }
+
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
 
@@ -540,8 +554,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
         }
     }
 
-  // Determine the new contributions of the particles necessary for void
-  // fraction calculation
+  // Determine the new volumetric contributions of the particles necessary
+  // for void fraction calculation
   for (const auto &cell :
        this->void_fraction_dof_handler.active_cell_iterators())
     {
@@ -549,12 +563,11 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
         {
           fe_values_void_fraction.reinit(cell);
 
-          // Active Neighbors include the current cell as well
+          // Active neighbors include the current cell as well
           auto active_neighbors =
             LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
-          // Array of real locations for the quadrature
-          // points
+          // Array of real locations for the quadrature points
           std::vector<std::vector<Point<dim>>>
             neighbor_quadrature_point_location(
               active_neighbors.size(), std::vector<Point<dim>>(n_q_points));
@@ -567,13 +580,13 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                 fe_values_void_fraction.get_quadrature_points();
             }
 
+          // Loop over the particles in the current cell
           const auto pic = particle_handler.particles_in_cell(cell);
-
           for (auto &particle : pic)
             {
               auto         particle_properties = particle.get_properties();
               const double r_particle =
-                particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+                0.5 * particle_properties[DEM::PropertiesIndex::dp];
 
               // Loop over neighboring cells to determine if a given neighboring
               // particle contributes to the solid volume of the current
@@ -581,85 +594,78 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
               //***********************************************************************
               for (unsigned int n = 0; n < active_neighbors.size(); n++)
                 {
-                  // Define the volume of the reference sphere to be used as the
-                  // averaging volume for the QCM
-                  double reference_sphere_volume;
-                  if (this->cfd_dem_simulation_parameters.void_fraction
-                        ->qcm_sphere_diameter < 1e-16)
+                  // Define the radius of the reference sphere to be used as the
+                  // averaging volume for the QCM, if the reference sphere
+                  // diameter was given by the user the value is already defined
+                  // since is it not dependent on any measure of the active cell
+                  if (calculate_reference_sphere_radius)
                     {
-                      // Volume of sphere equals volume of cell
                       if (this->cfd_dem_simulation_parameters.void_fraction
                             ->qcm_sphere_equal_cell_volume == true)
-                        reference_sphere_volume =
-                          active_neighbors[n]->measure();
+                        {
+                          // Get the radius by the volume of sphere which is
+                          // equal to the volume of cell
+                          R_sphere =
+                            0.5 *
+                            pow(2 * dim * active_neighbors[n]->measure() / M_PI,
+                                1. / dim);
+                        }
                       else
-                        // Volume of sphere based on R_s = h_omega
-                        reference_sphere_volume =
-                          M_PI *
-                          pow((2 *
-                               pow(active_neighbors[n]->measure(), 1. / dim)),
-                              dim) /
-                          (2 * dim);
-                    }
-                  else
-                    { // Volume of sphere based on R_s = user defined
-                      reference_sphere_volume =
-                        M_PI * pow((qcm_sphere_diameter), dim) / (2 * dim);
+                        {
+                          // The radius is get from the volume of sphere based
+                          // on R_s = h_omega
+                          double reference_sphere_volume =
+                            M_PI *
+                            pow((2 *
+                                 pow(active_neighbors[n]->measure(), 1. / dim)),
+                                dim) /
+                            (2 * dim);
+                          R_sphere =
+                            0.5 * pow(2 * dim * reference_sphere_volume / M_PI,
+                                      1. / dim);
+                        }
                     }
 
-                  // From the defined volume, get the actual radius of the
-                  // reference sphere
-                  if (dim == 2)
-                    R_sphere = (std::sqrt(reference_sphere_volume / M_PI));
-                  else if (dim == 3)
-                    R_sphere =
-                      (pow(3 * reference_sphere_volume / (4 * M_PI), 1. / 3.));
-                  {
-                    // Loop over quadrature points
-                    for (unsigned int k = 0; k < n_q_points; ++k)
-                      {
-                        // Distance between particle and quadrature
-                        // point
-                        double neighbor_distance =
-                          particle.get_location().distance(
-                            neighbor_quadrature_point_location[n][k]);
+                  // Loop over quadrature points
+                  for (unsigned int k = 0; k < n_q_points; ++k)
+                    {
+                      // Distance between particle and quadrature point
+                      double neighbor_distance =
+                        particle.get_location().distance(
+                          neighbor_quadrature_point_location[n][k]);
 
-                        // Particle completely in reference sphere
-                        if (neighbor_distance <= (R_sphere - r_particle))
-                          {
+                      // Particle completely in reference sphere
+                      if (neighbor_distance <= (R_sphere - r_particle))
+                        {
+                          particle_properties
+                            [DEM::PropertiesIndex::volumetric_contribution] +=
+                            M_PI *
+                            pow(particle_properties[DEM::PropertiesIndex::dp],
+                                dim) /
+                            (2.0 * dim);
+                        }
+
+                      // Particle completely outside reference
+                      // sphere. Do absolutely nothing.
+
+                      // Particle partially in reference sphere
+                      else if ((neighbor_distance > (R_sphere - r_particle)) &&
+                               (neighbor_distance < (R_sphere + r_particle)))
+                        {
+                          if constexpr (dim == 2)
                             particle_properties
                               [DEM::PropertiesIndex::volumetric_contribution] +=
-                              M_PI *
-                              pow(particle_properties[DEM::PropertiesIndex::dp],
-                                  dim) /
-                              (2.0 * dim);
-                          }
+                              particle_circle_intersection_2d(
+                                r_particle, R_sphere, neighbor_distance);
 
-                        // Particle completely outside reference
-                        // sphere. Do absolutely nothing.
-
-                        // Particle partially in reference sphere
-                        else if ((neighbor_distance >
-                                  (R_sphere - r_particle)) &&
-                                 (neighbor_distance < (R_sphere + r_particle)))
-                          {
-                            if (dim == 2)
-                              particle_properties[DEM::PropertiesIndex::
-                                                    volumetric_contribution] +=
-                                particle_circle_intersection_2d(
-                                  r_particle, R_sphere, neighbor_distance);
-
-                            else if (dim == 3)
-
-                              particle_properties[DEM::PropertiesIndex::
-                                                    volumetric_contribution] +=
-                                particle_sphere_intersection_3d(
-                                  r_particle, R_sphere, neighbor_distance);
-                          }
-                      }
-                  }
+                          else if constexpr (dim == 3)
+                            particle_properties
+                              [DEM::PropertiesIndex::volumetric_contribution] +=
+                              particle_sphere_intersection_3d(
+                                r_particle, R_sphere, neighbor_distance);
+                        }
+                    }
                 }
-
               //*********************************************************************
             }
         }
@@ -697,34 +703,27 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
 
           // Define the volume of the reference sphere to be used as the
           // averaging volume for the QCM
-          double reference_sphere_volume;
-
-          if (this->cfd_dem_simulation_parameters.void_fraction
-                ->qcm_sphere_diameter < 1e-16)
+          if (calculate_reference_sphere_radius)
             {
-              // Volume of sphere equals volume of cell
               if (this->cfd_dem_simulation_parameters.void_fraction
                     ->qcm_sphere_equal_cell_volume == true)
-                reference_sphere_volume = cell->measure();
+                {
+                  // Get the radius by the volume of sphere which is
+                  // equal to the volume of cell
+                  R_sphere =
+                    0.5 * pow(2 * dim * cell->measure() / M_PI, 1. / dim);
+                }
               else
-                // Volume of sphere based on R_s = h_omega
-                reference_sphere_volume =
-                  M_PI * pow((2 * pow(cell->measure(), 1. / dim)), dim) /
-                  (2 * dim);
+                {
+                  // The radius is get from the volume of sphere based
+                  // on R_s = h_omega
+                  double reference_sphere_volume =
+                    M_PI * pow((2 * pow(cell->measure(), 1. / dim)), dim) /
+                    (2 * dim);
+                  R_sphere = 0.5 * pow(2 * dim * reference_sphere_volume / M_PI,
+                                       1. / dim);
+                }
             }
-          else
-            {
-              // Volume of sphere based on R_s = user defined
-              reference_sphere_volume =
-                M_PI * pow((qcm_sphere_diameter), dim) / (2 * dim);
-            }
-
-          // From the defined volume, get the actual radius of the
-          // reference sphere
-          if (dim == 2)
-            R_sphere = (std::sqrt(reference_sphere_volume / M_PI));
-          else if (dim == 3)
-            R_sphere = (pow(3 * reference_sphere_volume / (4 * M_PI), 1. / 3.));
 
           // Array of real locations for the quadrature points
           std::vector<Point<dim>> quadrature_point_location;
@@ -732,7 +731,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
           quadrature_point_location =
             fe_values_void_fraction.get_quadrature_points();
 
-          // Active Neighbors include the current cell as well
+          // Active neighbors include the current cell as well
           auto active_neighbors =
             LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
@@ -746,7 +745,6 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                 {
                   // Loop over particles in neighbor cell
                   // Begin and end iterator for particles in neighbor cell
-
                   const auto pic =
                     particle_handler.particles_in_cell(active_neighbors[m]);
                   for (auto &particle : pic)

@@ -1485,7 +1485,7 @@ CFDDEMSolver<dim>::solve()
           }
       }
 
-      // If simulation has periodic boundaries, the particles are sorted into
+      /*// If simulation has periodic boundaries, the particles are sorted into
       // subdomains and cells otherwise the particles will not match the cells
       // that they are in when void fraction is calculated with the qcm method
       if (has_periodic_boundaries &&
@@ -1494,7 +1494,7 @@ CFDDEMSolver<dim>::solve()
         {
           this->particle_handler.sort_particles_into_subdomains_and_cells();
           this->particle_handler.exchange_ghost_particles(true);
-        }
+        } */
 
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;
