@@ -110,12 +110,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_eq,
-                                                 h,
-                                                 density_eq) :
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, density_eq);
+            u_mag, viscosity_eq, h, sdt, 1);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -193,7 +190,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
                   local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij +=
+                    tau / density_eq * (strong_jac * grad_phi_p_i);
                 }
               else
                 {
@@ -327,12 +325,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_eq,
-                                                 h,
-                                                 density_eq) :
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1.) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, density_eq);
+            u_mag, viscosity_eq, h, sdt, 1.);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -366,7 +361,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
               local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
               // PSPG GLS term
-              local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+              local_rhs(i) +=
+                -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
             }
           else
             {

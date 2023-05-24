@@ -165,10 +165,12 @@ InexactNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
               last_res < this->params.tolerance)
             {
               // If the current residual has decreased  by less than
-              // the last residual * matrix_tolerance, the jacobian
-              // approximation has become insufficiently performant and,
-              // consequently, it is preferable to renew the jacobian matrix
-              if (current_res > this->params.matrix_tolerance * last_res)
+              // the last residual * matrix_tolerance or more than one alpha
+              // iteration was required, the jacobian approximation has become
+              // insufficiently performant and, consequently, it is preferable
+              // to renew the jacobian matrix
+              if (current_res > this->params.matrix_tolerance * last_res ||
+                  alpha_iter > 0)
                 matrix_requires_assembly = true;
               else
                 matrix_requires_assembly = false;
