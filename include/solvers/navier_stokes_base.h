@@ -401,6 +401,14 @@ protected:
   void
   rescale_pressure_dofs_in_newton_update();
 
+  /**
+   * @brief init_temporary_vector
+   * This function initializes correctly a temporary vector depending on the
+   * vector type
+   */
+  inline VectorType
+  init_temporary_vector();
+
   // Member variables
 protected:
   DofsType locally_owned_dofs;
