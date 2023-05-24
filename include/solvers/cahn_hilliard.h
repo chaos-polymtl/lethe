@@ -19,12 +19,10 @@
  * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
  * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
  * with Phi the phase field parameter (or phase order), eta the chemical
- * potential. The phase field parameter (or phase order, denoted by Phi) must
- not be confused with the order (respectively
- * phase_ch_order and potential_ch_order) of the finite elements.
- * elements related to the phase field parameter and the chemical potential
- * M the mobility function and epsilon the interface thickness
- *
+ * potential, and M the mobility function and epsilon the interface thickness.
+ * The phase field parameter must not be confused with the order (respectively
+ * phase_ch_order and potential_ch_order) of the finite elements related to the
+ * phase field parameter and the chemical potential.
  */
 
 #ifndef cahn_hilliard_h
@@ -34,9 +32,9 @@
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/cahn_hilliard_assemblers.h>
 #include <solvers/cahn_hilliard_scratch_data.h>
-#include <solvers/multiphysics_interface.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -58,10 +56,10 @@ class CahnHilliard : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   CahnHilliard<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-                    const SimulationParameters<dim> &p_simulation_parameters,
-                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                       p_triangulation,
-                    std::shared_ptr<SimulationControl> p_simulation_control)
+              const SimulationParameters<dim> &p_simulation_parameters,
+              std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                                 p_triangulation,
+              std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -74,11 +72,10 @@ public:
       {
         // for simplex meshes
         const FE_SimplexP<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.phase_ch_order);
+          simulation_parameters.fem_parameters.cahn_hilliard_order);
         const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_ch_order);
-        fe =
-          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+          simulation_parameters.fem_parameters.cahn_hilliard_order);
+        fe = std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
       }
@@ -86,19 +83,13 @@ public:
       {
         // Usual case, for quad/hex meshes
         const FE_Q<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.phase_ch_order);
+          simulation_parameters.fem_parameters.cahn_hilliard_order);
         const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_ch_order);
-        fe =
-          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+          simulation_parameters.fem_parameters.cahn_hilliard_order);
+        fe = std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping = std::make_shared<MappingQ<dim>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order),
-          simulation_parameters.fem_parameters.qmapping_all);
-        cell_quadrature = std::make_shared<QGauss<dim>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order) +
-          1);
+          simulation_parameters.fem_parameters.cahn_hilliard_order, simulation_parameters.fem_parameters.qmapping_all);
+        cell_quadrature = std::make_shared<QGauss<dim>>( simulation_parameters.fem_parameters.cahn_hilliard_order + 1);
       }
 
     // Allocate solution transfer
@@ -131,8 +122,9 @@ public:
   /**
    * @brief Calculates the L2 error of the solution
    */
-  std::pair<double, double>
+  std::pair<double,double>
   calculate_L2_error();
+
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -155,6 +147,8 @@ public:
    */
   void
   postprocess(bool first_iteration) override;
+
+
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
    * mesh refinement/coarsening
@@ -196,6 +190,8 @@ public:
    */
   void
   read_checkpoint() override;
+
+
   /**
    * @brief Returns the dof_handler of the Cahn-Hilliard physics
    */
@@ -300,7 +296,10 @@ private:
    * the results of the assembly over a cell
    */
   virtual void
-  assemble_local_system_matrix();
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    CahnHilliardScratchData<dim> &                     scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -316,7 +315,10 @@ private:
    * the results of the assembly over a cell
    */
   virtual void
-  assemble_local_system_rhs();
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    CahnHilliardScratchData<dim> &                     scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
@@ -330,15 +332,15 @@ private:
    */
 
   virtual void
-  copy_local_matrix_to_global_matrix();
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsCopyData &copy_data);
 
   /**
    * @brief Copy local cell rhs information to global rhs
    */
 
   virtual void
-  copy_local_rhs_to_global_rhs();
-
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
 
   MultiphysicsInterface<dim> *     multiphysics;

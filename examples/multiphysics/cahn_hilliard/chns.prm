@@ -22,10 +22,24 @@ end
 #---------------------------------------------------
 # Cahn-Hilliard order
 #---------------------------------------------------
+<<<<<<< HEAD
 
 subsection FEM
   set phase ch order     = 1
   set potential ch order = 1
+=======
+subsection FEM
+   set cahn hilliard order = 1
+end
+
+#---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity                = verbose
+
+>>>>>>> 8395155c4 (Attributes + assembly + dirichlet/noflux BC + initial conditions)
 end
 
 #---------------------------------------------------
@@ -72,4 +86,3 @@ subsection linear solver
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 200
 end
-

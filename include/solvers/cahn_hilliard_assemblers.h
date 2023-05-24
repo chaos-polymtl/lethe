@@ -16,8 +16,9 @@
 
 #include <core/simulation_control.h>
 
-#include <solvers/cahn_hilliard_scratch_data.h>
+
 #include <solvers/copy_data.h>
+#include <solvers/cahn_hilliard_scratch_data.h>
 
 
 #ifndef lethe_cahn_hilliard_assemblers_h
@@ -45,20 +46,22 @@ public:
    */
 
   virtual void
-  assemble_matrix() = 0;
+  assemble_matrix(CahnHilliardScratchData<dim> &   scratch_data,
+                  StabilizedMethodsCopyData &copy_data) = 0;
 
 
-  /**
-   * @brief assemble_matrix Interface for the call to rhs assembly
+   /**
+   * @brief assemble_rhs Interface for the call to rhs assembly
    * @param scratch_data Scratch data containing the information for the Cahn-Hilliard
    * equations.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for rhs assembly.
    * @param copy_data Destination where the local_rhs and local_matrix are copied to.
-   */
+    */
 
   virtual void
-  assemble_rhs() = 0;
+  assemble_rhs(CahnHilliardScratchData<dim> &   scratch_data,
+               StabilizedMethodsCopyData &copy_data) = 0;
 };
 
 
@@ -79,8 +82,7 @@ template <int dim>
 class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 {
 public:
-  CahnHilliardAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control)
+  CahnHilliardAssemblerCore(std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -90,7 +92,8 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_matrix() override;
+  assemble_matrix(CahnHilliardScratchData<dim> &   scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
 
 
   /**
@@ -99,7 +102,8 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs() override;
+  assemble_rhs(CahnHilliardScratchData<dim> &   scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
 
 
   std::shared_ptr<SimulationControl> simulation_control;
@@ -119,8 +123,7 @@ template <int dim>
 class CahnHilliardAssemblerBDF : public CahnHilliardAssemblerBase<dim>
 {
 public:
-  CahnHilliardAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+  CahnHilliardAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control)
     : simulation_control(simulation_control)
   {}
 
@@ -131,7 +134,8 @@ public:
    */
 
   virtual void
-  assemble_matrix() override;
+  assemble_matrix(CahnHilliardScratchData<dim> &   scratch_data,
+                  StabilizedMethodsCopyData &copy_data) override;
 
   /**
    * @brief assemble_rhs Assembles the rhs
@@ -139,7 +143,8 @@ public:
    * @param copy_data (see base class)
    */
   virtual void
-  assemble_rhs() override;
+  assemble_rhs(CahnHilliardScratchData<dim> &   scratch_data,
+               StabilizedMethodsCopyData &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };

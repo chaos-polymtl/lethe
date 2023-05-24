@@ -36,8 +36,7 @@ CahnHilliard<dim>::setup_assemblers()
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(
-        std::make_shared<CahnHilliardAssemblerBDF<dim>>(
-          this->simulation_control));
+        std::make_shared<CahnHilliardAssemblerBDF<dim>>(this->simulation_control));
     }
   // Core assembler
   this->assemblers.push_back(
@@ -48,21 +47,92 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_system_matrix()
 {
-  return;
+  this->system_matrix = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = CahnHilliardScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &CahnHilliard::assemble_local_system_matrix,
+                  &CahnHilliard::copy_local_matrix_to_global_matrix,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  system_matrix.compress(VectorOperation::add);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::assemble_local_system_matrix()
+CahnHilliard<dim>::assemble_local_system_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  CahnHilliardScratchData<dim> &                     scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
-  return;
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
+  source_term.set_time(simulation_control->get_current_time());
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+  if (multiphysics->fluid_dynamics_is_block())
+    {
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
+    }
+  else
+    {
+      scratch_data.reinit_velocity(
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+
+  copy_data.reset();
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_matrix(scratch_data, copy_data);
+    }
+
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::copy_local_matrix_to_global_matrix()
+CahnHilliard<dim>::copy_local_matrix_to_global_matrix(
+  const StabilizedMethodsCopyData &copy_data)
 {
-  return;
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                              copy_data.local_dof_indices,
+                                              system_matrix);
 }
 
 
@@ -70,21 +140,93 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_system_rhs()
 {
-  return;
+  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->system_rhs = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = CahnHilliardScratchData<dim>(
+    this->simulation_parameters.physical_properties_manager,
+    *this->fe,
+    *this->cell_quadrature,
+    *this->mapping,
+    dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &CahnHilliard::assemble_local_system_rhs,
+                  &CahnHilliard::copy_local_rhs_to_global_rhs,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  this->system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::assemble_local_system_rhs()
+CahnHilliard<dim>::assemble_local_system_rhs(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  CahnHilliardScratchData<dim> &                              scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
-  return;
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
+  source_term.set_time(simulation_control->get_current_time());
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+  if (multiphysics->fluid_dynamics_is_block())
+    {
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
+    }
+  else
+    {
+      scratch_data.reinit_velocity(
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+
+
+  copy_data.reset();
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_rhs(scratch_data, copy_data);
+    }
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::copy_local_rhs_to_global_rhs()
+CahnHilliard<dim>::copy_local_rhs_to_global_rhs(
+  const StabilizedMethodsCopyData &copy_data)
 {
-  return;
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                              copy_data.local_dof_indices,
+                                              system_rhs);
 }
 
 template <int dim>
@@ -94,25 +236,28 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Add the interpretation of the solution. The first component is the
   // phase order (Phi) and the following one is the chemical potential (eta)
 
-  std::vector<std::string> solution_names(2);
-  solution_names[0] = "phase_order";
-  solution_names[1] = "chemical_potential";
+  std::vector<std::string> solution_names;
+  solution_names.push_back("phase_order");
+  solution_names.push_back("chemical_potential");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation(
-      2, DataComponentInterpretation::component_is_scalar);
+    data_component_interpretation;
+  data_component_interpretation.push_back(
+    DataComponentInterpretation::component_is_scalar);
+  data_component_interpretation.push_back(
+    DataComponentInterpretation::component_is_scalar);
 
-  data_out.add_data_vector(dof_handler,
-                           present_solution,
+  data_out.add_data_vector(dof_handler,present_solution,
                            solution_names,
                            data_component_interpretation);
+
 }
 
 template <int dim>
 std::pair<double, double>
 CahnHilliard<dim>::calculate_L2_error()
 {
-  return std::pair<double, double>();
+ return std::pair<double,double>();
 }
 
 template <int dim>
@@ -160,9 +305,8 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
-      std::pair<double, double> error             = calculate_L2_error();
-      double                    phase_order_error = error.first;
-      double                    potential_error   = error.second;
+      double phase_order_error = calculate_L2_error().first;
+      double potential_error = calculate_L2_error().second;
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
@@ -172,10 +316,8 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error phase order : " << phase_order_error
-                      << std::endl;
-          this->pcout << "L2 error potential : " << potential_error
-                      << std::endl;
+          this->pcout << "L2 error phase order : " << phase_order_error << std::endl;
+          this->pcout << "L2 error potential : " << potential_error << std::endl;
         }
     }
 }
@@ -313,8 +455,47 @@ CahnHilliard<dim>::setup_dofs()
     nonzero_constraints.clear();
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
+         ++i_bc)
+      {
+        // Dirichlet condition : imposed phase_order at i_bc
+        if (this->simulation_parameters.boundary_conditions_cahn_hilliard.type[i_bc] ==
+            BoundaryConditions::BoundaryType::dirichlet_phase_order)
+          {
+            VectorTools::interpolate_boundary_values(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions_cahn_hilliard.id[i_bc],
+              dealii::Functions::ConstantFunction<dim>(
+                this->simulation_parameters.boundary_conditions_cahn_hilliard.dirichlet_value[i_bc],2),
+              nonzero_constraints);
+          }
+      }
   }
   nonzero_constraints.close();
+
+  // Boundary conditions for Newton correction
+  {
+    zero_constraints.clear();
+    DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                            zero_constraints);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions_cahn_hilliard.type[i_bc] ==
+            BoundaryConditions::BoundaryType::dirichlet_phase_order)
+          {
+            VectorTools::interpolate_boundary_values(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions_cahn_hilliard.id[i_bc],
+              Functions::ZeroFunction<dim>(2),
+              zero_constraints);
+          }
+      }
+  }
 
   zero_constraints.close();
 
@@ -352,19 +533,19 @@ CahnHilliard<dim>::set_initial_conditions()
   const FEValuesExtractors::Scalar phase_order(0);
   const FEValuesExtractors::Scalar potential(1);
 
-  VectorTools::interpolate(
-    *this->mapping,
-    this->dof_handler,
-    this->simulation_parameters.initial_condition->cahn_hilliard,
-    this->newton_update,
-    this->fe->component_mask(phase_order));
+  VectorTools::interpolate(*mapping,
+                           dof_handler,
+                           simulation_parameters.initial_condition->cahn_hilliard,
+                           newton_update,
+                           fe->component_mask(phase_order));
 
-  VectorTools::interpolate(
-    *this->mapping,
-    this->dof_handler,
-    this->simulation_parameters.initial_condition->cahn_hilliard,
-    this->newton_update,
-    this->fe->component_mask(potential));
+  //Set the initial chemical potential to 0. (May be discussed or modified
+  //later)
+  VectorTools::interpolate(*mapping,
+                           dof_handler,
+                           simulation_parameters.initial_condition->cahn_hilliard,
+                           newton_update,
+                           fe->component_mask(potential));
 
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
@@ -374,7 +555,7 @@ CahnHilliard<dim>::set_initial_conditions()
 template <int dim>
 void
 CahnHilliard<dim>::solve_linear_system(const bool initial_step,
-                                       const bool /*renewed_matrix*/)
+                                 const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
 

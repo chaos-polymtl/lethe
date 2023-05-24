@@ -58,8 +58,8 @@ namespace BoundaryConditions
     pw,
     vof_dirichlet,
     // for cahn hilliard
+    noflux_ch,
     dirichlet_phase_order,
-    dirichlet_potential,
     angle_of_contact,
   };
 
@@ -758,10 +758,14 @@ namespace BoundaryConditions
    * double passed to the deal.ii ConstantFunction
    */
 
-  template <int dim>
-  class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
+    template <int dim>
+    class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
+
+    std::vector<double> angle_of_contact;
+    std::vector<double> dirichlet_value;
+
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
@@ -782,20 +786,37 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(
-    ParameterHandler &prm,
-    unsigned int      i_bc)
+  CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
+                                                           unsigned int      i_bc)
   {
     prm.declare_entry("type",
-                      "none",
-                      Patterns::Selection("none"),
-                      "Type of boundary condition for Cahn-Hilliard"
-                      "Choices are <none>.");
+                      "noflux_ch",
+                      Patterns::Selection("noflux_ch|dirichlet_phase_order|angle_of_contact"),
+                      "Type of boundary condition for the Cahn-Hilliard equations"
+                      "Choices are <noflux_ch|dirichlet_phase_order|angle_of_contact>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.declare_entry("angle value",
+                      "0",
+                      Patterns::Double(),
+                      "Angle of contact between the fluid 1 and the wall (in degrees)");
+
+    prm.declare_entry("phase value",
+                      "0",
+                      Patterns::Double(),
+                      "Dirichlet value for the phase order");
+
+
+//    prm.enter_subsection("dirichlet_phase_order");
+//    dirichlet_value[i_bc]->declare_parameters(prm);
+//    prm.set("Function expression", "0");
+//    prm.leave_subsection();
+
+    return;
   }
 
   /**
@@ -841,14 +862,25 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler & prm,
-                                                      const unsigned int i_bc)
+  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
+                                                      unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
-    if (op == "none")
+    if (op == "noflux_ch")
       {
-        this->type[i_bc] = BoundaryType::none;
+        this->type[i_bc] = BoundaryType::noflux_ch;
       }
+    if (op == "dirichlet_phase_order")
+      {
+        this->type[i_bc] = BoundaryType::dirichlet_phase_order;
+        this->dirichlet_value[i_bc] = prm.get_double("phase value");
+      }
+    if (op == "angle_of_contact")
+      {
+        this->type[i_bc] = BoundaryType::angle_of_contact;
+        this->angle_of_contact[i_bc] = prm.get_double("angle value");
+      }
+
     this->id[i_bc] = prm.get_integer("id");
   }
 
@@ -866,6 +898,11 @@ namespace BoundaryConditions
     prm.enter_subsection("boundary conditions cahn hilliard");
     {
       this->size = prm.get_integer("number");
+
+      this->type.resize(this->size);
+      this->id.resize(this->size);
+      this->dirichlet_value.resize(this->size);
+      this->angle_of_contact.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {

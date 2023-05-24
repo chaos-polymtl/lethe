@@ -50,7 +50,7 @@ class MultiphysicsInterface
 {
 public:
   /** @brief Construct the Multiphysics interface from the simulation parameters.
-   * Depending on which multiphysics element is enabled, the appropraite
+   * Depending on which multiphysics element is enabled, the appropriate
    * auxiliary physics is instantiated.
    *
    */
@@ -87,6 +87,7 @@ public:
       {
         announce_string(pcout, "VOF");
       }
+
     else if (physics_id == PhysicsID::cahn_hilliard)
       {
         announce_string(pcout, "Cahn-Hilliard");
@@ -847,7 +848,8 @@ private:
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
                                             {VOF, true},
                                             {heat_transfer, false},
-                                            {tracer, false}};
+                                            {tracer, false},
+                                            {cahn_hilliard,false}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

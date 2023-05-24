@@ -1285,7 +1285,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   // crash it will restart with a fill level increased by 1. This restart
   // process will happen up to a maximum of 20 times, after which it will let
   // the solver crash. if a change happened on the fill level it will go back to
-  // it's original value at the end of the restart process.
+  // its original value at the end of the restart process.
 
   const unsigned int max_iter = 3;
   unsigned int       iter     = 0;

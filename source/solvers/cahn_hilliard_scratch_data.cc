@@ -17,16 +17,16 @@ CahnHilliardScratchData<dim>::allocate()
   this->source = std::vector<double>(n_q_points);
 
   // Initialize arrays related to phase order and chemical potential
-  this->phase_order.component        = 0;
+  this->phase_order.component = 0;
   this->chemical_potential.component = 1;
 
-  // Tracer
-  this->phase_order_values            = std::vector<double>(n_q_points);
-  this->phase_order_gradients         = std::vector<Tensor<1, dim>>(n_q_points);
-  this->phase_order_laplacians        = std::vector<double>(n_q_points);
-  this->chemical_potential_values     = std::vector<double>(n_q_points);
-  this->chemical_potential_gradients  = std::vector<Tensor<1, dim>>(n_q_points);
-  this->chemical_potential_laplacians = std::vector<double>(n_q_points);
+  // Variables for the Cahn-Hilliard equations
+  this->phase_order_values        = std::vector<double>(n_q_points);
+  this->phase_order_gradients     = std::vector<Tensor<1, dim>>(n_q_points);
+  this->phase_order_laplacians    = std::vector<double>(n_q_points);
+  this->chemical_potential_values        = std::vector<double>(n_q_points);
+  this->chemical_potential_gradients     = std::vector<Tensor<1, dim>>(n_q_points);
+  this->chemical_potential_laplacians    = std::vector<double>(n_q_points);
 
 
   // Velocity for BDF schemes
@@ -67,6 +67,7 @@ CahnHilliardScratchData<dim>::allocate()
   this->laplacian_phi_potential =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 }
+
 
 template class CahnHilliardScratchData<2>;
 template class CahnHilliardScratchData<3>;
