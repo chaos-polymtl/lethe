@@ -10,6 +10,7 @@ We organize the DEM examples from the simplest to the most complicated example:
     :glob:
     :numbered:
 
+    bouncing-particle/bouncing-particle
     packing-in-circle/packing-in-circle
     packing-in-ball/packing-in-ball
     small-scale-rotating-drum/small-scale-rotating-drum
@@ -21,3 +22,4 @@ We organize the DEM examples from the simplest to the most complicated example:
     rectangular-hopper/rectangular-hopper
     granular-dam-break/granular-dam-break
     granular-mixer/granular-mixer
+

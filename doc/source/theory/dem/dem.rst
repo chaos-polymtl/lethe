@@ -84,14 +84,14 @@ The relative velocities calculated to allow updating the tangential overlap are 
    * - Normal spring constant
      - :math:`k_n = \frac{16}{15}\sqrt{R_{e}}Y_{e}\left(\frac{15m_{e}V^2}{16\sqrt{R_{e}}Y_{e}}\right)^{0.2}`
      - :math:`k_n = \frac{4}{3}Y_{e}\sqrt{R_{e}\delta_n}`
-   * - Tangential spring constant
-     - :math:`\eta_n = \sqrt{\frac{4m_{e}k_n}{1+\left(\frac{\pi}{\ln{e}}\right)^2}}`
-     - :math:`\eta_n = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_nm_{e}}`
    * - Normal damping model constant
-     - :math:`k_t = k_n`
+     - :math:`\eta_n = -2\beta\sqrt{m_{e} k_n}`
+     - :math:`\eta_n = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_nm_{e}}`
+   * - Tangential spring constant
+     - :math:`k_t = 0.4 k_n`
      - :math:`k_t = 8G_{e}\sqrt{R_{e}\delta_n}`
    * - Tangential damping model constant
-     - :math:`\eta_t = \eta_n`
+     - :math:`\eta_t = -2\beta\sqrt{m_{e} k_t}`
      - :math:`\eta_t = -2\sqrt{\frac{5}{6}}\beta\sqrt{S_tm_{e}}`
 
 Where:
@@ -99,7 +99,7 @@ Where:
 * :math:`R_e` effective radius;
 * :math:`Y_e` effective Young's modulus;
 * :math:`m_e` effective mass;
-* :math:`V` characteristic impact velocity;
+* :math:`V` characteristic impact velocity, this parameters is set to 1.0;
 * :math:`e` coefficient of restitution;
 * :math:`G_e` effective shear modulus;
 
@@ -182,4 +182,5 @@ And velocity Verlet method is calculated with half-step velocity as:
 References
 -------------
 `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ Golshan et al. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Computational Particle Mechanics (2022) p.1-20
+[2] R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
