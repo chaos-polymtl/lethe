@@ -2,7 +2,7 @@
 Packing in ball
 ==================================
 
-This is the second example of Lethe-DEM. This example is the three-dimensional version of the ``packing_in_circle`` example. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
+This example is the three-dimensional version of the ``packing_in_circle`` example. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------

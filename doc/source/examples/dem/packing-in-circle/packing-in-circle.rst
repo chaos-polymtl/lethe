@@ -2,7 +2,7 @@
 Packing in circle
 ==================================
 
-This is the first example of Lethe-DEM. This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in Lethe-DEM.
+This example introduces the concept of parameter files to parametrize Lethe simulations. It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters in Lethe-DEM.
 
 Features
 ----------------------------------
