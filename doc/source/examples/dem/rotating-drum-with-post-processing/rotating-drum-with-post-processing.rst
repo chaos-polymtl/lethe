@@ -2,7 +2,7 @@
 Rotating drum with post-processing
 ==================================
 
-This is the fourth example of Lethe-DEM. This is a mini-example that only adds Lagrangian post-processing features to the rotating drum example (example 3). Hence, we only explain the post-processing subsection in this example.
+This is a mini-example that only adds Lagrangian post-processing features to the rotating drum example (example 3). Hence, we only explain the post-processing subsection in this example.
 
 Features
 ----------------------------------
