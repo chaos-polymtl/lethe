@@ -141,7 +141,7 @@ namespace SourceTerms
     prm.enter_subsection("cahn hilliard");
     cahn_hilliard_source.parse_parameters(prm);
     prm.leave_subsection();
-    
+
     prm.leave_subsection();
   }
 } // namespace SourceTerms
