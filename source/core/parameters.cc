@@ -2195,7 +2195,7 @@ namespace Parameters
         "number of particles",
         "1",
         Patterns::Integer(),
-        "Number of particles reprensented by IB max number of particles = 10 ");
+        "Number of particles represented by IB max number of particles = 10 ");
       prm.declare_entry(
         "initial refinement",
         "0",
@@ -2205,7 +2205,7 @@ namespace Parameters
         "stencil order",
         "2",
         Patterns::Integer(),
-        "Number of particles reprensented by IB max number of particles = 10 ");
+        "Order of the stencil used for extrapolation to the boundary.");
       prm.declare_entry(
         "levels not precalculated",
         "0",
