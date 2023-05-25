@@ -10,6 +10,8 @@ void
 CahnHilliardAssemblerCore<dim>::assemble_matrix(CahnHilliardScratchData<dim> &scratch_data,
                                           StabilizedMethodsCopyData &copy_data)
 {
+
+
   return;
 } // end loop on quadrature points
 

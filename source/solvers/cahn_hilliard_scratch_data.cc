@@ -16,10 +16,10 @@ CahnHilliardScratchData<dim>::allocate()
   // Forcing term array
   this->source = std::vector<double>(n_q_points);
 
-  // Initialize arrays related to velocity and pressure
-  this->velocities.first_vector_component = 0;
-  // Velocity
-  this->velocity_values = std::vector<Tensor<1, dim>>(n_q_points);
+  // Initialize arrays related to phase order and chemical potential
+  this->phase_order.component = 0;
+  this->chemical_potential.component = 1;
+
   // Tracer
   this->phase_order_values        = std::vector<double>(n_q_points);
   this->phase_order_gradients     = std::vector<Tensor<1, dim>>(n_q_points);

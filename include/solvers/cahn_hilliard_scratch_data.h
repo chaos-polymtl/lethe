@@ -247,7 +247,7 @@ public:
   }
 
   /** @brief Calculates the physical properties. This function calculates the physical properties
-   * that may be required by the Cahn-Hilliard equations. Namely W (what is it?),
+   * that may be required by the Cahn-Hilliard equations. Namely W,
    * the mobility function M, the mobility factor D and the interface thickness
    * epsilon.
    *
@@ -258,9 +258,7 @@ public:
   // Physical properties //Mettre les propriétés de Cahn-Hilliard (W,M,D,epsilon)
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
-//  std::vector<double>                  tracer_diffusivity;
-//  std::vector<double>                  tracer_diffusivity_0;
-//  std::vector<double>                  tracer_diffusivity_1;
+
 
 
 
