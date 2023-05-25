@@ -816,6 +816,10 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           previous_solutions_transfer.push_back(
             parallel::distributed::SolutionTransfer<dim, VectorType>(
               this->dof_handler));
+          if constexpr (std::is_same_v<
+                          VectorType,
+                          LinearAlgebra::distributed::Vector<double>>)
+            previous_solutions[i].update_ghost_values();
           previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
             previous_solutions[i]);
         }
@@ -826,6 +830,10 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         solution_transfer_m2(this->dof_handler);
       parallel::distributed::SolutionTransfer<dim, VectorType>
         solution_transfer_m3(this->dof_handler);
+
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        present_solution.update_ghost_values();
       solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
       multiphysics->prepare_for_mesh_adaptation();
@@ -838,7 +846,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
       this->setup_dofs();
 
       // Set up the vectors for the transfer
-      VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+      VectorType tmp = init_temporary_vector();
 
       // Interpolate the solution at time and previous time
       solution_transfer.interpolate(tmp);
@@ -852,8 +860,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
       for (unsigned int i = 0; i < previous_solutions.size(); ++i)
         {
-          VectorType tmp_previous_solution(locally_owned_dofs,
-                                           this->mpi_communicator);
+          VectorType tmp_previous_solution = init_temporary_vector();
           previous_solutions_transfer[i].interpolate(tmp_previous_solution);
           nonzero_constraints.distribute(tmp_previous_solution);
           previous_solutions[i] = tmp_previous_solution;
@@ -1019,10 +1026,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       previous_solutions_transfer.push_back(
         parallel::distributed::SolutionTransfer<dim, VectorType>(
           this->dof_handler));
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        previous_solutions[i].update_ghost_values();
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
         previous_solutions[i]);
     }
 
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    present_solution.update_ghost_values();
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
   multiphysics->prepare_for_mesh_adaptation();
@@ -1033,7 +1046,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->setup_dofs();
 
   // Set up the vectors for the transfer
-  VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp = init_temporary_vector();
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
@@ -1047,8 +1060,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      VectorType tmp_previous_solution(locally_owned_dofs,
-                                       this->mpi_communicator);
+      VectorType tmp_previous_solution = init_temporary_vector();
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
@@ -1074,6 +1086,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
+
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    present_solution.update_ghost_values();
+
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
 
@@ -1087,6 +1104,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
       previous_solutions_transfer.emplace_back(
         parallel::distributed::SolutionTransfer<dim, VectorType>(
           this->dof_handler));
+
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        previous_solutions[i].update_ghost_values();
+
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
         previous_solutions[i]);
     }
@@ -1099,7 +1121,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   setup_dofs();
 
   // Set up the vectors for the transfer
-  VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp = init_temporary_vector();
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
@@ -1114,8 +1136,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Set up the vectors for the transfer
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      VectorType tmp_previous_solution(locally_owned_dofs,
-                                       this->mpi_communicator);
+      VectorType tmp_previous_solution = init_temporary_vector();
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
@@ -2138,6 +2159,24 @@ NavierStokesBase<dim, VectorType, DofsType>::
             }
         }
     }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+inline VectorType
+NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
+{
+  VectorType tmp;
+
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
+                std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
+    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
+
+  else if constexpr (std::is_same_v<VectorType,
+                                    LinearAlgebra::distributed::Vector<double>>)
+    tmp.reinit(locally_owned_dofs,
+               locally_relevant_dofs,
+               this->mpi_communicator);
+  return tmp;
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur
