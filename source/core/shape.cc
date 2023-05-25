@@ -1016,10 +1016,24 @@ CompositeShape<dim>::gradient(const Point<dim> &evaluation_point,
             component->gradient(centered_point);
         }
 
+      double         levelset;
       Tensor<1, dim> gradient;
-      std::tie(std::ignore, gradient) =
+      std::tie(levelset, gradient) =
         apply_boolean_operations(constituent_shapes_values,
                                  constituent_shapes_gradients);
+
+      // The gradient obtained is in the shape referential. It needs to be
+      // returned to the global referential. We find the closest point (in the
+      // shape referential), we return that point to its global referential
+      // equivalent, then compute the gradient in the global referential.
+      Point<dim> closest_point_shape_referential =
+        centered_point - (gradient / (gradient.norm() + 1e-16)) * levelset;
+      Point<dim> closest_point_global_referential =
+        this->reverse_align_and_center(closest_point_shape_referential);
+      gradient = -(closest_point_global_referential - evaluation_point) /
+                 ((closest_point_global_referential - evaluation_point).norm() +
+                  1.0e-16);
+
       return gradient;
     }
   else
@@ -1051,10 +1065,24 @@ CompositeShape<dim>::gradient_with_cell_guess(
             component->gradient_with_cell_guess(centered_point, cell);
         }
 
+      double         levelset;
       Tensor<1, dim> gradient;
-      std::tie(std::ignore, gradient) =
+      std::tie(levelset, gradient) =
         apply_boolean_operations(constituent_shapes_values,
                                  constituent_shapes_gradients);
+
+      // The gradient obtained is in the shape referential. It needs to be
+      // returned to the global referential. We find the closest point (in the
+      // shape referential), we return that point to its global referential
+      // equivalent, then compute the gradient in the global referential.
+      Point<dim> closest_point_shape_referential =
+        centered_point - (gradient / (gradient.norm() + 1e-16)) * levelset;
+      Point<dim> closest_point_global_referential =
+        this->reverse_align_and_center(closest_point_shape_referential);
+      gradient = -(closest_point_global_referential - evaluation_point) /
+                 ((closest_point_global_referential - evaluation_point).norm() +
+                  1.0e-16);
+
       this->gradient_cache[point_in_string] = gradient;
       return gradient;
     }
