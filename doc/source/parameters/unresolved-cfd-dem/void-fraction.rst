@@ -12,7 +12,7 @@ In this subsection, all parameters required for the calculation of the void frac
       set l2 smoothing factor = 0
       set l2 lower bound = 0
       set l2 upper bound = 1
-      set bound void fraction = false
+      set bound void fraction = true
       set particle refinement factor = 0
    end
 
