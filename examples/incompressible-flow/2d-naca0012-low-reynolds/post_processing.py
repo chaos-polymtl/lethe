@@ -146,7 +146,7 @@ def printClCd():
 
     for i in range(0,len(pathList)):
         list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(pathList[i])
-        list_var_interet = [(2 / 1.3) * list_of_list_of_vars[0][1][cut:-cutLast], (2 / 1.3) * list_of_list_of_vars[0][2][cut:-cutLast],
+        list_var_interet = [2 * list_of_list_of_vars[0][1][cut:-cutLast], 2 * list_of_list_of_vars[0][2][cut:-cutLast],
                             list_of_list_of_vars[0][4][cut:-cutLast],
                             list_of_list_of_vars[0][5][cut:-cutLast], list_of_list_of_vars[0][7][cut:-cutLast],
                             list_of_list_of_vars[0][8][cut:-cutLast]]
@@ -225,46 +225,47 @@ def spectralAnalysis():
     cut = 500;
 
 
-    for i in range(8,9):
-        list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(pathList[angleIndex])
-        list_var_interet = [(2 / 1.3) * list_of_list_of_vars[0][1][cut:], (2 / 1.3) * list_of_list_of_vars[0][2][cut:],
+    #for i in range(0,9):
+    list_of_list_of_vars_name, list_of_list_of_vars = read_my_data(pathList[angleIndex])
+    list_var_interet = [2 * list_of_list_of_vars[0][1][cut:], 2 * list_of_list_of_vars[0][2][cut:],
                             list_of_list_of_vars[0][4][cut:],
                             list_of_list_of_vars[0][5][cut:], list_of_list_of_vars[0][7][cut:],
                             list_of_list_of_vars[0][8][cut:]]
                             
-        print(list_of_list_of_vars[0][2][500:])
-        print(list_of_list_of_vars_name)
+    #print(list_of_list_of_vars[0][2][500:])  #
+    #print(list_of_list_of_vars_name)
 
-        # Sampling rate : since the timestep is non-uniform, choice was made to use a mean timestep and perform
-        #a regular fft on the signal. for the sake of simplicity. A decicated signal processing tool exists for the case
-        # of non-uniform sampling, but this goes beyond the scope of the example.
-        sr = len(list_of_list_of_vars[0][0])/(list_of_list_of_vars[0][0][-1]-list_of_list_of_vars[0][0][0])
+    # Sampling rate : since the timestep is non-uniform, choice was made to use a mean timestep and perform
+    #a regular fft on the signal. for the sake of simplicity. A decicated signal processing tool exists for the case
+    # of non-uniform sampling, but this goes beyond the scope of the example.
+    sr = len(list_of_list_of_vars[0][0])/(list_of_list_of_vars[0][0][-1]-list_of_list_of_vars[0][0][0])
 
-        # sampling interval
-        ts = 1.0 / sr
-        t = np.arange(0, 40, ts)
+    # sampling interval
+    ts = 1.0 / sr
+    t = np.arange(0, 40, ts)
 
 
-        X = fft(list_var_interet[1]-np.mean(list_var_interet[1]))
-        N = len(X)
-        print(list_var_interet[1])
-        n = np.arange(N)
-        T = N/sr
-        freq = n/T
+    X = fft(list_var_interet[1]-np.mean(list_var_interet[1]))
+    N = len(X)
+    #print(list_var_interet[1])
+    n = np.arange(N)
+    T = N/sr
+    freq = n/T
 
-        plt.figure(figsize = (12, 6))
-        plt.subplot(121)
+    plt.figure(figsize = (12, 6))
+    plt.subplot(121)
 
-        plt.stem(freq, (np.sqrt(np.abs(X)*np.abs(X)))*(np.sqrt(np.abs(X)*np.abs(X))>100), 'b', \
+    plt.stem(freq, (np.sqrt(np.abs(X)*np.abs(X)))*(np.sqrt(np.abs(X)*np.abs(X))>100), 'b', \
                  markerfmt=" ", basefmt="-b")
-        plt.xlabel('Freq (Hz)')
-        plt.ylabel('FFT Amplitude |X(freq)|')
-        plt.title("FFT of lift coefficient")
-        plt.xlim(0.5, 3.5)
+    plt.xlabel('Freq (Hz)')
+    plt.ylabel('FFT Amplitude |X(freq)|')
+    plt.title("FFT of lift coefficient")
+    plt.xlim(0.5, 3.5)
 
     plt.show()
 
 
+spectralAnalysis()
 
 
 
