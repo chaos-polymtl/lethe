@@ -344,7 +344,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
             }
           final_set.insert({key_final_set, filling_vector_declustered_set});
           filling_vector_declustered_set.clear();
-          key_final_set = key_final_set + 1;
+          key_final_set++;
         }
     }
   double         compartment_final_id = 1;
@@ -356,7 +356,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
         {
           compartments_emw[d->active_cell_index()] = compartment_final_id;
         }
-      compartment_final_id = compartment_final_id + 1;
+      compartment_final_id++;
     }
   write_file_compartments_first_field(compartments_emw, 1.0, 1);
 
