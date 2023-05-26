@@ -250,7 +250,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
       number_of_compartments++;
       vector.clear();
       vector.push_back(vector_cell[i + 1]);
-      k   = k + 1;
+      k++;
       max = primer_matrix_index_emw[i + 1][1];
     }
   if (primer_matrix_index_emw.size() == k)
