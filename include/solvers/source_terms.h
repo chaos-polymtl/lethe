@@ -74,7 +74,7 @@ namespace SourceTerms
     // Tracer source
     Functions::ParsedFunction<dim> tracer_source;
 
-    //Cahn-Hilliard source
+    // Cahn-Hilliard source
     Functions::ParsedFunction<dim> cahn_hilliard_source;
 
   protected:

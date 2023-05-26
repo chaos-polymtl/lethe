@@ -80,7 +80,8 @@ namespace Parameters
   {
   public:
     InitialConditions()
-      : uvwp(dim + 1),cahn_hilliard(2)
+      : uvwp(dim + 1)
+      , cahn_hilliard(2)
     {}
 
     InitialConditionType type;
@@ -171,7 +172,7 @@ namespace Parameters
       ramp.declare_parameters(prm);
 
       prm.enter_subsection("cahn hilliard");
-      cahn_hilliard.declare_parameters(prm,dim);
+      cahn_hilliard.declare_parameters(prm, dim);
       prm.set("Function expression", "0; 0");
       prm.leave_subsection();
     }

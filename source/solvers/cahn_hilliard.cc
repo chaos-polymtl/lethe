@@ -36,7 +36,8 @@ CahnHilliard<dim>::setup_assemblers()
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
       this->assemblers.push_back(
-        std::make_shared<CahnHilliardAssemblerBDF<dim>>(this->simulation_control));
+        std::make_shared<CahnHilliardAssemblerBDF<dim>>(
+          this->simulation_control));
     }
   // Core assembler
   this->assemblers.push_back(
@@ -54,7 +55,7 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  CahnHilliardScratchData<dim> &                     scratch_data,
+  CahnHilliardScratchData<dim> &                        scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
 {
   return;
@@ -80,7 +81,7 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  CahnHilliardScratchData<dim> &                              scratch_data,
+  CahnHilliardScratchData<dim> &                        scratch_data,
   StabilizedMethodsCopyData &                           copy_data)
 {
   return;
@@ -98,7 +99,6 @@ template <int dim>
 void
 CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
-
   // Add the interpretation of the solution. The first component is the
   // phase order (Phi) and the following one is the chemical potential (eta)
 
@@ -113,17 +113,17 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
-  data_out.add_data_vector(dof_handler,present_solution,
+  data_out.add_data_vector(dof_handler,
+                           present_solution,
                            solution_names,
                            data_component_interpretation);
-
 }
 
 template <int dim>
 std::pair<double, double>
 CahnHilliard<dim>::calculate_L2_error()
 {
- return std::pair<double,double>();
+  return std::pair<double, double>();
 }
 
 template <int dim>
@@ -172,7 +172,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       !first_iteration)
     {
       double phase_order_error = calculate_L2_error().first;
-      double potential_error = calculate_L2_error().second;
+      double potential_error   = calculate_L2_error().second;
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
@@ -182,8 +182,10 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error phase order : " << phase_order_error << std::endl;
-          this->pcout << "L2 error potential : " << potential_error << std::endl;
+          this->pcout << "L2 error phase order : " << phase_order_error
+                      << std::endl;
+          this->pcout << "L2 error potential : " << potential_error
+                      << std::endl;
         }
     }
 }
@@ -287,7 +289,6 @@ template <int dim>
 void
 CahnHilliard<dim>::setup_dofs()
 {
-
   FEValuesExtractors::Scalar phase_order(0);
   FEValuesExtractors::Scalar chemical_potential(1);
 
@@ -361,17 +362,19 @@ CahnHilliard<dim>::set_initial_conditions()
   const FEValuesExtractors::Scalar phase_order(0);
   const FEValuesExtractors::Scalar potential(1);
 
-  VectorTools::interpolate(*this->mapping,
-                           this->dof_handler,
-                           this->simulation_parameters.initial_condition->cahn_hilliard,
-                           this->newton_update,
-                           this->fe->component_mask(phase_order));
+  VectorTools::interpolate(
+    *this->mapping,
+    this->dof_handler,
+    this->simulation_parameters.initial_condition->cahn_hilliard,
+    this->newton_update,
+    this->fe->component_mask(phase_order));
 
-  VectorTools::interpolate(*this->mapping,
-                           this->dof_handler,
-                           this->simulation_parameters.initial_condition->cahn_hilliard,
-                           this->newton_update,
-                           this->fe->component_mask(potential));
+  VectorTools::interpolate(
+    *this->mapping,
+    this->dof_handler,
+    this->simulation_parameters.initial_condition->cahn_hilliard,
+    this->newton_update,
+    this->fe->component_mask(potential));
 
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
@@ -381,7 +384,7 @@ CahnHilliard<dim>::set_initial_conditions()
 template <int dim>
 void
 CahnHilliard<dim>::solve_linear_system(const bool initial_step,
-                                 const bool /*renewed_matrix*/)
+                                       const bool /*renewed_matrix*/)
 {
   auto mpi_communicator = triangulation->get_communicator();
 

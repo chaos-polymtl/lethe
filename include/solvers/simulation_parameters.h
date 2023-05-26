@@ -56,15 +56,16 @@ public:
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
-  BoundaryConditions::CahnHilliardBoundaryConditions<dim> boundary_conditions_cahn_hilliard;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
-  Parameters::VelocitySource                        velocity_sources;
-  std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
-  Parameters::DynamicFlowControl                    flow_control;
-  Parameters::Multiphysics                          multiphysics;
-  Parameters::Stabilization                         stabilization;
+  BoundaryConditions::CahnHilliardBoundaryConditions<dim>
+                                                boundary_conditions_cahn_hilliard;
+  Parameters::InitialConditions<dim> *          initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
+  SourceTerms::SourceTerm<dim> *                source_term;
+  Parameters::VelocitySource                    velocity_sources;
+  std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
+  Parameters::DynamicFlowControl                flow_control;
+  Parameters::Multiphysics                      multiphysics;
+  Parameters::Stabilization                     stabilization;
 
   PhysicalPropertiesManager physical_properties_manager;
 

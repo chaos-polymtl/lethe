@@ -760,11 +760,10 @@ namespace BoundaryConditions
 
   */
 
-    template <int dim>
-    class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
+  template <int dim>
+  class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
@@ -785,8 +784,9 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
-                                                           unsigned int      i_bc)
+  CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(
+    ParameterHandler &prm,
+    unsigned int      i_bc)
   {
     return;
   }
@@ -837,7 +837,7 @@ namespace BoundaryConditions
   CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
                                                       unsigned int      i_bc)
   {
-  return;
+    return;
   }
 
   /**
