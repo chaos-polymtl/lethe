@@ -108,10 +108,9 @@ private:
   generate_cylindrical_grid();
 
   /**
-   * @brief First, sorts the cell based on their values of the electric field
-   * Then, agglomerates cell within a certain tolerance
-   * Next, break the clusters that are not connected but are in same group
-   * because of they are in a certain tolerance
+   * @brief First, sorts the cell based on their values of the electric field.
+   * Then, agglomerates cells in groups according to tolerances and
+   * breaks the clusters accordingly.
    */
   auto
   sort_agglomeration_deagglomeration_emw()
