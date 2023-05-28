@@ -362,6 +362,97 @@ Sphere<dim>::set_position(const Point<dim> &position)
 #endif
 }
 
+template <int dim>
+double
+Superquadric<dim>::value(const Point<dim> &evaluation_point,
+                         const unsigned int /*component*/) const
+{
+  using numbers::PI;
+
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end())
+    {
+      // We align and center the evaluation point according to the shape
+      // referential
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+      /*double     r              = centered_point.norm();
+      double     theta          = atan2(centered_point[1], centered_point[0]);
+      double     phi            = acos(centered_point[2] / r) - 0.5 * PI;
+
+      Point<dim> current_point_guess{};
+        current_point_guess[0] = half_lengths[0] * copysign(1.0,cos(phi)) *
+      pow(abs(cos(phi)) , 2/exponents[0])
+                                 * copysign(1.0,cos(theta)) *
+      pow(abs(cos(theta)) , 2/exponents[0]); current_point_guess[1] =
+      half_lengths[1] * copysign(1.0,cos(phi)) * pow(abs(cos(phi)) ,
+      2/exponents[1])
+                                 * copysign(1.0,sin(theta)) *
+      pow(abs(sin(theta)) , 2/exponents[1]); current_point_guess[2] =
+      half_lengths[2] * copysign(1.0,sin(phi)) * pow(abs(sin(phi)) ,
+      2/exponents[2]);*/
+
+      double levelset =
+        (pow((centered_point[0] / half_lengths[0]), exponents[0]) +
+         pow((centered_point[1] / half_lengths[1]), exponents[1]) +
+         pow(centered_point[2] / half_lengths[2], exponents[0])) -
+        1;
+
+      return levelset;
+    }
+  else
+    return iterator->second;
+}
+
+template <int dim>
+double
+Superquadric<dim>::value_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int /*component = 0*/)
+{
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end())
+    {
+      double levelset                    = this->value(evaluation_point);
+      this->value_cache[point_in_string] = levelset;
+      return levelset;
+    }
+  else
+    return iterator->second;
+}
+
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+Superquadric<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy = std::make_shared<Superquadric<dim>>(
+    this->half_lengths, this->exponents, this->position, this->orientation);
+  return copy;
+}
+
+template <int dim>
+Tensor<1, dim>
+Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
+                            const unsigned int /*component*/) const
+{
+  // TODO
+  return Tensor<1, dim>();
+}
+
+template <int dim>
+Tensor<1, dim>
+Superquadric<dim>::gradient_with_cell_guess(
+  const Point<dim> &                                   evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const unsigned int                                   component)
+{
+  // TODO
+  return Tensor<1, dim>();
+}
 
 template <int dim>
 double
@@ -2078,6 +2169,7 @@ template class Sphere<2>;
 template class Sphere<3>;
 template class HyperRectangle<2>;
 template class HyperRectangle<3>;
+template class Superquadric<3>;
 template class Ellipsoid<2>;
 template class Ellipsoid<3>;
 template class Torus<3>;

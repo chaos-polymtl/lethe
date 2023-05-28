@@ -378,6 +378,90 @@ private:
 #endif
 };
 
+/**
+ * @class This class defines superquadric shapes. Their signed distance function
+ * is:
+ * |\frac{x}{a}|^r  + |\frac{y}{b}|^s + |\frac{z}{c}|^t - 1 = 0
+ * @tparam dim Dimension of the shape
+ */
+template <int dim>
+class Superquadric : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructor for a superquadric shape
+   * @param half_lengths The half-lengths of each direction
+   * @param exponents The lengths of each direction
+   * @param position The superquadric center
+   * @param orientation The superquadric orientation
+   */
+  Superquadric<dim>(const Tensor<1, dim> half_lengths,
+                    const Tensor<1, dim> exponents,
+                    const Point<dim> &   position,
+                    const Tensor<1, 3> & orientation)
+    : Shape<dim>(half_lengths.norm(), position, orientation)
+  {
+    this->half_lengths = half_lengths;
+    this->exponents    = exponents;
+  }
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point with a guess for the cell containing
+   * the evaluation point
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int /*component = 0*/) override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+private:
+  Tensor<1, dim> half_lengths;
+  Tensor<1, dim> exponents;
+};
+
 template <int dim>
 class HyperRectangle : public Shape<dim>
 {

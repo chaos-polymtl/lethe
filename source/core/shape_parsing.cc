@@ -61,6 +61,23 @@ ShapeGenerator::initialize_shape_from_vector(
         }
       shape = std::make_shared<Ellipsoid<dim>>(radii, position, orientation);
     }
+  else if (type == "superquadric")
+    {
+      if constexpr (dim == 3)
+        {
+          Tensor<1, dim> half_lengths{};
+          Tensor<1, dim> exponents{};
+          for (unsigned int d = 0; d < dim; d++)
+            {
+              half_lengths[d] = shape_arguments[d];
+              exponents[d]    = shape_arguments[d + dim];
+            }
+          shape = std::make_shared<Superquadric<dim>>(half_lengths,
+                                                      exponents,
+                                                      position,
+                                                      orientation);
+        }
+    }
   else if (type == "torus")
     {
       if constexpr (dim == 3)
