@@ -7,9 +7,7 @@
 
 template <int dim>
 void
-CahnHilliardAssemblerCore<dim>::assemble_matrix(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+CahnHilliardAssemblerCore<dim>::assemble_matrix()
 {
   return;
 } // end loop on quadrature points
@@ -18,9 +16,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
 template <int dim>
 void
-CahnHilliardAssemblerCore<dim>::assemble_rhs(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+CahnHilliardAssemblerCore<dim>::assemble_rhs()
 {
   return;
 }
@@ -30,18 +26,14 @@ template class CahnHilliardAssemblerCore<3>;
 
 template <int dim>
 void
-CahnHilliardAssemblerBDF<dim>::assemble_matrix(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+CahnHilliardAssemblerBDF<dim>::assemble_matrix()
 {
   return;
 }
 
 template <int dim>
 void
-CahnHilliardAssemblerBDF<dim>::assemble_rhs(
-  CahnHilliardScratchData<dim> &scratch_data,
-  StabilizedMethodsCopyData &   copy_data)
+CahnHilliardAssemblerBDF<dim>::assemble_rhs()
 {
   return;
 }

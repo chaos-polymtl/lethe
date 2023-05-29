@@ -53,18 +53,14 @@ CahnHilliard<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-CahnHilliard<dim>::assemble_local_system_matrix(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  CahnHilliardScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+CahnHilliard<dim>::assemble_local_system_matrix()
 {
   return;
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::copy_local_matrix_to_global_matrix(
-  const StabilizedMethodsCopyData &copy_data)
+CahnHilliard<dim>::copy_local_matrix_to_global_matrix()
 {
   return;
 }
@@ -79,18 +75,14 @@ CahnHilliard<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-CahnHilliard<dim>::assemble_local_system_rhs(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  CahnHilliardScratchData<dim> &                        scratch_data,
-  StabilizedMethodsCopyData &                           copy_data)
+CahnHilliard<dim>::assemble_local_system_rhs()
 {
   return;
 }
 
 template <int dim>
 void
-CahnHilliard<dim>::copy_local_rhs_to_global_rhs(
-  const StabilizedMethodsCopyData &copy_data)
+CahnHilliard<dim>::copy_local_rhs_to_global_rhs()
 {
   return;
 }

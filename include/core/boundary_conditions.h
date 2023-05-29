@@ -56,7 +56,7 @@ namespace BoundaryConditions
     tracer_dirichlet,
     // for vof
     pw,
-    vof_dirichlet
+    vof_dirichlet,
     // for cahn hilliard
     dirichlet_phase_order,
     dirichlet_potential,
@@ -789,6 +789,8 @@ namespace BoundaryConditions
     unsigned int      i_bc)
   {
     return;
+    const std::string op = prm.get("type");
+    this->type[i_bc]     = BoundaryType::none;
   }
 
   /**
@@ -837,6 +839,11 @@ namespace BoundaryConditions
   CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
                                                       unsigned int      i_bc)
   {
+    const std::string op = prm.get("type");
+    if (op == "none")
+      {
+        this->type[i_bc] = BoundaryType::none;
+      }
     return;
   }
 
