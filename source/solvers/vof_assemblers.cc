@@ -8,14 +8,14 @@
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -61,8 +61,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       const double order = this->fem_parameters.VOF_order;
 
       // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(phase_gradient_norm * h, order);
+      const double vdcdd = (0.5 * h) * (velocity.norm());
 
       const double tolerance = 1e-12;
 
@@ -143,7 +142,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
                 {
                   local_matrix(i, j) +=
                     (vdcdd * scalar_product(grad_phi_phase_j,
-                                            dcdd_factor * grad_phi_phase_i) //+
+                                            grad_phi_phase_i) //+
                      // d_vdcdd * grad_phi_phase_j.norm() *
                      //   scalar_product(phase_gradient,
                      //                  dcdd_factor * grad_phi_phase_i)
@@ -159,7 +158,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -169,7 +168,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -207,8 +206,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       const double order = this->fem_parameters.VOF_order;
 
       // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(phase_gradient.norm() * h, order);
+      const double vdcdd = (0.5 * h) * (velocity.norm());
 
       const double tolerance = 1e-12;
 
@@ -262,7 +260,6 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
                            diffusivity * grad_phi_phase_i * phase_gradient) *
                           JxW;
 
-
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_phase_i * velocity)) *
             JxW;
@@ -271,9 +268,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
           if (DCDD)
             {
               local_rhs(i) +=
-                -vdcdd *
-                scalar_product(phase_gradient, dcdd_factor * grad_phi_phase_i) *
-                JxW;
+                -vdcdd * scalar_product(phase_gradient, grad_phi_phase_i) * JxW;
             }
         }
     }
@@ -284,11 +279,11 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -344,11 +339,11 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
