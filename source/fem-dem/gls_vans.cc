@@ -626,7 +626,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         }
                       else
                         {
-                          // The radius is get from the volume of sphere based
+                          // The radius is obtained from the volume of sphere based
                           // on R_s = h_omega
                           double reference_sphere_volume =
                             M_PI *
@@ -704,7 +704,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         }
                       else
                         {
-                          // The radius is get from the volume of sphere based
+                          // The radius is obtained from the volume of sphere based
                           // on R_s = h_omega
                           double reference_sphere_volume =
                             M_PI *
@@ -827,7 +827,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                 }
               else
                 {
-                  // The radius is get from the volume of sphere based
+                  // The radius is obtained from the volume of sphere based
                   // on R_s = h_omega
                   double reference_sphere_volume =
                     M_PI * pow((2 * pow(cell->measure(), 1. / dim)), dim) /

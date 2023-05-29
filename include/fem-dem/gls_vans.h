@@ -150,7 +150,7 @@ private:
 
 
   /**
-   * @brief This function gives the periodic offset of the domain with is needed
+   * @brief This function gives the periodic offset of the domain which is needed
    * for the periodic boundary conditions using the QCM for void fraction.
    *
    * @param periodic_boundary_id The id of the periodic boundary 0
@@ -198,9 +198,9 @@ private:
           }
       }
 
-    // A zero tensor in returned in case no cells are found on the periodic
+    // A zero tensor is returned in case no cells are found on the periodic
     // boundaries on this processor. This processor won't handle particle in
-    // cells at periodic boundaries, so I won't affect any computation.
+    // cells at periodic boundaries, so it won't affect any computation.
     return offset;
   }
 
