@@ -1250,7 +1250,8 @@ CFDDEMSolver<dim>::print_particles_summary()
 
       std::stringstream ss;
 
-      ss << "id: " << particle.get_id() << ",  "
+      ss << std::setprecision(6)
+         << "id: " << particle.get_id() << ",  "
          << "x: " << particle.get_location()[0] << ",  "
          << "y: " << particle.get_location()[1] << ",  "
          << "z: " << particle.get_location()[2] << ",  "
