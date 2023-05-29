@@ -100,8 +100,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim>                                  &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
+  VOFScratchData<dim> &                                 scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -193,8 +193,8 @@ template <int dim>
 void
 VolumeOfFluid<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  VOFScratchData<dim>                                  &scratch_data,
-  StabilizedMethodsCopyData                            &copy_data)
+  VOFScratchData<dim> &                                 scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -346,7 +346,7 @@ template <typename VectorType>
 std::pair<Tensor<1, dim>, Tensor<1, dim>>
 VolumeOfFluid<dim>::calculate_barycenter(
   const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType                    &solution_fd)
+  const VectorType &                   solution_fd)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
 
@@ -439,13 +439,13 @@ VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::Vector>(
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
 VolumeOfFluid<2>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::Vector &     solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
 VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::Vector &     solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd);
 
 
@@ -491,7 +491,8 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
             {
               switch (monitored_fluid)
                 {
-                    case Parameters::FluidIndicator::fluid0: {
+                  case Parameters::FluidIndicator::fluid0:
+                    {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
                       this->mass_monitored += fe_values_vof.JxW(q) *
@@ -499,7 +500,8 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                                               density_0[q];
                       break;
                     }
-                    case Parameters::FluidIndicator::fluid1: {
+                  case Parameters::FluidIndicator::fluid1:
+                    {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * phase_values[q];
                       this->mass_monitored +=
@@ -525,7 +527,7 @@ template <typename VectorType>
 double
 VolumeOfFluid<dim>::find_monitored_fluid_avg_pressure(
   const TrilinosWrappers::MPI::Vector &solution,
-  const VectorType                    &current_solution_fd,
+  const VectorType &                   current_solution_fd,
   const Parameters::FluidIndicator     monitored_fluid)
 {
   QGauss<dim>    quadrature_formula(this->cell_quadrature->size());
@@ -610,14 +612,14 @@ VolumeOfFluid<3>::find_monitored_fluid_avg_pressure<
 template double
 VolumeOfFluid<2>::find_monitored_fluid_avg_pressure<
   TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::Vector &     solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd,
   const Parameters::FluidIndicator          monitored_fluid);
 
 template double
 VolumeOfFluid<3>::find_monitored_fluid_avg_pressure<
   TrilinosWrappers::MPI::BlockVector>(
-  const TrilinosWrappers::MPI::Vector      &solution,
+  const TrilinosWrappers::MPI::Vector &     solution,
   const TrilinosWrappers::MPI::BlockVector &current_solution_fd,
   const Parameters::FluidIndicator          monitored_fluid);
 
@@ -1021,8 +1023,9 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
           st_min             = st_avg;
           mass_deviation_min = mass_deviation_avg;
         }
-  } while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
-           nb_search_ite < max_iterations);
+    }
+  while (std::abs(mass_deviation_avg) > mass_deviation_tol &&
+         nb_search_ite < max_iterations);
 
   // Take minimum deviation in between the two endpoints of the last
   // interval searched, if out of the do-while loop because max_iterations is
@@ -2831,9 +2834,9 @@ VolumeOfFluid<3>::apply_peeling_wetting<TrilinosWrappers::MPI::BlockVector>(
 template <int dim>
 void
 VolumeOfFluid<dim>::change_cell_phase(
-  const PhaseChange                          &type,
-  const double                               &new_phase,
-  TrilinosWrappers::MPI::Vector              &solution_pw,
+  const PhaseChange &                         type,
+  const double &                              new_phase,
+  TrilinosWrappers::MPI::Vector &             solution_pw,
   const std::vector<types::global_dof_index> &dof_indices_vof)
 {
   if (type == PhaseChange::wetting)
