@@ -231,7 +231,7 @@ with :math:`F_L` and :math:`F_D`, respectively, the lift and drag forces. Those 
         
 .. image:: image/cl_cd_results_plot.png
 
-There is a slight variation of the results obtained compared to the literature results. This may be due to the discontinuity at the trailing edge or a resolution not precise enough. Still, the evolution observed is relevant.
+The results obtained fit the drag and lift coefficients found by Kouser et al. Note that the value given for the :math:`C_D` and :math:`C_L` coefficients are Root Mean Squared (RMS) values. The time span considered is 25s long (between 15s and 40s). The first 15 seconds were not considered to let the system reach a pseudo-steady state.
 
 One can also see the low-velocity zones on the upper part of the airfoil, which corresponds to the recirculating zone: the ``noslip`` condition on the NACA imposes a zero velocity condition on the fluid. The following streamline representation helps to see the movements of the fluid inside the recirculating zone: 
 
