@@ -42,49 +42,13 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
-      const Tensor<1, dim> phase_gradient = scratch_data.phase_gradients[q];
-      const double         phase_gradient_norm = phase_gradient.norm();
-
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter and the compression term for the phase
       // indicator
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
-      // Implementation of a DCDD shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
-      // finite element formulations for nonlinear
-      // convection-diffusion-reaction equations. Computer methods in
-      // applied mechanics and engineering, 59(3), 307-325.
-
-      // Gather the order of the VOF interpolation
-      const double order = this->fem_parameters.VOF_order;
-
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd = (0.5 * h) * (velocity.norm());
-
-      const double tolerance = 1e-12;
-
-      Tensor<1, dim> gradient_unit_vector =
-        phase_gradient / (phase_gradient_norm + tolerance);
-
-      // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article. This term generates poorer
-      // results than just using the vdcdd approach.
-      // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
-      // s);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
-      const Tensor<2, dim> gradient_unit_tensor =
-        outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor; // - k_corr;
-
-      // We neglect the gradient of the shock capturing viscosity in the
-      // jacobian matrix since it tends to destabilize the matrix Gradient of
-      // the shock capturing viscosity for the assembly of the jacobian matrix
-      // const double d_vdcdd = order * (0.5 * h * h) *
-      //                       (velocity.norm() * velocity.norm()) *
-      //                       pow(phase_gradient_norm * h, order - 1);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
@@ -141,12 +105,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
               if (DCDD)
                 {
                   local_matrix(i, j) +=
-                    (vdcdd * scalar_product(grad_phi_phase_j,
-                                            grad_phi_phase_i) //+
-                     // d_vdcdd * grad_phi_phase_j.norm() *
-                     //   scalar_product(phase_gradient,
-                     //                  dcdd_factor * grad_phi_phase_i)
-                     ) *
+                    (vdcdd *
+                     scalar_product(grad_phi_phase_j, grad_phi_phase_i)) *
                     JxW;
                 }
             }
@@ -192,41 +152,15 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
       const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
-      const double JxW                 = JxW_vec[q];
-      const double phase_gradient_norm = phase_gradient.norm();
-
-      // Implementation of a DCDD shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
-      // finite element formulations for nonlinear
-      // convection-diffusion-reaction equations. Computer methods in
-      // applied mechanics and engineering, 59(3), 307-325.
-
-      // Gather the order of the VOF interpolation
-      const double order = this->fem_parameters.VOF_order;
+      const double JxW = JxW_vec[q];
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd = (0.5 * h) * (velocity.norm());
 
-      const double tolerance = 1e-12;
-
-      Tensor<1, dim> gradient_unit_vector =
-        phase_gradient / (phase_gradient_norm + tolerance);
-
-      // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article. This term generates poorer
-      // results than just using the vdcdd approach.
-      // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
-      // s);
-      // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
-      const Tensor<2, dim> gradient_unit_tensor =
-        outer_product(gradient_unit_vector, gradient_unit_vector);
-      const Tensor<2, dim> dcdd_factor = gradient_unit_tensor; // - k_corr;
-
       // Calculation of the magnitude of the velocity for the
-      // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), tolerance);
+      // stabilization parameter and the compression term for the phase
+      // indicator
+      const double u_mag = std::max(velocity.norm(), 1e-12);
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
