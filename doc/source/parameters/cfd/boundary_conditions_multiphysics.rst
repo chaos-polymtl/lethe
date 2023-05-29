@@ -102,7 +102,7 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
             set type		= peeling/wetting
         end
         subsection bc 2
-            set id 		= 3
+            set id 		= 2
             set type		= dirichlet
             subsection dirichlet
                 set Function expression = 0
