@@ -17,47 +17,47 @@ Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 6.16399e-0
    Number of degrees of freedom: 1596
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 532
-L2 error velocity : 3.09853e-06
-L2 error phase : 0.00425559
+L2 error velocity : 3.09819e-06
+L2 error phase : 0.0042552
 
 **********************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.63314e-05
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.63265e-05
 **********************************************************************************
-   Number of active cells:       400
-   Number of degrees of freedom: 1437
+   Number of active cells:       472
+   Number of degrees of freedom: 1659
    Volume of triangulation:      1
-   Number of VOF degrees of freedom: 479
-L2 error velocity : 2.63133e-06
-L2 error phase : 0.00425566
+   Number of VOF degrees of freedom: 553
+L2 error velocity : 2.62996e-06
+L2 error phase : 0.00425525
 
 **********************************************************************************
-Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.41975e-05
+Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.62523e-05
 **********************************************************************************
    Number of active cells:       568
    Number of degrees of freedom: 1950
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 650
-L2 error velocity : 2.06792e-06
-L2 error phase : 0.00425573
+L2 error velocity : 2.06778e-06
+L2 error phase : 0.0042553
 
 **********************************************************************************
-Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.31728e-05
+Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.31726e-05
 **********************************************************************************
-   Number of active cells:       952
-   Number of degrees of freedom: 3300
+   Number of active cells:       856
+   Number of degrees of freedom: 3009
    Volume of triangulation:      1
-   Number of VOF degrees of freedom: 1100
-L2 error velocity : 1.55492e-06
-L2 error phase : 0.0042558
+   Number of VOF degrees of freedom: 1003
+L2 error velocity : 1.97583e-06
+L2 error phase : 0.00455745
  time  error_velocity error_pressure 
 0.0200   1.980252e-05         0.0684 
-0.0400   3.098533e-06         0.0668 
-0.0600   2.631326e-06         0.0669 
-0.0800   2.067917e-06         0.0669 
-0.1000   1.554917e-06         0.0669 
+0.0400   3.098187e-06         0.0668 
+0.0600   2.629958e-06         0.0669 
+0.0800   2.067784e-06         0.0669 
+0.1000   1.975828e-06         0.0669 
  time  error_phase  
 0.0200 1.041667e-02 
-0.0400 4.255591e-03 
-0.0600 4.255663e-03 
-0.0800 4.255733e-03 
-0.1000 4.255803e-03 
+0.0400 4.255196e-03 
+0.0600 4.255250e-03 
+0.0800 4.255297e-03 
+0.1000 4.557453e-03 
