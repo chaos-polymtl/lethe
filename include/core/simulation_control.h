@@ -86,7 +86,7 @@ protected:
   // Number of time steps stored
   // BDF methods require a number of previous time steps. This number is known a
   // priori and depends on the method used. We do not keep all the time steps to
-  // prevent the accumualtion within a large vector.
+  // prevent the accumulation within a large vector.
   static const unsigned int numberTimeStepStored = 4;
 
   // Output iteration frequency
@@ -306,10 +306,10 @@ public:
 
 
   /**
-   * @brief Provide the value of the residual at the beggining
+   * @brief Provide the value of the residual at the beginning
    * of the iteration to the simulation controller
    *
-   * @param new_residual Value of the residual at the beggining
+   * @param new_residual Value of the residual at the beginning
    * of an adjoint time-stepping time step
    */
   void

@@ -490,8 +490,9 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                     {
                       this->volume_monitored +=
                         fe_values_vof.JxW(q) * (1 - phase_values[q]);
-                      this->mass_monitored +=
-                        this->volume_monitored * density_0[q];
+                      this->mass_monitored += fe_values_vof.JxW(q) *
+                                              (1 - phase_values[q]) *
+                                              density_0[q];
                       break;
                     }
                   case Parameters::FluidIndicator::fluid1:
@@ -769,7 +770,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                                                this->sharpening_threshold);
 
           if (this->simulation_control->get_step_number() %
-              this->simulation_parameters.post_processing.output_frequency)
+                this->simulation_parameters.post_processing.output_frequency ==
+              0)
             {
               // Save table to .dat
               std::string filename =
@@ -1889,7 +1891,7 @@ VolumeOfFluid<dim>::setup_dofs()
         locally_relevant_dofs_projected_phase_fraction_gradient);
 
 
-      // Initialization of phase fraction gradient matrice and rhs for the
+      // Initialization of phase fraction gradient matrix and rhs for the
       // calculation surface tension force
       system_matrix_projected_phase_fraction_gradient.reinit(
         locally_owned_dofs_projected_phase_fraction_gradient,
@@ -1941,7 +1943,7 @@ VolumeOfFluid<dim>::setup_dofs()
         locally_relevant_dofs_curvature);
 
 
-      // Initialization of curvature matrice and rhs for the
+      // Initialization of curvature matrix and rhs for the
       // calculation surface tension force
       system_matrix_curvature.reinit(locally_owned_dofs_curvature,
                                      locally_owned_dofs_curvature,
@@ -1987,20 +1989,10 @@ VolumeOfFluid<dim>::setup_dofs()
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
                                       mpi_communicator);
 
-  {
-    this->nonzero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->nonzero_constraints);
-  }
-  this->nonzero_constraints.close();
+  define_non_zero_constraints();
 
   // Boundary conditions for Newton correction
-  {
-    this->zero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->zero_constraints);
-  }
-  this->zero_constraints.close();
+  define_zero_constraints();
 
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(this->dof_handler.n_dofs());
@@ -2071,6 +2063,96 @@ VolumeOfFluid<dim>::setup_dofs()
                                     mpi_communicator);
 
   assemble_mass_matrix(mass_matrix_phase_fraction);
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::define_zero_constraints()
+{
+  // Zero constraints
+  this->zero_constraints.clear();
+  this->zero_constraints.reinit(this->locally_relevant_dofs);
+
+  DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                          this->zero_constraints);
+
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::periodic)
+        {
+          DoFTools::make_periodicity_constraints(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions.id[i_bc],
+            this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+            this->simulation_parameters.boundary_conditions
+              .periodic_direction[i_bc],
+            this->zero_constraints);
+        }
+    }
+  for (unsigned int i_bc = 0;
+       i_bc < this->simulation_parameters.boundary_conditions_vof.size;
+       ++i_bc)
+    {
+      if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
+          BoundaryConditions::BoundaryType::vof_dirichlet)
+        {
+          VectorTools::interpolate_boundary_values(
+            this->dof_handler,
+            this->simulation_parameters.boundary_conditions_vof.id[i_bc],
+            Functions::ZeroFunction<dim>(),
+            this->zero_constraints);
+        }
+    }
+  this->zero_constraints.close();
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::define_non_zero_constraints()
+{
+  {
+    nonzero_constraints.clear();
+    nonzero_constraints.reinit(this->locally_relevant_dofs);
+
+    DoFTools::make_hanging_node_constraints(this->dof_handler,
+                                            nonzero_constraints);
+
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
+            BoundaryConditions::BoundaryType::periodic)
+          {
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+              this->simulation_parameters.boundary_conditions
+                .periodic_direction[i_bc],
+              nonzero_constraints);
+          }
+      }
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions_vof.size;
+         ++i_bc)
+      {
+        if (this->simulation_parameters.boundary_conditions_vof.type[i_bc] ==
+            BoundaryConditions::BoundaryType::vof_dirichlet)
+          {
+            VectorTools::interpolate_boundary_values(
+              this->dof_handler,
+              this->simulation_parameters.boundary_conditions_vof.id[i_bc],
+              *this->simulation_parameters.boundary_conditions_vof
+                 .phase_fraction[i_bc],
+              nonzero_constraints);
+          }
+      }
+  }
+  nonzero_constraints.close();
 }
 
 template <int dim>
