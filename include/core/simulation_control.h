@@ -87,7 +87,7 @@ protected:
   // BDF methods require a number of previous time steps. This number is known a
   // priori and depends on the method used. We do not keep all the time steps to
   // prevent the accumulation within a large vector.
-  static const unsigned int numberTimeStepStored = 4;
+  static const unsigned int n_previous_time_steps = 4;
 
   // Output iteration frequency
   // Controls the output of the simulation results when the output is controlled
