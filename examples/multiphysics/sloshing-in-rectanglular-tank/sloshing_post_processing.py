@@ -13,12 +13,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import sys
-sys.path.append("../../../../contrib/postprocessing/")
+sys.path.append("../../../contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 #############################################################################
 
 #############################################################################
+# Run script : python3 path_to_sloshing_post_processing.py path_to_case prm_file_name
+
 #Take case path as argument
 simulation_path = sys.argv[1]
 prm_file_name = sys.argv[2]
@@ -76,7 +78,7 @@ relative_amplitude = [h/amplitude_0 for h in H]
 nu = fluids.prm_dict["kinematic viscosity"]
 g = 1
 Re = np.sqrt(g)/nu
-validation_file_name = f"analytical_solution_Re{Re:.0f}.csv"
+validation_file_name = f"{simulation_path}/analytical_solution_Re{Re:.0f}.csv"
 analytical_values = pd.read_csv(validation_file_name)
 analytical_time = np.array(analytical_values['x'])
 analytical_solution = np.array(-analytical_values[f"Re{Re:.0f}"])
@@ -98,5 +100,5 @@ plt.plot(analytical_time, analytical_solution, "--r", linewidth=2, label=f'Re = 
 plt.xlabel('Time')
 plt.ylabel('Relative amplitude')
 plt.legend(loc="best")
-plt.savefig('figure_' + figure_name + '.png')
+plt.savefig(f'{simulation_path}/figure_' + figure_name + '.png')
 plt.show()
