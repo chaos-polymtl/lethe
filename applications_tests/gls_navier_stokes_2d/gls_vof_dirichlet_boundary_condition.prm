@@ -125,7 +125,7 @@ set number                  = 1
         set id              = 3
         set type            = dirichlet
         subsection dirichlet
-		    set Function expression = if (x>0.5, 1, 0)
+            set Function expression = if (x>0.5, 1, 0)
         end
     end
 end
