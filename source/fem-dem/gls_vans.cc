@@ -86,9 +86,11 @@ GLSVANSSolver<dim>::setup_dofs()
             periodic_direction,
             void_fraction_constraints);
 
-          // Get periodic offset if void fraction method is qcm
+          // Get periodic offset if void fraction method is qcm or spm
           if (this->cfd_dem_simulation_parameters.void_fraction->mode ==
-              Parameters::VoidFractionMode::qcm)
+                Parameters::VoidFractionMode::qcm ||
+              this->cfd_dem_simulation_parameters.void_fraction->mode ==
+                Parameters::VoidFractionMode::spm)
             {
               periodic_offset =
                 get_periodic_offset(boundary_conditions.id[i_bc]);
@@ -390,7 +392,7 @@ template <int dim>
 void
 GLSVANSSolver<dim>::vertices_cell_mapping()
 {
-  // Find all the cells around each vertices
+  // Find all the cells around each vertex
   TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
 
   LetheGridTools::vertices_cell_mapping(this->void_fraction_dof_handler,
@@ -514,7 +516,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
   std::vector<double> phi_vf(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_vf(dofs_per_cell);
 
-  double R_sphere;
+  double R_sphere = 0.0;
   double particles_volume_in_sphere;
   double quadrature_void_fraction;
   double qcm_sphere_diameter =
@@ -1069,11 +1071,9 @@ GLSVANSSolver<dim>::satellite_point_method()
   // Creation of reference sphere and components required for mapping into
   // individual particles
   //-------------------------------------------------------------------------
-  QGauss<dim> quadrature_particle(1);
-
+  QGauss<dim>        quadrature_particle(1);
   Triangulation<dim> particle_triangulation;
-
-  Point<dim> center;
+  Point<dim>         center;
 
   // Reference particle with radius 1
   GridGenerator::hyper_ball(particle_triangulation, center, 1);
@@ -1107,18 +1107,18 @@ GLSVANSSolver<dim>::satellite_point_method()
     quadrature_particle.size() *
     particle_triangulation.n_global_active_cells());
 
-  double k = 0;
+  unsigned int n = 0;
   for (const auto &particle_cell : dof_handler_particle.active_cell_iterators())
     {
       fe_values_particle.reinit(particle_cell);
       for (unsigned int q = 0; q < quadrature_particle.size(); ++q)
         {
-          reference_quadrature_weights[k] =
+          reference_quadrature_weights[n] =
             (M_PI * pow(2.0, dim) / (2.0 * dim)) /
             reference_quadrature_weights.size();
-          reference_quadrature_location[k] =
+          reference_quadrature_location[n] =
             fe_values_particle.quadrature_point(q);
-          k += 1;
+          n++;
         }
     }
   //-------------------------------------------------------------------------
@@ -1134,7 +1134,7 @@ GLSVANSSolver<dim>::satellite_point_method()
 
           double solid_volume_in_cell = 0;
 
-          // Active Neighbors include the current cell as well
+          // Active neighbors include the current cell as well
           auto active_neighbors =
             LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell, cell);
 
@@ -1150,7 +1150,7 @@ GLSVANSSolver<dim>::satellite_point_method()
                   auto particle_properties = particle.get_properties();
                   auto particle_location   = particle.get_location();
 
-                  // Tanslation factor used to translate the reference sphere
+                  // Translation factor used to translate the reference sphere
                   // location and size to those of the particles. Usually, we
                   // take it as the radius of every individual particle. This
                   // makes our method valid for different particle distribution.
@@ -1166,7 +1166,7 @@ GLSVANSSolver<dim>::satellite_point_method()
                     {
                       // For example, in 3D V_particle/V_sphere =
                       // r_particle³/r_sphere³ and since r_sphere is always 1,
-                      // then V_particle/V_sphere = r_particle³. Therefore
+                      // then V_particle/V_sphere = r_particle³. Therefore,
                       // V_particle = r_particle³ * V_sphere.
                       quadrature_particle_weights[l] =
                         pow(translational_factor, dim) *
@@ -1180,9 +1180,52 @@ GLSVANSSolver<dim>::satellite_point_method()
                       // multiplying with the particle's radius. We then
                       // translate by taking the translational vector between
                       // the reference sphere center and the particle's center.
-                      // This translate directly into the translational vector
+                      // This translates directly into the translational vector
                       // being the particle's position as the reference sphere
                       // is always located at (0,0) in 2D or (0,0,0) in 3D.
+                      quadrature_particle_location[l] =
+                        (translational_factor *
+                         reference_quadrature_location[l]) +
+                        particle_location;
+
+                      if (cell->point_inside(quadrature_particle_location[l]))
+                        solid_volume_in_cell += quadrature_particle_weights[l];
+                    }
+                }
+            }
+
+          // Same steps for the periodic neighbors with particle location
+          // correction
+          auto active_periodic_neighbors =
+            LetheGridTools::find_cells_around_cell<dim>(
+              vertices_to_periodic_cell, cell);
+
+          for (unsigned int m = 0; m < active_periodic_neighbors.size(); m++)
+            {
+              const auto pic = particle_handler.particles_in_cell(
+                active_periodic_neighbors[m]);
+              for (auto &particle : pic)
+                {
+                  /*****************************************************************/
+                  auto particle_properties = particle.get_properties();
+                  const Point<dim> particle_location =
+                    (active_periodic_neighbors[m]
+                       ->center()[periodic_direction] >
+                     cell->center()[periodic_direction]) ?
+                      particle.get_location() - periodic_offset :
+                      particle.get_location() + periodic_offset;
+
+                  double translational_factor =
+                    particle_properties[DEM::PropertiesIndex::dp] * 0.5;
+
+                  for (unsigned int l = 0;
+                       l < reference_quadrature_location.size();
+                       ++l)
+                    {
+                      quadrature_particle_weights[l] =
+                        pow(translational_factor, dim) *
+                        reference_quadrature_weights[l];
+
                       quadrature_particle_location[l] =
                         (translational_factor *
                          reference_quadrature_location[l]) +
