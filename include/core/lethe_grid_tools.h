@@ -37,7 +37,7 @@ namespace LetheGridTools
    *
    * @param dof_handler DofHandler of the triangulation on which to create the map
    *
-   * @param vertices_cell_map The map of vertex ids to the set of neighbor cells
+   * @param vertices_cell_map The map container of vertex ids with its set of neighbor
    */
 
   template <int dim>

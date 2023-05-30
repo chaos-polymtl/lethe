@@ -93,7 +93,8 @@ GLSVANSSolver<dim>::setup_dofs()
                 Parameters::VoidFractionMode::spm)
             {
               periodic_offset =
-                get_periodic_offset(boundary_conditions.id[i_bc]);
+                get_periodic_offset_distance(boundary_conditions.id[i_bc]);
+              get_periodic_offset_distance(boundary_conditions.id[i_bc]);
             }
         }
     }
@@ -447,7 +448,9 @@ GLSVANSSolver<dim>::particle_centered_method()
             {
               auto particle_properties = particle.get_properties();
               solid_volume_in_cell +=
-                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                M_PI *
+                Utilities::fixed_power<dim>(
+                  particle_properties[DEM::PropertiesIndex::dp]) /
                 (2.0 * dim);
             }
           double cell_volume = cell->measure();
@@ -656,8 +659,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution] +=
                             M_PI *
-                            pow(particle_properties[DEM::PropertiesIndex::dp],
-                                dim) /
+                            Utilities::fixed_power<dim>(
+                              particle_properties[DEM::PropertiesIndex::dp]) /
                             (2.0 * dim);
                         }
 
@@ -747,8 +750,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution] +=
                             M_PI *
-                            pow(particle_properties[DEM::PropertiesIndex::dp],
-                                dim) /
+                            Utilities::fixed_power<dim>(
+                              particle_properties[DEM::PropertiesIndex::dp]) /
                             (2.0 * dim);
                         }
 
@@ -832,7 +835,9 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                   // The radius is obtained from the volume of sphere based
                   // on R_s = h_omega
                   double reference_sphere_volume =
-                    M_PI * pow((2 * pow(cell->measure(), 1. / dim)), dim) /
+                    M_PI *
+                    Utilities::fixed_power<dim>(
+                      2 * pow(cell->measure(), 1. / dim)) /
                     (2 * dim);
                   R_sphere = 0.5 * pow(2 * dim * reference_sphere_volume / M_PI,
                                        1. / dim);
@@ -872,7 +877,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       const double r_particle =
                         particle_properties[DEM::PropertiesIndex::dp] * 0.5;
                       double single_particle_volume =
-                        M_PI * pow((r_particle * 2), dim) / (2 * dim);
+                        M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
+                        (2 * dim);
 
                       // Distance between particle and quadrature point
                       // centers
@@ -883,8 +889,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       if (distance <= (R_sphere - r_particle))
                         particles_volume_in_sphere +=
                           (M_PI *
-                           pow(particle_properties[DEM::PropertiesIndex::dp],
-                               dim) /
+                           Utilities::fixed_power<dim>(
+                             particle_properties[DEM::PropertiesIndex::dp]) /
                            (2.0 * dim)) *
                           single_particle_volume /
                           particle_properties
@@ -935,7 +941,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       const double r_particle =
                         particle_properties[DEM::PropertiesIndex::dp] * 0.5;
                       double single_particle_volume =
-                        M_PI * pow((r_particle * 2), dim) / (2 * dim);
+                        M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
+                        (2 * dim);
 
                       // Adjust the location of the particle in the cell to
                       // account for the periodicity. If the position of the
@@ -960,8 +967,8 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       if (distance <= (R_sphere - r_particle))
                         particles_volume_in_sphere +=
                           (M_PI *
-                           pow(particle_properties[DEM::PropertiesIndex::dp],
-                               dim) /
+                           Utilities::fixed_power<dim>(
+                             particle_properties[DEM::PropertiesIndex::dp]) /
                            (2.0 * dim)) *
                           single_particle_volume /
                           particle_properties
@@ -1114,7 +1121,7 @@ GLSVANSSolver<dim>::satellite_point_method()
       for (unsigned int q = 0; q < quadrature_particle.size(); ++q)
         {
           reference_quadrature_weights[n] =
-            (M_PI * pow(2.0, dim) / (2.0 * dim)) /
+            (M_PI * Utilities::fixed_power<dim>(2.0) / (2.0 * dim)) /
             reference_quadrature_weights.size();
           reference_quadrature_location[n] =
             fe_values_particle.quadrature_point(q);
@@ -1169,7 +1176,7 @@ GLSVANSSolver<dim>::satellite_point_method()
                       // then V_particle/V_sphere = r_particle³. Therefore,
                       // V_particle = r_particle³ * V_sphere.
                       quadrature_particle_weights[l] =
-                        pow(translational_factor, dim) *
+                        Utilities::fixed_power<dim>(translational_factor) *
                         reference_quadrature_weights[l];
 
                       // Here, we translate the position of the reference sphere
@@ -1223,7 +1230,7 @@ GLSVANSSolver<dim>::satellite_point_method()
                        ++l)
                     {
                       quadrature_particle_weights[l] =
-                        pow(translational_factor, dim) *
+                        Utilities::fixed_power<dim>(translational_factor) *
                         reference_quadrature_weights[l];
 
                       quadrature_particle_location[l] =

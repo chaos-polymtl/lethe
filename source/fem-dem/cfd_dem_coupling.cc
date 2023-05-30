@@ -532,7 +532,8 @@ CFDDEMSolver<dim>::load_balance()
         *parallel_triangulation,
         container_manager.periodic_boundaries_cells_information);
 
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_offset =
+        periodic_boundaries_object.get_periodic_offset_distance();
     }
 
   container_manager.update_cell_neighbors(*parallel_triangulation,
@@ -663,7 +664,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
       // Temporary offset calculation : works only for one set of periodic
       // boundary on an axis.
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_offset =
+        periodic_boundaries_object.get_periodic_offset_distance();
     }
 
   if (dem_parameters.model_parameters.disable_particle_contacts)
@@ -890,9 +892,10 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       contact_build_number++;
 
       // Particles displacement if passing through a periodic boundary
-      periodic_boundaries_object.execute_particles_displacement(
-        this->particle_handler,
-        container_manager.periodic_boundaries_cells_information);
+      if (has_periodic_boundaries)
+        periodic_boundaries_object.execute_particles_displacement(
+          this->particle_handler,
+          container_manager.periodic_boundaries_cells_information);
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
