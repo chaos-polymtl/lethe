@@ -5,11 +5,11 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method         	= bdf1
-  set time end       	= 0.25
-  set time step      	= 0.05
-  set output name    	= vof_periodic_boundary_condition
-  set output frequency 	= 0  
+  set method           = bdf1
+  set time end         = 0.25
+  set time step        = 0.05
+  set output name      = vof_periodic_boundary_condition
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -33,12 +33,11 @@ subsection initial conditions
 
   subsection VOF
     set Function expression = if (y<0.5 , 1, 0)
-    
+
     subsection projection step
       set enable           = true
       set diffusion factor = 1
     end
-    
   end
 end
 
@@ -90,9 +89,9 @@ subsection VOF
   end
 
   subsection phase filtration
-    set type  		= tanh
-    set verbosity 	= quiet
-    set beta 		= 20
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 20
   end
 end
 
