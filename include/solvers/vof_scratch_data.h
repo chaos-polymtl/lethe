@@ -76,10 +76,10 @@ public:
    *
    */
   VOFScratchData(const PhysicalPropertiesManager properties_manager,
-                 const FiniteElement<dim> &      fe_vof,
-                 const Quadrature<dim> &         quadrature,
-                 const Mapping<dim> &            mapping,
-                 const FiniteElement<dim> &      fe_fd)
+                 const FiniteElement<dim>       &fe_vof,
+                 const Quadrature<dim>          &quadrature,
+                 const Mapping<dim>             &mapping,
+                 const FiniteElement<dim>       &fe_fd)
     : properties_manager(properties_manager)
     , fe_values_vof(mapping,
                     fe_vof,
@@ -146,7 +146,7 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages)
   {
@@ -168,7 +168,7 @@ public:
                                           this->phase_laplacians);
 
 
-    // Gather previous fs values
+    // Gather previous vof values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         fe_values_vof.get_function_values(previous_solutions[p],
@@ -212,7 +212,8 @@ public:
   template <typename VectorType>
   void
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                  const VectorType &current_solution)
+                  const VectorType              &current_solution,
+                  const std::vector<VectorType> &previous_solutions)
   {
     fe_values_fd.reinit(cell);
 
@@ -220,6 +221,12 @@ public:
                                                     velocity_values);
     fe_values_fd[velocities_fd].get_function_gradients(
       current_solution, velocity_gradient_values);
+
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        fe_values_fd[velocities_fd].get_function_values(
+          previous_solutions[p], this->previous_velocity_values[p]);
+      }
   }
 
   /** @brief Calculates the physical properties. This method calculates the physical properties
@@ -267,8 +274,9 @@ public:
 
   FEValuesExtractors::Vector velocities_fd;
   // This FEValues must mandatorily be instantiated for the velocity
-  std::vector<Tensor<1, dim>> velocity_values;
-  std::vector<Tensor<2, dim>> velocity_gradient_values;
+  std::vector<Tensor<1, dim>>              velocity_values;
+  std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
+  std::vector<Tensor<2, dim>>              velocity_gradient_values;
 };
 
 #endif

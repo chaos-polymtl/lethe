@@ -8,14 +8,14 @@
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -159,7 +159,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -169,7 +169,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -284,11 +284,11 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -306,11 +306,17 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
 
+  // Extrapolate velocity to t+dt using the BDF scheme
+  std::vector<double> time_vector = simulation_control->get_simulation_times();
+  bdf_extrapolate(time_vector,
+                  scratch_data.previous_velocity_values,
+                  number_of_previous_solutions(method),
+                  scratch_data.velocity_values);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       phase_value[0] = scratch_data.present_phase_values[q];
-
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_value[p + 1] = scratch_data.previous_phase_values[p][q];
@@ -344,11 +350,11 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -364,6 +370,13 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   // Vector for the BDF coefficients
   Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
+
+  // Extrapolate velocity to t+dt using the BDF scheme
+  std::vector<double> time_vector = simulation_control->get_simulation_times();
+  bdf_extrapolate(time_vector,
+                  scratch_data.previous_velocity_values,
+                  number_of_previous_solutions(method),
+                  scratch_data.velocity_values);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)

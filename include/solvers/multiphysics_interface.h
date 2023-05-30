@@ -59,7 +59,7 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control,
-    ConditionalOStream &               p_pcout);
+    ConditionalOStream                &p_pcout);
 
   std::vector<PhysicsID>
   get_active_physics()
@@ -734,6 +734,25 @@ public:
                            physics_id) != active_physics.end()),
                 ExcInternalError());
     physics_previous_solutions[physics_id] = previous_solutions_vector;
+  }
+
+  /**
+   * @brief Sets the pointer to the vector of previous solutions of the block physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler
+   *
+   * @param previous_solutions_vector The pointer to the vector of previous solutions
+   */
+  void
+  set_block_previous_solutions(
+    const PhysicsID                                  physics_id,
+    std::vector<TrilinosWrappers::MPI::BlockVector> *previous_solutions_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    block_physics_previous_solutions[physics_id] = previous_solutions_vector;
   }
 
   /**

@@ -18,6 +18,9 @@ VOFScratchData<dim>::allocate()
   this->velocities_fd.first_vector_component = 0;
   // Velocity
   this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+    maximum_number_of_previous_solutions(),
+    std::vector<Tensor<1, dim>>(this->n_q_points));
   this->velocity_gradient_values =
     std::vector<Tensor<2, dim>>(this->n_q_points);
 
@@ -58,16 +61,14 @@ VOFScratchData<dim>::calculate_physical_properties()
 {
   switch (properties_manager.get_number_of_fluids())
     {
-      case 1:
-        {
+        case 1: {
           // Cannot proceed a two-phase flow simulations if only one fluid is
           // defined. This error must have been thrown a long time ago by the
           // code, it is repeated here for clarity.
           throw std::runtime_error(
             "Cannot run VOF simulations with only 1 fluid, review the Physical Properties section of the .prm");
         }
-      case 2:
-        {
+        case 2: {
           const auto density_models = properties_manager.get_density_vector();
 
           density_models[0]->vector_value(fields, density_0);

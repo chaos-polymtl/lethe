@@ -405,6 +405,20 @@ public:
     assembly_method = method;
   }
 
+  std::vector<double>
+  get_simulation_times() const
+  {
+    // Create a vector of the previous times
+    std::vector<double> times(n_previous_time_steps + 1);
+    for (unsigned int i = 0; i < n_previous_time_steps + 1; ++i)
+      {
+        times[i] = current_time;
+        for (unsigned int j = 0; j < i; ++j)
+          times[i] -= time_step_vector[j];
+      }
+    return times;
+  }
+
 
 
   void

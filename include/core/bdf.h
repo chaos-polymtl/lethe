@@ -117,5 +117,60 @@ number_of_previous_solutions(
     return 0;
 }
 
+/**
+ * @brief Extrapolates vector of solution to time_vector[0] using previous solution times and previous solution
+ *
+ * @tparam The type of the variable being extrapolated (e.g. double, Tensor<1,dim>)
+ * @param time_vector The vector of times. The solution will be extrapolated to time 0. It should be of size number_of_previous_solutions+1
+ * @param solution_vector The vector of solutions.The solution will be extrapolated to index 0. It should be at least of size number_of_previous_solutions
+ * @param number_of_previous_solution The number of previous solutions to use to extrapolate
+ * @param extrapolated_solution The vector of extrapolated solutions
+ */
+
+template <typename DataType>
+inline void
+bdf_extrapolate(const std::vector<double>                &time_vector,
+                const std::vector<std::vector<DataType>> &solution_vector,
+                const unsigned int     number_of_previous_solution,
+                std::vector<DataType> &extrapolated_solution)
+{
+  // If only one previous solution is used,  we don't make a Lagrange
+  // polynomial but use the previous value
+  if (number_of_previous_solution == 1)
+    {
+      for (unsigned int q = 0; q < extrapolated_solution.size(); ++q)
+        extrapolated_solution[q] = solution_vector[0][q];
+      return;
+    }
+
+  // Otherwise we extrapolate with a Lagrange polynomial
+  for (unsigned int q = 0; q < extrapolated_solution.size(); ++q)
+    {
+      // Set extrapolated solution to zero
+      extrapolated_solution[q] = 0;
+
+      // For all the previous solutions which we will use to extrapolate
+      for (unsigned int p = 0; p < number_of_previous_solution; ++p)
+        {
+          // Factor is the weight of the previous solution fixed by the Lagrange
+          // Polynomial
+          double factor = 1;
+          for (unsigned int k = 0; k < number_of_previous_solution; ++k)
+            {
+              if (p != k)
+                {
+                  // The time vector also contains the time of the solution to
+                  // be extrapoled to, hence the +1
+                  factor *= (time_vector[0] - time_vector[k + 1]) /
+                            (time_vector[p + 1] - time_vector[k + 1]);
+                }
+            }
+          // Calculate the contribution of this time step to the extrapolated
+          // solution
+          extrapolated_solution[q] += solution_vector[p][q] * factor;
+        }
+    }
+}
+
 
 #endif
