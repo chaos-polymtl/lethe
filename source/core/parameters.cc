@@ -826,10 +826,16 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("cahn hilliard order",
-                        "1",
-                        Patterns::Integer(),
-                        "interpolation order cahn hilliard");
+      prm.declare_entry(
+        "phase ch order",
+        "1",
+        Patterns::Integer(),
+        "interpolation order phase parameter in the Cahn-Hilliard equations");
+      prm.declare_entry(
+        "potential ch order",
+        "1",
+        Patterns::Integer(),
+        "interpolation order chemical potential in the Cahn-Hilliard equations");
       prm.declare_entry("qmapping all",
                         "false",
                         Patterns::Bool(),
@@ -849,7 +855,8 @@ namespace Parameters
       temperature_order   = prm.get_integer("temperature order");
       tracer_order        = prm.get_integer("tracer order");
       VOF_order           = prm.get_integer("VOF order");
-      cahn_hilliard_order = prm.get_integer("cahn hilliard order");
+      phase_ch_order      = prm.get_integer("phase ch order");
+      potential_order     = prm.get_integer("potential ch order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();

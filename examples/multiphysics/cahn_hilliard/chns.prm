@@ -23,7 +23,8 @@ end
 # Cahn-Hilliard order
 #---------------------------------------------------
 subsection FEM
-   set cahn hilliard order = 1
+   set phase ch order  = 1
+   set potential ch order = 1
 end
 
 #---------------------------------------------------

@@ -61,7 +61,6 @@ namespace BoundaryConditions
     dirichlet_phase_order,
     dirichlet_potential,
     angle_of_contact,
-
   };
 
   /**

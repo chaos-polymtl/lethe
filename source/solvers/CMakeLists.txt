@@ -2,6 +2,9 @@ add_library(lethe-solvers
   # Sources
   analytical_solutions.cc
   auxiliary_physics.cc
+  cahn_hilliard.cc
+  cahn_hilliard_assemblers.cc
+  cahn_hilliard_scratch_data.cc
   flow_control.cc
   gd_navier_stokes.cc
   gls_navier_stokes.cc
@@ -29,9 +32,6 @@ add_library(lethe-solvers
   vof_assemblers.cc
   vof_filter.cc
   vof_scratch_data.cc
-  cahn_hilliard.cc
-  cahn_hilliard_assemblers.cc
-  cahn_hilliard_scratch_data.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h

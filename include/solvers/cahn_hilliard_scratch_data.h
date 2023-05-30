@@ -13,7 +13,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Scratch data for the cahn hilliard auxiliary physics
+ * Scratch data for the CahnHilliard auxiliary physics
  */
 
 #include <core/multiphysics.h>
@@ -258,7 +258,8 @@ public:
   //  void
   //  calculate_physical_properties();
 
-  // Physical properties //Mettre les propriétés de Cahn-Hilliard
+  // Physical properties
+  // TODO ADD Cahn-Hilliard properties
   // (W,M,D,epsilon)
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;

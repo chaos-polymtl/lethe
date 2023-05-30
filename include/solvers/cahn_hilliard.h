@@ -15,14 +15,13 @@
 
  *
  * Implementation of the Cahn-Hilliard equations as an auxiliary physics.
- * Equation solved:
+ * Equations solved:
  * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
  * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
  * with Phi the phase field parameter (or phase order), eta the chemical
  potential
  * M the mobility function and epsilon the interface thickness
  *
- * Author: Pierre Laurentin, Polytechnique Montreal, 2023-
  */
 
 #ifndef cahn_hilliard_h
@@ -72,9 +71,9 @@ public:
       {
         // for simplex meshes
         const FE_SimplexP<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
+          simulation_parameters.fem_parameters.phase_ch_order);
         const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
+          simulation_parameters.fem_parameters.potential_order);
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
@@ -85,16 +84,19 @@ public:
         // Usual case, for quad/hex meshes
 
         const FE_Q<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
+          simulation_parameters.fem_parameters.phase_ch_order);
         const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
+          simulation_parameters.fem_parameters.potential_order);
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping = std::make_shared<MappingQ<dim>>(
-          simulation_parameters.fem_parameters.cahn_hilliard_order,
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order),
           simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature = std::make_shared<QGauss<dim>>(
-          simulation_parameters.fem_parameters.cahn_hilliard_order + 1);
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order) +
+          1);
       }
 
     // Allocate solution transfer

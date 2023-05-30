@@ -65,7 +65,7 @@ public:
 /**
  * @brief Class that assembles the core of the Cahn-Hilliard equation.
  * This class assembles the weak form of:
- * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta);
+ * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
  * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
  * with an SUPG stabilization
  *
@@ -101,7 +101,6 @@ public:
   virtual void
   assemble_rhs() override;
 
-  const bool DCDD = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
