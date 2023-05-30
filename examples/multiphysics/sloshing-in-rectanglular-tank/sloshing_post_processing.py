@@ -95,7 +95,7 @@ figure_name = output_path[9:-1]
 # Plot heights
 fig0 = plt.figure(figsize=(19, 12))
 ax0 = fig0.add_subplot(111)
-plt.plot(time_list, relative_amplitude, "k", linewidth=2, label=f'Re = {Re:.0f} - Lethe')
+plt.plot(time_list, relative_amplitude, "sk", mfc="none", linewidth=2, label=f'Re = {Re:.0f} - Lethe')
 plt.plot(analytical_time, analytical_solution, "--r", linewidth=2, label=f'Re = {Re:.0f} - Analytical')
 plt.xlabel('Time')
 plt.ylabel('Relative amplitude')

@@ -5,13 +5,14 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set time end         = 50
   set time step        = 0.01
   set adapt            = true
-  set max cfl          = 0.5
+  set max cfl          = 0.25
   set output name      = sloshing-in-rectangular-tank_Re20
   set output path      = ./output_Re20/
+  set output frequency = 1
 end
 
 #---------------------------------------------------
@@ -50,7 +51,7 @@ subsection initial conditions
   end
 
   subsection VOF
-    set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.005,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.005,0))
+    set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
     
     subsection projection step
       set enable           = true
@@ -68,7 +69,7 @@ subsection physical properties
   set number of fluids = 2
   subsection fluid 0
     set density             = 0.001
-    set kinematic viscosity = 0.000001
+    set kinematic viscosity = 0.001
   end
   subsection fluid 1
     set density             = 1
@@ -95,7 +96,7 @@ subsection mesh adaptation
   set type                     = kelly
   set variable                 = phase
   set fraction type            = fraction
-  set max refinement level     = 9
+  set max refinement level     = 10
   set min refinement level     = 5
   set frequency                = 1
   set fraction refinement      = 0.99
@@ -162,7 +163,7 @@ end
 
 subsection non-linear solver
   set verbosity      = verbose
-  set tolerance      = 1e-6
+  set tolerance      = 1e-8
   set max iterations = 20
 end
 
@@ -176,7 +177,7 @@ subsection linear solver
   set max krylov vectors                    = 500
   set max iters                             = 1000
   set relative residual                     = 1e-5
-  set minimum residual                      = 1e-7
+  set minimum residual                      = 1e-9
   set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00

@@ -5,13 +5,14 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set time end         = 50
   set time step        = 0.01
   set adapt            = true
   set max cfl          = 0.5
   set output name      = sloshing-in-rectangular-tank_Re2
   set output path      = ./output_Re2/
+  set output frequency = 2
 end
 
 #---------------------------------------------------
