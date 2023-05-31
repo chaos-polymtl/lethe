@@ -175,26 +175,26 @@ private:
                 for (unsigned int face_id = 0; face_id < cell->n_faces();
                      ++face_id)
                   {
-                  unsigned int face_boundary_id =
-                    cell->face(face_id)->boundary_id();
+                    unsigned int face_boundary_id =
+                      cell->face(face_id)->boundary_id();
 
-                  // Check if face is on the boundary, if so, get
-                  // the periodic offset distance for one pair of periodic
-                  // faces only since periodic boundaries are aligned with the
-                  // direction and only axis are currently allowed
-                  if (face_boundary_id == boundary_id)
-                    {
-                      Point<dim> face_center = cell->face(face_id)->center();
-                      auto periodic_cell     = cell->periodic_neighbor(face_id);
-                      unsigned int periodic_face_id =
-                        cell->periodic_neighbor_face_no(face_id);
-                      Point<dim> periodic_face_center =
-                        periodic_cell->face(periodic_face_id)->center();
+                    // Check if face is on the boundary, if so, get
+                    // the periodic offset distance for one pair of periodic
+                    // faces only since periodic boundaries are aligned with the
+                    // direction and only axis are currently allowed
+                    if (face_boundary_id == boundary_id)
+                      {
+                        Point<dim> face_center = cell->face(face_id)->center();
+                        auto periodic_cell = cell->periodic_neighbor(face_id);
+                        unsigned int periodic_face_id =
+                          cell->periodic_neighbor_face_no(face_id);
+                        Point<dim> periodic_face_center =
+                          periodic_cell->face(periodic_face_id)->center();
 
-                      offset = periodic_face_center - face_center;
+                        offset = periodic_face_center - face_center;
 
-                      return offset;
-                    }
+                        return offset;
+                      }
                   }
               }
           }
