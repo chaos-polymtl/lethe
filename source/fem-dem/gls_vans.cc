@@ -640,8 +640,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         {
                           // Get the radius by the volume of sphere which is
                           // equal to the volume of cell
-                          double cell_measure = active_neighbors[n]->measure();
-                          r_sphere            = radius_sphere_volume_cell(
+                          r_sphere = radius_sphere_volume_cell(
                             active_neighbors[n]->measure());
                         }
                       else
