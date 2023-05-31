@@ -3,7 +3,6 @@
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
 #include <solvers/vof.h>
-#include <solvers/cahn_hilliard.h>
 
 #include <deal.II/base/exceptions.h>
 #define _unused(x) ((void)(x))

@@ -32,9 +32,6 @@ add_library(lethe-solvers
   vof_assemblers.cc
   vof_filter.cc
   vof_scratch_data.cc
-  cahn_hilliard.cc
-  cahn_hilliard_assemblers.cc
-  cahn_hilliard_scratch_data.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h

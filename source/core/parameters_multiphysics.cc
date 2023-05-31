@@ -92,6 +92,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
   prm.leave_subsection();
 
   vof_parameters.declare_parameters(prm);
+  ch_parameters.declare_parameters(prm);
 }
 
 void
@@ -113,6 +114,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
+  ch_parameters.parse_parameters(prm);
 }
 
 void
@@ -576,3 +578,64 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
   }
   prm.leave_subsection();
 }
+
+void
+Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("cahn hilliard");
+  {
+
+    prm.declare_entry("well height",
+                      "1",
+                      Patterns::Double(),
+                      "Potential height well for the Cahn-Hilliard equations.");
+
+    prm.declare_entry(
+      "epsilon",
+      "1",
+      Patterns::Double(),
+      "Interface thickness related parameter for the Cahn-Hilliard equations");
+
+    prm.declare_entry("mobility model",
+                      "constant",
+                      Patterns::Selection("constant|quadratic|quartic"),
+                      "Mobility model for the Cahn-Hilliard equations"
+                      "Choices are <constant|quadratic|quartic>.");
+
+    prm.declare_entry("mobility constant",
+                      "1",
+                      Patterns::Double(),
+                      "Mobility constant for the Cahn-Hilliard equations");
+
+  }
+  prm.leave_subsection();
+}
+
+void
+Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
+{
+  prm.enter_subsection("cahn hilliard");
+  {
+
+    well_height = prm.get_double("well height");
+    epsilon = prm.get_double("epsilon");
+
+    const std::string op = prm.get("mobility model");
+    if (op == "constant")
+      mobility_model = Parameters::MobilityModel::constant;
+    else if (op == "quadratic")
+          mobility_model =  Parameters::MobilityModel::quadratic;
+    else if (op == "quartic")
+      mobility_model =  Parameters::MobilityModel::quartic;
+
+    mobility_constant = prm.get_double("mobility constant");
+
+  }
+  prm.leave_subsection();
+}
+
+
+
+
+
+

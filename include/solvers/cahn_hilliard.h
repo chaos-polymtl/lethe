@@ -32,9 +32,9 @@
 #include <core/simulation_control.h>
 
 #include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
 #include <solvers/cahn_hilliard_assemblers.h>
 #include <solvers/cahn_hilliard_scratch_data.h>
+#include <solvers/multiphysics_interface.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -56,10 +56,10 @@ class CahnHilliard : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   CahnHilliard<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-              const SimulationParameters<dim> &p_simulation_parameters,
-              std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                 p_triangulation,
-              std::shared_ptr<SimulationControl> p_simulation_control)
+                    const SimulationParameters<dim> &p_simulation_parameters,
+                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                                       p_triangulation,
+                    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -72,24 +72,40 @@ public:
       {
         // for simplex meshes
         const FE_SimplexP<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
+          simulation_parameters.fem_parameters.phase_ch_order);
         const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
-        fe = std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+          simulation_parameters.fem_parameters.potential_order);
+        fe =
+          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
-        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                                                                        simulation_parameters.fem_parameters.potential_order) +
+                                                               1);
+          face_quadrature =
+            std::make_shared<QGaussSimplex<dim - 1>>(std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                                                            simulation_parameters.fem_parameters.potential_order) +
+                                                   1);;
       }
     else
       {
         // Usual case, for quad/hex meshes
         const FE_Q<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
+          simulation_parameters.fem_parameters.phase_ch_order);
         const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.cahn_hilliard_order);
-        fe = std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+          simulation_parameters.fem_parameters.potential_order);
+        fe =
+          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping = std::make_shared<MappingQ<dim>>(
-          simulation_parameters.fem_parameters.cahn_hilliard_order, simulation_parameters.fem_parameters.qmapping_all);
-        cell_quadrature = std::make_shared<QGauss<dim>>( simulation_parameters.fem_parameters.cahn_hilliard_order + 1);
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order),
+          simulation_parameters.fem_parameters.qmapping_all);
+        cell_quadrature = std::make_shared<QGauss<dim>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order) +
+          1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                                                                     simulation_parameters.fem_parameters.potential_order) +
+                                                            1);
       }
 
     // Allocate solution transfer
@@ -122,7 +138,7 @@ public:
   /**
    * @brief Calculates the L2 error of the solution
    */
-  std::pair<double,double>
+  std::pair<double, double>
   calculate_L2_error();
 
 
@@ -298,7 +314,7 @@ private:
   virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    CahnHilliardScratchData<dim> &                     scratch_data,
+    CahnHilliardScratchData<dim> &                        scratch_data,
     StabilizedMethodsCopyData &                           copy_data);
 
   /**
@@ -317,7 +333,7 @@ private:
   virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    CahnHilliardScratchData<dim> &                     scratch_data,
+    CahnHilliardScratchData<dim> &                        scratch_data,
     StabilizedMethodsCopyData &                           copy_data);
 
   /**
@@ -357,6 +373,7 @@ private:
   // Mapping and Quadrature
   std::shared_ptr<Mapping<dim>>    mapping;
   std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
 
   ConvergenceTable error_table;

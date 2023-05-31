@@ -191,6 +191,48 @@ calculate_point_property(const double phase,
   return property_eq;
 }
 
+/**
+ * @brief Used in the calculate_properties_ch to retrieve the sign of the phase parameter
+ * @tparam T
+ * @param val
+ * @return an integer -1 or 1 depending of the sign of the phase parameter
+ */
+template <typename T>
+int
+sgn(T val)
+{
+  return (T(0) < val) - (val < T(0));
+}
+
+/**
+ * @brief Used in multiphasic simulations to calculates the equivalent properties for a given phase given by the Cahn-Hilliard equations. Method called in quadrature points loop
+ *
+ * @param phase Phase value for the given quadrature point
+ *
+ * @param property0 Property value for the fluid with index 0 (fluid for phase = -1)
+ *
+ * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)
+ */
+inline double
+calculate_point_property_ch(const double phase_ch,
+                            const double property0,
+                            const double property1)
+{
+  double phase = phase_ch;
+
+  if (std::abs(phase_ch) > 1)
+    {
+      phase = sgn(phase_ch);
+    }
+
+  double property_avg  = (property0 + property1) / 2.0;
+  double property_diff = (property0 - property1) / 2.0;
+
+  double property_eq = phase * property_diff + property_avg;
+
+  return property_eq;
+}
+
 
 /**
  * @brief Reads a file that was built by writing a deal.II TableHandler class, and refills a TableHandler with the data in the file.

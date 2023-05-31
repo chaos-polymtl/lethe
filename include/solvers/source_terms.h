@@ -50,7 +50,7 @@ namespace SourceTerms
       : navier_stokes_source(dim + 1)
       , heat_transfer_source(1)
       , tracer_source(1)
-      , cahn_hilliard_source(1)
+      , cahn_hilliard_source(2)
     {}
 
     virtual void
@@ -74,7 +74,7 @@ namespace SourceTerms
     // Tracer source
     Functions::ParsedFunction<dim> tracer_source;
 
-    //Cahn-Hilliard source
+    // Cahn-Hilliard source
     Functions::ParsedFunction<dim> cahn_hilliard_source;
 
   protected:
@@ -112,7 +112,7 @@ namespace SourceTerms
 
     prm.enter_subsection("cahn hilliard");
     tracer_source.declare_parameters(prm);
-    prm.set("Function expression", "0");
+    prm.set("Function expression", "0; 0;");
     prm.leave_subsection();
 
 

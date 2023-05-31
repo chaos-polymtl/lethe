@@ -80,7 +80,7 @@ namespace Parameters
   {
   public:
     InitialConditions()
-      : uvwp(dim + 1),cahn_hilliard(2)
+      : uvwp(dim + 1)
     {}
 
     InitialConditionType type;
@@ -108,7 +108,8 @@ namespace Parameters
     Ramp ramp;
 
     // Cahn-Hilliard
-    Functions::ParsedFunction<dim> cahn_hilliard;
+    Functions::ParsedFunction<dim> cahn_hilliard =
+      Functions::ParsedFunction<dim>(2);
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -169,12 +170,11 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.enter_subsection("cahn hilliard");
-      cahn_hilliard.declare_parameters(prm,2);
+      cahn_hilliard.declare_parameters(prm, 2);
       prm.set("Function expression", "0; 0;");
       prm.leave_subsection();
 
       ramp.declare_parameters(prm);
-
     }
     prm.leave_subsection();
   }
