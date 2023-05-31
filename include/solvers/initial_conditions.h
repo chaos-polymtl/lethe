@@ -80,7 +80,8 @@ namespace Parameters
   {
   public:
     InitialConditions()
-      : uvwp(dim + 1),cahn_hilliard(2)
+      : uvwp(dim + 1)
+      , cahn_hilliard(2)
     {}
 
     InitialConditionType type;
