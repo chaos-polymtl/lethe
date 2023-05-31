@@ -12,7 +12,8 @@ subsection simulation control
   set max cfl          = 0.25
   set output name      = sloshing-in-rectangular-tank_Re200
   set output path      = ./output_Re200/
-  set output frequency = 1
+  set output frequency = 2
+  set adaptative time step scaling = 1.025
 end
 
 #---------------------------------------------------
@@ -73,7 +74,7 @@ subsection physical properties
   end
   subsection fluid 1
     set density             = 1
-    set kinematic viscosity = 0.05
+    set kinematic viscosity = 0.005
   end
 end
 
