@@ -94,7 +94,6 @@ GLSVANSSolver<dim>::setup_dofs()
             {
               periodic_offset =
                 get_periodic_offset_distance(boundary_conditions.id[i_bc]);
-              get_periodic_offset_distance(boundary_conditions.id[i_bc]);
             }
         }
     }
@@ -537,7 +536,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
   // Lambda functions for calculating the radius of the reference sphere
   // Calculate the radius by the volume (area in 2D) of sphere:
   // r = (2*dim*V/pi)^(1/dim) / 2
-  auto radius_sphere_volume_cell = [](double cell_measure) {
+  auto radius_sphere_volume_cell = [](auto cell_measure) {
     return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
   };
 
@@ -633,7 +632,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                   // Define the radius of the reference sphere to be used as the
                   // averaging volume for the QCM, if the reference sphere
                   // diameter was given by the user the value is already defined
-                  // since is it not dependent on any measure of the active cell
+                  // since it is not dependent on any measure of the active cell
                   if (calculate_reference_sphere_radius)
                     {
                       if (this->cfd_dem_simulation_parameters.void_fraction
@@ -641,15 +640,16 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         {
                           // Get the radius by the volume of sphere which is
                           // equal to the volume of cell
-                          r_sphere = radius_sphere_volume_cell(
+                          double cell_measure = active_neighbors[n]->measure();
+                          r_sphere            = radius_sphere_volume_cell(
                             active_neighbors[n]->measure());
                         }
                       else
                         {
                           // The radius is obtained from the volume of sphere
                           // based on R_s = h_omega
-                          r_sphere = radius_h_omega(
-                            active_periodic_neighbors[n]->measure());
+                          r_sphere =
+                            radius_h_omega(active_neighbors[n]->measure());
                         }
                     }
 
