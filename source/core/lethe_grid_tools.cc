@@ -79,29 +79,29 @@ LetheGridTools::vertices_cell_mapping_with_periodic_boundaries(
               // Current vertex index
               unsigned int v_index = cell->vertex_index(i);
 
-              // Check if the vertex has not already been explored and continue
-              // to the next vertex of the current cell, meaning the
-              // periodic neighbor cells has been already mapped with the vertex
-              if (explored_vertices.find(v_index) != explored_vertices.end())
+              // Try to insert the current vertex to the explored vertices list,
+              // if it was already explored, it returns a pair with false value,
+              // and we continue to the next vertex of the current cell, meaning
+              // the periodic neighbor cells has been already mapped with the
+              // vertex
+              if (!explored_vertices.insert(v_index).second)
                 continue;
-
-              explored_vertices.insert(v_index);
 
               // Set of neighbor cells at periodic vertex
               std::set<typename DoFHandler<dim>::active_cell_iterator>
                 periodic_neighbor_cells;
 
-              // Check if vertex is at periodic boundary, should be a key if so
-              if (vertex_to_coinciding_vertex_group.find(v_index) !=
+              // Get the iterator of the coinciding vertex key to the current
+              // vertex. If the iterator is the end of map, there's no vertex at
+              // periodic boundary.
+              auto coinciding_vertex_key_iterator =
+                vertex_to_coinciding_vertex_group.find(v_index);
+              if (coinciding_vertex_key_iterator !=
                   vertex_to_coinciding_vertex_group.end())
                 {
-                  // Get the coinciding vertex key to the current vertex
-                  unsigned int coinciding_vertex_key =
-                    vertex_to_coinciding_vertex_group.at(v_index);
-
                   // Store the neighbor cells in list
-                  for (auto coinciding_vertex :
-                       coinciding_vertex_groups.at(coinciding_vertex_key))
+                  for (auto coinciding_vertex : coinciding_vertex_groups.at(
+                         coinciding_vertex_key_iterator->second))
                     {
                       // Skip the current vertex since we only want cells linked
                       // to the periodic vertices

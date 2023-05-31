@@ -35,7 +35,7 @@ GLSVANSSolver<dim>::GLSVANSSolver(CFDDEMSimulationParameters<dim> &nsparam)
           if (n_pbc++ > 1)
             {
               throw std::runtime_error(
-                "More than one periodic boundary condition is not supported with GLS VANS solver.");
+                "GLS VANS solver does not support more than one periodic boundary condition.");
             }
           else
             {
@@ -519,20 +519,37 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
   std::vector<double> phi_vf(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_vf(dofs_per_cell);
 
-  double R_sphere = 0.0;
+  double r_sphere = 0.0;
   double particles_volume_in_sphere;
   double quadrature_void_fraction;
   double qcm_sphere_diameter =
     this->cfd_dem_simulation_parameters.void_fraction->qcm_sphere_diameter;
 
-  // Check the way to handle the reference sphere diameter
   // If the reference sphere diameter is user defined, the radius is calculated
-  // from it, otherwise, the value must be calculated while loop over the cells
+  // from it, otherwise, the value must be calculated while looping over the
+  // cells.
   bool calculate_reference_sphere_radius = false;
   if (qcm_sphere_diameter > 1e-16)
-    R_sphere = qcm_sphere_diameter / 2.0;
+    r_sphere = qcm_sphere_diameter / 2.0;
   else
     calculate_reference_sphere_radius = true;
+
+  // Lambda functions for calculating the radius of the reference sphere
+  // Calculate the radius by the volume (area in 2D) of sphere:
+  // r = (2*dim*V/pi)^(1/dim) / 2
+  auto radius_sphere_volume_cell = [](double cell_measure) {
+    return 0.5 * pow(2.0 * dim * cell_measure / M_PI, 1.0 / dim);
+  };
+
+  // Calculate the radius is obtained from the volume of sphere based on
+  // R_s = h_omega:
+  // V_s = pi*(2*V_c^(1/dim))^(dim)/(2*dim) = pi*2^(dim)*V_c/(2*dim)
+  auto radius_h_omega = [&radius_sphere_volume_cell](double cell_measure) {
+    double reference_sphere_volume =
+      M_PI * Utilities::fixed_power<dim>(2.0) * cell_measure / (2.0 * dim);
+
+    return radius_sphere_volume_cell(reference_sphere_volume);
+  };
 
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
@@ -624,24 +641,15 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         {
                           // Get the radius by the volume of sphere which is
                           // equal to the volume of cell
-                          R_sphere =
-                            0.5 *
-                            pow(2 * dim * active_neighbors[n]->measure() / M_PI,
-                                1. / dim);
+                          r_sphere = radius_sphere_volume_cell(
+                            active_neighbors[n]->measure());
                         }
                       else
                         {
                           // The radius is obtained from the volume of sphere
                           // based on R_s = h_omega
-                          double reference_sphere_volume =
-                            M_PI *
-                            pow((2 *
-                                 pow(active_neighbors[n]->measure(), 1. / dim)),
-                                dim) /
-                            (2 * dim);
-                          R_sphere =
-                            0.5 * pow(2 * dim * reference_sphere_volume / M_PI,
-                                      1. / dim);
+                          r_sphere = radius_h_omega(
+                            active_periodic_neighbors[n]->measure());
                         }
                     }
 
@@ -654,7 +662,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                           neighbor_quadrature_point_location[n][k]);
 
                       // Particle completely in reference sphere
-                      if (neighbor_distance <= (R_sphere - r_particle))
+                      if (neighbor_distance <= (r_sphere - r_particle))
                         {
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution] +=
@@ -668,20 +676,20 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       // sphere. Do absolutely nothing.
 
                       // Particle partially in reference sphere
-                      else if ((neighbor_distance > (R_sphere - r_particle)) &&
-                               (neighbor_distance < (R_sphere + r_particle)))
+                      else if ((neighbor_distance > (r_sphere - r_particle)) &&
+                               (neighbor_distance < (r_sphere + r_particle)))
                         {
                           if constexpr (dim == 2)
                             particle_properties
                               [DEM::PropertiesIndex::volumetric_contribution] +=
                               particle_circle_intersection_2d(
-                                r_particle, R_sphere, neighbor_distance);
+                                r_particle, r_sphere, neighbor_distance);
 
                           else if constexpr (dim == 3)
                             particle_properties
                               [DEM::PropertiesIndex::volumetric_contribution] +=
                               particle_sphere_intersection_3d(
-                                r_particle, R_sphere, neighbor_distance);
+                                r_particle, r_sphere, neighbor_distance);
                         }
                     }
                 }
@@ -700,27 +708,15 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         {
                           // Get the radius by the volume of sphere which is
                           // equal to the volume of cell
-                          R_sphere =
-                            0.5 *
-                            pow(2 * dim *
-                                  active_periodic_neighbors[n]->measure() /
-                                  M_PI,
-                                1. / dim);
+                          r_sphere = radius_sphere_volume_cell(
+                            active_periodic_neighbors[n]->measure());
                         }
                       else
                         {
                           // The radius is obtained from the volume of sphere
                           // based on R_s = h_omega
-                          double reference_sphere_volume =
-                            M_PI *
-                            pow((2 *
-                                 pow(active_periodic_neighbors[n]->measure(),
-                                     1. / dim)),
-                                dim) /
-                            (2 * dim);
-                          R_sphere =
-                            0.5 * pow(2 * dim * reference_sphere_volume / M_PI,
-                                      1. / dim);
+                          r_sphere = radius_h_omega(
+                            active_periodic_neighbors[n]->measure());
                         }
                     }
 
@@ -745,7 +741,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                           periodic_neighbor_quadrature_point_location[n][k]);
 
                       // Particle completely in reference sphere
-                      if (periodic_neighbor_distance <= (R_sphere - r_particle))
+                      if (periodic_neighbor_distance <= (r_sphere - r_particle))
                         {
                           particle_properties
                             [DEM::PropertiesIndex::volumetric_contribution] +=
@@ -760,16 +756,16 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
 
                       // Particle partially in reference sphere
                       else if ((periodic_neighbor_distance >
-                                (R_sphere - r_particle)) &&
+                                (r_sphere - r_particle)) &&
                                (periodic_neighbor_distance <
-                                (R_sphere + r_particle)))
+                                (r_sphere + r_particle)))
                         {
                           if constexpr (dim == 2)
                             particle_properties
                               [DEM::PropertiesIndex::volumetric_contribution] +=
                               particle_circle_intersection_2d(
                                 r_particle,
-                                R_sphere,
+                                r_sphere,
                                 periodic_neighbor_distance);
 
                           else if constexpr (dim == 3)
@@ -777,7 +773,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                               [DEM::PropertiesIndex::volumetric_contribution] +=
                               particle_sphere_intersection_3d(
                                 r_particle,
-                                R_sphere,
+                                r_sphere,
                                 periodic_neighbor_distance);
                         }
                     }
@@ -827,20 +823,13 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                 {
                   // Get the radius by the volume of sphere which is
                   // equal to the volume of cell
-                  R_sphere =
-                    0.5 * pow(2 * dim * cell->measure() / M_PI, 1. / dim);
+                  r_sphere = radius_sphere_volume_cell(cell->measure());
                 }
               else
                 {
                   // The radius is obtained from the volume of sphere based
                   // on R_s = h_omega
-                  double reference_sphere_volume =
-                    M_PI *
-                    Utilities::fixed_power<dim>(
-                      2 * pow(cell->measure(), 1. / dim)) /
-                    (2 * dim);
-                  R_sphere = 0.5 * pow(2 * dim * reference_sphere_volume / M_PI,
-                                       1. / dim);
+                  r_sphere = radius_h_omega(cell->measure());
                 }
             }
 
@@ -877,7 +866,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       const double r_particle =
                         particle_properties[DEM::PropertiesIndex::dp] * 0.5;
                       double single_particle_volume =
-                        M_PI * Utilities::fixed_power<dim>(r_particle * 2) /
+                        M_PI * Utilities::fixed_power<dim>(r_particle * 2.0) /
                         (2 * dim);
 
                       // Distance between particle and quadrature point
@@ -886,7 +875,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         quadrature_point_location[q]);
 
                       // Particle completely in reference sphere
-                      if (distance <= (R_sphere - r_particle))
+                      if (distance <= (r_sphere - r_particle))
                         particles_volume_in_sphere +=
                           (M_PI *
                            Utilities::fixed_power<dim>(
@@ -900,13 +889,13 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       // absolutely nothing.
 
                       // Particle partially in reference sphere
-                      else if ((distance > (R_sphere - r_particle)) &&
-                               (distance < (R_sphere + r_particle)))
+                      else if ((distance > (r_sphere - r_particle)) &&
+                               (distance < (r_sphere + r_particle)))
                         {
                           if (dim == 2)
                             particles_volume_in_sphere +=
                               particle_circle_intersection_2d(r_particle,
-                                                              R_sphere,
+                                                              r_sphere,
                                                               distance) *
                               single_particle_volume /
                               particle_properties
@@ -914,7 +903,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                           else if (dim == 3)
                             particles_volume_in_sphere +=
                               particle_sphere_intersection_3d(r_particle,
-                                                              R_sphere,
+                                                              r_sphere,
                                                               distance) *
                               single_particle_volume /
                               particle_properties
@@ -964,7 +953,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                         quadrature_point_location[q]);
 
                       // Particle completely in reference sphere
-                      if (distance <= (R_sphere - r_particle))
+                      if (distance <= (r_sphere - r_particle))
                         particles_volume_in_sphere +=
                           (M_PI *
                            Utilities::fixed_power<dim>(
@@ -978,13 +967,13 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                       // absolutely nothing.
 
                       // Particle partially in reference sphere
-                      else if ((distance > (R_sphere - r_particle)) &&
-                               (distance < (R_sphere + r_particle)))
+                      else if ((distance > (r_sphere - r_particle)) &&
+                               (distance < (r_sphere + r_particle)))
                         {
                           if (dim == 2)
                             particles_volume_in_sphere +=
                               particle_circle_intersection_2d(r_particle,
-                                                              R_sphere,
+                                                              r_sphere,
                                                               distance) *
                               single_particle_volume /
                               particle_properties
@@ -992,7 +981,7 @@ GLSVANSSolver<dim>::quadrature_centered_sphere_method(bool load_balance_step)
                           else if (dim == 3)
                             particles_volume_in_sphere +=
                               particle_sphere_intersection_3d(r_particle,
-                                                              R_sphere,
+                                                              r_sphere,
                                                               distance) *
                               single_particle_volume /
                               particle_properties
