@@ -703,7 +703,6 @@ namespace Parameters
     unsigned int phase_ch_order;
     unsigned int potential_order;
 
-
     // Apply high order mapping everywhere
     bool qmapping_all;
 

@@ -48,7 +48,7 @@ using namespace dealii;
  *degrees of freedom and stores it into arrays. Additionnaly, the use can
  *request that this class gathers additional fields for physics which are
  *coupled to the Cahn-Hilliard equations, such as the velocity which is
- *required. This class serves as a seperation between the evaluation at the
+ *required. This class serves as a separation between the evaluation at the
  *gauss point of the variables of interest and their use in the assembly, which
  *is carried out by the assembler functions. For more information on this
  *design, the reader can consult deal.II step-9

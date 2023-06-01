@@ -787,9 +787,9 @@ namespace BoundaryConditions
     ParameterHandler &prm,
     unsigned int      i_bc)
   {
-    return;
     const std::string op = prm.get("type");
     this->type[i_bc]     = BoundaryType::none;
+    return;
   }
 
   /**
@@ -835,8 +835,8 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
-                                                      unsigned int      i_bc)
+  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler & prm,
+                                                      const unsigned int i_bc)
   {
     const std::string op = prm.get("type");
     if (op == "none")

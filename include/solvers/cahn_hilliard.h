@@ -19,7 +19,10 @@
  * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
  * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
  * with Phi the phase field parameter (or phase order), eta the chemical
- potential
+ * potential. The phase field parameter (or phase order, denoted by Phi) must
+ not be confused with the order (respectively
+ * phase_ch_order and potential_order) of the finite elements.
+ * elements related to the phase field parameter and the chemical potential
  * M the mobility function and epsilon the interface thickness
  *
  */
@@ -82,7 +85,6 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-
         const FE_Q<dim> phase_order_fe(
           simulation_parameters.fem_parameters.phase_ch_order);
         const FE_Q<dim> potential_fe(
@@ -126,13 +128,11 @@ public:
   void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
-
   /**
    * @brief Calculates the L2 error of the solution
    */
   std::pair<double, double>
   calculate_L2_error();
-
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
@@ -155,7 +155,6 @@ public:
    */
   void
   postprocess(bool first_iteration) override;
-
 
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
@@ -198,7 +197,6 @@ public:
    */
   void
   read_checkpoint() override;
-
 
   /**
    * @brief Returns the dof_handler of the Cahn-Hilliard physics

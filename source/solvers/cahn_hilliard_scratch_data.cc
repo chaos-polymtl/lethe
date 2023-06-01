@@ -68,7 +68,5 @@ CahnHilliardScratchData<dim>::allocate()
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 }
 
-
-
 template class CahnHilliardScratchData<2>;
 template class CahnHilliardScratchData<3>;

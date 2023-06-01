@@ -163,8 +163,9 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
-      double phase_order_error = calculate_L2_error().first;
-      double potential_error   = calculate_L2_error().second;
+      std::pair<double, double> error             = calculate_L2_error();
+      double                    phase_order_error = error.first;
+      double                    potential_error   = error.second;
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
