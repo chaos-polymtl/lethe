@@ -115,7 +115,6 @@ namespace SourceTerms
     prm.set("Function expression", "0; 0");
     prm.leave_subsection();
 
-
     prm.leave_subsection();
   }
 

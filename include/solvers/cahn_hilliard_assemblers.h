@@ -41,7 +41,7 @@ public:
    * equations.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Destination where the local_rhs and local_matrix are copied to.
    */
 
   virtual void
@@ -49,12 +49,12 @@ public:
 
 
   /**
-   * @brief assemble_matrix Interface for the call to rhs
+   * @brief assemble_matrix Interface for the call to rhs assembly
    * @param scratch_data Scratch data containing the information for the Cahn-Hilliard
    * equations.
    * It is important to note that the scratch data has to have been re-inited
-   * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * before calling for rhs assembly.
+   * @param copy_data Destination where the local_rhs and local_matrix are copied to.
    */
 
   virtual void

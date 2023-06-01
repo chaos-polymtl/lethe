@@ -155,7 +155,6 @@ public:
    */
   void
   postprocess(bool first_iteration) override;
-
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
    * mesh refinement/coarsening
@@ -197,7 +196,6 @@ public:
    */
   void
   read_checkpoint() override;
-
   /**
    * @brief Returns the dof_handler of the Cahn-Hilliard physics
    */
@@ -215,7 +213,7 @@ public:
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
-   * only support imposing nodal values, but some physics additionnaly support
+   * only support imposing nodal values, but some physics additionally support
    * the use of L2 projection or steady-state solutions.
    */
   void

@@ -43,9 +43,9 @@ using namespace dealii;
  * stores the information required by the assembly procedure
  * for the Cahn-Hilliard equations Consequently, this class
  * calculates the phase field parameter Phi (values, gradients, laplacians),
- * the chemical potential eta (values,gradients,laplacians) and the shape
+ * the chemical potential eta (values, gradients, laplacians) and the shape
  *function (values, gradients, laplacians) at all the gauss points for all
- *degrees of freedom and stores it into arrays. Additionnaly, the use can
+ *degrees of freedom and stores it into arrays. Additionally, the user can
  *request that this class gathers additional fields for physics which are
  *coupled to the Cahn-Hilliard equations, such as the velocity which is
  *required. This class serves as a separation between the evaluation at the
@@ -58,7 +58,8 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- *  @ingroup solvers
+ *
+ * @ingroup solvers
  **/
 
 template <int dim>
@@ -69,7 +70,9 @@ public:
    * @brief Constructor. The constructor creates the fe_values that will be used
    * to fill the member variables of the scratch. It also allocated the
    * necessary memory for all member variables. However, it does not do any
-   * evalution, since this needs to be done at the cell level.
+   * evaluation, since this needs to be done at the cell level.
+   *
+   * @param properties_manager The physical properties manager (see physical_properties_manager.h)
    *
    * @param fe_ch The FESystem used to solve the Cahn-Hilliard equations
    *
@@ -98,7 +101,7 @@ public:
 
   /**
    * @brief Copy Constructor. Same as the main constructor.
-   *  This constructor only uses the other scratch to build the FeValues, it
+   * This constructor only uses the other scratch to build the FeValues, it
    * does not copy the content of the other scratch into itself since, by
    * definition of the WorkStream mechanism it is assumed that the content of
    * the scratch will be reset on a cell basis.
@@ -225,7 +228,6 @@ public:
             this->laplacian_phi_phase[q][k] = trace(this->hess_phi_phase[q][k]);
 
             // Shape functions for the chemical potential
-
             this->phi_potential[q][k] =
               this->fe_values_ch[chemical_potential].value(k, q);
             this->grad_phi_potential[q][k] =
@@ -309,7 +311,7 @@ public:
    * Scratch component for the Navier-Stokes component
    */
   FEValuesExtractors::Vector velocities;
-  // This FEValues must mandatorily be instantiated for the velocity
+  // This FEValues must be instantiated for the velocity
   FEValues<dim>               fe_values_fd;
   std::vector<Tensor<1, dim>> velocity_values;
 };

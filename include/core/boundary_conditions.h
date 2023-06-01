@@ -751,13 +751,12 @@ namespace BoundaryConditions
   }
 
   /**
-* @brief This class manages the boundary conditions for the Cahn-Hilliard solver
-* It introduces the boundary functions and declares the boundary conditions
-* coherently.
-*  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
-* double passed to the deal.ii ConstantFunction
-
-  */
+   * @brief This class manages the boundary conditions for the Cahn-Hilliard solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently.
+   *  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
+   * double passed to the deal.ii ConstantFunction
+   */
 
   template <int dim>
   class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
@@ -787,9 +786,16 @@ namespace BoundaryConditions
     ParameterHandler &prm,
     unsigned int      i_bc)
   {
-    return;
-    const std::string op = prm.get("type");
-    this->type[i_bc]     = BoundaryType::none;
+    prm.declare_entry("type",
+                      "none",
+                      Patterns::Selection("none"),
+                      "Type of boundary condition for Cahn-Hilliard"
+                      "Choices are <none>.");
+
+    prm.declare_entry("id",
+                      Utilities::int_to_string(i_bc, 2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
   }
 
   /**
@@ -843,7 +849,7 @@ namespace BoundaryConditions
       {
         this->type[i_bc] = BoundaryType::none;
       }
-    return;
+    this->id[i_bc] = prm.get_integer("id");
   }
 
   /**
