@@ -46,6 +46,7 @@ template class LinearAlgebra::distributed::Vector<int>;
  * The general idea behind the algorithm:
  * It uses the granular temperature to determinate if particles in a cell are
  * mobile enough that the contact forces are worth computation. A cell having a
+ * mobile enough that the contact forces are worth computation. A cell having a
  * granular temperature under a value (default is 1e-4) will have an inactive
  * status which makes them rejected in the broad search step. This results in no
  * contact forces or velocity integration in future steps for those particles,
@@ -105,26 +106,30 @@ public:
    * particles directly in contact with the mobile cell are also considered in
    * force calculation, but none of the particles in the cell are integrated.
    *
-   * mobile (2)
+   * mobile (4)
    * The movement of particles in the cell is significant or there is at least
    * one neighbor cell that is mobile by criteria (see the
    * identify_mobility_status() description), particles need to be in contact
    * candidates lists at the broad search step and particles are treated as
    * usual (force calculation and integration)
    *
-   * empty (3)
+   * empty (5)
    * This status is only used for the node-based mobility status identification,
    * no cells are flagged as empty, only node can by identify as empty. Without
    * this identification of the empty cells, we can't identify the cell that
-   * have a empty neighbor cell, which is critical for simulationd using
+   * have a empty neighbor cell, which is critical for simulations using
    * floating walls or mesh
    */
+
+  // TODO : add doc for advected and advected_active
   enum mobility_status : unsigned int
   {
-    inactive = 0, // used for cells and nodes
-    active   = 1, // used for cells and nodes
-    mobile   = 2, // used for cells and nodes
-    empty    = 3  // used for nodes only
+    inactive        = 0, // used for cells
+    active          = 1, // used for cells and nodes
+    advected        = 2, // used for cells and nodes
+    advected_active = 3, // used for cells and nodes
+    mobile          = 4, // used for cells and nodes
+    empty           = 5  // used for nodes only
   };
 
   /**
@@ -178,6 +183,48 @@ public:
     const unsigned int                     n_active_cells,
     MPI_Comm                               mpi_communicator);
 
+  inline void
+  map_periodic_nodes(const AffineConstraints<double> &constraints)
+  {
+    IndexSet local_lines = constraints.get_local_lines();
+    for (auto i : local_lines)
+      {
+        for (auto j : local_lines)
+          {
+            // Map the values of the periodic nodes (with repetition)
+            if (constraints.are_identity_constrained(i, j))
+              {
+                periodic_node_ids.insert(std::make_pair(i, j));
+              }
+          }
+      }
+  }
+
+  inline void
+  assign_to_periodic_node(const unsigned int node_id,
+                          const unsigned int mobility_status,
+                          const bool         check_max_mobility_status = false)
+  {
+    // Check if node has a periodic node
+    auto it = periodic_node_ids.find(node_id);
+    if (it != periodic_node_ids.end())
+      {
+        if (!check_max_mobility_status)
+          {
+            // Assign the mobility status to the periodic node
+            mobility_at_nodes(it->second) = mobility_status;
+          }
+        else
+          {
+            // Check if the mobility status is higher than the one already
+            // assigned to the periodic node (prevents from overwriting)
+            mobility_at_nodes(it->second) =
+              std::max((int)mobility_status, mobility_at_nodes(it->second));
+          }
+      }
+  }
+
+
   /**
    * @brief Find the mobility status of a cell
    *
@@ -201,10 +248,12 @@ public:
    */
   void
   set_threshold_values(const double granular_temperature,
-                       const double solid_fraction)
+                       const double solid_fraction,
+                       const double advect_particles)
   {
     granular_temperature_threshold = granular_temperature;
     solid_fraction_threshold       = solid_fraction;
+    advect_particles_enabled       = advect_particles;
   }
 
   /**
@@ -224,10 +273,161 @@ public:
       }
   };
 
+
+  LinearAlgebra::distributed::Vector<int>
+  get_mobility_output()
+  {
+    return mobility_at_nodes;
+  }
+
   typename DEM::dem_data_structures<dim>::cell_index_int_map &
   get_mobility_status()
   {
     return cell_mobility_status;
+  }
+
+  void
+  update_average_velocities_acceleration(
+    Particles::ParticleHandler<dim> &particle_handler,
+    const Tensor<1, 3> &             g,
+    const std::vector<Tensor<1, 3>> &force,
+    const double                     dt)
+  {
+    for (auto &cell : this->local_and_ghost_cells)
+      {
+        // We loop over the particles, even if cell is not mobile, to reset
+        // the force and torques value of the particle with the particle id
+        auto particles_in_cell = particle_handler.particles_in_cell(cell);
+        const unsigned int n_particles_in_cell =
+          particle_handler.n_particles_in_cell(cell);
+
+        if (n_particles_in_cell > 0)
+          {
+            Tensor<1, 3> velocity_cell_average;
+            Tensor<1, 3> acceleration_dt;
+
+            for (auto &particle : particles_in_cell)
+              {
+                // Get particle properties
+                auto &particle_properties         = particle.get_properties();
+                types::particle_index particle_id = particle.get_local_index();
+
+                for (int d = 0; d < dim; ++d)
+                  {
+                    // Get the particle velocity component (v_x, v_y & v_z if
+                    // dim = 3)
+                    int v_axis = DEM::PropertiesIndex::v_x + d;
+                    velocity_cell_average[d] += particle_properties[v_axis];
+                  }
+
+                acceleration_dt +=
+                  force[particle_id] /
+                    particle_properties[DEM::PropertiesIndex::mass] +
+                  g;
+              }
+
+            velocity_cell_average /= n_particles_in_cell;
+            acceleration_dt *= dt / n_particles_in_cell;
+
+            // Update acceleration for the mobile cell only
+            cell_velocities_accelerations[cell] = {velocity_cell_average,
+                                                   acceleration_dt};
+          }
+      }
+  }
+
+  std::vector<Tensor<1, 3>>
+  get_cell_velocities(unsigned int n_active_cell)
+  {
+    std::vector<Tensor<1, 3>> cell_velocities(n_active_cell);
+
+    for (auto &cell : this->local_and_ghost_cells)
+      {
+        cell_velocities[cell->active_cell_index()] = cell_velocities_map[cell];
+      }
+
+    return cell_velocities;
+  }
+
+  std::map<typename Triangulation<dim>::active_cell_iterator,
+           std::pair<Tensor<1, 3>, Tensor<1, 3>>> &
+  get_velocities_accelerations()
+  {
+    return cell_velocities_accelerations;
+  }
+
+
+  void
+  calculate_cell_acceleration(Particles::ParticleHandler<dim> &particle_handler,
+                              const Tensor<1, 3> &             g,
+                              std::vector<Tensor<1, 3>> &      force,
+                              bool only_mobile = false)
+  {
+    for (auto &cell : this->local_and_ghost_cells)
+      {
+        Tensor<1, 3> empty_cell_acceleration({0.0, 0.0, 0.0});
+        if (only_mobile)
+          if (cell_mobility_status[cell->active_cell_index()] !=
+              mobility_status::mobile)
+            continue;
+
+        // We loop over the particles, even if cell is not mobile, to reset
+        // the force and torques value of the particle with the particle id
+        auto particles_in_cell = particle_handler.particles_in_cell(cell);
+        const unsigned int n_particles_in_cell =
+          particle_handler.n_particles_in_cell(cell);
+
+        if (n_particles_in_cell > 0)
+          {
+            Tensor<1, 3> acceleration;
+
+            for (auto &particle : particles_in_cell)
+              {
+                // Get particle properties
+                auto &particle_properties         = particle.get_properties();
+                types::particle_index particle_id = particle.get_local_index();
+                acceleration +=
+                  force[particle_id] /
+                    particle_properties[DEM::PropertiesIndex::mass] +
+                  g;
+              }
+
+            acceleration /= n_particles_in_cell;
+
+            // Update acceleration for the mobile cell only
+            cell_acceleration_map[cell] = acceleration;
+          }
+      }
+  }
+
+  void get_cell_acceleration(std::vector<Tensor<1, 3>> &acceleration)
+  {
+    for (auto &cell : this->local_and_ghost_cells)
+      {
+        acceleration[cell->active_cell_index()] = cell_acceleration_map[cell];
+      }
+  }
+
+  void
+  get_acceleration_vector(Vector<float> &acceleration_x,
+                          Vector<float> &acceleration_y,
+                          Vector<float> &acceleration_z)
+  {
+    for (auto &cell : this->local_and_ghost_cells)
+      {
+        acceleration_x[cell->active_cell_index()] =
+          cell_acceleration_map[cell][0];
+        acceleration_y[cell->active_cell_index()] =
+          cell_acceleration_map[cell][1];
+        acceleration_z[cell->active_cell_index()] =
+          cell_acceleration_map[cell][2];
+      }
+  };
+
+  bool
+  has_advected_particles() const
+  {
+    return advect_particles_enabled;
   }
 
 private:
@@ -274,14 +474,34 @@ private:
   std::set<typename DoFHandler<dim>::active_cell_iterator>
     local_and_ghost_cells;
 
+  TrilinosWrappers::MPI::Vector mobility_output;
+
   // Vector of mobility status at nodes, used to check the value at node to
   // determine the mobility status of the cell, this type of vector is used
   // to allow update values in parallel
   LinearAlgebra::distributed::Vector<int> mobility_at_nodes;
 
+  std::unordered_map<unsigned int, unsigned int> periodic_node_ids;
+
+  // Particle advection
+  bool advect_particles_enabled;
+
   // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
   double solid_fraction_threshold;
+
+
+  std::vector<Tensor<1, 3>> cell_acceleration;
+
+  std::map<typename DoFHandler<dim>::active_cell_iterator, Tensor<1, 3>>
+    cell_acceleration_map;
+
+  std::map<typename DoFHandler<dim>::active_cell_iterator, Tensor<1, 3>>
+    cell_velocities_map;
+
+  std::map<typename Triangulation<dim>::active_cell_iterator,
+           std::pair<Tensor<1, 3>, Tensor<1, 3>>>
+    cell_velocities_accelerations;
 };
 
 #endif // lethe_disable_contacts_h

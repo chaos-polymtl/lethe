@@ -343,6 +343,13 @@ CFDDEMSolver<dim>::read_checkpoint()
 
   this->setup_dofs();
 
+  // Remap periodic nodes after setup of dofs
+  if (has_periodic_boundaries && has_disabled_contacts)
+    {
+      disable_contacts_object.map_periodic_nodes(
+        this->void_fraction_constraints);
+    }
+
   // Velocity Vectors
   std::vector<TrilinosWrappers::MPI::Vector *> x_system(
     1 + this->previous_solutions.size());
@@ -571,6 +578,13 @@ CFDDEMSolver<dim>::load_balance()
   this->pcout << "Setup DOFs" << std::endl;
   this->setup_dofs();
 
+  // Remap periodic nodes after setup of dofs
+  if (has_periodic_boundaries && has_disabled_contacts)
+    {
+      disable_contacts_object.map_periodic_nodes(
+        this->void_fraction_constraints);
+    }
+
   // Velocity Vectors
   std::vector<TrilinosWrappers::MPI::Vector *> x_system(
     1 + this->previous_solutions.size());
@@ -673,7 +687,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
       has_disabled_contacts = true;
       disable_contacts_object.set_threshold_values(
         dem_parameters.model_parameters.granular_temperature_threshold,
-        dem_parameters.model_parameters.solid_fraction_threshold);
+        dem_parameters.model_parameters.solid_fraction_threshold,
+        dem_parameters.model_parameters.advect_particles);
     }
 
   // Finding cell neighbors
@@ -844,21 +859,24 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
         {
           integrator_object->integrate(
             this->particle_handler, g, dem_time_step, torque, force, MOI);
+
+          disable_contacts_object.update_average_velocities_acceleration(
+            this->particle_handler, g, force, dem_time_step);
         }
       else // contacts are disabled
         {
           const auto parallel_triangulation =
             dynamic_cast<parallel::distributed::Triangulation<dim> *>(
               &*this->triangulation);
-          integrator_object->integrate(
-            this->particle_handler,
-            g,
-            dem_time_step,
-            torque,
-            force,
-            MOI,
-            *parallel_triangulation,
-            disable_contacts_object.get_mobility_status());
+
+          integrator_object->integrate(this->particle_handler,
+                                       g,
+                                       dem_time_step,
+                                       torque,
+                                       force,
+                                       MOI,
+                                       *parallel_triangulation,
+                                       disable_contacts_object);
         }
     }
 }
@@ -886,7 +904,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
   // directly after reading the dem initial checkpoint files
 
   if (contact_detection_step || checkpoint_step || load_balance_step ||
-      (this->simulation_control->is_at_start() && (counter == 0)))
+      (this->simulation_control->is_at_start() && (counter == 0)) ||
+      (has_periodic_boundaries && (counter == 0)))
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
       contact_build_number++;
@@ -899,7 +918,7 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
-      if (has_disabled_contacts && !this->simulation_control->is_at_start())
+      if (has_disabled_contacts)
         {
           // Update the active and ghost cells set (this should be done after a
           // load balance or a checkpoint, but since the fem-dem code do not
@@ -931,7 +950,8 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
   // Modify particles contact containers by search sequence
   if (load_balance_step || checkpoint_step || contact_detection_step ||
-      (this->simulation_control->is_at_start() && (counter == 0)))
+      (this->simulation_control->is_at_start() && (counter == 0)) ||
+      (has_periodic_boundaries && (counter == 0)))
     {
       // Execute broad search by filling containers of particle-particle
       // contact pair candidates and containers of particle-wall
@@ -1406,7 +1426,6 @@ CFDDEMSolver<dim>::solve()
     true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
-
   manage_triangulation_connections();
 
   dem_setup_contact_parameters();
@@ -1424,7 +1443,6 @@ CFDDEMSolver<dim>::solve()
     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
       .restart);
 
-
   // In the case the simulation is being restarted from a checkpoint file, the
   // checkpoint_step parameter is set to true. This allows to perform all
   // operations related to restarting a simulation. Once all operations have
@@ -1437,6 +1455,13 @@ CFDDEMSolver<dim>::solve()
     checkpoint_step = false;
 
   initialize_dem_parameters();
+
+  // Remap periodic nodes after setup of dofs
+  if (has_periodic_boundaries && has_disabled_contacts)
+    {
+      disable_contacts_object.map_periodic_nodes(
+        this->void_fraction_constraints);
+    }
 
   // Calculate first instance of void fraction once particles are set-up
   this->vertices_cell_mapping();
@@ -1487,6 +1512,17 @@ CFDDEMSolver<dim>::solve()
             dem_iterator(dem_counter);
           }
       }
+
+      // If simulation has periodic boundaries, the particles are sorted into
+      // subdomains and cells otherwise the particles will not match the cells
+      // that they are in when void fraction is calculated with the qcm method
+      if (has_periodic_boundaries &&
+          this->cfd_dem_simulation_parameters.void_fraction->mode ==
+            Parameters::VoidFractionMode::qcm)
+        {
+          this->particle_handler.sort_particles_into_subdomains_and_cells();
+          this->particle_handler.exchange_ghost_particles(true);
+        }
 
       this->pcout << "Finished " << coupling_frequency << " DEM iterations "
                   << std::endl;

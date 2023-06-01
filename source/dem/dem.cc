@@ -186,7 +186,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       has_disabled_contacts = true;
       disable_contacts_object.set_threshold_values(
         parameters.model_parameters.granular_temperature_threshold,
-        parameters.model_parameters.solid_fraction_threshold);
+        parameters.model_parameters.solid_fraction_threshold,
+        parameters.model_parameters.advect_particles);
     }
 
   // Calling input_parameter_inspection to evaluate input parameters in the
@@ -371,7 +372,32 @@ DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
+
+
+  // Periodic nodes have to be mapped with the background constraints otherwise
+  // the disabling of contacts will not propagate the mobility status to the
+  // periodic nodes during iterations
+  if (has_disabled_contacts && has_periodic_boundaries)
+    {
+      IndexSet locally_owned_dofs = background_dh.locally_owned_dofs();
+      IndexSet locally_relevant_dofs;
+      DoFTools::extract_locally_relevant_dofs(background_dh,
+                                              locally_relevant_dofs);
+
+      background_constraints.clear();
+      background_constraints.reinit(locally_relevant_dofs);
+
+      DoFTools::make_periodicity_constraints(
+        background_dh,
+        parameters.boundary_conditions.periodic_boundary_0,
+        parameters.boundary_conditions.periodic_boundary_1,
+        parameters.boundary_conditions.periodic_direction,
+        background_constraints);
+
+      disable_contacts_object.map_periodic_nodes(background_constraints);
+    }
 }
+
 
 template <int dim>
 void
@@ -1298,15 +1324,14 @@ DEMSolver<dim>::solve()
             }
           else // has_disabled_contacts && contact_build_number > 1
             {
-              integrator_object->integrate(
-                particle_handler,
-                g,
-                simulation_control->get_time_step(),
-                torque,
-                force,
-                MOI,
-                triangulation,
-                disable_contacts_object.get_mobility_status());
+              integrator_object->integrate(particle_handler,
+                                           g,
+                                           simulation_control->get_time_step(),
+                                           torque,
+                                           force,
+                                           MOI,
+                                           triangulation,
+                                           disable_contacts_object);
             }
         }
 

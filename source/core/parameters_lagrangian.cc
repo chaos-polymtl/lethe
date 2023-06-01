@@ -539,6 +539,13 @@ namespace Parameters
             "Choices are <true|false>.");
 
           prm.declare_entry(
+            "enable particle advection",
+            "false",
+            Patterns::Selection("true|false"),
+            "Enable the advection of particles with hydrodynamic forces"
+            "Choices are <true|false>.");
+
+          prm.declare_entry(
             "granular temperature threshold",
             "1e-4",
             Patterns::Double(),
@@ -567,6 +574,7 @@ namespace Parameters
         {
           disable_particle_contacts =
             prm.get_bool("enable dynamic disabling contacts");
+          advect_particles = prm.get_bool("enable particle advection");
 
           // Thresholds for disabling contacts
           granular_temperature_threshold =
