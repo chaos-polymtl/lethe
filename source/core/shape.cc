@@ -377,26 +377,10 @@ Superquadric<dim>::value(const Point<dim> &evaluation_point,
       // referential
       Point<dim> centered_point = this->align_and_center(evaluation_point);
 
-      /*double     r              = centered_point.norm();
-      double     theta          = atan2(centered_point[1], centered_point[0]);
-      double     phi            = acos(centered_point[2] / r) - 0.5 * PI;
-
-      Point<dim> current_point_guess{};
-        current_point_guess[0] = half_lengths[0] * copysign(1.0,cos(phi)) *
-      pow(abs(cos(phi)) , 2/exponents[0])
-                                 * copysign(1.0,cos(theta)) *
-      pow(abs(cos(theta)) , 2/exponents[0]); current_point_guess[1] =
-      half_lengths[1] * copysign(1.0,cos(phi)) * pow(abs(cos(phi)) ,
-      2/exponents[1])
-                                 * copysign(1.0,sin(theta)) *
-      pow(abs(sin(theta)) , 2/exponents[1]); current_point_guess[2] =
-      half_lengths[2] * copysign(1.0,sin(phi)) * pow(abs(sin(phi)) ,
-      2/exponents[2]);*/
-
       double levelset =
-        (pow((centered_point[0] / half_lengths[0]), exponents[0]) +
-         pow((centered_point[1] / half_lengths[1]), exponents[1]) +
-         pow(centered_point[2] / half_lengths[2], exponents[0])) -
+        (pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
+         pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
+         pow(abs(centered_point[2] / half_lengths[2]), exponents[2])) -
         1;
 
       return levelset;
@@ -408,8 +392,8 @@ Superquadric<dim>::value(const Point<dim> &evaluation_point,
 template <int dim>
 double
 Superquadric<dim>::value_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component = 0*/)
 {
   auto point_in_string = this->point_to_string(evaluation_point);
@@ -439,19 +423,49 @@ Tensor<1, dim>
 Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
                             const unsigned int /*component*/) const
 {
-  // TODO
-  return Tensor<1, dim>();
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end())
+    {
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+
+      Tensor<1, dim> gradient{};
+      for (unsigned int d = 0; d < dim; d++)
+        {
+          if (centered_point[d] > 0)
+            gradient[d] =
+              exponents[d] *
+              pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
+          else
+            gradient[d] =
+              -exponents[d] *
+              pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
+          if (this->value(evaluation_point) < 0)
+            gradient[d] *= -1;
+        }
+      return gradient;
+    }
+  else
+    return iterator->second;
 }
 
 template <int dim>
 Tensor<1, dim>
 Superquadric<dim>::gradient_with_cell_guess(
-  const Point<dim> &                                   evaluation_point,
-  const typename DoFHandler<dim>::active_cell_iterator cell,
-  const unsigned int                                   component)
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
 {
-  // TODO
-  return Tensor<1, dim>();
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end())
+    {
+      Tensor<1, dim> gradient               = this->gradient(evaluation_point);
+      this->gradient_cache[point_in_string] = gradient;
+      return gradient;
+    }
+  else
+    return iterator->second;
 }
 
 template <int dim>
