@@ -787,9 +787,9 @@ namespace BoundaryConditions
     ParameterHandler &prm,
     unsigned int      i_bc)
   {
+    return;
     const std::string op = prm.get("type");
     this->type[i_bc]     = BoundaryType::none;
-    return;
   }
 
   /**

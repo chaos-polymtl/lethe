@@ -27,14 +27,6 @@ subsection FEM
    set potential ch order = 1
 end
 
-#---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity                = verbose
-
-end
 
 #---------------------------------------------------
 # Mesh
@@ -45,7 +37,6 @@ subsection mesh
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : true
 end
-
 
 #---------------------------------------------------
 # Timer
