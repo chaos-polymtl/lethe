@@ -100,7 +100,7 @@ public:
   bool
   execute_particles_displacement(
     const Particles::ParticleHandler<dim> &particle_handler,
-    typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
       &periodic_boundaries_cells_information);
 
   /**

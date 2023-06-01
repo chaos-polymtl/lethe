@@ -18,8 +18,6 @@
 #ifndef lethe_parameters_lagrangian_h
 #define lethe_parameters_lagrangian_h
 
-// #include <deal.II/base/conditional_ostream.h>
-// #include <deal.II/base/function.h>
 #include <core/parameters.h>
 
 #include <deal.II/base/parameter_handler.h>
@@ -288,6 +286,10 @@ namespace Parameters
 
       // Disable particle contacts to optimize performance
       bool disable_particle_contacts;
+
+      // Enable advection of particles (applies cell average velocity and
+      // acceleration to particles)
+      bool advect_particles;
 
       // Minimal granular temperature value of cells where particle contacts
       // are considered

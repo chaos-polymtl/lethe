@@ -237,13 +237,67 @@ private:
   dynamic_flow_control() override;
 
   /**
-   * @brief Check if the disabling contacts is enabled and that
+   * @brief Check if the disabling contacts is enabled and that the counter is
+   * for the first (counter = 0)
    *
    */
   inline bool
   contacts_are_disabled(unsigned int counter) const
   {
-    return has_disabled_contacts && counter > 1;
+    return has_disabled_contacts && counter > 0;
+  }
+
+  /**
+   * @brief contact_search_step
+   * Checks all the conditions that require a contact search step. The check of
+   * conditions is done in order of suspected frequency occurrence.
+   *
+   */
+
+  inline bool
+  contact_search_step(const unsigned int counter)
+  {
+    if (contact_detection_step)
+      {
+        // Contact search step according to the contact detection method
+        return true;
+      }
+    else if (counter == (coupling_frequency - 1) &&
+             (contact_build_counter == 0))
+      {
+        // Ensure that the contact search is executed at least once per CFD time
+        // step.
+        return true;
+      }
+    else if (has_disabled_contacts && (counter == 1))
+      {
+        // First mobility status identification of the CFD time step (from the
+        // velocity computed at the first DEM time step (counter = 0) of the CFD
+        // time step) The contact search is executed to make sure the mobility
+        // status of cell match the particles that are in.
+        return true;
+      }
+    else if (load_balance_step)
+      {
+        // Needs to update contacts since particles/cells may have been
+        // distributed to a different subdomain
+        return true;
+      }
+    else if ((this->simulation_control->is_at_start() && (counter == 0)) ||
+             checkpoint_step)
+      {
+        // First contact search of the simulation
+        return true;
+      }
+    else if (has_periodic_boundaries && particle_displaced_in_pbc)
+      {
+        // Particles have been displaced in periodic boundaries
+        return true;
+      }
+    else
+      {
+        return false;
+      }
   }
 
   unsigned int                               coupling_frequency;
@@ -287,10 +341,13 @@ private:
   PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   Tensor<1, dim>                     periodic_offset;
   bool                               has_periodic_boundaries;
+  bool                               particle_displaced_in_pbc;
 
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;
-  unsigned int         contact_build_number;
+  unsigned int         contact_build_counter;
+
+  unsigned int contact_build_number;
 
   // Storage of statistics about time and contact lists
   statistics contact_list;

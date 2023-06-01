@@ -416,6 +416,7 @@ private:
   // Dynamic disabling of particle contacts in cells object
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;
+  AffineConstraints<double> background_constraints;
 
   // Load balancing iteration check function
   std::function<bool()> load_balance_iteration_check_function;
