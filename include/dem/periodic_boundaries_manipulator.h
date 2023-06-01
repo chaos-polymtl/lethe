@@ -100,12 +100,12 @@ public:
       &periodic_boundaries_cells_information);
 
   /**
-   * @brief Return the periodic offset, it is calculated from the first pair of
+   * @brief Return the periodic offset distance, it is calculated from the first pair of
    * cells on periodic boundaries, all pair of cells are assumed to have the
    * same offset
    */
   inline Tensor<1, dim>
-  get_constant_offset()
+  get_periodic_offset_distance()
   {
     return constant_periodic_offset;
   }

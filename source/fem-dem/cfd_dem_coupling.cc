@@ -532,7 +532,8 @@ CFDDEMSolver<dim>::load_balance()
         *parallel_triangulation,
         container_manager.periodic_boundaries_cells_information);
 
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_offset =
+        periodic_boundaries_object.get_periodic_offset_distance();
     }
 
   container_manager.update_cell_neighbors(*parallel_triangulation,
@@ -663,7 +664,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
 
       // Temporary offset calculation : works only for one set of periodic
       // boundary on an axis.
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_offset =
+        periodic_boundaries_object.get_periodic_offset_distance();
     }
 
   if (dem_parameters.model_parameters.disable_particle_contacts)
@@ -859,11 +861,6 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
             disable_contacts_object.get_mobility_status());
         }
     }
-
-  // Particles displacement if passing through a periodic boundary
-  periodic_boundaries_object.execute_particles_displacement(
-    this->particle_handler,
-    container_manager.periodic_boundaries_cells_information);
 }
 
 template <int dim>
@@ -893,6 +890,12 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
       contact_build_number++;
+
+      // Particles displacement if passing through a periodic boundary
+      if (has_periodic_boundaries)
+        periodic_boundaries_object.execute_particles_displacement(
+          this->particle_handler,
+          container_manager.periodic_boundaries_cells_information);
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -1250,7 +1253,7 @@ CFDDEMSolver<dim>::print_particles_summary()
 
       std::stringstream ss;
 
-      ss << "id: " << particle.get_id() << ",  "
+      ss << std::setprecision(6) << "id: " << particle.get_id() << ",  "
          << "x: " << particle.get_location()[0] << ",  "
          << "y: " << particle.get_location()[1] << ",  "
          << "z: " << particle.get_location()[2] << ",  "

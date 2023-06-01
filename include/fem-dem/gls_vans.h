@@ -148,9 +148,67 @@ private:
   void
   read_dem();
 
+  /**
+   * @brief This function calculates and returns the periodic offset distance of the domain which is needed
+   * for the periodic boundary conditions using the QCM or SPM for void fraction
+   * with the GLS VANS/CFD-DEM solver. The distance is based on one of the
+   * periodic boundaries and all particle location shifted by this distance is
+   * according to this periodic boundary.
+   *
+   * @param boundary_id The id of one of the periodic boundaries
+   *
+   * @return The periodic offset distance
+   */
+  inline Tensor<1, dim>
+  get_periodic_offset_distance(unsigned int boundary_id) const
+  {
+    Tensor<1, dim> offset;
+
+    // Iterating over the active cells in the triangulation
+    for (const auto &cell : (*this->triangulation).active_cell_iterators())
+      {
+        if (cell->is_locally_owned() || cell->is_ghost())
+          {
+            if (cell->at_boundary())
+              {
+                // Iterating over cell faces
+                for (unsigned int face_id = 0; face_id < cell->n_faces();
+                     ++face_id)
+                  {
+                    unsigned int face_boundary_id =
+                      cell->face(face_id)->boundary_id();
+
+                    // Check if face is on the boundary, if so, get
+                    // the periodic offset distance for one pair of periodic
+                    // faces only since periodic boundaries are aligned with the
+                    // direction and only axis are currently allowed
+                    if (face_boundary_id == boundary_id)
+                      {
+                        Point<dim> face_center = cell->face(face_id)->center();
+                        auto periodic_cell = cell->periodic_neighbor(face_id);
+                        unsigned int periodic_face_id =
+                          cell->periodic_neighbor_face_no(face_id);
+                        Point<dim> periodic_face_center =
+                          periodic_cell->face(periodic_face_id)->center();
+
+                        offset = periodic_face_center - face_center;
+
+                        return offset;
+                      }
+                  }
+              }
+          }
+      }
+
+    // A zero tensor is returned in case no cells are found on the periodic
+    // boundaries on this processor. This processor won't handle particle in
+    // cells at periodic boundaries, so it won't affect any computation.
+    return offset;
+  }
+
 protected:
   /**
-   * @brief asocciate the degrees of freedom to each vertex of the finite elements
+   * @brief associates the degrees of freedom to each vertex of the finite elements
    * and initialize the void fraction
    */
   virtual void
@@ -187,13 +245,13 @@ protected:
   assemble_system_matrix() override;
 
   /**
-   * @brief Assemble the rhs associated with the solver
+   * @brief Assembles the rhs associated with the solver
    */
   void
   assemble_system_rhs() override;
 
   /**
-   * @brief Assemble the local matrix for a given cell.
+   * @brief Assembles the local matrix for a given cell.
    *
    * This function is used by the WorkStream class to assemble
    * the system matrix. It is a thread safe function.
@@ -215,7 +273,7 @@ protected:
     StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
-   * @brief Assemble the local rhs for a given cell
+   * @brief Assembles the local rhs for a given cell
    *
    * @param cell The cell for which the local matrix is assembled.
    *
@@ -241,7 +299,7 @@ protected:
 
 
   /**
-   * @brief Copy local cell information to global matrix
+   * @brief Copies local cell information to global matrix
    */
 
   void
@@ -249,7 +307,7 @@ protected:
     const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
-   * @brief Copy local cell rhs information to global rhs
+   * @brief Copies local cell rhs information to global rhs
    */
 
   void
@@ -267,7 +325,7 @@ protected:
   percolate_void_fraction();
 
   /**
-   *Member Variables
+   * Member Variables
    */
 
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
@@ -306,9 +364,16 @@ protected:
   const double GLS_u_scale = 1;
   double       pressure_drop;
 
+  bool           has_periodic_boundaries;
+  Tensor<1, dim> periodic_offset;
+  unsigned int   periodic_direction;
+
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_cell;
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_periodic_cell;
 
 protected:
   Particles::ParticleHandler<dim, dim> particle_handler;

@@ -397,7 +397,8 @@ DEMSolver<dim>::load_balance()
       periodic_boundaries_object.map_periodic_cells(
         triangulation, container_manager.periodic_boundaries_cells_information);
 
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_offset =
+        periodic_boundaries_object.get_periodic_offset_distance();
     }
 
   // Update neighbors of cells after load balance
@@ -1058,7 +1059,8 @@ DEMSolver<dim>::solve()
 
       // Temporary offset calculation : works only for one set of periodic
       // boundary on an axis.
-      periodic_offset = periodic_boundaries_object.get_constant_offset();
+      periodic_offset =
+        periodic_boundaries_object.get_periodic_offset_distance();
     }
 
   // Find cell neighbors

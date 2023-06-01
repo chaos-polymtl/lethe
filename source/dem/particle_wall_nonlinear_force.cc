@@ -145,8 +145,6 @@ ParticleWallNonLinearForce<dim>::calculate_particle_wall_contact_force(
           auto normal_vector     = contact_information.normal_vector;
           auto point_on_boundary = contact_information.point_on_boundary;
 
-
-
           Point<3> particle_location_3d;
 
           if constexpr (dim == 3)
