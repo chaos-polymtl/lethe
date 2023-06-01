@@ -1,0 +1,105 @@
+# Listing of Parameters
+# ---------------------
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 1e-5
+  set time end          = 1.5
+  set log frequency     = 10000
+  set output frequency  = 10000
+  set output path       = ./output_dem/
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 10000
+  set restart    = false
+  set filename   = dem
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  set contact detection method               = dynamic
+  set load balance method                    = none
+  set neighborhood threshold                 = 1.5
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = 0
+  set gy                       = -9.81
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.01
+    set number                            = 2
+    set density particles                 = 912
+    set young modulus particles           = 1e7
+    set poisson ratio particles           = 0.33
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.01
+  end
+  set young modulus wall           = 1e7
+  set poisson ratio wall           = 0.33
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.01
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 5000
+  set list x              = 0.0999, -0.0001
+  set list y              = -0.021, -0.021
+  set list z              = 1e-10, 1e-10
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = cylinder
+  set grid type                           = balanced
+  set grid arguments                      = 10 : 0.0265 : 0.1
+  set initial refinement                  = 0
+  set expand particle-wall contact search = true
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 2
+    set periodic direction = 0
+  end
+end
