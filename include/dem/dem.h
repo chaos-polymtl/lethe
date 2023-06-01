@@ -391,8 +391,9 @@ private:
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
 
   // Dynamic disabling of particle contacts in cells object
-  DisableContacts<dim> disable_contacts_object;
-  bool                 has_disabled_contacts;
+  DisableContacts<dim>      disable_contacts_object;
+  bool                      has_disabled_contacts;
+  AffineConstraints<double> background_constraints;
 };
 
 #endif
