@@ -856,7 +856,7 @@ namespace Parameters
       tracer_order        = prm.get_integer("tracer order");
       VOF_order           = prm.get_integer("VOF order");
       phase_ch_order      = prm.get_integer("phase ch order");
-      potential_ch_order     = prm.get_integer("potential ch order");
+      potential_ch_order  = prm.get_integer("potential ch order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
