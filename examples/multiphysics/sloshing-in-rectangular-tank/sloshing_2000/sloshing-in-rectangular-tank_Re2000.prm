@@ -5,15 +5,15 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method         = bdf2
-  set time end       = 30
-  set time step      = 0.001
-  set adapt          = true
-  set max cfl        = 0.1
-  set output name    = sloshing-in-rectangular-tank_Re2000
-  set output path    = ./output_Re2000_4/
-  set output control = iteration
-  set output frequency = 20
+  set method           = bdf2
+  set time end         = 50
+  set time step        = 0.01
+  set adapt            = true
+  set max cfl          = 0.1
+  set output name      = sloshing-in-rectangular-tank_Re2000
+  set output path      = ./output_Re20/
+  set output frequency = 25
+  set adaptative time step scaling = 1.025
 end
 
 #---------------------------------------------------
@@ -25,20 +25,13 @@ subsection FEM
   set pressure order = 1
 end
 
+
 #---------------------------------------------------
-# Restart
+# Timer 
 #---------------------------------------------------
 
-subsection restart
-  #Checkpointing parameters
-  set checkpoint = false
-  set frequency  = 30
-
-  #Output/input files
-  set filename   = restart
-
-  #Restarting parameters
-  set restart    = false
+subsection timer
+  set type = iteration
 end
 
 #---------------------------------------------------
@@ -46,7 +39,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodal
+  set type = nodale
   subsection uvwp
     set Function expression = 0; 0; 0
   end
@@ -86,7 +79,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 5, 5 : -1, -1 : 1, 1 : true
+  set grid arguments     = 5, 2 : -1, -1 : 1, 0.1 : true
   set initial refinement = 6
 end
 
@@ -101,8 +94,8 @@ subsection mesh adaptation
   set max refinement level     = 10
   set min refinement level     = 5
   set frequency                = 1
-  set fraction refinement      = 0.99
-  set fraction coarsening      = 0.01
+  set fraction refinement      = 0.999
+  set fraction coarsening      = 0.001
   set initial refinement steps = 5
 end
 
@@ -119,22 +112,6 @@ end
 #---------------------------------------------------
 
 subsection VOF
-  subsection interface sharpening
-    set enable                  = false
-    set threshold               = 0.5
-    set interface sharpness     = 1.5
-    set frequency               = 10
-    set type                    = constant
-    set threshold max deviation = 0.2
-    set max iterations          = 50
-  end
-
-  subsection mass conservation
-    set monitoring      = true
-    set monitored fluid = fluid 1
-    set tolerance       = 1e-6
-    set verbosity       = quiet
-  end
 
   subsection phase filtration
     set type  		= tanh
@@ -206,12 +183,10 @@ end
 
 subsection linear solver
   set verbosity                             = verbose
-  set method                                = gmres
-  set max krylov vectors                    = 500
-  set max iters                             = 1000
+  set method                                = amg
+  set max krylov vectors                    = 200
+  set max iters                             = 200
   set relative residual                     = 1e-5
-  set minimum residual                      = 1e-8
-  set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-12
-  set ilu preconditioner relative tolerance = 1.00
+  set minimum residual                      = 1e-9
 end
+

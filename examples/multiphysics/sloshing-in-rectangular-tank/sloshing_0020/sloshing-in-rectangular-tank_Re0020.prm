@@ -12,7 +12,8 @@ subsection simulation control
   set max cfl          = 0.25
   set output name      = sloshing-in-rectangular-tank_Re20
   set output path      = ./output_Re20/
-  set output frequency = 1
+  set output frequency = 2
+  set adaptative time step scaling = 1.025
 end
 
 #---------------------------------------------------
@@ -24,21 +25,15 @@ subsection FEM
   set pressure order = 1
 end
 
+
 #---------------------------------------------------
-# Restart
+# Timer 
 #---------------------------------------------------
 
-subsection restart
-  #Checkpointing parameters
-  set checkpoint = true
-  set frequency  = 30
-
-  #Output/input files
-  set filename   = restart
-
-  #Restarting parameters
-  set restart    = false
+subsection timer
+  set type = iteration
 end
+
 
 #---------------------------------------------------
 # Initial Condition
@@ -54,7 +49,7 @@ subsection initial conditions
     set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
     
     subsection projection step
-      set enable           = true
+      set enable           = false
       set diffusion factor = 1
     end
     
@@ -173,12 +168,9 @@ end
 
 subsection linear solver
   set verbosity                             = verbose
-  set method                                = gmres
-  set max krylov vectors                    = 500
-  set max iters                             = 1000
+  set method                                = amg
+  set max krylov vectors                    = 200
+  set max iters                             = 200
   set relative residual                     = 1e-5
   set minimum residual                      = 1e-9
-  set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-12
-  set ilu preconditioner relative tolerance = 1.00
 end

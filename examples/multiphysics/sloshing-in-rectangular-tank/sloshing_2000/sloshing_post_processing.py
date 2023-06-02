@@ -94,7 +94,7 @@ figure_name = output_path[9:-1]
 Re = np.sqrt(g)/nu
 fig0 = plt.figure(figsize=(19, 12))
 ax0 = fig0.add_subplot(111)
-plt.plot(time_list, relative_amplitude, "sk", linewidth=2, label=f'Re = {Re:.0f} - Lethe')
+plt.plot(time_list, relative_amplitude, "sk", mfc="none", linewidth=2, label=f'Re = {Re:.0f} - Lethe')
 plt.plot(time_list, analytical_solution, "--r", linewidth=2, label=f'Re = {Re:.0f} - Analytical')
 plt.plot([0,tf], [-0.97, -0.97], "--b", linewidth=2,)
 plt.xlabel('Time')

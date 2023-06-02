@@ -129,7 +129,7 @@ number_of_previous_solutions(
 
 template <typename DataType>
 inline void
-bdf_extrapolate(const std::vector<double>                &time_vector,
+bdf_extrapolate(const std::vector<double> &               time_vector,
                 const std::vector<std::vector<DataType>> &solution_vector,
                 const unsigned int     number_of_previous_solution,
                 std::vector<DataType> &extrapolated_solution)
