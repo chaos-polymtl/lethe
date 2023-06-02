@@ -94,16 +94,13 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   // Add the interpretation of the solution. The first component is the
   // phase order (Phi) and the following one is the chemical potential (eta)
 
-  std::vector<std::string> solution_names;
-  solution_names.push_back("phase_order");
-  solution_names.push_back("chemical_potential");
+  std::vector<std::string> solution_names(2);
+  solution_names[0] = "phase_order";
+  solution_names[1] = "chemical_potential";
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation;
-  data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
-  data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
+    data_component_interpretation(
+      2, DataComponentInterpretation::component_is_scalar);
 
   data_out.add_data_vector(dof_handler,
                            present_solution,
