@@ -21,7 +21,7 @@
  * with Phi the phase field parameter (or phase order), eta the chemical
  * potential. The phase field parameter (or phase order, denoted by Phi) must
  not be confused with the order (respectively
- * phase_ch_order and potential_order) of the finite elements.
+ * phase_ch_order and potential_ch_order) of the finite elements.
  * elements related to the phase field parameter and the chemical potential
  * M the mobility function and epsilon the interface thickness
  *
@@ -76,7 +76,7 @@ public:
         const FE_SimplexP<dim> phase_order_fe(
           simulation_parameters.fem_parameters.phase_ch_order);
         const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_order);
+          simulation_parameters.fem_parameters.potential_ch_order);
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
@@ -88,16 +88,16 @@ public:
         const FE_Q<dim> phase_order_fe(
           simulation_parameters.fem_parameters.phase_ch_order);
         const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_order);
+          simulation_parameters.fem_parameters.potential_ch_order);
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping = std::make_shared<MappingQ<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order),
+                   simulation_parameters.fem_parameters.potential_ch_order),
           simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature = std::make_shared<QGauss<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order) +
+                   simulation_parameters.fem_parameters.potential_ch_order) +
           1);
       }
 

@@ -22,30 +22,21 @@ end
 #---------------------------------------------------
 # Cahn-Hilliard order
 #---------------------------------------------------
-subsection FEM
-   set phase ch order     = 1
-   set potential ch order = 1
-end
 
+subsection FEM
+  set phase ch order     = 1
+  set potential ch order = 1
+end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = hyper_cube
-  set grid arguments     = -1 : 1 : true
+  set type           = dealii
+  set grid type      = hyper_cube
+  set grid arguments = -1 : 1 : true
 end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
-end
-
 
 #---------------------------------------------------
 # FEM
@@ -81,3 +72,4 @@ subsection linear solver
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 200
 end
+
