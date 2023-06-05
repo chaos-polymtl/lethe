@@ -81,6 +81,7 @@ namespace Parameters
   public:
     InitialConditions()
       : uvwp(dim + 1)
+      , cahn_hilliard(2)
     {}
 
     InitialConditionType type;
@@ -106,6 +107,9 @@ namespace Parameters
 
     // Non-Newtonian
     Ramp ramp;
+
+    // Cahn-Hilliard
+    Functions::ParsedFunction<dim> cahn_hilliard;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -166,6 +170,11 @@ namespace Parameters
       prm.leave_subsection();
 
       ramp.declare_parameters(prm);
+
+      prm.enter_subsection("cahn hilliard");
+      cahn_hilliard.declare_parameters(prm, 2);
+      prm.set("Function expression", "0; 0");
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -212,6 +221,10 @@ namespace Parameters
       prm.leave_subsection();
 
       ramp.parse_parameters(prm);
+
+      prm.enter_subsection("cahn hilliard");
+      cahn_hilliard.parse_parameters(prm);
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }

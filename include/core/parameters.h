@@ -699,6 +699,10 @@ namespace Parameters
     // Interpolation order vof model
     unsigned int VOF_order;
 
+    // Interpolation order Cahn-Hilliard
+    unsigned int phase_ch_order;
+    unsigned int potential_ch_order;
+
     // Apply high order mapping everywhere
     bool qmapping_all;
 
