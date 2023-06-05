@@ -2,7 +2,7 @@
 Sloshing in a rectangular tank
 ================================
 
-This example simulates the damping of a small amplitude wave for Reynolds number of (2, 20, 200 and 2000). The problem is inspired by the test case of `Carrica et al.  <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ 
+This example simulates the damping of a small amplitude wave for Reynolds number of (2, 20, 200 and 2000). The problem is inspired by the test case of `Carrica et al. [1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_. 
 
 
 ----------------------------------
