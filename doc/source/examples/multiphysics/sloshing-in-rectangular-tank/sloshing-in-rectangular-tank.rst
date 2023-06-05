@@ -39,7 +39,7 @@ Four values of the Reynolds number are investigated: 2, 20, 200 and 2000.
 Parameter file
 --------------
 
-The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme with a variable time step. The ``adaptive time step scaling`` is set to 1.025 to ensure that the time-step does not rise too quickly during the oscillations of the wave.
+The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time step. The ``adaptive time step scaling`` is set to 1.025 to ensure that the time-step does not rise too quickly during wave oscillations.
 
 .. code-block:: text
 
@@ -47,14 +47,14 @@ The results for this problem are highly sensitive to the accuracy of the time-st
     # Simulation Control
     #---------------------------------------------------
     subsection simulation control
-      set method           = bdf2
-      set time end         = 50
+      set method                       = bdf2
+      set time end                     = 50
       set time step                    = 0.01
       set adapt                        = true
       set max cfl                      = 0.25
       set output name                  = sloshing-in-rectangular-tank_Re20
       set output path                  = ./output_Re20/
-      set output frequency = 1
+      set output frequency             = 1
       set adaptative time step scaling = 1.025
     end
 
@@ -70,7 +70,7 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
     end 
     
 
-In the ``initial condition``, we define the initial height of the wave ensuring that the interface (the 0.5 isovalue) lies at the right height.
+In the ``initial condition``, we define the initial height of the wave, such that the interface (:math:`\phi = 0.5` isocurve) lies at the right height.
 
 .. code-block:: text
 
