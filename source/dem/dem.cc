@@ -375,12 +375,14 @@ DEMSolver<dim>::setup_background_dofs()
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
 
-  // Periodic nodes have to be mapped with the background constraints otherwise
-  // the disabling of contacts will not propagate the mobility status to the
-  // periodic nodes during iterations
+  // Periodic nodes must be mapped otherwise the disabling of contacts will not
+  // propagate the mobility status to the periodic nodes during iterations.
+  // Identification of periodic nodes is done with the background constraints.
+  // Those constraints are not used for any matrix assembly in DEM solver, this
+  // approach comes from CFD-DEM coupling where void fraction constraints are
+  // used to achieve the periodic node mapping.
   if (has_disabled_contacts && has_periodic_boundaries)
     {
-      IndexSet locally_owned_dofs = background_dh.locally_owned_dofs();
       IndexSet locally_relevant_dofs;
       DoFTools::extract_locally_relevant_dofs(background_dh,
                                               locally_relevant_dofs);
