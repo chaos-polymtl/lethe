@@ -2,6 +2,9 @@ add_library(lethe-solvers
   # Sources
   analytical_solutions.cc
   auxiliary_physics.cc
+  cahn_hilliard.cc
+  cahn_hilliard_assemblers.cc
+  cahn_hilliard_scratch_data.cc
   flow_control.cc
   gd_navier_stokes.cc
   gls_navier_stokes.cc
@@ -32,6 +35,9 @@ add_library(lethe-solvers
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
+  ../../include/solvers/cahn_hilliard.h
+  ../../include/solvers/cahn_hilliard_assemblers.h
+  ../../include/solvers/cahn_hilliard_scratch_data.h
   ../../include/solvers/copy_data.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/gd_navier_stokes.h
