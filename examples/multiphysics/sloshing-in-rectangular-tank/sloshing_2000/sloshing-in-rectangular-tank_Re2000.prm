@@ -39,7 +39,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  set type = nodale
+  set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
   end
