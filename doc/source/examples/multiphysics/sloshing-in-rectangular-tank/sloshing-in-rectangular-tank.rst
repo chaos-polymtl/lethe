@@ -25,9 +25,9 @@ Files used in this example
 Description of the case
 -----------------------------
 
-Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas). Yet, simulating their dynamics is difficult, especially for high values of the Reynolds number. Indeed, in this case, the amplitude of the waves dampen very slowly, which leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the Volume of Fluid solver and the Navier-Stokes solver. 
+Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas). Yet, simulating their dynamics is difficult, especially for high values of the Reynolds number. Indeed, in this case, the amplitude of the waves dampen very slowly, which leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver. 
 
-In this problem, we simulate the damping of a small amplitude wave in a cavity of dimension :math:`(-1,-1)x(1,0.1)` . The initial height of the wave :math:`\xi (x)` is given by:
+In this problem, we simulate the damping of a small amplitude wave in a cavity of dimension :math:`(-1,-1)\times (1,0.1)` . The initial height of the wave :math:`\xi (x)` is given by:
 
 .. math::
 
