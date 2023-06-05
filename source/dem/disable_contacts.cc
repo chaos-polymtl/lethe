@@ -155,8 +155,8 @@ DisableContacts<dim>::identify_mobility_status(
   const unsigned int dofs_per_cell = fe.dofs_per_cell;
 
   // Get locally owned and relevant dofs
-  const IndexSet locally_owned_dofs = background_dh.locally_owned_dofs();
-  IndexSet       locally_relevant_dofs =
+  const IndexSet &locally_owned_dofs = background_dh.locally_owned_dofs();
+  IndexSet        locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(background_dh);
 
   // Reinit all value of mobility at nodes as inactive (0)
@@ -294,7 +294,7 @@ DisableContacts<dim>::identify_mobility_status(
       for (auto node_id : local_dof_indices)
         {
           // Check if node is mobile and assign mobile status to the cell
-          if (mobility_at_nodes[node_id] == mobility_status::mobile)
+          if (mobility_at_nodes(node_id) == mobility_status::mobile)
             {
               // Assign mobile status to cell in map
               const unsigned int cell_id = (*cell)->active_cell_index();

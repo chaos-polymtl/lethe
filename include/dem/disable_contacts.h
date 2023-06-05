@@ -182,11 +182,11 @@ public:
    * 2. Check if the cell is mobile by criteria (average granular temperature >
    * threshold, solid fraction < threshold or has at least one empty node from
    * previous check), if so, nodes are flagged and cells are stored with mobile
-   * mobility status (5)
+   * mobility status (4)
    *
    * 3. Check if the cell is mobile by neighbor (at least a node is flagged as
    * mobile from previous check), if so, cells are stored in map as mobile
-   * status (5) and nodes that are not mobile are flagged as active (1/3)
+   * status (4) and nodes that are not mobile are flagged as active (1/3)
    *
    * 4. Check if the cell is active (at least a node is flagged as active from
    * previous check), if so, cells are stored with active status in the map
@@ -426,7 +426,7 @@ private:
   inline void
   assign_node_status(const unsigned int node_id, const int mobility_status)
   {
-    // Prevailling mobility status of the node and assignation
+    // Prevailing mobility status of the node and assignation
     int mobility_status_assigned =
       std::max(mobility_status, mobility_at_nodes(node_id));
     mobility_at_nodes(node_id) = mobility_status_assigned;
