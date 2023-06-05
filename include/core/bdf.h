@@ -122,7 +122,7 @@ number_of_previous_solutions(
  *
  * @tparam The type of the variable being extrapolated (e.g. double, Tensor<1,dim>)
  * @param time_vector The vector of times. The solution will be extrapolated to time 0. It should be of size number_of_previous_solutions+1
- * @param solution_vector The vector of solutions.The solution will be extrapolated to index 0. It should be at least of size number_of_previous_solutions
+ * @param solution_vector The vector of solutions. The solution will be extrapolated to index 0. It should be at least of size number_of_previous_solutions
  * @param number_of_previous_solution The number of previous solutions to use to extrapolate
  * @param extrapolated_solution The vector of extrapolated solutions
  */
@@ -134,7 +134,7 @@ bdf_extrapolate(const std::vector<double> &               time_vector,
                 const unsigned int     number_of_previous_solution,
                 std::vector<DataType> &extrapolated_solution)
 {
-  // If only one previous solution is used,  we don't make a Lagrange
+  // If only one previous solution is used, we don't make a Lagrange
   // polynomial but use the previous value
   if (number_of_previous_solution == 1)
     {

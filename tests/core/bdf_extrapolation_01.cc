@@ -68,7 +68,7 @@ test()
     deallog << std::endl;
     deallog << "--------------------------";
     deallog << std::endl;
-    deallog << "Order 2 equal time steps: ";
+    deallog << "Order 2 constant time steps: ";
 
 
     for (unsigned int v = 0; v < out_values.size(); ++v)
