@@ -98,8 +98,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
       auto cell_with_boundary_point =
         cells_with_boundary_points_information->first;
 
-      // If main cell has status inactive or active, skip to next
-      // cell
+      // If main cell has status other than mobile, skip to next cell
       unsigned int main_cell_mobility_status =
         disable_contacts_object.check_cell_mobility(cell_with_boundary_point);
       if (main_cell_mobility_status != DisableContacts<dim>::mobile)
@@ -232,7 +231,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
       auto cell_with_boundary_line =
         std::get<0>(*cells_with_boundary_lines_information);
 
-      // If main cell has status inactive or active, skip to next cell
+      // If main cell has status other than mobile, skip to next cell
       unsigned int main_cell_mobility_status =
         disable_contacts_object.check_cell_mobility(cell_with_boundary_line);
       if (main_cell_mobility_status != DisableContacts<dim>::mobile)

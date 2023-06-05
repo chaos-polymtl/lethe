@@ -407,11 +407,13 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
   // Applied a factor on the particle weight regards the mobility status
   // Factor of 1 when mobile cell
   double alpha = 1.0;
-  if (cell_mobility_status == disable_contacts_object.active)
+  if (cell_mobility_status == disable_contacts_object.static_active ||
+      cell_mobility_status == disable_contacts_object.advected_active)
     {
       alpha = parameters.model_parameters.active_load_balancing_factor;
     }
-  else if (cell_mobility_status == disable_contacts_object.inactive)
+  else if (cell_mobility_status == disable_contacts_object.inactive ||
+           cell_mobility_status == disable_contacts_object.advected)
     {
       alpha = parameters.model_parameters.inactive_load_balancing_factor;
     }
@@ -474,7 +476,6 @@ DEMSolver<dim>::setup_background_dofs()
   FE_Q<dim> background_fe(1);
   background_dh.distribute_dofs(background_fe);
 
-
   // Periodic nodes have to be mapped with the background constraints otherwise
   // the disabling of contacts will not propagate the mobility status to the
   // periodic nodes during iterations
@@ -495,6 +496,8 @@ DEMSolver<dim>::setup_background_dofs()
         parameters.boundary_conditions.periodic_direction,
         background_constraints);
 
+      background_constraints.close();
+
       disable_contacts_object.map_periodic_nodes(background_constraints);
     }
 }
@@ -510,7 +513,6 @@ DEMSolver<dim>::load_balance()
 
   pcout << "-->Repartitionning triangulation" << std::endl;
   triangulation.repartition();
-  setup_background_dofs();
 
   // Unpack the particle handler after the mesh has been repartitioned
   particle_handler.unpack_after_coarsening_and_refinement();
@@ -568,6 +570,8 @@ DEMSolver<dim>::load_balance()
   pcout << "Minimum and maximum number of cells owned by the processors are "
         << average_minimum_maximum_cells.min << " and "
         << average_minimum_maximum_cells.max << std::endl;
+
+  setup_background_dofs();
 }
 
 template <int dim>
@@ -641,12 +645,17 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
               // mobility status. alpha = 1 by default for mobile cell, but
               // is modified if cell is active or inactive
               double alpha = 1.0;
-              if (cell_mobility_status == disable_contacts_object.active)
+              if (cell_mobility_status ==
+                    disable_contacts_object.static_active ||
+                  cell_mobility_status ==
+                    disable_contacts_object.advected_active)
                 {
                   alpha =
                     parameters.model_parameters.active_load_balancing_factor;
                 }
-              else if (cell_mobility_status == disable_contacts_object.inactive)
+              else if (cell_mobility_status ==
+                         disable_contacts_object.inactive ||
+                       cell_mobility_status == disable_contacts_object.advected)
                 {
                   alpha =
                     parameters.model_parameters.inactive_load_balancing_factor;
