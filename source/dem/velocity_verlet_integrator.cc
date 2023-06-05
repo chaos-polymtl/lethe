@@ -429,7 +429,8 @@ VelocityVerletIntegrator<dim>::integrate_with_advected_particles(
                         }
                     }
                 }
-              else // Active and inactive cells (no particles integration)
+              else // Static active and inactive cells (no particles
+                   // integration)
                 {
                   for (auto &particle : particles_in_cell)
                     {

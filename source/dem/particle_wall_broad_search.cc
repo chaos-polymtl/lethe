@@ -245,7 +245,7 @@ ParticleWallBroadSearch<dim>::find_particle_wall_contact_pairs(
       auto boundary_cells_content = boundary_cells_information_iterator->second;
       auto cell                   = boundary_cells_content.cell;
 
-      // If main cell has status inactive or active, skip to next cell
+      // If main cell has status other than mobile, skip to next cell
       // No needs to check if the main cell has any particle after this
       // step since mobile cells have particles
       unsigned int main_cell_mobility_status =
@@ -318,7 +318,7 @@ ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
                cell != boundary_cells_content.end();
                ++cell)
             {
-              // If main cell has status inactive or active, skip to next cell
+              // If main cell has status other than mobile, skip to next cell
               // No needs to check if the main cell has any particle after this
               // step since mobile cells have particles
               unsigned int main_cell_mobility_status =
@@ -394,7 +394,7 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
               // Loop through neighbors
               for (auto &cell_iterator : cell_list)
                 {
-                  // If main cell has status inactive or active, skip to next
+                  // If main cell has status other than mobile, skip to next
                   // cell
                   // No needs to check if the main cell has any particle after
                   // this step since mobile cells have particles

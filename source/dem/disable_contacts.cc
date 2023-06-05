@@ -155,8 +155,8 @@ DisableContacts<dim>::identify_mobility_status(
   const unsigned int dofs_per_cell = fe.dofs_per_cell;
 
   // Get locally owned and relevant dofs
-  const IndexSet &locally_owned_dofs = background_dh.locally_owned_dofs();
-  IndexSet        locally_relevant_dofs =
+  const IndexSet locally_owned_dofs = background_dh.locally_owned_dofs();
+  IndexSet       locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(background_dh);
 
   // Reinit all value of mobility at nodes as inactive (0)
@@ -166,14 +166,14 @@ DisableContacts<dim>::identify_mobility_status(
   mobility_at_nodes = 0;
 
   // If the advection of particles setting is enabled (useful for CFD-DEM),
-  // mobility status are different: inactive and active status are advected and
-  // advected_active since they are not handled in the same way as in DEM only.
-  // They have a special handling in the velocity integration step because cell
-  // averaged velocity and acceleration are applied to particles, so they need
-  // this different status. The criteria for those status are the same as for
-  // DEM.
+  // mobility status are different: inactive and static_active status are
+  // advected and advected_active since they are not handled in the same way as
+  // in DEM only. They have a special handling in the velocity integration step
+  // because cell averaged velocity and acceleration are applied to particles,
+  // so they need this different status. The criteria for those status are the
+  // same as for DEM.
   mobility_status inactive_status = mobility_status::inactive;
-  mobility_status active_status   = mobility_status::active;
+  mobility_status active_status   = mobility_status::static_active;
   if (advect_particles_enabled)
     {
       inactive_status = mobility_status::advected;
@@ -181,7 +181,7 @@ DisableContacts<dim>::identify_mobility_status(
     }
 
   // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
-  // flagged as empty mobility status (3)
+  // flagged as empty mobility status (5)
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {
@@ -196,14 +196,13 @@ DisableContacts<dim>::identify_mobility_status(
           cell_mobility_status.insert({cell_id, mobility_status::inactive});
 
           // Remove cell from cell set and iterate to the following cell, the
-          // erase function returns the next iterator.
+          // erase function returns the next iterator
           cell = local_and_ghost_cells_copy.erase(cell);
 
-          // Assign empty status to all nodes and periodic nodes for the cell
+          // Assign empty status to all nodes of the cell
           for (auto node_id : local_dof_indices)
             {
-              mobility_at_nodes(node_id) = mobility_status::empty;
-              assign_to_periodic_node(node_id, mobility_status::empty);
+              assign_node_status(node_id, mobility_status::empty);
             }
         }
       else
@@ -217,7 +216,8 @@ DisableContacts<dim>::identify_mobility_status(
   mobility_at_nodes.update_ghost_values();
 
   // Calculate the average granular temperature and solid fraction for each
-  // cell currently in the local_and_ghost_cells_copy set (no empty cells)
+  // cell currently in the local_and_ghost_cells_copy set (empty cells are
+  // already removed)
   Vector<double> granular_temperature_average(n_active_cells);
   Vector<double> solid_fractions(n_active_cells);
   calculate_granular_temperature_and_solid_fraction(
@@ -263,20 +263,9 @@ DisableContacts<dim>::identify_mobility_status(
           cell = local_and_ghost_cells_copy.erase(cell);
 
           // Assign mobile status to nodes but don't overwrite empty nodes.
-          // This prevents assigning mobile status to the empty cells in the
-          // next check (additional mobile layer) since we don't verify again if
-          // cell is empty or not.
           for (auto node_id : local_dof_indices)
             {
-              // Possible cases: (nodes are initialized to inactive (0))
-              // node = max(mobile (4), inactive (0/2)) = mobile (4)
-              // node = max(mobile (4), empty (5))    = empty (5)
-              mobility_at_nodes(node_id) =
-                std::max((int)mobility_status::mobile,
-                         mobility_at_nodes(node_id));
-              assign_to_periodic_node(node_id,
-                                      mobility_at_nodes(node_id),
-                                      true);
+              assign_node_status(node_id, mobility_status::mobile);
             }
         }
       else
@@ -323,13 +312,7 @@ DisableContacts<dim>::identify_mobility_status(
               // mobility status
               for (auto node_id : local_dof_indices)
                 {
-                  // Possible cases: (nodes are initialized to inactive (0))
-                  // node = max(active (1), inactive (0)) = active (1)
-                  // node = max(active (1), empty (3))    = empty (3)
-                  // node = max(active (1), mobile (2))   = mobile (2)
-                  mobility_at_nodes(node_id) =
-                    std::max((int)mobility_status::active,
-                             mobility_at_nodes(node_id));
+                  assign_node_status(node_id, active_status);
                 }
               break; // No need to check the other nodes
             }
