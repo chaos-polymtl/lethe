@@ -49,11 +49,11 @@ The results for this problem are highly sensitive to the accuracy of the time-st
     subsection simulation control
       set method           = bdf2
       set time end         = 50
-      set time step        = 0.01
-      set adapt            = true
-      set max cfl          = 0.25
-      set output name      = sloshing-in-rectangular-tank_Re20
-      set output path      = ./output_Re20/
+      set time step                    = 0.01
+      set adapt                        = true
+      set max cfl                      = 0.25
+      set output name                  = sloshing-in-rectangular-tank_Re20
+      set output path                  = ./output_Re20/
       set output frequency = 1
       set adaptative time step scaling = 1.025
     end
@@ -94,7 +94,7 @@ In the ``initial condition``, we define the initial height of the wave ensuring 
       end
     end
 
-In the ``mesh`` subsection, we define an hyper rectangle with the appropriate dimensions. The mesh is initially refined 6 times to ensure an adequate definition of the interface.
+In the ``mesh`` subsection, we define a hyper rectangle with appropriate dimensions. The mesh is initially refined 6 times to ensure adequate definition of the interface.
 
 .. code-block:: text
 
