@@ -13,8 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import sys
-#sys.path.append("../../../contrib/postprocessing/")
-sys.path.append("./")
+sys.path.append("../../../../contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 #############################################################################
@@ -37,7 +36,7 @@ pvd_name = fluids.prm_dict["output name"]
 fluids.read_lethe_to_pyvista(f'{pvd_name}.pvd')
 
 # Set phase_limit to search for height values
-phase_limit = 0.5#fluids.prm_dict["threshold"]
+phase_limit = 0.5
 
 # Get active times
 time_list = fluids.time_list
@@ -68,7 +67,6 @@ for i in range(len(fluids.list_vtu)):
         if point[1] > H_max:
             H_max = point[1]
 
-
     H.append(H_max)
 
 # Calculate relative
@@ -81,7 +79,6 @@ k = np.pi
 analytical_solution = [1-(1/(1+4*nu*nu*k*k*k/g)*(1-np.exp(-2*nu*k*k*t)*(np.cos(np.sqrt(k*g)*t)+2*nu*k*k*np.sin(np.sqrt(k*g)*t)/np.sqrt(k*g)))) for t in time_list]
 
 # Figures
-tf = time_list[len(time_list)-1]
 plt.rcParams['font.size'] = '16'
 fs1 = 16
 fs2 = 14
@@ -92,16 +89,13 @@ figure_name = output_path[9:-1]
 
 # Plot heights
 Re = np.sqrt(g)/nu
-fig0 = plt.figure(figsize=(19, 12))
+fig0 = plt.figure(figsize=(9.5, 6))
 ax0 = fig0.add_subplot(111)
 plt.plot(time_list, relative_amplitude, "sk", mfc="none", linewidth=2, label=f'Re = {Re:.0f} - Lethe')
 plt.plot(time_list, analytical_solution, "--r", linewidth=2, label=f'Re = {Re:.0f} - Analytical')
-plt.plot([0,tf], [-0.97, -0.97], "--b", linewidth=2,)
 plt.xlabel('Time')
 plt.ylabel('Relative amplitude')
 plt.legend(loc="best")
 plt.savefig('figure_' + figure_name + '.png')
 plt.show()
-
-
 
