@@ -885,6 +885,12 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 {
+  // Particles displacement if passing through a periodic boundary
+  if (has_periodic_boundaries)
+    periodic_boundaries_object.execute_particles_displacement(
+      this->particle_handler,
+      container_manager.periodic_boundaries_cells_information);
+
   // Check to see if it is contact search step
   contact_detection_step =
     check_contact_detection_method(counter,
@@ -909,12 +915,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
     {
       this->pcout << "DEM contact search at dem step " << counter << std::endl;
       contact_build_number++;
-
-      // Particles displacement if passing through a periodic boundary
-      if (has_periodic_boundaries)
-        periodic_boundaries_object.execute_particles_displacement(
-          this->particle_handler,
-          container_manager.periodic_boundaries_cells_information);
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -1266,22 +1266,53 @@ void
 CFDDEMSolver<dim>::print_particles_summary()
 {
   // Write particle Velocity
-  for (auto &particle : this->particle_handler)
+  std::map<int, Particles::ParticleIterator<dim>> global_particles;
+  unsigned int current_id, current_id_max = 0;
+
+  // Mapping of all particles & find the max id on current processor
+  for (auto particle = this->particle_handler.begin();
+       particle != this->particle_handler.end();
+       ++particle)
     {
-      auto particle_properties = particle.get_properties();
-      this->pcout << "Particle Summary" << std::endl;
+      current_id     = particle->get_id();
+      current_id_max = std::max(current_id, current_id_max);
 
-      std::stringstream ss;
+      global_particles.insert({current_id, particle});
+    }
 
-      ss << std::setprecision(6) << "id: " << particle.get_id() << ",  "
-         << "x: " << particle.get_location()[0] << ",  "
-         << "y: " << particle.get_location()[1] << ",  "
-         << "z: " << particle.get_location()[2] << ",  "
-         << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x] << ",  "
-         << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y] << ",  "
-         << "vz: " << particle_properties[DEM::PropertiesIndex::v_z];
+  // Find global max particle index
+  unsigned int id_max =
+    Utilities::MPI::max(current_id_max, this->mpi_communicator);
 
-      announce_string(this->pcout, ss.str(), '-');
+  // Print particle info one by one in ascending order
+  for (unsigned int i = 0; i <= id_max; i++)
+    {
+      for (auto &iterator : global_particles)
+        {
+          unsigned int id = iterator.first;
+          if (id == i)
+            {
+              auto particle            = iterator.second;
+              auto particle_properties = particle->get_properties();
+
+              this->pcout << "Particle Summary" << std::endl;
+
+              std::stringstream ss;
+              ss << std::setprecision(6) << "id: " << id << ",  "
+                 << "x: " << particle->get_location()[0] << ",  "
+                 << "y: " << particle->get_location()[1] << ",  "
+                 << "z: " << particle->get_location()[2] << ",  "
+                 << "v_x: " << particle_properties[DEM::PropertiesIndex::v_x]
+                 << ",  "
+                 << "v_y: " << particle_properties[DEM::PropertiesIndex::v_y]
+                 << ",  "
+                 << "vz: " << particle_properties[DEM::PropertiesIndex::v_z];
+
+              announce_string(this->pcout, ss.str(), '-');
+            }
+        }
+      usleep(100);
+      MPI_Barrier(this->mpi_communicator);
     }
 }
 
@@ -1325,9 +1356,9 @@ CFDDEMSolver<dim>::dem_setup_contact_parameters()
 
   triangulation_cell_diameter = 0.5 * GridTools::diameter(*this->triangulation);
 
-  //   Finding the smallest contact search frequency criterion between (smallest
-  //   cell size - largest particle radius) and (security factor * (blab
-  //   diamater - 1) *  largest particle radius). This value is used in
+  //   Finding the smallest contact search frequency criterion between
+  //   (smallest cell size - largest particle radius) and (security factor *
+  //   (blab diamater - 1) *  largest particle radius). This value is used in
   //   find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(*this->triangulation) -
@@ -1446,8 +1477,8 @@ CFDDEMSolver<dim>::solve()
   // In the case the simulation is being restarted from a checkpoint file, the
   // checkpoint_step parameter is set to true. This allows to perform all
   // operations related to restarting a simulation. Once all operations have
-  // been performed, this checkpoint_step is reset to false. It is only set once
-  // and reset once since restarting only occurs once.
+  // been performed, this checkpoint_step is reset to false. It is only set
+  // once and reset once since restarting only occurs once.
   if (this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
         .restart == true)
     checkpoint_step = true;
@@ -1537,8 +1568,8 @@ CFDDEMSolver<dim>::solve()
 
       // Load balancing
       // The input argument to this function is set to zero as this integer is
-      // not used for the check_load_balance_step function and is only important
-      // for the check_contact_search_step function.
+      // not used for the check_load_balance_step function and is only
+      // important for the check_contact_search_step function.
       load_balance_step =
         check_load_balance_method(this->cfd_dem_simulation_parameters,
                                   this->particle_handler,
