@@ -161,12 +161,12 @@ We compare the height of the free surface at :math:`x=0` with an analytical solu
 
 .. code-block:: text
 
-  python3 ../sloshing_post_processing.py . sloshing-in-rectangular-tank_Re0020.prm ``
+  python3 ../sloshing_post_processing.py . sloshing-in-rectangular-tank_Re0020.prm
 
 in the folder where you have ran the simulation for a given Reynolds number (20 in the above example). You need to ensure that the ``lethe_pyvista_tools`` module included within Lethe is in your Python path. For Reynolds number of 2000, a seperate post-processing script is included since the analytical solution must be calculated.
 
 
-The following table presents a comparison between the analytical results and the simulation results for all Reynolds number. A very good agreement is obtained for all Reynolds number, demonstrating the accuracy of the VOF solver.
+The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.
 
 +------+--------------------------------------+
 | Re   | Results                              |
