@@ -11,7 +11,7 @@ subsection simulation control
   set adapt            = true
   set max cfl          = 0.1
   set output name      = sloshing-in-rectangular-tank_Re2000
-  set output path      = ./output_Re20/
+  set output path      = ./output_Re2000/
   set output frequency = 25
   set adaptative time step scaling = 1.025
 end
@@ -64,7 +64,7 @@ subsection physical properties
   set number of fluids = 2
   subsection fluid 0
     set density             = 0.001
-    set kinematic viscosity = 0.001
+    set kinematic viscosity = 0.0005
   end
   subsection fluid 1
     set density             = 1
@@ -79,7 +79,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 5, 2 : -1, -1 : 1, 0.1 : true
+  set grid arguments     = 5, 3 : -1, -1 : 1, 0.1 : true
   set initial refinement = 6
 end
 
