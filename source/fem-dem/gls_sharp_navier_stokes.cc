@@ -723,9 +723,12 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
+  double dt    = this->simulation_control->get_time_steps_vector()[0];
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  bool extrapolate_particle_position=true;
 
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
   for (const auto &cell : cell_iterator)
@@ -740,6 +743,27 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
+              Point<dim> particle_position;
+              Tensor<1,3> particle_orientation;
+              if( extrapolate_particle_position){
+                  particle_position=particles[p].position;
+                  particle_orientation=particles[p].orientation;
+                  particles[p].orientation =
+                    particles[p].orientation + particles[p].omega * dt;
+                  particles[p].position[0] =
+                      particles[p].position[0] + particles[p].velocity[0] * dt;
+                  particles[p].position[1] =
+                    particles[p].position[1] + particles[p].velocity[1] * dt;
+
+                  if constexpr (dim==3)
+                    {
+                      particles[p].position[2] =
+                        particles[p].position[2] + particles[p].velocity[2] * dt;
+
+                    }
+                  particles[p].set_position(particles[p].position);
+                  particles[p].set_orientation(particles[p].orientation);
+                }
               // Check if a point on the random point on the IB is contained in
               // that cell. If the particle is much smaller than the cell, all
               // its vertices may be outside of the particle. In that case the
@@ -770,11 +794,20 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                         }
                     }
                 }
+
+              if( extrapolate_particle_position){
+                  particles[p].position=particle_position;
+                  particles[p].orientation=particle_orientation;
+                  particles[p].set_position(particles[p].position);
+                  particles[p].set_orientation(particles[p].orientation);
+                }
               if (count_small > 0 || cell_as_ib_inside)
                 {
                   cell->set_refine_flag();
                   break;
                 }
+
+
             }
         }
     }
@@ -4351,6 +4384,32 @@ GLSSharpNavierStokesSolver<dim>::solve()
       else
         {
           ib_done.clear();
+          double temp_refine =
+            this->simulation_parameters.mesh_adaptation.variables.begin()
+              ->second.refinement_fraction;
+          double temp_coarse =
+            this->simulation_parameters.mesh_adaptation.variables.begin()
+              ->second.coarsening_fraction;
+          this->simulation_parameters.mesh_adaptation.variables.begin()
+            ->second.refinement_fraction = 0;
+          this->simulation_parameters.mesh_adaptation.variables.begin()
+            ->second.coarsening_fraction = 0;
+
+          for (unsigned int i = 0;
+               i <
+               this->simulation_parameters.particlesParameters->initial_refinement-1;
+               ++i)
+            {
+
+              refine_ib();
+              NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+                refine_mesh();
+              update_precalculations_for_ib();
+            }
+          this->simulation_parameters.mesh_adaptation.variables.begin()
+            ->second.refinement_fraction = temp_refine;
+          this->simulation_parameters.mesh_adaptation.variables.begin()
+            ->second.coarsening_fraction = temp_coarse;
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
