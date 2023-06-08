@@ -13,7 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 import sys
-sys.path.append("../../../contrib/postprocessing/")
+sys.path.append("../../../../contrib/postprocessing/")
 from lethe_pyvista_tools import *
 
 #############################################################################
@@ -78,15 +78,19 @@ relative_amplitude = [h/amplitude_0 for h in H]
 nu = fluids.prm_dict["kinematic viscosity"]
 g = 1
 Re = np.sqrt(g)/nu
-validation_file_name = f"{simulation_path}/analytical_solution_Re{Re:.0f}.csv"
-analytical_values = pd.read_csv(validation_file_name)
-analytical_time = np.array(analytical_values['x'])
-analytical_solution = np.array(-analytical_values[f"Re{Re:.0f}"])
+if Re >= 2000 :
+    k = np.pi
+    tf = time_list[len(time_list)-1]
+    analytical_time = np.linspace(0,tf,1000)
+    analytical_solution = [1-(1/(1+4*nu*nu*k*k*k/g)*(1-np.exp(-2*nu*k*k*t)*(np.cos(np.sqrt(k*g)*t)+2*nu*k*k*np.sin(np.sqrt(k*g)*t)/np.sqrt(k*g)))) for t in analytical_time] # this solution is only valid for high Re [1]
+else :
+    validation_file_name = f"{simulation_path}/analytical_solution_Re{Re:.0f}.csv"
+    analytical_values = pd.read_csv(validation_file_name)
+    analytical_time = np.array(analytical_values['x'])
+    analytical_solution = np.array(-analytical_values[f"Re{Re:.0f}"])
 
 # Figures
 plt.rcParams['font.size'] = '16'
-fs1 = 16
-fs2 = 14
 
 # Figure name
 output_path = fluids.prm_dict["output path"]
@@ -103,3 +107,7 @@ plt.legend(loc="best")
 plt.tight_layout()
 plt.savefig(f'{simulation_path}/figure_' + figure_name + '.png')
 plt.show()
+
+# REFERENCES
+# [1] Wu, G. X., Eatock Taylor, R., & Greaves, D. M. (2001). The effect of viscosity on the transient
+# free-surface waves in a two-dimensional tank. Journal of Engineering Mathematics, 40, 77-90.

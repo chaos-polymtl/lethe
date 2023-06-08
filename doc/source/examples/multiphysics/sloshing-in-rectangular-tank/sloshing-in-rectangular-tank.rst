@@ -110,7 +110,7 @@ In the ``mesh`` subsection, we define a hyper rectangle with appropriate dimensi
   end
 
 
-The ``physical properties`` are mainly used to establish the Reynolds number of the sloshing liquid. For the air, however, the work of Carrica *et al.* `[1]  <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ does not give any physical properties. We thus fix the air to be significantly less dense, but we keep the viscosity of the air at a certain reasonable viscosity to ensure numerical stability.
+The ``physical properties`` are mainly used to establish the Reynolds number of the sloshing liquid. For the air, however, the work of Carrica *et al.* `[1]  <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ does not give any physical properties. We thus fix the air to be significantly less dense than the liquid, but we keep its viscosity at a certain reasonable viscosity to ensure numerical stability.
 
 .. code-block:: text
 
@@ -131,6 +131,20 @@ The ``physical properties`` are mainly used to establish the Reynolds number of 
   end
 
 
+The ``source term`` subsection is used to enable the gravitational acceleration along the :math:`y` direction.
+
+.. code-block:: text
+
+  # --------------------------------------------------
+  # Source term
+  #---------------------------------------------------
+  
+  subsection source term
+    set enable = true
+    subsection xyz
+      set Function expression = 0 ; -1 ; 0
+    end
+  end
     
 
 
@@ -157,13 +171,13 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results
 -------
 
-We compare the height of the free surface at :math:`x=0` with an analytical solution proposed by `Wu et al. [2] <https://link.springer.com/article/10.1023/A:1017558826258>`_. For the Reynolds number of 2, 20 and 200, data were directly extracted from `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of 2000, the simplified analytical expression of Wu et al. is used. The results for Reynolds number of 2, 20 or 200 can be post-processed by invoking the following command:
+We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by `Wu et al. [2] <https://link.springer.com/article/10.1023/A:1017558826258>`_. For the Reynolds number of 2, 20 and 200, data were directly extracted from `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of 2000, the simplified analytical expression of Wu et al. is used. The results for Reynolds number of 2, 20, 200 and 2000 can be post-processed by invoking the following command from the folder of the Reynolds number of interest::
 
 .. code-block:: text
 
   python3 ../sloshing_post_processing.py . sloshing-in-rectangular-tank_Re0020.prm
 
-in the folder where you have ran the simulation for a given Reynolds number (20 in the above example). You need to ensure that the ``lethe_pyvista_tools`` module included within Lethe is in your Python path. For Reynolds number of 2000, a separate post-processing script is included since the analytical solution must be calculated.
+in the folder where you have ran the simulation for a given Reynolds number (20 in the above example). You need to ensure that the ``lethe_pyvista_tools`` module included within Lethe is in your Python path.
 
 
 The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.
