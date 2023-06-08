@@ -14,6 +14,7 @@
 
 #include <bits/stdc++.h>
 #include <rpt/compartmentalization.h>
+#include <rpt/rpt_utilities.h>
 
 #include <iostream>
 #include <map>
@@ -42,25 +43,27 @@ Compartmentalization<dim>::generate_cylindrical_grid()
   triangulation.refine_global(cp_parameters.cp_param.initial_refinement);
   std::ofstream output("triangulation.vtk");
   grid_out.write_vtk(triangulation, output);
-  std::vector<double>     cell_index_output;
-  std::vector<Point<dim>> points;
+}
+
+template <int dim>
+void
+Compartmentalization<dim>::write_cell_center()
+{
+  std::vector<Point<dim>> points(triangulation.n_active_cells());
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      // std::vector<double> center;
       Point<3, double> center;
       if (cell->is_locally_owned())
         {
           center = cell->center();
           cells_and_indices.insert({cell->index(), cell});
-          points.push_back(center);
-          center.clear();
+          points[cell->index()] = center;
         }
     }
-
   // output the center of cell to feed the Pyvista and extract the electric
   // field and velocity at the cell centers
   // from COMSOL or CFD simulation
-  std::string   filename = "cell_centers";
+  std::string   filename = "cell_centers_pyvista_feed";
   std::ofstream myfile;
   std::string   sep = " ";
   myfile.open(filename);
@@ -77,37 +80,35 @@ Compartmentalization<dim>::generate_cylindrical_grid()
 
 template <int dim>
 auto
-Compartmentalization<dim>::electric_field_stored_in_vector()
+Compartmentalization<dim>::read_electric_field_in_vector()
   -> std::vector<std::vector<double>>
 {
+  std::string filename = "electric_field_values.txt";
+
   std::vector<double> electric_field;
-  std::ifstream       fin("input_values_emw");
+  std::ifstream       fin("electric_field_values");
   double              element;
   while (fin >> element)
     {
       electric_field.push_back(element);
     }
 
-
   for (const auto &[cell_index, cell] : cells_and_indices)
     {
-      std::vector<double> fill_matrix;
-      fill_matrix.push_back(cell_index);
-      fill_matrix.push_back(electric_field[cell_index]);
-      primer_matrix_index_emw.push_back(fill_matrix);
-      fill_matrix.clear();
+      matrix_index_electric_field.push_back(
+        {cell_index, electric_field[cell_index]});
     }
-  return primer_matrix_index_emw;
+  return matrix_index_electric_field;
 }
 
 template <int dim>
 auto
-Compartmentalization<dim>::electric_field_stored_in_map()
+Compartmentalization<dim>::read_electric_field_in_map()
   -> std::map<typename Triangulation<dim>::active_cell_iterator, double>
 {
   // Read the electric field and write it in a vector
   std::vector<double> electric_field;
-  std::ifstream       fin("input_values_emw");
+  std::ifstream       fin("electric_field_values");
   double              element;
   while (fin >> element)
     {
@@ -117,9 +118,9 @@ Compartmentalization<dim>::electric_field_stored_in_map()
   // Fill the container with the electromagnetic field
   for (const auto &[cell_index, cell] : cells_and_indices)
     {
-      primer_map_cell_emw.insert({cell, electric_field[cell_index]});
+      map_cell_electric_field.insert({cell, electric_field[cell_index]});
     }
-  return primer_map_cell_emw;
+  return map_cell_electric_field;
 }
 
 template <int dim>
@@ -157,26 +158,24 @@ Compartmentalization<dim>::read_velocity_magnitude()
 {
   // Read the velocity magnitude and write it in a vector
   std::vector<double> velocity_magnitude;
-  std::ifstream       fin("input_values_velocity_magnitude");
+  std::ifstream       fin("velocity_magnitude_values");
   double              element;
   while (fin >> element)
     {
       velocity_magnitude.push_back(element);
     }
 
-  //  this for loop fill the container with the properties
-  //  (velocity or electromagnetic field)
+  //  this for loop fill the container with the velocity
   for (const auto &[cell_index, cell] : cells_and_indices)
     {
-      primer_matrix_index_velocity.insert(
-        {cell, velocity_magnitude[cell_index]});
+      matrix_index_velocity.insert({cell, velocity_magnitude[cell_index]});
     }
-  return primer_matrix_index_velocity;
+  return matrix_index_velocity;
 }
 
 template <int dim>
 auto
-Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
+Compartmentalization<dim>::compartmentalize_first_step()
   -> std::map<int,
               std::vector<typename Triangulation<dim>::active_cell_iterator>>
 {
@@ -185,8 +184,8 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
 
   // Sort cells based on their value of the electric fields and the
   // cell index associated with the cell will move along with value
-  std::sort(primer_matrix_index_emw.begin(),
-            primer_matrix_index_emw.end(),
+  std::sort(matrix_index_electric_field.begin(),
+            matrix_index_electric_field.end(),
             [](const std::vector<double> &a, const std::vector<double> &b) {
               return a[1] > b[1];
             });
@@ -196,7 +195,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
   // The following "for loop" rearrange the cells (active_cell_iterator) to have
   // the sorted version it uses the sorted cell_index to rearrange and sorts the
   // cells
-  for (auto &i : primer_matrix_index_emw)
+  for (auto &i : matrix_index_electric_field)
     {
       double     index  = i[0];
       const auto search = cells_and_indices.find(index);
@@ -210,7 +209,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
 
   // this "k" iterator will avoid left over the last cell in case
   // that it must be clustered in one separate group
-  unsigned int k = 1;
+  unsigned int clustering_cell_iterator = 1;
 
   // first_set, is a map containing the compartment_ids and cells inside each
   // compartment before the deagglomeration step since it is possible that some
@@ -220,45 +219,47 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
     first_set;
 
   // vector will temporarily contain the cell of each compartment
-  std::vector<typename Triangulation<dim>::active_cell_iterator> vector;
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    temporary_compartment_cells;
 
   // tol is the threshold of the clustering for difference between the
   // electrical field
-  double Tol = cp_parameters.cp_param.electric_field_tolerance;
+  double tol = cp_parameters.cp_param.electric_field_tolerance;
 
   // the first cell in the sorted cells goes to first compartment
-  vector.push_back(vector_cell[0]);
+  temporary_compartment_cells.push_back(vector_cell[0]);
 
   // max is the highest physical property
-  double max = primer_matrix_index_emw[0][1];
-  for (unsigned int i = 0; i < primer_matrix_index_emw.size() - 1; i++)
+  double max = matrix_index_electric_field[0][1];
+  for (unsigned int i = 0; i < matrix_index_electric_field.size() - 1; i++)
     {
-      while (max - primer_matrix_index_emw[i + 1][1] < Tol)
+      while (max - matrix_index_electric_field[i + 1][1] < tol)
         {
-          vector.push_back(vector_cell[i + 1]);
-          k = k + 1;
-          if ((i + 1) < primer_matrix_index_emw.size() - 1)
+          temporary_compartment_cells.push_back(vector_cell[i + 1]);
+          clustering_cell_iterator++;
+          if ((i + 1) < matrix_index_electric_field.size() - 1)
             {
-              i = i + 1;
+              i++;
             }
           else
             {
               break;
             }
         }
-      first_set.insert({number_of_compartments, vector});
+      first_set.insert({number_of_compartments, temporary_compartment_cells});
       number_of_compartments++;
-      vector.clear();
-      vector.push_back(vector_cell[i + 1]);
-      k++;
-      max = primer_matrix_index_emw[i + 1][1];
+      temporary_compartment_cells.clear();
+      temporary_compartment_cells.push_back(vector_cell[i + 1]);
+      clustering_cell_iterator++;
+      max = matrix_index_electric_field[i + 1][1];
     }
-  if (primer_matrix_index_emw.size() == k)
+  if (matrix_index_electric_field.size() == clustering_cell_iterator)
     {
       number_of_compartments++;
-      vector.clear();
-      vector.push_back(vector_cell[primer_matrix_index_emw.size() - 1]);
-      first_set.insert({number_of_compartments, vector});
+      temporary_compartment_cells.clear();
+      temporary_compartment_cells.push_back(
+        vector_cell[matrix_index_electric_field.size() - 1]);
+      first_set.insert({number_of_compartments, temporary_compartment_cells});
     }
   double         compartment_id = 1;
   Vector<double> compartments;
@@ -269,7 +270,7 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
         {
           compartments[d->active_cell_index()] = compartment_id;
         }
-      compartment_id = compartment_id + 1;
+      compartment_id++;
     }
 
   //  Start the deagglomeration (compartment_id)
@@ -348,17 +349,18 @@ Compartmentalization<dim>::sort_agglomeration_deagglomeration_emw()
         }
     }
   double         compartment_final_id = 1;
-  Vector<double> compartments_emw;
-  compartments_emw.reinit(triangulation.n_active_cells());
+  Vector<double> compartments_electric_field;
+  compartments_electric_field.reinit(triangulation.n_active_cells());
   for (const auto &pair : final_set)
     {
       for (typename Triangulation<dim>::active_cell_iterator d : pair.second)
         {
-          compartments_emw[d->active_cell_index()] = compartment_final_id;
+          compartments_electric_field[d->active_cell_index()] =
+            compartment_final_id;
         }
       compartment_final_id++;
     }
-  write_file_compartments_first_field(compartments_emw, 1.0, 1);
+  write_file_compartments_first_field(compartments_electric_field, 1.0, 1);
 
   return final_set;
 }
@@ -388,7 +390,7 @@ Compartmentalization<dim>::overlaid_map()
           primer_map_cell_index.insert({d->index(), d});
           std::vector<double> fill_matrix;
           fill_matrix.push_back(d->index());
-          fill_matrix.push_back(primer_matrix_index_velocity.find(d)->second);
+          fill_matrix.push_back(matrix_index_velocity.find(d)->second);
           inner_matrix.push_back(fill_matrix);
           fill_matrix.clear();
         }
@@ -410,12 +412,12 @@ Compartmentalization<dim>::overlaid_map()
 
       // vector will temporarily contain the cell of each compartment
       std::vector<typename Triangulation<dim>::active_cell_iterator> vector;
-      double Tol = cp_parameters.cp_param.velocity_tolerance;
+      double tol = cp_parameters.cp_param.velocity_tolerance;
       vector.push_back(vector_cell[0]);
       double max = inner_matrix[0][1];
       for (unsigned int i = 0; i < inner_matrix.size() - 1; i++)
         {
-          while (max - inner_matrix[i + 1][1] < Tol)
+          while (max - inner_matrix[i + 1][1] < tol)
             {
               vector.push_back(vector_cell[i + 1]);
               k = k + 1;
@@ -531,7 +533,7 @@ Compartmentalization<dim>::overlaid_map()
       double sum = 0;
       for (typename Triangulation<dim>::active_cell_iterator d : pair.second)
         {
-          sum = sum + primer_map_cell_emw[d];
+          sum = sum + map_cell_electric_field[d];
         }
       double average = sum / pair.second.size();
       electric_field_average.push_back(average);
@@ -594,7 +596,7 @@ Compartmentalization<dim>::write_file_compartments_first_field(
 
   DataOut<dim> data_out;
   data_out.attach_triangulation(triangulation);
-  std::string average_solution_names("Compartments_emw");
+  std::string average_solution_names("Compartments_electric_field");
 
   data_out.add_data_vector(compartments_final,
                            average_solution_names,
@@ -606,7 +608,7 @@ Compartmentalization<dim>::write_file_compartments_first_field(
   write_vtu_and_pvd<dim>(grid_pvdhandler,
                          data_out,
                          folder,
-                         "emw",
+                         "electric_field",
                          time,
                          step_number,
                          1,
@@ -949,9 +951,10 @@ void
 Compartmentalization<dim>::test()
 {
   generate_cylindrical_grid();
-  electric_field_stored_in_map();
-  electric_field_stored_in_vector();
-  sort_agglomeration_deagglomeration_emw();
+  write_cell_center();
+  read_electric_field_in_map();
+  read_electric_field_in_vector();
+  compartmentalize_first_step();
   read_velocity_magnitude();
   read_velocity_vector();
   overlaid_map();
