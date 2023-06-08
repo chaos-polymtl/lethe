@@ -11,7 +11,7 @@ This example simulates a dam break experiment from the Maritime Research Institu
 Features
 ----------------------------------
 - Solver: ``gls_navier_stokes_3d`` (Q1-Q1)
-- Two phase flow handled by the Volume-of-Fluids (VOF) approach with interface sharpening
+- Two phase flow handled by the Volume-of-Fluids (VOF) approach with phase fraction filtration
 - Mesh adaptation using phase fraction
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme
 - The use of a python script for post-processing data
@@ -31,7 +31,7 @@ Files used in this example
 Description of the case
 -------------------------
 
-For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0` s, the gate opens instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00` m. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
+For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0 \ \text{s}`, the gate opens instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00 \ \text{m}`. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
 
 
 Along the x-axis, the water height is measured at 4 different positions. These positions are represented by red crosses in the figure below.
@@ -83,7 +83,7 @@ Parameter file
 Simulation control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6` s simulation time with an initial time step of :math:`0.001` s. Time-step adaptation is enabled using ``adapt=true``
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
 and the max CFL is :math:`0.5`.
 
 .. note::
@@ -128,7 +128,7 @@ Note that the fluid dynamics are solved by default.
 Physical properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{kg}{m^3}` (air) and :math:`1000 \ \frac{kg}{m^3}` (water). However, the current numerical model was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
+The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{\text{kg}}{\text{m}^3}` (air) and :math:`1000 \ \frac{\text{kg}}{\text{m}^3}` (water). However, the current numerical model was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
 
 .. warning::
     Altering the dynamic viscosities of the fluids will surely have an impact on the results. We will show this impact in the `<Results_>`_ section.
@@ -194,7 +194,7 @@ In the ``source term`` subsection, we define the gravitational acceleration.
 VOF
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Here we use the default ``constant`` method for interface sharpening.
+In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.
 
 .. code-block:: text
 
@@ -203,12 +203,9 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
     #---------------------------------------------------
 
     subsection VOF
-      subsection interface sharpening
-        set enable                  = true
-        set threshold               = 0.5
-        set interface sharpness     = 1.5
-        set frequency               = 10
-        set type                    = constant
+      subsection phase filtration
+        set type   = tanh
+        set beta   = 10
       end
     end
 
@@ -262,7 +259,7 @@ We call the gls_navier_stokes_3d by invoking:
 ``mpirun -np $number_of_CPU_cores gls_navier_stokes_3d 3d-dam-break.prm``
 
 .. warning::
-    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. This simulation took :math:`\approx` 15.5 hours on 40 processes (runned on the `Béluga <https://docs.alliancecan.ca/wiki/B%C3%A9luga/en>`_ cluster).
+    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. This simulation took :math:`\approx` 17 hours on 64 processes (runned on the `Narval <https://docs.alliancecan.ca/wiki/Narval/en>`_ cluster).
 
 .. _Results:
 
@@ -274,10 +271,10 @@ The following video shows the results of the simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XGp7pxBQvWY" frameborder="0" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/gaz4PiqhOzg"  frameborder="0" allowfullscreen></iframe>
 
 
-In the following figure, we compare the water height evolution at 4 the positions mentioned in the `<Description of the case_>`_ section with the experimental results obtained from MARIN (available `here <https://www.spheric-sph.org/tests/test-02>`_):
+In the following figure, we compare the water height evolution at the 4 positions mentioned in the `<Description of the case_>`_ section with the experimental results obtained from MARIN (available `here <https://www.spheric-sph.org/tests/test-02>`_):
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/H1_to_H4_evolution.png                                                                        |
@@ -294,7 +291,7 @@ In the following figure, we compare the water height evolution at 4 the position
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-As we can see, the simulated general evolution of the height seems to follow the experimentation results. However, on all 4 subplots, we notice that the height is overestimated. We also notice a slight shift to the right for :math:`H2`,  :math:`H3`, and :math:`H4` evolutions. These observations may be explained by the "highly viscous air" (fluid 0) that acts as an obstacle to the free flow of the water. Additionally, fluid 1 representing the water is 1000 times more viscous than regular water. With these results, we can see that the model needs to be improved to be able to accurately simulate low-viscosity fluids such as air.
+As we can see, the simulated general evolution of the height seems to follow the experimentation results. However, on all 4 subplots, we notice that the height is overestimated. We also notice a slight shift to the right for :math:`H2`,  :math:`H3`, and :math:`H4` evolutions. These observations may be explained by the "highly viscous air" (fluid 0) that acts as an obstacle to the free flow of the water. Additionally, fluid 1 representing the water is 1000 times more viscous than regular water. With these results, we can see that the model needs to be improved to be able to accurately simulate low-viscosity fluids such as air. Furthermore, we observe that the wave formed at the impact with the obstacle doesn't collapse the right way due to the lack of compressibility of the air being simulated.
 
 
 -----------

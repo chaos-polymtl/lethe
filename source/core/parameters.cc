@@ -373,6 +373,15 @@ namespace Parameters
         Patterns::Selection("pspg_supg|gls|grad_div"),
         "Type of stabilization used for the Navier-Stokes equations"
         "Choices are <pspg_supg|gls|grad_div>.");
+
+      prm.declare_entry(
+        "pressure scaling factor",
+        "1",
+        Patterns::Double(),
+        "This parameter can be used to change the scale of pressure in the "
+        "Navier-Stokes equations. When the velocity and pressure scales are very "
+        "different, using this parameter allows to reduce the condition number"
+        " and reach a solution.");
     }
     prm.leave_subsection();
   }
@@ -392,6 +401,8 @@ namespace Parameters
         stabilization = NavierStokesStabilization::grad_div;
       else
         throw(std::runtime_error("Invalid stabilization strategy"));
+
+      pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
     prm.leave_subsection();
   }
@@ -717,7 +728,6 @@ namespace Parameters
       viscosity *= dimensions.viscosity_scaling;
       non_newtonian_parameters.parse_parameters(prm, dimensions);
 
-
       //--------------
       // Specific heat
       //--------------
@@ -816,6 +826,16 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
+      prm.declare_entry(
+        "phase ch order",
+        "1",
+        Patterns::Integer(),
+        "interpolation order phase parameter in the Cahn-Hilliard equations");
+      prm.declare_entry(
+        "potential ch order",
+        "1",
+        Patterns::Integer(),
+        "interpolation order chemical potential in the Cahn-Hilliard equations");
       prm.declare_entry("qmapping all",
                         "false",
                         Patterns::Bool(),
@@ -835,6 +855,8 @@ namespace Parameters
       temperature_order   = prm.get_integer("temperature order");
       tracer_order        = prm.get_integer("tracer order");
       VOF_order           = prm.get_integer("VOF order");
+      phase_ch_order      = prm.get_integer("phase ch order");
+      potential_ch_order  = prm.get_integer("potential ch order");
       qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
@@ -2185,7 +2207,7 @@ namespace Parameters
         "number of particles",
         "1",
         Patterns::Integer(),
-        "Number of particles reprensented by IB max number of particles = 10 ");
+        "Number of particles represented by IB max number of particles = 10 ");
       prm.declare_entry(
         "initial refinement",
         "0",
@@ -2195,7 +2217,7 @@ namespace Parameters
         "stencil order",
         "2",
         Patterns::Integer(),
-        "Number of particles reprensented by IB max number of particles = 10 ");
+        "Order of the stencil used for extrapolation to the boundary.");
       prm.declare_entry(
         "levels not precalculated",
         "0",

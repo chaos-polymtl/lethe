@@ -33,6 +33,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -86,7 +88,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
@@ -122,7 +125,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
               const auto &phi_u_j = scratch_data.phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -238,6 +242,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
           calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
 
+
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              viscosity * velocity_laplacian - force +
@@ -308,6 +313,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -344,6 +351,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
           calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
           calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
+      // LSIC stabilization term
+      const double tau_lsic = u_mag * h / 2;
+
+
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              viscosity * velocity_laplacian - force +
@@ -361,7 +372,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
             (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
@@ -373,16 +385,18 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
-
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+
           const auto &phi_u_i           = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i      = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i       = scratch_data.div_phi_u[q][i];
           const auto &phi_p_i           = scratch_data.phi_p[q][i];
           const auto &grad_phi_p_i      = scratch_data.grad_phi_p[q][i];
           const auto &laplacian_phi_u_i = scratch_data.laplacian_phi_u[q][i];
+
+
 
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
@@ -391,34 +405,57 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const unsigned int component_j = scratch_data.components[j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
-                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
-                velocity_gradient_x_phi_u_j[j] * phi_u_i +
-                grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j +
-                mass_source * phi_u_j * phi_u_i +
-                // Continuity
-                phi_p_i * div_phi_u_j;
+                component_j == dim ? -div_phi_u_i * phi_p_j : 0;
+              if (component_i == dim)
+                {
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
 
-              // PSPG GLS term
-              local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij += phi_p_i * div_phi_u_j;
 
-              // The jacobian matrix for the SUPG formulation
-              // currently does not include the jacobian of the stabilization
-              // parameter tau. Our experience has shown that does not alter the
-              // number of newton iteration for convergence, but greatly
-              // simplifies assembly.
-              local_matrix_ij +=
-                tau * (strong_jac * (grad_phi_u_i_x_velocity -
-                                     viscosity * laplacian_phi_u_i) +
-                       strong_residual_x_grad_phi_u_i * phi_u_j);
+                  // PSPG GLS term
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+
+                  // LSIC GLS term
+                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
+                }
+
+              if (component_i < dim && component_j < dim)
+                {
+                  const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+
+                  local_matrix_ij += velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                                     grad_phi_u_j_x_velocity[j] * phi_u_i;
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij +=
+                        viscosity * (grad_phi_u_j[component_j] *
+                                     grad_phi_u_i[component_i]) +
+                        mass_source * phi_u_j * phi_u_i;
+                    }
+                }
+              if (component_i < dim)
+                {
+                  // The jacobian matrix for the SUPG formulation
+                  // currently does not include the jacobian of the
+                  // stabilization parameter tau. Our experience has shown that
+                  // does not alter the number of newton iteration for
+                  // convergence, but greatly simplifies assembly.
+                  local_matrix_ij +=
+                    tau * (strong_jac * (grad_phi_u_i_x_velocity -
+                                         viscosity * laplacian_phi_u_i) +
+                           strong_residual_x_grad_phi_u_i * phi_u_j);
+                }
 
               local_matrix_ij *= JxW;
               local_matrix(i, j) += local_matrix_ij;
@@ -492,6 +529,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
           calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
 
+      // LSIC stabilization term
+      const double tau_lsic = u_mag * h / 2;
+
+
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity + pressure_gradient -
                              viscosity * velocity_laplacian - force +
@@ -523,6 +564,9 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
 
           // PSPG GLS term
           local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
+
+          // LSIC GLS term
+          local_rhs_i += -tau_lsic * (div_phi_u_i * velocity_divergence) * JxW;
 
           // SUPG GLS term
           local_rhs_i += -tau *
@@ -566,6 +610,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -640,7 +686,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           const auto &grad_phi_u_j_non_newtonian =
             grad_phi_u_j + transpose(grad_phi_u_j);
@@ -681,7 +728,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j_non_newtonian =
                 grad_phi_u_j + transpose(grad_phi_u_j);
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -876,7 +924,6 @@ GLSNavierStokesAssemblerSRF<dim>::assemble_matrix(
   omega_vector[1] = velocity_sources.omega_y;
   if (dim == 3)
     omega_vector[2] = velocity_sources.omega_z;
-
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1172,7 +1219,6 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_matrix(
   if (is_sdirk3(method))
     sdirk_coefs = sdirk_coefficients(3, dt);
 
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1291,6 +1337,9 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
   std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1331,7 +1380,8 @@ GDNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               const auto &grad_phi_u_j_non_newtonian =
                 grad_phi_u_j + transpose(grad_phi_u_j);
@@ -1447,6 +1497,9 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
   std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
   std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
+  // Pressure scaling factor
+  const double pressure_scaling_factor = scratch_data.pressure_scaling_factor;
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1489,7 +1542,8 @@ GDNavierStokesAssemblerCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                pressure_scaling_factor * scratch_data.phi_p[q][j];
 
               double local_matrix_ij =
                 viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
@@ -1597,7 +1651,6 @@ LaplaceAssembly<dim>::assemble_matrix(
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -1689,6 +1742,8 @@ LaplaceAssembly<dim>::assemble_rhs(
           local_rhs_i += -1 / viscosity * h *
                          scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
+          if (scratch_data.components[i] == dim)
+            local_rhs_i /= scratch_data.pressure_scaling_factor;
           local_rhs(i) += local_rhs_i;
         }
     }
@@ -1778,8 +1833,6 @@ PressureBoundaryCondition<dim>::assemble_matrix(
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces_q_points,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_dofs)));
-
-
 
   auto &local_matrix = copy_data.local_matrix;
 
@@ -1948,6 +2001,7 @@ WeakDirichletBoundaryCondition<dim>::assemble_matrix(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_matrix = copy_data.local_matrix;
+
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
@@ -2158,6 +2212,7 @@ PartialSlipDirichletBoundaryCondition<dim>::assemble_matrix(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_matrix = copy_data.local_matrix;
+
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {
@@ -2415,6 +2470,7 @@ OutletBoundaryCondition<dim>::assemble_matrix(
   const double penalty_parameter =
     1. / std::pow(scratch_data.cell_size, fe.degree + 1);
   auto &local_matrix = copy_data.local_matrix;
+
   // Loop over the BCs
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions.size; ++i_bc)
     {

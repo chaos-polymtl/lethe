@@ -32,5 +32,5 @@ DEAL::Testing an union of spheres: radius = 1
 DEAL::Testing value
 DEAL:: Value at P(1.25, 0.5, 0) = -0.440983
 DEAL::Testing gradient
-DEAL:: Gradient at P(1.25, 0.5, 0) = 0.447214 0.894427 0.00000
+DEAL:: Gradient at P(1.25, 0.5, 0) = -0.447214 -0.894427 0.00000
 DEAL::OK

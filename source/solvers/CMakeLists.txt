@@ -2,6 +2,9 @@ add_library(lethe-solvers
   # Sources
   analytical_solutions.cc
   auxiliary_physics.cc
+  cahn_hilliard.cc
+  cahn_hilliard_assemblers.cc
+  cahn_hilliard_scratch_data.cc
   flow_control.cc
   gd_navier_stokes.cc
   gls_navier_stokes.cc
@@ -10,6 +13,7 @@ add_library(lethe-solvers
   heat_transfer_assemblers.cc
   heat_transfer_scratch_data.cc
   initial_conditions.cc
+  mf_gls_navier_stokes.cc
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
   navier_stokes_base.cc
@@ -31,6 +35,9 @@ add_library(lethe-solvers
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
+  ../../include/solvers/cahn_hilliard.h
+  ../../include/solvers/cahn_hilliard_assemblers.h
+  ../../include/solvers/cahn_hilliard_scratch_data.h
   ../../include/solvers/copy_data.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/gd_navier_stokes.h
@@ -40,6 +47,7 @@ add_library(lethe-solvers
   ../../include/solvers/heat_transfer_assemblers.h
   ../../include/solvers/heat_transfer_scratch_data.h
   ../../include/solvers/initial_conditions.h
+  ../../include/solvers/mf_gls_navier_stokes.h
   ../../include/solvers/multiphysics_interface.h
   ../../include/solvers/navier_stokes_assemblers.h
   ../../include/solvers/navier_stokes_base.h

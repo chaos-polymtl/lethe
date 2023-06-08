@@ -106,12 +106,12 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_vof                              = false;
-    gather_filtered_phase_fraction_gradient = false;
-    gather_curvature                        = false;
-    gather_void_fraction                    = false;
-    gather_particles_information            = false;
-    gather_temperature                      = false;
+    gather_vof                               = false;
+    gather_projected_phase_fraction_gradient = false;
+    gather_curvature                         = false;
+    gather_void_fraction                     = false;
+    gather_particles_information             = false;
+    gather_temperature                       = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -146,12 +146,12 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_vof                              = false;
-    gather_filtered_phase_fraction_gradient = false;
-    gather_curvature                        = false;
-    gather_void_fraction                    = false;
-    gather_particles_information            = false;
-    gather_temperature                      = false;
+    gather_vof                               = false;
+    gather_projected_phase_fraction_gradient = false;
+    gather_curvature                         = false;
+    gather_void_fraction                     = false;
+    gather_particles_information             = false;
+    gather_temperature                       = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
     if (sd.gather_vof)
@@ -159,11 +159,11 @@ public:
                  sd.fe_values_vof->get_quadrature(),
                  sd.fe_values_vof->get_mapping(),
                  sd.filter);
-    if (sd.gather_filtered_phase_fraction_gradient)
-      enable_filtered_phase_fraction_gradient(
-        sd.fe_values_filtered_phase_fraction_gradient->get_fe(),
-        sd.fe_values_filtered_phase_fraction_gradient->get_quadrature(),
-        sd.fe_values_filtered_phase_fraction_gradient->get_mapping());
+    if (sd.gather_projected_phase_fraction_gradient)
+      enable_projected_phase_fraction_gradient(
+        sd.fe_values_projected_phase_fraction_gradient->get_fe(),
+        sd.fe_values_projected_phase_fraction_gradient->get_quadrature(),
+        sd.fe_values_projected_phase_fraction_gradient->get_mapping());
     if (sd.gather_curvature)
       enable_curvature(sd.fe_values_curvature->get_fe(),
                        sd.fe_values_curvature->get_quadrature(),
@@ -220,7 +220,8 @@ public:
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
          Function<dim> *                forcing_function,
-         Tensor<1, dim>                 beta_force)
+         Tensor<1, dim>                 beta_force,
+         const double                   pressure_scaling_factor)
   {
     this->fe_values.reinit(cell);
 
@@ -294,6 +295,7 @@ public:
                                             this->pressure_values);
     fe_values[pressure].get_function_gradients(current_solution,
                                                this->pressure_gradients);
+    this->pressure_scaling_factor = pressure_scaling_factor;
 
 
     for (unsigned int q = 0; q < n_q_points; ++q)
@@ -492,8 +494,8 @@ public:
              const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
 
   void
-  enable_filtered_phase_fraction_gradient(
-    const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
+  enable_projected_phase_fraction_gradient(
+    const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
     const Quadrature<dim> &   quadrature,
     const Mapping<dim> &      mapping);
 
@@ -510,6 +512,8 @@ public:
    *
    * @param current_solution The present value of the solution for [alpha]
    *
+   * @param current_filtered_solution The present value of the solution for [alpha]_filtered
+   *
    * @param previous_solutions The solutions at the previous time steps for [alpha]
    *
    * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [alpha]
@@ -520,6 +524,7 @@ public:
   void
   reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType &             current_solution,
+             const VectorType &             current_filtered_solution,
              const std::vector<VectorType> &previous_solutions,
              const std::vector<VectorType> & /*solution_stages*/)
   {
@@ -527,8 +532,10 @@ public:
     // Gather phase fraction (values, gradient)
     this->fe_values_vof->get_function_values(current_solution,
                                              this->phase_values);
-    this->fe_values_vof->get_function_gradients(current_solution,
-                                                this->phase_gradient_values);
+    this->fe_values_vof->get_function_values(current_filtered_solution,
+                                             this->filtered_phase_values);
+    this->fe_values_vof->get_function_gradients(
+      current_filtered_solution, this->filtered_phase_gradient_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
@@ -540,19 +547,19 @@ public:
 
   template <typename VectorType>
   void
-  reinit_filtered_phase_fraction_gradient(
+  reinit_projected_phase_fraction_gradient(
     const typename DoFHandler<dim>::active_cell_iterator
-      &               filtered_phase_fraction_gradient_cell,
-    const VectorType &current_filtered_phase_fraction_gradient_solution)
+      &               projected_phase_fraction_gradient_cell,
+    const VectorType &current_projected_phase_fraction_gradient_solution)
   {
-    this->fe_values_filtered_phase_fraction_gradient->reinit(
-      filtered_phase_fraction_gradient_cell);
+    this->fe_values_projected_phase_fraction_gradient->reinit(
+      projected_phase_fraction_gradient_cell);
 
     FEValuesExtractors::Vector pfg(0);
     // Gather phase fraction gradient
-    (*fe_values_filtered_phase_fraction_gradient)[pfg].get_function_values(
-      current_filtered_phase_fraction_gradient_solution,
-      this->filtered_phase_fraction_gradient_values);
+    (*fe_values_projected_phase_fraction_gradient)[pfg].get_function_values(
+      current_projected_phase_fraction_gradient_solution,
+      this->projected_phase_fraction_gradient_values);
   }
 
   template <typename VectorType>
@@ -918,6 +925,10 @@ public:
   std::vector<double>                  grad_viscosity_shear_rate;
   std::vector<std::vector<double>>     previous_density;
 
+  // Pressure scaling factor to facilitate different scales between velocity and
+  // pressure
+  double pressure_scaling_factor;
+
   // For VOF simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;
   std::vector<double> density_1;
@@ -975,17 +986,18 @@ public:
   bool                             gather_vof;
   unsigned int                     n_dofs_vof;
   std::vector<double>              phase_values;
+  std::vector<double>              filtered_phase_values;
   std::vector<std::vector<double>> previous_phase_values;
-  std::vector<Tensor<1, dim>>      phase_gradient_values;
+  std::vector<Tensor<1, dim>>      filtered_phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>>           fe_values_vof;
   std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
 
-  bool                           gather_filtered_phase_fraction_gradient;
+  bool                           gather_projected_phase_fraction_gradient;
   bool                           gather_curvature;
-  std::shared_ptr<FEValues<dim>> fe_values_filtered_phase_fraction_gradient;
+  std::shared_ptr<FEValues<dim>> fe_values_projected_phase_fraction_gradient;
   std::shared_ptr<FEValues<dim>> fe_values_curvature;
-  std::vector<Tensor<1, dim>>    filtered_phase_fraction_gradient_values;
+  std::vector<Tensor<1, dim>>    projected_phase_fraction_gradient_values;
   std::vector<double>            curvature_values;
 
   /**

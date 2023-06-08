@@ -7,6 +7,8 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2023
 ----
 
+* `V. O. Ferreira, T. El Geitani, D. Silva Junior, B. Blais, and G. C. Lopes, "In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds", Powder Technology, 2023 <https://doi.org/10.1016/j.powtec.2023.118652>`_.
+
 * `T. El Geitani and B. Blais, "Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations", Industrial & Engineering Chemistry Research, 2023 <https://doi.org/10.1021/acs.iecr.3c00172>`_.
 
 * `V. Bibeau, L. Barbeau, D. C. Boffito and B. Blais, "Artificial neural network to predict the power number of agitated tanks fed by CFD simulations", The Canadian Journal of Chemical Engineering, 1-11, 2023 <https://doi.org/10.1002/cjce.24870>`_.

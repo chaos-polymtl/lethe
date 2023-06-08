@@ -56,14 +56,16 @@ public:
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
-  Parameters::InitialConditions<dim> *              initial_condition;
-  AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    source_term;
-  Parameters::VelocitySource                        velocity_sources;
-  std::shared_ptr<Parameters::IBParticles<dim>>     particlesParameters;
-  Parameters::DynamicFlowControl                    flow_control;
-  Parameters::Multiphysics                          multiphysics;
-  Parameters::Stabilization                         stabilization;
+  BoundaryConditions::CahnHilliardBoundaryConditions<dim>
+                                                boundary_conditions_cahn_hilliard;
+  Parameters::InitialConditions<dim> *          initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
+  SourceTerms::SourceTerm<dim> *                source_term;
+  Parameters::VelocitySource                    velocity_sources;
+  std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
+  Parameters::DynamicFlowControl                flow_control;
+  Parameters::Multiphysics                      multiphysics;
+  Parameters::Stabilization                     stabilization;
 
   PhysicalPropertiesManager physical_properties_manager;
 
@@ -81,7 +83,7 @@ public:
     boundary_conditions_ht.declare_parameters(prm);
     boundary_conditions_tracer.declare_parameters(prm);
     boundary_conditions_vof.declare_parameters(prm);
-
+    boundary_conditions_cahn_hilliard.declare_parameters(prm);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
@@ -140,6 +142,7 @@ public:
     boundary_conditions_ht.parse_parameters(prm);
     boundary_conditions_tracer.parse_parameters(prm);
     boundary_conditions_vof.parse_parameters(prm);
+    boundary_conditions_cahn_hilliard.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);

@@ -1,3 +1,4 @@
+#include <solvers/cahn_hilliard.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
@@ -99,11 +100,18 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
+
+  if (multiphysics_parameters.cahn_hilliard)
+    {
+      active_physics.push_back(PhysicsID::cahn_hilliard);
+      physics[PhysicsID::cahn_hilliard] = std::make_shared<CahnHilliard<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
+    }
 }
 
 template <int dim>
 TrilinosWrappers::MPI::Vector *
-MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_solution()
+MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 {
   // Throw error if VOF is not enabled
   AssertThrow((std::find(active_physics.begin(),
@@ -116,7 +124,7 @@ MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_solution()
     ExcInternalError());
 
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_filtered_phase_fraction_gradient_solution();
+    ->get_projected_phase_fraction_gradient_solution();
 }
 
 template <int dim>
@@ -157,7 +165,7 @@ MultiphysicsInterface<dim>::get_curvature_dof_handler()
 
 template <int dim>
 DoFHandler<dim> *
-MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_dof_handler()
+MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
 {
   // Throw error if VOF is not enabled
   AssertThrow((std::find(active_physics.begin(),
@@ -170,7 +178,7 @@ MultiphysicsInterface<dim>::get_filtered_phase_fraction_gradient_dof_handler()
     ExcInternalError());
 
   return std::dynamic_pointer_cast<VolumeOfFluid<dim>>(physics[PhysicsID::VOF])
-    ->get_filtered_phase_fraction_gradient_dof_handler();
+    ->get_projected_phase_fraction_gradient_dof_handler();
 }
 
 template <int dim>

@@ -37,15 +37,15 @@ subsection VOF
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
-    set beta = 10
+    set beta      = 20
   end
 
   subsection surface tension force
-    set enable                                = true
-    set surface tension coefficient           = 24.5
-    set phase fraction gradient filter factor = 4
-    set curvature filter factor               = 1
-    set output auxiliary fields               = true
+    set enable                                   = true
+    set surface tension coefficient              = 24.5
+    set phase fraction gradient diffusion factor = 4
+    set curvature diffusion factor               = 1
+    set output auxiliary fields                  = true
   end
 end
 

@@ -21,7 +21,7 @@ namespace Parameters
                       "Define particles using a DEM simulation results file.");
     prm.declare_entry(
       "bound void fraction",
-      "true",
+      "false",
       Patterns::Bool(),
       "Boolean for the bounding of the void fraction using an active set method.");
     prm.declare_entry("dem file name",

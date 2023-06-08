@@ -110,12 +110,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_eq,
-                                                 h,
-                                                 density_eq) :
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, density_eq);
+            u_mag, viscosity_eq, h, sdt, 1);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -127,6 +124,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
+      // Pressure scaling factor
+      const double pressure_scaling_factor =
+        scratch_data.pressure_scaling_factor;
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -136,7 +136,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            scratch_data.grad_phi_p[q][j] * pressure_scaling_factor;
 
           strong_jacobian_vec[q][j] +=
             (density_eq * velocity_gradient * phi_u_j +
@@ -171,7 +172,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &grad_shear_rate_j =
                 grad_phi_u_j + transpose(grad_phi_u_j);
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                scratch_data.phi_p[q][j] * pressure_scaling_factor;
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
@@ -188,7 +190,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
                   local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij +=
+                    tau / density_eq * (strong_jac * grad_phi_p_i);
                 }
               else
                 {
@@ -322,12 +325,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_eq,
-                                                 h,
-                                                 density_eq) :
+          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1.) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, density_eq);
+            u_mag, viscosity_eq, h, sdt, 1.);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -361,7 +361,8 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
               local_rhs(i) += -(velocity_divergence * phi_p_i) * JxW;
 
               // PSPG GLS term
-              local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+              local_rhs(i) +=
+                -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
             }
           else
             {
@@ -541,7 +542,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &phase_gradient_value =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.filtered_phase_gradient_values[q];
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> surface_tension_force =
@@ -605,7 +606,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
       // Gather phase fraction gradient
       const Tensor<1, dim> &phase_gradient_value =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.filtered_phase_gradient_values[q];
 
       const double phase_gradient_norm = phase_gradient_value.norm();
 
@@ -781,6 +782,9 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
+      // Pressure scaling factor
+      const double pressure_scaling_factor =
+        scratch_data.pressure_scaling_factor;
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -790,7 +794,8 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
           const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
 
-          const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+          const auto &grad_phi_p_j =
+            scratch_data.grad_phi_p[q][j] * pressure_scaling_factor;
 
           const auto &grad_phi_u_j_non_newtonian =
             grad_phi_u_j + transpose(grad_phi_u_j);
@@ -831,7 +836,8 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
               const auto &grad_phi_u_j_non_newtonian =
                 grad_phi_u_j + transpose(grad_phi_u_j);
 
-              const auto &phi_p_j = scratch_data.phi_p[q][j];
+              const auto &phi_p_j =
+                scratch_data.phi_p[q][j] * pressure_scaling_factor;
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 

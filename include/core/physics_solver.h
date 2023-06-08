@@ -87,7 +87,6 @@ public:
     nonzero_constraints.distribute(local_evaluation_point);
   }
 
-
   /**
    * @brief Getter methods that give access to the private attributes of the physics being solved.
    * These methods must be provided by the physics as they are the key to solve

@@ -87,19 +87,26 @@ For tracer boundary conditions, the defaults parameters are:
 VOF
 ^^^
 
-For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none`` (default) and ``peeling/wetting``, as shown below.
+For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none`` (default), ``peeling/wetting``, and ``dirichlet``, as shown below.
 
 .. code-block:: text
 
     subsection boundary conditions VOF
-    set number                  = 2
+    set number                  = 3
         subsection bc 0
-	    set id 		= 0
+            set id 		= 0
             set type	        = none
         end
         subsection bc 1
-	    set id 		= 1
+            set id 		= 1
             set type		= peeling/wetting
+        end
+        subsection bc 2
+            set id 		= 2
+            set type		= dirichlet
+            subsection dirichlet
+                set Function expression = 0
+            end
         end
     end
 
@@ -118,5 +125,8 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 * ``type``: This is the type of boundary condition been imposed. At the moment, choices are:
     * ``none`` for which nothing happens.
     * ``peeling/wetting`` for the fluid can attach to (`wet`) or detach from (`peel`) the boundary. The parameters for peeling/wetting are defined in the :doc:`volume_of_fluid` subsection of the parameter file.
+    * ``dirichlet`` for inlet and outlet boundary conditions, to specify which fluid should be at the selected boundary.
 
+.. note::
+    For periodic boundary conditions, there is no need to specify anything in the ``boundary conditions VOF`` subsection. The periodic boundary condition must be specified in the ``boundary conditions`` subsection (see :doc:`boundary_conditions_cfd`).
 

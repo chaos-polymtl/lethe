@@ -17,7 +17,7 @@ TracerScratchData<dim>::allocate()
   // Forcing term array
   this->source = std::vector<double>(n_q_points);
 
-  // Initialize arrays related to velocity and pressure
+  // Initialize arrays related to velocity
   this->velocities.first_vector_component = 0;
   // Velocity
   this->velocity_values = std::vector<Tensor<1, dim>>(n_q_points);

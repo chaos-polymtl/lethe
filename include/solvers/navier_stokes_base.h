@@ -394,6 +394,21 @@ protected:
   void
   write_output_torques();
 
+  /**
+   * @brief rescale_pressure_dofs_in_newton_update
+   * This function is used to rescale pressure DOFs in the newton correction
+   */
+  void
+  rescale_pressure_dofs_in_newton_update();
+
+  /**
+   * @brief init_temporary_vector
+   * This function initializes correctly a temporary vector depending on the
+   * vector type
+   */
+  inline VectorType
+  init_temporary_vector();
+
   // Member variables
 protected:
   DofsType locally_owned_dofs;
@@ -446,7 +461,7 @@ protected:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
-  // Assemblers for the matrix
+  // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers;
 
   // Multiphysics interface

@@ -49,8 +49,9 @@ NavierStokesScratchData<dim>::allocate()
 
 
   // Pressure
-  this->pressure_values    = std::vector<double>(n_q_points);
-  this->pressure_gradients = std::vector<Tensor<1, dim>>(n_q_points);
+  this->pressure_values         = std::vector<double>(n_q_points);
+  this->pressure_gradients      = std::vector<Tensor<1, dim>>(n_q_points);
+  this->pressure_scaling_factor = 1;
 
   // Initialize arrays related to shape functions
   // Velocity shape functions
@@ -98,11 +99,14 @@ NavierStokesScratchData<dim>::enable_vof(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values = std::vector<double>(this->n_q_points);
+  phase_values          = std::vector<double>(this->n_q_points);
+  filtered_phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
-  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  // For STF calculation
+  filtered_phase_gradient_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   density_0           = std::vector<double>(n_q_points);
@@ -129,11 +133,14 @@ NavierStokesScratchData<dim>::enable_vof(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate VOF values
-  phase_values = std::vector<double>(this->n_q_points);
+  phase_values          = std::vector<double>(this->n_q_points);
+  filtered_phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
-  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  // For STF calculation
+  filtered_phase_gradient_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   density_0           = std::vector<double>(n_q_points);
@@ -149,20 +156,20 @@ NavierStokesScratchData<dim>::enable_vof(
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_filtered_phase_fraction_gradient(
-  const FiniteElement<dim> &fe_filtered_phase_fraction_gradient,
+NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
+  const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
   const Quadrature<dim> &   quadrature,
   const Mapping<dim> &      mapping)
 {
-  gather_filtered_phase_fraction_gradient = true;
-  fe_values_filtered_phase_fraction_gradient =
+  gather_projected_phase_fraction_gradient = true;
+  fe_values_projected_phase_fraction_gradient =
     std::make_shared<FEValues<dim>>(mapping,
-                                    fe_filtered_phase_fraction_gradient,
+                                    fe_projected_phase_fraction_gradient,
                                     quadrature,
                                     update_values | update_gradients);
 
   // phase fraction gradient (PFG)
-  filtered_phase_fraction_gradient_values =
+  projected_phase_fraction_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 }
 
@@ -279,8 +286,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto density_model = properties_manager.get_density();
           density_model->vector_value(fields, density);
 
-
-
           if (properties_manager.is_non_newtonian())
             {
               // Calculate derivative of viscosity with respect to shear rate
@@ -326,19 +331,18 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           // Blend the physical properties using the VOF field
           for (unsigned int q = 0; q < this->n_q_points; ++q)
             {
-              density[q] = calculate_point_property(filter->filter_phase(
-                                                      this->phase_values[q]),
+              double filtered_phase_value = this->filtered_phase_values[q];
+
+              density[q] = calculate_point_property(filtered_phase_value,
                                                     this->density_0[q],
                                                     this->density_1[q]);
 
-              viscosity[q] = calculate_point_property(filter->filter_phase(
-                                                        this->phase_values[q]),
+              viscosity[q] = calculate_point_property(filtered_phase_value,
                                                       this->viscosity_0[q],
                                                       this->viscosity_1[q]);
 
               thermal_expansion[q] =
-                calculate_point_property(filter->filter_phase(
-                                           this->phase_values[q]),
+                calculate_point_property(filtered_phase_value,
                                          this->thermal_expansion_0[q],
                                          this->thermal_expansion_1[q]);
             }

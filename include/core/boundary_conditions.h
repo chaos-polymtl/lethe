@@ -56,6 +56,11 @@ namespace BoundaryConditions
     tracer_dirichlet,
     // for vof
     pw,
+    vof_dirichlet,
+    // for cahn hilliard
+    dirichlet_phase_order,
+    dirichlet_potential,
+    angle_of_contact,
   };
 
   /**
@@ -746,12 +751,144 @@ namespace BoundaryConditions
   }
 
   /**
+   * @brief This class manages the boundary conditions for the Cahn-Hilliard solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently.
+   *  - if bc type is "dirichlet" (Dirichlet condition), "value" is the
+   * double passed to the deal.ii ConstantFunction
+   */
+
+  template <int dim>
+  class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
+  {
+  public:
+    void
+    declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_boundary(ParameterHandler &prm, unsigned int i_bc);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Declares the default parameters for a boundary condition id i_bc
+   * i.e. Dirichlet condition (ConstantFunction) with value 0
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition id.
+   */
+  template <int dim>
+  void
+  CahnHilliardBoundaryConditions<dim>::declareDefaultEntry(
+    ParameterHandler &prm,
+    unsigned int      i_bc)
+  {
+    prm.declare_entry("type",
+                      "none",
+                      Patterns::Selection("none"),
+                      "Type of boundary condition for Cahn-Hilliard"
+                      "Choices are <none>.");
+
+    prm.declare_entry("id",
+                      Utilities::int_to_string(i_bc, 2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
+  }
+
+  /**
+   * @brief Declare the boundary conditions default parameters
+   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+  template <int dim>
+  void
+  CahnHilliardBoundaryConditions<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    this->max_size = 14;
+
+    prm.enter_subsection("boundary conditions cahn hilliard");
+    {
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+      this->id.resize(this->max_size);
+      this->type.resize(this->max_size);
+
+      for (unsigned int n = 0; n < this->max_size; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            declareDefaultEntry(prm, n);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  /**
+   * @brief Parse the information for a boundary condition
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition number (and not necessarily its id).
+   */
+
+  template <int dim>
+  void
+  CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler & prm,
+                                                      const unsigned int i_bc)
+  {
+    const std::string op = prm.get("type");
+    if (op == "none")
+      {
+        this->type[i_bc] = BoundaryType::none;
+      }
+    this->id[i_bc] = prm.get_integer("id");
+  }
+
+  /**
+   * @brief Parse the boundary conditions
+   * Calls parse_boundary method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+
+  template <int dim>
+  void
+  CahnHilliardBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions cahn hilliard");
+    {
+      this->size = prm.get_integer("number");
+
+      for (unsigned int n = 0; n < this->size; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            parse_boundary(prm, n);
+          }
+          prm.leave_subsection();
+        }
+    }
+    prm.leave_subsection();
+  }
+
+  /**
    * @brief This class manages the boundary conditions for VOF solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    *
    *  - if bc type is "peeling/wetting", peeling/wetting of the free surface
    * will be applied. See vof.cc for further implementation details.
+   *
+   * - if bc type is "dirichlet", the function is applied on the selected
+   * boundary
    *
    * - if bc type is "none", nothing happens
    */
@@ -760,6 +897,8 @@ namespace BoundaryConditions
   class VOFBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> phase_fraction;
+
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
@@ -784,14 +923,20 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|peeling/wetting"),
+                      Patterns::Selection("none|dirichlet|peeling/wetting"),
                       "Type of boundary condition for VOF"
-                      "Choices are <none|peeling/wetting>.");
+                      "Choices are <none|dirichlet|peeling/wetting>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.enter_subsection("dirichlet");
+    phase_fraction[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    phase_fraction[i_bc]->declare_parameters(prm);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
   }
 
   /**
@@ -814,6 +959,7 @@ namespace BoundaryConditions
                         "Number of boundary conditions");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
+      phase_fraction.resize(this->max_size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -844,6 +990,13 @@ namespace BoundaryConditions
     if (op == "none")
       {
         this->type[i_bc] = BoundaryType::none;
+      }
+    else if (op == "dirichlet")
+      {
+        this->type[i_bc] = BoundaryType::vof_dirichlet;
+        prm.enter_subsection("dirichlet");
+        phase_fraction[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
       }
     else if (op == "peeling/wetting")
       {

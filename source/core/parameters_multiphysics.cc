@@ -67,6 +67,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "VOF calculation <true|false>");
 
+    prm.declare_entry("cahn hilliard",
+                      "false",
+                      Patterns::Bool(),
+                      "Cahn-Hilliard calculation <true|false>");
+
     prm.declare_entry(
       "use time average velocity field",
       "false",
@@ -98,6 +103,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     VOF            = prm.get_bool("VOF");
+    cahn_hilliard  = prm.get_bool("cahn hilliard");
     use_time_average_velocity_field =
       prm.get_bool("use time average velocity field");
 
@@ -441,13 +447,13 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
                       "Output the phase fraction gradient and curvature");
 
     prm.declare_entry(
-      "phase fraction gradient filter factor",
+      "phase fraction gradient diffusion factor",
       "4",
       Patterns::Double(),
       "Factor applied to the filter for phase fraction gradient calculations to damp high-frequency errors");
 
     prm.declare_entry(
-      "curvature filter factor",
+      "curvature diffusion factor",
       "1",
       Patterns::Double(),
       "Factor applied to the filter for curvature calculations to damp high-frequency errors");
@@ -484,9 +490,9 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
     enable = prm.get_bool("enable");
     // Surface tension coefficient
     surface_tension_coef = prm.get_double("surface tension coefficient");
-    phase_fraction_gradient_filter_factor =
-      prm.get_double("phase fraction gradient filter factor");
-    curvature_filter_factor = prm.get_double("curvature filter factor");
+    phase_fraction_gradient_diffusion_factor =
+      prm.get_double("phase fraction gradient diffusion factor");
+    curvature_diffusion_factor = prm.get_double("curvature diffusion factor");
 
     output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
 

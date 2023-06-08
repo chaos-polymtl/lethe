@@ -570,14 +570,14 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
           const DoFHandler<dim> *curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
 
-          scratch_data.enable_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_dof_handler->get_fe(),
+          scratch_data.enable_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_dof_handler->get_fe(),
             *this->cell_quadrature,
             *this->mapping);
           scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
@@ -618,12 +618,14 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -635,29 +637,30 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
-                              *this->multiphysics->get_previous_solutions(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
+        std::vector<TrilinosWrappers::MPI::Vector>());
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
 
           typename DoFHandler<dim>::active_cell_iterator
-            filtered_phase_fraction_gradient_cell(
+            projected_phase_fraction_gradient_cell(
               &(*(this->triangulation)),
               cell->level(),
               cell->index(),
-              filtered_phase_fraction_gradient_dof_handler);
-          scratch_data.reinit_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_cell,
+              projected_phase_fraction_gradient_dof_handler);
+          scratch_data.reinit_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_cell,
             *this->multiphysics
-               ->get_filtered_phase_fraction_gradient_solution());
+               ->get_projected_phase_fraction_gradient_solution());
 
 
 
@@ -750,14 +753,14 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
           const DoFHandler<dim> *curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
 
-          scratch_data.enable_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_dof_handler->get_fe(),
+          scratch_data.enable_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_dof_handler->get_fe(),
             *this->cell_quadrature,
             *this->mapping);
           scratch_data.enable_curvature(curvature_dof_handler->get_fe(),
@@ -803,12 +806,14 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -820,28 +825,29 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
-                              *this->multiphysics->get_previous_solutions(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
+        std::vector<TrilinosWrappers::MPI::Vector>());
 
       if (this->simulation_parameters.multiphysics.vof_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> *filtered_phase_fraction_gradient_dof_handler =
+          const DoFHandler<dim> *projected_phase_fraction_gradient_dof_handler =
             this->multiphysics
-              ->get_filtered_phase_fraction_gradient_dof_handler();
+              ->get_projected_phase_fraction_gradient_dof_handler();
           typename DoFHandler<dim>::active_cell_iterator
-            filtered_phase_fraction_gradient_cell(
+            projected_phase_fraction_gradient_cell(
               &(*(this->triangulation)),
               cell->level(),
               cell->index(),
-              filtered_phase_fraction_gradient_dof_handler);
-          scratch_data.reinit_filtered_phase_fraction_gradient(
-            filtered_phase_fraction_gradient_cell,
+              projected_phase_fraction_gradient_dof_handler);
+          scratch_data.reinit_projected_phase_fraction_gradient(
+            projected_phase_fraction_gradient_cell,
             *this->multiphysics
-               ->get_filtered_phase_fraction_gradient_solution());
+               ->get_projected_phase_fraction_gradient_solution());
 
           const DoFHandler<dim> *curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
@@ -1162,6 +1168,7 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
     solve_system_direct(initial_step, absolute_residual, relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
+  this->rescale_pressure_dofs_in_newton_update();
 }
 
 template <int dim>

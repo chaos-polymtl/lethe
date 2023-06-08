@@ -216,12 +216,14 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
   if (this->simulation_parameters.multiphysics.VOF)
     {
       const DoFHandler<dim> *dof_handler_vof =
@@ -232,11 +234,12 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
-                              *this->multiphysics->get_previous_solutions(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
+        std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -342,12 +345,14 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      this->forcing_function,
-                      this->flow_control.get_beta());
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    this->forcing_function,
+    this->flow_control.get_beta(),
+    this->simulation_parameters.stabilization.pressure_scaling_factor);
 
   if (this->simulation_parameters.multiphysics.VOF)
     {
@@ -359,11 +364,12 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_solution(PhysicsID::VOF),
-                              *this->multiphysics->get_previous_solutions(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::VOF),
+        *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
+        std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -845,6 +851,7 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                      renewed_matrix);
   else
     throw(std::runtime_error("This solver is not allowed"));
+  this->rescale_pressure_dofs_in_newton_update();
 }
 
 template <int dim>

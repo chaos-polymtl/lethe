@@ -816,6 +816,10 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
           previous_solutions_transfer.push_back(
             parallel::distributed::SolutionTransfer<dim, VectorType>(
               this->dof_handler));
+          if constexpr (std::is_same_v<
+                          VectorType,
+                          LinearAlgebra::distributed::Vector<double>>)
+            previous_solutions[i].update_ghost_values();
           previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
             previous_solutions[i]);
         }
@@ -826,6 +830,10 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         solution_transfer_m2(this->dof_handler);
       parallel::distributed::SolutionTransfer<dim, VectorType>
         solution_transfer_m3(this->dof_handler);
+
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        present_solution.update_ghost_values();
       solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
       multiphysics->prepare_for_mesh_adaptation();
@@ -838,7 +846,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
       this->setup_dofs();
 
       // Set up the vectors for the transfer
-      VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+      VectorType tmp = init_temporary_vector();
 
       // Interpolate the solution at time and previous time
       solution_transfer.interpolate(tmp);
@@ -852,8 +860,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
       for (unsigned int i = 0; i < previous_solutions.size(); ++i)
         {
-          VectorType tmp_previous_solution(locally_owned_dofs,
-                                           this->mpi_communicator);
+          VectorType tmp_previous_solution = init_temporary_vector();
           previous_solutions_transfer[i].interpolate(tmp_previous_solution);
           nonzero_constraints.distribute(tmp_previous_solution);
           previous_solutions[i] = tmp_previous_solution;
@@ -1019,10 +1026,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       previous_solutions_transfer.push_back(
         parallel::distributed::SolutionTransfer<dim, VectorType>(
           this->dof_handler));
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        previous_solutions[i].update_ghost_values();
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
         previous_solutions[i]);
     }
 
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    present_solution.update_ghost_values();
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
   multiphysics->prepare_for_mesh_adaptation();
@@ -1033,7 +1046,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->setup_dofs();
 
   // Set up the vectors for the transfer
-  VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp = init_temporary_vector();
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
@@ -1047,8 +1060,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      VectorType tmp_previous_solution(locally_owned_dofs,
-                                       this->mpi_communicator);
+      VectorType tmp_previous_solution = init_temporary_vector();
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
@@ -1074,6 +1086,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
+
+  if constexpr (std::is_same_v<VectorType,
+                               LinearAlgebra::distributed::Vector<double>>)
+    present_solution.update_ghost_values();
+
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
 
@@ -1087,6 +1104,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
       previous_solutions_transfer.emplace_back(
         parallel::distributed::SolutionTransfer<dim, VectorType>(
           this->dof_handler));
+
+      if constexpr (std::is_same_v<VectorType,
+                                   LinearAlgebra::distributed::Vector<double>>)
+        previous_solutions[i].update_ghost_values();
+
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
         previous_solutions[i]);
     }
@@ -1099,7 +1121,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   setup_dofs();
 
   // Set up the vectors for the transfer
-  VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp = init_temporary_vector();
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
@@ -1114,8 +1136,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Set up the vectors for the transfer
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      VectorType tmp_previous_solution(locally_owned_dofs,
-                                       this->mpi_communicator);
+      VectorType tmp_previous_solution = init_temporary_vector();
       previous_solutions_transfer[i].interpolate(tmp_previous_solution);
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
@@ -1885,6 +1906,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     *this->triangulation,
     this->simulation_parameters,
     number_quadrature_points);
+
+  // TODO: generalize this to VectorType
   TrilinosWrappers::MPI::Vector qcriterion_field;
   TrilinosWrappers::MPI::Vector continuity_field;
 
@@ -1978,11 +2001,19 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   if (simulation_control->get_output_boundaries() &&
       simulation_control->get_step_number() == 0)
     {
-      DataOutFaces<dim>          data_out_faces;
+      DataOutFaces<dim> data_out_faces;
+
+      // Add the additional flag to enable high-order cells output when the
+      // velocity interpolation order is larger than 1
+      DataOutBase::VtkFlags flags;
+      if (this->velocity_fem_degree > 1)
+        flags.write_higher_order_cells = true;
+      data_out_faces.set_flags(flags);
+
       BoundaryPostprocessor<dim> boundary_id;
       data_out_faces.attach_dof_handler(this->dof_handler);
       data_out_faces.add_data_vector(solution, boundary_id);
-      data_out_faces.build_patches(*this->mapping);
+      data_out_faces.build_patches(*this->mapping, subdivision);
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
@@ -2068,8 +2099,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                               av_set_transfer.end());
     }
 
-
-
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
@@ -2084,6 +2113,72 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     }
 }
 
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::
+  rescale_pressure_dofs_in_newton_update()
+{
+  const double pressure_scaling_factor =
+    simulation_parameters.stabilization.pressure_scaling_factor;
+
+  // We skip the function if the factor has a value of 1
+  if (abs(pressure_scaling_factor - 1) < 1e-8)
+    return;
+
+  TimerOutput::Scope t(this->computing_timer, "rescale_pressure");
+
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  // Map used to keep track of which DOFs have been looped over
+  std::unordered_set<unsigned int> rescaled_dofs_set;
+  rescaled_dofs_set.clear();
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+            {
+              const unsigned int global_id = local_dof_indices[j];
+              // We check if we have already checked this DOF
+              auto iterator = rescaled_dofs_set.find(global_id);
+              if (iterator == rescaled_dofs_set.end())
+                {
+                  const unsigned int component_index =
+                    this->fe->system_to_component_index(j).first;
+                  if (this->dof_handler.locally_owned_dofs().is_element(
+                        global_id) &&
+                      component_index == dim)
+                    {
+                      this->newton_update(global_id) =
+                        this->newton_update(global_id) *
+                        pressure_scaling_factor;
+                    }
+                  rescaled_dofs_set.insert(global_id);
+                }
+            }
+        }
+    }
+}
+
+template <int dim, typename VectorType, typename DofsType>
+inline VectorType
+NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
+{
+  VectorType tmp;
+
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector> ||
+                std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
+    tmp.reinit(locally_owned_dofs, this->mpi_communicator);
+
+  else if constexpr (std::is_same_v<VectorType,
+                                    LinearAlgebra::distributed::Vector<double>>)
+    tmp.reinit(locally_owned_dofs,
+               locally_relevant_dofs,
+               this->mpi_communicator);
+  return tmp;
+}
+
 // Pre-compile the 2D and 3D version with the types that can occur
 template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;
 template class NavierStokesBase<3, TrilinosWrappers::MPI::Vector, IndexSet>;
@@ -2093,3 +2188,9 @@ template class NavierStokesBase<2,
 template class NavierStokesBase<3,
                                 TrilinosWrappers::MPI::BlockVector,
                                 std::vector<IndexSet>>;
+template class NavierStokesBase<2,
+                                LinearAlgebra::distributed::Vector<double>,
+                                IndexSet>;
+template class NavierStokesBase<3,
+                                LinearAlgebra::distributed::Vector<double>,
+                                IndexSet>;
