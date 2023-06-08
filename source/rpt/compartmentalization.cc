@@ -95,8 +95,10 @@ Compartmentalization<dim>::read_electric_field_in_vector()
 
   for (const auto &[cell_index, cell] : cells_and_indices)
     {
-      matrix_index_electric_field.push_back(
-        {cell_index, electric_field[cell_index]});
+      std::vector<double> fill_matrix;
+      fill_matrix.push_back(cell_index);
+      fill_matrix.push_back(electric_field[cell_index]);
+      matrix_index_electric_field.push_back(fill_matrix);
     }
   return matrix_index_electric_field;
 }
