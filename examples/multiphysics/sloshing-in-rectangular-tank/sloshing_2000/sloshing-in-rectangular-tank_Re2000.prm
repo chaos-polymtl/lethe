@@ -5,14 +5,14 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 50
-  set time step        = 0.01
-  set adapt            = true
-  set max cfl          = 0.1
-  set output name      = sloshing-in-rectangular-tank_Re2000
-  set output path      = ./output_Re2000/
-  set output frequency = 25
+  set method                       = bdf2
+  set time end                     = 50
+  set time step                    = 0.01
+  set adapt                        = true
+  set max cfl                      = 0.1
+  set output name                  = sloshing-in-rectangular-tank_Re2000
+  set output path                  = ./output_Re2000/
+  set output frequency             = 25
   set adaptative time step scaling = 1.025
 end
 
@@ -25,9 +25,8 @@ subsection FEM
   set pressure order = 1
 end
 
-
 #---------------------------------------------------
-# Timer 
+# Timer
 #---------------------------------------------------
 
 subsection timer
@@ -45,7 +44,7 @@ subsection initial conditions
   end
 
   subsection VOF
-    set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0)) 
+    set Function expression = if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
   end
 end
 
@@ -105,11 +104,10 @@ end
 #---------------------------------------------------
 
 subsection VOF
-
   subsection phase filtration
-    set type  		= tanh
-    set verbosity 	= quiet
-    set beta 		= 20
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 20
   end
 end
 
@@ -154,7 +152,7 @@ subsection non-linear solver
   set verbosity      = verbose
   set tolerance      = 1e-7
   set max iterations = 20
-  set solver         =  inexact_newton
+  set solver         = inexact_newton
 end
 
 # --------------------------------------------------
@@ -162,11 +160,10 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                             = verbose
-  set method                                = amg
-  set max krylov vectors                    = 200
-  set max iters                             = 200
-  set relative residual                     = 1e-5
-  set minimum residual                      = 1e-9
+  set verbosity          = verbose
+  set method             = amg
+  set max krylov vectors = 200
+  set max iters          = 200
+  set relative residual  = 1e-5
+  set minimum residual   = 1e-9
 end
-
