@@ -138,10 +138,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
           Assert(pic.begin() == particle, ExcInternalError());
           for (const auto &p : pic)
             {
+              const ArrayView<const double> properties = p.get_properties();
+
               velocity           = 0;
               const auto &ref_q  = p.get_reference_location();
               const auto &real_q = p.get_location();
-              const auto &JxW    = p.get_properties()[0];
+              const auto &JxW    = properties[0];
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
@@ -302,13 +304,15 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
 
       for (const auto &p : pic)
         {
+          const ArrayView<const double> properties = p.get_properties();
+
           velocity_gradient = 0;
           pressure          = 0;
           const auto &q     = p.get_location();
-          const auto &JxW   = p.get_properties()[0];
-          normal_vector[0]  = -p.get_properties()[1];
-          normal_vector[1]  = -p.get_properties()[2];
-          normal_vector[2]  = -p.get_properties()[3];
+          const auto &JxW   = properties[0];
+          normal_vector[0]  = -properties[1];
+          normal_vector[1]  = -properties[2];
+          normal_vector[2]  = -properties[3];
 
           for (int k = 0; k < 3; ++k)
             {
@@ -381,10 +385,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
       Assert(pic.begin() == particle, ExcInternalError());
       for (const auto &p : pic)
         {
+          const ArrayView<const double> properties = p.get_properties();
+
           velocity           = 0;
           const auto &ref_q  = p.get_reference_location();
           const auto &real_q = p.get_location();
-          const auto &JxW    = p.get_properties()[0];
+          const auto &JxW    = properties[0];
 
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
@@ -468,12 +474,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
       Assert(pic.begin() == particle, ExcInternalError());
       for (const auto &p : pic)
         {
+          const ArrayView<const double> properties = p.get_properties();
+
           Tensor<1, spacedim> force;
           force              = 0;
           velocity           = 0;
           const auto &ref_q  = p.get_reference_location();
           const auto &real_q = p.get_location();
-          const auto &JxW    = p.get_properties()[0];
+          const auto &JxW    = properties[0];
 
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
