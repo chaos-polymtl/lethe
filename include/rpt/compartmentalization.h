@@ -72,8 +72,8 @@ private:
    * and write the pair of cell_index and electric field into a vector of a
    * vector to use it for compartmentalization
    */
-  auto
-  electric_field_stored_in_vector() -> std::vector<std::vector<double>>;
+  std::vector<std::vector<double>>
+  read_electric_field_in_vector();
 
   /**
    * @brief Read the electric field at each cell, derived from COMSOL
@@ -81,47 +81,49 @@ private:
    * to use it for calculating the average electric field at the final
    * compartments
    */
-  auto
-  electric_field_stored_in_map()
-    -> std::map<typename Triangulation<dim>::active_cell_iterator, double>;
+  std::map<typename Triangulation<dim>::active_cell_iterator, double>
+  read_electric_field_in_map();
+
 
   /**
    * @brief Read the velocity magnitude and write the pair of cell and associated velocity to that cell into a map
    */
-  auto
-  read_velocity_magnitude()
-    -> std::map<typename Triangulation<dim>::active_cell_iterator, double>;
+  std::map<typename Triangulation<dim>::active_cell_iterator, double>
+  read_velocity_magnitude();
 
   /**
    * @brief Read the velocity vector at the center point of cells and write it into a vector
    * add the cell as the key and associated velocity vector to a map
    */
-  auto
-  read_velocity_vector()
-    -> std::map<typename Triangulation<dim>::active_cell_iterator,
-                std::vector<double>>;
+  std::map<typename Triangulation<dim>::active_cell_iterator,
+           std::vector<double>>
+  read_velocity_vector();
+
 
   /**
    * @brief Generate subdivided_cylinder mesh
    */
   void
   generate_cylindrical_grid();
+  /**
+   * @brief output the cell center for pyvista
+   */
+  void
+  write_cell_center();
 
   /**
    * @brief First, sorts the cell based on their values of the electric field.
    * Then, agglomerates cells in groups according to tolerances and
    * breaks the clusters accordingly.
    */
-  auto
-  sort_agglomeration_deagglomeration_emw()
-    -> std::map<int,
-                std::vector<typename Triangulation<dim>::active_cell_iterator>>;
+  std::map<int, std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  compartmentalize_first_step();
 
   /**
    * @brief This function performs a two-step compartmentalization process. Firstly,
    * it obtains the initial set of compartments by analyzing the electric field
    * values of each cell, utilizing the
-   * "sort_agglomeration_deagglomeration_emw()" function. Subsequently, each
+   * compartmentalize_first_step()" function. Subsequently, each
    * compartment is treated as a separate problem to be compartmentalized
    * further. The second physical property, velocity, is employed to carry out
    * the following steps within each compartment: 1) sorts the cell, 2)
@@ -169,16 +171,16 @@ private:
   // Map contains cell as the key and the associated value of the electric field
   // at each cell
   std::map<typename Triangulation<dim>::active_cell_iterator, double>
-    primer_map_cell_emw;
+    map_cell_electric_field;
 
   // Vector of vector to store cell_index and the average value of electric
   // field in each cell
-  std::vector<std::vector<double>> primer_matrix_index_emw;
+  std::vector<std::vector<double>> matrix_index_electric_field;
 
   // Vector of vector to store cell_index and the average velocity magnitude of
   // the cell
   std::map<typename Triangulation<dim>::active_cell_iterator, double>
-    primer_matrix_index_velocity;
+    matrix_index_velocity;
 
   // Map of cell (active_cell_iterator) as key and the associated velocity
   // vector
