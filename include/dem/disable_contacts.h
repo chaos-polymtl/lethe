@@ -436,9 +436,47 @@ private:
     auto it = periodic_node_ids.find(node_id);
     if (it != periodic_node_ids.end())
       {
-        mobility_at_nodes(it->second) =
+        mobility_at_nodes(it->second) = // mobility_status;
           std::max(mobility_status_assigned, mobility_at_nodes(it->second));
       }
+  }
+
+  // Assign active status to nodes except mobile because
+  // this will cause to propagate the mobile status to the
+  // neighbors in this loop since the mobility check at node
+  // is executed in the same container that we are assigning new
+  // mobility status
+  inline void
+  assign_mobility_status(unsigned int                         cell_id,
+                         std::vector<types::global_dof_index> dof_indices,
+                         const int                            cell_status,
+                         const int                            node_status)
+  {
+    cell_mobility_status.insert({cell_id, cell_status});
+
+    // Assign mobility status to nodes but don't overwrite empty or mobile nodes
+    // in regards of the case.
+    for (auto node_id : dof_indices)
+      {
+        // Prevailing mobility status of the node and assignation
+        int status_assigned = std::max(node_status, mobility_at_nodes(node_id));
+        mobility_at_nodes(node_id) = status_assigned;
+
+        // Check if node has a periodic node and assign the same mobility status
+        // if prevailing on the one on the periodic node
+        auto it = periodic_node_ids.find(node_id);
+        if (it != periodic_node_ids.end())
+          {
+            mobility_at_nodes(it->second) =
+              std::max(status_assigned, mobility_at_nodes(it->second));
+          }
+      }
+  }
+
+  inline void
+  assign_mobility_status(unsigned int cell_id, const int cell_status)
+  {
+    cell_mobility_status.insert({cell_id, cell_status});
   }
 
   // Map of cell mobility status, the key is the active cell index and the value
@@ -467,6 +505,8 @@ private:
   // Threshold values for granular temperature and solid fraction
   double granular_temperature_threshold;
   double solid_fraction_threshold;
+
+  int trigger_flag = 1;
 
   // Map of cell velocities and accelerations, the key is the active cell
   // iterator and the value is a pair of the cell velocity and acceleration
