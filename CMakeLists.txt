@@ -66,7 +66,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
   add_compile_options(
     -Wall -Wextra -Wpedantic # Actually already in DEAL_II_CXX_FLAGS
-    -Wunused-variable -Wdisabled-optimization)
+    -Wunused-variable -Wdisabled-optimization -std=c++17)
 
   if(CMAKE_VERSION VERSION_LESS 3.24)
     option(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings on compile as errors")

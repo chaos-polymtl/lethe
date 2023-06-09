@@ -18,6 +18,9 @@ VOFScratchData<dim>::allocate()
   this->velocities_fd.first_vector_component = 0;
   // Velocity
   this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+    maximum_number_of_previous_solutions(),
+    std::vector<Tensor<1, dim>>(this->n_q_points));
   this->velocity_gradient_values =
     std::vector<Tensor<2, dim>>(this->n_q_points);
 

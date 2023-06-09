@@ -306,11 +306,17 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
   Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
 
+  // Extrapolate velocity to t+dt using the BDF scheme
+  std::vector<double> time_vector = simulation_control->get_simulation_times();
+  bdf_extrapolate(time_vector,
+                  scratch_data.previous_velocity_values,
+                  number_of_previous_solutions(method),
+                  scratch_data.velocity_values);
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       phase_value[0] = scratch_data.present_phase_values[q];
-
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_value[p + 1] = scratch_data.previous_phase_values[p][q];
@@ -364,6 +370,13 @@ VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   // Vector for the BDF coefficients
   Vector<double>      bdf_coefs = bdf_coefficients(method, time_steps_vector);
   std::vector<double> phase_value(1 + number_of_previous_solutions(method));
+
+  // Extrapolate velocity to t+dt using the BDF scheme
+  std::vector<double> time_vector = simulation_control->get_simulation_times();
+  bdf_extrapolate(time_vector,
+                  scratch_data.previous_velocity_values,
+                  number_of_previous_solutions(method),
+                  scratch_data.velocity_values);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)

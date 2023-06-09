@@ -32,7 +32,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl param)
   , bdf_start_method(param.bdf_startup_method)
   , startup_timestep_scaling(param.startup_timestep_scaling)
 {
-  time_step_vector.resize(numberTimeStepStored);
+  time_step_vector.resize(n_previous_time_steps);
   time_step_vector[0] = param.dt;
   time_step_vector[1] = param.dt;
   time_step_vector[2] = param.dt;

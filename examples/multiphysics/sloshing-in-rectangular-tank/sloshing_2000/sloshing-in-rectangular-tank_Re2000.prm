@@ -5,13 +5,15 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set time end         = 50
-  set time step        = 0.01
-  set adapt            = true
-  set max cfl          = 0.5
-  set output name      = sloshing-in-rectangular-tank_Re20
-  set output path      = ./output_Re20/
+  set method                       = bdf2
+  set time end                     = 50
+  set time step                    = 0.01
+  set adapt                        = true
+  set max cfl                      = 0.1
+  set output name                  = sloshing-in-rectangular-tank_Re2000
+  set output path                  = ./output_Re2000/
+  set output frequency             = 25
+  set adaptative time step scaling = 1.025
 end
 
 #---------------------------------------------------
@@ -24,19 +26,11 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Restart
+# Timer
 #---------------------------------------------------
 
-subsection restart
-  #Checkpointing parameters
-  set checkpoint = true
-  set frequency  = 30
-
-  #Output/input files
-  set filename   = restart
-
-  #Restarting parameters
-  set restart    = false
+subsection timer
+  set type = iteration
 end
 
 #---------------------------------------------------
@@ -50,13 +44,7 @@ subsection initial conditions
   end
 
   subsection VOF
-    set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.005,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.005,0))
-    
-    subsection projection step
-      set enable           = true
-      set diffusion factor = 1
-    end
-    
+    set Function expression = if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
   end
 end
 
@@ -68,11 +56,11 @@ subsection physical properties
   set number of fluids = 2
   subsection fluid 0
     set density             = 0.001
-    set kinematic viscosity = 0.000001
+    set kinematic viscosity = 0.0005
   end
   subsection fluid 1
     set density             = 1
-    set kinematic viscosity = 0.05
+    set kinematic viscosity = 0.0005
   end
 end
 
@@ -83,7 +71,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 5, 2 : -1, -1 : 1, 0.1 : true
+  set grid arguments     = 5, 3 : -1, -1 : 1, 0.1 : true
   set initial refinement = 6
 end
 
@@ -95,11 +83,11 @@ subsection mesh adaptation
   set type                     = kelly
   set variable                 = phase
   set fraction type            = fraction
-  set max refinement level     = 9
+  set max refinement level     = 10
   set min refinement level     = 5
   set frequency                = 1
-  set fraction refinement      = 0.99
-  set fraction coarsening      = 0.01
+  set fraction refinement      = 0.999
+  set fraction coarsening      = 0.001
   set initial refinement steps = 5
 end
 
@@ -117,9 +105,9 @@ end
 
 subsection VOF
   subsection phase filtration
-    set type  		= tanh
-    set verbosity 	= quiet
-    set beta 		= 20
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 20
   end
 end
 
@@ -162,8 +150,9 @@ end
 
 subsection non-linear solver
   set verbosity      = verbose
-  set tolerance      = 1e-6
+  set tolerance      = 1e-7
   set max iterations = 20
+  set solver         = inexact_newton
 end
 
 # --------------------------------------------------
@@ -171,13 +160,10 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                             = verbose
-  set method                                = gmres
-  set max krylov vectors                    = 500
-  set max iters                             = 1000
-  set relative residual                     = 1e-5
-  set minimum residual                      = 1e-7
-  set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-12
-  set ilu preconditioner relative tolerance = 1.00
+  set verbosity          = verbose
+  set method             = amg
+  set max krylov vectors = 200
+  set max iters          = 200
+  set relative residual  = 1e-5
+  set minimum residual   = 1e-9
 end

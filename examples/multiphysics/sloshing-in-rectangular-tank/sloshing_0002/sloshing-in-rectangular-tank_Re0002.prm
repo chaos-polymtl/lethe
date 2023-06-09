@@ -1,0 +1,168 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                       = bdf2
+  set time end                     = 50
+  set time step                    = 0.01
+  set adapt                        = true
+  set max cfl                      = 0.25
+  set output name                  = sloshing-in-rectangular-tank_Re2
+  set output path                  = ./output_Re2/
+  set output frequency             = 2
+  set adaptative time step scaling = 1.025
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+#---------------------------------------------------
+# Initial Condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+
+  subsection VOF
+    set Function expression = if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density             = 0.001
+    set kinematic viscosity = 0.001
+  end
+  subsection fluid 1
+    set density             = 1
+    set kinematic viscosity = 0.5
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5, 3 : -1, -1 : 1, 0.1 : true
+  set initial refinement = 6
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase
+  set fraction type            = fraction
+  set max refinement level     = 10
+  set min refinement level     = 5
+  set frequency                = 1
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
+  set initial refinement steps = 5
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection phase filtration
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 20
+  end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id                 = 0
+    set type               = periodic
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  set enable = true
+  subsection xyz
+    set Function expression = 0 ; -1 ; 0
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set verbosity      = verbose
+  set tolerance      = 1e-8
+  set max iterations = 20
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set verbosity          = verbose
+  set method             = amg
+  set max krylov vectors = 200
+  set max iters          = 200
+  set relative residual  = 1e-5
+  set minimum residual   = 1e-9
+end

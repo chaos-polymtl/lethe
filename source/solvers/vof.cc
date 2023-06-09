@@ -121,14 +121,17 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_block_solution(
-                                     PhysicsID::fluid_dynamics));
+      scratch_data.reinit_velocity(
+        velocity_cell,
+        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+        *multiphysics->get_block_previous_solutions(PhysicsID::fluid_dynamics));
     }
   else
     {
       scratch_data.reinit_velocity(
-        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        velocity_cell,
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
     }
 
   copy_data.reset();
@@ -211,14 +214,17 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(velocity_cell,
-                                   *multiphysics->get_block_solution(
-                                     PhysicsID::fluid_dynamics));
+      scratch_data.reinit_velocity(
+        velocity_cell,
+        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+        *multiphysics->get_block_previous_solutions(PhysicsID::fluid_dynamics));
     }
   else
     {
       scratch_data.reinit_velocity(
-        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        velocity_cell,
+        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+        *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
     }
 
   copy_data.reset();
