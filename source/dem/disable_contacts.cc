@@ -145,8 +145,8 @@ DisableContacts<dim>::identify_mobility_status(
   cell_mobility_status.clear();
 
   // Get a copy of the active & ghost cells set to iterate over and remove cell
-  // of the set when the mobility status is known to avoid unnecessary
-  // iterations for next loops. We don't want to modify the original set since
+  // of the set when the mobility status is known. It avoids unnecessary
+  // iteration for next loops. We don't want to modify the original set since
   // it is only updated when there's load balancing or reading of checkpoints.
   auto local_and_ghost_cells_copy = local_and_ghost_cells;
 
@@ -172,13 +172,12 @@ DisableContacts<dim>::identify_mobility_status(
   // because cell averaged velocity and acceleration are applied to particles,
   // so they need this different status. The criteria for those status are the
   // same as for DEM.
-  mobility_status inactive_status = mobility_status::inactive;
-  mobility_status active_status   = mobility_status::static_active;
-  if (advect_particles_enabled)
-    {
-      inactive_status = mobility_status::advected;
-      active_status   = mobility_status::advected_active;
-    }
+  mobility_status inactive_status = (!advect_particles_enabled) ?
+                                      mobility_status::inactive :
+                                      mobility_status::advected;
+  mobility_status active_status = (!advect_particles_enabled) ?
+                                    mobility_status::static_active :
+                                    mobility_status::advected_active;
 
   // Check if the cell is empty (n_particle = 0), if so, nodes and cells are
   // flagged as empty mobility status (5)
@@ -191,23 +190,19 @@ DisableContacts<dim>::identify_mobility_status(
           std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
           (*cell)->get_dof_indices(local_dof_indices);
 
-          // Assign mobile status to cell in map
-          const unsigned int cell_id = (*cell)->active_cell_index();
-          cell_mobility_status.insert({cell_id, mobility_status::inactive});
+          // Assign inactive status to cell and empty status to nodes
+          assign_mobility_status((*cell)->active_cell_index(),
+                                 local_dof_indices,
+                                 mobility_status::inactive,
+                                 mobility_status::empty);
 
-          // Remove cell from cell set and iterate to the following cell, the
-          // erase function returns the next iterator
+          // Remove cell from cell set and iterate to the following cell,
+          // erase() function returns the next iterator
           cell = local_and_ghost_cells_copy.erase(cell);
-
-          // Assign empty status to all nodes of the cell
-          for (auto node_id : local_dof_indices)
-            {
-              assign_node_status(node_id, mobility_status::empty);
-            }
         }
       else
         {
-          // Since erase() is not called, we need to increment the iterator
+          // Since erase() is not called, iterator is incremented
           ++cell;
         }
     }
@@ -234,43 +229,38 @@ DisableContacts<dim>::identify_mobility_status(
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {
+      const unsigned int cell_id = (*cell)->active_cell_index();
       std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dof_indices);
 
       // Check if the cell has any empty neighbor cell by the value at nodes
-      bool has_empty_neighbor = false;
+      bool has_empty_node = false;
       for (auto node_id : local_dof_indices)
         {
           if (mobility_at_nodes(node_id) == mobility_status::empty)
             {
-              has_empty_neighbor = true;
-              break; // No need to check the other nodes
+              has_empty_node = true;
+              break; // No need to check other nodes
             }
         }
 
-      // Check if the cell is mobile by criteria
-      // (granular temperature or solid fraction or empty neighbor)
-      const unsigned int cell_id = (*cell)->active_cell_index();
+      // Check if the cell is mobile by criteria (granular temperature, solid
+      // fraction, next to empty cell)
       if (granular_temperature_average[cell_id] >
             granular_temperature_threshold ||
-          solid_fractions[cell_id] < solid_fraction_threshold ||
-          has_empty_neighbor)
+          solid_fractions[cell_id] < solid_fraction_threshold || has_empty_node)
         {
-          // Assign mobile status to cell in map
-          cell_mobility_status.insert({cell_id, mobility_status::mobile});
+          // Assign mobile status to cell and nodes
+          assign_mobility_status(cell_id,
+                                 local_dof_indices,
+                                 mobility_status::mobile,
+                                 mobility_status::mobile);
 
-          // Remove cell from cell set and iterate to the following cell
+          // Remove cell from cell set
           cell = local_and_ghost_cells_copy.erase(cell);
-
-          // Assign mobile status to nodes but don't overwrite empty nodes.
-          for (auto node_id : local_dof_indices)
-            {
-              assign_node_status(node_id, mobility_status::mobile);
-            }
         }
       else
         {
-          // Since erase() is not called, we need to increment the iterator
           ++cell;
         }
     }
@@ -279,48 +269,37 @@ DisableContacts<dim>::identify_mobility_status(
 
   // Check if the cell is mobile by neighbor (at least a node is flagged as
   // mobile from previous check), this is the additional mobile layer.
-  // If so, cells are stored in map as mobile status (2) and nodes that are not
-  // mobile are flagged as active (1)
+  // If so, cells are stored in map as mobile status (4) and nodes that are not
+  // mobile are flagged as active (1/3)
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();)
     {
       std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dof_indices);
 
-      // Check if the cell has any mobile nodes to know if we need to iterate
-      // over the next cell (no call of erase() function)
+      // Check if the cell has any mobile nodes by the value at nodes
       bool has_mobile_node = false;
-
       for (auto node_id : local_dof_indices)
         {
-          // Check if node is mobile and assign mobile status to the cell
           if (mobility_at_nodes(node_id) == mobility_status::mobile)
             {
-              // Assign mobile status to cell in map
-              const unsigned int cell_id = (*cell)->active_cell_index();
-              cell_mobility_status.insert({cell_id, mobility_status::mobile});
-
-              // Remove cell from cell set and iterate to the following cell,
-              // also label it as mobile to avoid double iteration
-              cell            = local_and_ghost_cells_copy.erase(cell);
               has_mobile_node = true;
-
-              // Assign active status to nodes except mobile because
-              // this will cause to propagate the mobile status to the
-              // neighbors in this loop since the mobility check at node
-              // is executed in the same container that we are assigning new
-              // mobility status
-              for (auto node_id : local_dof_indices)
-                {
-                  assign_node_status(node_id, active_status);
-                }
-              break; // No need to check the other nodes
+              break;
             }
         }
 
-      // Since erase() is not called (no mobile node), we need to increment the
-      // iterator
-      if (!has_mobile_node)
+      if (has_mobile_node)
+        {
+          // Assign mobile status to cell and active to nodes
+          assign_mobility_status((*cell)->active_cell_index(),
+                                 local_dof_indices,
+                                 mobility_status::mobile,
+                                 active_status);
+
+          // Remove cell from cell set and iterate to the following cell
+          cell = local_and_ghost_cells_copy.erase(cell);
+        }
+      else
         {
           ++cell;
         }
@@ -337,29 +316,21 @@ DisableContacts<dim>::identify_mobility_status(
       std::vector<types::global_dof_index> local_dofs_indices(dofs_per_cell);
       (*cell)->get_dof_indices(local_dofs_indices);
 
+      // Check if cell has active nodes
       bool has_active_nodes = false;
-      bool has_mobile_nodes = false;
-
-      // Check if cell has active and/or mobile nodes
       for (auto node_id : local_dofs_indices)
         {
-          has_active_nodes =
-            (mobility_at_nodes(node_id) == (int)active_status) ||
-            has_active_nodes;
-
-          has_mobile_nodes =
-            (mobility_at_nodes(node_id) == mobility_status::mobile) ||
-            has_mobile_nodes;
+          if (mobility_at_nodes(node_id) == (int)active_status)
+            {
+              has_active_nodes = true;
+              break;
+            }
         }
 
-      // Active nodes with mobile nodes means that the cell is part of the
-      // additional mobile layer.
-      // Active nodes and no mobile nodes means that the cell is a neighbor
-      // of the additional layer of mobile cells, this is an active cell.
-      if (has_active_nodes && !has_mobile_nodes)
+      if (has_active_nodes)
         {
-          const unsigned int cell_id = (*cell)->active_cell_index();
-          cell_mobility_status.insert({cell_id, active_status});
+          // Assign active status to cell (no need to assign active to nodes)
+          assign_mobility_status((*cell)->active_cell_index(), active_status);
           cell = local_and_ghost_cells_copy.erase(cell);
         }
       else
@@ -369,14 +340,13 @@ DisableContacts<dim>::identify_mobility_status(
     }
 
   // Store the inactive cells in the map, those are all the remaining cells
-  // in the active & ghost cells set
+  // in the local & ghost cells set
   for (auto cell = local_and_ghost_cells_copy.begin();
        cell != local_and_ghost_cells_copy.end();
        ++cell)
     {
-      // Assign mobile status to cell in map
-      const unsigned int cell_id = (*cell)->active_cell_index();
-      cell_mobility_status.insert({cell_id, inactive_status});
+      // Assign inactive status to cell in map
+      assign_mobility_status((*cell)->active_cell_index(), inactive_status);
     }
 }
 
