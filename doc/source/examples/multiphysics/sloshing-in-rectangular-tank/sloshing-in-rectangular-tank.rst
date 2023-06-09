@@ -27,7 +27,7 @@ Description of the case
 
 Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas). Yet, simulating their dynamics is difficult, especially for high values of the Reynolds number. Indeed, in this case, the amplitude of the waves dampen very slowly, which leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver. 
 
-In this problem, we simulate the damping of a small amplitude wave in a cavity of dimension :math:`(-1,-1)\times (1,0.1)` . The initial height of the wave :math:`\xi (x)` is given by:
+In this problem, we simulate the damping of a small amplitude wave in a cavity of dimension :math:`(-1,-1)\times (1,0.1)`. The initial height of the wave :math:`\xi (x)` is given by:
 
 .. math::
 
@@ -85,11 +85,6 @@ In the ``initial condition``, we define the initial height of the wave, such tha
     
       subsection VOF
         set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
-        
-          set enable           = false
-          set diffusion factor = 1
-        end
-        
       end
     end
 
@@ -170,16 +165,17 @@ to run the simulation using eight CPU cores. Feel free to use more.
 Results
 -------
 
-We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by `Wu et al. [2] <https://link.springer.com/article/10.1023/A:1017558826258>`_. For the Reynolds number of 2, 20 and 200, data were directly extracted from `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of 2000, the simplified analytical expression of Wu et al. is used. The results for Reynolds number of 2, 20, 200 and 2000 can be post-processed by invoking the following command from the folder of the Reynolds number of interest::
+We compare the relative height of the free surface at :math:`x=0` with an analytical solution proposed by `Wu et al. [2] <https://link.springer.com/article/10.1023/A:1017558826258>`_. For the Reynolds number of 2, 20 and 200, data were directly extracted from `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_, whereas for the Reynolds of 2000, the simplified analytical expression of Wu *et al.* `[2] <https://link.springer.com/article/10.1023/A:1017558826258>`_ is used. The results for Reynolds number of 2, 20, 200 and 2000 can be post-processed by invoking the following command from the folder of the Reynolds number of interest (Re=20 in the example below):
 
 .. code-block:: text
 
   python3 ../sloshing_post_processing.py . sloshing-in-rectangular-tank_Re0020.prm
 
-in the folder where you have ran the simulation for a given Reynolds number (20 in the above example). You need to ensure that the ``lethe_pyvista_tools`` module included within Lethe is in your Python path.
+.. important::
+    You need to ensure that the ``lethe_pyvista_tools`` module included within Lethe is in your Python path.
 
 
-The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.
+The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers mentioned above. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.
 
 +------+--------------------------------------+
 | Re   | Results                              |
