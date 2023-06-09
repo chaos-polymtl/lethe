@@ -86,7 +86,6 @@ In the ``initial condition``, we define the initial height of the wave, such tha
       subsection VOF
         set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
         
-        subsection projection step
           set enable           = false
           set diffusion factor = 1
         end
