@@ -11,4 +11,5 @@ VOF
     rayleigh-taylor-instability/rayleigh-taylor-instability
     static-bubble/static-bubble
     rising-bubble/rising-bubble
+    sloshing-in-rectangular-tank/sloshing-in-rectangular-tank
     3d-dam-break/3d-dam-break

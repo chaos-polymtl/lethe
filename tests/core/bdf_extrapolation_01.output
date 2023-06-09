@@ -1,0 +1,19 @@
+
+DEAL::Value set 0
+DEAL::----------
+DEAL::3.00000 2.00000 1.00000 
+DEAL::Value set 1
+DEAL::----------
+DEAL::103.000 102.000 101.000 
+DEAL::
+DEAL::---------
+DEAL::Order 1: 3.00000 103.000 
+DEAL::
+DEAL::--------------------------
+DEAL::Order 2 constant time steps: 4.00000 104.000 
+DEAL::
+DEAL::-----------------------------
+DEAL::Order 2 variable time steps: 5.00000 105.000 
+DEAL::
+DEAL::-----------------------------
+DEAL::Order 3 constant time steps: 4.00000 104.000 

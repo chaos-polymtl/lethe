@@ -175,6 +175,8 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                                       &this->dof_handler);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
                                    &this->present_solution);
+  this->multiphysics->set_previous_solutions(PhysicsID::fluid_dynamics,
+                                             &this->previous_solutions);
 }
 
 template <int dim>
