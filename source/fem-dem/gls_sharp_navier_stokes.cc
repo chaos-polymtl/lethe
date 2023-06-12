@@ -369,10 +369,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::refinement_control(bool initial_refinement)
 {
-  // To change once refinement is split into two function
-  // Warning: variables.begin() only takes the first values given (not
-  // generalized for multivariables mesh adaptation)
-
+  //  This function applies the various refinement steps depending on the
+  //  parameters and the state.
   if (initial_refinement)
     {
       // Apply the initial box refinement
