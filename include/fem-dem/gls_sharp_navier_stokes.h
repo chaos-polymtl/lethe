@@ -447,6 +447,14 @@ private:
   void
   load_particles_from_file();
 
+  /**
+   * @brief Regroup and organize the refinement process around the IB particle.
+   *
+   * @param initial_refinement, A bool that indicate if this is the initial refinement.
+   */
+  void
+  refinement_control(bool initial_refinement);
+
 
   /**
 * @brief
