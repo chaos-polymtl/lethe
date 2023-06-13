@@ -437,56 +437,47 @@ protected:
     const unsigned int particle_two_type =
       particle_two_properties[PropertiesIndex::type];
 
+    const double characteristic_velocity =
+      1.0; // Characteristic velocity is set at 1.0 so that the normal and
+           // tangential spring_constant remain constant throughout a
+           // simululation.
+
     // Calculation of normal and tangential spring and dashpot constants
     // using particle properties
     double normal_spring_constant =
       1.0667 * sqrt(this->effective_radius) *
       this->effective_youngs_modulus[vec_particle_type_index(
         particle_one_type, particle_two_properties[PropertiesIndex::type])] *
-      pow((0.9375 * this->effective_mass * normal_relative_velocity_value *
-           normal_relative_velocity_value /
+      pow((0.9375 * this->effective_mass * characteristic_velocity *
+           characteristic_velocity /
            (sqrt(this->effective_radius) *
             this->effective_youngs_modulus[vec_particle_type_index(
               particle_one_type, particle_two_type)])),
           0.2);
-    double tangential_spring_constant =
-      1.0667 * sqrt(this->effective_radius) *
-        this->effective_youngs_modulus[vec_particle_type_index(
-          particle_one_type, particle_two_type)] *
-        pow((0.9375 * this->effective_mass *
-             contact_info.tangential_relative_velocity *
-             contact_info.tangential_relative_velocity /
-             (sqrt(this->effective_radius) *
-              this->effective_youngs_modulus[vec_particle_type_index(
-                particle_one_type, particle_two_type)])),
-            0.2) +
-      DBL_MIN;
-    double normal_damping_constant = sqrt(
-      (4.0 * this->effective_mass * normal_spring_constant) /
-      (1.0 +
-       (M_PI /
-        (log(this->effective_coefficient_of_restitution[vec_particle_type_index(
-           particle_one_type, particle_two_type)]) +
-         DBL_MIN)) *
-         (M_PI /
-          (log(
-             this->effective_coefficient_of_restitution[vec_particle_type_index(
-               particle_one_type, particle_two_type)]) +
-           DBL_MIN))));
-    double tangential_damping_constant =
-      normal_damping_constant *
-      sqrt(tangential_spring_constant / normal_spring_constant);
 
-    // Calculation of normal force
-    normal_force =
-      ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
-      ((normal_damping_constant * normal_relative_velocity_value) *
-       normal_unit_vector);
+    // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala,“Documentation of
+    // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p.
+    // 10, Sep. 2012.
+    double tangential_spring_constant = normal_spring_constant * 0.4;
+
+    double normal_damping_constant =
+      -2 *
+      this->model_parameter_beta[vec_particle_type_index(particle_one_type,
+                                                         particle_two_type)] *
+      sqrt(this->effective_mass * normal_spring_constant);
+
+    double tangential_damping_constant =
+      normal_damping_constant * 0.6324555320336759; // sqrt(0.4)
+    // Calculation of the normal force
+    normal_force = (normal_spring_constant * normal_overlap +
+                    normal_damping_constant * normal_relative_velocity_value) *
+                   normal_unit_vector;
 
     // Calculation of tangential force. Since we need damping tangential force
     // in the gross sliding again, we define it as a separate variable
     Tensor<1, 3> damping_tangential_force =
       tangential_damping_constant * contact_info.tangential_relative_velocity;
+
     tangential_force =
       (tangential_spring_constant * contact_info.tangential_overlap) +
       damping_tangential_force;
