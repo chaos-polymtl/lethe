@@ -248,7 +248,7 @@ Shape<dim>::closest_surface_point(
 template <int dim>
 void
 Shape<dim>::closest_surface_point(const Point<dim> &p,
-                                  Point<dim> &      closest_point)
+                                  Point<dim> &      closest_point) const
 {
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
@@ -362,6 +362,100 @@ Sphere<dim>::set_position(const Point<dim> &position)
 #endif
 }
 
+
+template <int dim>
+void
+Superquadric<dim>::closest_surface_point(
+  const Point<dim> &p,
+  Point<dim> &      closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell_guess*/)
+{
+  auto point_in_string = this->point_to_string(p);
+  auto iterator        = this->closest_point_cache.find(point_in_string);
+  if (iterator == this->closest_point_cache.end())
+    {
+      this->closest_surface_point(p, closest_point);
+
+      Point<dim> copy_closest_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        copy_closest_point[d] = closest_point[d];
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+    }
+  else
+    closest_point = iterator->second;
+}
+
+template <int dim>
+void
+Superquadric<dim>::closest_surface_point(const Point<dim> &p,
+                                         Point<dim> &      closest_point) const
+{
+  using numbers::PI;
+
+  auto point_in_string = this->point_to_string(p);
+  auto iterator        = this->closest_point_cache.find(point_in_string);
+  if (iterator == this->closest_point_cache.end())
+    {
+      // We align and center the evaluation point according to the shape
+      // referential
+      Point<dim> centered_point = this->align_and_center(p);
+
+      //// TODO WORK HERE
+      double r     = centered_point.norm();
+      double theta = atan2(centered_point[1], centered_point[0]);
+      double phi   = acos(centered_point[2] / r);
+
+      unsigned int iteration     = 0;
+      unsigned int iteration_max = 100;
+      double       tolerance     = 1e-2;
+      double       step          = 1e-3;
+
+      Tensor<1, 2> residual{};
+      Tensor<1, 2> dx{};
+      Tensor<1, 2> front_residual{},
+        back_residual{}; // for jacobian calculations
+      Tensor<2, 2> jacobian{}, inv_jacobian{};
+      dx[0] = 1;
+      while (iteration < iteration_max && dx.norm() > tolerance)
+        {
+          residual = compute_residual(theta, phi, step, centered_point);
+          jacobian = compute_jacobian(theta, phi, step, centered_point);
+          /*
+                    std::cout << "iteration: " << iteration << std::endl;
+                    std::cout << "residual: " << residual << std::endl;
+                    std::cout << "jacobian: " << jacobian << std::endl;
+                    */
+
+          const double determinant =
+            jacobian[0][0] * jacobian[1][1] - jacobian[1][0] * jacobian[0][1];
+          inv_jacobian[0][0] = jacobian[1][1];
+          inv_jacobian[1][0] = -jacobian[1][0];
+          inv_jacobian[0][1] = -jacobian[0][1];
+          inv_jacobian[1][1] = jacobian[0][0];
+          inv_jacobian /= determinant;
+
+          dx[0] = inv_jacobian[0][0] * (-residual[0]) +
+                  inv_jacobian[0][1] * (-residual[1]);
+          dx[1] = inv_jacobian[1][0] * (-residual[0]) +
+                  inv_jacobian[1][1] * (-residual[1]);
+
+          theta += dx[0];
+          phi += dx[1];
+
+          iteration++;
+        }
+      if (iteration == iteration_max)
+        std::cout << "Couldn't find the closest point" << std::endl;
+      Point<dim> current_point = superquadric_point(theta, phi);
+
+      //////////////
+      closest_point =
+        current_point; // this->reverse_align_and_center(current_point);
+    }
+  else
+    closest_point = iterator->second;
+}
+
 template <int dim>
 double
 Superquadric<dim>::value(const Point<dim> &evaluation_point,
@@ -373,17 +467,14 @@ Superquadric<dim>::value(const Point<dim> &evaluation_point,
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())
     {
-      // We align and center the evaluation point according to the shape
-      // referential
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+
       Point<dim> centered_point = this->align_and_center(evaluation_point);
-
-      double levelset =
-        (pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
-         pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
-         pow(abs(centered_point[2] / half_lengths[2]), exponents[2])) -
-        1;
-
-      return levelset;
+      if (superquadric(centered_point) > 0)
+        return (closest_point - evaluation_point).norm();
+      else
+        return -(closest_point - evaluation_point).norm();
     }
   else
     return iterator->second;
@@ -396,10 +487,22 @@ Superquadric<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component = 0*/)
 {
+  // TODO enlever
+  // return superquadric(this->align_and_center(evaluation_point));
+
   auto point_in_string = this->point_to_string(evaluation_point);
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())
     {
+      // The closest point has to be found first, because it is used in value
+      // calculation
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+      Point<dim> copy_closest_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        copy_closest_point[d] = closest_point[d];
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+
       double levelset                    = this->value(evaluation_point);
       this->value_cache[point_in_string] = levelset;
       return levelset;
@@ -407,7 +510,6 @@ Superquadric<dim>::value_with_cell_guess(
   else
     return iterator->second;
 }
-
 
 template <int dim>
 std::shared_ptr<Shape<dim>>
@@ -419,6 +521,14 @@ Superquadric<dim>::static_copy() const
 }
 
 template <int dim>
+void
+Superquadric<dim>::clear_cache()
+{
+  Shape<dim>::clear_cache();
+  this->closest_point_cache.clear();
+}
+
+template <int dim>
 Tensor<1, dim>
 Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
                             const unsigned int /*component*/) const
@@ -427,22 +537,12 @@ Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
   auto iterator        = this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end())
     {
-      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
 
-      Tensor<1, dim> gradient{};
-      for (unsigned int d = 0; d < dim; d++)
-        {
-          if (centered_point[d] > 0)
-            gradient[d] =
-              exponents[d] *
-              pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
-          else
-            gradient[d] =
-              -exponents[d] *
-              pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
-          if (this->value(evaluation_point) < 0)
-            gradient[d] *= -1;
-        }
+      Tensor<1, dim> gradient =
+        (evaluation_point - closest_point) /
+        ((evaluation_point - closest_point).norm() + 1e-16);
       return gradient;
     }
   else
@@ -460,6 +560,15 @@ Superquadric<dim>::gradient_with_cell_guess(
   auto iterator        = this->gradient_cache.find(point_in_string);
   if (iterator == this->gradient_cache.end())
     {
+      // The closest point has to be found first, because it is used in value
+      // calculation
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+      Point<dim> copy_closest_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        copy_closest_point[d] = closest_point[d];
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+
       Tensor<1, dim> gradient               = this->gradient(evaluation_point);
       this->gradient_cache[point_in_string] = gradient;
       return gradient;
@@ -1301,8 +1410,7 @@ template <int dim>
 void
 CompositeShape<dim>::clear_cache()
 {
-  this->value_cache.clear();
-  this->gradient_cache.clear();
+  Shape<dim>::clear_cache();
   // The constituents themselves don't need to have their cache cleared, because
   // everytime the value or gradient functions are called the evaluation point
   // is modified (the relationships between the constituents don't change).

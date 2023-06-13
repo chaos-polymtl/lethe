@@ -163,7 +163,7 @@ public:
     Point<dim> &                                          closest_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   virtual void
-  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
+  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point) const;
 
   /**
    * @brief
@@ -457,9 +457,177 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator cell,
     const unsigned int component = 0) override;
 
+  /**
+   * @brief
+   * Sets the closest_point parameter to be the point on the surface of the
+   * shape which has the minimal distance from the given point p. Since this
+   * function is at the core of the calculations for superquadrics, it is
+   * redefined here.
+   *
+   * @param p The point at which the evaluation is performed
+   * @param closest_point The reference to the closest point. This point will be modified by the function.
+   * @param cell_guess A guess of the cell containing the evaluation point, which
+   * is useful to reduce computation time
+   */
+  void
+  closest_surface_point(
+    const Point<dim> &                                    p,
+    Point<dim> &                                          closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) override;
+  void
+  closest_surface_point(const Point<dim> &p,
+                        Point<dim> &      closest_point) const override;
+
+
+  /**
+   * @brief
+   * Clear the cache of the shape
+   */
+  virtual void
+  clear_cache() override;
+
+  inline double
+  sign(const double prm) const
+  {
+    if (prm > 0)
+      return 1;
+    else if (prm < 0)
+      return -1;
+    else
+      return 0;
+  }
+
+  inline double
+  f(const double omega, const double exponent) const
+  {
+    return sign(sin(omega)) * pow(abs(sin(omega)), exponent);
+  }
+
+  inline double
+  g(const double omega, const double exponent) const
+  {
+    return sign(cos(omega)) * pow(abs(cos(omega)), exponent);
+  }
+
+  /**
+   * @brief Computes the surface point of a superquadric for given theta and phi
+   * @param theta
+   * @param phi
+   */
+  inline Point<dim>
+  superquadric_point(const double theta, const double phi) const
+  {
+    const double a = half_lengths[0];
+    const double b = half_lengths[1];
+    const double c = half_lengths[2];
+    const double p = exponents[0];
+    const double q = exponents[1];
+    const double r = exponents[2];
+
+    Point<dim> surface_point{};
+
+    surface_point[0] = a * g(phi, 2 / p) * g(theta, 2 / p);
+    surface_point[1] = b * g(phi, 2 / q) * f(theta, 2 / q);
+    surface_point[2] = c * g(phi, 2 / r);
+
+    return surface_point;
+  }
+
+  inline Tensor<1, 6>
+  superquadric_point_derivative(const double theta, const double phi) const
+  {
+    const double a = half_lengths[0];
+    const double b = half_lengths[1];
+    const double c = half_lengths[2];
+    const double p = exponents[0];
+    const double q = exponents[1];
+    const double r = exponents[2];
+
+    Tensor<1, 6> derivatives{};
+
+    // dx_dtheta, dy_dtheta, dz_dtheta
+    derivatives[0] = -a * p * g(theta, (2 / p) - 1) * g(phi, 2 / p);
+    derivatives[1] = b * q * f(theta, (2 / q) - 1) * g(phi, 2 / q);
+    derivatives[2] = 0;
+
+    // dx_dphi, dy_dphi, dz_dphi
+    derivatives[3] = a * p * g(phi, (2 / p) - 1) * g(theta, 2 / p);
+    derivatives[4] = b * q * g(phi, (2 / q) - 1) * f(theta, 2 / q);
+    derivatives[5] = -c * r * f(phi, (2 / r) - 1);
+
+    return derivatives;
+  }
+
+  /**
+   * @brief Computes the value of the superquadric from its equation
+   * @param centered_point point at which we make the evaluation, in the shape referential
+   */
+  inline double
+  superquadric(const Point<dim> &centered_point) const
+  {
+    return (pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
+            pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
+            pow(abs(centered_point[2] / half_lengths[2]), exponents[2])) -
+           1;
+  }
+
+  inline Tensor<1, 2>
+  compute_residual(const double     theta,
+                   const double     phi,
+                   const double     step,
+                   const Point<dim> centered_point) const
+  {
+    Tensor<1, 2> residual{}; // d(distance(surface-centered)^2)/dtheta,
+                             // d(distance(surface-centered)^2)/dphi
+
+    double front_value;
+    double back_value;
+    // Residual
+    front_value =
+      (superquadric_point(theta + step, phi) - centered_point).norm();
+    back_value =
+      (superquadric_point(theta - step, phi) - centered_point).norm();
+    residual[0] = (pow(front_value, 2) - pow(back_value, 2)) / (2 * step);
+    front_value =
+      (superquadric_point(theta, phi + step) - centered_point).norm();
+    back_value =
+      (superquadric_point(theta, phi - step) - centered_point).norm();
+    residual[1] = (pow(front_value, 2) - pow(back_value, 2)) / (2 * step);
+
+    return residual;
+  }
+
+  inline Tensor<2, 2>
+  compute_jacobian(const double     theta,
+                   const double     phi,
+                   const double     step,
+                   const Point<dim> centered_point) const
+  {
+    Tensor<1, 2> front_residual{}, back_residual{}; // for jacobian calculations
+    Tensor<2, 2> jacobian{};
+
+    front_residual = compute_residual(theta + step, phi, step, centered_point);
+    back_residual  = compute_residual(theta - step, phi, step, centered_point);
+    Tensor<1, 2> first_column = (front_residual - back_residual) / (2 * step);
+
+    front_residual = compute_residual(theta, phi + step, step, centered_point);
+    back_residual  = compute_residual(theta, phi - step, step, centered_point);
+    Tensor<1, 2> second_column = (front_residual - back_residual) / (2 * step);
+
+    jacobian[0][0] = first_column[0];
+    jacobian[1][0] = first_column[1];
+    jacobian[0][1] = second_column[0];
+    jacobian[1][1] = second_column[1];
+    return jacobian;
+  }
+
 private:
   Tensor<1, dim> half_lengths;
   Tensor<1, dim> exponents;
+
+  // The cache of the evaluation of the shape. This is used to avoid costly
+  // reevaluation of the shape.
+  std::unordered_map<std::string, Point<dim>> closest_point_cache;
 };
 
 template <int dim>
@@ -943,7 +1111,6 @@ public:
   /**
    * @brief
    * Clear the cache of the shape
-   *
    */
   virtual void
   clear_cache() override;
