@@ -367,7 +367,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::refinement_control(const bool initial_refinement)
+GLSSharpNavierStokesSolver<dim>::refinement_control(
+  const bool initial_refinement)
 {
   //  This function applies the various refinement steps depending on the
   //  parameters and the state.
