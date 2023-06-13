@@ -53,6 +53,7 @@ public:
     effective_coefficient_of_restitution.resize(n_particle_types);
     effective_coefficient_of_friction.resize(n_particle_types);
     effective_coefficient_of_rolling_friction.resize(n_particle_types);
+    model_parameter_beta.resize(n_particle_types);
   }
 
   virtual ~ParticleWallContactForce()
@@ -271,11 +272,13 @@ protected:
   std::unordered_map<unsigned int, double>       boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
   unsigned int                                   n_particle_types;
-  std::vector<double>                            effective_youngs_modulus;
-  std::vector<double>                            effective_shear_modulus;
+
+  std::vector<double> effective_youngs_modulus;
+  std::vector<double> effective_shear_modulus;
   std::vector<double> effective_coefficient_of_restitution;
   std::vector<double> effective_coefficient_of_friction;
   std::vector<double> effective_coefficient_of_rolling_friction;
+  std::vector<double> model_parameter_beta;
 
   std::map<unsigned int, Tensor<1, 3>> force_on_walls;
   std::map<unsigned int, Tensor<1, 3>> torque_on_walls;

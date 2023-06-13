@@ -74,6 +74,12 @@ ParticleWallNonLinearForce<dim>::ParticleWallNonLinearForce(
         (particle_restitution_coefficient + wall_restitution_coefficient +
          DBL_MIN);
 
+      const double log_coeff_restitution =
+        log(this->effective_coefficient_of_restitution[i]);
+      this->model_parameter_beta[i] =
+        log_coeff_restitution /
+        sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
+
       this->effective_coefficient_of_friction[i] =
         2 * particle_friction_coefficient * wall_friction_coefficient /
         (particle_friction_coefficient + wall_friction_coefficient + DBL_MIN);
@@ -394,11 +400,6 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   double radius_times_overlap_sqrt =
     sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5 *
          contact_info.normal_overlap);
-  double log_coeff_restitution =
-    log(this->effective_coefficient_of_restitution[particle_type]);
-  double model_parameter_beta =
-    log_coeff_restitution /
-    sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
   double model_parameter_sn = 2 *
                               this->effective_youngs_modulus[particle_type] *
                               radius_times_overlap_sqrt;
@@ -409,7 +410,7 @@ ParticleWallNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     1.3333 * this->effective_youngs_modulus[particle_type] *
     radius_times_overlap_sqrt;
   double normal_damping_constant =
-    1.8257 * model_parameter_beta *
+    1.8257 * this->model_parameter_beta[particle_type] *
     sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
   double tangential_spring_constant =
     -8 * this->effective_shear_modulus[particle_type] *
@@ -505,6 +506,7 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   this->effective_coefficient_of_friction.resize(this->n_particle_types);
   this->effective_coefficient_of_rolling_friction.resize(
     this->n_particle_types);
+  this->model_parameter_beta.resize(this->n_particle_types);
 
   this->effective_youngs_modulus[particle_type] =
     (particle.youngs_modulus * wall_youngs_modulus) /
@@ -531,6 +533,11 @@ ParticleWallNonLinearForce<dim>::calculate_IB_particle_wall_contact_force(
   this->effective_coefficient_of_rolling_friction[particle_type] =
     harmonic_mean(particle.rolling_friction_coefficient,
                   wall_rolling_friction_coefficient);
+  const double log_coeff_restitution =
+    log(this->effective_coefficient_of_restitution[particle_type]);
+  this->model_parameter_beta[particle_type] =
+    log_coeff_restitution /
+    sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
 
   this->update_contact_information(contact_info, particle_properties, dt);
 
