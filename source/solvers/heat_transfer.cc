@@ -126,10 +126,12 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
               Assert(pic.begin() == particle, ExcInternalError());
               for (const auto &p : pic)
                 {
+                  const ArrayView<const double> properties = p.get_properties();
+
                   double      fluid_temperature = 0;
                   const auto &ref_q             = p.get_reference_location();
                   const auto &real_q            = p.get_location();
-                  const auto &JxW               = p.get_properties()[0];
+                  const auto &JxW               = properties[0];
 
                   for (unsigned int k = 0; k < dofs_per_cell; ++k)
                     {
@@ -230,10 +232,12 @@ HeatTransfer<dim>::postprocess_heat_flux_on_nitsche_ib()
               Assert(pic.begin() == particle, ExcInternalError());
               for (const auto &p : pic)
                 {
+                  const ArrayView<const double> properties = p.get_properties();
+
                   double      fluid_temperature = 0;
                   const auto &ref_q             = p.get_reference_location();
                   const auto &real_q            = p.get_location();
-                  const auto &JxW               = p.get_properties()[0];
+                  const auto &JxW               = properties[0];
 
                   for (unsigned int k = 0; k < dofs_per_cell; ++k)
                     {
