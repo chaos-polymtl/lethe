@@ -453,7 +453,7 @@ private:
    * @param initial_refinement, A bool that indicate if this is the initial refinement.
    */
   void
-  refinement_control(bool initial_refinement);
+  refinement_control(const bool initial_refinement);
 
 
   /**
