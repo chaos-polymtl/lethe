@@ -366,6 +366,66 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 }
 
 template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::refinement_control(
+  const bool initial_refinement)
+{
+  //  This function applies the various refinement steps depending on the
+  //  parameters and the state.
+  if (initial_refinement)
+    {
+      // Apply the initial box refinement
+      this->box_refine_mesh();
+      update_precalculations_for_ib();
+    }
+  if (this->simulation_parameters.particlesParameters
+        ->time_extrapolation_of_refinement_zone ||
+      initial_refinement)
+    {
+      // Stores variable for refinement around the particle.
+      double temp_refine =
+        this->simulation_parameters.mesh_adaptation.variables.begin()
+          ->second.refinement_fraction;
+      double temp_coarse =
+        this->simulation_parameters.mesh_adaptation.variables.begin()
+          ->second.coarsening_fraction;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.refinement_fraction = 0;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.coarsening_fraction = 0;
+
+      for (unsigned int i = 0;
+           i <
+           this->simulation_parameters.particlesParameters->initial_refinement;
+           ++i)
+        {
+          this->pcout << "Initial refinement around IB particles - Step : "
+                      << i + 1 << " of "
+                      << this->simulation_parameters.particlesParameters
+                           ->initial_refinement
+                      << std::endl;
+          refine_ib();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+            refine_mesh();
+          update_precalculations_for_ib();
+        }
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.refinement_fraction = temp_refine;
+      this->simulation_parameters.mesh_adaptation.variables.begin()
+        ->second.coarsening_fraction = temp_coarse;
+    }
+  if (initial_refinement == false)
+    {
+      refine_ib();
+      NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+        refine_mesh();
+      update_precalculations_for_ib();
+    }
+}
+
+
+
+template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_absolute_distance(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
@@ -723,9 +783,14 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
+  double dt = this->simulation_control->get_time_steps_vector()[0];
 
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  bool extrapolate_particle_position =
+    this->simulation_parameters.particlesParameters
+      ->time_extrapolation_of_refinement_zone;
 
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
   for (const auto &cell : cell_iterator)
@@ -740,6 +805,27 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
               Tensor<1, dim> r;
               r[0] = particles[p].radius;
 
+              Point<dim>   particle_position;
+              Tensor<1, 3> particle_orientation;
+              if (extrapolate_particle_position)
+                {
+                  particle_position    = particles[p].position;
+                  particle_orientation = particles[p].orientation;
+                  particles[p].orientation =
+                    particles[p].orientation + particles[p].omega * dt;
+                  particles[p].position[0] =
+                    particles[p].position[0] + particles[p].velocity[0] * dt;
+                  particles[p].position[1] =
+                    particles[p].position[1] + particles[p].velocity[1] * dt;
+
+                  if constexpr (dim == 3)
+                    {
+                      particles[p].position[2] = particles[p].position[2] +
+                                                 particles[p].velocity[2] * dt;
+                    }
+                  particles[p].set_position(particles[p].position);
+                  particles[p].set_orientation(particles[p].orientation);
+                }
               // Check if a point on the random point on the IB is contained in
               // that cell. If the particle is much smaller than the cell, all
               // its vertices may be outside of the particle. In that case the
@@ -769,6 +855,14 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                           ++count_small;
                         }
                     }
+                }
+
+              if (extrapolate_particle_position)
+                {
+                  particles[p].position    = particle_position;
+                  particles[p].orientation = particle_orientation;
+                  particles[p].set_position(particles[p].position);
+                  particles[p].set_orientation(particles[p].orientation);
                 }
               if (count_small > 0 || cell_as_ib_inside)
                 {
@@ -4258,46 +4352,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   define_particles();
   this->setup_dofs();
-  this->box_refine_mesh();
 
-  update_precalculations_for_ib();
   if (this->simulation_parameters.restart_parameters.restart == false)
     {
-      // To change once refinement is split into two function
-      // Warning: variables.begin() only takes the first values given (not
-      // generalized for multivariables mesh adaptation)
-      double temp_refine =
-        this->simulation_parameters.mesh_adaptation.variables.begin()
-          ->second.refinement_fraction;
-      double temp_coarse =
-        this->simulation_parameters.mesh_adaptation.variables.begin()
-          ->second.coarsening_fraction;
-      this->simulation_parameters.mesh_adaptation.variables.begin()
-        ->second.refinement_fraction = 0;
-      this->simulation_parameters.mesh_adaptation.variables.begin()
-        ->second.coarsening_fraction = 0;
-
-      for (unsigned int i = 0;
-           i <
-           this->simulation_parameters.particlesParameters->initial_refinement;
-           ++i)
-        {
-          this->pcout << "Initial refinement around IB particles - Step : "
-                      << i + 1 << " of "
-                      << this->simulation_parameters.particlesParameters
-                           ->initial_refinement
-                      << std::endl;
-
-          refine_ib();
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-            refine_mesh();
-          update_precalculations_for_ib();
-        }
-      this->simulation_parameters.mesh_adaptation.variables.begin()
-        ->second.refinement_fraction = temp_refine;
-      this->simulation_parameters.mesh_adaptation.variables.begin()
-        ->second.coarsening_fraction = temp_coarse;
-
+      refinement_control(true);
       vertices_cell_mapping();
 
       if (all_spheres)
@@ -4351,16 +4409,14 @@ GLSSharpNavierStokesSolver<dim>::solve()
       else
         {
           ib_done.clear();
-          refine_ib();
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
-            refine_mesh();
-          update_precalculations_for_ib();
+          refinement_control(false);
           vertices_cell_mapping();
 
           if (all_spheres)
             optimized_generate_cut_cells_map();
           else
             generate_cut_cells_map();
+
           ib_dem.update_particles_boundary_contact(this->particles,
                                                    this->dof_handler,
                                                    *this->face_quadrature,

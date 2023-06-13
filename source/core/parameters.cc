@@ -2351,6 +2351,11 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "This parameter enables the output of more information related to the particles in the vtu file.");
+      prm.declare_entry(
+        "refinement zone extrapolation",
+        "false",
+        Patterns::Bool(),
+        "This parameter enables the extrapolation in time of the refinement zone. This means that it will try to refine where the particle will be at the end of the time step instead of the initial position.");
 
 
       prm.enter_subsection("gravity");
@@ -2383,9 +2388,11 @@ namespace Parameters
     using numbers::PI;
     prm.enter_subsection("particles");
     {
-      nb                       = prm.get_integer("number of particles");
-      order                    = prm.get_integer("stencil order");
-      initial_refinement       = prm.get_integer("initial refinement");
+      nb                 = prm.get_integer("number of particles");
+      order              = prm.get_integer("stencil order");
+      initial_refinement = prm.get_integer("initial refinement");
+      time_extrapolation_of_refinement_zone =
+        prm.get_bool("refinement zone extrapolation");
       levels_not_precalculated = prm.get_integer("levels not precalculated");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
