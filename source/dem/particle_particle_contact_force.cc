@@ -40,6 +40,7 @@ ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   effective_coefficient_of_friction.resize(n_particle_types * n_particle_types);
   effective_coefficient_of_rolling_friction.resize(n_particle_types *
                                                    n_particle_types);
+
   model_parameter_beta.resize(n_particle_types * n_particle_types);
 
   for (unsigned int i = 0; i < n_particle_types; ++i)

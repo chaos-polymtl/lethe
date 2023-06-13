@@ -76,6 +76,13 @@ ParticleWallLinearForce<dim>::ParticleWallLinearForce(
         wall_rolling_friction_coefficient /
         (particle_rolling_friction_coefficient +
          wall_rolling_friction_coefficient + DBL_MIN);
+
+      const double log_coeff_restitution =
+        log(this->effective_coefficient_of_restitution[i]);
+
+      this->model_parameter_beta[i] =
+        log_coeff_restitution /
+        sqrt(log_coeff_restitution * log_coeff_restitution + M_PI * M_PI);
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
@@ -383,47 +390,46 @@ ParticleWallLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   double normal_spring_constant =
     1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
-    pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
-         contact_info.normal_relative_velocity *
-         contact_info.normal_relative_velocity /
+    pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] * 1.0 *
+         1.0 / // Characteristic velocity is set to 1.0
          (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
-  double tangential_spring_constant =
-    -1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
-      pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
-           contact_info.tangential_relative_velocity *
-           contact_info.tangential_relative_velocity /
-           (rp_sqrt * this->effective_youngs_modulus[particle_type])),
-          0.2) +
-    DBL_MIN;
-  double normal_damping_constant = sqrt(
-    (4 * particle_properties[DEM::PropertiesIndex::mass] *
-     normal_spring_constant) /
-    (1 + pow((M_PI /
-              (log(this->effective_coefficient_of_restitution[particle_type]) +
-               DBL_MIN)),
-             2)));
+
+  // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
+  // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10,
+  // Sep. 2012.
+  double tangential_spring_constant = normal_spring_constant * 0.4;
+
+  double normal_damping_constant =
+    -2 * this->model_parameter_beta[particle_type] *
+    sqrt(particle_properties[DEM::PropertiesIndex::mass] *
+         normal_spring_constant);
+
+
+  double tangential_damping_constant =
+    normal_damping_constant * 0.6324555320336759; // sqrt(0.4)
 
   // Calculation of normal force using spring and dashpot normal forces
+  // TODO , there's an inconsistency with the particle-particle force
+  //  calculation. The sign of the damping part should be a "+" and not a "-"
   Tensor<1, 3> normal_force =
-    (normal_spring_constant * contact_info.normal_overlap -
+    (normal_spring_constant * contact_info.normal_overlap - // TODO
      normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
-  ;
 
   // Calculation of tangential force
   Tensor<1, 3> tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
+    (tangential_spring_constant * contact_info.tangential_overlap -
+     tangential_damping_constant * contact_info.tangential_relative_velocity);
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *
     normal_force.norm();
-
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
-      // Gross sliding occurs and the tangential overlap and tangnetial
-      // force are limited to Coulumb's criterion
+      // Gross sliding occurs and the tangential overlap and tangential
+      // force are limited to Coulomb's criterion
       tangential_force =
         coulomb_threshold * (tangential_force / tangential_force.norm());
 
