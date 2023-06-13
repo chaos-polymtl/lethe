@@ -14,8 +14,9 @@ This subsection contains the parameters related to the sharp immersed boundary s
         set calculate force                         = true
         set ib force output file                    = ib_force
         set ib particles pvd file                   = ib_particles_data
-        set initial refinement                      = 0
         set levels not precalculated                = 0
+        set initial refinement                      = 0
+        set refinement zone extrapolation	    = false
         set refine mesh inside radius factor        = 0.5
         set refine mesh outside radius factor       = 1.5
         set integrate motion                        = false
@@ -106,6 +107,8 @@ To sharpen the immersed boundary of each particle, a layer of cells around the i
 	This near-particle zone will be systematically refined at each refinement step until reaching the ``max refinement level`` parameter (:doc:`../cfd/mesh_adaptation_control`).
 
 * The ``initial refinement`` parameter controls the number of refinement cycles in the near-particle refinement zone around every particle before the simulation starts.
+
+* The ``refinement zone extrapolation`` parameter controls how the refinement zone is evaluated. By default, the refinement zone is around the particle's last position (If this parameter is false). If this parameter is set to true, the refinement zone position is extrapolated from the particle's current velocity. It will then apply all the initial refinement steps at the particle's new position. This is used when the particle moves significantly between two time steps.
 
 * The ``levels not precalculated`` parameter controls the number of layers of the hierarchical grid used by Lethe that are ignored by precalculations. It allows to reduce the memory footprint at the cost of an increased computing time. At the moment, this is used only for RBF shapes. The value should be increased when the RBF contains a lot of nodes and/or the grid is extremely fine.
 

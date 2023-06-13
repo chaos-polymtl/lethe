@@ -1086,6 +1086,7 @@ namespace Parameters
     unsigned int                 levels_not_precalculated;
     double                       inside_radius;
     double                       outside_radius;
+    bool                         time_extrapolation_of_refinement_zone;
     std::vector<IBParticle<dim>> particles;
     bool                         calculate_force_ib;
     bool                         assemble_navier_stokes_inside;
