@@ -22,6 +22,8 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
+#include <deal.II/lac/full_matrix.h>
+
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>
@@ -533,31 +535,6 @@ public:
     return surface_point;
   }
 
-  inline Tensor<1, 6>
-  superquadric_point_derivative(const double theta, const double phi) const
-  {
-    const double a = half_lengths[0];
-    const double b = half_lengths[1];
-    const double c = half_lengths[2];
-    const double p = exponents[0];
-    const double q = exponents[1];
-    const double r = exponents[2];
-
-    Tensor<1, 6> derivatives{};
-
-    // dx_dtheta, dy_dtheta, dz_dtheta
-    derivatives[0] = -a * p * g(theta, (2 / p) - 1) * g(phi, 2 / p);
-    derivatives[1] = b * q * f(theta, (2 / q) - 1) * g(phi, 2 / q);
-    derivatives[2] = 0;
-
-    // dx_dphi, dy_dphi, dz_dphi
-    derivatives[3] = a * p * g(phi, (2 / p) - 1) * g(theta, 2 / p);
-    derivatives[4] = b * q * g(phi, (2 / q) - 1) * f(theta, 2 / q);
-    derivatives[5] = -c * r * f(phi, (2 / r) - 1);
-
-    return derivatives;
-  }
-
   /**
    * @brief Computes the value of the superquadric from its equation
    * @param centered_point point at which we make the evaluation, in the shape referential
@@ -571,53 +548,59 @@ public:
            1;
   }
 
-  inline Tensor<1, 2>
-  compute_residual(const double     theta,
-                   const double     phi,
-                   const double     step,
-                   const Point<dim> centered_point) const
+  inline double
+  lagrange(const Tensor<1, 4> &current_solution,
+           const Point<dim> &  centered_point) const
   {
-    Tensor<1, 2> residual{}; // d(distance(surface-centered)^2)/dtheta,
-                             // d(distance(surface-centered)^2)/dphi
+    Point<dim> current_point{};
+    for (unsigned int d = 0; d < dim; d++)
+      current_point[d] = current_solution[d];
+    return pow((current_point - centered_point).norm(), 2) +
+           current_solution[3] * superquadric(current_point);
+  }
 
-    double front_value;
-    double back_value;
-    // Residual
-    front_value =
-      (superquadric_point(theta + step, phi) - centered_point).norm();
-    back_value =
-      (superquadric_point(theta - step, phi) - centered_point).norm();
-    residual[0] = (pow(front_value, 2) - pow(back_value, 2)) / (2 * step);
-    front_value =
-      (superquadric_point(theta, phi + step) - centered_point).norm();
-    back_value =
-      (superquadric_point(theta, phi - step) - centered_point).norm();
-    residual[1] = (pow(front_value, 2) - pow(back_value, 2)) / (2 * step);
+  inline Tensor<1, 4>
+  compute_residual(const Tensor<1, 4> &current_solution,
+                   const double        step,
+                   const Point<dim>    centered_point) const
+  {
+    Tensor<1, 4> residual{}, tensor_step{};
+    for (unsigned int i = 0; i < 4; i++)
+      {
+        tensor_step    = 0;
+        tensor_step[i] = step;
+        residual[i] =
+          (lagrange(current_solution + tensor_step, centered_point) -
+           lagrange(current_solution - tensor_step, centered_point)) /
+          (2 * step);
+      }
 
     return residual;
   }
 
-  inline Tensor<2, 2>
-  compute_jacobian(const double     theta,
-                   const double     phi,
-                   const double     step,
-                   const Point<dim> centered_point) const
+  inline FullMatrix<double>
+  compute_jacobian(const Tensor<1, 4> &current_solution,
+                   const double        step,
+                   const Point<dim>    centered_point) const
   {
-    Tensor<1, 2> front_residual{}, back_residual{}; // for jacobian calculations
-    Tensor<2, 2> jacobian{};
+    Tensor<1, 4> front_residual{}, back_residual{}, tensor_step{},
+      current_column{}; // for jacobian calculations
+    FullMatrix<double> jacobian(4, 4);
 
-    front_residual = compute_residual(theta + step, phi, step, centered_point);
-    back_residual  = compute_residual(theta - step, phi, step, centered_point);
-    Tensor<1, 2> first_column = (front_residual - back_residual) / (2 * step);
-
-    front_residual = compute_residual(theta, phi + step, step, centered_point);
-    back_residual  = compute_residual(theta, phi - step, step, centered_point);
-    Tensor<1, 2> second_column = (front_residual - back_residual) / (2 * step);
-
-    jacobian[0][0] = first_column[0];
-    jacobian[1][0] = first_column[1];
-    jacobian[0][1] = second_column[0];
-    jacobian[1][1] = second_column[1];
+    for (unsigned int i = 0; i < 4; i++)
+      {
+        tensor_step    = 0;
+        tensor_step[i] = step;
+        front_residual = compute_residual(current_solution + tensor_step,
+                                          step,
+                                          centered_point);
+        back_residual  = compute_residual(current_solution - tensor_step,
+                                         step,
+                                         centered_point);
+        current_column = (front_residual - back_residual) / (2 * step);
+        for (unsigned int j = 0; j < 4; j++)
+          jacobian[j][i] = current_column[j];
+      }
     return jacobian;
   }
 

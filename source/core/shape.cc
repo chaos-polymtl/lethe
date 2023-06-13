@@ -18,6 +18,8 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
+#include <deal.II/lac/full_matrix.h>
+
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>
@@ -400,57 +402,46 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
       // referential
       Point<dim> centered_point = this->align_and_center(p);
 
-      //// TODO WORK HERE
-      double r     = centered_point.norm();
-      double theta = atan2(centered_point[1], centered_point[0]);
-      double phi   = acos(centered_point[2] / r);
+      double     radius = centered_point.norm();
+      Point<dim> current_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        current_point[d] =
+          centered_point[d] * (half_lengths[d] / radius) + 1e-5;
 
       unsigned int iteration     = 0;
-      unsigned int iteration_max = 100;
-      double       tolerance     = 1e-2;
-      double       step          = 1e-3;
+      unsigned int iteration_max = 50;
+      double       tolerance     = 1e-3;
+      double       step          = 1e-5;
 
-      Tensor<1, 2> residual{};
-      Tensor<1, 2> dx{};
-      Tensor<1, 2> front_residual{},
-        back_residual{}; // for jacobian calculations
-      Tensor<2, 2> jacobian{}, inv_jacobian{};
-      dx[0] = 1;
-      while (iteration < iteration_max && dx.norm() > tolerance)
+      Tensor<1, 4>       residual{};
+      Tensor<1, 4>       dx{}, solution{};
+      FullMatrix<double> jacobian(4, 4), inv_jacobian(4, 4);
+      residual[0] = 1;
+      for (unsigned int d = 0; d < dim; d++)
+        solution[d] = current_point[d];
+      solution[3] = 0;
+      while (iteration < iteration_max && residual.norm() > tolerance)
         {
-          residual = compute_residual(theta, phi, step, centered_point);
-          jacobian = compute_jacobian(theta, phi, step, centered_point);
-          /*
-                    std::cout << "iteration: " << iteration << std::endl;
-                    std::cout << "residual: " << residual << std::endl;
-                    std::cout << "jacobian: " << jacobian << std::endl;
-                    */
+          residual = compute_residual(solution, step, centered_point);
+          jacobian = compute_jacobian(solution, step, centered_point);
 
-          const double determinant =
-            jacobian[0][0] * jacobian[1][1] - jacobian[1][0] * jacobian[0][1];
-          inv_jacobian[0][0] = jacobian[1][1];
-          inv_jacobian[1][0] = -jacobian[1][0];
-          inv_jacobian[0][1] = -jacobian[0][1];
-          inv_jacobian[1][1] = jacobian[0][0];
-          inv_jacobian /= determinant;
+          inv_jacobian.invert(jacobian);
 
-          dx[0] = inv_jacobian[0][0] * (-residual[0]) +
-                  inv_jacobian[0][1] * (-residual[1]);
-          dx[1] = inv_jacobian[1][0] * (-residual[0]) +
-                  inv_jacobian[1][1] * (-residual[1]);
+          dx = 0;
+          for (unsigned int i = 0; i < 4; i++)
+            for (unsigned int j = 0; j < 4; j++)
+              dx[i] += inv_jacobian[i][j] * (-residual[j]);
 
-          theta += dx[0];
-          phi += dx[1];
+          solution += 0.1 * dx;
 
           iteration++;
         }
       if (iteration == iteration_max)
         std::cout << "Couldn't find the closest point" << std::endl;
-      Point<dim> current_point = superquadric_point(theta, phi);
+      for (unsigned int d = 0; d < dim; d++)
+        current_point[d] = solution[d];
 
-      //////////////
-      closest_point =
-        current_point; // this->reverse_align_and_center(current_point);
+      closest_point = this->reverse_align_and_center(current_point);
     }
   else
     closest_point = iterator->second;
