@@ -7,6 +7,7 @@
 *.cmake
 .vscode/*
 *.vscode/
+*.idea/
 
 # Prerequisites
 *.d
@@ -65,3 +66,4 @@ cmake-build-release/*
 # Doc
 doc/build/*
 contrib/utilities/programs/*
+/.github/
