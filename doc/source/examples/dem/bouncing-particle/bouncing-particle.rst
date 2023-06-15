@@ -14,9 +14,8 @@ Files used in this example
 ----------------------------
 
 - ``/examples/dem/3d-bouncing-particle/bouncing_particle_original.prm``
-- ``/examples/dem/3d-bouncing-particle/Bisection.py``
-- ``/examples/dem/3d-bouncing-particle/Bouncing_particle_case_generator.py``
-- ``/examples/dem/3d-bouncing-particle/Bouncing_particle_post-processing.py``
+- ``/examples/dem/3d-bouncing-particle/bouncing_particle_case_generator.py``
+- ``/examples/dem/3d-bouncing-particle/bouncing_particle_post-processing.py``
 
 
 Description of the case
@@ -88,7 +87,7 @@ The following properties are defined in the ``bouncing_particle_original.prm``  
       set friction coefficient wall    = 0.
     end
 
-As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.prm`` file. A Python code called ``Bouncing_particle_case_generator.py`` is provided with this example. This code allows the generation 6 parameter files each using a different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
+As you can see, the ``young modulus particles`` and the ``restitution coefficient`` of both the wall and particle are not yet defined in the ``bouncing_particle_original.prm`` file. A Python code called ``bouncing_particle_case_generator.py`` is provided with this example. This code allows the generation 6 parameter files each using a different restitution coefficient values (from 0.5 to 1.0) for one specific normal spring constant. The ``young modulus particles`` parameter will be determined using a bisection algorithm to satisfy the desired normal spring constant. Assuming you have Python3 installed on your machine, this code can be launched using this next line:
 
 .. code-block:: text
 
@@ -119,7 +118,7 @@ Once the 6 simulations have been run, use the following line in your command lin
 
 .. code-block:: text
 
-  python3 Bouncing_particle_post_processing.py
+  python3 bouncing_particle_post_processing.py
 
 A figure will be generated which compares the analytical solution with the simulation results.
 
