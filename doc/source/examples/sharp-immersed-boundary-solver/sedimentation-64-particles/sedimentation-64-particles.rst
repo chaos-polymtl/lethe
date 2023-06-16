@@ -262,7 +262,7 @@ IB particles
       set length ratio = 2
       set contact search radius factor = 1.5
       set particle nonlinear tolerance = 1e-3
-      set DEM coupling frequency = 500
+      set DEM coupling frequency = 1000
       set enable lubrication force                = true
       set lubrication range max                   = 2
       set lubrication range min                   = 0.1
@@ -295,7 +295,7 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``particle nonlinear tolerance`` has been set to 1e-3. This is small enough to ensure that the particle dynamics are adequately resolved. We expect a velocity of the particle of the order of 10.
 
-* The ``DEM coupling frequency`` is set to 500. This is the number of DEM time steps performed per CFD time step. Here 500 is enough to prevent instability due to particles' contact.
+* The ``DEM coupling frequency`` is set to 1000. This is the number of DEM time steps performed per CFD time step. Here 1000 is enough to prevent instability due to particles' contact.
 
 * The ``enable lubrication force`` is set to true since the subgrid lubrication force model is required to capture the lubrication force between the particle when the gap between them is inferior to two times the mesh size.
 
