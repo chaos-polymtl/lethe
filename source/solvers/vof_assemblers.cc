@@ -8,14 +8,14 @@
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                        StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
   const auto method = this->simulation_control->get_assembly_method();
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -52,22 +52,24 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
       // Implementation of a DCDD shock capturing scheme.
       // For more information see
-      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
-      // finite element formulations for nonlinear
-      // convection-diffusion-reaction equations. Computer methods in
-      // applied mechanics and engineering, 59(3), 307-325.
-
-      // Gather the order of the VOF interpolation
-      const double order = this->fem_parameters.VOF_order;
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(phase_gradient_norm * h, order);
+      // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
+      // and stabilization parameters. International Journal for Numerical
+      // Methods in Fluids, 43(5), 555-575. We implement the equivalent of
+      // equation (70) and (79)
 
       const double tolerance = 1e-12;
 
+      // In Tezduyar 2003 this is noted r
       Tensor<1, dim> gradient_unit_vector =
         phase_gradient / (phase_gradient_norm + tolerance);
+
+      // Calculate the artificial viscosity of the shock capture
+      const double vdcdd =
+        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
+      //(0.5 * h) * (velocity.norm() * velocity.norm()) *
+      // pow(phase_gradient_norm * h, order);
+
+
 
       // We neglect to remove the diffusion aligned with the velocity
       // as is done in the original article. This term generates poorer
@@ -159,7 +161,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                     StabilizedMethodsCopyData &copy_data)
 {
   // Scheme and physical properties
@@ -169,7 +171,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
   const double diffusivity = this->vof_parameters.diffusivity;
 
   // Loop and quadrature informations
-  const auto &       JxW_vec    = scratch_data.JxW;
+  const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
   const double       h          = scratch_data.cell_size;
@@ -198,22 +200,20 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
 
       // Implementation of a DCDD shock capturing scheme.
       // For more information see
-      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
-      // finite element formulations for nonlinear
-      // convection-diffusion-reaction equations. Computer methods in
-      // applied mechanics and engineering, 59(3), 307-325.
-
-      // Gather the order of the VOF interpolation
-      const double order = this->fem_parameters.VOF_order;
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(phase_gradient.norm() * h, order);
+      // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
+      // and stabilization parameters. International Journal for Numerical
+      // Methods in Fluids, 43(5), 555-575. We implement the equivalent of
+      // equation (70) and (79)
 
       const double tolerance = 1e-12;
 
+      // In Tezduyar 2003 this is noted r
       Tensor<1, dim> gradient_unit_vector =
         phase_gradient / (phase_gradient_norm + tolerance);
+
+      // Calculate the artificial viscosity of the shock capture
+      const double vdcdd =
+        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
 
       // We neglect to remove the diffusion aligned with the velocity
       // as is done in the original article. This term generates poorer
@@ -284,11 +284,11 @@ template class VOFAssemblerCore<3>;
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim>       &scratch_data,
                                       StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
@@ -350,11 +350,11 @@ VOFAssemblerBDF<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
 
 template <int dim>
 void
-VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
+VOFAssemblerBDF<dim>::assemble_rhs(VOFScratchData<dim>       &scratch_data,
                                    StabilizedMethodsCopyData &copy_data)
 {
   // Loop and quadrature informations
-  const auto &       JxW        = scratch_data.JxW;
+  const auto        &JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
