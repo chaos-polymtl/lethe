@@ -13,7 +13,7 @@ from operator import itemgetter
 # Define class:
 class lethe_pyvista_tools():
 
-    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None, step = 1):
+    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None, step = 1, read_to_df = False):
         '''
         Contructor of post-processing object.
         
@@ -218,62 +218,27 @@ class lethe_pyvista_tools():
         # will loop through the vtu files and flush.
         self.df_available = False
 
+        if read_to_df:
+            # Create empty array to store results
+            self.df = []
+
+            # Read VTU data
+            N_vtu = len(self.list_vtu)
+            pbar = tqdm(total = N_vtu, desc="Reading VTU files")
+            for i in range(len(self.list_vtu)):
+                
+                # Read dataframes from VTU files into df
+                self.df.append(self.get_df)
+                pbar.update(1)
+
+            self.df_available = True
+
+            print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
+
 
     # Return single pyvista dataset from list
     def get_df(self, time_step):
         return pv.read(f"{self.path_output}/{self.list_vtu[time_step]}")
-
-    # Read fluid or particle information from vtu files
-    def read_lethe_to_pyvista(self, first = 0, last = None, step = 1):
-        '''
-        Reads Lethe files into PyVista data.
-
-        The parameters of the reader are
-
-        first = 0               -> First time-step to be read into PyVista 
-        dataset.
-
-        last  = None            -> Last time-step to be read into PyVista 
-        dataset.
-
-        step  = 1               -> Step between datasets.
-
-        
-        This method assigns the following attributes to the object:
-
-        self.df[$TIME-STEP].    -> Returns a list of all datasets. Given a 
-        time-step number, returns the PyVista dataset related to the time-step.
-        
-        '''
-
-        if last == None:
-            self.list_vtu = self.list_vtu[first::step]
-            self.time_list = self.time_list[first::step]
-            self.first = first
-            self.step = step
-            self.last = len(self.time_list) - 1
-        else:
-            self.list_vtu = self.list_vtu[first:last:step]
-            self.time_list = self.time_list[first:last:step]
-            self.first = first
-            self.step = step
-            self.last = last
-
-        # Create empty array to store results
-        self.df = []
-
-        # Read VTU data
-        N_vtu = len(self.list_vtu)
-        pbar = tqdm(total = N_vtu, desc="Reading VTU files")
-        for i in range(len(self.list_vtu)):
-            
-            # Read dataframes from VTU files into df
-            self.df.append(self.get_df)
-            pbar.update(1)
-
-        self.df_available = True
-
-        print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
 
 
     # Write modifications on each df to VTU files

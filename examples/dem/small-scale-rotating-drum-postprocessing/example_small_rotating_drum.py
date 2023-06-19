@@ -13,10 +13,7 @@ import matplotlib.pyplot as plt
 
 
 # Create object named "particles"
-particles = lethe_pyvista_tools(".", "small-rotating-drum-dem.prm")
-
-# Read files and store data to object named "particles"
-particles.read_lethe_to_pyvista("out.pvd")
+particles = lethe_pyvista_tools(".", "small-rotating-drum-dem.prm", "out.pvd")
 
 
 # State condition for particle_color array creation
@@ -43,7 +40,7 @@ particles.modify_array(array_name = "particle_color", condition = condition, arr
 sphere = pv.Sphere(theta_resolution=50, phi_resolution=50)
 
 # Use sphere as basis to create sheric representation of particles
-particle_glyph = particles.df[40].glyph(scale='Diameter', geom=sphere)
+particle_glyph = particles.get_df(40).glyph(scale='Diameter', geom=sphere)
 
 # Create a plotter object
 plotter = pv.Plotter()
@@ -51,9 +48,6 @@ plotter = pv.Plotter()
 plotter.add_mesh(particle_glyph, scalars = "particle_color")
 # Open plot window
 plotter.show()
-
-# Save results to be able to open them on ParaView
-particles.write_vtu(prefix = "mod_")
 
 
 # MIXING INDEX:
@@ -67,7 +61,7 @@ particles.write_vtu(prefix = "mod_")
 particles.get_cylindrical_coords(radial_components = "yz")
 
 # Since all particles are of the same size (radius = coord 0)
-r_center_mass = np.mean(particles.df[40].points_cyl[:, 0])
+r_center_mass = np.mean(particles.get_df(40).points_cyl[:, 0])
 
 # Split domain in half (restarting array)
 condition = f"(y**2 + z**2)**(1/2) > {r_center_mass}"
@@ -77,7 +71,7 @@ particles.modify_array(array_name = "particle_color", condition = condition, arr
 particles.get_nearest_neighbors(return_id = True, n_neighbors = 15)
 
 # Print position of nearest neighbors:
-print(f"\nPosition of nearest neighbor of particle 2 at time-step 5 = {particles.df[5].points[particles.df[5].neighbors[2][0]]}\n")
+print(f"\nPosition of nearest neighbor of particle 2 at time-step 5 = {particles.get_df(5).points[particles.get_df(5).neighbors[2][0]]}\n")
 
 # Calculate mixing index using nearest neighbors technique by
 # Godlieb et al. (2007)
