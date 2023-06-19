@@ -4,6 +4,7 @@
 
 # Import modules
 import os
+import shutil
 import numpy as np
 import pyvista as pv
 from tqdm import tqdm
@@ -12,9 +13,13 @@ from operator import itemgetter
 # Define class:
 class lethe_pyvista_tools():
 
-    def __init__(self, case_path = ".", prm_file_name = ""):
+    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None, step = 1):
         '''
         Contructor of post-processing object.
+        
+        The data follows the data models provided by PyVista.
+        For further information, consult:
+        https://docs.pyvista.org/user-guide/data_model.html
         
         The constructor parameters are:
 
@@ -34,6 +39,29 @@ class lethe_pyvista_tools():
         string with the parameter's name.
 
         self.path_output        -> Returns the path to the output folder.
+
+        pvd_name                -> Name of the .pvd file containing the 
+        reference to Lethe data.
+
+        prefix                  -> Prefix of the modified vtu and pvd files. By default, "mod_". IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over the original vtu and pvd files.
+
+        first = 0               -> First time-step to be read into PyVista 
+        dataset.
+
+        last  = None            -> Last time-step to be read into PyVista 
+        dataset.
+
+        step  = 1               -> Step between datasets.
+
+        This method assigns the following attributes to the object:
+        
+        self.pvd_name           -> Returns the name of the .pvd file.
+        
+        self.time_list          -> Returns the list of times corresponding to 
+        datasets.
+
+        self.list_vtu           -> Returns the list of names of .vtu files.
+
         '''
 
         self.path_case = case_path
@@ -100,20 +128,105 @@ class lethe_pyvista_tools():
         # Define path where vtu files are
         self.path_output = self.path_case + self.prm_dict['output path'].replace('.', '')
 
+
+        self.pvd_name = prefix + pvd_name
+        
+        # Read name of files in .pvd file        
+        self.reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
+
+        # Create list of pvd datasets
+        pvd_datasets = self.reader.datasets
+
+        # Create a list of time-steps
+        self.time_list = self.reader.time_values
+
+        # Create a list of all files' names
+        list_vtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
+        list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in list_vtu]
+
+        # Remove duplicates
+        list_vtu = list(dict.fromkeys(list_vtu))
+
+        # Select data
+        if last == None:
+            list_vtu = list_vtu[first::step]
+            self.time_list = self.time_list[first::step]
+            first = first
+            step = step
+            last = len(self.time_list) - 1
+        else:
+            list_vtu = list_vtu[first:last:step]
+            self.time_list = self.time_list[first:last:step]
+            first = first
+            step = step
+            last = last
+
+        # List of paths among read data
+        read_files_path_list = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
+
+        # Write new vtu and pvd files to store modified data.
+        # IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over the original vtu and pvd files.
+        with open(f'{self.path_output}/{pvd_name}') as pvd_in:
+            with open(f'{self.path_output}/{prefix}{pvd_name}', 'w') as pvd_out:
+                for line in pvd_in:
+                    
+                    # If line refers to a dataset
+                    if "vtu" in line:
+
+                        # For all read files
+                        for path in read_files_path_list:
+
+                            # If line matches one of the files
+                            if path in line:
+                                line = line.replace('.pvtu', '.0000.vtu')
+                                line = line.replace('file="', f'file="{prefix}')
+                                pvd_out.write(line)
+                                read_files_path_list.remove(path)
+                                pass
+                    
+                    # Write config lines
+                    else:
+                        pvd_out.write(line)
+
+        # Make a copy of VTU files
+        N_vtu = len(list_vtu)
+        pbar = tqdm(total = N_vtu, desc="Writting modified VTU and PVD files")
+        self.list_vtu = []
+        for i in range(len(list_vtu)):
+            # Copy file
+            shutil.copy2(f'{self.path_output}/{list_vtu[i]}', f'{self.path_output}/{prefix}{list_vtu[i]}')
+
+            # Append to list of names of VTU files
+            self.list_vtu.append(f'{prefix}{list_vtu[i]}')
+            pbar.update(1)
+
+        # Fix name of PVD file
+        self.pvd_name = prefix + pvd_name
+
+        # Create pyvista reader for files in the new .pvd file 
+        self.reader = pv.get_reader(f"{self.path_output}/{self.pvd_name}") 
+
+        # Create list of PVD datasets with new files
+        self.pvd_datasets = self.reader.datasets
+
+        # Boolean indicating that the dataframes are not stored in the
+        # self.df object. If read_lethe_to_pyvista is called, all data 
+        # will be stored in self.df, thus, consuming a lot of RAM. 
+        # Reading data into df can make the post-processing steps faster, since 
+        # each step will be already available in self.df. However, this 
+        # consumes a lot of RAM and for large simulations the tool will crash.
+        # Alternatively, if read_lethe_to_pyvista is not called, all functions
+        # will loop through the vtu files and flush.
+        self.df_available = False
+
+
     # Read fluid or particle information from vtu files
-    def read_lethe_to_pyvista(self, pvd_name, first = 0, last = None, step = 1):
+    def read_lethe_to_pyvista(self, first = 0, last = None, step = 1):
         '''
         Reads Lethe files into PyVista data.
 
-        The data follows the data models provided by PyVista.
-        For further information, consult:
-        https://docs.pyvista.org/user-guide/data_model.html
-        
-        The reading parameters are:
+        The parameters of the reader are
 
-        pvd_name                -> Name of the .pvd file containing the 
-        reference to Lethe data.
-        
         first = 0               -> First time-step to be read into PyVista 
         dataset.
 
@@ -122,35 +235,13 @@ class lethe_pyvista_tools():
 
         step  = 1               -> Step between datasets.
 
+        
         This method assigns the following attributes to the object:
-        
-        self.pvd_name           -> Returns the name of the .pvd file.
-        
-        self.time_list          -> Returns the list of times corresponding to 
-        datasets.
-
-        self.list_vtu           -> Returns the list of names of .vtu files.
 
         self.df[$TIME-STEP].    -> Returns a list of all datasets. Given a 
         time-step number, returns the PyVista dataset related to the time-step.
+        
         '''
-
-        self.pvd_name = pvd_name
-        # Read name of files in .pvd file        
-        reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
-
-        # Create list of pvd datasets
-        self.pvd_datasets = reader.datasets
-
-        # Create a list of time-steps
-        self.time_list = reader.time_values
-
-        # Create a list of all files' names
-        self.list_vtu = [self.pvd_datasets[x].path for x in range(len(self.pvd_datasets))]
-        self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
-
-        # Remove duplicates
-        self.list_vtu = list(dict.fromkeys(self.list_vtu))
 
         if last == None:
             self.list_vtu = self.list_vtu[first::step]
@@ -177,10 +268,13 @@ class lethe_pyvista_tools():
             self.df.append(pv.read(f"{self.path_output}/{self.list_vtu[i]}"))
             pbar.update(1)
 
+        self.df_available = True
+
         print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
 
+
     # Write modifications on each df to VTU files
-    def write_vtu(self, prefix = "mod_"):
+    def write_df_to_vtu(self, prefix = "mod_"):
         '''
         Writes .pvd and .vtu files from data stored in self.df.
         The files are written in self.output_path.
@@ -217,15 +311,16 @@ class lethe_pyvista_tools():
                     else:
                         pvd_out.write(line)
         
-        # Write modified VTU file
-        N_vtu = len(self.df)
-        pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
-        for i in range(len(self.df)):
-            self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
-            pbar.update(1)
+        
+        if self.df_is_available:
+            # Write modified VTU file
+            N_vtu = len(self.df)
+            pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
+            for i in range(len(self.df)):
+                self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
+                pbar.update(1)
 
-
-        print(f"Modified .vtu and .pvd files with prefix {prefix} successfully written")
+            print(f"Modified .vtu and .pvd files with prefix {prefix} successfully written")
 
     # Sort all data given reference array 
     def sort_by_array(self, reference_array_name = "ID"):
@@ -240,11 +335,23 @@ class lethe_pyvista_tools():
         '''
         
         pbar = tqdm(total = len(self.time_list), desc = f"Sorting dataframe by {reference_array_name}")
-        for i in range(len(self.time_list)):
-            self.df[i].points = self.df[i].points[self.df[i][reference_array_name].argsort()]
-            for name in self.df[0].array_names:
-                self.df[i][name] = self.df[i][name][self.df[i][reference_array_name].argsort()]
-            pbar.update(1)
+        
+        if self.df_is_available:
+            for i in range(len(self.time_list)):
+                self.df[i].points = self.df[i].points[self.df[i][reference_array_name].argsort()]
+                for name in self.df[0].array_names:
+                    self.df[i][name] = self.df[i][name][self.df[i][reference_array_name].argsort()]
+                pbar.update(1)
+        
+        else:
+            for i in range(len(self.list_vtu)):
+                self.df = pv.read(f"{self.path_output}/{i}")
+                self.df.points = self.df.points[self.df[reference_array_name].argsort()]
+                for name in self.df.array_names:
+                    self.df[name] = self.df[name][self.df[reference_array_name].argsort()]
+                
+                self.df.save(f'{self.path_output}/{i}')
+                pbar.update(1)
 
     # Creates or modifies array
     def modify_array(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
