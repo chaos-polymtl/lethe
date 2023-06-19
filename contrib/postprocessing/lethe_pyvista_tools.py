@@ -415,10 +415,10 @@ class lethe_pyvista_tools():
         # the variables x, y, z, u, v, w, t, f_x, f_y, and f_z
         # in the condition argument
         if self.df_available:
-            array_names = self.df[0].array_names
+            df = self.df[0]
         else:
             df = self.get_df(0)
-            array_names = df.array_names
+        array_names = df.array_names
         array_names.append("x")
         array_names.append("y")
         array_names.append("z")
@@ -437,9 +437,9 @@ class lethe_pyvista_tools():
         # The previous values in it will be preserved.
         # This can be used to apply multiple conditions without affecting
         # Previous modifications, for example. 
-        if restart_array == True or array_name not in array_names:
+        if restart_array == True or array_name not in df.array_names:
             # Create array if does not exist
-            new_array = np.repeat(standard_value, len(self.list_vtu[reference_time_step]))
+            new_array = np.repeat(standard_value, len(df[reference_array_name]))
             print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
             # Push array to all pyvista arrays
@@ -481,12 +481,12 @@ class lethe_pyvista_tools():
                 # If one of the variables used in "condition"
                 # is a pyvista array, create a list with the
                 # name of the variable for further manipulation
-                if name in array_names:
+                if name in df.array_names:
                     if self.df_available:
                         exec(f"global {name}; {name} = self.df[reference_time_step][name]")
                     else:
                         df_reference = self.get_df(reference_time_step)
-                        exec(f"global{name} = df_reference[name]")
+                        exec(f"global {name}; {name} = df_reference[name]")
                     new_variables.add(name)
 
         if type(array_values) == type(str()):
@@ -497,10 +497,11 @@ class lethe_pyvista_tools():
                     # If one of the variable used in "array_value"
                     # is a pyvista array, create a list with the
                     # name of the variable for further manipulation
-                    if name in array_names:
+                    if name in df.array_names:
                         if self.df_available:
                             exec(f"global {name}; {name} = self.df[reference_time_step][name]")
                         else:
+                            df_reference = self.get_df(reference_time_step)
                             exec(f"global {name}; {name} = df_reference[name]")
                         new_variables.add(name)
 
@@ -670,7 +671,7 @@ class lethe_pyvista_tools():
                 else:
                     df = self.get_df(i)
                 
-                keys, indices, _ = np.intersect1d(df[i][reference_array_name], key_list, assume_unique = True, return_indices = True)
+                keys, indices, _ = np.intersect1d(df[reference_array_name], key_list, assume_unique = True, return_indices = True)
 
                 if self.df_available:
                     self.df[i][array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
@@ -719,9 +720,13 @@ class lethe_pyvista_tools():
         pbar = tqdm(total = len(self.list_vtu), desc = "Getting cylindrical coords")
         for i in range(len(self.list_vtu)):
 
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # Get cartesian position
-            cartesian = self.df[i].points
+            cartesian = df[i].points
 
             # Calculate radial coord
             radius = np.sqrt(cartesian[:, radial_indices[0]]**2 + cartesian[:, radial_indices[1]]**2)
@@ -733,10 +738,17 @@ class lethe_pyvista_tools():
             z = cartesian[:, z_index].flatten()
 
             # Store coordinates into points_cyl (same shape as .points)
-            self.df[i].points_cyl = np.empty(self.df[i].points.shape)
-            self.df[i].points_cyl[:, 0] = radius.tolist()
-            self.df[i].points_cyl[:, 1] = theta
-            self.df[i].points_cyl[:, 2] = z
+            if self.df_available:
+                self.df[i].points_cyl = np.empty(df.points.shape)
+                self.df[i].points_cyl[:, 0] = radius.tolist()
+                self.df[i].points_cyl[:, 1] = theta
+                self.df[i].points_cyl[:, 2] = z
+            else:
+                df.points_cyl = np.empty(df.points.shape)
+                df.points_cyl[:, 0] = radius.tolist()
+                df.points_cyl[:, 1] = theta
+                df.points_cyl[:, 2] = z
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
             pbar.update(1)
 
@@ -781,8 +793,13 @@ class lethe_pyvista_tools():
         from sklearn.neighbors import KDTree
 
         # Loop through dataframes to search for neighbors
-        pbar = tqdm(total = len(self.df), desc = "Finding neighbors")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Finding neighbors")
+        for i in range(len(self.list_vtu)):
+
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # Create a tree from points
             tree = KDTree(self.df[i].points)
@@ -790,7 +807,7 @@ class lethe_pyvista_tools():
             # Get the distance and the indices of the n_neighbors neighbors
             # It is important to note that the closest neighbor is going to
             # be the point itself, so we ask for n_neighbors + 1
-            dist, indices = tree.query(self.df[i].points, k = n_neighbors+1)
+            dist, indices = tree.query(df.points, k = n_neighbors+1)
 
             # Remove itself from indices and dist for all points
             indices = indices[:, 1:]
@@ -798,10 +815,18 @@ class lethe_pyvista_tools():
 
             # Add neighbors_id, neighbors indices, and neighbors distances
             # to each dataframe
-            if return_id and hasattr(self.df[0], "ID"):
-                self.df[i].neighbors_id = self.df[i]["ID"][indices]
-            self.df[i].neighbors = indices
-            self.df[i].neighbors_dist = dist
+            if self.df_available:
+                if return_id and hasattr(df, "ID"):
+                    self.df[i].neighbors_id = self.df[i]["ID"][indices]
+                self.df[i].neighbors = indices
+                self.df[i].neighbors_dist = dist
+            else:
+                if return_id and hasattr(df, "ID"):
+                    df.neighbors_id = df["ID"][indices]
+                df.neighbors = indices
+                df.neighbors_dist = dist
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
             pbar.update(1)
 
 
@@ -843,7 +868,13 @@ class lethe_pyvista_tools():
         # "Characterizing solids mixing in DEM simulations." cell 1 (2007).
 
         # If neighbors is not an attribute of the dataframe
-        if hasattr(self.df[0], "neighbors") == False or len(self.df[0].neighbors[0]) != n_neighbors:
+
+        if self.df_available:
+            df = self.df[0]
+        else:
+            df = self.get_df(0)
+
+        if hasattr(df, "neighbors") == False or len(df.neighbors[0]) != n_neighbors:
             self.get_nearest_neighbors(n_neighbors = n_neighbors)
 
         # Create empty list to store mixing_index per time-step
@@ -854,16 +885,26 @@ class lethe_pyvista_tools():
         pbar = tqdm(total = len(self.df), desc = "Calculating mixing index")
         for i in range(len(self.df)):
 
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
+
             # Find particles with different values for the reference array per 
             # particle
-            list_neighbor_reference_array = self.df[i][reference_array][self.df[i].neighbors]
-            n_equal_neighbors_per_particle = np.sum(np.equal(self.df[i][reference_array][:, None], list_neighbor_reference_array), axis = 1)
+            list_neighbor_reference_array = df[reference_array][df.neighbors]
+            n_equal_neighbors_per_particle = np.sum(np.equal(df[reference_array][:, None], list_neighbor_reference_array), axis = 1)
 
             # Calculate mixing index per particle
             mixing_index_per_particle = 2*(1-(1/n_neighbors) * n_equal_neighbors_per_particle)
 
             # Create array of mixing index per particle
-            self.df[i][mixing_index_array_name] = mixing_index_per_particle
+            if self.df_available:
+                self.df[i][mixing_index_array_name] = mixing_index_per_particle
+            else:
+                df[mixing_index_array_name] = mixing_index_per_particle
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
             mixing_index = np.mean(mixing_index_per_particle)
             mixing_index_std = np.std(mixing_index_per_particle)
 
@@ -917,37 +958,48 @@ class lethe_pyvista_tools():
 
         # Get cylindrical coordinates if requested and not previously
         # calculated
-        if use_cyl and hasattr(self.df[0], "points_cyl") == False:
+
+        if self.df_available:
+            df = self.df[reference_time_step]
+        else:
+            df = self.get_df(reference_time_step)
+
+        if use_cyl and hasattr(df, "points_cyl") == False:
             self.get_cylindrical_coords()
 
         # If cylindrical coordinates requested, assign points_cyl to reference
         # position, otherwise use cartesian
         if use_cyl:
-            reference_position = self.df[reference_time_step].points_cyl
+            reference_position = df.points_cyl
         else:
-            reference_position = self.df[reference_time_step].points
+            reference_position = df.points
 
         # Get position of particles corresponding IDs
-        id_keys = self.df[reference_time_step]["ID"]
+        id_keys = df["ID"]
 
 
         # Create list of mixing indices per time-step and array of eigenvectors
         self.mixing_index = []
-        self.mixing_eigenvector = np.empty((len(self.df), 3))
+        self.mixing_eigenvector = np.empty((len(self.list_vtu), 3))
 
         # Loop through dataframes and find its mixing index
-        pbar = tqdm(total = len(self.df), desc = "Calculating mixing index")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Calculating mixing index")
+        for i in range(len(self.list_vtu)):
+
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # If cylindrical coordinates requested, assign points_cyl to current
             # position, otherwise use cartesian
             if use_cyl:
-                i_position = self.df[i].points_cyl
+                i_position = df.points_cyl
             else:
-                i_position = self.df[i].points
+                i_position = df.points
 
             # Find indices of particles in different time-steps
-            _, indices_i, indices_ref = np.intersect1d(self.df[i]["ID"], id_keys, assume_unique = True, return_indices = True)
+            _, indices_i, indices_ref = np.intersect1d(df["ID"], id_keys, assume_unique = True, return_indices = True)
 
             # Calculate correlation matrix
             correlation_matrix = np.corrcoef(i_position[indices_i], reference_position[indices_ref], rowvar=False)[3:, :3]
