@@ -802,7 +802,7 @@ class lethe_pyvista_tools():
                 df = self.get_df(i)
 
             # Create a tree from points
-            tree = KDTree(self.df[i].points)
+            tree = KDTree(df.points)
 
             # Get the distance and the indices of the n_neighbors neighbors
             # It is important to note that the closest neighbor is going to
@@ -882,8 +882,8 @@ class lethe_pyvista_tools():
         self.mixing_index_std = []
 
         # Loop through dataframes and find its mixing index
-        pbar = tqdm(total = len(self.df), desc = "Calculating mixing index")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Calculating mixing index")
+        for i in range(len(self.list_vtu)):
 
             if self.df_available:
                 df = self.df[i]
