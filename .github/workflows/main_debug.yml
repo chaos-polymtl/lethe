@@ -64,7 +64,7 @@ jobs:
           # Print the tests to be executed
           ctest -N --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
           # Run in parallel
-          ctest -V -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+          ctest --output-on-failure -j${{ env.COMPILE_JOBS }} --exclude-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
 
       # These tests require two cores each so we will run them sequencially
       - name: Run multi-core Lethe tests (Debug-deal.ii:${{ matrix.dealii_version }})
@@ -76,4 +76,4 @@ jobs:
           # Print the tests to be executed
           ctest -N --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
           # Run sequencially
-          ctest -V --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
+          ctest --output-on-failure --tests-regex ${{ env.MULTI_CORE_TESTS_REGEX }}
