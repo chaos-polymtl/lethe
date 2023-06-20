@@ -102,26 +102,32 @@ end
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
-subsection particles
-	set number of particles = 1
-	set stencil order = 6
-	set integrate motion = false
-	set assemble Navier-Stokes inside particles = false    
+ subsection particles
+    	set number of particles                     = 1
+    	set assemble Navier-Stokes inside particles = false
+    	set levels not precalculated                = 0
+
+ 	subsection extrapolation function
+ 	    	set stencil order                           = 6
+ 	end
+ 	
 	subsection particle info 0
-	subsection position
-	    set Function expression =0;0
-	end
-	subsection velocity
-	    set Function expression =0;0
-	end
-	    subsection omega
-	    set Function expression =0;0;0
-	end
-	    set pressure location = 0.00001; 0.00001
-	    set type       = sphere
-        set shape arguments = 0.5
-    end
+		subsection position
+		    set Function expression =0;0
+		end
+		subsection velocity
+		    set Function expression =0;0
+		end
+		    subsection omega
+		    set Function expression =0;0;0
+		end
+		set pressure location = 0.00001; 0.00001
+		set type       = sphere
+		set shape arguments = 0.5
+	    end
 end
+
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------

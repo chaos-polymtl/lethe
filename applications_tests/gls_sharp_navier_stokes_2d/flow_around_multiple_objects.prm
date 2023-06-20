@@ -71,18 +71,30 @@ set number                  = 3
 	end
 end
 
+
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
-subsection particles
-	set number of particles = 3
-	set stencil order = 2
-	set refine mesh inside radius factor = 0.7
-	set refine mesh outside radius factor = 1.5
-	set initial refinement = 2
-	set integrate motion = false
-	set assemble Navier-Stokes inside particles = false
-	subsection particle info 0
+ subsection particles
+    	set number of particles                     = 3
+    	set assemble Navier-Stokes inside particles = false
+
+ 	subsection extrapolation function
+ 	    	set stencil order                           = 2
+ 	end
+ 	
+ 	subsection input file
+ 		set load particles from file		    = false
+		set particles file		            = particles.input
+ 	end
+ 	
+ 	subsection local mesh refinement
+ 		set initial refinement                      = 2
+ 		set refine mesh inside radius factor        = 0.7
+        	set refine mesh outside radius factor       = 1.5
+ 	end
+
+    subsection particle info 0
 		set type = hyper rectangle
 		set shape arguments = 1; 0.5
 		subsection position
@@ -107,6 +119,7 @@ subsection particles
 		end
 	end
 end
+
 # --------------------------------------------------
 # Forces
 #---------------------------------------------------

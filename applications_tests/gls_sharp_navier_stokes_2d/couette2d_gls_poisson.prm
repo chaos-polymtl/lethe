@@ -85,11 +85,15 @@ end
 # --------------------------------------------------
 # IB particles
 #---------------------------------------------------
-subsection particles
-	set number of particles = 2
-	set stencil order = 6
-	set assemble Navier-Stokes inside particles=false
-    subsection particle info 0 
+ subsection particles
+    	set number of particles                     = 2
+    	set assemble Navier-Stokes inside particles = false
+
+ 	subsection extrapolation function
+ 	    	set stencil order                           = 6
+ 	end
+
+    subsection particle info 0
         subsection position
             set Function expression =0;0
         end
@@ -102,8 +106,10 @@ subsection particles
 	    set pressure location = 0.00001; 0.00001
 	    set type       = sphere
 	    set shape arguments = 0.25
-    end
-    subsection particle info 1 
+     end
+     
+     
+     subsection particle info 1 
         subsection position
             set Function expression =0;0
         end
@@ -113,9 +119,9 @@ subsection particles
         subsection omega
             set Function expression =0;0;0
         end
-	    set pressure location = 0.40001; 0.00001
+	    set pressure location = 0.40001;0.00001
 	    set type       = sphere
-        set shape arguments = 0.5
+            set shape arguments = 0.5
     end
 end
 

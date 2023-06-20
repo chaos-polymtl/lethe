@@ -1997,7 +1997,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
   std::map<field, double> field_values;
   field_values[field::shear_rate]  = 1;
   field_values[field::temperature] = 1;
-  this->pcout<<"time "<<time-dt<<std::endl;
 
   // Check if the parameters' combination is compatible. This is temporary and
   // will be moved to a new class that tests the parameter combination in the
