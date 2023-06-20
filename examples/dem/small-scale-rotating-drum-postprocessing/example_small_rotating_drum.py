@@ -71,7 +71,7 @@ particles.modify_array(array_name = "particle_color", condition = condition, arr
 particles.get_nearest_neighbors(return_id = True, n_neighbors = 15)
 
 # Print position of nearest neighbors:
-print(f"\nPosition of nearest neighbor of particle 2 at time-step 5 = {particles.get_df(5).points[particles.get_df(5).neighbors[2][0]]}\n")
+print(f"\nPosition of nearest neighbor of particle 2 at time-step 5 = {particles.get_df(5).points[particles.get_df(5)['neighbors'][2][0]]}\n")
 
 # Calculate mixing index using nearest neighbors technique by
 # Godlieb et al. (2007)

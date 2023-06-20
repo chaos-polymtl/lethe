@@ -213,13 +213,13 @@ One example of application of the ``modify_array`` method is on the calculation 
 
   particles.get_cylindrical_coords(radial_components = "yz")
 
-Given the radial components, this method assigns ``.points_cyl`` to the object ``particles``. The coordinates :math:`[0, 1, 2]` are :math:`[r, \theta, Z]`, respectively
+Given the radial components, this method assigns ``['points_cyl']`` to the object ``particles``. The coordinates :math:`[0, 1, 2]` are :math:`[r, \theta, Z]`, respectively
 
 To help us finding where to split the domain, we will also find the radial coordinate of the center of mass of the particles at ``reference_time_step = 40``:
 
 .. code-block::
 
-  r_center_mass = np.mean(particles.get_df(40).points_cyl[:, 0])
+  r_center_mass = np.mean(particles.get_df(40)['points_cyl'][:, 0])
 
 Now we can split the domain:
 
@@ -242,15 +242,15 @@ To get the indice and the position of the nearest neighbor (`0`) of particle `2`
 
 .. code-block::
 
-  neighbor_indice = particles.get_df(5).neighbors[2][0]
-  print(particles.get_df(5).points[neighbor_indice])
+  neighbor_index = particles.get_df(5)['neighbors'][2][0]
+  print(particles.get_df(5).points[neighbor_index])
 
 It is also possible to print the neighbor's `ID` and its distance to particle `2`:abbreviation:
 
 .. code-block::
 
-  print(particles.get_df(5).neighbors_id[2][0])
-  print(particles.get_df(5).neighbors_dist[2][0])
+  print(particles.get_df(5)['neighbors_id'][2][0])
+  print(particles.get_df(5)['neighbors_dist'][2][0])
 
 
 All set, now we can calculate the mixing index using NNM and store it in `particles.mixing_index_nnm`:

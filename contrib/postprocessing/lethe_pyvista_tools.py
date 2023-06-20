@@ -658,7 +658,7 @@ class lethe_pyvista_tools():
 
         This method assigns the following attribute to the object:
         
-        self.df[$TIME-STEP].points_cyl -> Returns a .points like array with all 
+        self.df[$TIME-STEP]['points_cyl'] -> Returns a .points like array with all 
         points in cylindrical [radius, theta, height].
         '''
 
@@ -704,15 +704,15 @@ class lethe_pyvista_tools():
 
             # Store coordinates into points_cyl (same shape as .points)
             if self.df_available:
-                self.df[i].points_cyl = np.empty(df.points.shape)
-                self.df[i].points_cyl[:, 0] = radius.tolist()
-                self.df[i].points_cyl[:, 1] = theta
-                self.df[i].points_cyl[:, 2] = z
+                self.df[i]['points_cyl'] = np.empty(df.points.shape)
+                self.df[i]['points_cyl'][:, 0] = radius.tolist()
+                self.df[i]['points_cyl'][:, 1] = theta
+                self.df[i]['points_cyl'][:, 2] = z
             else:
-                df.points_cyl = np.empty(df.points.shape)
-                df.points_cyl[:, 0] = radius.tolist()
-                df.points_cyl[:, 1] = theta
-                df.points_cyl[:, 2] = z
+                df['points_cyl'] = np.empty(df.points.shape)
+                df['points_cyl'][:, 0] = radius.tolist()
+                df['points_cyl'][:, 1] = theta
+                df['points_cyl'][:, 2] = z
                 df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
             pbar.update(1)
@@ -782,14 +782,14 @@ class lethe_pyvista_tools():
             # to each dataframe
             if self.df_available:
                 if return_id and hasattr(df, "ID"):
-                    self.df[i].neighbors_id = self.df[i]["ID"][indices]
-                self.df[i].neighbors = indices
-                self.df[i].neighbors_dist = dist
+                    self.df[i]["neighbors_id"] = self.df[i]["ID"][indices]
+                self.df[i]["neighbors"] = indices
+                self.df[i]["neighbors_dist"] = dist
             else:
                 if return_id and hasattr(df, "ID"):
-                    df.neighbors_id = df["ID"][indices]
-                df.neighbors = indices
-                df.neighbors_dist = dist
+                    df["neighbors_id"] = df["ID"][indices]
+                df["neighbors"] = indices
+                df["neighbors_dist"] = dist
                 df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
             pbar.update(1)
@@ -839,7 +839,7 @@ class lethe_pyvista_tools():
         else:
             df = self.get_df(0)
 
-        if hasattr(df, "neighbors") == False or len(df.neighbors[0]) != n_neighbors:
+        if hasattr(df, "neighbors") == False or len(df['neighbors'][0]) != n_neighbors:
             self.get_nearest_neighbors(n_neighbors = n_neighbors)
 
         # Create empty list to store mixing_index per time-step
@@ -857,7 +857,7 @@ class lethe_pyvista_tools():
 
             # Find particles with different values for the reference array per 
             # particle
-            list_neighbor_reference_array = df[reference_array][df.neighbors]
+            list_neighbor_reference_array = df[reference_array][df['neighbors']]
             n_equal_neighbors_per_particle = np.sum(np.equal(df[reference_array][:, None], list_neighbor_reference_array), axis = 1)
 
             # Calculate mixing index per particle
@@ -935,7 +935,7 @@ class lethe_pyvista_tools():
         # If cylindrical coordinates requested, assign points_cyl to reference
         # position, otherwise use cartesian
         if use_cyl:
-            reference_position = df.points_cyl
+            reference_position = df['points_cyl']
         else:
             reference_position = df.points
 
@@ -959,7 +959,7 @@ class lethe_pyvista_tools():
             # If cylindrical coordinates requested, assign points_cyl to current
             # position, otherwise use cartesian
             if use_cyl:
-                i_position = df.points_cyl
+                i_position = df['points_cyl']
             else:
                 i_position = df.points
 
