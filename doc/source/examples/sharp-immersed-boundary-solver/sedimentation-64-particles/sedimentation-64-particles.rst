@@ -2,11 +2,11 @@
 Sedimentation of 64 particles
 ==============================================================================
 
-This example aims to introduce the user on how to carry resolved CFD-DEM simulation with an none trival number of particles.
+This example aims to introduce the user on how to carry resolved CFD-DEM simulation with a larger number of particles.
 
 
 .. warning:: 
-    * This case is a computationally expensive example. It can take several days to run on a desktop.
+    * This case is a computationally intensive example. It can take several days to run on a desktop computer.
     
 
 Features
@@ -24,7 +24,7 @@ Files used in this example
 
 Description of the case
 -----------------------
-The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 0.25cm arrange in a 4 by 4 by 4 cube center 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
+The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 0.25cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, at which point we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
 Parameter file
 ---------------
@@ -48,7 +48,7 @@ Simulation and IO control
 
 * The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
-* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The sharp interface immersed boundary is not compatible at this point with the sdirk solver. This leaves us with the multiple step bdf approach that will ramp the order of the scheme in the first few time steps.
+* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The multiple step bdf approach will ramp the order of the scheme in the first few time steps.
 
 * The ``time step`` is set to  0.0025. This time step is small enough to prevent large error due to the time discretization. 
 
@@ -162,7 +162,6 @@ Boundary conditions
         set id   = 1
         set type = noslip
       end
-    
       subsection bc 2
         set id   = 2
         set type = noslip
@@ -303,14 +302,14 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``lubrication range min`` is set to 0.1. The subgrid lubrication force model minimal gap considered between the particle is 0.1 times the mesh size.         
 
-* The ``load particles from file`` is set to true to enable the particle to be defined in an external file.
+* The ``load particles from file`` is set to true to enable the particle to be defined using an external file.
 
 * The ``particles file`` is set to ``particles.input``, which is the file where the particles are defined.
 
 * The ``gravity`` ``Function expression`` is set to 0;0;-981 according to the definition of the case. As we choose the long axis of the rectangular box along the Y, we define gravity in this direction. 
 
 .. note:: 
-    * The number of particles is not define since here the particles are define by a file. In this case the number of particles is define by the number of particles defined in the file.
+    * The number of particles is not define since here the particles are defined using a file. In this case the number of particles is define by the number of particles defined in the file.
 
 Particles file
 ---------------
@@ -321,7 +320,7 @@ The file from which the particles are defined have a header line that goes as fo
    type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient.
 
 
-Then each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Youngs modulus is set to 100Mpa, the restitution coefficient to 0.9, the Poisson ratio to 0.0, and the friction coefficient to zero.
+Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Youngs modulus is set to 100Mpa, the restitution coefficient to 0.9, the Poisson ratio to 0.0, and the friction coefficient to zero.
 
 .. code-block:: text
 
