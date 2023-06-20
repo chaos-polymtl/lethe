@@ -2360,6 +2360,11 @@ namespace Parameters
           "1.5",
           Patterns::Double(),
           "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
+        prm.declare_entry(
+          "refinement zone extrapolation",
+          "false",
+          Patterns::Bool(),
+          "This parameter enables the extrapolation in time of the refinement zone. This means that it will try to refine where the particle will be at the end of the time step instead of the initial position.");
         prm.leave_subsection();
       }
 
@@ -2520,6 +2525,8 @@ namespace Parameters
         initial_refinement = prm.get_integer("initial refinement");
         inside_radius      = prm.get_double("refine mesh inside radius factor");
         outside_radius = prm.get_double("refine mesh outside radius factor");
+        time_extrapolation_of_refinement_zone =
+          prm.get_bool("refinement zone extrapolation");
         prm.leave_subsection();
       }
 
@@ -2568,8 +2575,7 @@ namespace Parameters
       }
 
       nb                       = prm.get_integer("number of particles");
-      time_extrapolation_of_refinement_zone =
-        prm.get_bool("refinement zone extrapolation");
+
       levels_not_precalculated = prm.get_integer("levels not precalculated");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
