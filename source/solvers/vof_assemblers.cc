@@ -50,7 +50,7 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // indicator
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
-      // Implementation of a DCDD shock capturing scheme.
+      // Implementation of a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme.
       // For more information see
       // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
       // and stabilization parameters. International Journal for Numerical
