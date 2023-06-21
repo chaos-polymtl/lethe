@@ -6,15 +6,15 @@ This example aims to introduce the user on how to carry resolved CFD-DEM simulat
 
 
 .. warning:: 
-    * This case is a computationally intensive example. It can take several days to run on a desktop computer.
+    * This case is a computationally expensive example. It can take several days to run on a desktop computer.
     
 
 Features
 ----------------------------------
-- Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1-Q1)
+- Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around multiple particles
-- Displays the stability of the resolved CFD-DEM Solver.
+- Displays the robustness of the resolved CFD-DEM Solver.
 
 Files used in this example
 ---------------------------
@@ -24,12 +24,12 @@ Files used in this example
 
 Description of the case
 -----------------------
-The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 0.25cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, at which point we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
+The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
 Parameter file
 ---------------
 
-We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the :doc:`../../../parameters/parameters`.
+We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters we suggest visiting the :doc:`../../../parameters/parameters`.
  
 Simulation and IO control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,11 +48,11 @@ Simulation and IO control
 
 * The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
-* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The multiple step bdf approach will ramp the order of the scheme in the first few time steps.
+* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The ``multiple step bdf`` approach will ramp the order of the scheme in the first few time steps.
 
 * The ``time step`` is set to  0.0025. This time step is small enough to prevent large error due to the time discretization. 
 
-* The ``time end`` is set to  4.0. This is slightly longer than the time need for all the particles to reach the bottom of the container
+* The ``time end`` is set to  4.0. This is slightly longer than the time needed for all the particles to reach the bottom of the container
 
 
 
@@ -83,7 +83,7 @@ FEM
       set pressure order = 1
     end
 	
-Here we use Q1Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run. 
+Here we use Q1Q1 elements. This case is only for demonstration purposes; as such, we suggest a simulation that is not too costly to run. 
 
 Mesh
 ~~~~~~
@@ -96,11 +96,11 @@ Mesh
     	set initial refinement   = 4
     end
 
-The domain is a rectangular box as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the z-direction with gravity. As such, we have the long side of the box along this axis.
+The domain is a rectangular box: we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have oriented the z-direction with gravity. As such, we have the long side of the box along this axis.
 
-* The ``grid arguments`` is set to  ``1,1,12: 0,0,0 : 2 , 2 , 24 : true``. This section has 3 subsections. First ``1,1,12`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 2 , 2 ,24`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (2,2,24). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
+* The ``grid arguments`` is set to  ``1,1,12: 0,0,0 : 2,2,24 : true``. This section has 3 subsections. First ``1,1,12`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 2,2,24`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (2,2,24). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
 
-* The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit smaller than the particle.
+* The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit finer than the particle size.
 
 
 Mesh adaptation control
@@ -140,9 +140,9 @@ Mesh adaptation control
 
 * The ``fraction refinement`` is set to 0.025. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not included in the refinement zone around the particle. The refinement zone around the particle will be discussed in more detail in the IB particle section.
 
-* The ``set frequency`` is set to 1. Since the particle is moving at each time step, the refinement zone around it should be reevaluated at each time step.
+* The ``frequency`` is set to 1. Since the particle is moving at each time step, the refinement zone around it should be reevaluated at each time step.
 
-* The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capability of the solver. However, the discretization error is not negligible in this case.
+* The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get, limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capabilities of the solver. However, the discretization error is not negligible in this case.
 
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
@@ -177,7 +177,7 @@ Boundary conditions
       end
     end
 
-Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=5`` free to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
+Here we define the 5 ``no slip`` boundaries for all the box walls and let the 6th boundary free, to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
 	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
@@ -190,7 +190,7 @@ Initial condition
     subsection initial conditions
       set type = nodal
       subsection uvwp
-        set Function expression = 0; 0; 0;0
+        set Function expression = 0; 0; 0; 0
       end
     end
 
@@ -209,12 +209,12 @@ Non-Linear solver control
       set force rhs calculation = true
     end
 	
-* The ``tolerance`` is set to 1e-4. This is small enough to ensure that the flow field is adequately resolved, as here, we expect a velocity of the particle of the order of 10.
+* The ``tolerance`` is set to 1e-4. This is small enough to ensure that the flow field is adequately resolved, since here we expect a velocity of the particle of the order of 10.
 
-* The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence to the tolerance. Also, we should limit the time pass on a single time step if the system is too stiff.  
+* The ``max iterations`` is set to 10. The objective here is to allow enough Newton non-linear steps to ensure the convergence to the tolerance. Also, we should limit the time spent on a single time step if the system is too stiff.  
 
 * The ``force rhs calculation`` is set to ``true``. This is the most important modification for resolved CFD-DEM simulation. By default, the non-linear solver will recalculate the RHS only after the update of the solution. But here, we need to evaluate it before every matrix resolution, and we cannot use the last RHS evaluation that was done after the last newton iteration. The particle position was updated between these two steps, changing the RHS evaluation. This means that for every non-linear step, we evaluate the RHS twice. The non-linear solver follows this sequence of steps for each newton iteration.
-	* update the particle position
+	* update the particles positions
 	* update the Jacobian matrix
 	* update the RHS
 	* solve the matrix system
@@ -240,13 +240,13 @@ Linear solver control
 
 * The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
 
-* The ``max krylov vectors`` is set to 1000. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of ``gmres`` iterations.
+* The ``max krylov vectors`` is set to 1000. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a lower number of ``gmres`` iterations.
 
 * The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
 * The ``ilu preconditioner fill`` is set to 0. This is the fastest option with the current simulation parameters. In this case, we are able to use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
-* The ``ilu preconditioner absolute tolerance`` is set to 1e-6. This slightly speed up the first few matrix resolution. 
+* The ``ilu preconditioner absolute tolerance`` is set to 1e-6. This slightly speeds up the first few matrix resolutions. 
 
 IB particles
 ~~~~~~~~~~~~~~
@@ -281,9 +281,8 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``refine mesh outside radius factor`` is set to 2. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
-* The ``initial refinement`` is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible.
+* The ``initial refinement`` is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle are as small as possible.
 
-* The ``fluid density`` is set to 0.001 according to the description of the problem. As mentioned above, this parameter is a duplication of the density parameter in the physics properties. This will be changed soon, and this parameter will be removed.
 
 * The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
 
@@ -307,10 +306,10 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``particles file`` is set to ``particles.input``, which is the file where the particles are defined.
 
-* The ``gravity`` ``Function expression`` is set to 0;0;-981 according to the definition of the case. As we choose the long axis of the rectangular box along the Y, we define gravity in this direction. 
+* The ``gravity`` ``Function expression`` is set to 0;0;-981 according to the definition of the case. As we choose the long axis of the rectangular box along the Z, we define gravity in this direction. 
 
 .. note:: 
-    * The number of particles is not define since here the particles are defined using a file. In this case the number of particles is define by the number of particles defined in the file.
+    The number of particles is not defined here since the particles are defined using a file. In this case the number of particles is defined by the number of particles defined in the file.
 
 Particles file
 ---------------
@@ -321,7 +320,7 @@ The file from which the particles are defined have a header line that goes as fo
    type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient.
 
 
-Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Youngs modulus is set to 100Mpa, the restitution coefficient to 0.9, the Poisson ratio to 0.0, and the friction coefficient to zero.
+Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Young's moduli are set to 100MPa, the restitution coefficients to 0.9, the Poisson ratios to 0.30, and the friction coefficients to zero.
 
 .. code-block:: text
 
@@ -332,11 +331,11 @@ Each line corresponds to a particle and its properties. A space separates each p
 
 Results
 ---------------
-The results are shown in the animation below. We can see the intricate particles interaction between the particles. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
+The results are shown in the animation below. We can see the intricate particles interactions between the particles. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
 
 
 .. note:: 
-    * The results shown in the animation were obtained with a finer mesh and with a finer time-step.
+    The results shown in the animation were obtained with a finer mesh and with a finer time-step.
 
 .. raw:: html
 
