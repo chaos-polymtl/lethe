@@ -239,7 +239,7 @@ Linear solver control
 
 * The ``max iters`` is set to 1000. This is a lot more steps than how much it should take to solve the system.
 
-* The ``max krylov vectors`` is set to 1000. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a certain number of ``gmres`` iterations.
+* The ``max krylov vectors`` is set to 1000. This is to ensure that we keep the full Arnoldi basis for each new iteration. From experience keeping a maximum of Krylov vector results in a faster resolution for this case than clearing the basis after a lower number of ``gmres`` iterations.
 
 * The ``relative residual`` is set to 1e-4. This is small enough, so we don't under-resolve our matrix and do extra non-linear steps because of it, and at the same, it doesn't require too many ``gmres`` iterations.
 
@@ -280,9 +280,8 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``refine mesh outside radius factor`` is set to 2. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
-* The ``initial refinement`` is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible.
+* The ``initial refinement`` is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle are as small as possible.
 
-* The ``fluid density`` is set to 0.001 according to the description of the problem. As mentioned above, this parameter is a duplication of the density parameter in the physics properties. This will be changed soon, and this parameter will be removed.
 
 * The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
 
@@ -306,10 +305,10 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``particles file`` is set to ``particles.input``, which is the file where the particles are defined.
 
-* The ``gravity`` ``Function expression`` is set to 0;0;-981 according to the definition of the case. As we choose the long axis of the rectangular box along the Y, we define gravity in this direction. 
+* The ``gravity`` ``Function expression`` is set to 0;0;-981 according to the definition of the case. As we choose the long axis of the rectangular box along the Z, we define gravity in this direction. 
 
 .. note:: 
-    * The number of particles is not define since here the particles are defined using a file. In this case the number of particles is define by the number of particles defined in the file.
+    The number of particles is not defined here since the particles are defined using a file. In this case the number of particles is defined by the number of particles defined in the file.
 
 Particles file
 ---------------
@@ -320,7 +319,7 @@ The file from which the particles are defined have a header line that goes as fo
    type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient.
 
 
-Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Youngs modulus is set to 100Mpa, the restitution coefficient to 0.9, the Poisson ratio to 0.0, and the friction coefficient to zero.
+Each line corresponds to a particle and its properties. A space separates each property. For the details on the properties, see the section :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`. Here the particles' Young's moduli are set to 100MPa, the restitution coefficients to 0.9, the Poisson ratios to 0.30, and the friction coefficients to zero.
 
 .. code-block:: text
 
@@ -331,11 +330,11 @@ Each line corresponds to a particle and its properties. A space separates each p
 
 Results
 ---------------
-The results are shown in the animation below. We can see the intricate particles interaction between the particles. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
+The results are shown in the animation below. We can see the intricate particles interactions between the particles. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
 
 
 .. note:: 
-    * The results shown in the animation were obtained with a finer mesh and with a finer time-step.
+    The results shown in the animation were obtained with a finer mesh and with a finer time-step.
 
 .. raw:: html
 
