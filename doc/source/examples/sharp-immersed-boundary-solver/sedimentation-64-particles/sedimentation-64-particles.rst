@@ -36,13 +36,13 @@ Simulation and IO control
 .. code-block:: text
 
     subsection simulation control
-    	set method                  = bdf2
-    	set bdf startup method      = multiple step bdf
-    	set time step               = 0.025 # Time step
-    	set time end                = 5  # End time of simulation
-    	set output name             = out # Prefix for VTU outputs
-    	set output frequency        = 1     # Frequency of simulation output
-    	set subdivision             = 1       # Mesh subdivision when outputend
+      set method             = bdf2
+      set bdf startup method = multiple step bdf
+      set time step          = 0.0025 # Time step
+      set time end           = 5      # End time of simulation
+      set output name        = out    # Prefix for VTU outputs
+      set output frequency   = 1      # Frequency of simulation output
+      set subdivision        = 1      # Mesh subdivision when outputend
     end
 
 
@@ -63,10 +63,11 @@ Physical properties
 
     subsection physical properties
       subsection fluid 0
-    	set kinematic viscosity            =0.1
-    	set density =0.001
+        set kinematic viscosity = 0.1
+        set density             = 0.001
       end
     end
+
 
 * The ``kinematic viscosity`` is set to  0.1. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`.
 
