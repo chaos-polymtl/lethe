@@ -29,7 +29,7 @@ The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\te
 Parameter file
 ---------------
 
-We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the :doc:`../../../parameters/parameters`.
+We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters we suggest visiting the :doc:`../../../parameters/parameters`.
  
 Simulation and IO control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,11 +48,11 @@ Simulation and IO control
 
 * The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
-* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The multiple step bdf approach will ramp the order of the scheme in the first few time steps.
+* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The ``multiple step bdf`` approach will ramp the order of the scheme in the first few time steps.
 
 * The ``time step`` is set to  0.0025. This time step is small enough to prevent large error due to the time discretization. 
 
-* The ``time end`` is set to  4.0. This is slightly longer than the time need for all the particles to reach the bottom of the container
+* The ``time end`` is set to  4.0. This is slightly longer than the time needed for all the particles to reach the bottom of the container
 
 
 
@@ -82,7 +82,7 @@ FEM
       set pressure order = 1
     end
 	
-Here we use Q1Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run. 
+Here we use Q1Q1 elements. This case is only for demonstration purposes; as such, we suggest a simulation that is not too costly to run. 
 
 Mesh
 ~~~~~~
