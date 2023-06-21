@@ -50,12 +50,12 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // indicator
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
-      // Implementation of a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
-      // and stabilization parameters. International Journal for Numerical
-      // Methods in Fluids, 43(5), 555-575. Our implementation is based on 
-      // equations (70) and (79), which are adapted for the VOF solver.
+      // Implementation of a Discontinuity-Capturing Directional Dissipation
+      // (DCDD) shock capturing scheme. For more information see Tezduyar, T. E.
+      // (2003). Computation of moving boundaries and interfaces and
+      // stabilization parameters. International Journal for Numerical Methods
+      // in Fluids, 43(5), 555-575. Our implementation is based on equations
+      // (70) and (79), which are adapted for the VOF solver.
 
       const double tolerance = 1e-12;
 
@@ -198,7 +198,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       // For more information see
       // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
       // and stabilization parameters. International Journal for Numerical
-      // Methods in Fluids, 43(5), 555-575. Our implementation is based on 
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on
       // equations (70) and (79), which are adapted for the VOF solver.
 
       const double tolerance = 1e-12;
