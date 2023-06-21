@@ -150,15 +150,15 @@ class lethe_pyvista_tools():
         if last == None:
             list_vtu = list_vtu[first::step]
             self.time_list = self.time_list[first::step]
-            first = first
-            step = step
-            last = len(self.time_list) - 1
+            self.first = first
+            self.step = step
+            self.last = len(self.time_list) - 1
         else:
             list_vtu = list_vtu[first:last:step]
             self.time_list = self.time_list[first:last:step]
-            first = first
-            step = step
-            last = last
+            self.first = first
+            self.step = step
+            self.last = last
 
         # List of paths among read data
         read_files_path_list = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
@@ -209,12 +209,12 @@ class lethe_pyvista_tools():
         self.pvd_datasets = self.reader.datasets
 
         # Boolean indicating that the dataframes are not stored in the
-        # self.df object. If read_lethe_to_pyvista is called, all data 
+        # self.df object. If read_to_df = True is called, all data 
         # will be stored in self.df, thus, consuming a lot of RAM. 
         # Reading data into df can make the post-processing steps faster, since 
         # each step will be already available in self.df. However, this 
         # consumes a lot of RAM and for large simulations the tool will crash.
-        # Alternatively, if read_lethe_to_pyvista is not called, all functions
+        # Alternatively, if read_to_df = False, all functions
         # will loop through the vtu files and flush.
         self.df_available = False
 
@@ -691,7 +691,7 @@ class lethe_pyvista_tools():
                 df = self.get_df(i)
 
             # Get cartesian position
-            cartesian = df[i].points
+            cartesian = df.points
 
             # Calculate radial coord
             radius = np.sqrt(cartesian[:, radial_indices[0]]**2 + cartesian[:, radial_indices[1]]**2)
@@ -931,6 +931,9 @@ class lethe_pyvista_tools():
 
         if use_cyl and hasattr(df, "points_cyl") == False:
             self.get_cylindrical_coords()
+
+            if self.df_available == False:
+                df = self.get_df(reference_time_step)
 
         # If cylindrical coordinates requested, assign points_cyl to reference
         # position, otherwise use cartesian
