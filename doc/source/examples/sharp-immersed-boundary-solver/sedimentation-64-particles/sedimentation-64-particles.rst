@@ -14,7 +14,7 @@ Features
 - Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around multiple particles
-- Displays the stability of the resolved CFD-DEM Solver.
+- Displays the robustness of the resolved CFD-DEM Solver.
 
 Files used in this example
 ---------------------------
@@ -24,7 +24,7 @@ Files used in this example
 
 Description of the case
 -----------------------
-The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 0.25cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, at which point we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
+The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
 Parameter file
 ---------------
