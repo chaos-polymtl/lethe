@@ -203,7 +203,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
 
       const double tolerance = 1e-12;
 
-      // In Tezduyar 2003 this is noted r
+      // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
         phase_gradient / (phase_gradient_norm + tolerance);
 
