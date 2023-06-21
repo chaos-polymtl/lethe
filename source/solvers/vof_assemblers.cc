@@ -212,8 +212,7 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
         (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
 
       // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article. This term generates poorer
-      // results than just using the vdcdd approach.
+      // as is done in the original article.
       // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
       // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
       // s);
