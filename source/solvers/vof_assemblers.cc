@@ -54,22 +54,18 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // For more information see
       // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
       // and stabilization parameters. International Journal for Numerical
-      // Methods in Fluids, 43(5), 555-575. We implement the equivalent of
-      // equation (70) and (79)
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on 
+      // equations (70) and (79), which are adapted for the VOF solver.
 
       const double tolerance = 1e-12;
 
-      // In Tezduyar 2003 this is noted r
+      // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
         phase_gradient / (phase_gradient_norm + tolerance);
 
       // Calculate the artificial viscosity of the shock capture
       const double vdcdd =
         (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
-      //(0.5 * h) * (velocity.norm() * velocity.norm()) *
-      // pow(phase_gradient_norm * h, order);
-
-
 
       // We neglect to remove the diffusion aligned with the velocity
       // as is done in the original article. This term generates poorer
@@ -202,8 +198,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
       // For more information see
       // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
       // and stabilization parameters. International Journal for Numerical
-      // Methods in Fluids, 43(5), 555-575. We implement the equivalent of
-      // equation (70) and (79)
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on 
+      // equations (70) and (79), which are adapted for the VOF solver.
 
       const double tolerance = 1e-12;
 
