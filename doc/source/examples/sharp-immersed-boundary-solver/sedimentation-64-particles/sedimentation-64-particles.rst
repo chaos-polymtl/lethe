@@ -245,7 +245,7 @@ Linear solver control
 
 * The ``ilu preconditioner fill`` is set to 0. This is the fastest option with the current simulation parameters. In this case, we are able to use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
-* The ``ilu preconditioner absolute tolerance`` is set to 1e-6. This slightly speed up the first few matrix resolution. 
+* The ``ilu preconditioner absolute tolerance`` is set to 1e-6. This slightly speeds up the first few matrix resolutions. 
 
 IB particles
 ~~~~~~~~~~~~~~
