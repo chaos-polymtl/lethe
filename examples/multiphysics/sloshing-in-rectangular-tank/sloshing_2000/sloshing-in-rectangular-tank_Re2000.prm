@@ -12,7 +12,7 @@ subsection simulation control
   set max cfl                      = 0.1
   set output name                  = sloshing-in-rectangular-tank_Re2000
   set output path                  = ./output_Re2000/
-  set output frequency             = 25
+  set output frequency             = 30
   set adaptative time step scaling = 1.025
 end
 
