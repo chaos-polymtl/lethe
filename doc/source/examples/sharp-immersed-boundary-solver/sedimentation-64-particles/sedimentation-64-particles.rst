@@ -95,11 +95,11 @@ Mesh
     	set initial refinement   = 4
     end
 
-The domain is a rectangular box as such we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have orientated the z-direction with gravity. As such, we have the long side of the box along this axis.
+The domain is a rectangular box: we can directly use a subdivided hyper rectangle mesh from the deal.II library. In this case, we have oriented the z-direction with gravity. As such, we have the long side of the box along this axis.
 
-* The ``grid arguments`` is set to  ``1,1,12: 0,0,0 : 2 , 2 , 24 : true``. This section has 3 subsections. First ``1,1,12`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 2 , 2 ,24`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (2,2,24). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
+* The ``grid arguments`` is set to  ``1,1,12: 0,0,0 : 2,2,24 : true``. This section has 3 subsections. First ``1,1,12`` describes the initial subdivision of the box. This subdivision has been chosen as it is the smallest mesh we can do of the box in order to have cubic elements. Secondly ``0,0,0 : 2,2,24`` describes the 2 points from which we have derived the rectangular box (0,0,0) and  (2,2,24). Finally, we have ``true``, which is a boolean to activate the coloration of the boundary. This allows us to define separate boundary conditions at each side of the box.
 
-* The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit smaller than the particle.
+* The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit finer than the particle size.
 
 
 Mesh adaptation control
@@ -139,9 +139,9 @@ Mesh adaptation control
 
 * The ``fraction refinement`` is set to 0.025. The objective here is to refine elements that become close to the particle when it's moving. This will mostly refine elements around the particle that are not included in the refinement zone around the particle. The refinement zone around the particle will be discussed in more detail in the IB particle section.
 
-* The ``set frequency`` is set to 1. Since the particle is moving at each time step, the refinement zone around it should be reevaluated at each time step.
+* The ``frequency`` is set to 1. Since the particle is moving at each time step, the refinement zone around it should be reevaluated at each time step.
 
-* The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capability of the solver. However, the discretization error is not negligible in this case.
+* The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get, limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capabilities of the solver. However, the discretization error is not negligible in this case.
 
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
@@ -176,7 +176,7 @@ Boundary conditions
       end
     end
 
-Here we define the 5 ``no slip`` boundary for all the box walls and let the boundary with ``id=5`` free to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
+Here we define the 5 ``no slip`` boundaries for all the box walls and let the 6th boundary free, to represent the top of the box. We refer the reader to the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section on how those boundaries are defined. 
 
 .. note:: 
 	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
