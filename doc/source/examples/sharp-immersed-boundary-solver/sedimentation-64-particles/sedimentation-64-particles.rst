@@ -6,7 +6,7 @@ This example aims to introduce the user on how to carry resolved CFD-DEM simulat
 
 
 .. warning:: 
-    * This case is a computationally intensive example. It can take several days to run on a desktop computer.
+    * This case is a computationally expensive example. It can take several days to run on a desktop computer.
     
 
 Features
