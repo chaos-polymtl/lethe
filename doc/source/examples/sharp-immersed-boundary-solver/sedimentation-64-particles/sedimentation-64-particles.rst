@@ -24,7 +24,7 @@ Files used in this example
 
 Description of the case
 -----------------------
-The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
+The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25 cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
 Parameter file
 ---------------
@@ -281,8 +281,7 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``refine mesh outside radius factor`` is set to 2. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
-* The ``initial refinement`` is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle are as small as possible.
-
+* The ``initial refinement`` is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 3 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle are as small as possible.
 
 * The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
 
