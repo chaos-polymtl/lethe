@@ -352,7 +352,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
           calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
       // LSIC stabilization term
-      const double tau_lsic = u_mag * h / 2;
+      const double tau_lsic = 0.5 * u_mag * h;
 
 
       // Calculate the strong residual for GLS stabilization
@@ -424,9 +424,6 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
                   // PSPG GLS term
                   local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
-
-                  // LSIC GLS term
-                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
                 }
 
               if (component_i < dim && component_j < dim)
@@ -435,6 +432,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
                   local_matrix_ij += velocity_gradient_x_phi_u_j[j] * phi_u_i +
                                      grad_phi_u_j_x_velocity[j] * phi_u_i;
+
+                  // LSIC GLS term
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
+                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
 
                   if (component_i == component_j)
                     {
