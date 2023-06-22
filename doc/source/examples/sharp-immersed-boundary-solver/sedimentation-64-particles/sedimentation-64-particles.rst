@@ -287,7 +287,7 @@ In this subsection, we define most of the parameters that are related to the par
 
 * The ``assemble Navier-Stokes inside particles`` is set to false because we are not interested in the flow inside of the particle.
 
-* The ``length ratio`` as been set to 2. This is small enough so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
+* The ``length ratio`` has been set to 2. This is small enough so it does not impact too much the conditioning of the matrix while avoiding interpolation of the immersed boundary stencil in multiple elements.
 
 * The ``contact search radius factor`` is set to 1.5. This parameter is smaller than the default one since the particle motion relative to their size is relatively slow. This enables the use of a smaller search radius which increases the DEM calculation speed.
 
