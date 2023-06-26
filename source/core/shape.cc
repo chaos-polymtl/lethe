@@ -402,46 +402,41 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
       // referential
       Point<dim> centered_point = this->align_and_center(p);
 
-      double     radius = centered_point.norm();
-      Point<dim> current_point{};
-      for (unsigned int d = 0; d < dim; d++)
-        current_point[d] =
-          centered_point[d] * (half_lengths[d] / radius) + 1e-5;
-
-      unsigned int iteration     = 0;
-      unsigned int iteration_max = 50;
-      double       tolerance     = 1e-3;
-      double       step          = 1e-5;
-
-      Tensor<1, 4>       residual{};
-      Tensor<1, 4>       dx{}, solution{};
-      FullMatrix<double> jacobian(4, 4), inv_jacobian(4, 4);
-      residual[0] = 1;
-      for (unsigned int d = 0; d < dim; d++)
-        solution[d] = current_point[d];
-      solution[3] = 0;
-      while (iteration < iteration_max && residual.norm() > tolerance)
+      double minimal_radius = half_lengths[0];
+      minimal_radius        = std::min(minimal_radius, half_lengths[1]);
+      minimal_radius        = std::min(minimal_radius, half_lengths[2]);
+      minimal_radius *= 0.1;
+      if (centered_point.norm() < minimal_radius)
         {
-          residual = compute_residual(solution, step, centered_point);
-          jacobian = compute_jacobian(solution, step, centered_point);
-
-          inv_jacobian.invert(jacobian);
-
-          dx = 0;
-          for (unsigned int i = 0; i < 4; i++)
-            for (unsigned int j = 0; j < 4; j++)
-              dx[i] += inv_jacobian[i][j] * (-residual[j]);
-
-          solution += 0.1 * dx;
-
-          iteration++;
+          Point<dim> dummy_point{};
+          for (unsigned int d = 0; d < dim; d++)
+            dummy_point[d] = half_lengths[d];
+          closest_point = this->reverse_align_and_center(dummy_point);
         }
-      if (iteration == iteration_max)
-        std::cout << "Couldn't find the closest point" << std::endl;
-      for (unsigned int d = 0; d < dim; d++)
-        current_point[d] = solution[d];
+      else
+        {
+          Point<dim>   current_point = centered_point;
+          unsigned int iteration     = 0;
+          unsigned int iteration_max = 100;
+          double       tolerance     = 1e-6;
 
-      closest_point = this->reverse_align_and_center(current_point);
+          Point<dim> dx{}, distance_gradient{};
+          dx[0]             = 1;
+          double relaxation = 0.1;
+          while (iteration < iteration_max && dx.norm() > tolerance)
+            {
+              distance_gradient = superquadric_gradient(current_point);
+              dx                = -relaxation *
+                   (superquadric(current_point) * distance_gradient) /
+                   distance_gradient.norm_square();
+
+              current_point = current_point + dx;
+
+              iteration++;
+            }
+
+          closest_point = this->reverse_align_and_center(current_point);
+        }
     }
   else
     closest_point = iterator->second;
@@ -478,9 +473,6 @@ Superquadric<dim>::value_with_cell_guess(
   const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
   const unsigned int /*component = 0*/)
 {
-  // TODO enlever
-  // return superquadric(this->align_and_center(evaluation_point));
-
   auto point_in_string = this->point_to_string(evaluation_point);
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())

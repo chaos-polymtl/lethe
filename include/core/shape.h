@@ -499,42 +499,6 @@ public:
       return 0;
   }
 
-  inline double
-  f(const double omega, const double exponent) const
-  {
-    return sign(sin(omega)) * pow(abs(sin(omega)), exponent);
-  }
-
-  inline double
-  g(const double omega, const double exponent) const
-  {
-    return sign(cos(omega)) * pow(abs(cos(omega)), exponent);
-  }
-
-  /**
-   * @brief Computes the surface point of a superquadric for given theta and phi
-   * @param theta
-   * @param phi
-   */
-  inline Point<dim>
-  superquadric_point(const double theta, const double phi) const
-  {
-    const double a = half_lengths[0];
-    const double b = half_lengths[1];
-    const double c = half_lengths[2];
-    const double p = exponents[0];
-    const double q = exponents[1];
-    const double r = exponents[2];
-
-    Point<dim> surface_point{};
-
-    surface_point[0] = a * g(phi, 2 / p) * g(theta, 2 / p);
-    surface_point[1] = b * g(phi, 2 / q) * f(theta, 2 / q);
-    surface_point[2] = c * g(phi, 2 / r);
-
-    return surface_point;
-  }
-
   /**
    * @brief Computes the value of the superquadric from its equation
    * @param centered_point point at which we make the evaluation, in the shape referential
@@ -542,66 +506,24 @@ public:
   inline double
   superquadric(const Point<dim> &centered_point) const
   {
-    return (pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
-            pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
-            pow(abs(centered_point[2] / half_lengths[2]), exponents[2])) -
-           1;
+    return pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
+           pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
+           pow(abs(centered_point[2] / half_lengths[2]), exponents[2]) - 1;
   }
 
-  inline double
-  lagrange(const Tensor<1, 4> &current_solution,
-           const Point<dim> &  centered_point) const
+  /**
+   * @brief Computes the gradient of the superquadric from its equation
+   * @param centered_point point at which we make the evaluation, in the shape referential
+   */
+  inline Point<dim>
+  superquadric_gradient(const Point<dim> &centered_point) const
   {
-    Point<dim> current_point{};
+    Point<dim> gradient{};
     for (unsigned int d = 0; d < dim; d++)
-      current_point[d] = current_solution[d];
-    return pow((current_point - centered_point).norm(), 2) +
-           current_solution[3] * superquadric(current_point);
-  }
-
-  inline Tensor<1, 4>
-  compute_residual(const Tensor<1, 4> &current_solution,
-                   const double        step,
-                   const Point<dim>    centered_point) const
-  {
-    Tensor<1, 4> residual{}, tensor_step{};
-    for (unsigned int i = 0; i < 4; i++)
-      {
-        tensor_step    = 0;
-        tensor_step[i] = step;
-        residual[i] =
-          (lagrange(current_solution + tensor_step, centered_point) -
-           lagrange(current_solution - tensor_step, centered_point)) /
-          (2 * step);
-      }
-
-    return residual;
-  }
-
-  inline FullMatrix<double>
-  compute_jacobian(const Tensor<1, 4> &current_solution,
-                   const double        step,
-                   const Point<dim>    centered_point) const
-  {
-    Tensor<1, 4> front_residual{}, back_residual{}, tensor_step{},
-      current_column{}; // for jacobian calculations
-    FullMatrix<double> jacobian(4, 4);
-
-    for (unsigned int i = 0; i < 4; i++)
-      {
-        tensor_step    = 0;
-        tensor_step[i] = step;
-        front_residual = compute_residual(current_solution + tensor_step,
-                                          step,
-                                          centered_point);
-        back_residual  = compute_residual(current_solution - tensor_step,
-                                         step,
-                                         centered_point);
-        current_column = (front_residual - back_residual) / (2 * step);
-        for (unsigned int j = 0; j < 4; j++)
-          jacobian[j][i] = current_column[j];
-      }
-    return jacobian;
+      gradient[d] =
+        sign(centered_point[d]) * exponents[d] * (1 / half_lengths[d]) *
+        pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
+    return gradient;
   }
 
 private:
