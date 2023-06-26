@@ -24,6 +24,7 @@
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
@@ -40,17 +41,18 @@ CahnHilliard<dim>::setup_assemblers()
           this->simulation_control));
     }
 
-  // TODO ADD : change AssemblerCore because some terms will disappear when the mobility is a function.
-  //  There will only be the advective term left for the first equation.
+  // Angle of contact boundary condition
+  this->assemblers.push_back(
+    std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
+      this->simulation_control,
+      this->simulation_parameters.multiphysics.ch_parameters,
+      this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
-  //Angle of contact boundary condition
-
-  //this->assemblers.push_back(std::make_shared<)
 
   // Core assembler
-  this->assemblers.push_back(
-    std::make_shared<CahnHilliardAssemblerCore<dim>>(this->simulation_control,
-                                                     this->simulation_parameters.multiphysics.ch_parameters));
+  this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
+    this->simulation_control,
+    this->simulation_parameters.multiphysics.ch_parameters));
 }
 
 template <int dim>
@@ -289,10 +291,11 @@ CahnHilliard<dim>::calculate_L2_error()
   std::vector<double> local_phase_order_values(n_q_points);
   std::vector<double> local_chemical_potential_values(n_q_points);
 
-  auto &exact_solution = simulation_parameters.analytical_solution->cahn_hilliard;
+  auto &exact_solution =
+    simulation_parameters.analytical_solution->cahn_hilliard;
   exact_solution.set_time(simulation_control->get_current_time());
 
-  double l2_error_phase_order = 0.;
+  double l2_error_phase_order        = 0.;
   double l2_error_chemical_potential = 0.;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -302,12 +305,12 @@ CahnHilliard<dim>::calculate_L2_error()
           fe_values.reinit(cell);
           fe_values[phase_order].get_function_values(evaluation_point,
                                                      local_phase_order_values);
-          fe_values[chemical_potential].get_function_values(evaluation_point,
-                                                  local_chemical_potential_values);
+          fe_values[chemical_potential].get_function_values(
+            evaluation_point, local_chemical_potential_values);
 
           // Get the exact solution at all gauss points
           exact_solution.vector_value_list(fe_values.get_quadrature_points(),
-                                            q_exactSol);
+                                           q_exactSol);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
@@ -316,21 +319,28 @@ CahnHilliard<dim>::calculate_L2_error()
               double phase_order_sim   = local_phase_order_values[q];
               double phase_order_exact = q_exactSol[q][0];
 
-              l2_error_phase_order +=
-                (phase_order_sim - phase_order_exact) * (phase_order_sim - phase_order_exact) * fe_values.JxW(q);
+              l2_error_phase_order += (phase_order_sim - phase_order_exact) *
+                                      (phase_order_sim - phase_order_exact) *
+                                      fe_values.JxW(q);
 
-              double chemical_potential_sim   = local_chemical_potential_values[q];
+              double chemical_potential_sim =
+                local_chemical_potential_values[q];
               double chemical_potential_exact = q_exactSol[q][1];
 
               l2_error_chemical_potential +=
-                (chemical_potential_sim - chemical_potential_exact) * (chemical_potential_sim - chemical_potential_exact) * fe_values.JxW(q);
+                (chemical_potential_sim - chemical_potential_exact) *
+                (chemical_potential_sim - chemical_potential_exact) *
+                fe_values.JxW(q);
             }
         }
     }
-  l2_error_phase_order = Utilities::MPI::sum(l2_error_phase_order, mpi_communicator);
-  l2_error_chemical_potential = Utilities::MPI::sum(l2_error_chemical_potential, mpi_communicator);
+  l2_error_phase_order =
+    Utilities::MPI::sum(l2_error_phase_order, mpi_communicator);
+  l2_error_chemical_potential =
+    Utilities::MPI::sum(l2_error_chemical_potential, mpi_communicator);
 
-  return std::make_pair(std::sqrt(l2_error_phase_order), std::sqrt(l2_error_chemical_potential));
+  return std::make_pair(std::sqrt(l2_error_phase_order),
+                        std::sqrt(l2_error_chemical_potential));
 }
 
 template <int dim>
@@ -389,14 +399,13 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       error_table.add_value("error_phase_order", phase_order_error);
       error_table.add_value("error_chemical_potential", potential_error);
 
-      error_table.set_scientific(
-        "error_phase_order", true);
-      error_table.set_scientific(
-        "error_chemical_potential", true);
+      error_table.set_scientific("error_phase_order", true);
+      error_table.set_scientific("error_chemical_potential", true);
 
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.analytical_solution->get_filename() + "_cahn_hilliard.dat";
+        simulation_parameters.analytical_solution->get_filename() +
+        "_cahn_hilliard.dat";
       std::ofstream output(filename.c_str());
       error_table.write_text(output);
 
@@ -453,6 +462,42 @@ CahnHilliard<dim>::post_mesh_adaptation()
       previous_solutions[i] = tmp_previous_solution;
     }
 }
+
+template <int dim>
+void
+CahnHilliard<dim>::compute_kelly(
+  const std::pair<const Parameters::MeshAdaptation::Variable,
+                  Parameters::MultipleAdaptationParameters> &ivar,
+  dealii::Vector<float> &estimated_error_per_cell)
+{
+  const FEValuesExtractors::Scalar phase_order(0);
+  const FEValuesExtractors::Scalar chemical_potential(1);
+
+  if (ivar.first == Parameters::MeshAdaptation::Variable::phase_ch)
+    {
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(phase_order));
+    }
+  else if (ivar.first ==
+           Parameters::MeshAdaptation::Variable::chemical_potential_ch)
+    {
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        this->dof_handler,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        present_solution,
+        estimated_error_per_cell,
+        this->fe->component_mask(chemical_potential));
+    }
+}
+
 
 template <int dim>
 void
@@ -544,13 +589,18 @@ CahnHilliard<dim>::setup_dofs()
     nonzero_constraints.clear();
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
-
+    
     for (unsigned int i_bc = 0;
          i_bc <
          this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
          ++i_bc)
       {
+        ComponentMask mask(2, true);
+        mask.set(1, false);
+
         // Dirichlet condition : imposed phase_order at i_bc
+        // To impose the boundary condition only on the phase order, a component
+        // mask is used at the end of the interpolate_boundary_values function
         if (this->simulation_parameters.boundary_conditions_cahn_hilliard
               .type[i_bc] ==
             BoundaryConditions::BoundaryType::dirichlet_phase_order)
@@ -563,7 +613,8 @@ CahnHilliard<dim>::setup_dofs()
                 this->simulation_parameters.boundary_conditions_cahn_hilliard
                   .phase_dirichlet_value[i_bc],
                 2),
-              nonzero_constraints);
+              nonzero_constraints,
+              mask);
           }
       }
   }

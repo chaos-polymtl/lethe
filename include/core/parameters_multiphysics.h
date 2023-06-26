@@ -243,7 +243,8 @@ namespace Parameters
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
 
-    // Mobility model (Constant|Quadratic|Quartic) in the Cahn-Hilliard equations
+    // Mobility model (Constant|Quadratic|Quartic) in the Cahn-Hilliard
+    // equations
     Parameters::MobilityModel mobility_model;
 
     // Mobility constant in the Cahn-Hilliard equations
@@ -275,7 +276,7 @@ namespace Parameters
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    Parameters::VOF vof_parameters;
+    Parameters::VOF          vof_parameters;
     Parameters::CahnHilliard ch_parameters;
 
     void

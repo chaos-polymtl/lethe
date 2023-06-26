@@ -1948,10 +1948,10 @@ namespace Parameters
       prm.declare_entry(
         "variable",
         "velocity",
-        Patterns::List(
-          Patterns::Selection("velocity|pressure|phase|temperature")),
+        Patterns::List(Patterns::Selection(
+          "velocity|pressure|phase|temperature|phase_ch|chemical_potential_ch")),
         "Variable(s) for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature>."
+        "Choices are <velocity|pressure|phase|temperature|phase_ch|chemical_potential_ch>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -2028,9 +2028,13 @@ namespace Parameters
             vars = Variable::phase;
           else if (var_vec[i] == "temperature")
             vars = Variable::temperature;
+          else if (var_vec[i] == "phase_ch")
+            vars = Variable::phase_ch;
+          else if (var_vec[i] == "chemical_potential_ch")
+            vars = Variable::chemical_potential_ch;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase or temperature");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_ch or chemical_potential_ch");
 
           var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
           var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);

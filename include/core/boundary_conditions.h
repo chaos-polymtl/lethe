@@ -868,7 +868,7 @@ namespace BoundaryConditions
       }
     if (op == "dirichlet_phase_order")
       {
-        this->type[i_bc]            = BoundaryType::dirichlet_phase_order;
+        this->type[i_bc]                  = BoundaryType::dirichlet_phase_order;
         this->phase_dirichlet_value[i_bc] = prm.get_double("phase value");
       }
     if (op == "angle_of_contact")

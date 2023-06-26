@@ -14,7 +14,8 @@ CahnHilliardScratchData<dim>::allocate()
   this->JxW = std::vector<double>(n_q_points);
 
   // Forcing term array
-  this->source = std::vector<double>(n_q_points);
+  this->source_phase_order        = std::vector<double>(n_q_points);
+  this->source_chemical_potential = std::vector<double>(n_q_points);
 
   // Initialize arrays related to phase order and chemical potential
   this->phase_order.component        = 0;

@@ -17,6 +17,7 @@
  */
 
 #include <core/multiphysics.h>
+
 #include <solvers/physical_properties_manager.h>
 
 #include <deal.II/base/quadrature.h>
@@ -87,7 +88,7 @@ public:
                           const Quadrature<dim> &          quadrature,
                           const Mapping<dim> &             mapping,
                           const FiniteElement<dim> &       fe_fd,
-                          const Quadrature<dim - 1> &     face_quadrature)
+                          const Quadrature<dim - 1> &      face_quadrature)
     : properties_manager(properties_manager)
     , fe_values_ch(mapping,
                    fe_ch,
@@ -128,7 +129,7 @@ public:
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values)
-    ,fe_face_values_ch(sd.fe_face_values_ch.get_mapping(),
+    , fe_face_values_ch(sd.fe_face_values_ch.get_mapping(),
                         sd.fe_face_values_ch.get_fe(),
                         sd.fe_face_values_ch.get_quadrature(),
                         update_values | update_quadrature_points |
@@ -181,7 +182,11 @@ public:
     quadrature_points = this->fe_values_ch.get_quadrature_points();
     auto &fe_ch       = this->fe_values_ch.get_fe();
 
-    source_function->value_list(quadrature_points, source);
+    source_function->value_list(quadrature_points, source_phase_order, 0);
+    source_function->value_list(quadrature_points,
+                                source_chemical_potential,
+                                1);
+
 
     if (dim == 2)
       this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_ch.degree;
@@ -261,6 +266,7 @@ public:
           }
       }
 
+    this->is_boundary_cell = cell->at_boundary();
     if (cell->at_boundary())
       {
         n_faces          = cell->n_faces();
@@ -272,10 +278,12 @@ public:
           n_faces, std::vector<double>(n_faces_q_points));
 
         this->grad_phi_face_phase =
-          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(n_faces,std::vector<std::vector<Tensor<1, dim>>>(
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
               n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
 
-        this->face_phase_grad_value = std::vector<std::vector<Tensor<1, dim>>>(
+        this->face_phase_grad_values = std::vector<std::vector<Tensor<1, dim>>>(
           n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
 
         for (const auto face : cell->face_indices())
@@ -287,7 +295,7 @@ public:
                 boundary_face_id[face] = cell->face(face)->boundary_id();
 
                 this->fe_face_values_ch[phase_order].get_function_gradients(
-                  current_solution, this->face_phase_grad_value[face]);
+                  current_solution, this->face_phase_grad_values[face]);
 
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
                   {
@@ -373,7 +381,8 @@ public:
   std::vector<std::vector<double>> stages_chemical_potential_values;
 
   // Source term
-  std::vector<double> source;
+  std::vector<double> source_phase_order;
+  std::vector<double> source_chemical_potential;
 
   // Shape functions for the phase order and the chemical potential
   std::vector<std::vector<double>>         phi_phase;
@@ -408,8 +417,7 @@ public:
   // First vector is face number, second quadrature point, third DOF
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> grad_phi_face_phase;
   // First vector is face number, second quadrature point
-  std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_value;
-
+  std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_values;
 };
 
 #endif

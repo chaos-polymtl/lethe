@@ -78,13 +78,15 @@ public:
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
-        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                                                                        simulation_parameters.fem_parameters.potential_order) +
-                                                               1);
-          face_quadrature =
-            std::make_shared<QGaussSimplex<dim - 1>>(std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                                                            simulation_parameters.fem_parameters.potential_order) +
-                                                   1);;
+        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order) +
+          1);
+        face_quadrature = std::make_shared<QGaussSimplex<dim - 1>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order) +
+          1);
+        ;
       }
     else
       {
@@ -103,9 +105,10 @@ public:
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
                    simulation_parameters.fem_parameters.potential_order) +
           1);
-        face_quadrature = std::make_shared<QGauss<dim - 1>>(std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                                                                     simulation_parameters.fem_parameters.potential_order) +
-                                                            1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_order) +
+          1);
       }
 
     // Allocate solution transfer
@@ -187,13 +190,9 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   void
-  compute_kelly(
-    const std::pair<const Parameters::MeshAdaptation::Variable,
-                    Parameters::MultipleAdaptationParameters> & /*ivar*/,
-    dealii::Vector<float> & /*estimated_error_per_cell*/) override
-  {
-    return;
-  }
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
+                                Parameters::MultipleAdaptationParameters> &ivar,
+                dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
    * @brief Prepares Cahn-Hilliard to write checkpoint
@@ -371,8 +370,8 @@ private:
   // Finite element space
   std::shared_ptr<FESystem<dim>> fe;
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>    mapping;
-  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
 

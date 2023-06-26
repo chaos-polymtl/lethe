@@ -90,8 +90,10 @@ class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 {
 public:
   CahnHilliardAssemblerCore(
-    std::shared_ptr<SimulationControl> simulation_control, Parameters::CahnHilliard ch_parameters)
-    : CahnHilliardAssemblerBase<dim>(simulation_control),ch_parameters(ch_parameters)
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::CahnHilliard           ch_parameters)
+    : CahnHilliardAssemblerBase<dim>(simulation_control)
+    , ch_parameters(ch_parameters)
   {}
 
   /**
@@ -126,16 +128,19 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class CahnHilliardAssemblerAngleOfContact : public CahnHilliardAssemblerBase<dim>
+class CahnHilliardAssemblerAngleOfContact
+  : public CahnHilliardAssemblerBase<dim>
 {
 public:
   CahnHilliardAssemblerAngleOfContact(
-    std::shared_ptr<SimulationControl> simulation_control,Parameters::CahnHilliard ch_parameters,
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::CahnHilliard           ch_parameters,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_ch)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
-    ,ch_parameters(ch_parameters)
-    ,boundary_conditions_ch(p_boundary_conditions_ch) {}
+    , ch_parameters(ch_parameters)
+    , boundary_conditions_ch(p_boundary_conditions_ch)
+  {}
 
   /**
    * @brief assemble_matrix Assembles the matrix
@@ -158,8 +163,8 @@ public:
 
 
   Parameters::CahnHilliard ch_parameters;
-  const BoundaryConditions::CahnHilliardBoundaryConditions<dim> &boundary_conditions_ch;
-
+  const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
+    &boundary_conditions_ch;
 };
 
 
@@ -201,7 +206,6 @@ public:
   virtual void
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
-
 };
 
 

@@ -584,7 +584,6 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("cahn hilliard");
   {
-
     prm.declare_entry("well height",
                       "1",
                       Patterns::Double(),
@@ -606,7 +605,6 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
                       "1",
                       Patterns::Double(),
                       "Mobility constant for the Cahn-Hilliard equations");
-
   }
   prm.leave_subsection();
 }
@@ -616,26 +614,18 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("cahn hilliard");
   {
-
     well_height = prm.get_double("well height");
-    epsilon = prm.get_double("epsilon");
+    epsilon     = prm.get_double("epsilon");
 
     const std::string op = prm.get("mobility model");
     if (op == "constant")
       mobility_model = Parameters::MobilityModel::constant;
     else if (op == "quadratic")
-          mobility_model =  Parameters::MobilityModel::quadratic;
+      mobility_model = Parameters::MobilityModel::quadratic;
     else if (op == "quartic")
-      mobility_model =  Parameters::MobilityModel::quartic;
+      mobility_model = Parameters::MobilityModel::quartic;
 
     mobility_constant = prm.get_double("mobility constant");
-
   }
   prm.leave_subsection();
 }
-
-
-
-
-
-

@@ -994,7 +994,9 @@ namespace Parameters
       velocity,
       pressure,
       phase,
-      temperature
+      temperature,
+      phase_ch,
+      chemical_potential_ch
     } variable;
 
     // Map containing the refinement variables
