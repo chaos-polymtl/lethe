@@ -38,17 +38,15 @@ Simulation and IO control
     subsection simulation control
       set method             = bdf2
       set bdf startup method = multiple step bdf
-      set time step          = 0.0025 # Time step
-      set time end           = 5      # End time of simulation
-      set output name        = out    # Prefix for VTU outputs
-      set output frequency   = 1      # Frequency of simulation output
-      set subdivision        = 1      # Mesh subdivision when outputend
+      set time step          = 0.0025 
+      set time end           = 5      
+      set output name        = out    
+      set output frequency   = 1      
     end
 
 
 * The ``method`` is set to  ``bdf2`` to have a second-order time-stepping method. This ensures a low error due to the time discretization in this case.
 
-* The ``bdf startup method`` is set to  ``multiple step bdf``  as we do not have an initial solution that allows us to generate previous time steps. The ``multiple step bdf`` approach will ramp the order of the scheme in the first few time steps.
 
 * The ``time step`` is set to  0.0025. This time step is small enough to prevent large error due to the time discretization. 
 
@@ -69,7 +67,7 @@ Physical properties
     end
 
 
-* The ``kinematic viscosity`` is set to  0.1. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`.
+* The ``kinematic viscosity`` is set to  0.1. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`. This parameter changes the Reynolds number of the case since it is one of the variables in the evaluation of the Reynolds number but also by changing the terminal velocity of the particle.
 
 * The ``density`` is set to 0.001 according to the description of the problem.
 	
@@ -83,7 +81,7 @@ FEM
       set pressure order = 1
     end
 	
-Here we use Q1Q1 elements. This case is only for demonstration purposes; as such, we suggest a simulation that is not too costly to run. 
+Here we use Q1Q1 elements to reduce the computational cost.
 
 Mesh
 ~~~~~~
@@ -114,8 +112,7 @@ Mesh adaptation control
       # Fraction of refined elements
       set fraction refinement = 0.025
     
-      # How the fraction of refinement/coarsening are interepretedChoices are
-      # <number|fraction>.
+      # How the fraction of refinement/coarsening are interepreted
       set fraction type = number
     
       # Frequency of the mesh refinement
@@ -331,7 +328,7 @@ Each line corresponds to a particle and its properties. A space separates each p
 
 Results
 ---------------
-The results are shown in the animation below. We can see the intricate particles interactions between the particles. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
+The results are shown in the animation below. We can see the complex motion of the particles and the way they interact with one another. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
 
 
 .. note:: 

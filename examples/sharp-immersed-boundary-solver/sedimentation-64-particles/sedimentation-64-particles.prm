@@ -7,11 +7,10 @@
 subsection simulation control
   set method             = bdf2
   set bdf startup method = multiple step bdf
-  set time step          = 0.0025 # Time step
-  set time end           = 5      # End time of simulation
-  set output name        = out    # Prefix for VTU outputs
-  set output frequency   = 1      # Frequency of simulation output
-  set subdivision        = 1      # Mesh subdivision when outputend
+  set time step          = 0.0025 
+  set time end           = 5      
+  set output name        = out    
+  set output frequency   = 1      
 end
 
 #---------------------------------------------------
