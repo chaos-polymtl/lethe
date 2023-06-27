@@ -22,8 +22,6 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
-#include <deal.II/lac/full_matrix.h>
-
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>
@@ -393,7 +391,7 @@ public:
   /**
    * @brief Constructor for a superquadric shape
    * @param half_lengths The half-lengths of each direction
-   * @param exponents The lengths of each direction
+   * @param exponents The blockiness in each direction
    * @param position The superquadric center
    * @param orientation The superquadric orientation
    */

@@ -18,8 +18,6 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 
-#include <deal.II/lac/full_matrix.h>
-
 #ifdef DEAL_II_WITH_OPENCASCADE
 #  include <deal.II/opencascade/manifold_lib.h>
 #  include <deal.II/opencascade/utilities.h>

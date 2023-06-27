@@ -2228,7 +2228,7 @@ namespace Parameters
       "smaller sphere radius, distance between centers."
       "The parameters for a superquadric are, in order: "
       "a, b, c, r, s, t. The first three are half-lengths in x, y, and z."
-      "The last three are the exponents applied to each of the x, y, and z fractions."
+      "The last three are the blockiness in the x, y, and z directions."
       "The parameter for an rbf is the file name."
       "The parameter for a composite is the file name.");
     prm.declare_entry("shape arguments",
