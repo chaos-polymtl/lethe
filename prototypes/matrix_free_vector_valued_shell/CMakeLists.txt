@@ -1,0 +1,2 @@
+add_executable(matrix_free_vector_valued_shell matrix_free_vector_valued_shell.cc)
+deal_ii_setup_target(matrix_free_vector_valued_shell)
