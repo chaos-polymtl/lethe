@@ -53,6 +53,9 @@ class lethe_pyvista_tools():
 
         step  = 1               -> Step between datasets.
 
+        read_to_df = False      -> Choose whether dataframes will be stored on
+        RAM, that is, will be available on self.df list.
+
         This method assigns the following attributes to the object:
         
         self.pvd_name           -> Returns the name of the .pvd file.

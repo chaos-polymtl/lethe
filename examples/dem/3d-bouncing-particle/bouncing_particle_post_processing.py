@@ -53,7 +53,7 @@ for x in list1: # loop over the .prm
     top_bounce = np.array([0.5])  # Initialize an empty array to store the top of each bounce
     time = e.time_list  # Initialize an empty array to store the time step
 
-    for i in in range(len(e.list_vtu)): # Extract position and speed at every time step
+    for i in range(len(e.list_vtu)): # Extract position and speed at every time step
 
         df = e.get_df(i)
         position_z = np.append(position_z,df.points[0][2])

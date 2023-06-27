@@ -40,7 +40,7 @@ particles.modify_array(array_name = "particle_color", condition = condition, arr
 sphere = pv.Sphere(theta_resolution=50, phi_resolution=50)
 
 # Use sphere as basis to create sheric representation of particles
-particle_glyph = particles.get_df(40).glyph(scale='Diameter', geom=sphere)
+particle_glyph = particles.get_df(40).glyph(scale='diameter', geom=sphere)
 
 # Create a plotter object
 plotter = pv.Plotter()
@@ -61,7 +61,7 @@ plotter.show()
 particles.get_cylindrical_coords(radial_components = "yz")
 
 # Since all particles are of the same size (radius = coord 0)
-r_center_mass = np.mean(particles.get_df(40).points_cyl[:, 0])
+r_center_mass = np.mean(particles.get_df(40)["points_cyl"][:, 0])
 
 # Split domain in half (restarting array)
 condition = f"(y**2 + z**2)**(1/2) > {r_center_mass}"
@@ -79,9 +79,6 @@ particles.mixing_index_nearest_neighbors(reference_array = "particle_color", n_n
 
 # Store mixing index in a variable to compare with Doucet et al. (2008)
 particles.mixing_index_nnm = particles.mixing_index
-
-# Write data again to see the NNM mixing index on ParaView
-particles.write_vtu(prefix = "mix_")
 
 # Calculate mixing index using Doucet et al. (2008)
 
