@@ -130,8 +130,6 @@ class lethe_pyvista_tools():
         
         # Define path where vtu files are
         self.path_output = self.path_case + self.prm_dict['output path'].replace('.', '')
-
-        self.pvd_name = prefix + pvd_name
         
         # Read name of files in .pvd file        
         self.reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
