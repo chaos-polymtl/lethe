@@ -405,13 +405,13 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
       double minimal_radius = half_lengths[0];
       minimal_radius        = std::min(minimal_radius, half_lengths[1]);
       minimal_radius        = std::min(minimal_radius, half_lengths[2]);
-      minimal_radius *= 0.1;
+      minimal_radius *= 0.5;
       if (centered_point.norm() < minimal_radius)
         {
-          Point<dim> dummy_point{};
+          Point<dim> safety_point{};
           for (unsigned int d = 0; d < dim; d++)
-            dummy_point[d] = half_lengths[d];
-          closest_point = this->reverse_align_and_center(dummy_point);
+            safety_point[d] = sign(centered_point[d]) * 0.5 * half_lengths[d];
+          closest_point = this->reverse_align_and_center(safety_point);
         }
       else
         {
