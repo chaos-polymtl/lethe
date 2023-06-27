@@ -106,30 +106,14 @@ Mesh adaptation control
 .. code-block:: text
 
     subsection mesh adaptation
-      # Fraction of coarsened elements
       set fraction coarsening = 0.2
-    
-      # Fraction of refined elements
       set fraction refinement = 0.025
-    
-      # How the fraction of refinement/coarsening are interepreted
       set fraction type = number
-    
-      # Frequency of the mesh refinement
       set frequency = 1
-    
-      # Maximum number of elements
       set max number elements = 750000
-    
-      # Maximum refinement level
       set max refinement level = 6
-      # minimum refinement level
       set min refinement level = 4
-    
-      # Type of mesh adaptationChoices are <none|uniform|kelly>.
       set type = kelly
-    
-      # Variable for kelly estimationChoices are <velocity|pressure>.
       set variable = velocity
     end
 

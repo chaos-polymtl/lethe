@@ -121,31 +121,14 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  # Fraction of coarsened elements
   set fraction coarsening = 0.2
-
-  # Fraction of refined elements
   set fraction refinement = 0.025
-
-  # How the fraction of refinement/coarsening are interepretedChoices are
-  # <number|fraction>.
   set fraction type = number
-
-  # Frequency of the mesh refinement
   set frequency = 1
-
-  # Maximum number of elements
   set max number elements = 7500000
-
-  # Maximum refinement level
   set max refinement level = 6
-  # minimum refinement level
   set min refinement level = 4
-
-  # Type of mesh adaptationChoices are <none|uniform|kelly>.
   set type = kelly
-
-  # Variable for kelly estimationChoices are <velocity|pressure>.
   set variable = velocity
 end
 
@@ -185,16 +168,9 @@ end
 #---------------------------------------------------
 
 subsection restart
-  # Enable checkpointing. Checkpointing creates a restartpoint from which the
-  # simulation can be restarted from.
   set checkpoint = true
-  # Prefix for the filename of checkpoints
   set filename = restart
-
-  # Frequency for checkpointing
   set frequency = 10
-
-  # Frequency for checkpointing
   set restart = false
 end
 
