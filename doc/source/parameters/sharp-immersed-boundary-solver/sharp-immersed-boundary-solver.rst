@@ -209,9 +209,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Cut Hollow Sphere: *radius*, *cut height*, *wall thickness*; the effective radius is the *radius*;
 
-    * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*.
+    * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*;
 
-    * Superquadric: *x half length*, *y half length*, [*z half length* (if 3D)], *x exponent*, *y exponent*, [*z exponent* (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
+    * Superquadric: *x half length* (or :math:`a`), *y half length* (or :math:`b`), *z half length* (or :math:`c`), *x exponent* (or :math:`r`), *y exponent* (or :math:`s`), *z exponent* (or :math:`t`); the effective radius is the Euclidian norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by :math:`|\frac{x}{a}|^r + |\frac{y}{b}|^s + |\frac{z}{c}|^t - 1`. At the moment, only convex shapes are supported, which means exponents should be kept above 1;
 
     * Composite: *file name*.
    
