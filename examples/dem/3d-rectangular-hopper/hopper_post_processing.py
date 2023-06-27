@@ -31,7 +31,8 @@ save_path = simulation_path
 
 # Create the particle object
 pvd_name = 'hopper.pvd'
-particle = lethe_pyvista_tools(simulation_path, prm_file_name, pvd_name)
+ignore_data = ['type', 'diameter', 'volumetric contribution']
+particle = lethe_pyvista_tools(simulation_path, prm_file_name, pvd_name, ignore_data=ignore_data)
 
 #############################################################################
 # Beginning of flow (after loading particles)
@@ -96,7 +97,7 @@ data = pd.DataFrame({'time': particle.time_list, 'rate': rate,
 data.to_csv(save_path + '/results_' + pvd_name + '.csv')
 
 # Read data from paper
-paper_data = pd.read_csv('paper_data.csv', ',')
+paper_data = pd.read_csv('paper_data.csv')
 
 # Find range to calculate rate (this part is kind of headcoded)
 p0 = start + int(0.25/(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
