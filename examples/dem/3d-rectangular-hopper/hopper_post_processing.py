@@ -30,7 +30,8 @@ prm_file_name = sys.argv[2]
 save_path = simulation_path
 
 # Create the particle object
-particle = lethe_pyvista_tools(simulation_path, prm_file_name, 'hopper.pvd')
+pvd_name = 'hopper.pvd'
+particle = lethe_pyvista_tools(simulation_path, prm_file_name, pvd_name)
 
 #############################################################################
 # Beginning of flow (after loading particles)
@@ -71,7 +72,7 @@ rate = []
 # Loop through all results
 for i in range(len(particle.list_vtu)):
     # Store results in 'df'
-    df = particle.get_df[i]
+    df = particle.get_df(i)
 
     # Select the data (if particle is completely under hopper outlet)
     vertical_position = df.points[:, normal_vect]
