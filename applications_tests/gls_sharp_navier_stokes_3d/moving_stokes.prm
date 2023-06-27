@@ -161,10 +161,9 @@ subsection particles
  	end
  	
  	subsection local mesh refinement
- 		set initial refinement                      = 6
+ 		set initial refinement                      = 0
  		set refine mesh inside radius factor        = 111
         set refine mesh outside radius factor       = 111
-        set refinement zone extrapolation           = true
  	end
 
     subsection particle info 0

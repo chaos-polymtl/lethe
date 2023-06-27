@@ -8,6 +8,7 @@ subsection simulation control
     set time step               = 0.03125
     set time end                = 0.125
     set output frequency        = 0 
+    set log precision           = 3
 end
 #--------------------------------------------------
 # Physical Properties
