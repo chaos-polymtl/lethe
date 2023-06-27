@@ -61,34 +61,43 @@ subsection source term
   end
 end
 
-subsection particles
-  set number of particles                           = 3
-  set stencil order                                 = 1
-  set length ratio                                  = 1
-  set refine mesh inside radius factor              = 0
-  set refine mesh outside radius factor             = 1.5
-  set initial refinement                            = 0
-  subsection particle info 0
-    set type            = cylinder
-    set shape arguments = 0.35;1.1
-    subsection position
-      set Function expression = 0;0.9;0
+
+ subsection particles
+    set number of particles                     =3
+
+ 	subsection extrapolation function
+ 	    set stencil order                           = 1
+        set length ratio                            = 1
+ 	end
+ 	
+ 	
+ 	subsection local mesh refinement
+ 		set initial refinement                      = 0
+ 		set refine mesh inside radius factor        = 0
+        set refine mesh outside radius factor       = 1.5
+ 	end
+
+    subsection particle info 0
+        set type            = cylinder
+        set shape arguments = 0.35;1.1
+        subsection position
+          set Function expression = 0;0.9;0
+        end
     end
-  end
-  subsection particle info 1
-    set type            = cylinder
-    set shape arguments = 0.20;1.1
-    subsection position
-      set Function expression = 0;-0.02;0
+    subsection particle info 1
+        set type            = cylinder
+        set shape arguments = 0.20;1.1
+        subsection position
+          set Function expression = 0;-0.02;0
+        end
     end
-  end
-  subsection particle info 2
-    set type            = cylinder
-    set shape arguments = 0.25;1.1
-    subsection position
-      set Function expression = 0;-0.65;0
+    subsection particle info 2
+        set type            = cylinder
+        set shape arguments = 0.25;1.1
+        subsection position
+          set Function expression = 0;-0.65;0
+        end
     end
-  end
 end
 
 subsection forces

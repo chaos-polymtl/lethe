@@ -38,7 +38,7 @@ IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
   const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                                       fw_parameters,
-  const MPI_Comm                     &mpi_communicator_input,
+  const MPI_Comm &                    mpi_communicator_input,
   const std::vector<IBParticle<dim>> &particles)
 {
   parameters                = p_nsparam;
@@ -94,7 +94,8 @@ IBParticlesDEM<dim>::update_contact_candidates()
           if (particle_one.particle_id < particle_two.particle_id)
             {
               const Point<dim> particle_two_location = particle_two.position;
-              double distance = (particle_one_location - particle_two_location).norm();
+              double           distance =
+                (particle_one_location - particle_two_location).norm();
               if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
                   typeid(*particle_two.shape) == typeid(Sphere<dim>))
                 {
@@ -196,7 +197,8 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 }
               else
                 {
-                  // No contact force calculation between non-spherical particle.
+                  // No contact force calculation between non-spherical
+                  // particle.
                   normal_overlap = 0;
                   continue;
                 }
@@ -231,26 +233,56 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                       particle_two.mass);
 
                   if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
-                           typeid(*particle_two.shape) != typeid(Sphere<dim>))
+                      typeid(*particle_two.shape) != typeid(Sphere<dim>))
                     {
-                      // No tangential contact force between sphere and non-spherical object at the moment.
-                      tangential_force=0;
-                      // Re-orientate the normal force with the normal to the non-spherical particle.
-                      normal_force[0]=-normal_force.norm()*particle_two.shape->gradient(particle_one_location)[0]/particle_two.shape->gradient(particle_one_location).norm();
-                      normal_force[1]=-normal_force.norm()*particle_two.shape->gradient(particle_one_location)[1]/particle_two.shape->gradient(particle_one_location).norm();
-                      if constexpr (dim==3)
-                        normal_force[2]=-normal_force.norm()*particle_two.shape->gradient(particle_one_location)[2]/particle_two.shape->gradient(particle_one_location).norm();
+                      // No tangential contact force between sphere and
+                      // non-spherical object at the moment.
+                      tangential_force = 0;
+                      // Re-orientate the normal force with the normal to the
+                      // non-spherical particle.
+                      normal_force[0] =
+                        -normal_force.norm() *
+                        particle_two.shape->gradient(particle_one_location)[0] /
+                        particle_two.shape->gradient(particle_one_location)
+                          .norm();
+                      normal_force[1] =
+                        -normal_force.norm() *
+                        particle_two.shape->gradient(particle_one_location)[1] /
+                        particle_two.shape->gradient(particle_one_location)
+                          .norm();
+                      if constexpr (dim == 3)
+                        normal_force[2] =
+                          -normal_force.norm() *
+                          particle_two.shape->gradient(
+                            particle_one_location)[2] /
+                          particle_two.shape->gradient(particle_one_location)
+                            .norm();
                     }
                   else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
                            typeid(*particle_two.shape) == typeid(Sphere<dim>))
                     {
-                      // No tangential contact force between sphere and non-spherical object at the moment.
-                      tangential_force=0;
-                      // Re-orientate the normal force with the normal to the non-spherical particle.
-                      normal_force[0]=normal_force.norm()*particle_one.shape->gradient(particle_two_location)[0]/particle_one.shape->gradient(particle_two_location).norm();
-                      normal_force[1]=normal_force.norm()*particle_one.shape->gradient(particle_two_location)[1]/particle_one.shape->gradient(particle_two_location).norm();
-                      if constexpr (dim==3)
-                        normal_force[2]=normal_force.norm()*particle_one.shape->gradient(particle_two_location)[2]/particle_one.shape->gradient(particle_two_location).norm();
+                      // No tangential contact force between sphere and
+                      // non-spherical object at the moment.
+                      tangential_force = 0;
+                      // Re-orientate the normal force with the normal to the
+                      // non-spherical particle.
+                      normal_force[0] =
+                        normal_force.norm() *
+                        particle_one.shape->gradient(particle_two_location)[0] /
+                        particle_one.shape->gradient(particle_two_location)
+                          .norm();
+                      normal_force[1] =
+                        normal_force.norm() *
+                        particle_one.shape->gradient(particle_two_location)[1] /
+                        particle_one.shape->gradient(particle_two_location)
+                          .norm();
+                      if constexpr (dim == 3)
+                        normal_force[2] =
+                          normal_force.norm() *
+                          particle_one.shape->gradient(
+                            particle_two_location)[2] /
+                          particle_one.shape->gradient(particle_two_location)
+                            .norm();
                     }
 
                   contact_force[particle_one.particle_id] -=
@@ -303,7 +335,7 @@ IBParticlesDEM<dim>::calculate_pp_lubrication_force(
            ++particle_contact_candidates_id)
         {
           const auto &particle_contact_id = *particle_contact_candidates_id;
-          auto       &particle_two        = dem_particles[particle_contact_id];
+          auto &      particle_two        = dem_particles[particle_contact_id];
           if (particle_one.particle_id != particle_two.particle_id and
               particle_one.particle_id < particle_two.particle_id)
             {
@@ -362,9 +394,9 @@ template <int dim>
 void
 IBParticlesDEM<dim>::update_particles_boundary_contact(
   const std::vector<IBParticle<dim>> &particles,
-  const DoFHandler<dim>              &dof_handler,
-  const Quadrature<dim - 1>          &face_quadrature_formula,
-  const Mapping<dim>                 &mapping)
+  const DoFHandler<dim> &             dof_handler,
+  const Quadrature<dim - 1> &         face_quadrature_formula,
+  const Mapping<dim> &                mapping)
 {
   const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
@@ -767,7 +799,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
   double t = 0;
   // The gravitational acceleration.
   Tensor<1, 3> g;
-  this->parameters->f_gravity->set_time(cfd_time+dt);
+  this->parameters->f_gravity->set_time(cfd_time + dt);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
 
@@ -948,63 +980,83 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
                   dem_particles[p_i].set_position(dem_particles[p_i].position);
                 }
-              else{
+              else
+                {
                   if (parameters->load_particles_from_file == false)
                     {
-                      dem_particles[p_i].f_position->set_time(cfd_time+t+local_dt);
-                      dem_particles[p_i].f_velocity->set_time(cfd_time+t+local_dt);
-                      dem_particles[p_i].f_omega->set_time(cfd_time+t+local_dt);
-                      dem_particles[p_i].f_orientation->set_time(cfd_time+t+local_dt);
+                      dem_particles[p_i].f_position->set_time(cfd_time + t +
+                                                              local_dt);
+                      dem_particles[p_i].f_velocity->set_time(cfd_time + t +
+                                                              local_dt);
+                      dem_particles[p_i].f_omega->set_time(cfd_time + t +
+                                                           local_dt);
+                      dem_particles[p_i].f_orientation->set_time(cfd_time + t +
+                                                                 local_dt);
 
                       dem_particles[p_i].position[0] =
-                        dem_particles[p_i].f_position->value(dem_particles[p_i].position, 0);
+                        dem_particles[p_i].f_position->value(
+                          dem_particles[p_i].position, 0);
                       dem_particles[p_i].position[1] =
-                        dem_particles[p_i].f_position->value(dem_particles[p_i].position, 1);
+                        dem_particles[p_i].f_position->value(
+                          dem_particles[p_i].position, 1);
                       dem_particles[p_i].velocity[0] =
-                        dem_particles[p_i].f_velocity->value(dem_particles[p_i].position, 0);
+                        dem_particles[p_i].f_velocity->value(
+                          dem_particles[p_i].position, 0);
                       dem_particles[p_i].velocity[1] =
-                        dem_particles[p_i].f_velocity->value(dem_particles[p_i].position, 1);
+                        dem_particles[p_i].f_velocity->value(
+                          dem_particles[p_i].position, 1);
                       dem_particles[p_i].omega[0] =
-                        dem_particles[p_i].f_omega->value(dem_particles[p_i].position, 0);
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 0);
                       dem_particles[p_i].omega[1] =
-                        dem_particles[p_i].f_omega->value(dem_particles[p_i].position, 1);
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 1);
                       dem_particles[p_i].omega[2] =
-                        dem_particles[p_i].f_omega->value(dem_particles[p_i].position, 2);
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 2);
                       dem_particles[p_i].orientation[0] =
-                        dem_particles[p_i].f_orientation->value(dem_particles[p_i].position, 0);
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 0);
                       dem_particles[p_i].orientation[1] =
-                        dem_particles[p_i].f_orientation->value(dem_particles[p_i].position, 1);
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 1);
                       dem_particles[p_i].orientation[2] =
-                        dem_particles[p_i].f_orientation->value(dem_particles[p_i].position, 2);
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 2);
                       if (dim == 3)
                         {
                           dem_particles[p_i].position[2] =
-                            dem_particles[p_i].f_position->value(dem_particles[p_i].position,
-                                                           2);
+                            dem_particles[p_i].f_position->value(
+                              dem_particles[p_i].position, 2);
                           dem_particles[p_i].velocity[2] =
-                            dem_particles[p_i].f_velocity->value(dem_particles[p_i].position,
-                                                           2);
+                            dem_particles[p_i].f_velocity->value(
+                              dem_particles[p_i].position, 2);
                         }
                     }
                   else
                     {
-                      dem_particles[p_i].position[0] += dem_particles[p_i].velocity[0] * dt;
-                      dem_particles[p_i].position[1] +=dem_particles[p_i].velocity[1] * dt;
-                      dem_particles[p_i].orientation[0] = dem_particles[p_i].omega[0] * dt;
-                      dem_particles[p_i].orientation[1] =dem_particles[p_i].omega[1] * dt;
-                      dem_particles[p_i].orientation[2] = dem_particles[p_i].omega[2] * dt;
+                      dem_particles[p_i].position[0] +=
+                        dem_particles[p_i].velocity[0] * dt;
+                      dem_particles[p_i].position[1] +=
+                        dem_particles[p_i].velocity[1] * dt;
+                      dem_particles[p_i].orientation[0] =
+                        dem_particles[p_i].omega[0] * dt;
+                      dem_particles[p_i].orientation[1] =
+                        dem_particles[p_i].omega[1] * dt;
+                      dem_particles[p_i].orientation[2] =
+                        dem_particles[p_i].omega[2] * dt;
 
                       if (dim == 3)
                         {
-                          dem_particles[p_i].position[2] +=dem_particles[p_i].velocity[2] * dt;
+                          dem_particles[p_i].position[2] +=
+                            dem_particles[p_i].velocity[2] * dt;
                         }
                     }
                   dem_particles[p_i].set_position(dem_particles[p_i].position);
-                  dem_particles[p_i].set_orientation(dem_particles[p_i].orientation);
+                  dem_particles[p_i].set_orientation(
+                    dem_particles[p_i].orientation);
                 }
             }
-
-
         }
 
 

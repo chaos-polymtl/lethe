@@ -152,15 +152,20 @@ end
 # IB particules
 #---------------------------------------------------
 subsection particles
-	set number of particles = 1
-	set stencil order =6
-	set refine mesh inside radius factor = 111
-	set refine mesh outside radius factor = 111
-	set initial refinement = 0
-	set integrate motion = false
-	set alpha=1
-	set assemble Navier-Stokes inside particles = false
-	set length ratio = 2
+    set number of particles                     = 1
+    set assemble Navier-Stokes inside particles = false
+
+ 	subsection extrapolation function
+ 	    set stencil order                           = 6
+        set length ratio                            = 2
+ 	end
+ 	
+ 	subsection local mesh refinement
+ 		set initial refinement                      = 6
+ 		set refine mesh inside radius factor        = 111
+        set refine mesh outside radius factor       = 111
+        set refinement zone extrapolation           = true
+ 	end
 
     subsection particle info 0
         subsection position
@@ -169,12 +174,14 @@ subsection particles
         subsection velocity
             set Function expression =-sin(t);0;0
         end
-	    set type       = sphere
+	    set type            = sphere
         set shape arguments = 0.5
-	    set density = 1
+	    subsection physical properties
+            set density =  1
+        end
     end
-
 end
+
 
 # --------------------------------------------------
 # Analytical Solution

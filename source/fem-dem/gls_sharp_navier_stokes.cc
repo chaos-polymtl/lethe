@@ -129,7 +129,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
 
-  auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
@@ -294,8 +294,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
             }
 
           cut_cells_map[cell]    = {cell_is_cut,
-                                    particle_id_which_cuts_this_cell,
-                                    number_of_particles_cutting_this_cell};
+                                 particle_id_which_cuts_this_cell,
+                                 number_of_particles_cutting_this_cell};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
         }
@@ -429,7 +429,7 @@ template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_absolute_distance(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::map<types::global_dof_index, Point<dim>>        &support_points,
+  std::map<types::global_dof_index, Point<dim>> &       support_points,
   unsigned int                                          p)
 {
   // This function aims at defining if a cell is cut when the level set used to
@@ -743,7 +743,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
-  some_particle_coupled=false;
+  some_particle_coupled = false;
   // initialized the particles
   if (this->simulation_parameters.particlesParameters
         ->load_particles_from_file == false)
@@ -755,14 +755,24 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         {
           particles[i] =
             this->simulation_parameters.particlesParameters->particles[i];
-          if (particles[i].integrate_motion==true){
-              some_particle_coupled=true;
+          if (particles[i].integrate_motion == true)
+            {
+              some_particle_coupled = true;
             }
         }
     }
   else
     {
       load_particles_from_file();
+      for (unsigned int i = 0;
+           i < this->simulation_parameters.particlesParameters->nb;
+           ++i)
+        {
+          if (particles[i].integrate_motion == true)
+            {
+              some_particle_coupled = true;
+            }
+        }
     }
 
   table_p.resize(particles.size());
@@ -1094,7 +1104,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // IB stencil to extrapolate the fluid stress tensor.
 
                       std::vector<Tensor<2, dim>>
-                        local_face_viscous_stress_tensor(dofs_per_face);
+                                                  local_face_viscous_stress_tensor(dofs_per_face);
                       std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;
@@ -1565,7 +1575,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
         ->enable_extra_sharp_interface_vtu_output_field)
     {
       // Define cell iterator
-      const auto  &cell_iterator = this->dof_handler.active_cell_iterators();
+      const auto & cell_iterator = this->dof_handler.active_cell_iterators();
       unsigned int i             = 0;
 
       for (const auto &cell : cell_iterator)
@@ -1993,7 +2003,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
-  ib_dem.update_particles(particles, time-dt);
+  ib_dem.update_particles(particles, time - dt);
   std::map<field, double> field_values;
   field_values[field::shear_rate]  = 1;
   field_values[field::temperature] = 1;
@@ -2006,7 +2016,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
              .is_non_newtonian() and
            this->simulation_parameters.particlesParameters
              ->enable_lubrication_force and
-         some_particle_coupled),
+           some_particle_coupled),
          RequiresConstantViscosity(
            "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
 
@@ -2022,8 +2032,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     }
 
   particle_residual = 0;
-  if (some_particle_coupled &&
-      time > 0)
+  if (some_particle_coupled && time > 0)
     {
       Assert(this->simulation_parameters.physical_properties_manager
                .density_is_constant(),
@@ -3677,8 +3686,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3772,8 +3781,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim>                         &scratch_data,
-  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -4281,6 +4290,14 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
           particles[p_i].initialize_previous_solution();
+          if (restart_data["integrate_motion"][p_i] == 0.0)
+            {
+              particles[p_i].integrate_motion = false;
+            }
+          else
+            {
+              particles[p_i].integrate_motion = true;
+            }
         }
     }
   if (dim == 3)
@@ -4396,6 +4413,14 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
           particles[p_i].initialize_previous_solution();
+          if (restart_data["integrate_motion"][p_i] == 0.0)
+            {
+              particles[p_i].integrate_motion = false;
+            }
+          else
+            {
+              particles[p_i].integrate_motion = true;
+            }
         }
     }
 }
@@ -4463,8 +4488,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           this->update_boundary_conditions();
         }
 
-      if (some_particle_coupled ==
-          false)
+      if (some_particle_coupled == false)
         integrate_particles();
 
 

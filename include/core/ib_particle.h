@@ -330,7 +330,8 @@ public:
   // Allow the definition of a local relaxation parameter for each particle in
   // the integration process.
 
-  // Bool that indicates if the motion of this particle must be integrated. If it is false, the position and velocity are defined by the function.
+  // Bool that indicates if the motion of this particle must be integrated. If
+  // it is false, the position and velocity are defined by the function.
   bool integrate_motion;
   // Current residual of the particle velocity.
   double residual_velocity;
