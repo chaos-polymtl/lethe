@@ -13,7 +13,8 @@ from operator import itemgetter
 # Define class:
 class lethe_pyvista_tools():
 
-    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None, step = 1, read_to_df = False):
+    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None,
+                 step = 1, read_to_df = False, ignore_data = []):
         '''
         Contructor of post-processing object.
         
@@ -56,6 +57,8 @@ class lethe_pyvista_tools():
         read_to_df = False      -> Choose whether dataframes will be stored on
         RAM, that is, will be available on self.df list.
 
+        self.ignore_data        -> List of data to be ignored when reading
+
         This method assigns the following attributes to the object:
         
         self.pvd_name           -> Returns the name of the .pvd file.
@@ -69,6 +72,7 @@ class lethe_pyvista_tools():
 
         self.path_case = case_path
         self.prm_file = prm_file_name
+        self.ignore_data = ignore_data
 
         if not ".prm" in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
