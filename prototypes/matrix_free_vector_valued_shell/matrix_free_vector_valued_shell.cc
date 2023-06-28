@@ -609,8 +609,8 @@ struct MultigridParameters
 {
   struct
   {
-    std::string  type            = "gmres_with_identity";
-    unsigned int maxiter         = 10000;
+    std::string  type            = "gmres_with_amg";
+    unsigned int maxiter         = 1000;
     double       abstol          = 1e-20;
     double       reltol          = 1e-4;
     unsigned int smoother_sweeps = 1;
@@ -647,7 +647,7 @@ mg_solve(SolverControl &                                        solver_control,
          const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
          const MGTransferType &                                 mg_transfer)
 {
-  AssertThrow(mg_data.coarse_solver.type == "gmres_with_identity",
+  AssertThrow(mg_data.coarse_solver.type == "gmres_with_amg",
               ExcNotImplemented());
   AssertThrow(mg_data.smoother.type == "chebyshev", ExcNotImplemented());
 
