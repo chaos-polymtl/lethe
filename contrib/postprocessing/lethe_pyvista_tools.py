@@ -4,6 +4,7 @@
 
 # Import modules
 import os
+import shutil
 import numpy as np
 import pyvista as pv
 from tqdm import tqdm
@@ -12,9 +13,14 @@ from operator import itemgetter
 # Define class:
 class lethe_pyvista_tools():
 
-    def __init__(self, case_path = ".", prm_file_name = ""):
+    def __init__(self, case_path = ".", prm_file_name = "", pvd_name = "", prefix = "mod_", first = 0, last = None,
+                 step = 1, read_to_df = False, ignore_data = []):
         '''
         Contructor of post-processing object.
+        
+        The data follows the data models provided by PyVista.
+        For further information, consult:
+        https://docs.pyvista.org/user-guide/data_model.html
         
         The constructor parameters are:
 
@@ -34,10 +40,39 @@ class lethe_pyvista_tools():
         string with the parameter's name.
 
         self.path_output        -> Returns the path to the output folder.
+
+        pvd_name                -> Name of the .pvd file containing the 
+        reference to Lethe data.
+
+        prefix                  -> Prefix of the modified vtu and pvd files. By default, "mod_". IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over the original vtu and pvd files.
+
+        first = 0               -> First time-step to be read into PyVista 
+        dataset.
+
+        last  = None            -> Last time-step to be read into PyVista 
+        dataset.
+
+        step  = 1               -> Step between datasets.
+
+        read_to_df = False      -> Choose whether dataframes will be stored on
+        RAM, that is, will be available on self.df list.
+
+        self.ignore_data        -> List of data to be ignored when reading
+
+        This method assigns the following attributes to the object:
+        
+        self.pvd_name           -> Returns the name of the .pvd file.
+        
+        self.time_list          -> Returns the list of times corresponding to 
+        datasets.
+
+        self.list_vtu           -> Returns the list of names of .vtu files.
+
         '''
 
         self.path_case = case_path
         self.prm_file = prm_file_name
+        self.ignore_data = ignore_data
 
         if not ".prm" in self.prm_file:
             self.prm_file = self.prm_file + ".prm"
@@ -99,88 +134,127 @@ class lethe_pyvista_tools():
         
         # Define path where vtu files are
         self.path_output = self.path_case + self.prm_dict['output path'].replace('.', '')
-
-    # Read fluid or particle information from vtu files
-    def read_lethe_to_pyvista(self, pvd_name, first = 0, last = None, step = 1):
-        '''
-        Reads Lethe files into PyVista data.
-
-        The data follows the data models provided by PyVista.
-        For further information, consult:
-        https://docs.pyvista.org/user-guide/data_model.html
         
-        The reading parameters are:
-
-        pvd_name                -> Name of the .pvd file containing the 
-        reference to Lethe data.
-        
-        first = 0               -> First time-step to be read into PyVista 
-        dataset.
-
-        last  = None            -> Last time-step to be read into PyVista 
-        dataset.
-
-        step  = 1               -> Step between datasets.
-
-        This method assigns the following attributes to the object:
-        
-        self.pvd_name           -> Returns the name of the .pvd file.
-        
-        self.time_list          -> Returns the list of times corresponding to 
-        datasets.
-
-        self.list_vtu           -> Returns the list of names of .vtu files.
-
-        self.df[$TIME-STEP].    -> Returns a list of all datasets. Given a 
-        time-step number, returns the PyVista dataset related to the time-step.
-        '''
-
-        self.pvd_name = pvd_name
         # Read name of files in .pvd file        
-        reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
+        self.reader = pv.get_reader(f"{self.path_output}/{pvd_name}") 
 
         # Create list of pvd datasets
-        self.pvd_datasets = reader.datasets
+        pvd_datasets = self.reader.datasets
 
         # Create a list of time-steps
-        self.time_list = reader.time_values
+        self.time_list = self.reader.time_values
 
         # Create a list of all files' names
-        self.list_vtu = [self.pvd_datasets[x].path for x in range(len(self.pvd_datasets))]
-        self.list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in self.list_vtu]
+        list_vtu = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
+        list_vtu = [x.replace(".pvtu", ".0000.vtu") for x in list_vtu]
 
         # Remove duplicates
-        self.list_vtu = list(dict.fromkeys(self.list_vtu))
+        list_vtu = list(dict.fromkeys(list_vtu))
 
+        # Select data
         if last == None:
-            self.list_vtu = self.list_vtu[first::step]
+            list_vtu = list_vtu[first::step]
             self.time_list = self.time_list[first::step]
             self.first = first
             self.step = step
             self.last = len(self.time_list) - 1
         else:
-            self.list_vtu = self.list_vtu[first:last:step]
+            list_vtu = list_vtu[first:last:step]
             self.time_list = self.time_list[first:last:step]
             self.first = first
             self.step = step
             self.last = last
 
-        # Create empty array to store results
-        self.df = []
+        # List of paths among read data
+        read_files_path_list = [pvd_datasets[x].path for x in range(len(pvd_datasets))]
 
-        # Read VTU data
-        N_vtu = len(self.list_vtu)
-        pbar = tqdm(total = N_vtu, desc="Reading VTU files")
-        for i in range(len(self.list_vtu)):
-            
-            # Read dataframes from VTU files into df
-            self.df.append(pv.read(f"{self.path_output}/{self.list_vtu[i]}"))
+        # Write new vtu and pvd files to store modified data.
+        # IMPORTANT!!!! If this parameter is empty, that is,  "", data will be written over the original vtu and pvd files.
+        with open(f'{self.path_output}/{pvd_name}') as pvd_in:
+            with open(f'{self.path_output}/{prefix}{pvd_name}', 'w') as pvd_out:
+                for line in pvd_in:
+                    
+                    # If line refers to a dataset
+                    if "vtu" in line:
+
+                        # For all read files
+                        for path in read_files_path_list:
+
+                            # If line matches one of the files
+                            if path in line:
+                                line = line.replace('.pvtu', '.0000.vtu')
+                                line = line.replace('file="', f'file="{prefix}')
+                                pvd_out.write(line)
+                                read_files_path_list.remove(path)
+                                pass
+                    
+                    # Write config lines
+                    else:
+                        pvd_out.write(line)
+
+        # Make a copy of VTU files
+        N_vtu = len(list_vtu)
+        pbar = tqdm(total = N_vtu, desc="Writting modified VTU and PVD files")
+        self.list_vtu = []
+        for i in range(len(list_vtu)):
+            # Copy file
+            shutil.copy2(f'{self.path_output}/{list_vtu[i]}', f'{self.path_output}/{prefix}{list_vtu[i]}')
+
+            # Append to list of names of VTU files
+            self.list_vtu.append(f'{prefix}{list_vtu[i]}')
             pbar.update(1)
 
-        print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
+        # Fix name of PVD file
+        self.pvd_name = prefix + pvd_name
+
+        # Create pyvista reader for files in the new .pvd file 
+        self.reader = pv.get_reader(f"{self.path_output}/{self.pvd_name}") 
+
+        # Create list of PVD datasets with new files
+        self.pvd_datasets = self.reader.datasets
+
+        # Boolean indicating that the dataframes are not stored in the
+        # self.df object. If read_to_df = True is called, all data 
+        # will be stored in self.df, thus, consuming a lot of RAM. 
+        # Reading data into df can make the post-processing steps faster, since 
+        # each step will be already available in self.df. However, this 
+        # consumes a lot of RAM and for large simulations the tool will crash.
+        # Alternatively, if read_to_df = False, all functions
+        # will loop through the vtu files and flush.
+        self.df_available = False
+
+        if read_to_df:
+            # Create empty array to store results
+            self.df = []
+
+            # Read VTU data
+            N_vtu = len(self.list_vtu)
+            pbar = tqdm(total = N_vtu, desc="Reading VTU files")
+            for i in range(len(self.list_vtu)):
+                
+                # Read dataframes from VTU files into df
+                self.df.append(self.get_df)
+                pbar.update(1)
+
+            self.df_available = True
+
+            print(f'Written .df[timestep] from timestep = 0 to timestep = {len(self.list_vtu)-1}')
+
+
+    # Return single pyvista dataset from list
+    def get_df(self, time_step):
+        # Get reader for the VTU file
+        vtu_reader = pv.get_reader(f"{self.path_output}/{self.list_vtu[time_step]}")
+
+        # Ignore selected data in order to reduce RAM usage
+        for data in self.ignore_data:
+            vtu_reader.disable_point_array(data)
+
+        return vtu_reader.read()
+
 
     # Write modifications on each df to VTU files
-    def write_vtu(self, prefix = "mod_"):
+    def write_df_to_vtu(self, prefix = "mod_"):
         '''
         Writes .pvd and .vtu files from data stored in self.df.
         The files are written in self.output_path.
@@ -217,15 +291,19 @@ class lethe_pyvista_tools():
                     else:
                         pvd_out.write(line)
         
-        # Write modified VTU file
-        N_vtu = len(self.df)
-        pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
-        for i in range(len(self.df)):
-            self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
-            pbar.update(1)
+        
+        if self.df_available:
+            # Write modified VTU file
+            N_vtu = len(self.df)
+            pbar = tqdm(total = N_vtu, desc="Writting new VTU and PVD files")
+            for i in range(len(self.df)):
+                self.df[i].save(f'{self.path_output}/{prefix}{self.list_vtu[i]}')
+                pbar.update(1)
 
-
-        print(f"Modified .vtu and .pvd files with prefix {prefix} successfully written")
+            print(f"Modified .vtu and .pvd files with prefix {prefix} successfully written")
+        
+        else:
+            print(f"No df available for writing. Try to use read_lethe_to_pyvista first")
 
     # Sort all data given reference array 
     def sort_by_array(self, reference_array_name = "ID"):
@@ -240,11 +318,23 @@ class lethe_pyvista_tools():
         '''
         
         pbar = tqdm(total = len(self.time_list), desc = f"Sorting dataframe by {reference_array_name}")
-        for i in range(len(self.time_list)):
-            self.df[i].points = self.df[i].points[self.df[i][reference_array_name].argsort()]
-            for name in self.df[0].array_names:
-                self.df[i][name] = self.df[i][name][self.df[i][reference_array_name].argsort()]
-            pbar.update(1)
+        
+        if self.df_available:
+            for i in range(len(self.time_list)):
+                self.df[i].points = self.df[i].points[self.df[i][reference_array_name].argsort()]
+                for name in self.df[0].array_names:
+                    self.df[i][name] = self.df[i][name][self.df[i][reference_array_name].argsort()]
+                pbar.update(1)
+        
+        else:
+            for i in range(len(self.list_vtu)):
+                df = self.get_df(i)
+                df.points = df.points[df[reference_array_name].argsort()]
+                for name in df.array_names:
+                    df[name] = df[name][df[reference_array_name].argsort()]
+                
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+                pbar.update(1)
 
     # Creates or modifies array
     def modify_array(self, reference_array_name = "ID", array_name = "new_array", restart_array = False,  condition = "", array_values = 0, standard_value = 0, reference_time_step = 0, time_dependent = False):
@@ -301,7 +391,11 @@ class lethe_pyvista_tools():
         # This step is necessary to allow the usage of
         # the variables x, y, z, u, v, w, t, f_x, f_y, and f_z
         # in the condition argument
-        array_names = self.df[0].array_names
+        if self.df_available:
+            df = self.df[0]
+        else:
+            df = self.get_df(0)
+        array_names = df.array_names
         array_names.append("x")
         array_names.append("y")
         array_names.append("z")
@@ -320,21 +414,34 @@ class lethe_pyvista_tools():
         # The previous values in it will be preserved.
         # This can be used to apply multiple conditions without affecting
         # Previous modifications, for example. 
-        if restart_array == True or array_name not in array_names:
+        if restart_array == True or array_name not in df.array_names:
             # Create array if does not exist
-            new_array = np.repeat(standard_value, len(self.df[reference_time_step][reference_array_name]))
+            new_array = np.repeat(standard_value, len(df[reference_array_name]))
             print(f"Creating array '{array_name}' with standard_value {standard_value}")
 
             # Push array to all pyvista arrays
-            pbar = tqdm(total = len(self.df), desc = f"Creating array: {array_name}")
-            for i in range(len(self.df)):
-                self.df[i][array_name] = np.repeat(standard_value, len(self.df[i][reference_array_name]))
+            pbar = tqdm(total = len(self.list_vtu), desc = f"Creating array: {array_name}")
+            for i in range(len(self.list_vtu)):
+                if self.df_available:
+                    self.df[i][array_name] = np.repeat(standard_value, len(self.df[i][reference_array_name]))
+                
+                else:
+                    df = self.get_df(i)
+                    df[array_name] = np.repeat(standard_value, len(df[reference_array_name]))
+                    df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
                 pbar.update(1)
 
         else:
-            # Reading array from reference timestep
-            print("Reading previous array")
-            new_array = self.df[reference_time_step][array_name]
+            if self.df_available:
+                # Reading array from reference timestep
+                print("Reading previous array")
+                new_array = self.df[reference_time_step][array_name]
+
+            else:
+                print("Reading previous array")
+                df_reference = self.get_df(reference_time_step)
+                new_array = df_reference[array_name]
 
 
         # Create a list of array names that are used either in
@@ -351,8 +458,12 @@ class lethe_pyvista_tools():
                 # If one of the variables used in "condition"
                 # is a pyvista array, create a list with the
                 # name of the variable for further manipulation
-                if name in self.df[0].array_names:
-                    exec(f"global {name}; {name} = self.df[reference_time_step][name]")
+                if name in df.array_names:
+                    if self.df_available:
+                        exec(f"global {name}; {name} = self.df[reference_time_step][name]")
+                    else:
+                        df_reference = self.get_df(reference_time_step)
+                        exec(f"global {name}; {name} = df_reference[name]")
                     new_variables.add(name)
 
         if type(array_values) == type(str()):
@@ -363,8 +474,12 @@ class lethe_pyvista_tools():
                     # If one of the variable used in "array_value"
                     # is a pyvista array, create a list with the
                     # name of the variable for further manipulation
-                    if name in self.df[0].array_names:
-                        exec(f"global {name}; {name} = self.df[reference_time_step][name]")
+                    if name in df.array_names:
+                        if self.df_available:
+                            exec(f"global {name}; {name} = self.df[reference_time_step][name]")
+                        else:
+                            df_reference = self.get_df(reference_time_step)
+                            exec(f"global {name}; {name} = df_reference[name]")
                         new_variables.add(name)
 
         # If results vary with time,
@@ -373,49 +488,55 @@ class lethe_pyvista_tools():
         if time_dependent:
             ("Creating time-dependent array:")
             pbar = tqdm(total = len(self.time_list), desc = f"Looping through time-steps")
-            for i in range(len(self.df)):
+            for i in range(len(self.list_vtu)):
                 # Assign velocities and positions to variables using the ith
                 # time step
-                exec(f"global x; x = self.df[i].points[:, 0]")
-                exec(f'global y; y = self.df[i].points[:, 1]')
-                exec(f'global z; z = self.df[i].points[:, 2]')
+                if self.df_available:
+                    df = self.df[i]
+
+                else:
+                    df = self.get_df(i)
+
+                exec(f"global x; x = df.points[:, 0]")
+                exec(f'global y; y = df.points[:, 1]')
+                exec(f'global z; z = df.points[:, 2]')
 
 
                 # In case velocity is written with caps V or v
-                if "velocity" in self.df[0].array_names:
-                    exec(f'global u; u = self.df[i]["velocity"][:, 0]')
-                    exec(f'global v; v = self.df[i]["velocity"][:, 1]')
-                    exec(f'global w; w = self.df[i]["velocity"][:, 2]')
+                if "velocity" in array_names:
+                    exec(f'global u; u = df["velocity"][:, 0]')
+                    exec(f'global v; v = df["velocity"][:, 1]')
+                    exec(f'global w; w = df["velocity"][:, 2]')
 
 
-                elif "Velocity" in self.df[0].array_names:
-                    exec(f'global u; u = self.df[i]["Velocity"][:, 0]')
-                    exec(f'global v; v = self.df[i]["Velocity"][:, 1]')
-                    exec(f'global w; w = self.df[i]["Velocity"][:, 2]')
+                elif "Velocity" in array_names:
+                    exec(f'global u; u = df["Velocity"][:, 0]')
+                    exec(f'global v; v = df["Velocity"][:, 1]')
+                    exec(f'global w; w = df["Velocity"][:, 2]')
 
                 # In case of FemForce or fem_force
-                if "FemForce" in self.df[0].array_names:
-                    exec(f'global f_x; f_x = self.df[i]["FemForce"][:, 0]')
-                    exec(f'global f_y; f_y = self.df[i]["FemForce"][:, 1]')
-                    exec(f'global f_z; f_z = self.df[i]["FemForce"][:, 2]')
+                if "FemForce" in array_names:
+                    exec(f'global f_x; f_x = df["FemForce"][:, 0]')
+                    exec(f'global f_y; f_y = df["FemForce"][:, 1]')
+                    exec(f'global f_z; f_z = df["FemForce"][:, 2]')
 
-                elif "fem_force" in self.df[0].array_names:
-                    exec(f'global f_x; f_x = self.df[i]["fem_force"][:, 0]')
-                    exec(f'global f_y; f_y = self.df[i]["fem_force"][:, 1]')
-                    exec(f'global f_z; f_z = self.df[i]["fem_force"][:, 2]')
+                elif "fem_force" in array_names:
+                    exec(f'global f_x; f_x = df["fem_force"][:, 0]')
+                    exec(f'global f_y; f_y = df["fem_force"][:, 1]')
+                    exec(f'global f_z; f_z = df["fem_force"][:, 2]')
 
                 # In case of fem_torque
-                if "fem_torque" in self.df[0].array_names:
-                    exec(f'global t_x; t_x = self.df[i]["fem_torque"][:, 0]')
-                    exec(f'global t_y; t_y = self.df[i]["fem_torque"][:, 1]')
-                    exec(f'global t_z; t_z = self.df[i]["fem_torque"][:, 2]')
+                if "fem_torque" in array_names:
+                    exec(f'global t_x; t_x = df["fem_torque"][:, 0]')
+                    exec(f'global t_y; t_y = df["fem_torque"][:, 1]')
+                    exec(f'global t_z; t_z = df["fem_torque"][:, 2]')
 
                 # Update lists used either in "condition" or "array_value":
                 for variable in new_variables:
-                    exec(f"{variable} = self.df[i][variable]")
+                    exec(f"{variable} = df[variable]")
 
                 # Reading array from reference timestep
-                new_array = self.df[i][array_name]
+                new_array = df[array_name]
 
                 # Fill new_array with array_value
                 for k in range(len(new_array)):
@@ -428,7 +549,13 @@ class lethe_pyvista_tools():
                             new_array[k] = eval(array_values)
 
                 # Assign new_array to pyvista dataframe
-                self.df[i][array_name] = new_array
+                df[array_name] = new_array
+                
+                if self.df_available:
+                    self.df[i] = df
+                else:
+                    df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
                 pbar.update(1)
 
         # If not time dependent, the condition and array_values will be applied
@@ -443,41 +570,46 @@ class lethe_pyvista_tools():
         else:
             print(f"Creating array based on time-step number: {reference_time_step}")
             print(f"Corresponding time: {self.time_list[reference_time_step]}")
-            # Assign velocities and positions to variables using
-            # reference_time_step
-            exec(f'global x; x = self.df[reference_time_step].points[:, 0]')
-            exec(f'global y; y = self.df[reference_time_step].points[:, 1]')
-            exec(f'global z; z = self.df[reference_time_step].points[:, 2]')
+            
+            if self.df_available:
+                df_reference = self.df[reference_time_step]
+
+            else:
+                df_reference = self.get_df(reference_time_step)
+
+            exec(f'global x; x = df_reference.points[:, 0]')
+            exec(f'global y; y = df_reference.points[:, 1]')
+            exec(f'global z; z = df_reference.points[:, 2]')
 
 
             # In case velocity is written with caps V or v
-            if "velocity" in self.df[0].array_names:
-                exec(f'global u; u = self.df[reference_time_step]["velocity"][:, 0]')
-                exec(f'global v; v = self.df[reference_time_step]["velocity"][:, 1]')
-                exec(f'global w; w = self.df[reference_time_step]["velocity"][:, 2]')
+            if "velocity" in array_names:
+                exec(f'global u; u = df_reference["velocity"][:, 0]')
+                exec(f'global v; v = df_reference["velocity"][:, 1]')
+                exec(f'global w; w = df_reference["velocity"][:, 2]')
 
 
-            elif "Velocity" in self.df[0].array_names:
-                exec(f'global u; u = self.df[reference_time_step]["Velocity"][:, 0]')
-                exec(f'global v; v = self.df[reference_time_step]["Velocity"][:, 1]')
-                exec(f'global w; w = self.df[reference_time_step]["Velocity"][:, 2]')
+            elif "Velocity" in array_names:
+                exec(f'global u; u = df_reference["Velocity"][:, 0]')
+                exec(f'global v; v = df_reference["Velocity"][:, 1]')
+                exec(f'global w; w = df_reference["Velocity"][:, 2]')
 
             # In case of FemForce or fem_force
-            if "FemForce" in self.df[0].array_names:
-                exec(f'global f_x; f_x = self.df[i]["FemForce"][:, 0]')
-                exec(f'global f_y; f_y = self.df[i]["FemForce"][:, 1]')
-                exec(f'global f_z; f_z = self.df[i]["FemForce"][:, 2]')
+            if "FemForce" in array_names:
+                exec(f'global f_x; f_x = df_reference["FemForce"][:, 0]')
+                exec(f'global f_y; f_y = df_reference["FemForce"][:, 1]')
+                exec(f'global f_z; f_z = df_reference["FemForce"][:, 2]')
 
-            elif "fem_force" in self.df[0].array_names:
-                exec(f'global f_x; f_x = self.df[i]["fem_force"][:, 0]')
-                exec(f'global f_y; f_y = self.df[i]["fem_force"][:, 1]')
-                exec(f'global f_z; f_z = self.df[i]["fem_force"][:, 2]')
+            elif "fem_force" in array_names:
+                exec(f'global f_x; f_x = df_reference["fem_force"][:, 0]')
+                exec(f'global f_y; f_y = df_reference["fem_force"][:, 1]')
+                exec(f'global f_z; f_z = df_reference["fem_force"][:, 2]')
 
             # In case of fem_torque
-            if "fem_torque" in self.df[0].array_names:
-                exec(f'global t_x; t_x = self.df[i]["fem_torque"][:, 0]')
-                exec(f'global t_y; t_y = self.df[i]["fem_torque"][:, 1]')
-                exec(f'global t_z; t_z = self.df[i]["fem_torque"][:, 2]')
+            if "fem_torque" in array_names:
+                exec(f'global t_x; t_x = df_reference["fem_torque"][:, 0]')
+                exec(f'global t_y; t_y = df_reference["fem_torque"][:, 1]')
+                exec(f'global t_z; t_z = df_reference["fem_torque"][:, 2]')
 
             # Fill new_array with array_value
             print(f"Creating new array named: {array_name}")
@@ -491,12 +623,16 @@ class lethe_pyvista_tools():
                         new_array[k] = eval(array_values)
 
             # Assign new_array to pyvista dataframe
-            self.df[reference_time_step][array_name] = new_array
+            if self.df_available:
+                self.df[reference_time_step][array_name] = new_array
+            else:
+                df_reference[array_name] = new_array
+                df_reference.save(f'{self.path_output}/{self.list_vtu[reference_time_step]}')
 
             # Create dictionary (map) based on reference_array
-            reference_time_step_dict = dict(zip(self.df[reference_time_step][reference_array_name], self.df[reference_time_step][array_name]))
+            reference_time_step_dict = dict(zip(df_reference[reference_array_name], df_reference[array_name]))
             
-            key_list = self.df[reference_time_step][reference_array_name]
+            key_list = df_reference[reference_array_name]
 
             # Use the same values for all time steps
             # Note that "reference_array_name" is used as criterium here
@@ -504,13 +640,22 @@ class lethe_pyvista_tools():
             # according to the user by changin the parameter
             # "reference_array_name" to any other array name in the original
             # pyvista arrays
-            # (self.df[0].array_names, for example)
-            pbar = tqdm(total = len(self.df), desc = f"Assigning {array_name} to dataframes")
-            for i in range(len(self.df)):
-
+            pbar = tqdm(total = len(self.list_vtu), desc = f"Assigning {array_name} to dataframes")
+            for i in range(len(self.list_vtu)):
                 # Find elements in common in current and reference arrays
-                keys, indices, _ = np.intersect1d(self.df[i][reference_array_name], key_list, assume_unique = True, return_indices = True)
-                self.df[i][array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
+                if self.df_available:
+                    df = self.df[i]
+                else:
+                    df = self.get_df(i)
+                
+                keys, indices, _ = np.intersect1d(df[reference_array_name], key_list, assume_unique = True, return_indices = True)
+
+                if self.df_available:
+                    self.df[i][array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
+                else:
+                    df[array_name][indices] = itemgetter(*keys)(reference_time_step_dict)
+                    df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
 
                 pbar.update(1)
 
@@ -525,7 +670,7 @@ class lethe_pyvista_tools():
 
         This method assigns the following attribute to the object:
         
-        self.df[$TIME-STEP].points_cyl -> Returns a .points like array with all 
+        self.df[$TIME-STEP]['points_cyl'] -> Returns a .points like array with all 
         points in cylindrical [radius, theta, height].
         '''
 
@@ -549,11 +694,16 @@ class lethe_pyvista_tools():
         z_index = [x for x in [0, 1, 2] if x not in radial_indices]
 
         # Loop through data
-        pbar = tqdm(total = len(self.df), desc = "Getting cylindrical coords")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Getting cylindrical coords")
+        for i in range(len(self.list_vtu)):
+
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # Get cartesian position
-            cartesian = self.df[i].points
+            cartesian = df.points
 
             # Calculate radial coord
             radius = np.sqrt(cartesian[:, radial_indices[0]]**2 + cartesian[:, radial_indices[1]]**2)
@@ -565,10 +715,17 @@ class lethe_pyvista_tools():
             z = cartesian[:, z_index].flatten()
 
             # Store coordinates into points_cyl (same shape as .points)
-            self.df[i].points_cyl = np.empty(self.df[i].points.shape)
-            self.df[i].points_cyl[:, 0] = radius.tolist()
-            self.df[i].points_cyl[:, 1] = theta
-            self.df[i].points_cyl[:, 2] = z
+            if self.df_available:
+                self.df[i]['points_cyl'] = np.empty(df.points.shape)
+                self.df[i]['points_cyl'][:, 0] = radius.tolist()
+                self.df[i]['points_cyl'][:, 1] = theta
+                self.df[i]['points_cyl'][:, 2] = z
+            else:
+                df['points_cyl'] = np.empty(df.points.shape)
+                df['points_cyl'][:, 0] = radius.tolist()
+                df['points_cyl'][:, 1] = theta
+                df['points_cyl'][:, 2] = z
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
 
             pbar.update(1)
 
@@ -613,16 +770,21 @@ class lethe_pyvista_tools():
         from sklearn.neighbors import KDTree
 
         # Loop through dataframes to search for neighbors
-        pbar = tqdm(total = len(self.df), desc = "Finding neighbors")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Finding neighbors")
+        for i in range(len(self.list_vtu)):
+
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # Create a tree from points
-            tree = KDTree(self.df[i].points)
+            tree = KDTree(df.points)
 
             # Get the distance and the indices of the n_neighbors neighbors
             # It is important to note that the closest neighbor is going to
             # be the point itself, so we ask for n_neighbors + 1
-            dist, indices = tree.query(self.df[i].points, k = n_neighbors+1)
+            dist, indices = tree.query(df.points, k = n_neighbors+1)
 
             # Remove itself from indices and dist for all points
             indices = indices[:, 1:]
@@ -630,10 +792,18 @@ class lethe_pyvista_tools():
 
             # Add neighbors_id, neighbors indices, and neighbors distances
             # to each dataframe
-            if return_id and hasattr(self.df[0], "ID"):
-                self.df[i].neighbors_id = self.df[i]["ID"][indices]
-            self.df[i].neighbors = indices
-            self.df[i].neighbors_dist = dist
+            if self.df_available:
+                if return_id and hasattr(df, "ID"):
+                    self.df[i]["neighbors_id"] = self.df[i]["ID"][indices]
+                self.df[i]["neighbors"] = indices
+                self.df[i]["neighbors_dist"] = dist
+            else:
+                if return_id and hasattr(df, "ID"):
+                    df["neighbors_id"] = df["ID"][indices]
+                df["neighbors"] = indices
+                df["neighbors_dist"] = dist
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
             pbar.update(1)
 
 
@@ -675,7 +845,13 @@ class lethe_pyvista_tools():
         # "Characterizing solids mixing in DEM simulations." cell 1 (2007).
 
         # If neighbors is not an attribute of the dataframe
-        if hasattr(self.df[0], "neighbors") == False or len(self.df[0].neighbors[0]) != n_neighbors:
+
+        if self.df_available:
+            df = self.df[0]
+        else:
+            df = self.get_df(0)
+
+        if hasattr(df, "neighbors") == False or len(df['neighbors'][0]) != n_neighbors:
             self.get_nearest_neighbors(n_neighbors = n_neighbors)
 
         # Create empty list to store mixing_index per time-step
@@ -683,19 +859,29 @@ class lethe_pyvista_tools():
         self.mixing_index_std = []
 
         # Loop through dataframes and find its mixing index
-        pbar = tqdm(total = len(self.df), desc = "Calculating mixing index")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Calculating mixing index")
+        for i in range(len(self.list_vtu)):
+
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # Find particles with different values for the reference array per 
             # particle
-            list_neighbor_reference_array = self.df[i][reference_array][self.df[i].neighbors]
-            n_equal_neighbors_per_particle = np.sum(np.equal(self.df[i][reference_array][:, None], list_neighbor_reference_array), axis = 1)
+            list_neighbor_reference_array = df[reference_array][df['neighbors']]
+            n_equal_neighbors_per_particle = np.sum(np.equal(df[reference_array][:, None], list_neighbor_reference_array), axis = 1)
 
             # Calculate mixing index per particle
             mixing_index_per_particle = 2*(1-(1/n_neighbors) * n_equal_neighbors_per_particle)
 
             # Create array of mixing index per particle
-            self.df[i][mixing_index_array_name] = mixing_index_per_particle
+            if self.df_available:
+                self.df[i][mixing_index_array_name] = mixing_index_per_particle
+            else:
+                df[mixing_index_array_name] = mixing_index_per_particle
+                df.save(f'{self.path_output}/{self.list_vtu[i]}')
+
             mixing_index = np.mean(mixing_index_per_particle)
             mixing_index_std = np.std(mixing_index_per_particle)
 
@@ -749,37 +935,51 @@ class lethe_pyvista_tools():
 
         # Get cylindrical coordinates if requested and not previously
         # calculated
-        if use_cyl and hasattr(self.df[0], "points_cyl") == False:
+
+        if self.df_available:
+            df = self.df[reference_time_step]
+        else:
+            df = self.get_df(reference_time_step)
+
+        if use_cyl and hasattr(df, "points_cyl") == False:
             self.get_cylindrical_coords()
+
+            if self.df_available == False:
+                df = self.get_df(reference_time_step)
 
         # If cylindrical coordinates requested, assign points_cyl to reference
         # position, otherwise use cartesian
         if use_cyl:
-            reference_position = self.df[reference_time_step].points_cyl
+            reference_position = df['points_cyl']
         else:
-            reference_position = self.df[reference_time_step].points
+            reference_position = df.points
 
         # Get position of particles corresponding IDs
-        id_keys = self.df[reference_time_step]["ID"]
+        id_keys = df["ID"]
 
 
         # Create list of mixing indices per time-step and array of eigenvectors
         self.mixing_index = []
-        self.mixing_eigenvector = np.empty((len(self.df), 3))
+        self.mixing_eigenvector = np.empty((len(self.list_vtu), 3))
 
         # Loop through dataframes and find its mixing index
-        pbar = tqdm(total = len(self.df), desc = "Calculating mixing index")
-        for i in range(len(self.df)):
+        pbar = tqdm(total = len(self.list_vtu), desc = "Calculating mixing index")
+        for i in range(len(self.list_vtu)):
+
+            if self.df_available:
+                df = self.df[i]
+            else:
+                df = self.get_df(i)
 
             # If cylindrical coordinates requested, assign points_cyl to current
             # position, otherwise use cartesian
             if use_cyl:
-                i_position = self.df[i].points_cyl
+                i_position = df['points_cyl']
             else:
-                i_position = self.df[i].points
+                i_position = df.points
 
             # Find indices of particles in different time-steps
-            _, indices_i, indices_ref = np.intersect1d(self.df[i]["ID"], id_keys, assume_unique = True, return_indices = True)
+            _, indices_i, indices_ref = np.intersect1d(df["ID"], id_keys, assume_unique = True, return_indices = True)
 
             # Calculate correlation matrix
             correlation_matrix = np.corrcoef(i_position[indices_i], reference_position[indices_ref], rowvar=False)[3:, :3]

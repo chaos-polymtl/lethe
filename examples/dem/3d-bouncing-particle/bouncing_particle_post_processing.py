@@ -42,28 +42,24 @@ color_list = np.array(['r', 'b','c' ,'y' ,'g' ,'m'])
 order = np.empty(len(list1)*2 , int)
 
 for x in list1: # loop over the .prm
-
-    e = lethe_pyvista_tools('.', x)
-    pvd_name = e.prm_dict["output name"]
+    e = lethe_pyvista_tools('.', x, 'out.pvd')
 
     # plot marker
     line = "-x" + color_list[color_index]
     square = "o" + color_list[color_index]
-
-    # Read data
-    e.read_lethe_to_pyvista(f'{pvd_name}.pvd')
 
     position_z = np.array([])  # Initialize an empty array to store the z position at each time step
     vitesse_z = np.array([])  # Initialize an empty array to store the speed at each time step
     top_bounce = np.array([0.5])  # Initialize an empty array to store the top of each bounce
     time = e.time_list  # Initialize an empty array to store the time step
 
-    for i in e.df: # Extract position and speed at every time step
-        position_z = np.append(position_z,i.points[0][2])
-        vitesse_z = np.append(vitesse_z,i['velocity'][0, 2])
+    for i in range(len(e.list_vtu)): # Extract position and speed at every time step
+
+        df = e.get_df(i)
+        position_z = np.append(position_z,df.points[0][2])
+        vitesse_z = np.append(vitesse_z,df['velocity'][0, 2])
 
     k = np.array([0])
-
 
     R_c = []
     for i in range(13):

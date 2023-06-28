@@ -25,17 +25,13 @@ from lethe_pyvista_tools import *
 # This script prints out the content of your prm file as dictionary
 # To run lethe_pyvista_tools you need to specify the path to your
 # case and the name of the .prm file
-example = lethe_pyvista_tools('PATH TO YOUR CASE', 'NAME_OF_YOUR_PARAMETERS_FILE.prm')
+example = lethe_pyvista_tools('PATH TO YOUR CASE', 'NAME_OF_YOUR_PARAMETERS_FILE.prm', 'NAME_OF_YOUR_PVD_FILE.pvd')
 
 print('This is the dictionary of your .prm file:')
 print(example.prm_dict)
 print('To print out any value inside the dictionary, ask for it using ["parameter_name"] right after .prm_dict variable')
 
 print('The path to the case can be seen using: example.case_path')
-
-# To read the data to pyvista dataframe, use the following with
-# the .pvd file as argument
-example.read_lethe_to_pyvista('NAME_OF_YOUR_PVD_FILE.pvd')
 
 # The read_lethe_to_pyvista method writes out the attributes .time_list,
 # .list_vtu and reads the '.vtu' files inside the pointed folder as pyvista
@@ -46,13 +42,12 @@ print('Time list, if transient: ')
 print(example.time_list)
 
 # Each .vtu file will correspond to a dataframe named df, such that the first
-# vtu can be accessed through .df[0], the second .df[1], and so on.
-print(example.df[0])
+# vtu can be accessed through .get_df(0), the second .get_df(1), and so on.print(example.get_df(0))
 
 # This should print out the name of the arrays in the first vtu file of your
 # case
 print('Name of the arrays in your pyvista dataframe: ')
-print(example.df[0].array_names)
+print(example.get_df(0).array_names)
 
 # This function sorts all arrays according to a given one array name.
 # For particle data, for example, the particles can be sorted according
@@ -102,8 +97,5 @@ example.modify_array()
 # Other modifications can be made without using the array_modified function, 
 # using the same structure as in PyVista documentation
 # (https://docs.pyvista.org/)
-
-# To write those, the following can be used:
-example.write_vtu()
 
 # For further information about PyVista, refer to https://docs.pyvista.org/
