@@ -13,7 +13,6 @@
  *
  * ---------------------------------------------------------------------*/
 
-
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -58,6 +57,7 @@
 #include <deal.II/multigrid/mg_matrix.h>
 #include <deal.II/multigrid/mg_smoother.h>
 #include <deal.II/multigrid/mg_tools.h>
+#include <deal.II/multigrid/mg_transfer_global_coarsening.h>
 #include <deal.II/multigrid/mg_transfer_matrix_free.h>
 #include <deal.II/multigrid/multigrid.h>
 
@@ -78,7 +78,8 @@ struct Settings
   enum PreconditionerType
   {
     amg,
-    gmg,
+    lsmg,
+    gcmg,
     ilu,
     none
   };
@@ -99,12 +100,10 @@ struct Settings
   SourceTermType     source_term;
 
   int          dimension;
-  unsigned int u_order;
-  unsigned int p_order;
+  unsigned int element_order;
   unsigned int number_of_cycles;
   unsigned int initial_refinement;
   unsigned int repetitions;
-  bool         nonlinearity;
   bool         output;
   std::string  output_name;
   std::string  output_path;
@@ -118,14 +117,10 @@ Settings::try_parse(const std::string &prm_filename)
                     "2",
                     Patterns::Integer(),
                     "The problem dimension <2|3>");
-  prm.declare_entry("u order",
+  prm.declare_entry("element order",
                     "1",
                     Patterns::Integer(),
-                    "Order of FE element for the u <1|2|3>");
-  prm.declare_entry("p order",
-                    "1",
-                    Patterns::Integer(),
-                    "Order of FE element for the p <1|2|3>");
+                    "Order of FE element for u and p <1|2|3>");
   prm.declare_entry("number of cycles",
                     "1",
                     Patterns::Integer(),
@@ -142,10 +137,6 @@ Settings::try_parse(const std::string &prm_filename)
                     "1",
                     Patterns::Integer(),
                     "Repetitions in one direction for the hyperrectangle");
-  prm.declare_entry("nonlinearity",
-                    "false",
-                    Patterns::Bool(),
-                    "Add exponential nonlinearity <true|false>");
   prm.declare_entry("output",
                     "true",
                     Patterns::Bool(),
@@ -160,8 +151,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Path for vtu output files");
   prm.declare_entry("preconditioner",
                     "AMG",
-                    Patterns::Selection("AMG|GMG|ILU|none"),
-                    "GMRES Preconditioner <AMG|GMG|ILU|none>");
+                    Patterns::Selection("AMG|LSMG|GCMG|ILU|none"),
+                    "GMRES Preconditioner <AMG|LSMG|GCMG|ILU|none>");
   prm.declare_entry("source term",
                     "zero",
                     Patterns::Selection("zero|mms"),
@@ -194,8 +185,10 @@ Settings::try_parse(const std::string &prm_filename)
 
   if (prm.get("preconditioner") == "AMG")
     this->preconditioner = amg;
-  else if (prm.get("preconditioner") == "GMG")
-    this->preconditioner = gmg;
+  else if (prm.get("preconditioner") == "LSMG")
+    this->preconditioner = lsmg;
+  else if (prm.get("preconditioner") == "GCMG")
+    this->preconditioner = gcmg;
   else if (prm.get("preconditioner") == "ILU")
     this->preconditioner = ilu;
   else if (prm.get("preconditioner") == "none")
@@ -216,12 +209,10 @@ Settings::try_parse(const std::string &prm_filename)
     AssertThrow(false, ExcNotImplemented());
 
   this->dimension          = prm.get_integer("dim");
-  this->u_order            = prm.get_integer("u order");
-  this->p_order            = prm.get_integer("p order");
+  this->element_order      = prm.get_integer("element order");
   this->number_of_cycles   = prm.get_integer("number of cycles");
   this->initial_refinement = prm.get_integer("initial refinement");
   this->repetitions        = prm.get_integer("repetitions");
-  this->nonlinearity       = prm.get_bool("nonlinearity");
   this->output             = prm.get_bool("output");
   this->output_name        = prm.get("output name");
   this->output_path        = prm.get("output path");
@@ -355,254 +346,518 @@ evaluate_function(const Function<dim> &                      function,
   return result;
 }
 
-// Matrix-free differential operator for a vector-valued problem
+// Matrix-free differential operator for a vector-valued problem.
+// It "replaces" the traditional assemble_matrix() function.
 template <int dim, typename number>
-class VectorValuedOperator
-  : public MatrixFreeOperators::Base<dim,
-                                     LinearAlgebra::distributed::Vector<number>>
+class VectorValuedOperator : public Subscriptor
 {
 public:
+  // The FEEValuation class is used to evaluate the solution vector
+  // at the quadrature points and to perform the integration. The
+  // second and third template arguments are set to -1 and 0 to let
+  // the class select dynamically the approproate polynomial order
+  // and number of quadrature points.
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+
+  using VectorType = LinearAlgebra::distributed::Vector<number>;
+
   using value_type = number;
 
-  using UIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using size_type = VectorizedArray<number>;
 
   VectorValuedOperator();
 
-  virtual void
-  clear() override;
+  VectorValuedOperator(const MappingQ<dim> &            mapping,
+                       const DoFHandler<dim> &          dof_handler,
+                       const AffineConstraints<number> &constraints,
+                       const QGauss<1> &                quadrature);
 
   void
-  reinit_operator_parameters(const Settings &parameters);
+  reinit(const MappingQ<dim> &            mapping,
+         const DoFHandler<dim> &          dof_handler,
+         const AffineConstraints<number> &constraints,
+         const QGauss<1> &                quadrature);
+
+  types::global_dof_index
+  m() const;
+
+  number
+  el(unsigned int, unsigned int) const;
 
   void
-  evaluate_newton_step(
-    const LinearAlgebra::distributed::Vector<number> &newton_step);
+  clear();
 
-  virtual void
-  compute_diagonal() override;
+  void
+  initialize_dof_vector(VectorType &vec) const;
+
+  void
+  vmult(VectorType &dst, const VectorType &src) const;
+
+  void
+  Tvmult(VectorType &dst, const VectorType &src) const;
 
   const TrilinosWrappers::SparseMatrix &
-  get_system_matrix(const AffineConstraints<number> &constraints);
+  get_system_matrix() const;
+
+  void
+  compute_inverse_diagonal(VectorType &diagonal) const;
+
+  void
+  vmult_interface_down(VectorType &dst, const VectorType &src) const;
+
+  void
+  vmult_interface_up(VectorType &dst, const VectorType &src) const;
 
 private:
-  virtual void
-  apply_add(
-    LinearAlgebra::distributed::Vector<number> &      dst,
-    const LinearAlgebra::distributed::Vector<number> &src) const override;
+  void
+  do_cell_integral_local(FECellIntegrator &integrator) const;
 
   void
-  local_apply(const MatrixFree<dim, number> &                   data,
-              LinearAlgebra::distributed::Vector<number> &      dst,
-              const LinearAlgebra::distributed::Vector<number> &src,
-              const std::pair<unsigned int, unsigned int> &cell_range) const;
+  do_cell_integral_global(FECellIntegrator &integrator,
+                          VectorType &      dst,
+                          const VectorType &src) const;
 
   void
-  local_compute_diagonal(UIntegrator &u_phi) const;
+  do_cell_integral_range(
+    const MatrixFree<dim, number> &              matrix_free,
+    VectorType &                                 dst,
+    const VectorType &                           src,
+    const std::pair<unsigned int, unsigned int> &range) const;
 
+public:
+  MatrixFree<dim, number> matrix_free;
+
+private:
+  AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   Settings                               parameters;
-  Table<2, VectorizedArray<number>>      nonlinear_values;
 };
 
 template <int dim, typename number>
 VectorValuedOperator<dim, number>::VectorValuedOperator()
-  : MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>()
 {
-  system_matrix.clear();
+  // system_matrix.clear();
+}
+
+template <int dim, typename number>
+VectorValuedOperator<dim, number>::VectorValuedOperator(
+  const MappingQ<dim> &            mapping,
+  const DoFHandler<dim> &          dof_handler,
+  const AffineConstraints<number> &constraints,
+  const QGauss<1> &                quadrature)
+{
+  this->reinit(mapping, dof_handler, constraints, quadrature);
+}
+
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::reinit(
+  const MappingQ<dim> &            mapping,
+  const DoFHandler<dim> &          dof_handler,
+  const AffineConstraints<number> &constraints,
+  const QGauss<1> &                quadrature)
+{
+  this->system_matrix.clear();
+  this->constraints.copy_from(constraints);
+
+  typename MatrixFree<dim, double>::AdditionalData additional_data;
+  additional_data.mapping_update_flags =
+    (update_values | update_gradients | update_JxW_values |
+     update_quadrature_points);
+
+  matrix_free.reinit(
+    mapping, dof_handler, constraints, quadrature, additional_data);
+}
+
+// This function gets the number of DoFs by calling the dof_handler
+// object related to the matrix free
+template <int dim, typename number>
+types::global_dof_index
+VectorValuedOperator<dim, number>::m() const
+{
+  return matrix_free.get_dof_handler().n_dofs();
+}
+
+template <int dim, typename number>
+number
+VectorValuedOperator<dim, number>::el(unsigned int, unsigned int) const
+{
+  Assert(false, ExcNotImplemented());
+  return 0;
 }
 
 template <int dim, typename number>
 void
 VectorValuedOperator<dim, number>::clear()
-{
-  nonlinear_values.reinit(0, 0);
-  MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
-    clear();
-}
+{}
 
+// The matrix free object initialized the vector accordingly
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::reinit_operator_parameters(
-  const Settings &parameters)
+VectorValuedOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
 {
-  this->parameters = parameters;
+  matrix_free.initialize_dof_vector(vec);
 }
 
+// Performs an operator evaluation by looping over all cells
+// and evluating the integrals in the matrix-free way
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::evaluate_newton_step(
-  const LinearAlgebra::distributed::Vector<number> &newton_step)
+VectorValuedOperator<dim, number>::vmult(VectorType &      dst,
+                                         const VectorType &src) const
 {
-  const unsigned int n_cells = this->data->n_cell_batches();
-  UIntegrator        phi(*this->data);
-
-  nonlinear_values.reinit(n_cells, phi.n_q_points);
-
-  for (unsigned int cell = 0; cell < n_cells; ++cell)
-    {
-      phi.reinit(cell);
-      phi.read_dof_values_plain(newton_step);
-      phi.evaluate(EvaluationFlags::values);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          if (parameters.nonlinearity)
-            nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
-          else
-            nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
-        }
-    }
+  this->matrix_free.cell_loop(
+    &VectorValuedOperator::do_cell_integral_range, this, dst, src, true);
 }
 
+// Performs the transposed operator evaluation. Since we have
+// non-symmetric matrices this is different from the vmult call.
+// TODO: implement this correctly (important for MG interfaces)
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::local_apply(
-  const MatrixFree<dim, number> &                   data,
-  LinearAlgebra::distributed::Vector<number> &      dst,
-  const LinearAlgebra::distributed::Vector<number> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+VectorValuedOperator<dim, number>::Tvmult(VectorType &      dst,
+                                          const VectorType &src) const
 {
-  UIntegrator u_phi(data);
-
-  for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
-    {
-      AssertDimension(nonlinear_values.size(0),
-                      u_phi.get_matrix_free().n_cell_batches());
-      AssertDimension(nonlinear_values.size(1), u_phi.n_q_points);
-
-      u_phi.reinit(cell);
-      u_phi.gather_evaluate(src,
-                            EvaluationFlags::values |
-                              EvaluationFlags::gradients);
-
-      for (unsigned int q = 0; q < u_phi.n_q_points; ++q)
-        {
-          // First term
-          u_phi.submit_gradient(-u_phi.get_gradient(q), q);
-
-          // // Second term
-          // p_phi.submit_value(-u_phi.get_divergence(q), q);
-
-          // Third term
-          // VectorizedArray<double>                 p_value =
-          // p_phi.get_value(q); Tensor<1, dim, VectorizedArray<double>>
-          // identity_by_p; for (unsigned int d = 0; d < dim; ++d)
-          //   identity_by_p[d] = p_value;
-
-          // u_phi.submit_value(-identity_by_p, q);
-
-          // // Fourth term
-          // p_phi.submit_gradient(-p_phi.get_gradient(q), q);
-        }
-
-      u_phi.integrate_scatter(EvaluationFlags::values |
-                                EvaluationFlags::gradients,
-                              dst);
-    }
+  this->vmult(dst, src);
 }
 
-template <int dim, typename number>
-void
-VectorValuedOperator<dim, number>::apply_add(
-  LinearAlgebra::distributed::Vector<number> &      dst,
-  const LinearAlgebra::distributed::Vector<number> &src) const
-{
-  this->data->cell_loop(&VectorValuedOperator::local_apply, this, dst, src);
-}
-
-template <int dim, typename number>
-void
-VectorValuedOperator<dim, number>::local_compute_diagonal(
-  UIntegrator &u_phi) const
-{
-  AssertDimension(nonlinear_values.size(0),
-                  u_phi.get_matrix_free().n_cell_batches());
-  AssertDimension(nonlinear_values.size(1), u_phi.n_q_points);
-
-  // u_phi.reinit(cell);
-  u_phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
-
-  for (unsigned int q = 0; q < u_phi.n_q_points; ++q)
-    {
-      // First term
-      u_phi.submit_gradient(-u_phi.get_gradient(q), q);
-
-      // // Second term
-      // p_phi.submit_value(-u_phi.get_divergence(q), q);
-
-      // Third term
-      // VectorizedArray<double>                 p_value =
-      // p_phi.get_value(q); Tensor<1, dim, VectorizedArray<double>>
-      // identity_by_p; for (unsigned int d = 0; d < dim; ++d)
-      //   identity_by_p[d] = p_value;
-
-      // u_phi.submit_value(-identity_by_p, q);
-
-      // // Fourth term
-      // p_phi.submit_gradient(-p_phi.get_gradient(q), q);
-    }
-
-  u_phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
-}
-
-template <int dim, typename number>
-void
-VectorValuedOperator<dim, number>::compute_diagonal()
-{
-  this->inverse_diagonal_entries.reset(
-    new DiagonalMatrix<LinearAlgebra::distributed::Vector<number>>());
-  LinearAlgebra::distributed::Vector<number> &inverse_diagonal =
-    this->inverse_diagonal_entries->get_vector();
-  this->data->initialize_dof_vector(inverse_diagonal);
-
-  MatrixFreeTools::compute_diagonal(*this->data,
-                                    inverse_diagonal,
-                                    &VectorValuedOperator::local_compute_diagonal,
-                                    this);
-
-  for (auto &diagonal_element : inverse_diagonal)
-    {
-      diagonal_element =
-        (std::abs(diagonal_element) > 1.0e-10) ? (1.0 / diagonal_element) : 1.0;
-    }
-}
-
+// Computes the matrix efficiently using the optimized compute_matrix call.
+// This function is usually only used to build the system matrix for the coarse
+// grid level in the multigrid algorithm.
 template <int dim, typename number>
 const TrilinosWrappers::SparseMatrix &
-VectorValuedOperator<dim, number>::get_system_matrix(
-  const AffineConstraints<number> &constraints)
+VectorValuedOperator<dim, number>::get_system_matrix() const
 {
   if (system_matrix.m() == 0 && system_matrix.n() == 0)
     {
-      AffineConstraints<number> constraints_copy;
-      constraints_copy.copy_from(constraints);
-
-      const auto &dof_handler = this->get_matrix_free()->get_dof_handler();
-      const auto &mg_level    = this->get_matrix_free()->get_mg_level();
+      const auto &dof_handler = this->matrix_free.get_dof_handler();
 
       TrilinosWrappers::SparsityPattern dsp(
-        mg_level != numbers::invalid_unsigned_int ?
-          dof_handler.locally_owned_mg_dofs(mg_level) :
-          dof_handler.locally_owned_dofs(),
+        dof_handler.locally_owned_dofs(),
         dof_handler.get_triangulation().get_communicator());
 
-      if (mg_level != numbers::invalid_unsigned_int)
-        MGTools::make_sparsity_pattern(dof_handler, dsp, mg_level, constraints);
-      else
-        DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
-
+      DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
 
       dsp.compress();
       system_matrix.reinit(dsp);
 
       MatrixFreeTools::compute_matrix(
-        *this->data,
+        matrix_free,
         constraints,
         system_matrix,
-        &VectorValuedOperator::local_compute_diagonal,
+        &VectorValuedOperator::do_cell_integral_local,
         this);
     }
   return system_matrix;
+}
+
+// The diagonal of the matrix is needed, e.g., for smoothers used in
+// multigrid. Thereforem it is computed by a sequence of operator
+// evaluations to unit basis vectors using the optimized compute_diagonal
+// call.
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::compute_inverse_diagonal(
+  VectorType &diagonal) const
+{
+  this->matrix_free.initialize_dof_vector(diagonal);
+  MatrixFreeTools::compute_diagonal(
+    matrix_free, diagonal, &VectorValuedOperator::do_cell_integral_local, this);
+
+  for (auto &i : diagonal)
+    i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
+}
+
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::vmult_interface_down(
+  VectorType & /* dst */,
+  const VectorType & /* src */) const
+{
+  // TODO
+}
+
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::vmult_interface_up(
+  VectorType & /* dst */,
+  const VectorType & /* src */) const
+{
+  // TODO
+}
+
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::do_cell_integral_local(
+  FECellIntegrator &integrator) const
+{
+  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+
+  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+    {
+      // TODO
+      integrator.submit_gradient(-integrator.get_gradient(q), q);
+    }
+
+  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+}
+
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::do_cell_integral_global(
+  FECellIntegrator &integrator,
+  VectorType &      dst,
+  const VectorType &src) const
+{
+  integrator.gather_evaluate(src,
+                             EvaluationFlags::values |
+                               EvaluationFlags::gradients);
+
+  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+    {
+      // TODO
+      integrator.submit_gradient(-integrator.get_gradient(q), q);
+    }
+
+  integrator.integrate_scatter(EvaluationFlags::values |
+                                 EvaluationFlags::gradients,
+                               dst);
+}
+
+template <int dim, typename number>
+void
+VectorValuedOperator<dim, number>::do_cell_integral_range(
+  const MatrixFree<dim, number> &              matrix_free,
+  VectorType &                                 dst,
+  const VectorType &                           src,
+  const std::pair<unsigned int, unsigned int> &range) const
+{
+  FECellIntegrator integrator(matrix_free, range);
+
+  for (unsigned int cell = range.first; cell < range.second; ++cell)
+    {
+      integrator.reinit(cell);
+
+      do_cell_integral_global(integrator, dst, src);
+    }
+}
+
+// Multigrid global coarsening algorithm and parameters
+struct MultigridParameters
+{
+  struct
+  {
+    std::string  type            = "gmres_with_identity";
+    unsigned int maxiter         = 10000;
+    double       abstol          = 1e-20;
+    double       reltol          = 1e-4;
+    unsigned int smoother_sweeps = 1;
+    unsigned int n_cycles        = 1;
+    std::string  smoother_type   = "ILU";
+  } coarse_solver;
+
+  struct
+  {
+    std::string  type                = "chebyshev";
+    double       smoothing_range     = 20;
+    unsigned int degree              = 5;
+    unsigned int eig_cg_n_iterations = 20;
+  } smoother;
+
+  struct
+  {
+    bool perform_h_transfer = true;
+  } transfer;
+};
+
+template <typename VectorType,
+          int dim,
+          typename SystemMatrixType,
+          typename LevelMatrixType,
+          typename MGTransferType>
+static void
+mg_solve(SolverControl &                                        solver_control,
+         VectorType &                                           dst,
+         const VectorType &                                     src,
+         const MultigridParameters &                            mg_data,
+         const DoFHandler<dim> &                                dof,
+         const SystemMatrixType &                               fine_matrix,
+         const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
+         const MGTransferType &                                 mg_transfer)
+{
+  AssertThrow(mg_data.coarse_solver.type == "gmres_with_identity",
+              ExcNotImplemented());
+  AssertThrow(mg_data.smoother.type == "chebyshev", ExcNotImplemented());
+
+  const unsigned int min_level = mg_matrices.min_level();
+  const unsigned int max_level = mg_matrices.max_level();
+
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using SmootherType               = PreconditionChebyshev<LevelMatrixType,
+                                             VectorType,
+                                             SmootherPreconditionerType>;
+  using PreconditionerType = PreconditionMG<dim, VectorType, MGTransferType>;
+
+  // We initialize level operators and Chebyshev smoothers here.
+  mg::Matrix<VectorType> mg_matrix(mg_matrices);
+
+  MGLevelObject<typename SmootherType::AdditionalData> smoother_data(min_level,
+                                                                     max_level);
+
+  for (unsigned int level = min_level; level <= max_level; ++level)
+    {
+      smoother_data[level].preconditioner =
+        std::make_shared<SmootherPreconditionerType>();
+      mg_matrices[level]->compute_inverse_diagonal(
+        smoother_data[level].preconditioner->get_vector());
+      smoother_data[level].smoothing_range = mg_data.smoother.smoothing_range;
+      smoother_data[level].degree          = mg_data.smoother.degree;
+      smoother_data[level].eig_cg_n_iterations =
+        mg_data.smoother.eig_cg_n_iterations;
+    }
+
+  MGSmootherPrecondition<LevelMatrixType, SmootherType, VectorType> mg_smoother;
+  mg_smoother.initialize(mg_matrices, smoother_data);
+
+  // Next, we initialize the coarse-grid solver. We use conjugate-gradient
+  // method with AMG as preconditioner.
+  ReductionControl coarse_grid_solver_control(mg_data.coarse_solver.maxiter,
+                                              mg_data.coarse_solver.abstol,
+                                              mg_data.coarse_solver.reltol,
+                                              false,
+                                              false);
+  SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control);
+
+  std::unique_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+
+  TrilinosWrappers::PreconditionAMG                 precondition_amg;
+  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+  amg_data.smoother_sweeps = mg_data.coarse_solver.smoother_sweeps;
+  amg_data.n_cycles        = mg_data.coarse_solver.n_cycles;
+  amg_data.smoother_type   = mg_data.coarse_solver.smoother_type.c_str();
+
+  precondition_amg.initialize(mg_matrices[min_level]->get_system_matrix(),
+                              amg_data);
+
+  mg_coarse =
+    std::make_unique<MGCoarseGridIterativeSolver<VectorType,
+                                                 SolverGMRES<VectorType>,
+                                                 LevelMatrixType,
+                                                 decltype(precondition_amg)>>(
+      coarse_grid_solver, *mg_matrices[min_level], precondition_amg);
+
+  // Finally, we create the Multigrid object, convert it to a preconditioner,
+  // and use it inside of a conjugate-gradient solver to solve the linear
+  // system of equations.
+  Multigrid<VectorType> mg(
+    mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
+
+  PreconditionerType preconditioner(dof, mg, mg_transfer);
+
+  SolverCG<VectorType>(solver_control)
+    .solve(fine_matrix, dst, src, preconditioner);
+}
+
+
+template <typename VectorType, typename OperatorType, int dim>
+void
+solve_with_gmg(SolverControl &            solver_control,
+               const OperatorType &       system_matrix,
+               VectorType &               dst,
+               const VectorType &         src,
+               const MultigridParameters &mg_data,
+               const MappingQ<dim>        mapping,
+               const DoFHandler<dim> &    dof_handler,
+               const QGauss<1> &          quadrature)
+{
+  // Create a DoFHandler and operator for each multigrid level,
+  // as well as, create transfer operators. To be able to
+  // set up the operators, we need a set of DoFHandler that we create
+  // via global coarsening of p or h. For latter, we need also a sequence
+  // of Triangulation objects that are obtained by
+  // Triangulation::coarsen_global().
+  //
+  // In case no h-transfer is requested, we provide an empty deleter for the
+  // `emplace_back()` function, since the Triangulation of our DoFHandler is
+  // an external field and its destructor is called somewhere else.
+  MGLevelObject<DoFHandler<dim>>                     dof_handlers;
+  MGLevelObject<std::unique_ptr<OperatorType>>       operators;
+  MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
+
+  std::vector<std::shared_ptr<const Triangulation<dim>>>
+    coarse_grid_triangulations;
+  if (mg_data.transfer.perform_h_transfer)
+    coarse_grid_triangulations =
+      MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
+        dof_handler.get_triangulation());
+
+  // Determine the total number of levels for the multigrid operation and
+  // allocate sufficient memory for all levels.
+  const unsigned int n_h_levels = coarse_grid_triangulations.size() - 1;
+
+  unsigned int minlevel = 0;
+  unsigned int maxlevel = n_h_levels - 1;
+
+  dof_handlers.resize(minlevel, maxlevel);
+  operators.resize(minlevel, maxlevel);
+  transfers.resize(minlevel, maxlevel);
+
+  for (unsigned int l = 0; l < n_h_levels; ++l)
+    {
+      dof_handlers[l].reinit(*coarse_grid_triangulations[l]);
+      dof_handlers[l].distribute_dofs(dof_handler.get_fe());
+    }
+
+  // Next, we will create all data structures additionally needed on each
+  // multigrid level. This involves determining constraints with homogeneous
+  // Dirichlet boundary conditions, and building the operator just like on the
+  // active level.
+  MGLevelObject<AffineConstraints<typename VectorType::value_type>> constraints(
+    minlevel, maxlevel);
+
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      const auto &dof_handler = dof_handlers[level];
+      auto &      constraint  = constraints[level];
+
+      const IndexSet locally_relevant_dofs =
+        DoFTools::extract_locally_relevant_dofs(dof_handler);
+      constraint.reinit(locally_relevant_dofs);
+
+      DoFTools::make_hanging_node_constraints(dof_handler, constraint);
+      VectorTools::interpolate_boundary_values(
+        mapping, dof_handler, 0, Functions::ZeroFunction<dim>(), constraint);
+      constraint.close();
+
+      VectorType dummy;
+
+      operators[level] = std::make_unique<OperatorType>(mapping,
+                                                        dof_handler,
+                                                        constraint,
+                                                        quadrature);
+    }
+
+  // Set up intergrid operators and collect transfer operators within a single
+  // operator as needed by the Multigrid solver class.
+  for (unsigned int level = minlevel; level < maxlevel; ++level)
+    transfers[level + 1].reinit(dof_handlers[level + 1],
+                                dof_handlers[level],
+                                constraints[level + 1],
+                                constraints[level]);
+
+  MGTransferGlobalCoarsening<dim, VectorType> transfer(
+    transfers,
+    [&](const auto l, auto &vec) { operators[l]->initialize_dof_vector(vec); });
+
+  // Finally, proceed to solve the problem with multigrid.
+  mg_solve(solver_control,
+           dst,
+           src,
+           mg_data,
+           dof_handler,
+           system_matrix,
+           operators,
+           transfer);
 }
 
 // Main class for a dummy vector-valued problem given by
@@ -626,12 +881,6 @@ private:
 
   void
   setup_gmg();
-
-  void
-  assemble_matrix();
-
-  void
-  assemble_coarse_matrix();
 
   void
   evaluate_residual(
@@ -671,8 +920,7 @@ private:
 
   Settings parameters;
 
-  const unsigned int u_order;
-  const unsigned int p_order;
+  const unsigned int element_order;
 
   const MappingQ<dim> mapping;
 
@@ -709,10 +957,9 @@ VectorValuedProblem<dim>::VectorValuedProblem(const Settings &parameters)
       Triangulation<dim>::limit_level_difference_at_vertices,
       parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy)
   , parameters(parameters)
-  , u_order(parameters.u_order)
-  , p_order(parameters.p_order)
-  , mapping(parameters.u_order)
-  , fe_system(FE_Q<dim>(parameters.u_order), dim + 1)
+  , element_order(parameters.element_order)
+  , mapping(parameters.element_order)
+  , fe_system(FE_Q<dim>(parameters.element_order), dim + 1)
   , dof_handler(triangulation)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , computing_timer(MPI_COMM_WORLD,
@@ -744,10 +991,6 @@ VectorValuedProblem<dim>::setup_system()
 {
   TimerOutput::Scope t(computing_timer, "setup system");
 
-  system_matrix.clear();
-
-  system_matrix.reinit_operator_parameters(parameters);
-
   dof_handler.distribute_dofs(fe_system);
 
   const IndexSet locally_relevant_dofs =
@@ -774,41 +1017,30 @@ VectorValuedProblem<dim>::setup_system()
 
   constraints.close();
 
-  {
-    typename MatrixFree<dim, double>::AdditionalData additional_data;
-    additional_data.tasks_parallel_scheme =
-      MatrixFree<dim, double>::AdditionalData::none;
-    additional_data.mapping_update_flags =
-      (update_values | update_gradients | update_JxW_values |
-       update_quadrature_points);
-    auto system_mf_storage = std::make_shared<MatrixFree<dim, double>>();
-    system_mf_storage->reinit(mapping,
-                              dof_handler,
-                              constraints,
-                              QGauss<1>(u_order + 1),
-                              additional_data);
-
-    system_matrix.initialize(system_mf_storage);
-  }
+  system_matrix.reinit(mapping,
+                       dof_handler,
+                       constraints,
+                       QGauss<1>(element_order + 1));
 
   system_matrix.initialize_dof_vector(solution);
   system_matrix.initialize_dof_vector(newton_update);
   system_matrix.initialize_dof_vector(system_rhs);
 
-  MPI_Comm               mpi_communicator(MPI_COMM_WORLD);
-  IndexSet               locally_owned_dofs = dof_handler.locally_owned_dofs();
-  DynamicSparsityPattern dsp(locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints, false);
-  SparsityTools::distribute_sparsity_pattern(dsp,
-                                             dof_handler.locally_owned_dofs(),
-                                             mpi_communicator,
-                                             locally_relevant_dofs);
-  constraints.condense(dsp);
+  // If in need of the matrix by matrix-based algorithms
+  // MPI_Comm               mpi_communicator(MPI_COMM_WORLD);
+  // IndexSet               locally_owned_dofs =
+  // dof_handler.locally_owned_dofs(); DynamicSparsityPattern
+  // dsp(locally_relevant_dofs); DoFTools::make_sparsity_pattern(dof_handler,
+  // dsp, constraints, false); SparsityTools::distribute_sparsity_pattern(dsp,
+  //                                            dof_handler.locally_owned_dofs(),
+  //                                            mpi_communicator,
+  //                                            locally_relevant_dofs);
+  // constraints.condense(dsp);
 
-  mb_system_matrix.reinit(locally_owned_dofs,
-                          locally_owned_dofs,
-                          dsp,
-                          mpi_communicator);
+  // mb_system_matrix.reinit(locally_owned_dofs,
+  //                         locally_owned_dofs,
+  //                         dsp,
+  //                         mpi_communicator);
 }
 
 template <int dim>
@@ -840,7 +1072,6 @@ VectorValuedProblem<dim>::setup_gmg()
 
   for (unsigned int level = 0; level < nlevels; ++level)
     {
-      mg_matrices[level].reinit_operator_parameters(parameters);
       const IndexSet relevant_dofs =
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
@@ -850,186 +1081,35 @@ VectorValuedProblem<dim>::setup_gmg()
         mg_constrained_dofs.get_boundary_indices(level));
       level_constraints[level].close();
 
-      typename MatrixFree<dim, double>::AdditionalData additional_data;
-      additional_data.tasks_parallel_scheme =
-        MatrixFree<dim, double>::AdditionalData::partition_color;
-      additional_data.mapping_update_flags =
-        (update_values | update_gradients | update_JxW_values |
-         update_quadrature_points);
-      additional_data.mg_level = level;
-      auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, double>>();
-      mg_mf_storage_level->reinit(mapping,
-                                  dof_handler,
-                                  level_constraints[level],
-                                  QGauss<1>(u_order + 1),
-                                  additional_data);
+      mg_matrices[level].reinit(mapping,
+                                dof_handler,
+                                level_constraints[level],
+                                QGauss<1>(element_order + 1));
 
-      mg_matrices[level].initialize(mg_mf_storage_level,
-                                    mg_constrained_dofs,
-                                    level);
-      mg_matrices[level].initialize_dof_vector(mg_solution[level]);
+      // typename MatrixFree<dim, double>::AdditionalData additional_data;
+      // additional_data.mapping_update_flags =
+      //   (update_values | update_gradients | update_JxW_values |
+      //    update_quadrature_points);
+      // additional_data.mg_level = level;
+      // auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, double>>();
+      // mg_mf_storage_level->reinit(mapping,
+      //                             dof_handler,
+      //                             level_constraints[level],
+      //                             QGauss<1>(element_order + 1),
+      //                             additional_data);
 
-      mg_interface_in[level].initialize(mg_mf_storage_level,
-                                        mg_constrained_dofs,
-                                        level);
-      mg_interface_out[level].initialize(mg_mf_storage_level,
-                                         mg_constrained_dofs,
-                                         level);
+      // mg_matrices[level].initialize(mg_mf_storage_level,
+      //                               mg_constrained_dofs,
+      //                               level);
+      // mg_matrices[level].initialize_dof_vector(mg_solution[level]);
+
+      // mg_interface_in[level].initialize(mg_mf_storage_level,
+      //                                   mg_constrained_dofs,
+      //                                   level);
+      // mg_interface_out[level].initialize(mg_mf_storage_level,
+      //                                    mg_constrained_dofs,
+      //                                    level);
     }
-}
-
-template <int dim>
-void
-VectorValuedProblem<dim>::assemble_matrix()
-{
-  const QGauss<dim> quadrature_formula(u_order + 1);
-
-  mb_system_matrix = 0;
-
-  FEValues<dim> fe_values(fe_system,
-                          quadrature_formula,
-                          update_values | update_gradients | update_JxW_values);
-
-  const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
-  // const FEValuesExtractors::Vector u(0);
-  // const FEValuesExtractors::Scalar p(dim);
-
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          cell_matrix = 0.0;
-
-          fe_values.reinit(cell);
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              const double dx = fe_values.JxW(q);
-
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  // const Tensor<1, dim> phi_i      = fe_values[u].value(i, q);
-                  // const Tensor<2, dim> grad_phi_i = fe_values.shape_grad(i,
-                  // q)[fe_system.system_to_component_index(i).first]; const
-                  // double         psi_i      = fe_values[p].value(i, q); const
-                  // Tensor<1, dim> grad_psi_i = fe_values[p].gradient(i, q);
-
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                    {
-                      // const Tensor<1, dim> phi_j = fe_values[u].value(j, q);
-                      // const Tensor<2, dim> grad_phi_j =
-                      //   fe_values.shape_grad(j, q);
-                      // const double div_phi_j = fe_values[u].divergence(j, q);
-                      // const double psi_j     = fe_values[p].value(j, q);
-                      // const Tensor<1, dim> grad_psi_j =
-                      //   fe_values[p].gradient(j, q);
-                      // Tensor<1, dim> identity;
-                      // identity[0] = 1;
-                      // identity[1] = 1;
-
-                      cell_matrix(i, j) -= 0;
-                      // (scalar_product(grad_phi_i, grad_phi_j) /* +
-                      //  (psi_i * div_phi_j) + (phi_i * psi_j * identity) +
-                      //  (grad_psi_i * grad_psi_j) */) *
-                      // dx;
-                    }
-                }
-            }
-
-          cell->get_dof_indices(local_dof_indices);
-          constraints.distribute_local_to_global(cell_matrix,
-                                                 local_dof_indices,
-                                                 mb_system_matrix);
-        }
-    }
-
-  mb_system_matrix.compress(VectorOperation::add);
-}
-
-template <int dim>
-void
-VectorValuedProblem<dim>::assemble_coarse_matrix()
-{
-  QGauss<dim> quadrature_formula(u_order + 1);
-
-  FEValues<dim> fe_values(fe_system,
-                          quadrature_formula,
-                          update_values | update_gradients | update_JxW_values);
-
-  const unsigned int dofs_per_cell = fe_values.dofs_per_cell;
-  const unsigned int n_q_points    = fe_values.n_quadrature_points;
-
-  const FEValuesExtractors::Vector u(0);
-  const FEValuesExtractors::Scalar p(dim);
-
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  std::vector<AffineConstraints<double>> boundary_constraints(
-    triangulation.n_global_levels());
-  const IndexSet dof_set =
-    DoFTools::extract_locally_relevant_level_dofs(dof_handler, 0);
-  boundary_constraints[0].reinit(dof_set);
-  boundary_constraints[0].add_lines(
-    mg_constrained_dofs.get_refinement_edge_indices(0));
-  boundary_constraints[0].add_lines(
-    mg_constrained_dofs.get_boundary_indices(0));
-  boundary_constraints[0].close();
-
-  for (const auto &cell : dof_handler.cell_iterators())
-    if (cell->level_subdomain_id() == triangulation.locally_owned_subdomain())
-      {
-        cell_matrix = 0;
-
-        fe_values.reinit(cell);
-
-        for (unsigned int q = 0; q < n_q_points; ++q)
-          {
-            const double dx = fe_values.JxW(q);
-
-            for (unsigned int i = 0; i < dofs_per_cell; ++i)
-              {
-                const Tensor<1, dim> phi_i      = fe_values[u].value(i, q);
-                const Tensor<2, dim> grad_phi_i = fe_values[u].gradient(i, q);
-                const double         psi_i      = fe_values[p].value(i, q);
-                const Tensor<1, dim> grad_psi_i = fe_values[p].gradient(i, q);
-
-                for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                  {
-                    // const Tensor<1, dim> phi_j = fe_values[u].value(j, q);
-                    const Tensor<2, dim> grad_phi_j =
-                      fe_values[u].gradient(j, q);
-                    const double div_phi_j = fe_values[u].divergence(j, q);
-                    const double psi_j     = fe_values[p].value(j, q);
-                    const Tensor<1, dim> grad_psi_j =
-                      fe_values[p].gradient(j, q);
-                    Tensor<1, dim> identity;
-                    identity[0] = 1;
-                    identity[1] = 0;
-
-                    cell_matrix(i, j) -=
-                      (scalar_product(grad_phi_i, grad_phi_j) +
-                       (psi_i * div_phi_j) + (phi_i * psi_j * identity) +
-                       (grad_psi_i * grad_psi_j)) *
-                      dx;
-                  }
-              }
-          }
-
-        cell->get_mg_dof_indices(local_dof_indices);
-
-        boundary_constraints[0].distribute_local_to_global(
-          cell_matrix, local_dof_indices, mb_system_matrix_coarse);
-      }
-
-  mb_system_matrix_coarse.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -1038,9 +1118,7 @@ VectorValuedProblem<dim>::evaluate_residual(
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
-  auto matrix_free = system_matrix.get_matrix_free();
-
-  matrix_free->cell_loop(
+  system_matrix.matrix_free.cell_loop(
     &VectorValuedProblem::local_evaluate_residual, this, dst, src, true);
 }
 
@@ -1164,41 +1242,42 @@ VectorValuedProblem<dim>::compute_update()
           TrilinosWrappers::PreconditionAMG                 preconditioner;
           TrilinosWrappers::PreconditionAMG::AdditionalData data;
 
-          if (parameters.u_order > 1)
+          if (parameters.element_order > 1)
             data.higher_order_elements = true;
 
           data.elliptic      = false;
           data.smoother_type = "Jacobi";
 
-          system_matrix.evaluate_newton_step(solution);
-          // assemble_matrix();
-          preconditioner.initialize(
-            system_matrix.get_system_matrix(constraints), data);
+          preconditioner.initialize(system_matrix.get_system_matrix(), data);
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
-        case Settings::gmg: {
-          system_matrix.evaluate_newton_step(solution);
-
+        case Settings::lsmg: {
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
 
+          const unsigned int min_level = mg_matrices.min_level();
+          const unsigned int max_level = mg_matrices.max_level();
+
           // Set up smoother: Jacobi Smoother
-          using SmootherTypeJacobi = PreconditionJacobi<LevelMatrixType>;
+          using SmootherPreconditionerType =
+            DiagonalMatrix<LinearAlgebra::distributed::Vector<double>>;
+          using SmootherType =
+            PreconditionRelaxation<LevelMatrixType, SmootherPreconditionerType>;
           MGSmootherPrecondition<LevelMatrixType,
-                                 SmootherTypeJacobi,
+                                 SmootherType,
                                  LinearAlgebra::distributed::Vector<double>>
-            mg_smoother_jacobi;
-          for (unsigned int level = 0; level < triangulation.n_global_levels();
-               ++level)
+            mg_smoother;
+
+          MGLevelObject<typename SmootherType::AdditionalData> smoother_data(
+            min_level, max_level);
+
+          for (unsigned int level = min_level; level <= max_level; ++level)
             {
-              mg_matrices[level].evaluate_newton_step(mg_solution[level]);
-              mg_matrices[level].compute_diagonal();
+              smoother_data[level].preconditioner =
+                std::make_shared<SmootherPreconditionerType>();
+              mg_matrices[level].compute_inverse_diagonal(
+                smoother_data[level].preconditioner->get_vector());
             }
-          mg_smoother_jacobi.initialize(
-            mg_matrices,
-            typename SmootherTypeJacobi::AdditionalData(
-              u_order == 1 ? 0.6667 : (u_order == 2 ? 0.56 : 0.47)));
-          mg_smoother_jacobi.set_steps(6);
 
           // Set up preconditioned coarse-grid solver
           SolverControl coarse_solver_control(200,
@@ -1212,7 +1291,7 @@ VectorValuedProblem<dim>::compute_update()
               AdditionalData(50, true));
 
           // Coarse-grid solver optional AMG preconditioner
-          // TrilinosWrappers::PreconditionAMG                 precondition_amg;
+          // TrilinosWrappers::PreconditionAMG precondition_amg;
           // TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
           // precondition_amg.initialize(
           //   mg_matrices[0].get_system_matrix(constraints), amg_data);
@@ -1252,11 +1331,7 @@ VectorValuedProblem<dim>::compute_update()
             mg_interface_out(mg_interface_matrices_out);
 
           Multigrid<LinearAlgebra::distributed::Vector<double>> mg(
-            mg_matrix,
-            mg_coarse,
-            mg_transfer,
-            mg_smoother_jacobi,
-            mg_smoother_jacobi);
+            mg_matrix, mg_coarse, mg_transfer, mg_smoother, mg_smoother);
           mg.set_edge_matrices(mg_interface_in, mg_interface_out);
 
           PreconditionMG<dim,
@@ -1265,20 +1340,32 @@ VectorValuedProblem<dim>::compute_update()
             preconditioner(dof_handler, mg, mg_transfer);
 
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
+
+          break;
+        }
+        case Settings::gcmg: {
+          MultigridParameters mg_data;
+
+          solve_with_gmg(solver_control,
+                         system_matrix,
+                         solution,
+                         system_rhs,
+                         mg_data,
+                         mapping,
+                         dof_handler,
+                         QGauss<1>(element_order + 1));
           break;
         }
         case Settings::ilu: {
           TrilinosWrappers::PreconditionILU                 preconditioner;
           TrilinosWrappers::PreconditionILU::AdditionalData data_ilu;
-          system_matrix.evaluate_newton_step(solution);
-          assemble_matrix();
-          preconditioner.initialize(mb_system_matrix, data_ilu);
+          preconditioner.initialize(system_matrix.get_system_matrix(),
+                                    data_ilu);
 
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
         }
         case Settings::none: {
-          system_matrix.evaluate_newton_step(solution);
           PreconditionIdentity preconditioner;
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
           break;
@@ -1360,7 +1447,7 @@ VectorValuedProblem<dim>::compute_solution_norm() const
                                     solution,
                                     Functions::ZeroFunction<dim>(dim + 1),
                                     norm_per_cell,
-                                    QGauss<dim>(u_order + 1),
+                                    QGauss<dim>(element_order + 1),
                                     VectorTools::H1_seminorm,
                                     &u_mask);
 
@@ -1378,7 +1465,7 @@ VectorValuedProblem<dim>::compute_solution_norm() const
                                     solution,
                                     Functions::ZeroFunction<dim>(dim + 1),
                                     norm_per_cell,
-                                    QGauss<dim>(p_order + 1),
+                                    QGauss<dim>(element_order + 1),
                                     VectorTools::H1_seminorm,
                                     &p_mask);
 
@@ -1410,7 +1497,7 @@ VectorValuedProblem<dim>::compute_l2_error() const
                                     solution,
                                     AnalyticalSolution<dim>(),
                                     error_per_cell,
-                                    QGauss<dim>(u_order + 1),
+                                    QGauss<dim>(element_order + 1),
                                     VectorTools::L2_norm,
                                     &u_mask);
 
@@ -1427,7 +1514,7 @@ VectorValuedProblem<dim>::compute_l2_error() const
                                     solution,
                                     AnalyticalSolution<dim>(),
                                     error_per_cell,
-                                    QGauss<dim>(p_order + 1),
+                                    QGauss<dim>(element_order + 1),
                                     VectorTools::L2_norm,
                                     &p_mask);
 
@@ -1515,8 +1602,10 @@ VectorValuedProblem<dim>::run()
     std::string PRECOND_header = "";
     if (parameters.preconditioner == Settings::amg)
       PRECOND_header = "Preconditioner: AMG";
-    else if (parameters.preconditioner == Settings::gmg)
-      PRECOND_header = "Preconditioner: GMG";
+    else if (parameters.preconditioner == Settings::lsmg)
+      PRECOND_header = "Preconditioner: LSMG";
+    else if (parameters.preconditioner == Settings::gcmg)
+      PRECOND_header = "Preconditioner: GCMG";
     else if (parameters.preconditioner == Settings::ilu)
       PRECOND_header = "Preconditioner: ILU";
     else if (parameters.preconditioner == Settings::none)
@@ -1533,11 +1622,6 @@ VectorValuedProblem<dim>::run()
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
     std::string CYCLES_header =
       "Total number of cycles: " + std::to_string(parameters.number_of_cycles);
-    std::string NONLINEARITY_header = "";
-    if (parameters.nonlinearity)
-      NONLINEARITY_header = "Nonlinearity: true";
-    else
-      NONLINEARITY_header = "Nonlinearity: false";
     std::string REPETITIONS_header =
       "Repetitions in one direction: " + std::to_string(parameters.repetitions);
 
@@ -1553,7 +1637,6 @@ VectorValuedProblem<dim>::run()
     pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
     pcout << CYCLES_header << std::endl;
-    pcout << NONLINEARITY_header << std::endl;
     pcout << REPETITIONS_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
@@ -1579,7 +1662,7 @@ VectorValuedProblem<dim>::run()
       pcout << "Set up system..." << std::endl;
       setup_system();
 
-      if (parameters.preconditioner == Settings::gmg)
+      if (parameters.preconditioner == Settings::lsmg)
         setup_gmg();
 
       pcout << "   Triangulation: " << triangulation.n_global_active_cells()
@@ -1587,7 +1670,7 @@ VectorValuedProblem<dim>::run()
       pcout << "   DoFHandler:    " << dof_handler.n_dofs() << " DoFs"
             << std::endl;
 
-      if (parameters.preconditioner == Settings::gmg)
+      if (parameters.preconditioner == Settings::lsmg)
         for (unsigned int level = 0; level < triangulation.n_global_levels();
              ++level)
           pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
@@ -1613,9 +1696,9 @@ VectorValuedProblem<dim>::run()
           output_results(cycle);
         }
 
-      compute_solution_norm();
+      // compute_solution_norm();
 
-      compute_l2_error();
+      // compute_l2_error();
 
       computing_timer.print_summary();
       computing_timer.reset();
@@ -1625,9 +1708,7 @@ VectorValuedProblem<dim>::run()
 int
 main(int argc, char *argv[])
 {
-  Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
-  dealii::Utilities::System::MemoryStats stats;
-  dealii::Utilities::System::get_memory_stats(stats);
+  Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
@@ -1660,7 +1741,6 @@ main(int argc, char *argv[])
               ExcMessage(
                 "This program only works in 2d and 3d and for element orders equal to 1, 2 or 3."));
         }
-
     }
   catch (std::exception &exc)
     {
