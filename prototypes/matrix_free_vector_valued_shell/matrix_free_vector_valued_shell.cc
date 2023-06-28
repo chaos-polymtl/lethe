@@ -217,6 +217,7 @@ Settings::try_parse(const std::string &prm_filename)
   return true;
 }
 
+// Function for analytical solution in the case of MMS verification
 template <int dim>
 class AnalyticalSolution : public Function<dim>
 {
@@ -241,6 +242,7 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   values(2) = std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
 }
 
+// Function for source term in the case of MMS verification
 template <int dim>
 class FirstSourceTerm : public Function<dim>
 {
@@ -282,6 +284,7 @@ FirstSourceTerm<dim>::value(const Point<dim> & p,
   return value<double>(p, component);
 }
 
+// Function for source term in the case of MMS verification
 template <int dim>
 class SecondSourceTerm : public Function<dim>
 {
@@ -293,18 +296,6 @@ public:
     return -numbers::PI * (2.0 * numbers::PI * std::sin(numbers::PI * p[0]) *
                              std::sin(numbers::PI * p[1]) +
                            std::sin(numbers::PI * (p[0] + p[1])));
-  }
-};
-
-template <int dim>
-class BoundaryFunction : public Function<dim>
-{
-public:
-  virtual double
-  value(const Point<dim> &p,
-        const unsigned int /* component */ = 0) const override
-  {
-    return p[0];
   }
 };
 
@@ -354,7 +345,7 @@ public:
   // second and third template arguments are set to -1 and 0 to let
   // the class select dynamically the approproate polynomial order
   // and number of quadrature points.
-  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim, number>;
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
 
   using VectorType = LinearAlgebra::distributed::Vector<number>;
 
@@ -426,9 +417,7 @@ private:
 
 template <int dim, typename number>
 VectorValuedOperator<dim, number>::VectorValuedOperator()
-{
-  // system_matrix.clear();
-}
+{}
 
 template <int dim, typename number>
 VectorValuedOperator<dim, number>::VectorValuedOperator(
@@ -503,7 +492,7 @@ VectorValuedOperator<dim, number>::vmult(VectorType &      dst,
 
 // Performs the transposed operator evaluation. Since we have
 // non-symmetric matrices this is different from the vmult call.
-// TODO: implement this correctly (important for MG interfaces)
+// TODO: implement this correctly
 template <int dim, typename number>
 void
 VectorValuedOperator<dim, number>::Tvmult(VectorType &      dst,
@@ -568,7 +557,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
-      // TODO
+      // TODO: implement Jacobian
       integrator.submit_gradient(-integrator.get_gradient(q), q);
     }
 
@@ -588,7 +577,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
-      // TODO
+      // TODO: implement jacobian
       integrator.submit_gradient(-integrator.get_gradient(q), q);
     }
 
@@ -798,8 +787,12 @@ solve_with_gmg(SolverControl &            solver_control,
       constraint.reinit(locally_relevant_dofs);
 
       DoFTools::make_hanging_node_constraints(dof_handler, constraint);
-      VectorTools::interpolate_boundary_values(
-        mapping, dof_handler, 0, Functions::ZeroFunction<dim>(dim), constraint);
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim + 1),
+                                               constraint);
       constraint.close();
 
       VectorType dummy;
@@ -855,9 +848,6 @@ private:
 
   void
   setup_system();
-
-  void
-  setup_gmg();
 
   void
   evaluate_residual(
@@ -936,7 +926,7 @@ VectorValuedProblem<dim>::VectorValuedProblem(const Settings &parameters)
   , parameters(parameters)
   , element_order(parameters.element_order)
   , mapping(parameters.element_order)
-  , fe_system(FE_Q<dim>(parameters.element_order), dim)
+  , fe_system(FE_Q<dim>(parameters.element_order), dim + 1)
   , dof_handler(triangulation)
   , pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
   , computing_timer(MPI_COMM_WORLD,
@@ -980,25 +970,17 @@ VectorValuedProblem<dim>::setup_system()
   // Set homogeneous constraints for the matrix-free operator
   // Create zero BCs for the delta.
   // Left wall
-  VectorTools::interpolate_boundary_values(dof_handler,
-                                           0,
-                                           Functions::ZeroFunction<dim>(dim),
-                                           constraints);
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 0, Functions::ZeroFunction<dim>(dim + 1), constraints);
 
-  VectorTools::interpolate_boundary_values(dof_handler,
-                                           1,
-                                           Functions::ZeroFunction<dim>(dim),
-                                           constraints);
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 1, Functions::ZeroFunction<dim>(dim + 1), constraints);
 
-  VectorTools::interpolate_boundary_values(dof_handler,
-                                           2,
-                                           Functions::ZeroFunction<dim>(dim),
-                                           constraints);
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 2, Functions::ZeroFunction<dim>(dim + 1), constraints);
 
-  VectorTools::interpolate_boundary_values(dof_handler,
-                                           3,
-                                           Functions::ZeroFunction<dim>(dim),
-                                           constraints);
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 3, Functions::ZeroFunction<dim>(dim + 1), constraints);
 
   constraints.close();
 
@@ -1030,7 +1012,7 @@ VectorValuedProblem<dim>::local_evaluate_residual(
   const LinearAlgebra::distributed::Vector<double> &src,
   const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
-  FEEvaluation<dim, -1, 0, dim, double> phi(data);
+  FEEvaluation<dim, -1, 0, dim + 1, double> phi(data);
 
   FirstSourceTerm<dim>  first_source_term_function;
   SecondSourceTerm<dim> second_source_term_function;
@@ -1059,28 +1041,8 @@ VectorValuedProblem<dim>::local_evaluate_residual(
                                                point_batch);
             }
 
-          // // First term + fourth term
+          // TODO: complete residual
           phi.submit_gradient(-phi.get_gradient(q), q);
-
-          // Second term  + second source term
-          // Tensor<1,dim> source_terms;
-          // source_terms[0] = first_source_value;
-          // source_terms[1] = second_source_value;
-          // phi.submit_value(-source_terms,q);
-
-          // p_phi.submit_value(-u_phi.get_divergence(q) - second_source_value,
-          // q);
-
-          // // Third term + first source term
-          // VectorizedArray<double>                 p_value =
-          // p_phi.get_value(q); Tensor<1, dim, VectorizedArray<double>>
-          // identity_by_p; for (unsigned int d = 0; d < dim; ++d)
-          //   identity_by_p[d] = p_value;
-
-          // u_phi.submit_value(-identity_by_p - first_source_value, q);
-
-          // // Fourth term
-          // p_phi.submit_gradient(-p_phi.get_gradient(q), q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -1492,9 +1454,9 @@ VectorValuedProblem<dim>::run()
           output_results(cycle);
         }
 
-      // compute_solution_norm();
+      compute_solution_norm();
 
-      // compute_l2_error();
+      compute_l2_error();
 
       computing_timer.print_summary();
       computing_timer.reset();
