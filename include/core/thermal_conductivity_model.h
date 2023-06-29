@@ -77,7 +77,7 @@ public:
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal conductivity with respect to a field
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the thermal conductivity with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
@@ -154,7 +154,7 @@ public:
   }
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal conductivity with respect to a field
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the thermal conductivity with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated
@@ -268,7 +268,7 @@ public:
   };
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the thermal conductivity with respect to a field
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the thermal conductivity with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
    * should be calculated

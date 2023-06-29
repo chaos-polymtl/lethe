@@ -16,8 +16,7 @@ test()
   PowerLaw rheology_model(5, 0.5, 1e-3);
 
 
-  // field values can remain empty since the constant thermal conductivity does
-  // not depend  on any fields
+  // Field values must contain shear rate
   std::map<field, double> field_values;
 
   deallog << "Testing power law viscosity - nu" << std::endl;
