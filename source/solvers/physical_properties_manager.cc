@@ -46,6 +46,7 @@ PhysicalPropertiesManager::initialize(
   required_fields[field::temperature]          = false;
   required_fields[field::previous_temperature] = false;
   required_fields[field::shear_rate]           = false;
+  required_fields[field::pressure]             = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)

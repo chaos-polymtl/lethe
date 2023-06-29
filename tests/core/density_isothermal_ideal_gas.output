@@ -1,0 +1,6 @@
+
+DEAL::Beginning
+DEAL::Testing isothermal ideal gas density - rho
+DEAL:: p = 0    , density = 1.2
+DEAL:: p = 1000 , density = 1.21188
+DEAL::OK
