@@ -24,7 +24,7 @@ set output name        = solution
 # Path for vtu output files
 set output path        = ./
 
-# GMRES Preconditioner <AMG|LSMG|GCMG|ILU>
+# GMRES Preconditioner <AMG|GCMG|ILU>
 set preconditioner     = ILU
 
 # Repetitions in one direction for the hyperrectangle
