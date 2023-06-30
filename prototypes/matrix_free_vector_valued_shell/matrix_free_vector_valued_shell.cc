@@ -237,10 +237,45 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
 {
   AssertDimension(values.size(), dim + 1);
 
-  values(0) = std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
-  values(1) = std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
-  values(2) = std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+  for (unsigned int i = 0 ; i < dim+1 ; ++i)
+  values(i) = (1+i)*std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
 }
+
+
+// Function for the full source term
+template <int dim>
+class FullSourceTerm : public Function<dim>
+{
+public:
+  FullSourceTerm()
+  {}
+
+  virtual double
+  value(const Point<dim> &p, const unsigned int component = 0) const override;
+
+  template <typename number>
+  number
+  value(const Point<dim, number> &p, const unsigned int component = 0) const;
+};
+
+template <int dim>
+template <typename number>
+number
+FullSourceTerm<dim>::value(const Point<dim, number> &p,
+                            const unsigned int        component) const
+{
+  number result=(component+1) * (2*numbers::PI*numbers::PI-1) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+  return result;
+}
+
+template <int dim>
+double
+FullSourceTerm<dim>::value(const Point<dim> & p,
+                            const unsigned int component) const
+{
+  return value<double>(p, component);
+}
+
 
 // Function for source term in the case of MMS verification
 template <int dim>
@@ -318,11 +353,11 @@ evaluate_function(const Function<dim> &                      function,
 
 // Matrix-free helper function
 template <int dim, typename Number, int components>
-Tensor<1, dim, VectorizedArray<Number>>
+Tensor<1, components, VectorizedArray<Number>>
 evaluate_function(const Function<dim> &                      function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
-  Tensor<1, dim, VectorizedArray<Number>> result;
+  Tensor<1, components, VectorizedArray<Number>> result;
   for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
     {
       Point<dim> p;
@@ -343,7 +378,7 @@ public:
   // The FEEValuation class is used to evaluate the solution vector
   // at the quadrature points and to perform the integration. The
   // second and third template arguments are set to -1 and 0 to let
-  // the class select dynamically the approproate polynomial order
+  // the class select dynamically the appropriate polynomial order
   // and number of quadrature points.
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
 
@@ -492,7 +527,7 @@ VectorValuedOperator<dim, number>::vmult(VectorType &      dst,
 
 // Performs the transposed operator evaluation. Since we have
 // non-symmetric matrices this is different from the vmult call.
-// TODO: implement this correctly
+// TODO: implement this correctly (let's start with something symetric)
 template <int dim, typename number>
 void
 VectorValuedOperator<dim, number>::Tvmult(VectorType &      dst,
@@ -559,6 +594,8 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
     {
       // TODO: implement Jacobian
       integrator.submit_gradient(-integrator.get_gradient(q), q);
+      integrator.submit_value(integrator.get_value(q), q);
+
     }
 
   integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -573,16 +610,17 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
 {
   integrator.gather_evaluate(src,
                              EvaluationFlags::values |
-                               EvaluationFlags::gradients);
+                               EvaluationFlags::gradients );
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
       // TODO: implement jacobian
       integrator.submit_gradient(-integrator.get_gradient(q), q);
+      integrator.submit_value(integrator.get_value(q), q);
     }
 
   integrator.integrate_scatter(EvaluationFlags::values |
-                                 EvaluationFlags::gradients,
+                                 EvaluationFlags::gradients ,
                                dst);
 }
 
@@ -830,6 +868,8 @@ solve_with_gmg(SolverControl &            solver_control,
            transfer);
 }
 
+// Let's start with something dumb. Like  ∇^2 u + u =0
+// Then we can move on to something more comple like Stokes
 // Main class for a dummy vector-valued problem given by
 // ∇^2 u = p + f_1 and ∇^2 p = ∇ · u + f_2 using Newton's method
 // and the matrix-free approach.
@@ -944,7 +984,7 @@ VectorValuedProblem<dim>::make_grid()
   switch (parameters.geometry)
     {
         case Settings::hypercube: {
-          GridGenerator::hyper_cube(triangulation, 0, 1.0, true);
+          GridGenerator::hyper_cube(triangulation, -1, 1.0, true);
           break;
         }
     }
@@ -1014,8 +1054,7 @@ VectorValuedProblem<dim>::local_evaluate_residual(
 {
   FEEvaluation<dim, -1, 0, dim + 1, double> phi(data);
 
-  FirstSourceTerm<dim>  first_source_term_function;
-  SecondSourceTerm<dim> second_source_term_function;
+  FullSourceTerm<dim>  source_term_function;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -1025,24 +1064,23 @@ VectorValuedProblem<dim>::local_evaluate_residual(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          VectorizedArray<double> second_source_value =
-            VectorizedArray<double>(0.0);
-          Tensor<1, dim, VectorizedArray<double>> first_source_value;
+
+          Tensor<1, dim+1, VectorizedArray<double>> source_value;
           Point<dim, VectorizedArray<double>>     point_batch =
             phi.quadrature_point(q);
-          if (parameters.source_term == Settings::mms)
+         // if (parameters.source_term == Settings::mms)
             {
-              first_source_value =
-                evaluate_function<dim, double, dim>(first_source_term_function,
+              source_value =
+                evaluate_function<dim, double, dim+1>(source_term_function,
                                                     point_batch);
-
-              second_source_value =
-                evaluate_function<dim, double>(second_source_term_function,
-                                               point_batch);
             }
+
 
           // TODO: complete residual
           phi.submit_gradient(-phi.get_gradient(q), q);
+          phi.submit_value(phi.get_value(q)+source_value, q);
+          //phi.submit_value(-source_value, q);
+
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -1295,8 +1333,8 @@ VectorValuedProblem<dim>::compute_l2_error() const
                                                         error_per_cell,
                                                         VectorTools::L2_norm);
 
-  pcout << "  u L2 norm: " << u_l2_error << std::endl;
-  pcout << "  p L2 norm: " << p_l2_error << std::endl;
+  pcout << "  u L2 norm error: " << u_l2_error << std::endl;
+  pcout << "  p L2 norm error: " << p_l2_error << std::endl;
 }
 
 template <int dim>
@@ -1454,7 +1492,7 @@ VectorValuedProblem<dim>::run()
           output_results(cycle);
         }
 
-      compute_solution_norm();
+      //compute_solution_norm();
 
       compute_l2_error();
 
