@@ -16,8 +16,8 @@ find_particle_contact_detection_step(
     for (auto &d : displacement)
       d = 0.;
 
-  double       max_displacement       = 0;
-  unsigned int contact_detection_step = 0;
+  double max_displacement       = 0.;
+  bool   contact_detection_step = false;
 
   // Updating displacement
   for (auto &particle : particle_handler)
@@ -38,18 +38,16 @@ find_particle_contact_detection_step(
       max_displacement = std::max(max_displacement, particle_displacement);
     }
 
+  // If the maximum displacement of particles exceeds criterion, this step
+  // is a contact detection step
   if (max_displacement > smallest_contact_search_criterion)
     {
-      // If the maximum displacement of particles exceeds criterion, the
-      // function returns true and the displcament of all particles are reset to
-      // zero
-
-      contact_detection_step = 1;
+      contact_detection_step = true;
     }
 
-  // Broadcasting updating_step value to other processors
+  // Broadcasting contact detection step value to other processors
   contact_detection_step =
-    Utilities::MPI::max(contact_detection_step, mpi_communicator);
+    Utilities::MPI::logical_or(contact_detection_step, mpi_communicator);
 
   return contact_detection_step;
 }
