@@ -1133,6 +1133,11 @@ DEMSolver<dim>::solve()
       if (particles_insertion_step || load_balance_step ||
           contact_detection_step || checkpoint_step)
         {
+          // Particles displacement if passing through a periodic boundary
+          periodic_boundaries_object.execute_particles_displacement(
+            particle_handler,
+            container_manager.periodic_boundaries_cells_information);
+
           particle_handler.sort_particles_into_subdomains_and_cells();
 
           if (has_disabled_contacts && !simulation_control->is_at_start())
@@ -1309,11 +1314,6 @@ DEMSolver<dim>::solve()
                 disable_contacts_object.get_mobility_status());
             }
         }
-
-      // Particles displacement if passing through a periodic boundary
-      periodic_boundaries_object.execute_particles_displacement(
-        particle_handler,
-        container_manager.periodic_boundaries_cells_information);
 
       // Visualization
       if (simulation_control->is_output_iteration())
