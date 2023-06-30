@@ -264,8 +264,10 @@ number
 FullSourceTerm<dim>::value(const Point<dim, number> &p,
                             const unsigned int        component) const
 {
-  number result=(component+1) * (2*numbers::PI*numbers::PI-1) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
-  return result;
+  if (component==dim)
+    return (component+1) * (-1.) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+  else
+    return (component+1) * (2*numbers::PI*numbers::PI) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
 }
 
 template <int dim>
@@ -368,6 +370,9 @@ evaluate_function(const Function<dim> &                      function,
     }
   return result;
 }
+
+
+
 
 // Matrix-free differential operator for a vector-valued problem.
 // It "replaces" the traditional assemble_matrix() function.
@@ -588,13 +593,39 @@ void
 VectorValuedOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
+  using FECellIntegratorType = FEEvaluation<dim,
+                                            -1,
+                                            0,
+                                            dim+1,
+                                            double,
+                                            VectorizedArray<double>>;
+
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
+
+      // Gather the original value/gradient
+      typename FECellIntegratorType::value_type value = integrator.get_value(q);
+      typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
+
+      // Result value/gradient we will use
+      typename FECellIntegratorType::value_type    value_result;
+      typename FECellIntegratorType::gradient_type gradient_result;
+
+      // Assemble -nabla u = 0 for the first 3 components
+      // Assemble p = 0 for the last component
+      for (unsigned int i = 0 ; i<dim ; ++i)
+        {
+          gradient_result[i] = gradient[i];
+          value_result[i] = 0;
+        }
+      value_result[dim] = value[dim];
+      gradient_result[dim] = 0 ;
+
       // TODO: implement Jacobian
-      integrator.submit_gradient(-integrator.get_gradient(q), q);
-      integrator.submit_value(integrator.get_value(q), q);
+      integrator.submit_gradient(-gradient_result, q);
+      integrator.submit_value(value_result, q);
 
     }
 
@@ -608,15 +639,39 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
   VectorType &      dst,
   const VectorType &src) const
 {
+  using FECellIntegratorType = FEEvaluation<dim,
+                                            -1,
+                                            0,
+                                            dim+1,
+                                            double,
+                                            VectorizedArray<double>>;
+
   integrator.gather_evaluate(src,
                              EvaluationFlags::values |
                                EvaluationFlags::gradients );
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
+
+      // Gather the original value/gradient
+      typename FECellIntegratorType::value_type value = integrator.get_value(q);
+      typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
+
+      // Result value/gradient we will use
+      typename FECellIntegratorType::value_type    value_result;
+      typename FECellIntegratorType::gradient_type gradient_result;
+
+      // Assemble -nabla u = 0 for the first 3 components
+      // Assemble p = 0 for the last component
+      for (unsigned int i = 0 ; i<dim ; ++i)
+        {
+          gradient_result[i] = gradient[i];
+        }
+      value_result[dim] = value[dim];
+
       // TODO: implement jacobian
-      integrator.submit_gradient(-integrator.get_gradient(q), q);
-      integrator.submit_value(integrator.get_value(q), q);
+      integrator.submit_gradient(-gradient_result, q);
+      integrator.submit_value(value_result, q);
     }
 
   integrator.integrate_scatter(EvaluationFlags::values |
@@ -1052,6 +1107,13 @@ VectorValuedProblem<dim>::local_evaluate_residual(
   const LinearAlgebra::distributed::Vector<double> &src,
   const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
+  using FECellIntegratorType = FEEvaluation<dim,
+                                            -1,
+                                            0,
+                                            dim+1,
+                                            double,
+                                            VectorizedArray<double>>;
+
   FEEvaluation<dim, -1, 0, dim + 1, double> phi(data);
 
   FullSourceTerm<dim>  source_term_function;
@@ -1075,10 +1137,27 @@ VectorValuedProblem<dim>::local_evaluate_residual(
                                                     point_batch);
             }
 
+            // Gather the original value/gradient
+            typename FECellIntegratorType::value_type value = phi.get_value(q);
+            typename FECellIntegratorType::gradient_type gradient = phi.get_gradient(q);
+
+            // Result value/gradient we will use
+            typename FECellIntegratorType::value_type    value_result;
+            typename FECellIntegratorType::gradient_type gradient_result;
+
+            // Assemble -nabla u = 0 for the first 3 components
+            // Assemble p = 0 for the last component
+            for (unsigned int i = 0 ; i<dim ; ++i)
+              {
+                gradient_result[i] = gradient[i];
+              }
+            value_result[dim] = value[dim];
+
+
 
           // TODO: complete residual
-          phi.submit_gradient(-phi.get_gradient(q), q);
-          phi.submit_value(phi.get_value(q)+source_value, q);
+          phi.submit_gradient(-gradient_result, q);
+          phi.submit_value(value_result+source_value, q);
           //phi.submit_value(-source_value, q);
 
         }
