@@ -304,7 +304,7 @@ This model is parameterized using the ``phase change`` subsection
 Density models
 ~~~~~~~~~~~~~~
 
-Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid's density varies according the following state equation (ideal gas law):
+Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid's density varies according the following state equation:
 
 .. math::
   \rho = \rho_{ref} + \psi p = \rho_{ref} + \frac{1}{R T} \ p

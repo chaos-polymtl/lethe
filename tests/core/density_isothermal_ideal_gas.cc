@@ -1,5 +1,5 @@
 /**
- * @brief Tests the isothermal ideal gas density model. This model should always return a constant.
+ * @brief Tests the isothermal ideal gas density model. This model should always return rho_ref + 1/(RT)*p
  */
 
 // Lethe
