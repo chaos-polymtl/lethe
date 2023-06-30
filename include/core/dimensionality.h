@@ -95,7 +95,6 @@ namespace Parameters
      * everywhere.
      */
     double density_scaling;
-    double pressure_scaling;
     double specific_gas_constant_scaling;
     double viscosity_scaling;
     double specific_heat_scaling;
