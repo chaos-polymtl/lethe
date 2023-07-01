@@ -342,7 +342,7 @@ Since the geometry of the mesh and the number of the particles are not the same,
 Results comparison
 ~~~~~~~~~~~~~~~~~~
 Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
-The simulated mass discharging rate is 85.09 g/s from the original simulation and 91.73 g/s with PBC. Also, the run time of the simulation goes from about 1 hours and 30 minutes to 10 minutes on 8 cores.
+The simulated mass discharging rate is 85.09 g/s from the original simulation and 91.73 g/s with PBC. Also, the run time of the simulation goes from about 1 hours and 30 minutes to 10 minutes on 8 cores with an Intel i7-11700K.
 
 .. figure:: images/figure_hopper_comparison.png
     :width: 600
