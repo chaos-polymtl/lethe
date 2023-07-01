@@ -16,8 +16,7 @@ test()
   Carreau rheology_model(5, 0, 1, 2, 0.5);
 
 
-  // field values can remain empty since the constant thermal conductivity does
-  // not depend  on any fields
+  // Field values must contain shear rate
   std::map<field, double> field_values;
 
   deallog << "Testing Carreau viscosity - nu" << std::endl;

@@ -358,6 +358,56 @@ namespace Parameters
   }
 
   void
+  IsothermalIdealGasDensityParameters::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("isothermal_ideal_gas");
+    {
+      prm.declare_entry(
+        "density_ref",
+        "1.2", // dry air's density at normal temperature and pressure (20 °C
+               // and 1 atm)
+        Patterns::Double(),
+        "Reference density of the gas in SI units for isothermal ideal gas equation of state in density calculation");
+
+      prm.declare_entry(
+        "R",
+        "287.05", // dry air's specific gas constant as default
+        Patterns::Double(),
+        "Specific gas constant in SI units for isothermal ideal gas equation of state in density calculation");
+
+      prm.declare_entry(
+        "T",
+        "293.15", // normal temperature (20°C) as a default
+        Patterns::Double(),
+        "Absolute temperature of the gas in kelvin (K) for isothermal ideal gas equation of state in density calculation");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  IsothermalIdealGasDensityParameters::parse_parameters(
+    ParameterHandler &   prm,
+    const Dimensionality dimensions)
+  {
+    prm.enter_subsection("isothermal_ideal_gas");
+    {
+      // Isothermal ideal gas equation of state parameters
+      // The reference state density of the gas (rho_{ref}) is in M L^-3
+      density_ref = prm.get_double("density_ref");
+      density_ref *= dimensions.density_scaling;
+
+      // The specific gas constant (R) is in L^2 T^-2 theta^-1
+      R = prm.get_double("R");
+      R *= dimensions.specific_gas_constant_scaling;
+
+      // The absolute temperature (T) of the ideal gas is in theta^-1
+      T = prm.get_double("T");
+      T *= 1. / dimensions.temperature;
+    }
+    prm.leave_subsection();
+  }
+
+  void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("stabilization");
@@ -640,9 +690,11 @@ namespace Parameters
 
       prm.declare_entry("density model",
                         "constant",
-                        Patterns::Selection("constant"),
+                        Patterns::Selection("constant|isothermal_ideal_gas"),
                         "Model used for the calculation of the density"
-                        "Choices are <constant>.");
+                        "Choices are <constant|isothermal_ideal_gas>.");
+
+      isothermal_ideal_gas_density_parameters.declare_parameters(prm);
 
       prm.declare_entry("specific heat model",
                         "constant",
@@ -696,11 +748,17 @@ namespace Parameters
       //---------------------------------------------------
       op = prm.get("density model");
       if (op == "constant")
-        density_model = DensityModel::constant;
+        {
+          density_model = DensityModel::constant;
+        }
+      else if (op == "isothermal_ideal_gas")
+        {
+          density_model = DensityModel::isothermal_ideal_gas;
+        }
       density = prm.get_double("density");
       // Density is in M L^-3, rescale
       density *= dimensions.density_scaling;
-
+      isothermal_ideal_gas_density_parameters.parse_parameters(prm, dimensions);
 
       //---------------------------------------------------
       // Viscosity and Rheology

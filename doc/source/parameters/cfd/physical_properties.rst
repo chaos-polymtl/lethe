@@ -6,42 +6,42 @@ Physical Properties
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids	= 1
+    set number of fluids = 1
     subsection fluid 0
       # Rheology
-      set rheological model = newtonian
-      set kinematic viscosity 	= 1
+      set rheological model          = newtonian
+      set kinematic viscosity        = 1
       
       # Density
-      set density model = constant
-      set density 		= 1
+      set density model              = constant
+      set density                    = 1
       
       # Specific heat
-      set specific heat model = constant
-      set specific heat 	= 1
+      set specific heat model        = constant
+      set specific heat              = 1
       
       # Thermal conductivity
       set thermal conductivity model = constant
-      set thermal conductivity = 1
+      set thermal conductivity       = 1
       
       # Thermal expansion
-      set thermal expansion model = constant 
-      set thermal expansion = 0
+      set thermal expansion model    = constant
+      set thermal expansion          = 0
       
       # Tracer diffusivity
-      set tracer diffusivity model = constant
-      set tracer diffusivity   = 0
+      set tracer diffusivity model   = constant
+      set tracer diffusivity         = 0
     end
-    set number of solids	= 0
+    set number of solids = 0
   end
  
 * The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `two phase simulations`_ .
 
-* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological model, see  `Rheological models`_ .
+* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological models`_ .
 
 * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
-* The ``density model`` specifies the model used to calculate the density. At the moment, only a constant density is supported.
+* The ``density model`` specifies the model used to calculate the density. At the moment, a ``constant`` density and an ``isothermal_ideal_gas`` model are supported. For more details on the density models, see `Density models`_.
 
 * The ``density`` parameter is the constant density of the fluid in units of :math:`\text{Mass} \cdot \text{Length}^{-3}`
 
@@ -85,18 +85,18 @@ For two phases, the properties are defined for each fluid. Default values are:
 .. code-block:: text
 
   subsection physical properties
-  set number of fluids		= 2
+  set number of fluids = 2
       subsection fluid 0
-         set density 		= 1
-         set kinematic viscosity 	= 1
-         set specific heat 	= 1
+         set density              = 1
+         set kinematic viscosity  = 1
+         set specific heat        = 1
          set thermal conductivity = 1
          set tracer diffusivity   = 0
       end
       subsection fluid 1
-         set density 		= 1
-         set kinematic viscosity 	= 1
-         set specific heat 	= 1
+         set density              = 1
+         set kinematic viscosity  = 1
+         set specific heat        = 1
          set thermal conductivity = 1
          set tracer diffusivity   = 0
       end
@@ -116,29 +116,29 @@ Conjugate heat transfer
 
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physcal properties of the solid region are set in an identical fashion as those of the fluid. 
 
- .. warning::
+.. warning::
   This is an experimental feature. It has not been tested on a large range of application cases. 
 
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids	= 1
+    set number of fluids = 1
     subsection fluid 0
       ...
     end
-    set number of solids	= 1
+    set number of solids = 1
     subsection solid 0
       # Density
-      set density model = constant
-      set density 		= 1
+      set density model              = constant
+      set density                    = 1
       
       # Specific heat
-      set specific heat model = constant
-      set specific heat 	= 1
+      set specific heat model        = constant
+      set specific heat              = 1
       
       # Thermal conductivity
       set thermal conductivity model = constant
-      set thermal conductivity = 1
+      set thermal conductivity       = 1
     end
   end
 
@@ -154,7 +154,7 @@ The ``rheological model`` parameter sets which rheological model you are using. 
 .. code-block:: text
 
     subsection physical properties
-      set number of fluids		= 1
+      set number of fluids = 1
       subsection fluid 0
         set rheological model   = newtonian
         set kinematic viscosity = 1.0
@@ -188,7 +188,7 @@ When using the power-law model, the default values are:
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids		  = 1
+    set number of fluids = 1
     subsection fluid 0
       set rheological model   = power-law
       subsection non newtonian
@@ -227,12 +227,12 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 .. code-block:: text
 
   subsection physical properties
-    set number of fluids		  = 1
+    set number of fluids = 1
     subsection fluid 0
       set rheological model   = carreau
       subsection non newtonian
         subsection carreau
-          set viscosity_0	   = 1.0
+          set viscosity_0     = 1.0
           set viscosity_inf   = 1.0
           set a               = 2.0
           set lambda          = 1.0
@@ -281,10 +281,10 @@ This model is parameterized using the ``phase change`` subsection
     set solidus temperature  = 0
 
     # Specific heat of the liquid phase
-    set viscosity liquid = 1
+    set viscosity liquid     = 1
   
     # viscosity of the solid phase
-    set viscosity solid  = 1
+    set viscosity solid      = 1
   end
 
 
@@ -299,6 +299,49 @@ This model is parameterized using the ``phase change`` subsection
 .. note::
   The phase change subsection is used to parametrize *both* ``rheological model = phase_change`` *and* ``specific heat model = phase_change``. This prevents parameter duplication.
 
+.. _density_models:
+
+Density models
+~~~~~~~~~~~~~~
+
+Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid's density varies according the following state equation:
+
+.. math::
+  \rho = \rho_{ref} + \psi p = \rho_{ref} + \frac{1}{R T} \ p
+
+where :math:`\rho_{ref}` is the density of the fluid at the reference state, :math:`\psi = \frac{1}{R T}` is the compressibility factor derived from the ideal gas law with :math:`R= \frac{R_u}{M}` the specific gas constant (universal gas constant (:math:`R_u`) divided by the molar mass of the gas (:math:`M`)) and :math:`T` the temperature of the gas, finally, :math:`p` is the differential pressure between the reference state and the current state.
+
+This model is parametrized using the ``isothermal_ideal_gas`` subsection:
+
+.. code-block:: text
+
+  subsection physical properties
+    set number of fluids = 1
+    subsection fluid 0
+      set density model = isothermal_ideal_gas
+      subsection isothermal_ideal_gas
+        set density_ref = 1.2
+        set R           = 287.05
+        set T           = 293.15
+      end
+    end
+  end
+
+where:
+
+* ``density_ref`` corresponds to :math:`\rho_{ref}`
+
+* ``R`` corresponds to :math:`R`
+
+* ``T`` corresponds to :math:`T`
+
+By default, parameters are set to the values of dry air evaluated under normal temperature and pressure conditions :math:`(20 \ \text{°C}`, :math:`1 \ \text{atm})`.
+
+.. caution::
+  When defining the initial pressure condition in the ``initial conditions`` subsection (see :doc:`initial_conditions`), make sure to set it to :math:`0`, as it represents the reference state for the calculated pressure. In solving the Navier-Stokes equations, the pressure is defined to within a constant. Therefore, it is more appropriate to interpret it as a differential pressure.
+
+  .. attention::
+    Currently, the ``isothermal_ideal_gas`` density model can only be used in conjunction with the incompressible Navier-Stokes equations. However, it is meant to be used with the isothermal formulation of compressible Navier-Stokes equations to account for weakly compressible flows. In a future update, these equations will be implemented.
 
 .. _thermal_conductivity_models:
 
@@ -319,7 +362,7 @@ In the ``phase_change`` thermal conductivity model, two different values (``ther
   k = \alpha_l k_l + (1 - \alpha_l) k_s
 
 
-where :math:`k_l`, :math:`k_s` and  :math:`alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
+where :math:`k_l`, :math:`k_s` and  :math:`\alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
 
 Specific heat models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

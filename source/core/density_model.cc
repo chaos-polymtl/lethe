@@ -19,5 +19,16 @@
 std::shared_ptr<DensityModel>
 DensityModel::model_cast(const Parameters::Material &material_properties)
 {
-  return std::make_shared<DensityConstant>(material_properties.density);
+  if (material_properties.density_model ==
+      Parameters::Material::DensityModel::isothermal_ideal_gas)
+    {
+      return std::make_shared<DensityIsothermalIdealGas>(
+        material_properties.isothermal_ideal_gas_density_parameters.density_ref,
+        material_properties.isothermal_ideal_gas_density_parameters.R,
+        material_properties.isothermal_ideal_gas_density_parameters.T);
+    }
+  else
+    {
+      return std::make_shared<DensityConstant>(material_properties.density);
+    }
 }

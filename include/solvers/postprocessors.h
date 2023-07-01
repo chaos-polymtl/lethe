@@ -408,4 +408,37 @@ private:
   std::shared_ptr<Shape<dim>> shape;
 };
 
+
+/**
+ * @class Calculates the density on post-processing points this is used when the
+ * density isn<t considered constant
+ */
+template <int dim>
+class DensityPostprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  DensityPostprocessor(std::shared_ptr<DensityModel> p_density_model)
+    : DataPostprocessorScalar<dim>("density", update_values)
+    , density_model(p_density_model)
+  {}
+  virtual void
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &inputs,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    const unsigned int      n_quadrature_points = inputs.solution_values.size();
+    std::map<field, double> field_values;
+
+    for (unsigned int q = 0; q < n_quadrature_points; ++q)
+      {
+        AssertDimension(computed_quantities[q].size(), 1);
+
+        field_values[field::pressure] = inputs.solution_values[q][dim];
+        computed_quantities[q]        = density_model->value(field_values);
+      }
+  }
+
+private:
+  std::shared_ptr<DensityModel> density_model;
+};
 #endif
