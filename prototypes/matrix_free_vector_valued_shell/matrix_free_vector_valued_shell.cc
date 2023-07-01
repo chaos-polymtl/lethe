@@ -237,8 +237,9 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
 {
   AssertDimension(values.size(), dim + 1);
 
-  for (unsigned int i = 0 ; i < dim+1 ; ++i)
+  for (unsigned int i = 0 ; i < dim ; ++i)
   values(i) = (1+i)*std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+  values(dim) = std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
 }
 
 
@@ -264,10 +265,22 @@ number
 FullSourceTerm<dim>::value(const Point<dim, number> &p,
                             const unsigned int        component) const
 {
-  if (component==dim)
-    return (component+1) * (-1.) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+  if (component==0)
+  {
+      return - (2*numbers::PI*numbers::PI) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1])
+         - numbers::PI * std::cos(numbers::PI*p[0])* std::sin(numbers::PI * p[1]);
+  }
+  else if (component==1)
+  {
+      return - (4*numbers::PI*numbers::PI) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1])
+             - numbers::PI * std::sin(numbers::PI*p[0])* std::cos(numbers::PI * p[1]);
+
+  }
+  else if (component==dim)
+    return -1 * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
   else
-    return (component+1) * (2*numbers::PI*numbers::PI) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+    return 0;
+
 }
 
 template <int dim>
@@ -618,13 +631,13 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
       for (unsigned int i = 0 ; i<dim ; ++i)
         {
           gradient_result[i] = gradient[i];
-          value_result[i] = 0;
+          value_result[i] = gradient[dim][i];
         }
       value_result[dim] = value[dim];
       gradient_result[dim] = 0 ;
 
       // TODO: implement Jacobian
-      integrator.submit_gradient(-gradient_result, q);
+      integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
 
     }
@@ -666,11 +679,12 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
       for (unsigned int i = 0 ; i<dim ; ++i)
         {
           gradient_result[i] = gradient[i];
+          value_result[i] = gradient[dim][i];
         }
       value_result[dim] = value[dim];
 
       // TODO: implement jacobian
-      integrator.submit_gradient(-gradient_result, q);
+      integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
     }
 
@@ -1150,14 +1164,15 @@ VectorValuedProblem<dim>::local_evaluate_residual(
             for (unsigned int i = 0 ; i<dim ; ++i)
               {
                 gradient_result[i] = gradient[i];
+                value_result[i] = gradient[dim][i] + source_value[i];
               }
-            value_result[dim] = value[dim];
+            value_result[dim] = value[dim] + source_value[dim];
 
 
 
           // TODO: complete residual
-          phi.submit_gradient(-gradient_result, q);
-          phi.submit_value(value_result+source_value, q);
+          phi.submit_gradient(gradient_result, q);
+          phi.submit_value(value_result, q);
           //phi.submit_value(-source_value, q);
 
         }
