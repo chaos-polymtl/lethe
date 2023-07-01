@@ -31,7 +31,7 @@ save_path = simulation_path
 
 # Create the particle object
 pvd_name = 'hopper.pvd'
-ignore_data = ['type', 'diameter', 'volumetric contribution']
+ignore_data = ['type', 'diameter', 'volumetric contribution', 'velocity', 'torque', 'fem_torque', 'fem_force']
 particle = lethe_pyvista_tools(simulation_path, prm_file_name, pvd_name, ignore_data=ignore_data)
 
 #############################################################################
@@ -99,7 +99,7 @@ data.to_csv(save_path + '/results_' + pvd_name + '.csv')
 # Read data from paper
 paper_data = pd.read_csv('paper_data.csv')
 
-# Find range to calculate rate (this part is kind of headcoded)
+# Find range to calculate rate (this part is kind of hardcoded from results of the plot)
 p0 = start + int(0.25/(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
 p1 = p0 +    int(0.5 /(particle.prm_dict['output frequency'] * particle.prm_dict['time step']))
 
@@ -109,7 +109,8 @@ p = np.polyfit([value - particle.time_list[p0] for value in particle.time_list[p
 print(f'Mass flow rate is : {p[0]:.2f} g/s.')
 
 # Plot results
-plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor, label="Lethe DEM")
+plt.plot(data['time'][start:] - data['time'][start], data['mass_discharge'][start:] * 1000 / correction_factor,
+         label="Lethe DEM")
 plt.plot(paper_data['time'], paper_data['discharge'], '.k', label="Anand et al.")
 plt.xlabel('Time (s)')
 plt.ylabel('Mass discharged from the hopper (g)')

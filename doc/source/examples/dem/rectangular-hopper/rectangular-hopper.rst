@@ -12,7 +12,7 @@ Features
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
 - Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
-- Periodic boundaries in DEM (for extensional version of the case only, see section 7.9)
+- Periodic boundaries in DEM (see section :ref:`ref-periodic-hopper`)
 
 Files used in this example
 ----------------------------
@@ -238,6 +238,8 @@ The simulated mass discharging rate is 84.94 g/s.
 
     Rectangular hopper at the end of the simulation.
 
+.. _ref-periodic-hopper:
+
 Case with periodic boundary conditions
 --------------------------------------
 Periodic boundary conditions feature was not implemented when this example was created. Since it is now, this example is now extended to show how to use it. The original case in Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ did use periodic boundaries.
@@ -327,7 +329,7 @@ Since the geometry of the mesh and the number of the particles are not the same,
         set inserted number of particles at each time step = 2910
         set insertion frequency                            = 25000
         set insertion box minimum x                        = -0.1030
-        set insertion box minimum y                        Rectangular hopper at the end of the simulation.   = 0.10644
+        set insertion box minimum y                        = 0.10644
         set insertion box minimum z                        = .00224
         set insertion box maximum x                        = 0.1030
         set insertion box maximum y                        = 0.16020
@@ -340,7 +342,7 @@ Since the geometry of the mesh and the number of the particles are not the same,
 Results comparison
 ~~~~~~~~~~~~~~~~~~
 Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
-The simulated mass discharging rate is 84.94 g/s from the original simulation and 88.77 g/s with PBC. Also, the run time of the simulation goes from about 3 hours and 15 minutes to 30 minutes on 8 cores.
+The simulated mass discharging rate is 85.09 g/s from the original simulation and 91.73 g/s with PBC. Also, the run time of the simulation goes from about 1 hours and 30 minutes to 10 minutes on 8 cores with an Intel i7-11700K.
 
 .. figure:: images/figure_hopper_comparison.png
     :width: 600
