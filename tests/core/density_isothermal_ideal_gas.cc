@@ -1,9 +1,9 @@
 /**
- * @brief Tests the Power law rheology model. This model should always return a constant.
+ * @brief Tests the isothermal ideal gas density model. This model should always return rho_ref + 1/(RT)*p
  */
 
 // Lethe
-#include <core/rheological_model.h>
+#include <core/density_model.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -11,29 +11,20 @@
 void
 test()
 {
-  deallog << "Beggining" << std::endl;
+  deallog << "Beginning" << std::endl;
 
-  PowerLaw rheology_model(5, 0.5, 1e-3);
+  DensityIsothermalIdealGas density_model(1.2, 287.05, 293.15);
 
-
-  // Field values must contain shear rate
+  // Field values must contain pressure
   std::map<field, double> field_values;
 
-  deallog << "Testing power law viscosity - nu" << std::endl;
-  field_values[field::shear_rate] = 1;
-  deallog << " gamma = 1 , nu = " << rheology_model.value(field_values)
-          << " , dnu/dgamma analytical = "
-          << rheology_model.jacobian(field_values, field::shear_rate)
-          << " , dnu/dgamma numerical = "
-          << rheology_model.numerical_jacobian(field_values, field::shear_rate)
+  deallog << "Testing isothermal ideal gas density - rho" << std::endl;
+  field_values[field::pressure] = 0;
+  deallog << " p = 0    , density = " << density_model.value(field_values)
           << std::endl;
-  field_values[field::shear_rate] = 2;
-  deallog << " gamma = 2 , nu = " << rheology_model.value(field_values)
-          << " , dnu/dgamma analytical = "
-          << rheology_model.jacobian(field_values, field::shear_rate)
-          << " , dnu/dgamma numerical = "
-          << rheology_model.numerical_jacobian(field_values, field::shear_rate)
 
+  field_values[field::pressure] = 1000;
+  deallog << " p = 1000 , density = " << density_model.value(field_values)
           << std::endl;
 
   deallog << "OK" << std::endl;

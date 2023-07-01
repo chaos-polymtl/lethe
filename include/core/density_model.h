@@ -108,4 +108,95 @@ private:
   const double density;
 };
 
+
+/**
+ * @brief Isothermal ideal gas density.
+ */
+class DensityIsothermalIdealGas : public DensityModel
+{
+public:
+  /**
+   * @brief Default constructor
+   */
+  DensityIsothermalIdealGas(const double p_density_ref,
+                            const double p_R,
+                            const double p_T)
+    : density_ref(p_density_ref)
+    , R(p_R)
+    , T(p_T)
+  {
+    this->model_depends_on[field::pressure] = true;
+  }
+
+  /**
+   * @brief value Calculates the density
+   * @param fields_value Value of the various field on which the property may depend.
+   * @return value of the physical property calculated with the fields_value
+   */
+  double
+  value(const std::map<field, double> &fields_value) override
+  {
+    const double pressure = fields_value.at(field::pressure);
+    const double psi      = 1. / (R * T);
+    return density_ref + psi * pressure;
+  }
+
+  /**
+   * @brief vector_value Calculates the vector of density.
+   * @param field_vectors Vectors of the fields on which the density may depend.
+   * @param property_vector Vectors of the density values
+   */
+  void
+  vector_value(const std::map<field, std::vector<double>> &field_vectors,
+               std::vector<double> &property_vector) override
+  {
+    const std::vector<double> &pressure = field_vectors.at(field::pressure);
+    const double               psi      = 1. / (R * T);
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] = density_ref + psi * pressure[i];
+  }
+
+  /**
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the density with respect to a field
+   * @param field_values Value of the various fields on which the property may depend.
+   * @param id Indicator of the field with respect to which the jacobian
+   * should be calculated.
+   * @return value of the partial derivative of the density with respect to the field.
+   */
+
+  double
+  jacobian(const std::map<field, double> & /*field_values*/, field id) override
+  {
+    if (id == field::pressure)
+      return 1. / (R * T);
+    else
+      return 0;
+  }
+
+  /**
+   * @brief vector_jacobian Calculates the derivative of the density with respect to a field.
+   * @param field_vectors Vector for the values of the fields used to evaluate the property.
+   * @param id Identifier of the field with respect to which a derivative should be calculated.
+   * @param jacobian vector of the value of the derivative of the density with respect to the field id.
+   */
+
+  void
+  vector_jacobian(
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    const field          id,
+    std::vector<double> &jacobian_vector) override
+  {
+    const double psi = 1. / (R * T);
+    if (id == field::pressure)
+      std::fill(jacobian_vector.begin(), jacobian_vector.end(), psi);
+    else
+      std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+  }
+
+private:
+  const double density_ref;
+  const double R;
+  const double T;
+};
+
 #endif
