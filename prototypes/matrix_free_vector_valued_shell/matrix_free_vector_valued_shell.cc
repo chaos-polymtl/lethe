@@ -237,9 +237,19 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
 {
   AssertDimension(values.size(), dim + 1);
 
-  for (unsigned int i = 0 ; i < dim ; ++i)
-  values(i) = (1+i)*std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
-  values(dim) = std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
+  // 2D Stokes analytical solution for the Rayleigh-Kothe-ish vortex
+  // u=sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y)
+  // v=-cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y)
+  // p=x**2.*y**2.
+  // with a = PI or any multiple of PI
+  const double a = numbers::PI;
+  const double x = p[0];
+  const double y = p[1];
+
+  values(0) = sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y);
+  values(1) = -cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y);
+  values(2) = 0;
+
 }
 
 
@@ -265,21 +275,20 @@ number
 FullSourceTerm<dim>::value(const Point<dim, number> &p,
                             const unsigned int        component) const
 {
+  const double a = numbers::PI;
+  const double x = p[0];
+  const double y = p[1];
   if (component==0)
   {
-      return - (2*numbers::PI*numbers::PI) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1])
-         - numbers::PI * std::cos(numbers::PI*p[0])* std::sin(numbers::PI * p[1]);
+      return (2*a*a*(sin(a*x)*sin(a*x) - cos(a*x)*cos(a*x))*sin(a*y)*cos(a*y) + 4*a*a*sin(a*x)*sin(a*x)*sin(a*y)*cos(a*y)) ;
   }
   else if (component==1)
   {
-      return - (4*numbers::PI*numbers::PI) * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1])
-             - numbers::PI * std::sin(numbers::PI*p[0])* std::cos(numbers::PI * p[1]);
-
+      return (-2*a*a*(sin(a*y)*sin(a*y) - cos(a*y)*cos(a*y))*sin(a*x)*cos(a*x) - 4*a*a*sin(a*x)*sin(a*y)*sin(a*y)*cos(a*x)) ;
   }
-  else if (component==dim)
-    return -1 * std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
   else
     return 0;
+
 
 }
 
@@ -290,64 +299,6 @@ FullSourceTerm<dim>::value(const Point<dim> & p,
 {
   return value<double>(p, component);
 }
-
-
-// Function for source term in the case of MMS verification
-template <int dim>
-class FirstSourceTerm : public Function<dim>
-{
-public:
-  FirstSourceTerm()
-  {}
-
-  virtual double
-  value(const Point<dim> &p, const unsigned int component = 0) const override;
-
-  template <typename number>
-  number
-  value(const Point<dim, number> &p, const unsigned int component = 0) const;
-};
-
-template <int dim>
-template <typename number>
-number
-FirstSourceTerm<dim>::value(const Point<dim, number> &p,
-                            const unsigned int        component) const
-{
-  number result;
-  if (component == 0)
-    result = (-2.0 * Utilities::fixed_power<2, double>(numbers::PI) - 1) *
-             std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
-  else if (component == 1)
-    result = (-2.0 * Utilities::fixed_power<2, double>(numbers::PI) - 1) *
-             std::sin(numbers::PI * p[0]) * std::sin(numbers::PI * p[1]);
-  else
-    result = 0.0;
-  return result;
-}
-
-template <int dim>
-double
-FirstSourceTerm<dim>::value(const Point<dim> & p,
-                            const unsigned int component) const
-{
-  return value<double>(p, component);
-}
-
-// Function for source term in the case of MMS verification
-template <int dim>
-class SecondSourceTerm : public Function<dim>
-{
-public:
-  virtual double
-  value(const Point<dim> &p,
-        const unsigned int /* component */ = 0) const override
-  {
-    return -numbers::PI * (2.0 * numbers::PI * std::sin(numbers::PI * p[0]) *
-                             std::sin(numbers::PI * p[1]) +
-                           std::sin(numbers::PI * (p[0] + p[1])));
-  }
-};
 
 // Matrix-free helper function
 template <int dim, typename Number>
@@ -613,33 +564,72 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
                                             double,
                                             VectorizedArray<double>>;
 
-  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients | EvaluationFlags::hessians);
+
+  const unsigned int cell = integrator.get_current_cell_index();
+
+  VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+  std::array<number, VectorizedArray<number>::size()> h_k;
+  std::array<number, VectorizedArray<number>::size()> h;
+
+  for (auto lane = 0u;
+       lane <
+       matrix_free.n_active_entries_per_cell_batch(cell);
+       lane++)
+    {
+      h_k[lane] = matrix_free.get_cell_iterator(cell, lane)
+                    ->measure();
+    }
+
+
+  for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+    {
+      if (dim == 2)
+        {
+          h[v] =
+            std::sqrt(4. * h_k[v] / M_PI) ;
+        }
+      else if (dim == 3)
+        {
+          h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+        }
+      tau[v] =  h[v]*h[v];
+    }
+
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
 
-      // Gather the original value/gradient
-      typename FECellIntegratorType::value_type value = integrator.get_value(q);
-      typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
+            // Gather the original value/gradient
+            typename FECellIntegratorType::value_type value = integrator.get_value(q);
+            typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
+            typename FECellIntegratorType::gradient_type hessian_diagonal = integrator.get_hessian_diagonal(q);
 
-      // Result value/gradient we will use
-      typename FECellIntegratorType::value_type    value_result;
-      typename FECellIntegratorType::gradient_type gradient_result;
 
-      // Assemble -nabla u = 0 for the first 3 components
-      // Assemble p = 0 for the last component
-      for (unsigned int i = 0 ; i<dim ; ++i)
-        {
-          gradient_result[i] = gradient[i];
-          value_result[i] = gradient[dim][i];
-        }
-      value_result[dim] = value[dim];
-      gradient_result[dim] = 0 ;
+            // Result value/gradient we will use
+            typename FECellIntegratorType::value_type    value_result;
+            typename FECellIntegratorType::gradient_type gradient_result;
 
-      // TODO: implement Jacobian
-      integrator.submit_gradient(gradient_result, q);
-      integrator.submit_value(value_result, q);
+            // Assemble -nabla u + nabla p = 0 for the first 3 components
+            // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
+            // Assemble q div(u) = 0 for the last component
+            dealii::VectorizedArray<double, 1> divergence_u=0;
+            for (unsigned int i = 0 ; i<dim ; ++i)
+              {
+                gradient_result[i] = -gradient[i];
+                gradient_result[i][i] += value[dim];
 
+                divergence_u += gradient[i][i];
+              }
+            value_result[dim] = divergence_u;
+            for (unsigned int i = 0 ; i < dim ; ++i)
+              for (unsigned int k = 0 ; k < dim ; ++k)
+                gradient_result[dim][i] = -tau * hessian_diagonal[i][k] ;
+            gradient_result[dim] += tau * gradient[dim];
+
+            // TODO: implement jacobian
+            integrator.submit_gradient(gradient_result, q);
+            integrator.submit_value(value_result, q);
     }
 
   integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -661,27 +651,72 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
 
   integrator.gather_evaluate(src,
                              EvaluationFlags::values |
-                               EvaluationFlags::gradients );
+                               EvaluationFlags::gradients | EvaluationFlags::hessians );
+
+  const unsigned int cell = integrator.get_current_cell_index();
+
+
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
 
+            VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+            std::array<number, VectorizedArray<number>::size()> h_k;
+            std::array<number, VectorizedArray<number>::size()> h;
+
+
+            for (auto lane = 0u;
+                 lane <
+                 matrix_free.n_active_entries_per_cell_batch(cell);
+                 lane++)
+              {
+                h_k[lane] = matrix_free.get_cell_iterator(cell, lane)
+                              ->measure();
+              }
+
+
+            for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+              {
+                if (dim == 2)
+                  {
+                    h[v] =
+                      std::sqrt(4. * h_k[v] / M_PI);
+                  }
+                else if (dim == 3)
+                  {
+                    h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+                  }
+                //std::cout<<"h[v] is ??? " << h[v] <<std::endl;
+                tau[v] = h[v]*h[v];
+
+              }
+
       // Gather the original value/gradient
       typename FECellIntegratorType::value_type value = integrator.get_value(q);
       typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
+      typename FECellIntegratorType::gradient_type hessian_diagonal = integrator.get_hessian_diagonal(q);
+
 
       // Result value/gradient we will use
       typename FECellIntegratorType::value_type    value_result;
       typename FECellIntegratorType::gradient_type gradient_result;
 
-      // Assemble -nabla u = 0 for the first 3 components
-      // Assemble p = 0 for the last component
+      // Assemble -nabla u + nabla p = 0 for the first 3 components
+      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
+      // Assemble q div(u) = 0 for the last component
+      dealii::VectorizedArray<double, 1> divergence_u=0;
       for (unsigned int i = 0 ; i<dim ; ++i)
         {
-          gradient_result[i] = gradient[i];
-          value_result[i] = gradient[dim][i];
+          gradient_result[i] = -gradient[i];
+          gradient_result[i][i] += value[dim];
+
+          divergence_u += gradient[i][i];
         }
-      value_result[dim] = value[dim];
+      value_result[dim] = divergence_u;
+      for (unsigned int i = 0 ; i < dim ; ++i)
+        for (unsigned int k = 0 ; k < dim ; ++k)
+        gradient_result[dim][i] = -tau * hessian_diagonal[i][k] ;
+      gradient_result[dim] += tau * gradient[dim];
 
       // TODO: implement jacobian
       integrator.submit_gradient(gradient_result, q);
@@ -1136,7 +1171,31 @@ VectorValuedProblem<dim>::local_evaluate_residual(
     {
       phi.reinit(cell);
       phi.read_dof_values_plain(src);
-      phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
+      phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients | EvaluationFlags::hessians);
+
+      VectorizedArray<double> tau = VectorizedArray<double>(0.0);
+      std::array<double, VectorizedArray<double>::size()> h_k;
+      std::array<double, VectorizedArray<double>::size()> h;
+
+      for (auto lane = 0u;
+           lane < data.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
+        }
+
+      for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+        {
+          if (dim == 2)
+            {
+              h[v] = std::sqrt(4. * h_k[v] / M_PI);
+            }
+          else if (dim == 3)
+            {
+              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+            }
+          tau[v] = h[v]*h[v];
+        }
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
@@ -1154,21 +1213,30 @@ VectorValuedProblem<dim>::local_evaluate_residual(
             // Gather the original value/gradient
             typename FECellIntegratorType::value_type value = phi.get_value(q);
             typename FECellIntegratorType::gradient_type gradient = phi.get_gradient(q);
+            typename FECellIntegratorType::gradient_type hessian_diagonal = phi.get_hessian_diagonal(q);
+
 
             // Result value/gradient we will use
             typename FECellIntegratorType::value_type    value_result;
             typename FECellIntegratorType::gradient_type gradient_result;
 
-            // Assemble -nabla u = 0 for the first 3 components
-            // Assemble p = 0 for the last component
+            // Assemble -nabla u + nabla p = 0 for the first 3 components
+            // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
+            // Assemble q div(u) = 0 for the last component
+            dealii::VectorizedArray<double, 1> divergence_u=0;
             for (unsigned int i = 0 ; i<dim ; ++i)
               {
-                gradient_result[i] = gradient[i];
-                value_result[i] = gradient[dim][i] + source_value[i];
+                gradient_result[i] = -gradient[i];
+                gradient_result[i][i] += value[dim];
+                value_result[i] = source_value[i];
+
+                divergence_u += gradient[i][i];
               }
-            value_result[dim] = value[dim] + source_value[dim];
-
-
+            value_result[dim] = divergence_u;
+            for (unsigned int i = 0 ; i < dim ; ++i)
+              for (unsigned int k = 0 ; k < dim ; ++k)
+                gradient_result[dim][i] = -tau * hessian_diagonal[i][k] ;
+            gradient_result[dim] += tau * gradient[dim];
 
           // TODO: complete residual
           phi.submit_gradient(gradient_result, q);
@@ -1225,7 +1293,7 @@ VectorValuedProblem<dim>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl solver_control(200, 1.e-8 * system_rhs.l2_norm(), true, true);
+  SolverControl solver_control(2000, std::max(1.e-8 * system_rhs.l2_norm(),1e-11), true, true);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
