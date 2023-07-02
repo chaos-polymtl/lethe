@@ -447,7 +447,7 @@ VectorValuedOperator<dim, number>::reinit(
   typename MatrixFree<dim, double>::AdditionalData additional_data;
   additional_data.mapping_update_flags =
     (update_values | update_gradients | update_JxW_values |
-     update_quadrature_points);
+     update_quadrature_points | update_hessians);
 
   matrix_free.reinit(
     mapping, dof_handler, constraints, quadrature, additional_data);
@@ -624,7 +624,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
             value_result[dim] = divergence_u;
             for (unsigned int i = 0 ; i < dim ; ++i)
               for (unsigned int k = 0 ; k < dim ; ++k)
-                gradient_result[dim][i] = -tau * hessian_diagonal[i][k] ;
+                gradient_result[dim][i] += -tau * hessian_diagonal[i][k] ;
             gradient_result[dim] += tau * gradient[dim];
 
             // TODO: implement jacobian
@@ -715,7 +715,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
       value_result[dim] = divergence_u;
       for (unsigned int i = 0 ; i < dim ; ++i)
         for (unsigned int k = 0 ; k < dim ; ++k)
-        gradient_result[dim][i] = -tau * hessian_diagonal[i][k] ;
+        gradient_result[dim][i] += -tau * hessian_diagonal[i][k] ;
       gradient_result[dim] += tau * gradient[dim];
 
       // TODO: implement jacobian
@@ -858,7 +858,7 @@ mg_solve(SolverControl &                                        solver_control,
 
   PreconditionerType preconditioner(dof, mg, mg_transfer);
 
-  SolverCG<VectorType>(solver_control)
+  SolverGMRES<VectorType>(solver_control)
     .solve(fine_matrix, dst, src, preconditioner);
 }
 
@@ -1220,7 +1220,7 @@ VectorValuedProblem<dim>::local_evaluate_residual(
             typename FECellIntegratorType::value_type    value_result;
             typename FECellIntegratorType::gradient_type gradient_result;
 
-            // Assemble -nabla u + nabla p = 0 for the first 3 components
+            // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
             // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
             // Assemble q div(u) = 0 for the last component
             dealii::VectorizedArray<double, 1> divergence_u=0;
@@ -1235,7 +1235,7 @@ VectorValuedProblem<dim>::local_evaluate_residual(
             value_result[dim] = divergence_u;
             for (unsigned int i = 0 ; i < dim ; ++i)
               for (unsigned int k = 0 ; k < dim ; ++k)
-                gradient_result[dim][i] = -tau * hessian_diagonal[i][k] ;
+                gradient_result[dim][i] += -tau * hessian_diagonal[i][k] ;
             gradient_result[dim] += tau * gradient[dim];
 
           // TODO: complete residual
