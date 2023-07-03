@@ -533,16 +533,15 @@ StokesOperator<dim, fe_degree, number>::local_apply(
               // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
               // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
               // Assemble q div(u) = 0 for the last component
-              dealii::VectorizedArray<double, 1> divergence_u=0;
               for (unsigned int i = 0 ; i<dim ; ++i)
                 {
                   gradient_result[i] = -gradient[i];
                   gradient_result[i][i] += value[dim];
                  // value_result[i] = source_value[i];
 
-                  divergence_u += gradient[i][i];
+                // divergence of u
+                  value_result[dim] += gradient[i][i];
                 }
-              value_result[dim] = +divergence_u;
               for (unsigned int i = 0 ; i < dim ; ++i)
                 {
                   gradient_result[dim][i] += tau * value[i];
@@ -646,16 +645,15 @@ StokesOperator<dim, fe_degree, number>::local_compute(
                     // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
                     // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
                     // Assemble q div(u) = 0 for the last component
-                    dealii::VectorizedArray<double, 1> divergence_u=0;
                     for (unsigned int i = 0 ; i<dim ; ++i)
                       {
                         gradient_result[i] = -gradient[i];
                         gradient_result[i][i] += value[dim];
                         //value_result[i] = source_value[i];
 
-                        divergence_u += gradient[i][i];
+                        //divergence of u
+                        value_result[dim] += gradient[i][i];
                       }
-                    value_result[dim] = +divergence_u;
                     for (unsigned int i = 0 ; i < dim ; ++i)
                       {
                         gradient_result[dim][i] += tau * value[i];
@@ -1121,16 +1119,15 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
               // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
               // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
               // Assemble q div(u) = 0 for the last component
-              dealii::VectorizedArray<double, 1> divergence_u=0;
               for (unsigned int i = 0 ; i<dim ; ++i)
                 {
                   gradient_result[i] = -gradient[i];
                   gradient_result[i][i] += value[dim];
                   value_result[i] = source_value[i];
 
-                  divergence_u += gradient[i][i];
+                  //divergence of u
+                  value_result[dim]+= gradient[i][i];
                 }
-              value_result[dim] = +divergence_u;
               for (unsigned int i = 0 ; i < dim ; ++i)
                 {
                   gradient_result[dim][i] += tau * value[i];
