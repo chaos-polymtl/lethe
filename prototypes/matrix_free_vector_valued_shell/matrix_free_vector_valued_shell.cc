@@ -735,10 +735,9 @@ struct MultigridParameters
 
   struct
   {
-    std::string  type                = "chebyshev";
-    double       smoothing_range     = 20;
-    unsigned int degree              = 5;
-    unsigned int eig_cg_n_iterations = 20;
+    std::string  type         = "relaxation";
+    unsigned int n_iterations = 1;
+    double       relaxation   = 1;
   } smoother;
 };
 
@@ -759,15 +758,14 @@ mg_solve(SolverControl &                                        solver_control,
 {
   AssertThrow(mg_data.coarse_solver.type == "gmres_with_amg",
               ExcNotImplemented());
-  AssertThrow(mg_data.smoother.type == "chebyshev", ExcNotImplemented());
+  AssertThrow(mg_data.smoother.type == "relaxation", ExcNotImplemented());
 
   const unsigned int min_level = mg_matrices.min_level();
   const unsigned int max_level = mg_matrices.max_level();
 
   using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
-  using SmootherType               = PreconditionChebyshev<LevelMatrixType,
-                                             VectorType,
-                                             SmootherPreconditionerType>;
+  using SmootherType =
+    PreconditionRelaxation<LevelMatrixType, SmootherPreconditionerType>;
   using PreconditionerType = PreconditionMG<dim, VectorType, MGTransferType>;
 
   mg::Matrix<VectorType> mg_matrix(mg_matrices);
@@ -781,10 +779,8 @@ mg_solve(SolverControl &                                        solver_control,
         std::make_shared<SmootherPreconditionerType>();
       mg_matrices[level]->compute_inverse_diagonal(
         smoother_data[level].preconditioner->get_vector());
-      smoother_data[level].smoothing_range = mg_data.smoother.smoothing_range;
-      smoother_data[level].degree          = mg_data.smoother.degree;
-      smoother_data[level].eig_cg_n_iterations =
-        mg_data.smoother.eig_cg_n_iterations;
+      smoother_data[level].n_iterations = mg_data.smoother.n_iterations;
+      smoother_data[level].relaxation   = mg_data.smoother.relaxation;
     }
 
   MGSmootherPrecondition<LevelMatrixType, SmootherType, VectorType> mg_smoother;
@@ -1594,7 +1590,7 @@ VectorValuedProblem<dim>::run()
           output_results(cycle);
         }
 
-      //compute_solution_norm();
+      // compute_solution_norm();
 
       compute_l2_error();
 
