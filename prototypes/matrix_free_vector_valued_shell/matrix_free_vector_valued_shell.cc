@@ -246,12 +246,10 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   const double x = p[0];
   const double y = p[1];
 
-  values(0) = sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y);
-  values(1) = -cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y);
+  values(0) = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
+  values(1) = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
   values(2) = 0;
-
 }
-
 
 // Function for the full source term
 template <int dim>
@@ -273,29 +271,31 @@ template <int dim>
 template <typename number>
 number
 FullSourceTerm<dim>::value(const Point<dim, number> &p,
-                            const unsigned int        component) const
+                           const unsigned int        component) const
 {
   const double a = numbers::PI;
   const double x = p[0];
   const double y = p[1];
-  if (component==0)
-  {
-      return (2*a*a*(sin(a*x)*sin(a*x) - cos(a*x)*cos(a*x))*sin(a*y)*cos(a*y) + 4*a*a*sin(a*x)*sin(a*x)*sin(a*y)*cos(a*y)) ;
-  }
-  else if (component==1)
-  {
-      return (-2*a*a*(sin(a*y)*sin(a*y) - cos(a*y)*cos(a*y))*sin(a*x)*cos(a*x) - 4*a*a*sin(a*x)*sin(a*y)*sin(a*y)*cos(a*x)) ;
-  }
+  if (component == 0)
+    {
+      return (2 * a * a * (sin(a * x) * sin(a * x) - cos(a * x) * cos(a * x)) *
+                sin(a * y) * cos(a * y) +
+              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y));
+    }
+  else if (component == 1)
+    {
+      return (-2 * a * a * (sin(a * y) * sin(a * y) - cos(a * y) * cos(a * y)) *
+                sin(a * x) * cos(a * x) -
+              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x));
+    }
   else
     return 0;
-
-
 }
 
 template <int dim>
 double
 FullSourceTerm<dim>::value(const Point<dim> & p,
-                            const unsigned int component) const
+                           const unsigned int component) const
 {
   return value<double>(p, component);
 }
@@ -335,20 +335,12 @@ evaluate_function(const Function<dim> &                      function,
   return result;
 }
 
-
-
-
 // Matrix-free differential operator for a vector-valued problem.
 // It "replaces" the traditional assemble_matrix() function.
 template <int dim, typename number>
 class VectorValuedOperator : public Subscriptor
 {
 public:
-  // The FEEValuation class is used to evaluate the solution vector
-  // at the quadrature points and to perform the integration. The
-  // second and third template arguments are set to -1 and 0 to let
-  // the class select dynamically the appropriate polynomial order
-  // and number of quadrature points.
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
 
   using VectorType = LinearAlgebra::distributed::Vector<number>;
@@ -453,8 +445,6 @@ VectorValuedOperator<dim, number>::reinit(
     mapping, dof_handler, constraints, quadrature, additional_data);
 }
 
-// This function gets the number of DoFs by calling the dof_handler
-// object related to the matrix free
 template <int dim, typename number>
 types::global_dof_index
 VectorValuedOperator<dim, number>::m() const
@@ -557,14 +547,11 @@ void
 VectorValuedOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
-  using FECellIntegratorType = FEEvaluation<dim,
-                                            -1,
-                                            0,
-                                            dim+1,
-                                            double,
-                                            VectorizedArray<double>>;
+  using FECellIntegratorType =
+    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
 
-  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients | EvaluationFlags::hessians);
+  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                      EvaluationFlags::hessians);
 
   const unsigned int cell = integrator.get_current_cell_index();
 
@@ -572,13 +559,10 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
   std::array<number, VectorizedArray<number>::size()> h_k;
   std::array<number, VectorizedArray<number>::size()> h;
 
-  for (auto lane = 0u;
-       lane <
-       matrix_free.n_active_entries_per_cell_batch(cell);
+  for (auto lane = 0u; lane < matrix_free.n_active_entries_per_cell_batch(cell);
        lane++)
     {
-      h_k[lane] = matrix_free.get_cell_iterator(cell, lane)
-                    ->measure();
+      h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
     }
 
 
@@ -586,50 +570,50 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
     {
       if (dim == 2)
         {
-          h[v] =
-            std::sqrt(4. * h_k[v] / M_PI) ;
+          h[v] = std::sqrt(4. * h_k[v] / M_PI);
         }
       else if (dim == 3)
         {
           h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
         }
-      tau[v] =  h[v]*h[v];
+      tau[v] = h[v] * h[v];
     }
 
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
+      // Gather the original value/gradient
+      typename FECellIntegratorType::value_type value = integrator.get_value(q);
+      typename FECellIntegratorType::gradient_type gradient =
+        integrator.get_gradient(q);
+      typename FECellIntegratorType::gradient_type hessian_diagonal =
+        integrator.get_hessian_diagonal(q);
 
-            // Gather the original value/gradient
-            typename FECellIntegratorType::value_type value = integrator.get_value(q);
-            typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
-            typename FECellIntegratorType::gradient_type hessian_diagonal = integrator.get_hessian_diagonal(q);
 
+      // Result value/gradient we will use
+      typename FECellIntegratorType::value_type    value_result;
+      typename FECellIntegratorType::gradient_type gradient_result;
 
-            // Result value/gradient we will use
-            typename FECellIntegratorType::value_type    value_result;
-            typename FECellIntegratorType::gradient_type gradient_result;
+      // Assemble -nabla u + nabla p = 0 for the first 3 components
+      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
+      // ; Assemble q div(u) = 0 for the last component
 
-            // Assemble -nabla u + nabla p = 0 for the first 3 components
-            // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
-            // Assemble q div(u) = 0 for the last component
-            dealii::VectorizedArray<double, 1> divergence_u=0;
-            for (unsigned int i = 0 ; i<dim ; ++i)
-              {
-                gradient_result[i] = -gradient[i];
-                gradient_result[i][i] += value[dim];
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          gradient_result[i] = -gradient[i];
+          gradient_result[i][i] += value[dim];
 
-                divergence_u += gradient[i][i];
-              }
-            value_result[dim] = divergence_u;
-            for (unsigned int i = 0 ; i < dim ; ++i)
-              for (unsigned int k = 0 ; k < dim ; ++k)
-                gradient_result[dim][i] += -tau * hessian_diagonal[i][k] ;
-            gradient_result[dim] += tau * gradient[dim];
+          value_result[dim] += gradient[i][i];
+        }
 
-            // TODO: implement jacobian
-            integrator.submit_gradient(gradient_result, q);
-            integrator.submit_value(value_result, q);
+      for (unsigned int i = 0; i < dim; ++i)
+        for (unsigned int k = 0; k < dim; ++k)
+          gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+      gradient_result[dim] += tau * gradient[dim];
+
+      // TODO: implement jacobian
+      integrator.submit_gradient(gradient_result, q);
+      integrator.submit_value(value_result, q);
     }
 
   integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
@@ -642,80 +626,69 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
   VectorType &      dst,
   const VectorType &src) const
 {
-  using FECellIntegratorType = FEEvaluation<dim,
-                                            -1,
-                                            0,
-                                            dim+1,
-                                            double,
-                                            VectorizedArray<double>>;
+  using FECellIntegratorType =
+    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
 
   integrator.gather_evaluate(src,
                              EvaluationFlags::values |
-                               EvaluationFlags::gradients | EvaluationFlags::hessians );
+                               EvaluationFlags::gradients |
+                               EvaluationFlags::hessians);
 
   const unsigned int cell = integrator.get_current_cell_index();
 
-
-
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
+      VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+      std::array<number, VectorizedArray<number>::size()> h_k;
+      std::array<number, VectorizedArray<number>::size()> h;
 
-            VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-            std::array<number, VectorizedArray<number>::size()> h_k;
-            std::array<number, VectorizedArray<number>::size()> h;
+      for (auto lane = 0u;
+           lane < matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
+        }
 
-
-            for (auto lane = 0u;
-                 lane <
-                 matrix_free.n_active_entries_per_cell_batch(cell);
-                 lane++)
-              {
-                h_k[lane] = matrix_free.get_cell_iterator(cell, lane)
-                              ->measure();
-              }
-
-
-            for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-              {
-                if (dim == 2)
-                  {
-                    h[v] =
-                      std::sqrt(4. * h_k[v] / M_PI);
-                  }
-                else if (dim == 3)
-                  {
-                    h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
-                  }
-                //std::cout<<"h[v] is ??? " << h[v] <<std::endl;
-                tau[v] = h[v]*h[v];
-
-              }
+      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+        {
+          if (dim == 2)
+            {
+              h[v] = std::sqrt(4. * h_k[v] / M_PI);
+            }
+          else if (dim == 3)
+            {
+              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+            }
+          // std::cout<<"h[v] is ??? " << h[v] <<std::endl;
+          tau[v] = h[v] * h[v];
+        }
 
       // Gather the original value/gradient
       typename FECellIntegratorType::value_type value = integrator.get_value(q);
-      typename FECellIntegratorType::gradient_type gradient = integrator.get_gradient(q);
-      typename FECellIntegratorType::gradient_type hessian_diagonal = integrator.get_hessian_diagonal(q);
-
+      typename FECellIntegratorType::gradient_type gradient =
+        integrator.get_gradient(q);
+      typename FECellIntegratorType::gradient_type hessian_diagonal =
+        integrator.get_hessian_diagonal(q);
 
       // Result value/gradient we will use
       typename FECellIntegratorType::value_type    value_result;
       typename FECellIntegratorType::gradient_type gradient_result;
 
       // Assemble -nabla u + nabla p = 0 for the first 3 components
-      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
-      // Assemble q div(u) = 0 for the last component
-      dealii::VectorizedArray<double, 1> divergence_u=0;
-      for (unsigned int i = 0 ; i<dim ; ++i)
+      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
+      // ; Assemble q div(u) = 0 for the last component
+
+      for (unsigned int i = 0; i < dim; ++i)
         {
           gradient_result[i] = -gradient[i];
           gradient_result[i][i] += value[dim];
 
-          divergence_u += gradient[i][i];
+          value_result[dim] += gradient[i][i];
         }
-      value_result[dim] = divergence_u;
-      for (unsigned int i = 0 ; i < dim ; ++i)
-        for (unsigned int k = 0 ; k < dim ; ++k)
-        gradient_result[dim][i] += -tau * hessian_diagonal[i][k] ;
+
+      for (unsigned int i = 0; i < dim; ++i)
+        for (unsigned int k = 0; k < dim; ++k)
+          gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
       gradient_result[dim] += tau * gradient[dim];
 
       // TODO: implement jacobian
@@ -724,7 +697,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
     }
 
   integrator.integrate_scatter(EvaluationFlags::values |
-                                 EvaluationFlags::gradients ,
+                                 EvaluationFlags::gradients,
                                dst);
 }
 
@@ -767,11 +740,6 @@ struct MultigridParameters
     unsigned int degree              = 5;
     unsigned int eig_cg_n_iterations = 20;
   } smoother;
-
-  struct
-  {
-    bool perform_h_transfer = true;
-  } transfer;
 };
 
 template <typename VectorType,
@@ -802,7 +770,6 @@ mg_solve(SolverControl &                                        solver_control,
                                              SmootherPreconditionerType>;
   using PreconditionerType = PreconditionMG<dim, VectorType, MGTransferType>;
 
-  // We initialize level operators and Chebyshev smoothers here.
   mg::Matrix<VectorType> mg_matrix(mg_matrices);
 
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data(min_level,
@@ -823,8 +790,6 @@ mg_solve(SolverControl &                                        solver_control,
   MGSmootherPrecondition<LevelMatrixType, SmootherType, VectorType> mg_smoother;
   mg_smoother.initialize(mg_matrices, smoother_data);
 
-  // Next, we initialize the coarse-grid solver. We use conjugate-gradient
-  // method with AMG as preconditioner.
   ReductionControl coarse_grid_solver_control(mg_data.coarse_solver.maxiter,
                                               mg_data.coarse_solver.abstol,
                                               mg_data.coarse_solver.reltol,
@@ -850,9 +815,6 @@ mg_solve(SolverControl &                                        solver_control,
                                                  decltype(precondition_amg)>>(
       coarse_grid_solver, *mg_matrices[min_level], precondition_amg);
 
-  // Finally, we create the Multigrid object, convert it to a preconditioner,
-  // and use it inside of a conjugate-gradient solver to solve the linear
-  // system of equations.
   Multigrid<VectorType> mg(
     mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
 
@@ -874,30 +836,18 @@ solve_with_gmg(SolverControl &            solver_control,
                const DoFHandler<dim> &    dof_handler,
                const QGauss<1> &          quadrature)
 {
-  // Create a DoFHandler and operator for each multigrid level,
-  // as well as, create transfer operators. To be able to
-  // set up the operators, we need a set of DoFHandler that we create
-  // via global coarsening of p or h. For latter, we need also a sequence
-  // of Triangulation objects that are obtained by
-  // Triangulation::coarsen_global().
-  //
-  // In case no h-transfer is requested, we provide an empty deleter for the
-  // `emplace_back()` function, since the Triangulation of our DoFHandler is
-  // an external field and its destructor is called somewhere else.
   MGLevelObject<DoFHandler<dim>>                     dof_handlers;
   MGLevelObject<std::unique_ptr<OperatorType>>       operators;
   MGLevelObject<MGTwoLevelTransfer<dim, VectorType>> transfers;
 
   std::vector<std::shared_ptr<const Triangulation<dim>>>
     coarse_grid_triangulations;
-  if (mg_data.transfer.perform_h_transfer)
-    coarse_grid_triangulations =
-      MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
-        dof_handler.get_triangulation());
 
-  // Determine the total number of levels for the multigrid operation and
-  // allocate sufficient memory for all levels.
-  const unsigned int n_h_levels = coarse_grid_triangulations.size() - 1;
+  coarse_grid_triangulations =
+    MGTransferGlobalCoarseningTools::create_geometric_coarsening_sequence(
+      dof_handler.get_triangulation());
+
+  const unsigned int n_h_levels = coarse_grid_triangulations.size();
 
   unsigned int minlevel = 0;
   unsigned int maxlevel = n_h_levels - 1;
@@ -906,16 +856,12 @@ solve_with_gmg(SolverControl &            solver_control,
   operators.resize(minlevel, maxlevel);
   transfers.resize(minlevel, maxlevel);
 
-  for (unsigned int l = 0; l < n_h_levels; ++l)
+  for (unsigned int l = minlevel; l <= maxlevel; ++l)
     {
       dof_handlers[l].reinit(*coarse_grid_triangulations[l]);
       dof_handlers[l].distribute_dofs(dof_handler.get_fe());
     }
 
-  // Next, we will create all data structures additionally needed on each
-  // multigrid level. This involves determining constraints with homogeneous
-  // Dirichlet boundary conditions, and building the operator just like on the
-  // active level.
   MGLevelObject<AffineConstraints<typename VectorType::value_type>> constraints(
     minlevel, maxlevel);
 
@@ -945,8 +891,6 @@ solve_with_gmg(SolverControl &            solver_control,
                                                         quadrature);
     }
 
-  // Set up intergrid operators and collect transfer operators within a single
-  // operator as needed by the Multigrid solver class.
   for (unsigned int level = minlevel; level < maxlevel; ++level)
     transfers[level + 1].reinit(dof_handlers[level + 1],
                                 dof_handlers[level],
@@ -959,9 +903,9 @@ solve_with_gmg(SolverControl &            solver_control,
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     std::cout << "   MG Level " << level << ": " << dof_handlers[level].n_dofs()
-              << " DoFs " << std::endl;
+              << " DoFs, " << coarse_grid_triangulations[level]->n_cells(level)
+              << " cells" << std::endl;
 
-  // Finally, proceed to solve the problem with multigrid.
   mg_solve(solver_control,
            dst,
            src,
@@ -972,10 +916,8 @@ solve_with_gmg(SolverControl &            solver_control,
            transfer);
 }
 
-// Let's start with something dumb. Like  ∇^2 u + u =0
-// Then we can move on to something more comple like Stokes
 // Main class for a dummy vector-valued problem given by
-// ∇^2 u = p + f_1 and ∇^2 p = ∇ · u + f_2 using Newton's method
+// -∇^2 u + ∇p = f_1 and ∇ · u = f_2 using Newton's method
 // and the matrix-free approach.
 template <int dim>
 class VectorValuedProblem
@@ -1156,29 +1098,25 @@ VectorValuedProblem<dim>::local_evaluate_residual(
   const LinearAlgebra::distributed::Vector<double> &src,
   const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
-  using FECellIntegratorType = FEEvaluation<dim,
-                                            -1,
-                                            0,
-                                            dim+1,
-                                            double,
-                                            VectorizedArray<double>>;
+  using FECellIntegratorType =
+    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
 
   FEEvaluation<dim, -1, 0, dim + 1, double> phi(data);
 
-  FullSourceTerm<dim>  source_term_function;
+  FullSourceTerm<dim> source_term_function;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
       phi.reinit(cell);
       phi.read_dof_values_plain(src);
-      phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients | EvaluationFlags::hessians);
+      phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                   EvaluationFlags::hessians);
 
       VectorizedArray<double> tau = VectorizedArray<double>(0.0);
       std::array<double, VectorizedArray<double>::size()> h_k;
       std::array<double, VectorizedArray<double>::size()> h;
 
-      for (auto lane = 0u;
-           lane < data.n_active_entries_per_cell_batch(cell);
+      for (auto lane = 0u; lane < data.n_active_entries_per_cell_batch(cell);
            lane++)
         {
           h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
@@ -1194,55 +1132,54 @@ VectorValuedProblem<dim>::local_evaluate_residual(
             {
               h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
             }
-          tau[v] = h[v]*h[v];
+          tau[v] = h[v] * h[v];
         }
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-
-          Tensor<1, dim+1, VectorizedArray<double>> source_value;
-          Point<dim, VectorizedArray<double>>     point_batch =
+          Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+          Point<dim, VectorizedArray<double>>         point_batch =
             phi.quadrature_point(q);
-         // if (parameters.source_term == Settings::mms)
+          // if (parameters.source_term == Settings::mms)
+          {
+            source_value =
+              evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                      point_batch);
+          }
+
+          // Gather the original value/gradient
+          typename FECellIntegratorType::value_type    value = phi.get_value(q);
+          typename FECellIntegratorType::gradient_type gradient =
+            phi.get_gradient(q);
+          typename FECellIntegratorType::gradient_type hessian_diagonal =
+            phi.get_hessian_diagonal(q);
+
+
+          // Result value/gradient we will use
+          typename FECellIntegratorType::value_type    value_result;
+          typename FECellIntegratorType::gradient_type gradient_result;
+
+          // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
+          // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v
+          // = 0 ; Assemble q div(u) = 0 for the last component
+
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              source_value =
-                evaluate_function<dim, double, dim+1>(source_term_function,
-                                                    point_batch);
+              gradient_result[i] = -gradient[i];
+              gradient_result[i][i] += value[dim];
+              value_result[i] = source_value[i];
+
+              value_result[dim] += gradient[i][i];
             }
 
-            // Gather the original value/gradient
-            typename FECellIntegratorType::value_type value = phi.get_value(q);
-            typename FECellIntegratorType::gradient_type gradient = phi.get_gradient(q);
-            typename FECellIntegratorType::gradient_type hessian_diagonal = phi.get_hessian_diagonal(q);
+          for (unsigned int i = 0; i < dim; ++i)
+            for (unsigned int k = 0; k < dim; ++k)
+              gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+          gradient_result[dim] += tau * gradient[dim];
 
-
-            // Result value/gradient we will use
-            typename FECellIntegratorType::value_type    value_result;
-            typename FECellIntegratorType::gradient_type gradient_result;
-
-            // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
-            // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
-            // Assemble q div(u) = 0 for the last component
-            dealii::VectorizedArray<double, 1> divergence_u=0;
-            for (unsigned int i = 0 ; i<dim ; ++i)
-              {
-                gradient_result[i] = -gradient[i];
-                gradient_result[i][i] += value[dim];
-                value_result[i] = source_value[i];
-
-                divergence_u += gradient[i][i];
-              }
-            value_result[dim] = divergence_u;
-            for (unsigned int i = 0 ; i < dim ; ++i)
-              for (unsigned int k = 0 ; k < dim ; ++k)
-                gradient_result[dim][i] += -tau * hessian_diagonal[i][k] ;
-            gradient_result[dim] += tau * gradient[dim];
-
-          // TODO: complete residual
           phi.submit_gradient(gradient_result, q);
           phi.submit_value(value_result, q);
-          //phi.submit_value(-source_value, q);
-
+          // phi.submit_value(-source_value, q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -1293,7 +1230,10 @@ VectorValuedProblem<dim>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl solver_control(2000, std::max(1.e-8 * system_rhs.l2_norm(),1e-11), true, true);
+  SolverControl                                           solver_control(2000,
+                               std::max(1.e-8 * system_rhs.l2_norm(), 1e-11),
+                               true,
+                               true);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
