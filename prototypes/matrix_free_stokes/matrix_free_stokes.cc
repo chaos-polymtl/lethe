@@ -506,18 +506,6 @@ StokesOperator<dim, fe_degree, number>::local_apply(
                                                       point_batch);
           }
 
-          // phi.submit_value(advection_vector * phi.get_gradient(q) -
-          //                    nonlinear_values(cell, q) * phi.get_value(q),
-          //                  q);
-          // phi.submit_gradient(
-          //   1 / parameters.peclet_number * phi.get_gradient(q) +
-          //     (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-          //       (advection_vector * phi.get_gradient(q)) -
-          //       (nonlinear_values(cell, q) * phi.get_value(q))) *
-          //      tau * advection_vector),
-          //   q);
-
-
           // Gather the original value/gradient
           typename FECellIntegrator::value_type    value = phi.get_value(q);
           typename FECellIntegrator::gradient_type gradient =
@@ -762,10 +750,10 @@ private:
   void
   solve();
 
-  double
+  void
   compute_solution_norm() const;
 
-  double
+  void
   compute_l2_error() const;
 
   void
@@ -837,8 +825,8 @@ template <int dim, int fe_degree>
 void
 MatrixFreeStokes<dim, fe_degree>::setup_system()
 {
-  TimerOutput::Scope         t(computing_timer, "setup system");
-  FEValuesExtractors::Vector velocities(0);
+  TimerOutput::Scope t(computing_timer, "setup system");
+
   system_matrix.clear();
 
   system_matrix.reinit_operator_parameters(parameters);
@@ -857,33 +845,17 @@ MatrixFreeStokes<dim, fe_degree>::setup_system()
   {
     // Create zero BCs for the delta.
     // Left wall
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             0,
-                                             Functions::ZeroFunction<dim>(dim +
-                                                                          1),
-                                             constraints,
-                                             fe.component_mask(velocities));
+    VectorTools::interpolate_boundary_values(
+      dof_handler, 0, Functions::ZeroFunction<dim>(dim + 1), constraints);
     // Right wall
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             1,
-                                             Functions::ZeroFunction<dim>(dim +
-                                                                          1),
-                                             constraints,
-                                             fe.component_mask(velocities));
+    VectorTools::interpolate_boundary_values(
+      dof_handler, 1, Functions::ZeroFunction<dim>(dim + 1), constraints);
     // Top wall
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             3,
-                                             Functions::ZeroFunction<dim>(dim +
-                                                                          1),
-                                             constraints,
-                                             fe.component_mask(velocities));
+    VectorTools::interpolate_boundary_values(
+      dof_handler, 3, Functions::ZeroFunction<dim>(dim + 1), constraints);
     // Bottom wall
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             2,
-                                             Functions::ZeroFunction<dim>(dim +
-                                                                          1),
-                                             constraints,
-                                             fe.component_mask(velocities));
+    VectorTools::interpolate_boundary_values(
+      dof_handler, 2, Functions::ZeroFunction<dim>(dim + 1), constraints);
   }
 
   constraints.close();
@@ -1013,7 +985,6 @@ MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
       phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                    EvaluationFlags::hessians);
 
-
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
           VectorizedArray<double> tau = VectorizedArray<double>(0.0);
@@ -1030,8 +1001,6 @@ MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
                             ->get_cell_iterator(cell, lane)
                             ->measure();
             }
-
-
 
           for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
             {
@@ -1051,19 +1020,6 @@ MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
               Point<dim, VectorizedArray<double>> point_batch =
                 phi.quadrature_point(q);
 
-
-
-              // phi.submit_value(advection_vector * phi.get_gradient(q) -
-              //                    nonlinear_values(cell, q) *
-              //                    phi.get_value(q),
-              //                  q);
-              // phi.submit_gradient(
-              //   1 / parameters.peclet_number * phi.get_gradient(q) +
-              //     (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-              //       (advection_vector * phi.get_gradient(q)) -
-              //       (nonlinear_values(cell, q) * phi.get_value(q))) *
-              //      tau * advection_vector),
-              //   q);
               Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
               // if (parameters.source_term == Settings::mms)
@@ -1299,7 +1255,6 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
   solution.zero_out_ghost_values();
 }
 
-
 template <int dim, int fe_degree>
 void
 MatrixFreeStokes<dim, fe_degree>::solve()
@@ -1347,10 +1302,13 @@ MatrixFreeStokes<dim, fe_degree>::solve()
 }
 
 template <int dim, int fe_degree>
-double
+void
 MatrixFreeStokes<dim, fe_degree>::compute_solution_norm() const
 {
   solution.update_ghost_values();
+
+  const ComponentSelectFunction<dim> p_mask(dim, dim + 1);
+  const ComponentSelectFunction<dim> u_mask(std::make_pair(0, dim), dim + 1);
 
   Vector<float> norm_per_cell(triangulation.n_active_cells());
 
@@ -1359,21 +1317,48 @@ MatrixFreeStokes<dim, fe_degree>::compute_solution_norm() const
                                     solution,
                                     Functions::ZeroFunction<dim>(dim + 1),
                                     norm_per_cell,
-                                    QGauss<dim>(fe.degree + 1),
-                                    VectorTools::H1_seminorm);
+                                    QGauss<dim>(parameters.element_order + 1),
+                                    VectorTools::H1_seminorm,
+                                    &u_mask);
 
   solution.zero_out_ghost_values();
 
-  return VectorTools::compute_global_error(triangulation,
-                                           norm_per_cell,
-                                           VectorTools::H1_seminorm);
+  double u_h1_norm =
+    VectorTools::compute_global_error(triangulation,
+                                      norm_per_cell,
+                                      VectorTools::H1_seminorm);
+
+  solution.update_ghost_values();
+
+  VectorTools::integrate_difference(mapping,
+                                    dof_handler,
+                                    solution,
+                                    Functions::ZeroFunction<dim>(dim + 1),
+                                    norm_per_cell,
+                                    QGauss<dim>(parameters.element_order + 1),
+                                    VectorTools::H1_seminorm,
+                                    &p_mask);
+
+  solution.zero_out_ghost_values();
+
+  double p_h1_norm =
+    VectorTools::compute_global_error(triangulation,
+                                      norm_per_cell,
+                                      VectorTools::H1_seminorm);
+
+  pcout << "  u H1 seminorm: " << u_h1_norm << std::endl;
+  pcout << "  p H1 seminorm: " << p_h1_norm << std::endl;
+  pcout << std::endl;
 }
 
 template <int dim, int fe_degree>
-double
+void
 MatrixFreeStokes<dim, fe_degree>::compute_l2_error() const
 {
   solution.update_ghost_values();
+
+  const ComponentSelectFunction<dim> p_mask(dim, dim + 1);
+  const ComponentSelectFunction<dim> u_mask(std::make_pair(0, dim), dim + 1);
 
   Vector<float> error_per_cell(triangulation.n_active_cells());
 
@@ -1382,14 +1367,35 @@ MatrixFreeStokes<dim, fe_degree>::compute_l2_error() const
                                     solution,
                                     AnalyticalSolution<dim>(),
                                     error_per_cell,
-                                    QGauss<dim>(fe.degree + 1),
-                                    VectorTools::L2_norm);
+                                    QGauss<dim>(parameters.element_order + 1),
+                                    VectorTools::L2_norm,
+                                    &u_mask);
 
   solution.zero_out_ghost_values();
 
-  return VectorTools::compute_global_error(triangulation,
-                                           error_per_cell,
-                                           VectorTools::L2_norm);
+  double u_l2_error = VectorTools::compute_global_error(triangulation,
+                                                        error_per_cell,
+                                                        VectorTools::L2_norm);
+
+  solution.update_ghost_values();
+
+  VectorTools::integrate_difference(mapping,
+                                    dof_handler,
+                                    solution,
+                                    AnalyticalSolution<dim>(),
+                                    error_per_cell,
+                                    QGauss<dim>(parameters.element_order + 1),
+                                    VectorTools::L2_norm,
+                                    &p_mask);
+
+  solution.zero_out_ghost_values();
+
+  double p_l2_error = VectorTools::compute_global_error(triangulation,
+                                                        error_per_cell,
+                                                        VectorTools::L2_norm);
+
+  pcout << "  u L2 norm error: " << u_l2_error << std::endl;
+  pcout << "  p L2 norm error: " << p_l2_error << std::endl;
 }
 
 template <int dim, int fe_degree>
@@ -1544,17 +1550,15 @@ MatrixFreeStokes<dim, fe_degree>::run()
             << timer.wall_time() << " s" << std::endl;
       pcout << std::endl;
 
-      const double norm = compute_solution_norm();
       if (parameters.output)
         {
           pcout << "Output results..." << std::endl;
           output_results(cycle);
         }
 
-      pcout << "  H1 seminorm: " << norm << std::endl;
-      pcout << std::endl;
+      // compute_solution_norm();
 
-      pcout << "  L2 norm: " << compute_l2_error() << std::endl;
+      compute_l2_error();
 
       computing_timer.print_summary();
       computing_timer.reset();
