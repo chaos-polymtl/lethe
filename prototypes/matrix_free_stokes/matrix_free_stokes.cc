@@ -77,7 +77,7 @@ struct Settings
   enum PreconditionerType
   {
     amg,
-    gcmg,
+    gmg,
     ilu,
     none
   };
@@ -149,8 +149,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Path for vtu output files");
   prm.declare_entry("preconditioner",
                     "AMG",
-                    Patterns::Selection("AMG|GCMG|ILU|none"),
-                    "GMRES Preconditioner <AMG|GCMG|ILU|none>");
+                    Patterns::Selection("AMG|GMG|ILU|none"),
+                    "GMRES Preconditioner <AMG|GMG|ILU|none>");
   prm.declare_entry("source term",
                     "zero",
                     Patterns::Selection("zero|mms"),
@@ -183,8 +183,8 @@ Settings::try_parse(const std::string &prm_filename)
 
   if (prm.get("preconditioner") == "AMG")
     this->preconditioner = amg;
-  else if (prm.get("preconditioner") == "GCMG")
-    this->preconditioner = gcmg;
+  else if (prm.get("preconditioner") == "GMG")
+    this->preconditioner = gmg;
   else if (prm.get("preconditioner") == "ILU")
     this->preconditioner = ilu;
   else if (prm.get("preconditioner") == "none")
@@ -232,7 +232,7 @@ public:
 template <int dim>
 void
 AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
-                                      Vector<double>   &values) const
+                                      Vector<double> &  values) const
 {
   AssertDimension(values.size(), dim + 1);
 
@@ -294,7 +294,7 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
 
 template <int dim>
 double
-FullSourceTerm<dim>::value(const Point<dim>  &p,
+FullSourceTerm<dim>::value(const Point<dim> & p,
                            const unsigned int component) const
 {
   return value<double>(p, component);
@@ -303,7 +303,7 @@ FullSourceTerm<dim>::value(const Point<dim>  &p,
 // Matrix-free helper function
 template <int dim, typename Number>
 VectorizedArray<Number>
-evaluate_function(const Function<dim>                       &function,
+evaluate_function(const Function<dim> &                      function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   VectorizedArray<Number> result;
@@ -320,7 +320,7 @@ evaluate_function(const Function<dim>                       &function,
 // Matrix-free helper function
 template <int dim, typename Number, int components>
 Tensor<1, components, VectorizedArray<Number>>
-evaluate_function(const Function<dim>                       &function,
+evaluate_function(const Function<dim> &                      function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   Tensor<1, components, VectorizedArray<Number>> result;
@@ -369,12 +369,12 @@ public:
 private:
   virtual void
   apply_add(
-    LinearAlgebra::distributed::Vector<number>       &dst,
+    LinearAlgebra::distributed::Vector<number> &      dst,
     const LinearAlgebra::distributed::Vector<number> &src) const override;
 
   void
-  local_apply(const MatrixFree<dim, number>                    &data,
-              LinearAlgebra::distributed::Vector<number>       &dst,
+  local_apply(const MatrixFree<dim, number> &                   data,
+              LinearAlgebra::distributed::Vector<number> &      dst,
               const LinearAlgebra::distributed::Vector<number> &src,
               const std::pair<unsigned int, unsigned int> &cell_range) const;
 
@@ -439,10 +439,10 @@ StokesOperator<dim, fe_degree, number>::evaluate_newton_step(
 template <int dim, int fe_degree, typename number>
 void
 StokesOperator<dim, fe_degree, number>::local_apply(
-  const MatrixFree<dim, number>                    &data,
-  LinearAlgebra::distributed::Vector<number>       &dst,
+  const MatrixFree<dim, number> &                   data,
+  LinearAlgebra::distributed::Vector<number> &      dst,
   const LinearAlgebra::distributed::Vector<number> &src,
-  const std::pair<unsigned int, unsigned int>      &cell_range) const
+  const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
   FECellIntegrator    phi(data);
   FullSourceTerm<dim> source_term_function;
@@ -566,7 +566,7 @@ StokesOperator<dim, fe_degree, number>::local_apply(
 template <int dim, int fe_degree, typename number>
 void
 StokesOperator<dim, fe_degree, number>::apply_add(
-  LinearAlgebra::distributed::Vector<number>       &dst,
+  LinearAlgebra::distributed::Vector<number> &      dst,
   const LinearAlgebra::distributed::Vector<number> &src) const
 {
   this->data->cell_loop(&StokesOperator::local_apply, this, dst, src);
@@ -627,7 +627,8 @@ StokesOperator<dim, fe_degree, number>::local_compute(
 
       // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
       // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
-      // Assemble q div(u)  + strong_residual * nabla q = 0 for the last component
+      // Assemble q div(u)  + strong_residual * nabla q = 0 for the last
+      // component
       for (unsigned int i = 0; i < dim; ++i)
         {
           // Weak form of the laplacian
@@ -739,15 +740,15 @@ private:
 
   void
   evaluate_residual(
-    LinearAlgebra::distributed::Vector<double>       &dst,
+    LinearAlgebra::distributed::Vector<double> &      dst,
     const LinearAlgebra::distributed::Vector<double> &src) const;
 
   void
   local_evaluate_residual(
-    const MatrixFree<dim, double>                    &data,
-    LinearAlgebra::distributed::Vector<double>       &dst,
+    const MatrixFree<dim, double> &                   data,
+    LinearAlgebra::distributed::Vector<double> &      dst,
     const LinearAlgebra::distributed::Vector<double> &src,
-    const std::pair<unsigned int, unsigned int>      &cell_range) const;
+    const std::pair<unsigned int, unsigned int> &     cell_range) const;
 
   void
   assemble_rhs();
@@ -799,8 +800,7 @@ private:
 };
 
 template <int dim, int fe_degree>
-MatrixFreeStokes<dim, fe_degree>::MatrixFreeStokes(
-  const Settings &parameters)
+MatrixFreeStokes<dim, fe_degree>::MatrixFreeStokes(const Settings &parameters)
   : triangulation(
       MPI_COMM_WORLD,
       Triangulation<dim>::limit_level_difference_at_vertices,
@@ -980,25 +980,22 @@ MatrixFreeStokes<dim, fe_degree>::setup_gmg()
 template <int dim, int fe_degree>
 void
 MatrixFreeStokes<dim, fe_degree>::evaluate_residual(
-  LinearAlgebra::distributed::Vector<double>       &dst,
+  LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   auto matrix_free = system_matrix.get_matrix_free();
 
-  matrix_free->cell_loop(&MatrixFreeStokes::local_evaluate_residual,
-                         this,
-                         dst,
-                         src,
-                         true);
+  matrix_free->cell_loop(
+    &MatrixFreeStokes::local_evaluate_residual, this, dst, src, true);
 }
 
 template <int dim, int fe_degree>
 void
 MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
-  const MatrixFree<dim, double>                    &data,
-  LinearAlgebra::distributed::Vector<double>       &dst,
+  const MatrixFree<dim, double> &                   data,
+  LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src,
-  const std::pair<unsigned int, unsigned int>      &cell_range) const
+  const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
   FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, double> phi(data);
   FullSourceTerm<dim> source_term_function;
@@ -1133,8 +1130,7 @@ MatrixFreeStokes<dim, fe_degree>::assemble_rhs()
 
 template <int dim, int fe_degree>
 double
-MatrixFreeStokes<dim, fe_degree>::compute_residual(
-  const double alpha)
+MatrixFreeStokes<dim, fe_degree>::compute_residual(const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
 
@@ -1192,7 +1188,7 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
 
           break;
         }
-        case Settings::gcmg: {
+        case Settings::gmg: {
           system_matrix.evaluate_newton_step(solution);
 
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
@@ -1398,8 +1394,7 @@ MatrixFreeStokes<dim, fe_degree>::compute_l2_error() const
 
 template <int dim, int fe_degree>
 void
-MatrixFreeStokes<dim, fe_degree>::output_results(
-  const unsigned int cycle) const
+MatrixFreeStokes<dim, fe_degree>::output_results(const unsigned int cycle) const
 {
   if (triangulation.n_global_active_cells() > 1e6)
     return;
@@ -1461,7 +1456,7 @@ MatrixFreeStokes<dim, fe_degree>::run()
     std::string PRECOND_header = "";
     if (parameters.preconditioner == Settings::amg)
       PRECOND_header = "Preconditioner: AMG";
-    else if (parameters.preconditioner == Settings::gcmg)
+    else if (parameters.preconditioner == Settings::gmg)
       PRECOND_header = "Preconditioner: GMG";
     else if (parameters.preconditioner == Settings::ilu)
       PRECOND_header = "Preconditioner: ILU";
@@ -1521,7 +1516,7 @@ MatrixFreeStokes<dim, fe_degree>::run()
       pcout << "Set up system..." << std::endl;
       setup_system();
 
-      if (parameters.preconditioner == Settings::gcmg)
+      if (parameters.preconditioner == Settings::gmg)
         setup_gmg();
 
       pcout << "   Triangulation: " << triangulation.n_global_active_cells()
@@ -1529,7 +1524,7 @@ MatrixFreeStokes<dim, fe_degree>::run()
       pcout << "   DoFHandler:    " << dof_handler.n_dofs() << " DoFs"
             << std::endl;
 
-      if (parameters.preconditioner == Settings::gcmg)
+      if (parameters.preconditioner == Settings::gmg)
         for (unsigned int level = 0; level < triangulation.n_global_levels();
              ++level)
           pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
@@ -1569,9 +1564,7 @@ MatrixFreeStokes<dim, fe_degree>::run()
 int
 main(int argc, char *argv[])
 {
-  Utilities::MPI::MPI_InitFinalize       mpi_init(argc, argv, 1);
-  dealii::Utilities::System::MemoryStats stats;
-  dealii::Utilities::System::get_memory_stats(stats);
+  Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
 
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
@@ -1589,22 +1582,22 @@ main(int argc, char *argv[])
               switch (parameters.element_order)
                 {
                     case 1: {
-                      MatrixFreeStokes<2, 1>
-                        non_linear_poisson_problem(parameters);
+                      MatrixFreeStokes<2, 1> non_linear_poisson_problem(
+                        parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 2: {
-                      MatrixFreeStokes<2, 2>
-                        non_linear_poisson_problem(parameters);
+                      MatrixFreeStokes<2, 2> non_linear_poisson_problem(
+                        parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 3: {
-                      MatrixFreeStokes<2, 3>
-                        non_linear_poisson_problem(parameters);
+                      MatrixFreeStokes<2, 3> non_linear_poisson_problem(
+                        parameters);
                       non_linear_poisson_problem.run();
 
                       break;
@@ -1617,22 +1610,22 @@ main(int argc, char *argv[])
               switch (parameters.element_order)
                 {
                     case 1: {
-                      MatrixFreeStokes<3, 1>
-                        non_linear_poisson_problem(parameters);
+                      MatrixFreeStokes<3, 1> non_linear_poisson_problem(
+                        parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 2: {
-                      MatrixFreeStokes<3, 2>
-                        non_linear_poisson_problem(parameters);
+                      MatrixFreeStokes<3, 2> non_linear_poisson_problem(
+                        parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 3: {
-                      MatrixFreeStokes<3, 3>
-                        non_linear_poisson_problem(parameters);
+                      MatrixFreeStokes<3, 3> non_linear_poisson_problem(
+                        parameters);
                       non_linear_poisson_problem.run();
 
                       break;
@@ -1647,31 +1640,6 @@ main(int argc, char *argv[])
               ExcMessage(
                 "This program only works in 2d and 3d and for element orders equal to 1, 2 or 3."));
         }
-
-
-      pcout << "MEMORY STATS: " << std::endl;
-      const auto print = [&pcout](const double value) {
-        const auto min_max_avg =
-          dealii::Utilities::MPI::min_max_avg(value, MPI_COMM_WORLD);
-
-        pcout << "MIN: " << min_max_avg.min << " MAX: " << min_max_avg.max
-              << " AVG: " << min_max_avg.avg << " SUM: " << min_max_avg.sum
-              << std::endl;
-      };
-
-      pcout << "VmPeak: ";
-      print(stats.VmPeak);
-
-      pcout << "VmSize: ";
-      print(stats.VmSize);
-
-      pcout << "VmHWM: ";
-      print(stats.VmHWM);
-
-      pcout << "VmRSS: ";
-      print(stats.VmRSS);
-
-      pcout << std::endl;
     }
   catch (std::exception &exc)
     {
