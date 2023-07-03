@@ -591,11 +591,6 @@ StokesOperator<dim, fe_degree, number>::local_compute(
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
-      // Get advection field vector
-      Point<dim, VectorizedArray<double>> point_batch = phi.quadrature_point(q);
-
-
-
         {
           VectorizedArray<number> tau = VectorizedArray<number>(0.0);
           std::array<number, VectorizedArray<number>::size()> h_k;
