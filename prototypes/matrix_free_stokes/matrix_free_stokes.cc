@@ -886,8 +886,6 @@ template <int dim, int fe_degree>
 void
 MatrixFreeStokes<dim, fe_degree>::setup_gmg()
 {
-  TimerOutput::Scope t(computing_timer, "setup GMG");
-
   dof_handler.distribute_mg_dofs();
 
   mg_matrices.clear_elements();
@@ -1145,6 +1143,14 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
           break;
         }
         case Settings::gmg: {
+          setup_gmg();
+
+          for (unsigned int level = 0; level < triangulation.n_global_levels();
+               ++level)
+            pcout << "   MG Level " << level << ": "
+                  << dof_handler.n_dofs(level) << " DoFs, "
+                  << triangulation.n_cells(level) << " cells" << std::endl;
+
           system_matrix.evaluate_newton_step(solution);
 
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
@@ -1522,23 +1528,12 @@ MatrixFreeStokes<dim, fe_degree>::run()
       pcout << "Set up system..." << std::endl;
       setup_system();
 
-      if (parameters.preconditioner == Settings::gmg)
-        setup_gmg();
-
       pcout << "   Triangulation: " << triangulation.n_global_active_cells()
             << " cells" << std::endl;
       pcout << "   DoFHandler:    " << dof_handler.n_dofs() << " DoFs"
             << std::endl;
 
-      if (parameters.preconditioner == Settings::gmg)
-        for (unsigned int level = 0; level < triangulation.n_global_levels();
-             ++level)
-          pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
-                << " DoFs, " << triangulation.n_cells(level) << " cells"
-                << std::endl;
-
       pcout << std::endl;
-
 
       pcout << "Solve using Newton's method..." << std::endl;
       solve();
