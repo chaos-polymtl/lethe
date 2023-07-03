@@ -591,7 +591,7 @@ StokesOperator<dim, fe_degree, number>::local_compute(
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
-        {
+
           VectorizedArray<number> tau = VectorizedArray<number>(0.0);
           std::array<number, VectorizedArray<number>::size()> h_k;
           std::array<number, VectorizedArray<number>::size()> h;
@@ -671,11 +671,10 @@ StokesOperator<dim, fe_degree, number>::local_compute(
          //      tau * advection_vector),
          //   q);
         }
-
-    }
-
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+
 }
+
 
 template <int dim, int fe_degree, typename number>
 void
