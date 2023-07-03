@@ -14,14 +14,18 @@ This subsection specifies the characteristics of the finite element method used 
      set velocity order    = 1
  
      # interpolation order temperature
-     set temperature order    = 1
+     set temperature order = 1
  
      # interpolation order tracer
-     set tracer order    = 1
+     set tracer order      = 1
    
      # interpolation order vof
-     set VOF order  =1
- 
+     set VOF order         = 1
+     
+     #interpolation order cahn hilliard
+     set phase ch order    = 1
+     set potential ch order    = 1
+     
      # Apply high order mapping everywhere
      set qmapping all      = false
    end
@@ -35,6 +39,8 @@ This subsection specifies the characteristics of the finite element method used 
 * ``tracer order`` specifies the interpolation order for the tracer physics.
 
 * ``VOF order`` specifies the interpolation for the VOF phase indicator. It is not recommended to use higher order interpolation for the VOF method as this may conflict with the bounding and the sharpening mechanism used therein.
+
+* ``phase ch order`` and ``potential ch order`` specify the interpolation order for the phase order parameter and chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate orders for debugging.
 
 * The ``qmapping all`` option enables the use of isoparametric elements everywhere in the domain. When this option is set to false, higher-order mapping is only used on the cells which have a boundary face. If the mesh you are using supports high-order manifolds everywhere, it is highly suggested to put ``qmapping all=true``.
 

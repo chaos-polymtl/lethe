@@ -81,7 +81,7 @@ For tracer boundary conditions, the defaults parameters are:
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
-* ``type``: This is the type of boundary condition been imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
+* ``type``: This is the type of boundary condition being imposed. At the moment, only dirichlet boundary conditions can be imposed for tracer.
 
 
 VOF
@@ -122,11 +122,45 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
-* ``type``: This is the type of boundary condition been imposed. At the moment, choices are:
+* ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
     * ``none`` for which nothing happens.
     * ``peeling/wetting`` for the fluid can attach to (`wet`) or detach from (`peel`) the boundary. The parameters for peeling/wetting are defined in the :doc:`volume_of_fluid` subsection of the parameter file.
     * ``dirichlet`` for inlet and outlet boundary conditions, to specify which fluid should be at the selected boundary.
 
 .. note::
     For periodic boundary conditions, there is no need to specify anything in the ``boundary conditions VOF`` subsection. The periodic boundary condition must be specified in the ``boundary conditions`` subsection (see :doc:`boundary_conditions_cfd`).
+    
+    
+Cahn-Hilliard
+^^^^^^^^^^^^^^
+
+For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux_ch`` (default), ``dirichlet_phase_order`` and ``angle_of_contact``. The default parameters for ``dirichlet_phase_order`` and ``angle_of_contact`` are shown:
+
+.. code-block:: text
+
+    subsection boundary conditions cahn hilliard
+    set number                  = 2
+        subsection bc 0
+	    set id 		= 0
+            set type            = dirichlet_phase_order
+            set phase value     = 0
+         end
+         subsection bc 1 
+            set id              = 1
+            set type            = angle_of_contact
+            set angle value     = 90 # The angle is given in degrees (°) 
+         end
+    end
+    
+.. warning::
+   The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
+
+* ``number``: This is the number of boundary conditions of the problem. 
+
+* ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
+
+* ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
+    * ``noflux_ch`` (default) so that no phase leave the simulation domain.
+    * ``dirichlet_phase_order`` (Dirichlet_BC) to impose a given phase order parameter ``phase value`` at the boundary.
+    * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary.
 
