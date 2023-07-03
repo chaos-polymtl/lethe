@@ -232,7 +232,7 @@ public:
 template <int dim>
 void
 AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
-                                      Vector<double> &  values) const
+                                      Vector<double>   &values) const
 {
   AssertDimension(values.size(), dim + 1);
 
@@ -245,10 +245,9 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   const double x = p[0];
   const double y = p[1];
 
-  values(0) = sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y);
-  values(1) = -cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y);
+  values(0) = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
+  values(1) = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
   values(2) = 0;
-
 }
 
 
@@ -277,23 +276,25 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
   const double a = numbers::PI;
   const double x = p[0];
   const double y = p[1];
-  if (component==0)
+  if (component == 0)
     {
-      return (2*a*a*(sin(a*x)*sin(a*x) - cos(a*x)*cos(a*x))*sin(a*y)*cos(a*y) + 4*a*a*sin(a*x)*sin(a*x)*sin(a*y)*cos(a*y)) ;
+      return (2 * a * a * (sin(a * x) * sin(a * x) - cos(a * x) * cos(a * x)) *
+                sin(a * y) * cos(a * y) +
+              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y));
     }
-  else if (component==1)
+  else if (component == 1)
     {
-      return (-2*a*a*(sin(a*y)*sin(a*y) - cos(a*y)*cos(a*y))*sin(a*x)*cos(a*x) - 4*a*a*sin(a*x)*sin(a*y)*sin(a*y)*cos(a*x)) ;
+      return (-2 * a * a * (sin(a * y) * sin(a * y) - cos(a * y) * cos(a * y)) *
+                sin(a * x) * cos(a * x) -
+              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x));
     }
   else
     return 0;
-
-
 }
 
 template <int dim>
 double
-FullSourceTerm<dim>::value(const Point<dim> & p,
+FullSourceTerm<dim>::value(const Point<dim>  &p,
                            const unsigned int component) const
 {
   return value<double>(p, component);
@@ -302,7 +303,7 @@ FullSourceTerm<dim>::value(const Point<dim> & p,
 // Matrix-free helper function
 template <int dim, typename Number>
 VectorizedArray<Number>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   VectorizedArray<Number> result;
@@ -319,7 +320,7 @@ evaluate_function(const Function<dim> &                      function,
 // Matrix-free helper function
 template <int dim, typename Number, int components>
 Tensor<1, components, VectorizedArray<Number>>
-evaluate_function(const Function<dim> &                      function,
+evaluate_function(const Function<dim>                       &function,
                   const Point<dim, VectorizedArray<Number>> &p_vectorized)
 {
   Tensor<1, components, VectorizedArray<Number>> result;
@@ -345,7 +346,7 @@ public:
   using value_type = number;
 
   using FECellIntegrator =
-    FEEvaluation<dim, fe_degree, fe_degree + 1, dim+1, number>;
+    FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, number>;
 
   StokesOperator();
 
@@ -368,12 +369,12 @@ public:
 private:
   virtual void
   apply_add(
-    LinearAlgebra::distributed::Vector<number> &      dst,
+    LinearAlgebra::distributed::Vector<number>       &dst,
     const LinearAlgebra::distributed::Vector<number> &src) const override;
 
   void
-  local_apply(const MatrixFree<dim, number> &                   data,
-              LinearAlgebra::distributed::Vector<number> &      dst,
+  local_apply(const MatrixFree<dim, number>                    &data,
+              LinearAlgebra::distributed::Vector<number>       &dst,
               const LinearAlgebra::distributed::Vector<number> &src,
               const std::pair<unsigned int, unsigned int> &cell_range) const;
 
@@ -427,10 +428,10 @@ StokesOperator<dim, fe_degree, number>::evaluate_newton_step(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-         // if (parameters.nonlinearity)
-         //   nonlinear_values(cell, q) = 1e-01 * std::exp(phi.get_value(q));
-         // else
-           nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
+          // if (parameters.nonlinearity)
+          //   nonlinear_values(cell, q) = 1e-01 * std::exp(phi.get_value(q));
+          // else
+          nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
         }
     }
 }
@@ -438,13 +439,13 @@ StokesOperator<dim, fe_degree, number>::evaluate_newton_step(
 template <int dim, int fe_degree, typename number>
 void
 StokesOperator<dim, fe_degree, number>::local_apply(
-  const MatrixFree<dim, number> &                   data,
-  LinearAlgebra::distributed::Vector<number> &      dst,
+  const MatrixFree<dim, number>                    &data,
+  LinearAlgebra::distributed::Vector<number>       &dst,
   const LinearAlgebra::distributed::Vector<number> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
-  FECellIntegrator phi(data);
-  FullSourceTerm<dim>  source_term_function;
+  FECellIntegrator    phi(data);
+  FullSourceTerm<dim> source_term_function;
 
 
 
@@ -457,103 +458,102 @@ StokesOperator<dim, fe_degree, number>::local_apply(
       phi.reinit(cell);
 
       phi.gather_evaluate(src,
-                            EvaluationFlags::values |
-                              EvaluationFlags::gradients |
-                              EvaluationFlags::hessians);
+                          EvaluationFlags::values | EvaluationFlags::gradients |
+                            EvaluationFlags::hessians);
 
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-              VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-              std::array<number, VectorizedArray<number>::size()> h_k;
-              std::array<number, VectorizedArray<number>::size()> h;
+          VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+          std::array<number, VectorizedArray<number>::size()> h_k;
+          std::array<number, VectorizedArray<number>::size()> h;
 
-              for (auto lane = 0u;
-                   lane < data.n_active_entries_per_cell_batch(cell);
-                   lane++)
-                {
-                  h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
-                }
-
-
-
-              for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-                {
-                  if (dim == 2)
-                    {
-                      h[v] = std::sqrt(4. * h_k[v] / M_PI) /
-                             parameters.element_order;
-                    }
-                  else if (dim == 3)
-                    {
-                      h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
-                             parameters.element_order;
-                    }
-                  tau[v] = std::pow(
-                    std::pow( h[v] * h[v], 2),
-                    -0.5);
-                }
-
-              // Get advection field vector
-              Point<dim, VectorizedArray<double>> point_batch =
-                phi.quadrature_point(q);
-
-
-              Tensor<1, dim+1, VectorizedArray<double>> source_value;
-
-              // if (parameters.source_term == Settings::mms)
-              {
-                source_value =
-                  evaluate_function<dim, double, dim+1>(source_term_function,
-                                                          point_batch);
-              }
-
-             // phi.submit_value(advection_vector * phi.get_gradient(q) -
-             //                    nonlinear_values(cell, q) * phi.get_value(q),
-             //                  q);
-             // phi.submit_gradient(
-             //   1 / parameters.peclet_number * phi.get_gradient(q) +
-             //     (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-             //       (advection_vector * phi.get_gradient(q)) -
-             //       (nonlinear_values(cell, q) * phi.get_value(q))) *
-             //      tau * advection_vector),
-             //   q);
-
-
-              // Gather the original value/gradient
-              typename FECellIntegrator::value_type value = phi.get_value(q);
-              typename FECellIntegrator::gradient_type gradient = phi.get_gradient(q);
-              typename FECellIntegrator::gradient_type hessian_diagonal = phi.get_hessian_diagonal(q);
-
-
-              // Result value/gradient we will use
-              typename FECellIntegrator::value_type    value_result;
-              typename FECellIntegrator::gradient_type gradient_result;
-
-              // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
-              // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
-              // Assemble q div(u) = 0 for the last component
-              for (unsigned int i = 0 ; i<dim ; ++i)
-                {
-                  gradient_result[i] = -gradient[i];
-                  gradient_result[i][i] += value[dim];
-                 // value_result[i] = source_value[i];
-
-                // divergence of u
-                  value_result[dim] += gradient[i][i];
-                }
-              for (unsigned int i = 0 ; i < dim ; ++i)
-                {
-                  gradient_result[dim][i] += tau * value[i];
-                  for (unsigned int k = 0; k < dim; ++k)
-                    gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
-                }
-              gradient_result[dim] += tau * (gradient[dim] );
-
-              // TODO: complete residual
-              phi.submit_gradient(gradient_result, q);
-              phi.submit_value(value_result, q);
+          for (auto lane = 0u;
+               lane < data.n_active_entries_per_cell_batch(cell);
+               lane++)
+            {
+              h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
             }
+
+
+
+          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+            {
+              if (dim == 2)
+                {
+                  h[v] =
+                    std::sqrt(4. * h_k[v] / M_PI) / parameters.element_order;
+                }
+              else if (dim == 3)
+                {
+                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
+                         parameters.element_order;
+                }
+              tau[v] = std::pow(std::pow(h[v] * h[v], 2), -0.5);
+            }
+
+          // Get advection field vector
+          Point<dim, VectorizedArray<double>> point_batch =
+            phi.quadrature_point(q);
+
+
+          Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+
+          // if (parameters.source_term == Settings::mms)
+          {
+            source_value =
+              evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                      point_batch);
+          }
+
+          // phi.submit_value(advection_vector * phi.get_gradient(q) -
+          //                    nonlinear_values(cell, q) * phi.get_value(q),
+          //                  q);
+          // phi.submit_gradient(
+          //   1 / parameters.peclet_number * phi.get_gradient(q) +
+          //     (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
+          //       (advection_vector * phi.get_gradient(q)) -
+          //       (nonlinear_values(cell, q) * phi.get_value(q))) *
+          //      tau * advection_vector),
+          //   q);
+
+
+          // Gather the original value/gradient
+          typename FECellIntegrator::value_type    value = phi.get_value(q);
+          typename FECellIntegrator::gradient_type gradient =
+            phi.get_gradient(q);
+          typename FECellIntegrator::gradient_type hessian_diagonal =
+            phi.get_hessian_diagonal(q);
+
+
+          // Result value/gradient we will use
+          typename FECellIntegrator::value_type    value_result;
+          typename FECellIntegrator::gradient_type gradient_result;
+
+          // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
+          // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v
+          // = 0 ; Assemble q div(u) = 0 for the last component
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              gradient_result[i] = -gradient[i];
+              gradient_result[i][i] += value[dim];
+              // value_result[i] = source_value[i];
+
+              // divergence of u
+              value_result[dim] += gradient[i][i];
+            }
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              gradient_result[dim][i] += tau * value[i];
+              for (unsigned int k = 0; k < dim; ++k)
+                gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+            }
+          gradient_result[dim] += tau * (gradient[dim]);
+
+          // TODO: complete residual
+          phi.submit_gradient(gradient_result, q);
+          phi.submit_value(value_result, q);
+        }
 
 
 
@@ -566,13 +566,10 @@ StokesOperator<dim, fe_degree, number>::local_apply(
 template <int dim, int fe_degree, typename number>
 void
 StokesOperator<dim, fe_degree, number>::apply_add(
-  LinearAlgebra::distributed::Vector<number> &      dst,
+  LinearAlgebra::distributed::Vector<number>       &dst,
   const LinearAlgebra::distributed::Vector<number> &src) const
 {
-  this->data->cell_loop(&StokesOperator::local_apply,
-                        this,
-                        dst,
-                        src);
+  this->data->cell_loop(&StokesOperator::local_apply, this, dst, src);
 }
 
 template <int dim, int fe_degree, typename number>
@@ -586,93 +583,78 @@ StokesOperator<dim, fe_degree, number>::local_compute(
 
   const unsigned int cell = phi.get_current_cell_index();
 
-    phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                 EvaluationFlags::hessians);
+  phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+               EvaluationFlags::hessians);
+
+  VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+  std::array<number, VectorizedArray<number>::size()> h_k;
+  std::array<number, VectorizedArray<number>::size()> h;
+
+
+  for (auto lane = 0u;
+       lane < this->get_matrix_free()->n_active_entries_per_cell_batch(cell);
+       lane++)
+    {
+      h_k[lane] =
+        this->get_matrix_free()->get_cell_iterator(cell, lane)->measure();
+    }
+
+  for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+    {
+      if (dim == 2)
+        {
+          h[v] = std::sqrt(4. * h_k[v] / M_PI);
+        }
+      else if (dim == 3)
+        {
+          h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+        }
+
+      tau[v] = std::pow(std::pow(h[v] * h[v], 2), -0.5);
+    }
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
+      // Gather the original value/gradient
+      typename FECellIntegrator::value_type    value    = phi.get_value(q);
+      typename FECellIntegrator::gradient_type gradient = phi.get_gradient(q);
+      typename FECellIntegrator::gradient_type hessian_diagonal =
+        phi.get_hessian_diagonal(q);
 
-          VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-          std::array<number, VectorizedArray<number>::size()> h_k;
-          std::array<number, VectorizedArray<number>::size()> h;
+      // Result value/gradient we will use
+      typename FECellIntegrator::value_type    value_result;
+      typename FECellIntegrator::gradient_type gradient_result;
 
+      // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
+      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
+      // Assemble q div(u)  + strong_residual * nabla q = 0 for the last component
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          // Weak form of the laplacian
+          gradient_result[i] = -gradient[i];
 
-          for (auto lane = 0u;
-               lane <
-               this->get_matrix_free()->n_active_entries_per_cell_batch(cell);
-               lane++)
-            {
-              h_k[lane] = this->get_matrix_free()
-                            ->get_cell_iterator(cell, lane)
-                            ->measure();
-            }
+          // Weak form of the pressure gradient term
+          gradient_result[i][i] += value[dim];
 
-
-          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-            {
-              if (dim == 2)
-                {
-                  h[v] =
-                    std::sqrt(4. * h_k[v] / M_PI) ;
-                }
-              else if (dim == 3)
-                {
-                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) ;
-                }
-
-              tau[v] =
-                std::pow(std::pow( h[v] * h[v],
-                                  2) ,
-                         -0.5);
-            }
-
-
-                    // Gather the original value/gradient
-                    typename FECellIntegrator::value_type value = phi.get_value(q);
-                    typename FECellIntegrator::gradient_type gradient = phi.get_gradient(q);
-                    typename FECellIntegrator::gradient_type hessian_diagonal = phi.get_hessian_diagonal(q);
-
-
-                    // Result value/gradient we will use
-                    typename FECellIntegrator::value_type    value_result;
-                    typename FECellIntegrator::gradient_type gradient_result;
-
-                    // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
-                    // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
-                    // Assemble q div(u) = 0 for the last component
-                    for (unsigned int i = 0 ; i<dim ; ++i)
-                      {
-                        gradient_result[i] = -gradient[i];
-                        gradient_result[i][i] += value[dim];
-                        //value_result[i] = source_value[i];
-
-                        //divergence of u
-                        value_result[dim] += gradient[i][i];
-                      }
-                    for (unsigned int i = 0 ; i < dim ; ++i)
-                      {
-                        gradient_result[dim][i] += tau * value[i];
-                        for (unsigned int k = 0; k < dim; ++k)
-                          gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
-                      }
-                    gradient_result[dim] += tau * (gradient[dim] );
-
-                    // TODO: complete residual
-                    phi.submit_gradient(gradient_result, q);
-                    phi.submit_value(value_result, q);
-         // phi.submit_value(advection_vector * phi.get_gradient(q) -
-         //                    nonlinear_values(cell, q) * phi.get_value(q),
-         //                  q);
-         // phi.submit_gradient(
-         //   1 / parameters.peclet_number * phi.get_gradient(q) +
-         //     (((-1 / parameters.peclet_number * phi.get_laplacian(q)) +
-         //       (advection_vector * phi.get_gradient(q) -
-         //        (nonlinear_values(cell, q) * phi.get_value(q)))) *
-         //      tau * advection_vector),
-         //   q);
+          // divergence of u
+          value_result[dim] += gradient[i][i];
         }
-  phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          // Stabilization for the source term
+          gradient_result[dim][i] += tau * value[i];
 
+          // Stabilization for the strong form of the laplacian
+          for (unsigned int k = 0; k < dim; ++k)
+            gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+        }
+      // Pressure gradient strong residual
+      gradient_result[dim] += tau * (gradient[dim]);
+
+      phi.submit_gradient(gradient_result, q);
+      phi.submit_value(value_result, q);
+    }
+  phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
 
@@ -726,25 +708,21 @@ StokesOperator<dim, fe_degree, number>::get_system_matrix(
       dsp.compress();
       system_matrix.reinit(dsp);
 
-      MatrixFreeTools::compute_matrix(
-        *this->data,
-        constraints,
-        system_matrix,
-        &StokesOperator::local_compute,
-        this);
-
+      MatrixFreeTools::compute_matrix(*this->data,
+                                      constraints,
+                                      system_matrix,
+                                      &StokesOperator::local_compute,
+                                      this);
     }
   return system_matrix;
 }
 
-// Main class for the advection-diffusion problem given by
-// −ϵ∆u + w · ∇u = f using Newton's method, the matrix-free
-// approach and different test problems.
+// Main class for the stabilized Stokes problem
 template <int dim, int fe_degree>
-class MatrixFreeAdvectionDiffusion
+class MatrixFreeStokes
 {
 public:
-  MatrixFreeAdvectionDiffusion(const Settings &parameters);
+  MatrixFreeStokes(const Settings &parameters);
 
   void
   run();
@@ -761,15 +739,15 @@ private:
 
   void
   evaluate_residual(
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src) const;
 
   void
   local_evaluate_residual(
-    const MatrixFree<dim, double> &                   data,
-    LinearAlgebra::distributed::Vector<double> &      dst,
+    const MatrixFree<dim, double>                    &data,
+    LinearAlgebra::distributed::Vector<double>       &dst,
     const LinearAlgebra::distributed::Vector<double> &src,
-    const std::pair<unsigned int, unsigned int> &     cell_range) const;
+    const std::pair<unsigned int, unsigned int>      &cell_range) const;
 
   void
   assemble_rhs();
@@ -795,7 +773,7 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   const MappingQ<dim>                       mapping;
 
-  FESystem<dim>   fe;
+  FESystem<dim>             fe;
   DoFHandler<dim>           dof_handler;
   AffineConstraints<double> constraints;
   using SystemMatrixType = StokesOperator<dim, fe_degree, double>;
@@ -821,7 +799,7 @@ private:
 };
 
 template <int dim, int fe_degree>
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::MatrixFreeAdvectionDiffusion(
+MatrixFreeStokes<dim, fe_degree>::MatrixFreeStokes(
   const Settings &parameters)
   : triangulation(
       MPI_COMM_WORLD,
@@ -840,15 +818,15 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::MatrixFreeAdvectionDiffusion(
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
+MatrixFreeStokes<dim, fe_degree>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
   switch (parameters.geometry)
     {
         case Settings::hypercube: {
-            GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
-            break;
+          GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
+          break;
         }
     }
 
@@ -857,9 +835,9 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::make_grid()
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
+MatrixFreeStokes<dim, fe_degree>::setup_system()
 {
-  TimerOutput::Scope t(computing_timer, "setup system");
+  TimerOutput::Scope         t(computing_timer, "setup system");
   FEValuesExtractors::Vector velocities(0);
   system_matrix.clear();
 
@@ -876,33 +854,37 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
 
   // Set homogeneous constraints for the matrix-free operator
 
-    {
-      // Create zero BCs for the delta.
-      // Left wall
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               0,
-                                               Functions::ZeroFunction<dim>(dim+1),
-                                               constraints,
-                                               fe.component_mask(velocities));
-      // Right wall
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               1,
-                                               Functions::ZeroFunction<dim>(dim+1),
-                                                 constraints,
-                                               fe.component_mask(velocities));
-      // Top wall
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               3,
-                                               Functions::ZeroFunction<dim>(dim+1),
-                                                 constraints,
-                                               fe.component_mask(velocities));
-      // Bottom wall
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               2,
-                                               Functions::ZeroFunction<dim>(dim+1),
-                                               constraints,
-                                               fe.component_mask(velocities));
-    }
+  {
+    // Create zero BCs for the delta.
+    // Left wall
+    VectorTools::interpolate_boundary_values(dof_handler,
+                                             0,
+                                             Functions::ZeroFunction<dim>(dim +
+                                                                          1),
+                                             constraints,
+                                             fe.component_mask(velocities));
+    // Right wall
+    VectorTools::interpolate_boundary_values(dof_handler,
+                                             1,
+                                             Functions::ZeroFunction<dim>(dim +
+                                                                          1),
+                                             constraints,
+                                             fe.component_mask(velocities));
+    // Top wall
+    VectorTools::interpolate_boundary_values(dof_handler,
+                                             3,
+                                             Functions::ZeroFunction<dim>(dim +
+                                                                          1),
+                                             constraints,
+                                             fe.component_mask(velocities));
+    // Bottom wall
+    VectorTools::interpolate_boundary_values(dof_handler,
+                                             2,
+                                             Functions::ZeroFunction<dim>(dim +
+                                                                          1),
+                                             constraints,
+                                             fe.component_mask(velocities));
+  }
 
   constraints.close();
 
@@ -926,13 +908,11 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_system()
   system_matrix.initialize_dof_vector(solution);
   system_matrix.initialize_dof_vector(newton_update);
   system_matrix.initialize_dof_vector(system_rhs);
-
-
 }
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
+MatrixFreeStokes<dim, fe_degree>::setup_gmg()
 {
   TimerOutput::Scope t(computing_timer, "setup GMG");
 
@@ -999,13 +979,13 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::setup_gmg()
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::evaluate_residual(
-  LinearAlgebra::distributed::Vector<double> &      dst,
+MatrixFreeStokes<dim, fe_degree>::evaluate_residual(
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   auto matrix_free = system_matrix.get_matrix_free();
 
-  matrix_free->cell_loop(&MatrixFreeAdvectionDiffusion::local_evaluate_residual,
+  matrix_free->cell_loop(&MatrixFreeStokes::local_evaluate_residual,
                          this,
                          dst,
                          src,
@@ -1014,18 +994,17 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::evaluate_residual(
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
-  const MatrixFree<dim, double> &                   data,
-  LinearAlgebra::distributed::Vector<double> &      dst,
+MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
+  const MatrixFree<dim, double>                    &data,
+  LinearAlgebra::distributed::Vector<double>       &dst,
   const LinearAlgebra::distributed::Vector<double> &src,
-  const std::pair<unsigned int, unsigned int> &     cell_range) const
+  const std::pair<unsigned int, unsigned int>      &cell_range) const
 {
-
-  FEEvaluation<dim, fe_degree, fe_degree + 1, dim+1, double> phi(data);
-  FullSourceTerm<dim>                                        source_term_function;
+  FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, double> phi(data);
+  FullSourceTerm<dim> source_term_function;
 
   using FECellIntegrator =
-    FEEvaluation<dim, fe_degree, fe_degree + 1, dim+1, double>;
+    FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, double>;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
@@ -1035,42 +1014,40 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
 
       phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                     EvaluationFlags::hessians);
+                   EvaluationFlags::hessians);
 
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
+          VectorizedArray<double> tau = VectorizedArray<double>(0.0);
+          std::array<double, VectorizedArray<double>::size()> h_k;
+          std::array<double, VectorizedArray<double>::size()> h;
 
-              VectorizedArray<double> tau = VectorizedArray<double>(0.0);
-              std::array<double, VectorizedArray<double>::size()> h_k;
-              std::array<double, VectorizedArray<double>::size()> h;
+          for (auto lane = 0u;
+               lane <
+               system_matrix.get_matrix_free()->n_active_entries_per_cell_batch(
+                 cell);
+               lane++)
+            {
+              h_k[lane] = system_matrix.get_matrix_free()
+                            ->get_cell_iterator(cell, lane)
+                            ->measure();
+            }
 
-              for (auto lane = 0u;
-                   lane < system_matrix.get_matrix_free()
-                            ->n_active_entries_per_cell_batch(cell);
-                   lane++)
+
+
+          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+            {
+              if (dim == 2)
                 {
-                  h_k[lane] = system_matrix.get_matrix_free()
-                                ->get_cell_iterator(cell, lane)
-                                ->measure();
+                  h[v] = std::sqrt(4. * h_k[v] / M_PI);
+                }
+              else if (dim == 3)
+                {
+                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
                 }
 
-
-
-              for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-                {
-                  if (dim == 2)
-                    {
-                      h[v] = std::sqrt(4. * h_k[v] / M_PI) ;
-                    }
-                  else if (dim == 3)
-                    {
-                      h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) ;
-                    }
-
-                  tau[v] = std::pow(
-                    std::pow( h[v] * h[v], 2),
-                    -0.5);
+              tau[v] = std::pow(std::pow(h[v] * h[v], 2), -0.5);
 
 
               // Get advection field vector
@@ -1079,10 +1056,9 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
 
 
-
-
               // phi.submit_value(advection_vector * phi.get_gradient(q) -
-              //                    nonlinear_values(cell, q) * phi.get_value(q),
+              //                    nonlinear_values(cell, q) *
+              //                    phi.get_value(q),
               //                  q);
               // phi.submit_gradient(
               //   1 / parameters.peclet_number * phi.get_gradient(q) +
@@ -1091,19 +1067,21 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
               //       (nonlinear_values(cell, q) * phi.get_value(q))) *
               //      tau * advection_vector),
               //   q);
-              Tensor<1, dim+1, VectorizedArray<double>> source_value;
+              Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
               // if (parameters.source_term == Settings::mms)
               {
                 source_value =
-                  evaluate_function<dim, double, dim+1>(source_term_function,
+                  evaluate_function<dim, double, dim + 1>(source_term_function,
                                                           point_batch);
               }
 
               // Gather the original value/gradient
-              typename FECellIntegrator::value_type value = phi.get_value(q);
-              typename FECellIntegrator::gradient_type gradient = phi.get_gradient(q);
-              typename FECellIntegrator::gradient_type hessian_diagonal = phi.get_hessian_diagonal(q);
+              typename FECellIntegrator::value_type    value = phi.get_value(q);
+              typename FECellIntegrator::gradient_type gradient =
+                phi.get_gradient(q);
+              typename FECellIntegrator::gradient_type hessian_diagonal =
+                phi.get_hessian_diagonal(q);
 
 
               // Result value/gradient we will use
@@ -1111,30 +1089,29 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
               typename FECellIntegrator::gradient_type gradient_result;
 
               // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
-              // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0 ;
-              // Assemble q div(u) = 0 for the last component
-              for (unsigned int i = 0 ; i<dim ; ++i)
+              // The corresponding weak form is nabla v * nabla u  - p nabla
+              // \cdot v = 0 ; Assemble q div(u) = 0 for the last component
+              for (unsigned int i = 0; i < dim; ++i)
                 {
                   gradient_result[i] = -gradient[i];
                   gradient_result[i][i] += value[dim];
                   value_result[i] = source_value[i];
 
-                  //divergence of u
-                  value_result[dim]+= gradient[i][i];
+                  // divergence of u
+                  value_result[dim] += gradient[i][i];
                 }
-              for (unsigned int i = 0 ; i < dim ; ++i)
+              for (unsigned int i = 0; i < dim; ++i)
                 {
                   gradient_result[dim][i] += tau * value[i];
                   for (unsigned int k = 0; k < dim; ++k)
                     gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
                 }
-              gradient_result[dim] += tau * (gradient[dim] );
+              gradient_result[dim] += tau * (gradient[dim]);
 
               // TODO: complete residual
               phi.submit_gradient(gradient_result, q);
               phi.submit_value(value_result, q);
             }
-
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -1145,7 +1122,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::local_evaluate_residual(
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
+MatrixFreeStokes<dim, fe_degree>::assemble_rhs()
 {
   TimerOutput::Scope t(computing_timer, "assemble right hand side");
 
@@ -1156,7 +1133,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::assemble_rhs()
 
 template <int dim, int fe_degree>
 double
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_residual(
+MatrixFreeStokes<dim, fe_degree>::compute_residual(
   const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
@@ -1180,13 +1157,16 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_residual(
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
+MatrixFreeStokes<dim, fe_degree>::compute_update()
 {
   TimerOutput::Scope t(computing_timer, "compute update");
 
   solution.update_ghost_values();
 
-  SolverControl solver_control(1000, std::max(1.e-8 * system_rhs.l2_norm(),1e-14), true, true);
+  SolverControl                                           solver_control(1000,
+                               std::max(1.e-8 * system_rhs.l2_norm(), 1e-14),
+                               true,
+                               true);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
@@ -1236,10 +1216,8 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
           mg_smoother_jacobi.set_steps(6);
 
           // Set up preconditioned coarse-grid solver
-          SolverControl coarse_solver_control(200,
-                                              std::max(1.e-8 * system_rhs.l2_norm(),1e-14),
-                                              true,
-                                              true);
+          SolverControl coarse_solver_control(
+            200, std::max(1.e-8 * system_rhs.l2_norm(), 1e-14), true, true);
 
           SolverGMRES<LinearAlgebra::distributed::Vector<double>> coarse_solver(
             coarse_solver_control,
@@ -1328,7 +1306,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_update()
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::solve()
+MatrixFreeStokes<dim, fe_degree>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -1374,7 +1352,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::solve()
 
 template <int dim, int fe_degree>
 double
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
+MatrixFreeStokes<dim, fe_degree>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
@@ -1383,7 +1361,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
   VectorTools::integrate_difference(mapping,
                                     dof_handler,
                                     solution,
-                                    Functions::ZeroFunction<dim>(dim+1),
+                                    Functions::ZeroFunction<dim>(dim + 1),
                                     norm_per_cell,
                                     QGauss<dim>(fe.degree + 1),
                                     VectorTools::H1_seminorm);
@@ -1397,7 +1375,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_solution_norm() const
 
 template <int dim, int fe_degree>
 double
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
+MatrixFreeStokes<dim, fe_degree>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
@@ -1420,7 +1398,7 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::compute_l2_error() const
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
+MatrixFreeStokes<dim, fe_degree>::output_results(
   const unsigned int cycle) const
 {
   if (triangulation.n_global_active_cells() > 1e6)
@@ -1448,19 +1426,19 @@ MatrixFreeAdvectionDiffusion<dim, fe_degree>::output_results(
   std::string test_case = "";
 
 
-  data_out.write_vtu_with_pvtu_record(
-    parameters.output_path,
-    parameters.output_name + std::to_string(dim),
-    cycle,
-    MPI_COMM_WORLD,
-    3);
+  data_out.write_vtu_with_pvtu_record(parameters.output_path,
+                                      parameters.output_name +
+                                        std::to_string(dim),
+                                      cycle,
+                                      MPI_COMM_WORLD,
+                                      3);
 
   solution.zero_out_ghost_values();
 }
 
 template <int dim, int fe_degree>
 void
-MatrixFreeAdvectionDiffusion<dim, fe_degree>::run()
+MatrixFreeStokes<dim, fe_degree>::run()
 {
   {
     const unsigned int n_ranks =
@@ -1611,21 +1589,21 @@ main(int argc, char *argv[])
               switch (parameters.element_order)
                 {
                     case 1: {
-                      MatrixFreeAdvectionDiffusion<2, 1>
+                      MatrixFreeStokes<2, 1>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 2: {
-                      MatrixFreeAdvectionDiffusion<2, 2>
+                      MatrixFreeStokes<2, 2>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 3: {
-                      MatrixFreeAdvectionDiffusion<2, 3>
+                      MatrixFreeStokes<2, 3>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
@@ -1639,21 +1617,21 @@ main(int argc, char *argv[])
               switch (parameters.element_order)
                 {
                     case 1: {
-                      MatrixFreeAdvectionDiffusion<3, 1>
+                      MatrixFreeStokes<3, 1>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 2: {
-                      MatrixFreeAdvectionDiffusion<3, 2>
+                      MatrixFreeStokes<3, 2>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
                       break;
                     }
                     case 3: {
-                      MatrixFreeAdvectionDiffusion<3, 3>
+                      MatrixFreeStokes<3, 3>
                         non_linear_poisson_problem(parameters);
                       non_linear_poisson_problem.run();
 
