@@ -403,6 +403,7 @@ public:
   {
     this->half_lengths = half_lengths;
     this->exponents    = exponents;
+    this->epsilon      = 1e-12;
   }
 
   /**
@@ -491,8 +492,10 @@ public:
   {
     if (prm > 0)
       return 1;
-    else
+    else if (prm < 0)
       return -1;
+    else
+      return 0;
   }
 
   /**
@@ -516,15 +519,21 @@ public:
   {
     Point<dim> gradient{};
     for (unsigned int d = 0; d < dim; d++)
-      gradient[d] =
-        sign(centered_point[d]) * exponents[d] * (1 / half_lengths[d]) *
-        pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
-    return gradient;
+      {
+        if (abs(centered_point[d]) < epsilon)
+          gradient[d] = sign(superquadric(centered_point)) * epsilon;
+        else
+          gradient[d] =
+            sign(centered_point[d]) * exponents[d] * (1 / half_lengths[d]) *
+            pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
+      }
+    return gradient / gradient.norm();
   }
 
 private:
   Tensor<1, dim> half_lengths;
   Tensor<1, dim> exponents;
+  double         epsilon;
 
   // The cache of the evaluation of the shape. This is used to avoid costly
   // reevaluation of the shape.

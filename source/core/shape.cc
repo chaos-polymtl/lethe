@@ -400,41 +400,25 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
       // referential
       Point<dim> centered_point = this->align_and_center(p);
 
-      double minimal_radius = half_lengths[0];
-      minimal_radius        = std::min(minimal_radius, half_lengths[1]);
-      minimal_radius        = std::min(minimal_radius, half_lengths[2]);
-      minimal_radius *= 0.5;
-      if (centered_point.norm() < minimal_radius)
+      Point<dim>   current_point = centered_point;
+      unsigned int iteration     = 0;
+      unsigned int iteration_max = 100;
+
+      Point<dim> dx{}, distance_gradient{};
+      dx[0]             = 1;
+      double relaxation = 0.1;
+      while (iteration < iteration_max && dx.norm() > epsilon)
         {
-          Point<dim> safety_point{};
-          for (unsigned int d = 0; d < dim; d++)
-            safety_point[d] = sign(centered_point[d]) * 0.5 * half_lengths[d];
-          closest_point = this->reverse_align_and_center(safety_point);
+          distance_gradient = superquadric_gradient(current_point);
+          dx = -relaxation * (superquadric(current_point) * distance_gradient) /
+               distance_gradient.norm_square();
+
+          current_point = current_point + dx;
+
+          iteration++;
         }
-      else
-        {
-          Point<dim>   current_point = centered_point;
-          unsigned int iteration     = 0;
-          unsigned int iteration_max = 100;
-          double       tolerance     = 1e-6;
 
-          Point<dim> dx{}, distance_gradient{};
-          dx[0]             = 1;
-          double relaxation = 0.1;
-          while (iteration < iteration_max && dx.norm() > tolerance)
-            {
-              distance_gradient = superquadric_gradient(current_point);
-              dx                = -relaxation *
-                   (superquadric(current_point) * distance_gradient) /
-                   distance_gradient.norm_square();
-
-              current_point = current_point + dx;
-
-              iteration++;
-            }
-
-          closest_point = this->reverse_align_and_center(current_point);
-        }
+      closest_point = this->reverse_align_and_center(current_point);
     }
   else
     closest_point = iterator->second;
