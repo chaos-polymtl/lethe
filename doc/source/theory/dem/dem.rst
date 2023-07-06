@@ -182,5 +182,6 @@ And velocity Verlet method is calculated with half-step velocity as:
 References
 -------------
 `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ Golshan et al. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Computational Particle Mechanics (2022) p.1-20
-[2] R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
+
+`[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
