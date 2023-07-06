@@ -95,7 +95,12 @@ test()
   // boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
   std::vector<unsigned int>     outlet_boundaries;
-  boundary_cells_object.build(tr, outlet_boundaries, false, std::cout);
+  boundary_cells_object.build(
+    tr,
+    outlet_boundaries,
+    false,
+    ConditionalOStream(std::cout,
+                       Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
   // Calling particle-wall broad search
   ParticleWallBroadSearch<dim> broad_search_object;

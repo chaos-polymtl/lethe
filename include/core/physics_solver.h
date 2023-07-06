@@ -127,7 +127,7 @@ private:
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   const Parameters::NonLinearSolver non_linear_solver_parameters)
-  : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
+  : pcout(std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
 {
   switch (non_linear_solver_parameters.solver)
     {

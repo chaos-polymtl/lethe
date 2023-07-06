@@ -1212,12 +1212,13 @@ GLSNavierStokesSolver<dim>::setup_AMG()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
+  // Constant modes for velocity
   std::vector<std::vector<bool>> constant_modes;
+
   // Constant modes include pressure since everything is in the same matrix
-  std::vector<bool> velocity_components(dim + 1, true);
-  velocity_components[dim] = true;
+  ComponentMask components(dim + 1, true);
   DoFTools::extract_constant_modes(this->dof_handler,
-                                   velocity_components,
+                                   components,
                                    constant_modes);
 
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;

@@ -114,8 +114,8 @@ ListInsertion<dim>::insert(
       remaining_particles_of_each_type -= n_total_particles_to_insert;
 
 
-      ConditionalOStream pcout = {
-        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0};
+      ConditionalOStream pcout(
+        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
       this->print_insertion_info(n_total_particles_to_insert,
                                  remaining_particles_of_each_type,
                                  current_inserting_particle_type,
