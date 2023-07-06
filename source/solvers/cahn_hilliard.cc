@@ -589,7 +589,7 @@ CahnHilliard<dim>::setup_dofs()
     nonzero_constraints.clear();
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
-    
+
     for (unsigned int i_bc = 0;
          i_bc <
          this->simulation_parameters.boundary_conditions_cahn_hilliard.size;
