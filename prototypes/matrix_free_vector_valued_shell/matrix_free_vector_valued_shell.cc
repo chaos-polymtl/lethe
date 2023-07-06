@@ -248,7 +248,7 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
 
   values(0) = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
   values(1) = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
-  values(2) = 0;
+  values(2) = sin(a * x) * sin(a * y);
 }
 
 // Function for the full source term
@@ -280,13 +280,15 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
     {
       return (2 * a * a * (sin(a * x) * sin(a * x) - cos(a * x) * cos(a * x)) *
                 sin(a * y) * cos(a * y) +
-              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y));
+              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y) +
+              a * sin(a * y) * cos(a * x));
     }
   else if (component == 1)
     {
       return (-2 * a * a * (sin(a * y) * sin(a * y) - cos(a * y) * cos(a * y)) *
                 sin(a * x) * cos(a * x) -
-              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x));
+              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x) +
+              a * sin(a * x) * cos(a * y));
     }
   else
     return 0;
@@ -550,6 +552,8 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
   using FECellIntegratorType =
     FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
 
+  FullSourceTerm<dim> source_term_function;
+
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                       EvaluationFlags::hessians);
 
@@ -582,13 +586,25 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
+      // Evaluate source term function
+      Point<dim, VectorizedArray<double>> point_batch =
+        integrator.quadrature_point(q);
+
+      Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+
+      if (parameters.source_term == Settings::mms)
+        {
+          source_value =
+            evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                    point_batch);
+        }
+
       // Gather the original value/gradient
       typename FECellIntegratorType::value_type value = integrator.get_value(q);
       typename FECellIntegratorType::gradient_type gradient =
         integrator.get_gradient(q);
       typename FECellIntegratorType::gradient_type hessian_diagonal =
         integrator.get_hessian_diagonal(q);
-
 
       // Result value/gradient we will use
       typename FECellIntegratorType::value_type    value_result;
@@ -600,18 +616,20 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
 
       for (unsigned int i = 0; i < dim; ++i)
         {
-          gradient_result[i] = -gradient[i];
-          gradient_result[i][i] += value[dim];
+          gradient_result[i] = gradient[i];
+          gradient_result[i][i] += -value[dim];
 
           value_result[dim] += gradient[i][i];
         }
 
       for (unsigned int i = 0; i < dim; ++i)
-        for (unsigned int k = 0; k < dim; ++k)
-          gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+        {
+          // gradient_result[dim][i] += tau * source_value[i];
+          for (unsigned int k = 0; k < dim; ++k)
+            gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+        }
       gradient_result[dim] += tau * gradient[dim];
 
-      // TODO: implement jacobian
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
     }
@@ -629,6 +647,8 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
   using FECellIntegratorType =
     FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
 
+  FullSourceTerm<dim> source_term_function;
+
   integrator.gather_evaluate(src,
                              EvaluationFlags::values |
                                EvaluationFlags::gradients |
@@ -636,31 +656,42 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
+  VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+  std::array<number, VectorizedArray<number>::size()> h_k;
+  std::array<number, VectorizedArray<number>::size()> h;
+
+  for (auto lane = 0u; lane < matrix_free.n_active_entries_per_cell_batch(cell);
+       lane++)
+    {
+      h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
+    }
+
+  for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+    {
+      if (dim == 2)
+        {
+          h[v] = std::sqrt(4. * h_k[v] / M_PI);
+        }
+      else if (dim == 3)
+        {
+          h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+        }
+      tau[v] = h[v] * h[v];
+    }
+
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
-      VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-      std::array<number, VectorizedArray<number>::size()> h_k;
-      std::array<number, VectorizedArray<number>::size()> h;
+      // Evaluate source term function
+      Point<dim, VectorizedArray<double>> point_batch =
+        integrator.quadrature_point(q);
 
-      for (auto lane = 0u;
-           lane < matrix_free.n_active_entries_per_cell_batch(cell);
-           lane++)
-        {
-          h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
-        }
+      Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
-      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+      if (parameters.source_term == Settings::mms)
         {
-          if (dim == 2)
-            {
-              h[v] = std::sqrt(4. * h_k[v] / M_PI);
-            }
-          else if (dim == 3)
-            {
-              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
-            }
-          // std::cout<<"h[v] is ??? " << h[v] <<std::endl;
-          tau[v] = h[v] * h[v];
+          source_value =
+            evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                    point_batch);
         }
 
       // Gather the original value/gradient
@@ -677,21 +708,22 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
       // Assemble -nabla u + nabla p = 0 for the first 3 components
       // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
       // ; Assemble q div(u) = 0 for the last component
-
       for (unsigned int i = 0; i < dim; ++i)
         {
-          gradient_result[i] = -gradient[i];
-          gradient_result[i][i] += value[dim];
+          gradient_result[i] = gradient[i];
+          gradient_result[i][i] += -value[dim];
 
           value_result[dim] += gradient[i][i];
         }
 
       for (unsigned int i = 0; i < dim; ++i)
-        for (unsigned int k = 0; k < dim; ++k)
-          gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+        {
+          // gradient_result[dim][i] += tau * source_value[i];
+          for (unsigned int k = 0; k < dim; ++k)
+            gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+        }
       gradient_result[dim] += tau * gradient[dim];
 
-      // TODO: implement jacobian
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
     }
@@ -877,9 +909,26 @@ solve_with_gmg(SolverControl &            solver_control,
                                                Functions::ZeroFunction<dim>(
                                                  dim + 1),
                                                constraint);
-      constraint.close();
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               1,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim + 1),
+                                               constraint);
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim + 1),
+                                               constraint);
+      VectorTools::interpolate_boundary_values(mapping,
+                                               dof_handler,
+                                               3,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim + 1),
+                                               constraint);
 
-      VectorType dummy;
+      constraint.close();
 
       operators[level] = std::make_unique<OperatorType>(mapping,
                                                         dof_handler,
@@ -1026,7 +1075,7 @@ VectorValuedProblem<dim>::make_grid()
   switch (parameters.geometry)
     {
         case Settings::hypercube: {
-          GridGenerator::hyper_cube(triangulation, -1, 1.0, true);
+          GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
           break;
         }
     }
@@ -1097,7 +1146,7 @@ VectorValuedProblem<dim>::local_evaluate_residual(
   using FECellIntegratorType =
     FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
 
-  FEEvaluation<dim, -1, 0, dim + 1, double> phi(data);
+  FECellIntegratorType phi(data);
 
   FullSourceTerm<dim> source_term_function;
 
@@ -1133,15 +1182,18 @@ VectorValuedProblem<dim>::local_evaluate_residual(
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          Tensor<1, dim + 1, VectorizedArray<double>> source_value;
-          Point<dim, VectorizedArray<double>>         point_batch =
+          // Evaluate source term function
+          Point<dim, VectorizedArray<double>> point_batch =
             phi.quadrature_point(q);
-          // if (parameters.source_term == Settings::mms)
-          {
-            source_value =
-              evaluate_function<dim, double, dim + 1>(source_term_function,
-                                                      point_batch);
-          }
+
+          Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+
+          if (parameters.source_term == Settings::mms)
+            {
+              source_value =
+                evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                        point_batch);
+            }
 
           // Gather the original value/gradient
           typename FECellIntegratorType::value_type    value = phi.get_value(q);
@@ -1150,7 +1202,6 @@ VectorValuedProblem<dim>::local_evaluate_residual(
           typename FECellIntegratorType::gradient_type hessian_diagonal =
             phi.get_hessian_diagonal(q);
 
-
           // Result value/gradient we will use
           typename FECellIntegratorType::value_type    value_result;
           typename FECellIntegratorType::gradient_type gradient_result;
@@ -1158,24 +1209,25 @@ VectorValuedProblem<dim>::local_evaluate_residual(
           // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
           // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v
           // = 0 ; Assemble q div(u) = 0 for the last component
-
           for (unsigned int i = 0; i < dim; ++i)
             {
-              gradient_result[i] = -gradient[i];
-              gradient_result[i][i] += value[dim];
-              value_result[i] = source_value[i];
+              gradient_result[i] = gradient[i];
+              gradient_result[i][i] += -value[dim];
+              value_result[i] = -source_value[i];
 
               value_result[dim] += gradient[i][i];
             }
 
           for (unsigned int i = 0; i < dim; ++i)
-            for (unsigned int k = 0; k < dim; ++k)
-              gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+            {
+              gradient_result[dim][i] += -tau * source_value[i];
+              for (unsigned int k = 0; k < dim; ++k)
+                gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+            }
           gradient_result[dim] += tau * gradient[dim];
 
           phi.submit_gradient(gradient_result, q);
           phi.submit_value(value_result, q);
-          // phi.submit_value(-source_value, q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
