@@ -375,7 +375,7 @@ namespace Parameters
     // DEM solid objects
     std::vector<std::shared_ptr<RigidSolidObject<dim>>> solids;
     unsigned int                                        number_solids;
-    static const unsigned int max_number_of_solids = 5;
+    static const unsigned int max_number_of_solids = 10;
   };
 
   template <int dim>
