@@ -55,10 +55,12 @@ test()
 
   // Fining boundary cellds information
   BoundaryCellsInformation<dim> boundary_cells_object;
-  boundary_cells_object.build(triangulation,
-                              outlet_boundaries,
-                              false,
-                              std::cout);
+  boundary_cells_object.build(
+    triangulation,
+    outlet_boundaries,
+    false,
+    ConditionalOStream(std::cout,
+                       Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =

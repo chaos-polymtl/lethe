@@ -44,8 +44,8 @@ NonUniformInsertion<dim>::insert(
   if (remained_particles_of_each_type != 0)
     {
       MPI_Comm           communicator = triangulation.get_communicator();
-      ConditionalOStream pcout        = {
-        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0};
+      ConditionalOStream pcout(
+        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
 
       auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       auto n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
