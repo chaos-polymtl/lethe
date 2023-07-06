@@ -65,8 +65,9 @@ test()
     std::make_shared<SimulationControlTransient>(
       solver_parameters.simulation_control);
 
-  ConditionalOStream pcout(
-    {std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0});
+  ConditionalOStream pcout(std::cout,
+                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                             0);
 
   {
     MultiphysicsInterface<dim> multiphysics(solver_parameters,

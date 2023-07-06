@@ -33,6 +33,8 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/fe/component_mask.h>
+
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/full_matrix.h>
@@ -908,16 +910,21 @@ GDNavierStokesSolver<dim>::setup_AMG()
 
   // Constant modes for velocity
   std::vector<std::vector<bool>> velocity_constant_modes;
-  std::vector<bool>              velocity_components(dim + 1, true);
-  velocity_components[dim] = false;
+  FEValuesExtractors::Vector     velocities(0);
+
+  ComponentMask velocity_components = this->fe->component_mask(velocities);
+  // std::vector<bool> velocity_components(dim + 1, true);
+  // velocity_components[dim] = false;
   DoFTools::extract_constant_modes(this->dof_handler,
                                    velocity_components,
                                    velocity_constant_modes);
 
   // Constant modes for pressure
   std::vector<std::vector<bool>> pressure_constant_modes;
-  std::vector<bool>              pressure_components(dim + 1, false);
-  pressure_components[dim] = true;
+  FEValuesExtractors::Scalar     pressure(dim);
+  ComponentMask pressure_components = this->fe->component_mask(pressure);
+  // std::vector<bool> pressure_components(dim + 1, false);
+  // pressure_components[dim] = true;
   DoFTools::extract_constant_modes(this->dof_handler,
                                    pressure_components,
                                    pressure_constant_modes);
