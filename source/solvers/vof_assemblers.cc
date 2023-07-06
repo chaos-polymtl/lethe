@@ -50,24 +50,22 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
       // indicator
       const double u_mag = std::max(velocity.norm(), 1e-12);
 
-      // Implementation of a DCDD shock capturing scheme.
-      // For more information see
-      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
-      // finite element formulations for nonlinear
-      // convection-diffusion-reaction equations. Computer methods in
-      // applied mechanics and engineering, 59(3), 307-325.
-
-      // Gather the order of the VOF interpolation
-      const double order = this->fem_parameters.VOF_order;
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(phase_gradient_norm * h, order);
+      // Implementation of a Discontinuity-Capturing Directional Dissipation
+      // (DCDD) shock capturing scheme. For more information see Tezduyar, T. E.
+      // (2003). Computation of moving boundaries and interfaces and
+      // stabilization parameters. International Journal for Numerical Methods
+      // in Fluids, 43(5), 555-575. Our implementation is based on equations
+      // (70) and (79), which are adapted for the VOF solver.
 
       const double tolerance = 1e-12;
 
+      // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
         phase_gradient / (phase_gradient_norm + tolerance);
+
+      // Calculate the artificial viscosity of the shock capture
+      const double vdcdd =
+        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
 
       // We neglect to remove the diffusion aligned with the velocity
       // as is done in the original article. This term generates poorer
@@ -198,26 +196,23 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
 
       // Implementation of a DCDD shock capturing scheme.
       // For more information see
-      // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
-      // finite element formulations for nonlinear
-      // convection-diffusion-reaction equations. Computer methods in
-      // applied mechanics and engineering, 59(3), 307-325.
-
-      // Gather the order of the VOF interpolation
-      const double order = this->fem_parameters.VOF_order;
-
-      // Calculate the artificial viscosity of the shock capture
-      const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
-                           pow(phase_gradient.norm() * h, order);
+      // Tezduyar, T. E. (2003). Computation of moving boundaries and interfaces
+      // and stabilization parameters. International Journal for Numerical
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on
+      // equations (70) and (79), which are adapted for the VOF solver.
 
       const double tolerance = 1e-12;
 
+      // In Tezduyar 2003, this is denoted r
       Tensor<1, dim> gradient_unit_vector =
         phase_gradient / (phase_gradient_norm + tolerance);
 
+      // Calculate the artificial viscosity of the shock capture
+      const double vdcdd =
+        (0.5 * h * h) * velocity.norm() * phase_gradient_norm;
+
       // We neglect to remove the diffusion aligned with the velocity
-      // as is done in the original article. This term generates poorer
-      // results than just using the vdcdd approach.
+      // as is done in the original article.
       // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
       // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
       // s);

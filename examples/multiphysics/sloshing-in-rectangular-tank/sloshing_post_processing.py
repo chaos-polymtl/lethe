@@ -29,13 +29,7 @@ prm_file_name = sys.argv[2]
 save_path = simulation_path
 
 # Create the fluids object
-fluids = lethe_pyvista_tools(simulation_path, prm_file_name)
-
-# Get the pvd name
-pvd_name = fluids.prm_dict["output name"]
-
-# Read data
-fluids.read_lethe_to_pyvista(f'{pvd_name}.pvd')
+fluids = lethe_pyvista_tools(simulation_path, prm_file_name, 'sloshing-in-rectangular-tank_Re2.pvd')
 
 # Set phase_limit to search for height values
 phase_limit = 0.5
@@ -53,7 +47,7 @@ H_b = [0, 0.02, 0]
 # Read VTU files
 for i in range(len(fluids.list_vtu)):
     # Store results in 'df'
-    df = fluids.df[i]
+    df = fluids.get_df(i)
 
     # Extract phase values and points over the center line
     sampled_data = df.sample_over_line(H_a, H_b, resolution=5000)

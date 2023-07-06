@@ -74,6 +74,8 @@ NavierStokesScratchData<dim>::allocate()
 
   // Physical properties
   fields.insert(
+    std::pair<field, std::vector<double>>(field::pressure, n_q_points));
+  fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
 
   density                   = std::vector<double>(n_q_points);
@@ -258,6 +260,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
       set_field_vector(field::temperature,
                        this->temperature_values,
                        this->fields);
+    }
+
+  if (properties_manager.field_is_required(field::pressure))
+    {
+      set_field_vector(field::pressure, this->pressure_values, this->fields);
     }
 
   if (properties_manager.field_is_required(field::shear_rate))
