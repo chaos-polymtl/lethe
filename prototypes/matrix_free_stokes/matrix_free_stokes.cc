@@ -247,7 +247,7 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
 
   values(0) = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
   values(1) = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
-  values(2) = 0;
+  values(2) = sin(a * x) * sin(a * y);
 }
 
 
@@ -280,13 +280,15 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
     {
       return (2 * a * a * (sin(a * x) * sin(a * x) - cos(a * x) * cos(a * x)) *
                 sin(a * y) * cos(a * y) +
-              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y));
+              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y) +
+              a * sin(a * y) * cos(a * x));
     }
   else if (component == 1)
     {
       return (-2 * a * a * (sin(a * y) * sin(a * y) - cos(a * y) * cos(a * y)) *
                 sin(a * x) * cos(a * x) -
-              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x));
+              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x) +
+              a * sin(a * x) * cos(a * y));
     }
   else
     return 0;
@@ -356,10 +358,6 @@ public:
   void
   reinit_operator_parameters(const Settings &parameters);
 
-  void
-  evaluate_newton_step(
-    const LinearAlgebra::distributed::Vector<number> &newton_step);
-
   virtual void
   compute_diagonal() override;
 
@@ -383,7 +381,6 @@ private:
 
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   Settings                               parameters;
-  Table<2, VectorizedArray<number>>      nonlinear_values;
 };
 
 template <int dim, int fe_degree, typename number>
@@ -397,7 +394,6 @@ template <int dim, int fe_degree, typename number>
 void
 StokesOperator<dim, fe_degree, number>::clear()
 {
-  nonlinear_values.reinit(0, 0);
   MatrixFreeOperators::Base<dim, LinearAlgebra::distributed::Vector<number>>::
     clear();
 }
@@ -412,32 +408,6 @@ StokesOperator<dim, fe_degree, number>::reinit_operator_parameters(
 
 template <int dim, int fe_degree, typename number>
 void
-StokesOperator<dim, fe_degree, number>::evaluate_newton_step(
-  const LinearAlgebra::distributed::Vector<number> &newton_step)
-{
-  const unsigned int n_cells = this->data->n_cell_batches();
-  FECellIntegrator   phi(*this->data);
-
-  nonlinear_values.reinit(n_cells, phi.n_q_points);
-
-  for (unsigned int cell = 0; cell < n_cells; ++cell)
-    {
-      phi.reinit(cell);
-      phi.read_dof_values_plain(newton_step);
-      phi.evaluate(EvaluationFlags::values);
-
-      for (unsigned int q = 0; q < phi.n_q_points; ++q)
-        {
-          // if (parameters.nonlinearity)
-          //   nonlinear_values(cell, q) = 1e-01 * std::exp(phi.get_value(q));
-          // else
-          nonlinear_values(cell, q) = VectorizedArray<number>(0.0);
-        }
-    }
-}
-
-template <int dim, int fe_degree, typename number>
-void
 StokesOperator<dim, fe_degree, number>::local_apply(
   const MatrixFree<dim, number> &                   data,
   LinearAlgebra::distributed::Vector<number> &      dst,
@@ -447,64 +417,51 @@ StokesOperator<dim, fe_degree, number>::local_apply(
   FECellIntegrator    phi(data);
   FullSourceTerm<dim> source_term_function;
 
-
-
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
-      AssertDimension(nonlinear_values.size(0),
-                      phi.get_matrix_free().n_cell_batches());
-      AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
       phi.reinit(cell);
 
       phi.gather_evaluate(src,
                           EvaluationFlags::values | EvaluationFlags::gradients |
                             EvaluationFlags::hessians);
 
+      VectorizedArray<number> tau = VectorizedArray<number>(0.0);
+      std::array<number, VectorizedArray<number>::size()> h_k;
+      std::array<number, VectorizedArray<number>::size()> h;
+
+      for (auto lane = 0u; lane < data.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
+        }
+
+      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+        {
+          if (dim == 2)
+            {
+              h[v] = std::sqrt(4. * h_k[v] / M_PI);
+            }
+          else if (dim == 3)
+            {
+              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+            }
+          tau[v] = h[v] * h[v];
+        }
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-          std::array<number, VectorizedArray<number>::size()> h_k;
-          std::array<number, VectorizedArray<number>::size()> h;
-
-          for (auto lane = 0u;
-               lane < data.n_active_entries_per_cell_batch(cell);
-               lane++)
-            {
-              h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
-            }
-
-
-
-          for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-            {
-              if (dim == 2)
-                {
-                  h[v] =
-                    std::sqrt(4. * h_k[v] / M_PI) / parameters.element_order;
-                }
-              else if (dim == 3)
-                {
-                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.) /
-                         parameters.element_order;
-                }
-              tau[v] = std::pow(std::pow(h[v] * h[v], 2), -0.5);
-            }
-
-          // Get advection field vector
+          // Evaluate source term function
           Point<dim, VectorizedArray<double>> point_batch =
             phi.quadrature_point(q);
 
-
           Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
-          // if (parameters.source_term == Settings::mms)
-          {
-            source_value =
-              evaluate_function<dim, double, dim + 1>(source_term_function,
-                                                      point_batch);
-          }
+          if (parameters.source_term == Settings::mms)
+            {
+              source_value =
+                evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                        point_batch);
+            }
 
           // Gather the original value/gradient
           typename FECellIntegrator::value_type    value = phi.get_value(q);
@@ -512,7 +469,6 @@ StokesOperator<dim, fe_degree, number>::local_apply(
             phi.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal =
             phi.get_hessian_diagonal(q);
-
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
@@ -523,27 +479,23 @@ StokesOperator<dim, fe_degree, number>::local_apply(
           // = 0 ; Assemble q div(u) = 0 for the last component
           for (unsigned int i = 0; i < dim; ++i)
             {
-              gradient_result[i] = -gradient[i];
-              gradient_result[i][i] += value[dim];
+              gradient_result[i] = gradient[i];
+              gradient_result[i][i] += -value[dim];
               // value_result[i] = source_value[i];
-
               // divergence of u
               value_result[dim] += gradient[i][i];
             }
           for (unsigned int i = 0; i < dim; ++i)
             {
-              gradient_result[dim][i] += tau * value[i];
+              // gradient_result[dim][i] += -tau * source_value[i];
               for (unsigned int k = 0; k < dim; ++k)
                 gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
             }
-          gradient_result[dim] += tau * (gradient[dim]);
+          gradient_result[dim] += tau * gradient[dim];
 
-          // TODO: complete residual
           phi.submit_gradient(gradient_result, q);
           phi.submit_value(value_result, q);
         }
-
-
 
       phi.integrate_scatter(EvaluationFlags::values |
                               EvaluationFlags::gradients,
@@ -565,14 +517,12 @@ void
 StokesOperator<dim, fe_degree, number>::local_compute(
   FECellIntegrator &phi) const
 {
-  AssertDimension(nonlinear_values.size(0),
-                  phi.get_matrix_free().n_cell_batches());
-  AssertDimension(nonlinear_values.size(1), phi.n_q_points);
-
-  const unsigned int cell = phi.get_current_cell_index();
+  FullSourceTerm<dim> source_term_function;
 
   phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                EvaluationFlags::hessians);
+
+  const unsigned int cell = phi.get_current_cell_index();
 
   VectorizedArray<number> tau = VectorizedArray<number>(0.0);
   std::array<number, VectorizedArray<number>::size()> h_k;
@@ -598,11 +548,23 @@ StokesOperator<dim, fe_degree, number>::local_compute(
           h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
         }
 
-      tau[v] = std::pow(std::pow(h[v] * h[v], 2), -0.5);
+      tau[v] = h[v] * h[v];
     }
 
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
+      // Evaluate source term function
+      Point<dim, VectorizedArray<double>> point_batch = phi.quadrature_point(q);
+
+      Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+
+      if (parameters.source_term == Settings::mms)
+        {
+          source_value =
+            evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                    point_batch);
+        }
+
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value    = phi.get_value(q);
       typename FECellIntegrator::gradient_type gradient = phi.get_gradient(q);
@@ -620,10 +582,10 @@ StokesOperator<dim, fe_degree, number>::local_compute(
       for (unsigned int i = 0; i < dim; ++i)
         {
           // Weak form of the laplacian
-          gradient_result[i] = -gradient[i];
+          gradient_result[i] = gradient[i];
 
           // Weak form of the pressure gradient term
-          gradient_result[i][i] += value[dim];
+          gradient_result[i][i] += -value[dim];
 
           // divergence of u
           value_result[dim] += gradient[i][i];
@@ -631,18 +593,18 @@ StokesOperator<dim, fe_degree, number>::local_compute(
       for (unsigned int i = 0; i < dim; ++i)
         {
           // Stabilization for the source term
-          gradient_result[dim][i] += tau * value[i];
-
+          // gradient_result[dim][i] += -tau * source_value[i];
           // Stabilization for the strong form of the laplacian
           for (unsigned int k = 0; k < dim; ++k)
             gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
         }
       // Pressure gradient strong residual
-      gradient_result[dim] += tau * (gradient[dim]);
+      gradient_result[dim] += tau * gradient[dim];
 
       phi.submit_gradient(gradient_result, q);
       phi.submit_value(value_result, q);
     }
+
   phi.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
@@ -866,7 +828,7 @@ MatrixFreeStokes<dim, fe_degree>::setup_system()
       MatrixFree<dim, double>::AdditionalData::none;
     additional_data.mapping_update_flags =
       (update_values | update_gradients | update_JxW_values |
-       update_quadrature_points);
+       update_quadrature_points | update_hessians);
     auto system_mf_storage = std::make_shared<MatrixFree<dim, double>>();
     system_mf_storage->reinit(mapping,
                               dof_handler,
@@ -924,7 +886,7 @@ MatrixFreeStokes<dim, fe_degree>::setup_gmg()
         MatrixFree<dim, double>::AdditionalData::partition_color;
       additional_data.mapping_update_flags =
         (update_values | update_gradients | update_JxW_values |
-         update_quadrature_points);
+         update_quadrature_points | update_hessians);
       additional_data.mg_level = level;
       auto mg_mf_storage_level = std::make_shared<MatrixFree<dim, double>>();
       mg_mf_storage_level->reinit(mapping,
@@ -967,102 +929,96 @@ MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
   const LinearAlgebra::distributed::Vector<double> &src,
   const std::pair<unsigned int, unsigned int> &     cell_range) const
 {
-  FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, double> phi(data);
-  FullSourceTerm<dim> source_term_function;
+  using FECellIntegrator = FEEvaluation<dim,
+                                        fe_degree,
+                                        fe_degree + 1,
+                                        dim + 1,
+                                        double,
+                                        VectorizedArray<double>>;
 
-  using FECellIntegrator =
-    FEEvaluation<dim, fe_degree, fe_degree + 1, dim + 1, double>;
+  FECellIntegrator phi(data);
+
+  FullSourceTerm<dim> source_term_function;
 
   for (unsigned int cell = cell_range.first; cell < cell_range.second; ++cell)
     {
       phi.reinit(cell);
-
       phi.read_dof_values_plain(src);
-
-
       phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                    EvaluationFlags::hessians);
 
+      VectorizedArray<double> tau = VectorizedArray<double>(0.0);
+      std::array<double, VectorizedArray<double>::size()> h_k;
+      std::array<double, VectorizedArray<double>::size()> h;
+
+      for (auto lane = 0u; lane < data.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
+        }
+
+      for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+        {
+          if (dim == 2)
+            {
+              h[v] = std::sqrt(4. * h_k[v] / M_PI);
+            }
+          else if (dim == 3)
+            {
+              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
+            }
+
+          tau[v] = h[v] * h[v];
+        }
+
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
-          VectorizedArray<double> tau = VectorizedArray<double>(0.0);
-          std::array<double, VectorizedArray<double>::size()> h_k;
-          std::array<double, VectorizedArray<double>::size()> h;
+          // Evaluate source term function
+          Point<dim, VectorizedArray<double>> point_batch =
+            phi.quadrature_point(q);
 
-          for (auto lane = 0u;
-               lane <
-               system_matrix.get_matrix_free()->n_active_entries_per_cell_batch(
-                 cell);
-               lane++)
+          Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+
+          if (parameters.source_term == Settings::mms)
             {
-              h_k[lane] = system_matrix.get_matrix_free()
-                            ->get_cell_iterator(cell, lane)
-                            ->measure();
+              source_value =
+                evaluate_function<dim, double, dim + 1>(source_term_function,
+                                                        point_batch);
             }
 
-          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+          // Gather the original value/gradient
+          typename FECellIntegrator::value_type    value = phi.get_value(q);
+          typename FECellIntegrator::gradient_type gradient =
+            phi.get_gradient(q);
+          typename FECellIntegrator::gradient_type hessian_diagonal =
+            phi.get_hessian_diagonal(q);
+
+          // Result value/gradient we will use
+          typename FECellIntegrator::value_type    value_result;
+          typename FECellIntegrator::gradient_type gradient_result;
+
+          // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
+          // The corresponding weak form is nabla v * nabla u  - p nabla
+          // \cdot v = 0 ; Assemble q div(u) = 0 for the last component
+          for (unsigned int i = 0; i < dim; ++i)
             {
-              if (dim == 2)
-                {
-                  h[v] = std::sqrt(4. * h_k[v] / M_PI);
-                }
-              else if (dim == 3)
-                {
-                  h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
-                }
+              gradient_result[i] = gradient[i];
+              gradient_result[i][i] += -value[dim];
+              value_result[i] = -source_value[i];
 
-              tau[v] = std::pow(std::pow(h[v] * h[v], 2), -0.5);
-
-
-              // Get advection field vector
-              Point<dim, VectorizedArray<double>> point_batch =
-                phi.quadrature_point(q);
-
-              Tensor<1, dim + 1, VectorizedArray<double>> source_value;
-
-              // if (parameters.source_term == Settings::mms)
-              {
-                source_value =
-                  evaluate_function<dim, double, dim + 1>(source_term_function,
-                                                          point_batch);
-              }
-
-              // Gather the original value/gradient
-              typename FECellIntegrator::value_type    value = phi.get_value(q);
-              typename FECellIntegrator::gradient_type gradient =
-                phi.get_gradient(q);
-              typename FECellIntegrator::gradient_type hessian_diagonal =
-                phi.get_hessian_diagonal(q);
-
-
-              // Result value/gradient we will use
-              typename FECellIntegrator::value_type    value_result;
-              typename FECellIntegrator::gradient_type gradient_result;
-
-              // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
-              // The corresponding weak form is nabla v * nabla u  - p nabla
-              // \cdot v = 0 ; Assemble q div(u) = 0 for the last component
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  gradient_result[i] = -gradient[i];
-                  gradient_result[i][i] += value[dim];
-                  value_result[i] = source_value[i];
-
-                  // divergence of u
-                  value_result[dim] += gradient[i][i];
-                }
-              for (unsigned int i = 0; i < dim; ++i)
-                {
-                  gradient_result[dim][i] += tau * value[i];
-                  for (unsigned int k = 0; k < dim; ++k)
-                    gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
-                }
-              gradient_result[dim] += tau * (gradient[dim]);
-
-              // TODO: complete residual
-              phi.submit_gradient(gradient_result, q);
-              phi.submit_value(value_result, q);
+              // divergence of u
+              value_result[dim] += gradient[i][i];
             }
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              gradient_result[dim][i] += -tau * source_value[i];
+              for (unsigned int k = 0; k < dim; ++k)
+                gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
+            }
+          gradient_result[dim] += tau * gradient[dim];
+
+          phi.submit_gradient(gradient_result, q);
+          phi.submit_value(value_result, q);
         }
 
       phi.integrate_scatter(EvaluationFlags::values |
@@ -1133,8 +1089,6 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
           data.elliptic      = false;
           data.smoother_type = "Jacobi";
 
-          system_matrix.evaluate_newton_step(solution);
-
           preconditioner.initialize(
             system_matrix.get_system_matrix(constraints), data);
           gmres.solve(system_matrix, newton_update, system_rhs, preconditioner);
@@ -1151,8 +1105,6 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
                   << dof_handler.n_dofs(level) << " DoFs, "
                   << triangulation.n_cells(level) << " cells" << std::endl;
 
-          system_matrix.evaluate_newton_step(solution);
-
           mg_transfer.interpolate_to_mg(dof_handler, mg_solution, solution);
 
           // Set up smoother: Jacobi Smoother
@@ -1164,7 +1116,6 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
           for (unsigned int level = 0; level < triangulation.n_global_levels();
                ++level)
             {
-              mg_matrices[level].evaluate_newton_step(mg_solution[level]);
               mg_matrices[level].compute_diagonal();
             }
           mg_smoother_jacobi.initialize(
@@ -1413,9 +1364,22 @@ MatrixFreeStokes<dim, fe_degree>::output_results(const unsigned int cycle) const
 
   solution.update_ghost_values();
 
+  std::vector<std::string> solution_names(dim, "u");
+  solution_names.push_back("p");
+
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    dealii_data_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
+
+  dealii_data_component_interpretation.push_back(
+    DataComponentInterpretation::component_is_scalar);
+
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
-  data_out.add_data_vector(solution, "solution");
+  data_out.add_data_vector(solution,
+                           solution_names,
+                           DataOut<dim>::type_dof_data,
+                           dealii_data_component_interpretation);
 
   Vector<float> subdomain(triangulation.n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
@@ -1424,14 +1388,11 @@ MatrixFreeStokes<dim, fe_degree>::output_results(const unsigned int cycle) const
     }
   data_out.add_data_vector(subdomain, "subdomain");
 
-  data_out.build_patches(mapping, fe.degree, DataOut<dim>::curved_inner_cells);
+  data_out.build_patches();
 
   DataOutBase::VtkFlags flags;
   flags.compression_level = DataOutBase::VtkFlags::best_speed;
   data_out.set_flags(flags);
-
-  std::string test_case = "";
-
 
   data_out.write_vtu_with_pvtu_record(parameters.output_path,
                                       parameters.output_name +
@@ -1486,10 +1447,8 @@ MatrixFreeStokes<dim, fe_degree>::run()
       "Initial refinement: " + std::to_string(parameters.initial_refinement);
     std::string CYCLES_header =
       "Total number of cycles: " + std::to_string(parameters.number_of_cycles);
-
-    std::string PROBLEM_TYPE_header = "";
-
-
+    std::string REPETITIONS_header =
+      "Repetitions in one direction: " + std::to_string(parameters.repetitions);
 
     pcout << std::string(80, '=') << std::endl;
     pcout << DAT_header << std::endl;
@@ -1503,7 +1462,7 @@ MatrixFreeStokes<dim, fe_degree>::run()
     pcout << SOURCE_header << std::endl;
     pcout << REFINE_header << std::endl;
     pcout << CYCLES_header << std::endl;
-    pcout << PROBLEM_TYPE_header << std::endl;
+    pcout << REPETITIONS_header << std::endl;
 
     pcout << std::string(80, '=') << std::endl;
   }
