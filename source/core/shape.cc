@@ -417,6 +417,22 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
 
           iteration++;
         }
+      iteration                = 0;
+      dx[0]                    = 1;
+      double global_blockiness = exponents.norm();
+      relaxation               = 0.01 / global_blockiness;
+      iteration_max            = 100 * global_blockiness;
+      while (iteration < iteration_max && dx.norm() > epsilon)
+        {
+          distance_gradient = fonc_grad(current_point, centered_point);
+          dx                = -relaxation *
+               (fonc(current_point, centered_point) * distance_gradient) /
+               distance_gradient.norm_square();
+
+          current_point = current_point + dx;
+
+          iteration++;
+        }
 
       closest_point = this->reverse_align_and_center(current_point);
     }

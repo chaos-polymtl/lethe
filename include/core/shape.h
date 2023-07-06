@@ -530,6 +530,28 @@ public:
     return gradient / gradient.norm();
   }
 
+  inline double
+  fonc(const Point<dim> &current_point, const Point<dim> &centered_point) const
+  {
+    return 0.1 * sign(superquadric(current_point)) *
+             (current_point - centered_point).norm_square() +
+           abs(superquadric(current_point));
+  }
+
+  inline Point<dim>
+  fonc_grad(const Point<dim> &current_point,
+            const Point<dim> &centered_point) const
+  {
+    Point<dim> gradient{};
+    Point<dim> superquadric_grad = superquadric_gradient(current_point);
+    for (unsigned int d = 0; d < dim; d++)
+      {
+        gradient[d] = 0.1 * (current_point[d] - centered_point[d] + epsilon) +
+                      superquadric_grad[d];
+      }
+    return gradient / gradient.norm();
+  }
+
 private:
   Tensor<1, dim> half_lengths;
   Tensor<1, dim> exponents;
