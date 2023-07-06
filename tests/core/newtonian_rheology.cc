@@ -17,8 +17,7 @@ test()
 
   deallog << "Testing constant viscosity - nu" << std::endl;
 
-  // field values can remain empty since the constant thermal conductivity does
-  // not depend  on any fields
+  // Field values must contain shear rate
   std::map<field, double> field_values;
 
   field_values[field::shear_rate] = 1;

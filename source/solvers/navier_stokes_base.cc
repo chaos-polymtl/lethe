@@ -1896,6 +1896,14 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   VorticityPostprocessor<dim>  vorticity;
   data_out.add_data_vector(solution, vorticity);
 
+  DensityPostprocessor<dim> density_postprocessed(
+    this->simulation_parameters.physical_properties_manager.get_density());
+  if (!this->simulation_parameters.physical_properties_manager
+         .density_is_constant()) // Only output when density is not constant
+    {
+      data_out.add_data_vector(solution, density_postprocessed);
+    }
+
   // Trilinos vector for the smoothed output fields
   QcriterionPostProcessorSmoothing<dim, VectorType> qcriterion_smoothing(
     *this->triangulation,

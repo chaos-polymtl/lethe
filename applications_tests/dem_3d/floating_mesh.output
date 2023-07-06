@@ -2,8 +2,7 @@
 *********************
 Running on 1 rank(s)
 *********************
-DEM time-step is 15.7495% of Rayleigh time step
-Warning: It is recommended to decrease the time-step
+DEM time-step is 14.3773% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation

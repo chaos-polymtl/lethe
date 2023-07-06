@@ -229,7 +229,7 @@ namespace Parameters
     // Flow behavior index"
     double n;
     // Minimal shear rate magnitude for which we calculate viscosity, since
-    // power-law does not allow for minimal visocsity
+    // power-law does not allow for minimal viscosity
     double shear_rate_min;
 
     static void
@@ -266,7 +266,6 @@ namespace Parameters
    * non newtonian flows according to the chosen
    * rheological model.
    */
-
   struct NonNewtonian
   {
     CarreauParameters  carreau_parameters;
@@ -278,6 +277,25 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
+
+  /**
+   * @brief Isothermal ideal gas model to solve for isothermal weakly compressible fluid
+   * flows.
+   */
+  struct IsothermalIdealGasDensityParameters
+  {
+    // Reference state density of the gas in Pa
+    double density_ref;
+    // Specific gas constant in J/kg/K
+    double R;
+    // Absolute temperature of the ideal gas in K
+    double T;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
+  };
 
 
   /**
@@ -329,8 +347,10 @@ namespace Parameters
 
     enum class DensityModel
     {
-      constant
+      constant,
+      isothermal_ideal_gas
     } density_model;
+    IsothermalIdealGasDensityParameters isothermal_ideal_gas_density_parameters;
 
     enum class SpecificHeatModel
     {
@@ -351,7 +371,7 @@ namespace Parameters
       phase_change
     } thermal_expansion_model;
 
-    // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
+    // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;
     double k_A1;
   };
@@ -363,7 +383,7 @@ namespace Parameters
    * All continuum equations share the same physical properties object but only
    * take the subset of properties they require
    * Defined as a class with public attributes in order to use a non-static
-   * declare_paremeters methods (useful for multiple fluid simulations).
+   * declare_parameters methods (useful for multiple fluid simulations).
    */
   class PhysicalProperties
   {
@@ -622,7 +642,7 @@ namespace Parameters
     // Frequency of the output
     unsigned int output_frequency;
 
-    // Prefix for kinectic energy output
+    // Prefix for kinetic energy output
     std::string kinetic_energy_output_name;
 
     // Prefix for pressure drop output

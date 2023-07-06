@@ -15,15 +15,16 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
   double rayleigh_time_step  = 0;
 
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
-    rayleigh_time_step =
-      std::max(M_PI_2 * physical_properties.particle_average_diameter[i] *
-                 sqrt(2 * physical_properties.density_particle[i] *
-                      (2 + physical_properties.poisson_ratio_particle[i]) *
-                      (1 - physical_properties.poisson_ratio_particle[i]) /
-                      physical_properties.youngs_modulus_particle[i]) /
-                 (0.1631 * physical_properties.poisson_ratio_particle[i] +
-                  0.8766),
-               rayleigh_time_step);
+    {
+      double shear_modulus =
+        physical_properties.youngs_modulus_particle[i] /
+        (2.0 * (1.0 + physical_properties.poisson_ratio_particle[i]));
+      rayleigh_time_step = std::max(
+        M_PI_2 * physical_properties.particle_average_diameter[i] *
+          sqrt(physical_properties.density_particle[i] / shear_modulus) /
+          (0.1631 * physical_properties.poisson_ratio_particle[i] + 0.8766),
+        rayleigh_time_step);
+    }
 
   const double time_step_rayleigh_ratio =
     parameters.simulation_control.dt / rayleigh_time_step;
