@@ -484,13 +484,11 @@ StokesOperator<dim, fe_degree, number>::local_apply(
             {
               gradient_result[i] = gradient[i];
               gradient_result[i][i] += -value[dim];
-              // value_result[i] = source_value[i];
-              // divergence of u
+
               value_result[dim] += gradient[i][i];
             }
           for (unsigned int i = 0; i < dim; ++i)
             {
-              // gradient_result[dim][i] += -tau * source_value[i];
               for (unsigned int k = 0; k < dim; ++k)
                 gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
             }
@@ -584,24 +582,16 @@ StokesOperator<dim, fe_degree, number>::local_compute(
       // component
       for (unsigned int i = 0; i < dim; ++i)
         {
-          // Weak form of the laplacian
           gradient_result[i] = gradient[i];
-
-          // Weak form of the pressure gradient term
           gradient_result[i][i] += -value[dim];
 
-          // divergence of u
           value_result[dim] += gradient[i][i];
         }
       for (unsigned int i = 0; i < dim; ++i)
         {
-          // Stabilization for the source term
-          // gradient_result[dim][i] += -tau * source_value[i];
-          // Stabilization for the strong form of the laplacian
           for (unsigned int k = 0; k < dim; ++k)
             gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
         }
-      // Pressure gradient strong residual
       gradient_result[dim] += tau * gradient[dim];
 
       phi.submit_gradient(gradient_result, q);
@@ -1026,7 +1016,6 @@ MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
               gradient_result[i][i] += -value[dim];
               value_result[i] = -source_value[i];
 
-              // divergence of u
               value_result[dim] += gradient[i][i];
             }
           for (unsigned int i = 0; i < dim; ++i)

@@ -625,7 +625,6 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
 
       for (unsigned int i = 0; i < dim; ++i)
         {
-          // gradient_result[dim][i] += tau * source_value[i];
           for (unsigned int k = 0; k < dim; ++k)
             gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
         }
@@ -719,7 +718,6 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
 
       for (unsigned int i = 0; i < dim; ++i)
         {
-          // gradient_result[dim][i] += tau * source_value[i];
           for (unsigned int k = 0; k < dim; ++k)
             gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
         }
