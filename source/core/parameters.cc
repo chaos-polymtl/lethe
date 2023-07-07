@@ -678,18 +678,6 @@ namespace Parameters
         "Tracer diffusivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
 
-      prm.declare_entry(
-        "well height constant",
-        "1",
-        Patterns::Double(),
-        "Potential height well for the Cahn-Hilliard equations");
-
-      prm.declare_entry(
-        "epsilon constant",
-        "1",
-        Patterns::Double(),
-        "Interface thickness related parameter for the Cahn-Hilliard equations");
-
       prm.declare_entry("mobility constant",
                         "1",
                         Patterns::Double(),
@@ -750,18 +738,6 @@ namespace Parameters
                         Patterns::Selection("constant|quadratic|quartic"),
                         "Mobility model for the Cahn-Hilliard equations"
                         "Choices are <constant|quadratic|quartic>.");
-
-      prm.declare_entry("well height model",
-                        "constant",
-                        Patterns::Selection("constant"),
-                        "Well height model for the Cahn-Hilliard equations"
-                        "Choices are <constant>.");
-
-      prm.declare_entry("epsilon model",
-                        "constant",
-                        Patterns::Selection("constant"),
-                        "Epsilon model for the Cahn-Hilliard equations"
-                        "Choices are <constant>.");
     }
     prm.leave_subsection();
   }
@@ -874,7 +850,6 @@ namespace Parameters
       // thermal expansion is in theta^-1
       thermal_expansion *= dimensions.temperature;
 
-
       //-------------------
       // Tracer diffusivity
       //-------------------
@@ -886,35 +861,6 @@ namespace Parameters
       // Phase change properties
       //--------------------------------
       phase_change_parameters.parse_parameters(prm, dimensions);
-
-      //--------------------------------
-      // Cahn-Hilliard properties
-      //--------------------------------
-
-      op = prm.get("well height model");
-      if (op == "constant")
-        well_height_model = WellHeightModel::constant;
-
-      // potential well height in J
-      well_height_constant = prm.get_double("well height constant");
-
-      op = prm.get("epsilon model");
-      if (op == "constant")
-        epsilon_model = EpsilonModel::constant;
-
-      // interface thickness related parameter in J^(0.5)*m
-      epsilon_constant = prm.get_double("epsilon constant");
-
-      op = prm.get("mobility model");
-      if (op == "constant")
-        mobility_model = MobilityModel::constant;
-      else if (op == "quadratic")
-        mobility_model = MobilityModel::quadratic;
-      else if (op == "quartic")
-        mobility_model = MobilityModel::quartic;
-
-      // mobility constant in m^2/s/J
-      mobility_constant = prm.get_double("mobility constant");
     }
     prm.leave_subsection();
   }

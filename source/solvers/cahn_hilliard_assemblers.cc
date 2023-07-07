@@ -14,20 +14,20 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   // Gather physical properties
 
   const double well_height = this->ch_parameters.well_height;
-  // const double epsilon = this->ch_parameters.epsilon;
   const double mobility_constant = this->ch_parameters.mobility_constant;
+  double epsilon;
 
-  const double h = scratch_data.cell_size;
+  if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+  {
+      const double h = scratch_data.cell_size;
+      epsilon = 2 * h;
+  }
 
-  const double epsilon = 2 * h;
+  else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+  {
+      epsilon = this->ch_parameters.epsilon;
+  }
 
-  // std::cout<<"epsilon = " << epsilon<< std::endl;
-
-
-
-  //      std::cout<<"well_height = "<<well_height<<std::endl;
-  //      std::cout<<"epsilon = "<<epsilon<<std::endl;
-  //      std::cout<<"mobility = "<<mobility_constant <<std::endl;
 
 
   // Loop and quadrature informations
@@ -41,7 +41,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
   if (this->ch_parameters.mobility_model == Parameters::MobilityModel::constant)
     {
-      // 0std::cout<< "Mobility is a constant"<<std::endl;
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
           // Store JxW in local variable for faster access;
@@ -84,21 +83,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                      epsilon * epsilon * grad_phi_potential_i *
                        grad_phi_phase_j) *
                     JxW;
-
-                  //            std::cout<<"local matrix(i,j) =
-                  //            "<<local_matrix(i,j)<<std::endl;
-                  //            std::cout<<"phi_phase_i =
-                  //            "<<phi_phase_i<<std::endl;
-                  //            std::cout<<"phi_phase_j =
-                  //            "<<phi_phase_j<<std::endl;
-                  //            std::cout<<"phase_order_value =
-                  //            "<<phase_order_value<<std::endl; std::cout<<"JxW
-                  //            =
-                  //            "<<JxW<<std::endl;
-                  //            std::cout<<"grad_phi_potential_i =
-                  //            "<<grad_phi_potential_i<<std::endl;
-                  //            std::cout<<"grad_phi_potential_i =
-                  //            "<<grad_phi_potential_i<<std::endl;
                 }
             }
         }
@@ -156,21 +140,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
                      epsilon * epsilon * grad_phi_potential_i *
                        grad_phi_phase_j) *
                     JxW;
-
-                  //            std::cout<<"local matrix(i,j) =
-                  //            "<<local_matrix(i,j)<<std::endl;
-                  //            std::cout<<"phi_phase_i =
-                  //            "<<phi_phase_i<<std::endl;
-                  //            std::cout<<"phi_phase_j =
-                  //            "<<phi_phase_j<<std::endl;
-                  //            std::cout<<"phase_order_value =
-                  //            "<<phase_order_value<<std::endl; std::cout<<"JxW
-                  //            =
-                  //            "<<JxW<<std::endl;
-                  //            std::cout<<"grad_phi_potential_i =
-                  //            "<<grad_phi_potential_i<<std::endl;
-                  //            std::cout<<"grad_phi_potential_i =
-                  //            "<<grad_phi_potential_i<<std::endl;
                 }
             }
         }
@@ -188,15 +157,19 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   // Gather physical properties
 
   const double well_height = this->ch_parameters.well_height;
-  // const double epsilon = this->ch_parameters.epsilon;
   const double mobility_constant = this->ch_parameters.mobility_constant;
+  double epsilon;
 
-  const double h       = scratch_data.cell_size;
-  const double epsilon = 2 * h;
+    if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+    {
+        const double h = scratch_data.cell_size;
+        epsilon = 2 * h;
+    }
 
-  //  std::cout<<"well_height = "<<well_height<<std::endl;
-  //  std::cout<<"epsilon = "<<epsilon<<std::endl;
-  //  std::cout<<"mobility = "<<mobility_constant <<std::endl;
+    else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+    {
+        epsilon = this->ch_parameters.epsilon;
+    }
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -248,21 +221,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
                 JxW;
-
-              //        std::cout<<"local rhs(i) = "<<local_rhs(i)<<std::endl;
-              //        std::cout<<"phi_phase_i = "<<phi_phase_i<<std::endl;
-              //        std::cout<<"phase_order_value =
-              //        "<<phase_order_value<<std::endl;
-              //        std::cout<<"phase_order_gradient =
-              //        "<<phase_order_gradient<<std::endl;
-              //        std::cout<<"potential_value =
-              //        "<<potential_value<<std::endl;
-              //        std::cout<<"potential_gradient =
-              //        "<<potential_gradient<<std::endl; std::cout<<"JxW =
-              //        "<<JxW<<std::endl; std::cout<<"grad_phi_phase_i=
-              //        "<<grad_phi_phase_i<<std::endl;
-              //        std::cout<<"grad_phi_potential_i =
-              //        "<<grad_phi_potential_i<<std::endl;
             }
         }
     } // end loop on quadrature points
@@ -310,21 +268,6 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
                  + source_phase_order * phi_phase_i +
                  source_chemical_potential * phi_potential_i) *
                 JxW;
-
-              //        std::cout<<"local rhs(i) = "<<local_rhs(i)<<std::endl;
-              //        std::cout<<"phi_phase_i = "<<phi_phase_i<<std::endl;
-              //        std::cout<<"phase_order_value =
-              //        "<<phase_order_value<<std::endl;
-              //        std::cout<<"phase_order_gradient =
-              //        "<<phase_order_gradient<<std::endl;
-              //        std::cout<<"potential_value =
-              //        "<<potential_value<<std::endl;
-              //        std::cout<<"potential_gradient =
-              //        "<<potential_gradient<<std::endl; std::cout<<"JxW =
-              //        "<<JxW<<std::endl; std::cout<<"grad_phi_phase_i=
-              //        "<<grad_phi_phase_i<<std::endl;
-              //        std::cout<<"grad_phi_potential_i =
-              //        "<<grad_phi_potential_i<<std::endl;
             }
         }
     } // end loop on quadrature points
@@ -344,30 +287,24 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
 
   auto &local_matrix = copy_data.local_matrix;
 
-  const double h       = scratch_data.cell_size;
-  const double epsilon = 2 * h;
+  double epsilon;
 
-  // std::cout<<this->boundary_conditions_ch.size<<std::endl;
+    if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+    {
+        const double h = scratch_data.cell_size;
+        epsilon = 2 * h;
+    }
 
-  //  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size;
-  //  ++i_bc)
-  //    {
-  //      std::cout<<(this->boundary_conditions_ch.type[i_bc]==BoundaryConditions::BoundaryType::angle_of_contact)
-  //                <<std::endl;
-  //      std::cout<<(boundary_conditions_ch.type[i_bc]==BoundaryConditions::BoundaryType::angle_of_contact)
-  //                <<std::endl;
-  //      std::cout<<this->boundary_conditions_ch.id[i_bc]<<std::endl;
-  //      std::cout<<boundary_conditions_ch.id[i_bc]<<std::endl;
-  //      std::cout<<this->boundary_conditions_ch.angle_of_contact[i_bc]<<std::endl;
-  //      std::cout<<boundary_conditions_ch.angle_of_contact[i_bc]<<std::endl;
-  //    }
+    else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+    {
+        epsilon = this->ch_parameters.epsilon;
+    }
 
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
     {
       if (this->boundary_conditions_ch.type[i_bc] ==
           BoundaryConditions::BoundaryType::angle_of_contact)
         {
-          // std::cout<<"Angle of contact BC is in action! (matrix)"<<std::endl;
           const double angle_of_contact =
             this->boundary_conditions_ch.angle_of_contact[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; f++)
@@ -420,8 +357,18 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
   auto &local_rhs = copy_data.local_rhs;
 
-  const double h       = scratch_data.cell_size;
-  const double epsilon = 2 * h;
+    double epsilon;
+
+    if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+    {
+        const double h = scratch_data.cell_size;
+        epsilon = 2 * h;
+    }
+
+    else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+    {
+        epsilon = this->ch_parameters.epsilon;
+    }
 
 
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)

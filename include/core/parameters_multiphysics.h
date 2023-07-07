@@ -57,10 +57,15 @@ namespace Parameters
     tanh
   };
 
+  enum class EpsilonSetStrategy
+  {
+      automatic,
+      manual
+  };
+
   enum class MobilityModel
   {
     constant,
-    quadratic,
     quartic
   };
 
@@ -240,10 +245,13 @@ namespace Parameters
     // Well height value (W) in the Cahn-Hilliard equations
     double well_height;
 
+    //Epsilon set strategy (automatic|manual)
+    Parameters::EpsilonSetStrategy epsilon_set_method;
+
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
 
-    // Mobility model (Constant|Quadratic|Quartic) in the Cahn-Hilliard
+    // Mobility model (constant|quartic) in the Cahn-Hilliard
     // equations
     Parameters::MobilityModel mobility_model;
 

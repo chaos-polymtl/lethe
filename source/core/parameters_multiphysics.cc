@@ -589,22 +589,35 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
                       Patterns::Double(),
                       "Potential height well for the Cahn-Hilliard equations.");
 
-    prm.declare_entry(
-      "epsilon",
-      "1",
-      Patterns::Double(),
-      "Interface thickness related parameter for the Cahn-Hilliard equations");
+    prm.enter_subsection("epsilon");
+      {
+          prm.declare_entry("method",
+                            "automatic",
+                            Patterns::Selection("automatic|manual"),
+                            "Epsilon is either set to two times the characteristic length (automatic) of the element or user defined on all the domain (manual)");
 
-    prm.declare_entry("mobility model",
-                      "constant",
-                      Patterns::Selection("constant|quadratic|quartic"),
-                      "Mobility model for the Cahn-Hilliard equations"
-                      "Choices are <constant|quadratic|quartic>.");
+          prm.declare_entry("value",
+                            "1.0",
+                            Patterns::Double(),
+                            "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
+      }
+    prm.leave_subsection();
 
-    prm.declare_entry("mobility constant",
-                      "1",
-                      Patterns::Double(),
-                      "Mobility constant for the Cahn-Hilliard equations");
+      prm.enter_subsection("mobility");
+      {
+          prm.declare_entry("model",
+                            "constant",
+                            Patterns::Selection("constant|quadratic|quartic"),
+                            "Mobility model for the Cahn-Hilliard equations"
+                            "Choices are <constant|quadratic|quartic>.");
+
+          prm.declare_entry("mobility constant",
+                            "1",
+                            Patterns::Double(),
+                            "Mobility constant for the Cahn-Hilliard equations");
+      }
+      prm.leave_subsection();
+
   }
   prm.leave_subsection();
 }
@@ -615,17 +628,36 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("cahn hilliard");
   {
     well_height = prm.get_double("well height");
-    epsilon     = prm.get_double("epsilon");
 
-    const std::string op = prm.get("mobility model");
-    if (op == "constant")
-      mobility_model = Parameters::MobilityModel::constant;
-    else if (op == "quadratic")
-      mobility_model = Parameters::MobilityModel::quadratic;
-    else if (op == "quartic")
-      mobility_model = Parameters::MobilityModel::quartic;
+      prm.enter_subsection("epsilon");
+      {
+          const std::string op_epsilon = prm.get("method");
+          if (op_epsilon== "automatic")
+          {
+              epsilon_set_method = Parameters::EpsilonSetStrategy::automatic;
+          }
+          if (op_epsilon== "manual")
+          {
+              epsilon_set_method = Parameters::EpsilonSetStrategy::manual;
+          }
 
-    mobility_constant = prm.get_double("mobility constant");
+          // Surface tension gradient
+          epsilon = prm.get_double("value");
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("mobility");
+      {
+          const std::string op = prm.get("mobility model");
+          if (op == "constant")
+              mobility_model = Parameters::MobilityModel::constant;
+          else if (op == "quartic")
+              mobility_model = Parameters::MobilityModel::quartic;
+
+          mobility_constant = prm.get_double("mobility constant");
+
+      }
+      prm.leave_subsection();
   }
   prm.leave_subsection();
 }
