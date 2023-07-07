@@ -187,20 +187,21 @@ attach_manifolds_to_triangulation(
  *
  * @param manifold_id Identifier of the manifold
  */
-void attach_cad_to_manifold(
-  parallel::DistributedTriangulationBase<2> &triangulation,
-  std::string                                cad_name,
-  unsigned int                               manifold_id);
+void
+attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &triangulation,
+                       std::string                                cad_name,
+                       unsigned int                               manifold_id);
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
   std::string                                   cad_name,
   unsigned int                                  manifold_id);
 
-void attach_cad_to_manifold(
-  parallel::DistributedTriangulationBase<3> &triangulation,
-  std::string                                cad_name,
-  unsigned int                               manifold_id);
+void
+attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &triangulation,
+                       std::string                                cad_name,
+                       unsigned int                               manifold_id);
 
 
 

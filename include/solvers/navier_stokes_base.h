@@ -190,8 +190,7 @@ protected:
             multiphysics->postprocess(true);
           }
         ref_iter++;
-      }
-    while (
+    } while (
       ref_iter <
         (this->simulation_parameters.mesh_adaptation.initial_refinement + 1) &&
       restart == false);

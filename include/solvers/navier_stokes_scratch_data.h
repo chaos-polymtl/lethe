@@ -1020,8 +1020,8 @@ public:
   Tensor<1, dim>              average_particle_velocity;
   std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
   std::vector<Tensor<1, dim>>
-                              fluid_particle_relative_velocity_at_particle_location;
-  Tensor<1, dim>              average_fluid_particle_relative_velocity;
+                 fluid_particle_relative_velocity_at_particle_location;
+  Tensor<1, dim> average_fluid_particle_relative_velocity;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
   std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;

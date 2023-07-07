@@ -152,7 +152,8 @@ update_fine_search_candidates(pairs_structure &     pairs_in_contact,
 }
 
 // Local particle-particle contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<2>::particle_particle_candidates,
@@ -162,7 +163,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<3>::particle_particle_candidates,
@@ -173,7 +175,8 @@ template void update_fine_search_candidates<
     &contact_candidates);
 
 // Ghost particle-particle contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<2>::particle_particle_candidates,
@@ -183,7 +186,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<3>::particle_particle_candidates,
@@ -194,7 +198,8 @@ template void update_fine_search_candidates<
     &contact_candidates);
 
 // Local periodic particle-particle contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<2>::particle_particle_candidates,
@@ -204,7 +209,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<3>::particle_particle_candidates,
@@ -215,7 +221,8 @@ template void update_fine_search_candidates<
     &contact_candidates);
 
 // Local-ghost particle-particle contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<2>::particle_particle_candidates,
@@ -225,7 +232,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<3>::particle_particle_candidates,
@@ -236,7 +244,8 @@ template void update_fine_search_candidates<
     &contact_candidates);
 
 // Ghost-local particle-particle contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<2>::particle_particle_candidates,
@@ -246,7 +255,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs,
   typename DEM::dem_data_structures<3>::particle_particle_candidates,
@@ -257,7 +267,8 @@ template void update_fine_search_candidates<
     &contact_candidates);
 
 // Particle-wall contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::particle_wall_in_contact,
   typename DEM::dem_data_structures<2>::particle_wall_candidates,
@@ -267,7 +278,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_wall_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::particle_wall_in_contact,
   typename DEM::dem_data_structures<3>::particle_wall_candidates,
@@ -278,7 +290,8 @@ template void update_fine_search_candidates<
     &contact_pair_candidates);
 
 // Particle-floating wall contacts
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   2,
   typename DEM::dem_data_structures<2>::particle_wall_in_contact,
   typename DEM::dem_data_structures<2>::particle_floating_wall_candidates,
@@ -288,7 +301,8 @@ template void update_fine_search_candidates<
   typename DEM::dem_data_structures<2>::particle_floating_wall_candidates
     &contact_pair_candidates);
 
-template void update_fine_search_candidates<
+template void
+update_fine_search_candidates<
   3,
   typename DEM::dem_data_structures<3>::particle_wall_in_contact,
   typename DEM::dem_data_structures<3>::particle_floating_wall_candidates,
@@ -299,25 +313,25 @@ template void update_fine_search_candidates<
     &contact_pair_candidates);
 
 // Particle-floating mesh contacts
-template void update_fine_search_candidates<
-  2,
-  typename DEM::dem_data_structures<
-    2>::particle_floating_wall_from_mesh_in_contact,
-  typename DEM::dem_data_structures<
-    2>::particle_floating_wall_from_mesh_candidates,
-  ContactType::particle_floating_mesh>(
+template void
+update_fine_search_candidates<2,
+                              typename DEM::dem_data_structures<
+                                2>::particle_floating_wall_from_mesh_in_contact,
+                              typename DEM::dem_data_structures<
+                                2>::particle_floating_wall_from_mesh_candidates,
+                              ContactType::particle_floating_mesh>(
   typename DEM::dem_data_structures<
     2>::particle_floating_wall_from_mesh_in_contact &adjacent_particles,
   typename DEM::dem_data_structures<
     2>::particle_floating_wall_from_mesh_candidates &contact_pair_candidates);
 
-template void update_fine_search_candidates<
-  3,
-  typename DEM::dem_data_structures<
-    3>::particle_floating_wall_from_mesh_in_contact,
-  typename DEM::dem_data_structures<
-    3>::particle_floating_wall_from_mesh_candidates,
-  ContactType::particle_floating_mesh>(
+template void
+update_fine_search_candidates<3,
+                              typename DEM::dem_data_structures<
+                                3>::particle_floating_wall_from_mesh_in_contact,
+                              typename DEM::dem_data_structures<
+                                3>::particle_floating_wall_from_mesh_candidates,
+                              ContactType::particle_floating_mesh>(
   typename DEM::dem_data_structures<
     3>::particle_floating_wall_from_mesh_in_contact &adjacent_particles,
   typename DEM::dem_data_structures<

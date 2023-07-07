@@ -121,7 +121,7 @@ namespace Parameters
 
     // Tuned parameters
     std::vector<double>
-                        dead_time; // Dead time of the detector per accepted pulse
+      dead_time; // Dead time of the detector per accepted pulse
     std::vector<double> activity; // Activity of the tracer
     // Total linear attenuation coefficient of the medium
     std::vector<double> attenuation_coefficient_reactor;

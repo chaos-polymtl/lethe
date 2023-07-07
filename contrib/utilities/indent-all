@@ -14,12 +14,6 @@
 ##
 ## ---------------------------------------------------------------------
 
-# ---------------------------------------------------------------------
-#
-# This file has adapted from the dealii library to be used within Lethe
-#
-# ---------------------------------------------------------------------
-
 #
 # This script indents all source files of deal.II according to our usual
 # code formatting standards. It is used to ensure that our code base looks
@@ -37,9 +31,9 @@
 #
 # The script can be invoked with DEAL_II_CLANG_FORMAT to change
 # the default version of clang-format. For example:
-#   DEAL_II_CLANG_FORMAT=clang-format-6.0 ./contrib/utilities/indent
+#   DEAL_II_CLANG_FORMAT=clang-format-11.0 ./contrib/utilities/indent-all
 # or,
-#   make DEAL_II_CLANG_FORMAT="clang-format-6.0" indent
+#   make DEAL_II_CLANG_FORMAT="clang-format-11.0" indent-all
 #
 # Note: If the script is invoked with REPORT_ONLY=true set,
 #   REPORT_ONLY=true ./contrib/utilities/indent-all
@@ -49,8 +43,13 @@
 # changes.
 #
 
-if [ ! -f contrib/utilities/indent_common.sh ]; then
+if [ ! -f contrib/utilities/indent-all ]; then
   echo "*** This script must be run from the top-level directory of deal.II."
+  exit 1
+fi
+
+if [ ! -f contrib/utilities/indent_common.sh ]; then
+  echo "*** This script requires contrib/utilities/indent_common.sh."
   exit 1
 fi
 
@@ -66,15 +65,29 @@ checks
 # Process all source and header files:
 #
 
-process "tests include source applications applications_tests" ".*\.(cc|h|cu|cuh)" format_file
-#process "src" ".*\.inst.in" format_inst
+process "tests include source " ".*\.(cc|h)" format_file
+process "source" ".*\.inst.in" format_inst
 
 #
 # Fix permissions and convert to unix line ending if necessary:
 #
 
-process "tests include source applications applications_tests" \
-  ".*\.(cc|h|cu|cuh|inst.in|output.*|cmake)" fix_permissions
+process "tests include source examples cmake/scripts contrib/python-bindings" \
+  ".*\.(cc|h|inst.in|output.*|cmake)" fix_permissions
 
-process "tests include source applications applications_tests" \
-  ".*\.(cc|h|cu|cuh|inst.in|cmake)" dos_to_unix
+process "tests include source examples cmake/scripts contrib/python-bindings" \
+  ".*\.(cc|h|inst.in|cmake)" dos_to_unix
+
+#
+# Removing trailing whitespace
+#
+
+process "tests include source examples cmake/scripts contrib/python-bindings doc" \
+  ".*\.(cc|h|html|dox|txt)" remove_trailing_whitespace
+
+#
+# Ensure only a single newline at end of files
+#
+
+process "tests include source examples cmake/scripts contrib/python-bindings doc" \
+  ".*\.(cc|h|html|dox|txt)" ensure_single_trailing_newline

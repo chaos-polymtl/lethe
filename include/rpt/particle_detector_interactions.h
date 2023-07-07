@@ -158,9 +158,10 @@ private:
    * @param particle_position_rotation Transfer of the lab coordinate particle
    * position to the detector-particle coordinate
    */
-  std::vector<double> solve_t(Tensor<2, dim> e_inverse,
-                              Tensor<1, dim> detector_particle_origin,
-                              Tensor<1, dim> particle_position_rotation);
+  std::vector<double>
+  solve_t(Tensor<2, dim> e_inverse,
+          Tensor<1, dim> detector_particle_origin,
+          Tensor<1, dim> particle_position_rotation);
 
   double         efficiency;
   double         alpha;

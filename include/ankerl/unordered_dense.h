@@ -261,7 +261,7 @@ namespace ankerl::unordered_dense
                (static_cast<uint64_t>(p[k >> 1U]) << 8U) | p[k - 1];
       }
 
-      [[maybe_unused]][[nodiscard]] static inline auto
+      [[maybe_unused]] [[nodiscard]] static inline auto
       hash(void const *key, size_t len) -> uint64_t
       {
         static constexpr auto secret = std::array{UINT64_C(0xa0761d6478bd642f),
@@ -306,8 +306,7 @@ namespace ankerl::unordered_dense
                     see2 = mix(r8(p + 32) ^ secret[3], r8(p + 40) ^ see2);
                     p += 48;
                     i -= 48;
-                  }
-                while (ANKERL_UNORDERED_DENSE_LIKELY(i > 48));
+                } while (ANKERL_UNORDERED_DENSE_LIKELY(i > 48));
                 seed ^= see1 ^ see2;
               }
             while (ANKERL_UNORDERED_DENSE_UNLIKELY(i > 16))
@@ -335,9 +334,9 @@ namespace ankerl::unordered_dense
     struct hash
     {
       auto
-      operator()(T const &obj) const
-        noexcept(noexcept(std::declval<std::hash<T>>().
-                          operator()(std::declval<T const &>()))) -> uint64_t
+      operator()(T const &obj) const noexcept(noexcept(
+        std::declval<std::hash<T>>().operator()(std::declval<T const &>())))
+        -> uint64_t
       {
         return std::hash<T>{}(obj);
       }
@@ -493,7 +492,8 @@ namespace ankerl::unordered_dense
 
       template <class Default,
                 class AlwaysVoid,
-                template <class...> class Op,
+                template <class...>
+                class Op,
                 class... Args>
       struct detector
       {
@@ -956,7 +956,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         do_place_element(dist_and_fingerprint_type dist_and_fingerprint,
                          value_idx_type            bucket_idx,
                          K &&                      key,
-                         Args &&... args) -> std::pair<iterator, bool>
+                         Args &&...args) -> std::pair<iterator, bool>
         {
           // emplace the new value. If that throws an exception, no harm done;
           // index is still in a valid state
@@ -973,7 +973,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
 
         template <typename K, typename... Args>
         auto
-        do_try_emplace(K &&key, Args &&... args) -> std::pair<iterator, bool>
+        do_try_emplace(K &&key, Args &&...args) -> std::pair<iterator, bool>
         {
           if (ANKERL_UNORDERED_DENSE_UNLIKELY(is_full()))
             {
@@ -1612,7 +1612,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
 
         template <class... Args>
         auto
-        emplace(Args &&... args) -> std::pair<iterator, bool>
+        emplace(Args &&...args) -> std::pair<iterator, bool>
         {
           if (is_full())
             {
@@ -1657,7 +1657,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
 
         template <class... Args>
         auto
-        emplace_hint(const_iterator /*hint*/, Args &&... args) -> iterator
+        emplace_hint(const_iterator /*hint*/, Args &&...args) -> iterator
         {
           return emplace(std::forward<Args>(args)...).first;
         }
@@ -1666,8 +1666,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
                   typename Q                          = T,
                   std::enable_if_t<is_map_v<Q>, bool> = true>
         auto
-        try_emplace(Key const &key, Args &&... args)
-          -> std::pair<iterator, bool>
+        try_emplace(Key const &key, Args &&...args) -> std::pair<iterator, bool>
         {
           return do_try_emplace(key, std::forward<Args>(args)...);
         }
@@ -1676,7 +1675,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
                   typename Q                          = T,
                   std::enable_if_t<is_map_v<Q>, bool> = true>
         auto
-        try_emplace(Key &&key, Args &&... args) -> std::pair<iterator, bool>
+        try_emplace(Key &&key, Args &&...args) -> std::pair<iterator, bool>
         {
           return do_try_emplace(std::move(key), std::forward<Args>(args)...);
         }
@@ -1685,7 +1684,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
                   typename Q                          = T,
                   std::enable_if_t<is_map_v<Q>, bool> = true>
         auto
-        try_emplace(const_iterator /*hint*/, Key const &key, Args &&... args)
+        try_emplace(const_iterator /*hint*/, Key const &key, Args &&...args)
           -> iterator
         {
           return do_try_emplace(key, std::forward<Args>(args)...).first;
@@ -1695,7 +1694,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
                   typename Q                          = T,
                   std::enable_if_t<is_map_v<Q>, bool> = true>
         auto
-        try_emplace(const_iterator /*hint*/, Key &&key, Args &&... args)
+        try_emplace(const_iterator /*hint*/, Key &&key, Args &&...args)
           -> iterator
         {
           return do_try_emplace(std::move(key), std::forward<Args>(args)...)
@@ -1712,7 +1711,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
                       is_neither_convertible_v<K &&, iterator, const_iterator>,
                     bool> = true>
         auto
-        try_emplace(K &&key, Args &&... args) -> std::pair<iterator, bool>
+        try_emplace(K &&key, Args &&...args) -> std::pair<iterator, bool>
         {
           return do_try_emplace(std::forward<K>(key),
                                 std::forward<Args>(args)...);
@@ -1728,7 +1727,7 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
                       is_neither_convertible_v<K &&, iterator, const_iterator>,
                     bool> = true>
         auto
-        try_emplace(const_iterator /*hint*/, K &&key, Args &&... args)
+        try_emplace(const_iterator /*hint*/, K &&key, Args &&...args)
           -> iterator
         {
           return do_try_emplace(std::forward<K>(key),
@@ -1858,13 +1857,15 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
         }
 
         template <typename Q = T, std::enable_if_t<is_map_v<Q>, bool> = true>
-        auto operator[](Key const &key) -> Q &
+        auto
+        operator[](Key const &key) -> Q &
         {
           return try_emplace(key).first->second;
         }
 
         template <typename Q = T, std::enable_if_t<is_map_v<Q>, bool> = true>
-        auto operator[](Key &&key) -> Q &
+        auto
+        operator[](Key &&key) -> Q &
         {
           return try_emplace(std::move(key)).first->second;
         }
@@ -1875,7 +1876,8 @@ constexpr bool is_transparent_v = is_detected_v<detect_is_transparent, Hash>&& i
           typename H  = Hash,
           typename KE = KeyEqual,
           std::enable_if_t<is_map_v<Q> && is_transparent_v<H, KE>, bool> = true>
-        auto operator[](K &&key) -> Q &
+        auto
+        operator[](K &&key) -> Q &
         {
           return try_emplace(std::forward<K>(key)).first->second;
         }
