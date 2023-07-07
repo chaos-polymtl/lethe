@@ -113,7 +113,6 @@ RestartNavierStokes<dim>::run()
   physical_properties.fluids[0].viscosity             = 1;
   physical_properties.number_of_solids                = 0;
 
-
   this->simulation_parameters.physical_properties_manager.initialize(
     physical_properties);
 
