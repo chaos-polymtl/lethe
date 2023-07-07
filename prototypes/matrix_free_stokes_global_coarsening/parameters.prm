@@ -6,7 +6,7 @@ set dim                = 2
 # Order of FE element for u and p <1|2|3>
 set element order     = 2
 
-# Geometry <hypercube>
+# Geometry <hypercube|hyperrectangle>
 set geometry           = hypercube
 
 # Global refinement 1st cycle
@@ -24,11 +24,11 @@ set output name        = solution
 # Path for vtu output files
 set output path        = ./
 
-# GMRES Preconditioner <AMG|GMG|ILU>
-set preconditioner     = GMG
+# GMRES Preconditioner <AMG|GCMG|ILU>
+set preconditioner     = GCMG
 
 # Repetitions in one direction for the hyperrectangle
 set repetitions        = 1
 
 # Source term <zero|mms>
-set source term        = zero
+set source term        = mms

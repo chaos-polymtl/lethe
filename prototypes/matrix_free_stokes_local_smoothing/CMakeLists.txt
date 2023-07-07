@@ -1,0 +1,2 @@
+add_executable(matrix_free_stokes_local_smoothing matrix_free_stokes_local_smoothing.cc)
+deal_ii_setup_target(matrix_free_stokes_local_smoothing)

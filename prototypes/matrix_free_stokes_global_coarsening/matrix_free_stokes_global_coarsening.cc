@@ -1296,8 +1296,8 @@ VectorValuedProblem<dim>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl                                           solver_control(2000,
-                               std::max(1.e-8 * system_rhs.l2_norm(), 1e-11),
+  SolverControl                                           solver_control(1000,
+                               std::max(1.e-8 * system_rhs.l2_norm(), 1e-14),
                                true,
                                true);
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);

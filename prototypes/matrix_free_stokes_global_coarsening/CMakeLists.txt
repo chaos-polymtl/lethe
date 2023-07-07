@@ -1,0 +1,2 @@
+add_executable(matrix_free_stokes_global_coarsening matrix_free_stokes_global_coarsening.cc)
+deal_ii_setup_target(matrix_free_stokes_global_coarsening)
