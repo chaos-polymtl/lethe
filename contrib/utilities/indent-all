@@ -72,7 +72,7 @@ process "source" ".*\.inst.in" format_inst
 # Fix permissions and convert to unix line ending if necessary:
 #
 
-process "tests include source examples cmake/scripts" \
+process "tests include source examples " \
   ".*\.(cc|h|inst.in|output.*|cmake)" fix_permissions
 
 process "tests include source examples " \
