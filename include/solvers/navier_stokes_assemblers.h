@@ -41,7 +41,8 @@ public:
    * @param scratch_data Scratch data containing the Navier-Stokes information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Stores the local_rhs and local_matrix that will be
+   * written into the global_rhs and global_matrix
    */
 
   virtual void
@@ -54,7 +55,8 @@ public:
    * @param scratch_data Scratch data containing the Navier-Stokes information.
    * It is important to note that the scratch data has to have been re-inited
    * before calling for matrix assembly.
-   * @param copy_data Destination where the local_rhs and loc
+   * @param copy_data Stores the local_rhs and local_matrix that will be
+   * written into the global_rhs and global_matrix
    */
 
   virtual void
@@ -66,7 +68,7 @@ public:
  * @brief Class that assembles the core of the Navier-Stokes equation.
  * This class assembles the weak form of:
  * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
- * =0 $$ with an SUPG and PSPG stabilziation
+ * =0 $$ with an SUPG and PSPG stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -220,7 +222,7 @@ public:
   /**
    * @brief Calculates an approximation of the gradient of the viscosity
    * @param velocity_gradient The velocity gradient tensor on the quadrature point
-     @param velocity_hessians The velocity hessian tensor on the quadrture point
+     @param velocity_hessians The velocity hessian tensor on the quadrature point
      @param non_newtonian_viscosity The viscosity at which the gradient is calculated
      @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
      viscosity variation with a slight change in the shear_rate magnitude
@@ -340,7 +342,7 @@ public:
 
 /**
  * @brief Class that assembles the transient time arising from SDIRK time
- * integration for the Navier Stokes equatios.
+ * integration for the Navier Stokes equations.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -641,7 +643,7 @@ public:
 };
 
 /**
- * @brief Class that assembles the weak formulation of an oulet boundary condition.
+ * @brief Class that assembles the weak formulation of an outlet boundary condition.
  * This class assembles the weak form of (nu grad(u) * grad(v) + pI - (beta *
  * u)_ * n See the paper by Arndt, Braack and Lube
  * https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf
