@@ -84,7 +84,8 @@ struct Settings
 
   enum GeometryType
   {
-    hypercube
+    hypercube,
+    hyperrectangle
   };
 
   enum SourceTermType
@@ -125,8 +126,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Number of cycles <1 up to 9-dim >");
   prm.declare_entry("geometry",
                     "hypercube",
-                    Patterns::Selection("hypercube"),
-                    "Geometry <hypercube>");
+                    Patterns::Selection("hypercube|hyperrectangle"),
+                    "Geometry <hypercube|hyperrectangle>");
   prm.declare_entry("initial refinement",
                     "1",
                     Patterns::Integer(),
@@ -194,6 +195,8 @@ Settings::try_parse(const std::string &prm_filename)
 
   if (prm.get("geometry") == "hypercube")
     this->geometry = hypercube;
+  else if (prm.get("geometry") == "hyperrectangle")
+    this->geometry = hyperrectangle;
   else
     AssertThrow(false, ExcNotImplemented());
 
@@ -776,6 +779,23 @@ MatrixFreeStokes<dim, fe_degree>::make_grid()
     {
         case Settings::hypercube: {
           GridGenerator::hyper_cube(triangulation, -1.0, 1.0, true);
+          break;
+        }
+        case Settings::hyperrectangle: {
+          std::vector<unsigned int> repetitions(dim);
+          for (unsigned int i = 0; i < dim - 1; i++)
+            {
+              repetitions[i] = 1;
+            }
+          repetitions[dim - 1] = parameters.repetitions;
+
+          GridGenerator::subdivided_hyper_rectangle(
+            triangulation,
+            repetitions,
+            (dim == 2) ? Point<dim>(-1., -1.) : Point<dim>(-1., -1., -1.),
+            (dim == 2) ? Point<dim>(1., parameters.repetitions) :
+                         Point<dim>(1., 1., parameters.repetitions),
+            true);
           break;
         }
     }
@@ -1434,10 +1454,10 @@ MatrixFreeStokes<dim, fe_degree>::run()
     else if (parameters.preconditioner == Settings::ilu)
       PRECOND_header = "Preconditioner: ILU";
     std::string GEOMETRY_header = "";
-
     if (parameters.geometry == Settings::hypercube)
       GEOMETRY_header = "Geometry: hypercube";
-
+    else if (parameters.geometry == Settings::hyperrectangle)
+      GEOMETRY_header = "Geometry: hyperrectangle";
     std::string SOURCE_header = "";
     if (parameters.source_term == Settings::zero)
       SOURCE_header = "Source term: zero";
