@@ -1281,6 +1281,16 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output tracer statistics");
 
+        prm.declare_entry("calculate phase statistics",
+                          "false",
+                          Patterns::Bool(),
+                          "Enable calculation of phase statistics (Cahn-Hilliard).");
+
+        prm.declare_entry("phase statistics name",
+                          "phase_statistics",
+                          Patterns::FileName(),
+                          "File name output phase statistics (Cahn-Hilliard)");
+
       prm.declare_entry("calculate temperature statistics",
                         "false",
                         Patterns::Bool(),
@@ -1367,6 +1377,8 @@ namespace Parameters
       output_frequency               = prm.get_integer("output frequency");
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
+      calculate_phase_statistics = prm.get_bool("calculate phase statistics");
+      phase_output_name          = prm.get("phase statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
       temperature_output_name  = prm.get("temperature statistics name");

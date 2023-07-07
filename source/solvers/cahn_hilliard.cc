@@ -343,6 +343,84 @@ CahnHilliard<dim>::calculate_L2_error()
                         std::sqrt(l2_error_chemical_potential));
 }
 
+
+template <int dim>
+void
+CahnHilliard<dim>::calculate_phase_statistics()
+{
+    auto mpi_communicator = triangulation->get_communicator();
+
+    FEValues<dim> fe_values(*this->mapping,
+                            *fe,
+                            *this->cell_quadrature,
+                            update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+    const FEValuesExtractors::Scalar phase_order(0);
+
+    const unsigned int  n_q_points = cell_quadrature->size();
+    std::vector<double> local_phase_order_values(n_q_points);
+
+    double integral = 0;
+    double max_phase_value = DBL_MIN;
+    double min_phase_value = DBL_MAX;
+
+    for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+        if (cell->is_locally_owned())
+        {
+            fe_values.reinit(cell);
+            fe_values[phase_order].get_function_values(evaluation_point, local_phase_order_values);
+
+            for (unsigned int q = 0; q < n_q_points; q++)
+            {
+                integral += local_phase_order_values[q] * fe_values.JxW(q);
+                max_phase_value = std::max(local_phase_order_values[q], max_phase_value);
+                min_phase_value = std::min(local_phase_order_values[q], min_phase_value);
+            }
+        }
+    }
+
+    integral      = Utilities::MPI::sum(integral, mpi_communicator);
+    double global_volume = GridTools::volume(*triangulation, *mapping);
+    double phase_average = integral / global_volume;
+
+
+    // Console output
+    if (simulation_parameters.post_processing.verbosity ==
+        Parameters::Verbosity::verbose)
+    {
+        this->pcout << "Phase statistics : " << std::endl;
+        this->pcout << "\t     Min : " << min_phase_value << std::endl;
+        this->pcout << "\t     Max : " << max_phase_value << std::endl;
+        this->pcout << "\t Average : " << phase_average << std::endl;
+        this->pcout << "\t Integral : " << integral << std::endl;
+    }
+
+    statistics_table.add_value("time", simulation_control->get_current_time());
+    statistics_table.add_value("min", min_phase_value);
+    statistics_table.add_value("max", max_phase_value);
+    statistics_table.add_value("average", phase_average);
+    statistics_table.add_value("integral", integral);
+}
+
+template <int dim>
+void
+CahnHilliard<dim>::write_phase_statistics()
+{
+    auto mpi_communicator = triangulation->get_communicator();
+
+    if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+        std::string filename =
+                simulation_parameters.simulation_control.output_folder +
+                simulation_parameters.post_processing.phase_output_name + ".dat";
+        std::ofstream output(filename.c_str());
+
+        statistics_table.write_text(output);
+    }
+}
+
 template <int dim>
 void
 CahnHilliard<dim>::finish_simulation()
@@ -417,6 +495,15 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
           this->pcout << "L2 error chemical_potential : " << potential_error
                       << std::endl;
         }
+    }
+
+    if (simulation_parameters.post_processing.calculate_phase_statistics)
+    {
+        calculate_phase_statistics();
+        if (simulation_control->get_step_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+            0)
+            this->write_phase_statistics();
     }
 }
 
@@ -768,6 +855,8 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
   constraints_used.distribute(completely_distributed_solution);
   newton_update = completely_distributed_solution;
 }
+
+
 
 
 
