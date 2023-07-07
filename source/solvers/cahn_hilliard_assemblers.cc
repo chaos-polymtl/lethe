@@ -15,7 +15,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
   const double well_height = this->ch_parameters.well_height;
   const double mobility_constant = this->ch_parameters.mobility_constant;
-  double epsilon;
+  double epsilon = 0.0;
 
   if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
   {
@@ -37,12 +37,14 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
   auto &local_matrix = copy_data.local_matrix;
 
-  Tensor<1, dim> velocity_field;
 
   if (this->ch_parameters.mobility_model == Parameters::MobilityModel::constant)
     {
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
+          // Gather into local variables the relevant fields
+          const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
+
           // Store JxW in local variable for faster access;
           const double JxW = JxW_vec[q];
 
@@ -93,6 +95,9 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
       // std::cout<< "Mobility is a quartic function"<<std::endl;
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
+          // Gather into local variables the relevant fields
+          const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
+
           // Store JxW in local variable for faster access;
           const double         JxW = JxW_vec[q];
           const Tensor<1, dim> potential_gradient =
@@ -179,12 +184,14 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
 
   auto &local_rhs = copy_data.local_rhs;
 
-  Tensor<1, dim> velocity_field;
 
   if (this->ch_parameters.mobility_model == Parameters::MobilityModel::constant)
     {
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
+          // Gather into local variables the relevant fields
+          const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
+
           // Store JxW in local variable for faster access;
           const double JxW               = JxW_vec[q];
           const double phase_order_value = scratch_data.phase_order_values[q];
@@ -229,6 +236,9 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
     {
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
+          // Gather into local variables the relevant fields
+          const Tensor<1, dim> velocity_field = scratch_data.velocity_values[q];
+
           // Store JxW in local variable for faster access;
           const double JxW               = JxW_vec[q];
           const double phase_order_value = scratch_data.phase_order_values[q];
