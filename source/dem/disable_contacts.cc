@@ -75,7 +75,7 @@ DisableContacts<dim>::calculate_granular_temperature_and_solid_fraction(
            ++particles_in_cell_iterator)
         {
           // Get particle properties
-          auto &particle_properties =
+          auto particle_properties =
             particles_in_cell_iterator->get_properties();
           const double dp = particle_properties[DEM::PropertiesIndex::dp];
 
@@ -103,7 +103,7 @@ DisableContacts<dim>::calculate_granular_temperature_and_solid_fraction(
            particles_in_cell_iterator != particles_in_cell.end();
            ++particles_in_cell_iterator)
         {
-          auto &particle_properties =
+          auto particle_properties =
             particles_in_cell_iterator->get_properties();
 
           for (int d = 0; d < dim; ++d)

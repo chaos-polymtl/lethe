@@ -118,15 +118,14 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   triangulation.signals.weight.connect(
     [](const typename Triangulation<dim>::cell_iterator &,
-       const typename Triangulation<dim>::CellStatus) -> unsigned int {
-      return 1000;
-    });
+       const CellStatus) -> unsigned int { return 1000; });
 
   triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &cell,
-        const typename parallel::distributed::Triangulation<dim>::CellStatus
-          status) -> unsigned int { return this->cell_weight(cell, status); });
+          &              cell,
+        const CellStatus status) -> unsigned int {
+      return this->cell_weight(cell, status);
+    });
 
   // Setting contact detection method (constant or dynamic)
   if (parameters.model_parameters.contact_detection_method ==
@@ -242,8 +241,7 @@ template <int dim>
 unsigned int
 DEMSolver<dim>::cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
+  const CellStatus status) const
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -263,19 +261,19 @@ DEMSolver<dim>::cell_weight(
 
   switch (status)
     {
-      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case dealii::CellStatus::cell_will_persist:
         // If CELL_PERSIST, do as CELL_REFINE
-        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
+        case dealii::CellStatus::cell_will_be_refined: {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return n_particles_in_cell * particle_weight;
           break;
         }
 
-      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+      case dealii::CellStatus::cell_invalid:
         break;
 
-        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
+        case dealii::CellStatus::children_will_be_coarsened: {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -300,8 +298,7 @@ template <int dim>
 unsigned int
 DEMSolver<dim>::cell_weight_with_mobility_status(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
-  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-  const
+  const CellStatus status) const
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -328,19 +325,19 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
 
   switch (status)
     {
-      case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case dealii::CellStatus::cell_will_persist:
         // If CELL_PERSIST, do as CELL_REFINE
-        case parallel::distributed::Triangulation<dim>::CELL_REFINE: {
+        case dealii::CellStatus::cell_will_be_refined: {
           const unsigned int n_particles_in_cell =
             particle_handler.n_particles_in_cell(cell);
           return alpha * n_particles_in_cell * particle_weight;
           break;
         }
 
-      case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+      case dealii::CellStatus::cell_invalid:
         break;
 
-        case parallel::distributed::Triangulation<dim>::CELL_COARSEN: {
+        case dealii::CellStatus::children_will_be_coarsened: {
           unsigned int n_particles_in_cell = 0;
 
           for (unsigned int child_index = 0;
@@ -571,15 +568,12 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
 
   triangulation.signals.weight.connect(
     [](const typename Triangulation<dim>::cell_iterator &,
-       const typename Triangulation<dim>::CellStatus) -> unsigned int {
-      return 1000;
-    });
+       const CellStatus) -> unsigned int { return 1000; });
 
   triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &cell,
-        const typename parallel::distributed::Triangulation<dim>::CellStatus
-          status) -> unsigned int {
+          &              cell,
+        const CellStatus status) -> unsigned int {
       return this->cell_weight_with_mobility_status(cell, status);
     });
 
@@ -668,7 +662,7 @@ DEMSolver<dim>::update_moment_of_inertia(
 
   for (auto &particle : particle_handler)
     {
-      auto &particle_properties = particle.get_properties();
+      auto particle_properties = particle.get_properties();
       MOI[particle.get_local_index()] =
         0.1 * particle_properties[DEM::PropertiesIndex::mass] *
         particle_properties[DEM::PropertiesIndex::dp] *
