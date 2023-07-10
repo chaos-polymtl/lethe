@@ -23,16 +23,24 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
 
 .. code-block:: text
 
-  subsection cahn hilliard	
-    set epsilon            = 1
-    set well_height        = 1
-    set mobility model     = constant
-    set mobility constant  = 1
+  subsection cahn hilliard
+  
+    set well height = 1
+
+    subsection epsilon
+      set method = automatic
+      set value  = 1
+    end
+
+    subsection mobility
+      set model             = constant
+      set mobility constant = 1
+    end
   end
 
 * ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell.
 
-* ``well_height``: defines the :math:`W` parameter in the equations above. Its value should remain close to unity.
+* ``well_height``: defines the :math:`W` parameter in the equations above. Its value should be made higher if the solution is too much diffusive.
 
 
 * ``mobility model``: defines the model chosen for mobility. The choices are ``constant`` or ``quartic``.
