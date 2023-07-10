@@ -61,16 +61,14 @@ TracerScratchData<dim>::calculate_physical_properties()
   // Case where you have one fluid
   switch (properties_manager.get_number_of_fluids())
     {
-      case 1:
-        {
+        case 1: {
           // In this case, only viscosity is the required property
           const auto diffusivity_model =
             properties_manager.get_tracer_diffusivity();
           diffusivity_model->vector_value(fields, tracer_diffusivity);
           break;
         }
-      case 2:
-        {
+        case 2: {
           // In this case,  we need both density and viscosity
           const auto diffusivity_models =
             properties_manager.get_tracer_diffusivity_vector();

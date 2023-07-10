@@ -2,7 +2,7 @@
 
 ## ---------------------------------------------------------------------
 ##
-## Copyright (C) 2019 by the deal.II authors
+## Copyright (C) 2019 - 2022 by the deal.II authors
 ##
 ## This file is part of the deal.II library.
 ##
@@ -14,13 +14,6 @@
 ## the top level directory of deal.II.
 ##
 ## ---------------------------------------------------------------------
-
-# ---------------------------------------------------------------------
-#
-# This file has adapted from the dealii library to be used within Lethe
-#
-# ---------------------------------------------------------------------
-
 """This script can be used to format code in external projects
 (that use deal.II) by adding .clang_format files.
 
@@ -99,12 +92,12 @@ def parse_arguments():
                                      "in a list of directories "
                                      "that satisfy a given regex."
                                      "This program requires "
-                                     "clang-format version 6.0.0 or 6.0.1.")
+                                     "clang-format version 11.1.")
 
     parser.add_argument("-b", "--clang-format-binary", metavar="PATH",
                         default=distutils.spawn.find_executable("clang-format"))
 
-    parser.add_argument("--regex", default="*.cc,*.h,*.cu,*.cuh",
+    parser.add_argument("--regex", default="*.cc,*.h",
                         help="Regular expression (regex) to filter files on "
                         "which clang-format is applied.")
 
@@ -283,7 +276,7 @@ def process(arguments):
     # Blocks (some) threads until all the threads finished their tasks.
     # Works similar to MPI_Barrier().
     # In other words, threads wait until all the tasks in task_queue
-    # have finshed.
+    # have finished.
     #
     task_queue.join()
 
@@ -296,11 +289,11 @@ if __name__ == "__main__":
 
     #
     # If clang-format-binary is not found, search again in
-    # contrib/utlitlies/programs/clang-6/bin
+    # contrib/utlitlies/programs/clang-11/bin
     #
     if not PARSED_ARGUMENTS.clang_format_binary:
         os.environ["PATH"] += ':' + \
-            os.getcwd() + "/contrib/utilities/programs/clang-6/bin"
+            os.getcwd() + "/contrib/utilities/programs/clang-11/bin"
         PARSED_ARGUMENTS.clang_format_binary = distutils.spawn.find_executable(
             "clang-format")
 

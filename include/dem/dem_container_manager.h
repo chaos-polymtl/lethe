@@ -320,7 +320,7 @@ public:
   typename dem_data_structures<dim>::vector_on_boundary
     torques_boundary_information;
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-                                                      periodic_boundaries_cells_information;
+    periodic_boundaries_cells_information;
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
 
 private:

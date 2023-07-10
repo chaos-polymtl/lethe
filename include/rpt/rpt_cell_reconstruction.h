@@ -176,7 +176,7 @@ private:
 
   std::vector<Point<dim>> reconstruction_positions; // Found positions
   std::vector<double>
-                            cells_volumes; // Cell volumes of the cell that contains positions
+    cells_volumes; // Cell volumes of the cell that contains positions
   std::vector<Point<dim>>   known_positions;  // Known positions to analyse
   std::vector<unsigned int> final_cell_level; // Level of the best cells
 
