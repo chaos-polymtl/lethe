@@ -255,7 +255,7 @@ LetheGridTools::find_boundary_cells_in_sphere(
 
   std::set<typename DoFHandler<dim>::cell_iterator> boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator>
-                                                    last_boundary_cells_candidates;
+    last_boundary_cells_candidates;
   std::set<typename DoFHandler<dim>::cell_iterator> cells_at_boundary;
   // Loop over the cells on level 0 of the mesh
   for (const auto &cell : cell_iterator)
@@ -627,8 +627,7 @@ LetheGridTools::project_to_d_linear_object(
         {
           break;
         }
-    }
-  while (true);
+  } while (true);
   Tensor<1, spacedim> normal;
   if (spacedim == 3)
     {

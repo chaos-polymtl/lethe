@@ -194,7 +194,7 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
           if (cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
-                         particles_in_cell = particle_handler.particles_in_cell(cell);
+                particles_in_cell = particle_handler.particles_in_cell(cell);
               const bool particles_exist_in_main_cell =
                 !particles_in_cell.empty();
 

@@ -158,7 +158,8 @@ NonUniformInsertion<dim>::create_random_number_container(
 
 // This function assigns the insertion points of the inserted particles
 template <>
-void NonUniformInsertion<2>::find_insertion_location_nonuniform(
+void
+NonUniformInsertion<2>::find_insertion_location_nonuniform(
   Point<2> &                                   insertion_location,
   const unsigned int                           id,
   const double                                 random_number1,
@@ -192,7 +193,8 @@ void NonUniformInsertion<2>::find_insertion_location_nonuniform(
 }
 
 template <>
-void NonUniformInsertion<3>::find_insertion_location_nonuniform(
+void
+NonUniformInsertion<3>::find_insertion_location_nonuniform(
   Point<3> &                                   insertion_location,
   const unsigned int                           id,
   const double                                 random_number1,

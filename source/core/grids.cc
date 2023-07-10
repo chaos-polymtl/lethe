@@ -345,40 +345,49 @@ read_mesh_and_manifolds(
     }
 }
 
-template void attach_grid_to_triangulation(
+template void
+attach_grid_to_triangulation(
   parallel::DistributedTriangulationBase<2> &triangulation,
   const Parameters::Mesh &                   mesh_parameters);
-template void attach_grid_to_triangulation(
+template void
+attach_grid_to_triangulation(
   parallel::DistributedTriangulationBase<3> &triangulation,
   const Parameters::Mesh &                   mesh_parameters);
-template void attach_grid_to_triangulation(
+template void
+attach_grid_to_triangulation(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
   const Parameters::Mesh &                      mesh_parameters);
 
 
-template void setup_periodic_boundary_conditions(
+template void
+setup_periodic_boundary_conditions(
   parallel::DistributedTriangulationBase<2, 2> &   triangulation,
   const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
-template void setup_periodic_boundary_conditions(
+template void
+setup_periodic_boundary_conditions(
   parallel::DistributedTriangulationBase<2, 3> &   triangulation,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
-template void setup_periodic_boundary_conditions(
+template void
+setup_periodic_boundary_conditions(
   parallel::DistributedTriangulationBase<3, 3> &   triangulation,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
 
-template void read_mesh_and_manifolds(
+template void
+read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2> &      triangulation,
   const Parameters::Mesh &                         mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,
   const bool &                                     restart,
   const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
-template void read_mesh_and_manifolds(
+template void
+read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<3> &      triangulation,
   const Parameters::Mesh &                         mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,
   const bool &                                     restart,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
-template void read_mesh_and_manifolds(
+template void
+read_mesh_and_manifolds(
   parallel::DistributedTriangulationBase<2, 3> &   triangulation,
   const Parameters::Mesh &                         mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,

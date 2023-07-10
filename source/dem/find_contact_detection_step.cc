@@ -52,7 +52,8 @@ find_particle_contact_detection_step(
   return contact_detection_step;
 }
 
-template bool find_particle_contact_detection_step(
+template bool
+find_particle_contact_detection_step(
   Particles::ParticleHandler<2> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,
@@ -60,7 +61,8 @@ template bool find_particle_contact_detection_step(
   bool                           sorting_in_subdomains_step,
   std::vector<double> &          displacement);
 
-template bool find_particle_contact_detection_step(
+template bool
+find_particle_contact_detection_step(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,

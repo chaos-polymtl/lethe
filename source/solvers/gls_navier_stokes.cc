@@ -1001,10 +1001,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       const int n_iter_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .n_iter;
-      double viscosity = n_iter_viscosity > 0 ?
-                           this->simulation_parameters.initial_condition->ramp
+      double       viscosity = n_iter_viscosity > 0 ?
+                                 this->simulation_parameters.initial_condition->ramp
                              .ramp_viscosity.viscosity_init :
-                           viscosity_end;
+                                 viscosity_end;
       const double alpha_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;

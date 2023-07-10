@@ -335,8 +335,8 @@ namespace LetheGridTools
   struct hash_cell
   {
     std::size_t
-    operator()(const typename DoFHandler<dim>::active_cell_iterator &cell) const
-      noexcept
+    operator()(
+      const typename DoFHandler<dim>::active_cell_iterator &cell) const noexcept
     {
       return std::hash<int>()(cell->global_active_cell_index());
     }

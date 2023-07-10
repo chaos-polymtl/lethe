@@ -291,25 +291,27 @@ attach_manifolds_to_triangulation(
     }
 }
 
-void attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &,
-                            std::string,
-                            unsigned int)
+void
+attach_cad_to_manifold(parallel::DistributedTriangulationBase<2> &,
+                       std::string,
+                       unsigned int)
 {
   throw std::runtime_error("IGES manifolds are not supported in 2D");
 }
 
-void attach_cad_to_manifold(parallel::DistributedTriangulationBase<2, 3> &,
-                            std::string,
-                            unsigned int)
+void
+attach_cad_to_manifold(parallel::DistributedTriangulationBase<2, 3> &,
+                       std::string,
+                       unsigned int)
 {
   throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
 }
 
 #ifdef DEAL_II_WITH_OPENCASCADE
-void attach_cad_to_manifold(
-  parallel::DistributedTriangulationBase<3> &triangulation,
-  std::string                                cad_name,
-  unsigned int                               manifold_id)
+void
+attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &triangulation,
+                       std::string                                cad_name,
+                       unsigned int                               manifold_id)
 {
   TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
 
@@ -336,9 +338,10 @@ void attach_cad_to_manifold(
   triangulation.set_manifold(manifold_id, normal_projector);
 }
 #else
-void attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &,
-                            std::string,
-                            unsigned int)
+void
+attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &,
+                       std::string,
+                       unsigned int)
 {
   throw std::runtime_error(
     "IGES manifolds require DEAL_II to be compiled with OPENCASCADE");
@@ -346,14 +349,17 @@ void attach_cad_to_manifold(parallel::DistributedTriangulationBase<3> &,
 #endif // DEAL_II_WITH_OPENCASCADE
 
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   parallel::DistributedTriangulationBase<2> &triangulation,
   Parameters::Manifolds                      manifolds);
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   parallel::DistributedTriangulationBase<3> &triangulation,
   Parameters::Manifolds                      manifolds);
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   parallel::DistributedTriangulationBase<2, 3> &triangulation,
   Parameters::Manifolds                         manifolds);

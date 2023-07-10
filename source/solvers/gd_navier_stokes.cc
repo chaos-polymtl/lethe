@@ -981,7 +981,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   if (this->pressure_fem_degree > 1)
     higher_order_elements = true;
   TrilinosWrappers::PreconditionAMG::AdditionalData
-                                      pressure_preconditioner_options(elliptic_pressure,
+                         pressure_preconditioner_options(elliptic_pressure,
                                     higher_order_elements,
                                     n_cycles,
                                     w_cycle,
@@ -992,7 +992,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
                                     output_details,
                                     smoother_type,
                                     coarse_type);
-  Teuchos::ParameterList              pressure_parameter_ml;
+  Teuchos::ParameterList pressure_parameter_ml;
   std::unique_ptr<Epetra_MultiVector> pressure_distributed_constant_modes;
   velocity_preconditioner_options.set_parameters(
     pressure_parameter_ml,

@@ -1,7 +1,7 @@
 #!/bin/bash
 ## ---------------------------------------------------------------------
 ##
-## Copyright (C) 2018 - 2019 by the deal.II authors
+## Copyright (C) 2018 - 2022 by the deal.II authors
 ##
 ## This file is part of the deal.II library.
 ##
@@ -13,12 +13,6 @@
 ## the top level of the deal.II distribution.
 ##
 ## ---------------------------------------------------------------------
-
-# ---------------------------------------------------------------------
-#
-# This file has adapted from the dealii library to be used within Lethe
-#
-# ---------------------------------------------------------------------
 
 #
 # This file contains a number of common functions used all indent scripts
@@ -38,31 +32,18 @@
 export DEAL_II_CLANG_FORMAT="${DEAL_II_CLANG_FORMAT:-clang-format}"
 
 checks() {
-  if test ! -d include -o ! -d tests  ; then
-    echo "*** This script must be run from the top-level directory of Lethe."
+  if test ! -d source -o ! -d include -o ! -d examples ; then
+    echo "*** This script must be run from the top-level directory of deal.II."
     exit 1
   fi
 
   # Add the location 'download_clang_format' or 'compile_clang_format'
-  # installs clang-format to to the local PATH.
-  CLANG_FORMAT_PATH="$(cd "$(dirname "$0")" && pwd)/programs/clang-6/bin"
+  # installs clang-format to the local PATH.
+  CLANG_FORMAT_PATH="$(cd "$(dirname "$0")" && pwd)/programs/clang-11/bin"
   export PATH="${CLANG_FORMAT_PATH}:${PATH}"
 
-  if ! [ -x "$(command -v ${DEAL_II_CLANG_FORMAT})" ]; then
+  if ! [ -x "$(command -v "${DEAL_II_CLANG_FORMAT}")" ]; then
     echo "***   No clang-format program found."
-    echo "***"
-    exit 1
-  fi
-
-  # Make sure to have the right version. We know that clang-6.0.0
-  # and clang-6.0.1 work. Hence, test for clang-6.0.
-  CLANG_FORMAT_VERSION="$(${DEAL_II_CLANG_FORMAT} --version)"
-  CLANG_FORMAT_MAJOR_VERSION=$(echo "${CLANG_FORMAT_VERSION}" | sed 's/^[^0-9]*\([0-9]*\).*$/\1/g')
-  CLANG_FORMAT_MINOR_VERSION=$(echo "${CLANG_FORMAT_VERSION}" | sed 's/^[^0-9]*[0-9]*\.\([0-9]*\).*$/\1/g')
-
-  if [ "${CLANG_FORMAT_MAJOR_VERSION}" -ne 6 ] || [ "${CLANG_FORMAT_MINOR_VERSION}" -ne 0 ]; then
-    echo "***   This indent script requires clang-format version 6.0,"
-    echo "***   but version ${CLANG_FORMAT_MAJOR_VERSION}.${CLANG_FORMAT_MINOR_VERSION} was found instead."
     echo "***"
     echo "***   You can run the './contrib/utilities/download_clang_format'"
     echo "***   script, or the './contrib/utilities/compile_clang_format' script "
@@ -70,32 +51,20 @@ checks() {
     exit 1
   fi
 
+  # Make sure to have the right version.
+  CLANG_FORMAT_VERSION="$(${DEAL_II_CLANG_FORMAT} --version)"
+  CLANG_FORMAT_MAJOR_VERSION=$(echo "${CLANG_FORMAT_VERSION}" | sed 's/^[^0-9]*\([0-9]*\).*$/\1/g')
+  CLANG_FORMAT_MINOR_VERSION=$(echo "${CLANG_FORMAT_VERSION}" | sed 's/^[^0-9]*[0-9]*\.\([0-9]*\).*$/\1/g')
 
-  # check formatting of usernames and email addresses, examples that will be detected:
-  # not-using-a-name <a@b.com>
-  # John Doe <doe@macbook.local>
-  # Jane Doe <a@nodomain>
-  #
-  # For commits already in the history, please see .mailmap in the root directory.
-  #
-  # Note that we currently allow email addresses of the form
-  # Luca Heltai <luca-heltai@users.noreply.github.com>
-  # as these are generated when using the website to commit.
-  #
-  # Finally, to stay sane, just go back until the beginning of 2019 for now.
-  #
-  # Check emails:
-  git log --since "2019-01-01" --format="%aE" | sort -u | while read email ; do
-      words=($name)
-      if ! echo "$email" | grep -q "\."; then
-	  echo "invalid email '$email'"
-	  exit 3
-      fi
-      if ! echo "$email" | grep -q -v -e "\.local$"; then
-	  echo "invalid email '$email'"
-	  exit 3
-      fi
-  done || exit 3
+  if [ "${CLANG_FORMAT_MAJOR_VERSION}" -ne 11 ] || [ "${CLANG_FORMAT_MINOR_VERSION}" -ne 1 ]; then
+    echo "***   This indent script requires clang-format version 11.1,"
+    echo "***   but version ${CLANG_FORMAT_MAJOR_VERSION}.${CLANG_FORMAT_MINOR_VERSION} was found instead."
+    echo "***"
+    echo "***   You can run the './contrib/utilities/download_clang_format'"
+    echo "***   script, or the './contrib/utilities/compile_clang_format' script "
+    echo "***   to install a compatible binary into './contrib/utilities/programs'."
+    exit 1
+  fi
 
 }
 
@@ -130,7 +99,7 @@ fix_or_report()
 export -f fix_or_report
 
 #
-# In order to format .cc and .h files we have to make sure that we override
+# In order to format .cc and .h files we have to make sure that we overwrite
 # the source/header file only if the actual contents changed.
 # Unfortunately, clang-format isn't exactly helpful there. Thus, use a
 # temporary file and diff as a workaround.
@@ -146,6 +115,27 @@ format_file()
   rm -f "${tmpfile}"
 }
 export -f format_file
+
+#
+# Remove trailing whitespace.
+#
+
+remove_trailing_whitespace()
+{
+  file="${1}"
+  tmpfile="$(mktemp "${TMPDIR}/$(basename "$1").tmp.XXXXXXXX")"
+
+  #
+  # Mac OS uses BSD sed (other than GNU sed in Linux),
+  # so it doesn't recognize \s as 'spaces' or + as 'one or more'.
+  #
+  sed 's/[[:space:]]\{1,\}$//g' "${file}" > "${tmpfile}"
+  if ! diff -q "${file}" "${tmpfile}" >/dev/null; then
+    mv "${tmpfile}" "${file}"
+  fi
+  rm -f "${tmpfile}"
+}
+export -f remove_trailing_whitespace
 
 #
 # In order to format .inst.in files, we need to replace \{ and \} by a
@@ -192,7 +182,7 @@ dos_to_unix()
   tr -d '\015' <"${file}" >"${tmpfile}"
 
   fix_or_report "${file}" "${tmpfile}" "file has non-unix line-ending '\\r\\n'"
-  rm -f "${tmpfile}" "${tmpfile}"
+  rm -f "${tmpfile}"
 }
 export -f dos_to_unix
 
@@ -224,8 +214,8 @@ fix_permissions()
 export -f fix_permissions
 
 #
-# Collect all files found in a list of directories "${1}$" matching a
-# regular expression "${2}$", and process them with a command "${3}" on 10
+# Collect all files found in a list of directories "${1}" matching a
+# regular expression "${2}", and process them with a command "${3}" on 10
 # threads in parallel.
 #
 # The command line is a bit complicated, so let's discuss the more
@@ -236,21 +226,22 @@ export -f fix_permissions
 #   serves as a good candidate to separate individual file names.
 # - For 'xargs', -0 does the opposite: it separates filenames that are
 #   delimited by \0
-# - the options "-n 1 -P 10" make sure that the following script will be
-#   called exactly with one file name as argument at a time, but we allow
-#   execution for up to 10 times in parallel
+# - the option "-P 10" starts up to 10 processes in parallel. -0 implies '-L 1'
+#   (one argument to each command) so each launch of clang-format corresponds
+#   to exactly one file.
 #
 
 process()
 {
+  directories=$1
   case "${OSTYPE}" in
     darwin*)
-      find -E ${1} -regex "${2}" -print0 |
-        xargs -0 -n 1 -P 10 -I {} bash -c "${3} {}"
+      find -E ${directories} -regex "${2}" -print0 |
+        xargs -0 -P 10 -I {} bash -c "${3} {}"
       ;;
     *)
-      find ${1} -regextype egrep -regex "${2}" -print0 |
-        xargs -0 -n 1 -P 10 -I {} bash -c "${3} {}"
+      find ${directories} -regextype egrep -regex "${2}" -print0 |
+        xargs -0 -P 10 -I {} bash -c "${3} {}"
       ;;
   esac
 }
@@ -266,7 +257,7 @@ process()
 process_changed()
 {
   LAST_MERGE_COMMIT="$(git log --format="%H" --merges --max-count=1 master)"
-  COMMON_ANCESTOR_WITH_MASTER="$(git merge-base ${LAST_MERGE_COMMIT} HEAD)"
+  COMMON_ANCESTOR_WITH_MASTER="$(git merge-base "${LAST_MERGE_COMMIT}" HEAD)"
 
   case "${OSTYPE}" in
     darwin*)
@@ -278,8 +269,36 @@ process_changed()
   esac
 
   ( git ls-files --others --exclude-standard -- ${1};
-    git diff --name-only --diff-filter=d $COMMON_ANCESTOR_WITH_MASTER -- ${1} )|
+    git diff --name-only $COMMON_ANCESTOR_WITH_MASTER -- ${1} )|
       sort -u |
+      xargs -n 1 ls -d 2>/dev/null |
       grep -E "^${2}$" |
-      ${XARGS} '\n' -n 1 -P 10 -I {} bash -c "${3} {}"
+      ${XARGS} '\n' -P 10 -I {} bash -c "${3} {}"
 }
+
+#
+# Ensure only a single newline at end of files
+#
+ensure_single_trailing_newline()
+{
+  f=$1
+
+  # Remove newlines at end of file
+  # Check that the current line only contains newlines
+  # If it doesn't match, print it
+  # If it does match and we're not at the end of the file,
+  # append the next line to the current line and repeat the check
+  # If it does match and we're at the end of the file,
+  # remove the line.
+  sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba' $f >$f.tmpi
+
+  # Then add a newline to the end of the file
+  # '$' denotes the end of file
+  # 'a\' appends the following text (which in this case is nothing)
+  # on a new line
+  sed -e '$a\' $f.tmpi >$f.tmp
+
+  diff -q $f $f.tmp >/dev/null || mv $f.tmp $f
+  rm -f $f.tmp $f.tmpi
+}
+export -f ensure_single_trailing_newline

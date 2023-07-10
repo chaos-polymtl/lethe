@@ -8,7 +8,7 @@ on:
 
 env:
   # Supports version 5 up to version 12
-  CLANG_FORMAT_VERION: 6
+  CLANG_FORMAT_VERION: 11
 
 jobs:
   clang-format:

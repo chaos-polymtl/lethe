@@ -268,8 +268,8 @@ protected:
   double effective_radius;
   double effective_mass;
   std::unordered_map<unsigned int, Tensor<1, 3>>
-                                                 boundary_translational_velocity_map;
-  std::unordered_map<unsigned int, double>       boundary_rotational_speed_map;
+                                           boundary_translational_velocity_map;
+  std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
   std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
   unsigned int                                   n_particle_types;
 

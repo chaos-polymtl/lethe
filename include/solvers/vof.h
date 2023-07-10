@@ -769,7 +769,7 @@ private:
   IndexSet locally_relevant_dofs_projected_phase_fraction_gradient;
   AffineConstraints<double> projected_phase_fraction_gradient_constraints;
   TrilinosWrappers::MPI::Vector
-                                nodal_projected_phase_fraction_gradient_relevant;
+    nodal_projected_phase_fraction_gradient_relevant;
   TrilinosWrappers::MPI::Vector nodal_projected_phase_fraction_gradient_owned;
 
   TrilinosWrappers::SparseMatrix

@@ -128,7 +128,8 @@ UniformInsertion<dim>::insert(
 
 // This function assigns the insertion points of the inserted particles
 template <>
-void UniformInsertion<2>::find_insertion_location_uniform(
+void
+UniformInsertion<2>::find_insertion_location_uniform(
   Point<2> &                                   insertion_location,
   const unsigned int &                         id,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
@@ -158,7 +159,8 @@ void UniformInsertion<2>::find_insertion_location_uniform(
 }
 
 template <>
-void UniformInsertion<3>::find_insertion_location_uniform(
+void
+UniformInsertion<3>::find_insertion_location_uniform(
   Point<3> &                                   insertion_location,
   const unsigned int &                         id,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
