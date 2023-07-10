@@ -38,7 +38,7 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
     end
   end
 
-* ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell.
+* ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell. The choices are ``automatic`` (default) or ``manual``.
 
 * ``well_height``: defines the :math:`W` parameter in the equations above. Its value should be made higher if the solution is too much diffusive.
 
