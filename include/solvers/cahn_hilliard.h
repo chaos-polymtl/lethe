@@ -357,17 +357,17 @@ private:
   virtual void
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
-    /**
+  /**
    * @brief Calculate phase order parameter integral for monitoring purpose
    */
-    void
-    calculate_phase_statistics();
+  void
+  calculate_phase_statistics();
 
-    /**
-     * @brief Writes the phase integral to an output file
-     */
-    void
-    write_phase_statistics();
+  /**
+   * @brief Writes the phase integral to an output file
+   */
+  void
+  write_phase_statistics();
 
 
   MultiphysicsInterface<dim> *     multiphysics;
@@ -418,8 +418,8 @@ private:
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<CahnHilliardAssemblerBase<dim>>> assemblers;
 
-    // Tracer statistics table
-    TableHandler statistics_table;
+  // Tracer statistics table
+  TableHandler statistics_table;
 };
 
 

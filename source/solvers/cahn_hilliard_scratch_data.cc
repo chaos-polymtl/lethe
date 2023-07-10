@@ -67,14 +67,13 @@ CahnHilliardScratchData<dim>::allocate()
   this->laplacian_phi_potential =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
 
-  //Velocity values
-    this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
-    this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
-            maximum_number_of_previous_solutions(),
-            std::vector<Tensor<1, dim>>(this->n_q_points));
-    this->velocity_gradient_values =
-            std::vector<Tensor<2, dim>>(this->n_q_points);
-
+  // Velocity values
+  this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+    maximum_number_of_previous_solutions(),
+    std::vector<Tensor<1, dim>>(this->n_q_points));
+  this->velocity_gradient_values =
+    std::vector<Tensor<2, dim>>(this->n_q_points);
 }
 template <int dim>
 void

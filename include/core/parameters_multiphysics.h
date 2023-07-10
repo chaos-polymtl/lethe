@@ -59,8 +59,8 @@ namespace Parameters
 
   enum class EpsilonSetStrategy
   {
-      automatic,
-      manual
+    automatic,
+    manual
   };
 
   enum class MobilityModel
@@ -245,7 +245,7 @@ namespace Parameters
     // Well height value (W) in the Cahn-Hilliard equations
     double well_height;
 
-    //Epsilon set strategy (automatic|manual)
+    // Epsilon set strategy (automatic|manual)
     Parameters::EpsilonSetStrategy epsilon_set_method;
 
     // Epsilon value in the Cahn-Hilliard equations

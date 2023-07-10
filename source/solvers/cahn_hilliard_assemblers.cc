@@ -13,20 +13,22 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 {
   // Gather physical properties
 
-  const double well_height = this->ch_parameters.well_height;
+  const double well_height       = this->ch_parameters.well_height;
   const double mobility_constant = this->ch_parameters.mobility_constant;
-  double epsilon = 0.0;
+  double       epsilon           = 0.0;
 
-  if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
-  {
+  if (this->ch_parameters.epsilon_set_method ==
+      Parameters::EpsilonSetStrategy::automatic)
+    {
       const double h = scratch_data.cell_size;
-      epsilon = 2 * h;
-  }
+      epsilon        = 2 * h;
+    }
 
-  else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
-  {
+  else if (this->ch_parameters.epsilon_set_method ==
+           Parameters::EpsilonSetStrategy::manual)
+    {
       epsilon = this->ch_parameters.epsilon;
-  }
+    }
 
 
 
@@ -161,19 +163,21 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
 {
   // Gather physical properties
 
-  const double well_height = this->ch_parameters.well_height;
+  const double well_height       = this->ch_parameters.well_height;
   const double mobility_constant = this->ch_parameters.mobility_constant;
-  double epsilon;
+  double       epsilon;
 
-    if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+  if (this->ch_parameters.epsilon_set_method ==
+      Parameters::EpsilonSetStrategy::automatic)
     {
-        const double h = scratch_data.cell_size;
-        epsilon = 2 * h;
+      const double h = scratch_data.cell_size;
+      epsilon        = 2 * h;
     }
 
-    else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+  else if (this->ch_parameters.epsilon_set_method ==
+           Parameters::EpsilonSetStrategy::manual)
     {
-        epsilon = this->ch_parameters.epsilon;
+      epsilon = this->ch_parameters.epsilon;
     }
 
   // Loop and quadrature informations
@@ -299,15 +303,17 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
 
   double epsilon;
 
-    if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+  if (this->ch_parameters.epsilon_set_method ==
+      Parameters::EpsilonSetStrategy::automatic)
     {
-        const double h = scratch_data.cell_size;
-        epsilon = 2 * h;
+      const double h = scratch_data.cell_size;
+      epsilon        = 2 * h;
     }
 
-    else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+  else if (this->ch_parameters.epsilon_set_method ==
+           Parameters::EpsilonSetStrategy::manual)
     {
-        epsilon = this->ch_parameters.epsilon;
+      epsilon = this->ch_parameters.epsilon;
     }
 
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
@@ -367,17 +373,19 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
   auto &local_rhs = copy_data.local_rhs;
 
-    double epsilon;
+  double epsilon;
 
-    if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::automatic)
+  if (this->ch_parameters.epsilon_set_method ==
+      Parameters::EpsilonSetStrategy::automatic)
     {
-        const double h = scratch_data.cell_size;
-        epsilon = 2 * h;
+      const double h = scratch_data.cell_size;
+      epsilon        = 2 * h;
     }
 
-    else if (this->ch_parameters.epsilon_set_method == Parameters::EpsilonSetStrategy::manual)
+  else if (this->ch_parameters.epsilon_set_method ==
+           Parameters::EpsilonSetStrategy::manual)
     {
-        epsilon = this->ch_parameters.epsilon;
+      epsilon = this->ch_parameters.epsilon;
     }
 
 

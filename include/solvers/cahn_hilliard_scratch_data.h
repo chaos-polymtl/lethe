@@ -399,8 +399,8 @@ public:
    */
   FEValuesExtractors::Vector velocities;
   // This FEValues must be instantiated for the velocity
-  FEValues<dim>               fe_values_fd;
-  std::vector<Tensor<1, dim>> velocity_values;
+  FEValues<dim>                            fe_values_fd;
+  std::vector<Tensor<1, dim>>              velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
 
