@@ -243,7 +243,7 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   // 2D Stokes analytical solution for the Rayleigh-Kothe-ish vortex
   // u=sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y)
   // v=-cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y)
-  // p=x**2.*y**2.
+  // p=sin(a*x)*sin(a*y)
   // with a = PI or any multiple of PI
   const double a = numbers::PI;
   const double x = p[0];
@@ -343,7 +343,7 @@ evaluate_function(const Function<dim> &                      function,
 // Matrix-free differential operator for a vector-valued problem.
 // It "replaces" the traditional assemble_matrix() function.
 template <int dim, typename number>
-class VectorValuedOperator : public Subscriptor
+class StokesOperator : public Subscriptor
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
@@ -354,9 +354,9 @@ public:
 
   using size_type = VectorizedArray<number>;
 
-  VectorValuedOperator();
+  StokesOperator();
 
-  VectorValuedOperator(const MappingQ<dim> &            mapping,
+  StokesOperator(const MappingQ<dim> &            mapping,
                        const DoFHandler<dim> &          dof_handler,
                        const AffineConstraints<number> &constraints,
                        const QGauss<1> &                quadrature);
@@ -417,11 +417,11 @@ private:
 };
 
 template <int dim, typename number>
-VectorValuedOperator<dim, number>::VectorValuedOperator()
+StokesOperator<dim, number>::StokesOperator()
 {}
 
 template <int dim, typename number>
-VectorValuedOperator<dim, number>::VectorValuedOperator(
+StokesOperator<dim, number>::StokesOperator(
   const MappingQ<dim> &            mapping,
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
@@ -432,7 +432,7 @@ VectorValuedOperator<dim, number>::VectorValuedOperator(
 
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::reinit(
+StokesOperator<dim, number>::reinit(
   const MappingQ<dim> &            mapping,
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
@@ -452,14 +452,14 @@ VectorValuedOperator<dim, number>::reinit(
 
 template <int dim, typename number>
 types::global_dof_index
-VectorValuedOperator<dim, number>::m() const
+StokesOperator<dim, number>::m() const
 {
   return matrix_free.get_dof_handler().n_dofs();
 }
 
 template <int dim, typename number>
 number
-VectorValuedOperator<dim, number>::el(unsigned int, unsigned int) const
+StokesOperator<dim, number>::el(unsigned int, unsigned int) const
 {
   Assert(false, ExcNotImplemented());
   return 0;
@@ -467,13 +467,13 @@ VectorValuedOperator<dim, number>::el(unsigned int, unsigned int) const
 
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::clear()
+StokesOperator<dim, number>::clear()
 {}
 
 // The matrix free object initialized the vector accordingly
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
+StokesOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
 {
   matrix_free.initialize_dof_vector(vec);
 }
@@ -482,11 +482,11 @@ VectorValuedOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
 // and evluating the integrals in the matrix-free way
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::vmult(VectorType &      dst,
+StokesOperator<dim, number>::vmult(VectorType &      dst,
                                          const VectorType &src) const
 {
   this->matrix_free.cell_loop(
-    &VectorValuedOperator::do_cell_integral_range, this, dst, src, true);
+    &StokesOperator::do_cell_integral_range, this, dst, src, true);
 }
 
 // Performs the transposed operator evaluation. Since we have
@@ -494,7 +494,7 @@ VectorValuedOperator<dim, number>::vmult(VectorType &      dst,
 // TODO: implement this correctly (let's start with something symetric)
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::Tvmult(VectorType &      dst,
+StokesOperator<dim, number>::Tvmult(VectorType &      dst,
                                           const VectorType &src) const
 {
   this->vmult(dst, src);
@@ -505,7 +505,7 @@ VectorValuedOperator<dim, number>::Tvmult(VectorType &      dst,
 // grid level in the multigrid algorithm.
 template <int dim, typename number>
 const TrilinosWrappers::SparseMatrix &
-VectorValuedOperator<dim, number>::get_system_matrix() const
+StokesOperator<dim, number>::get_system_matrix() const
 {
   if (system_matrix.m() == 0 && system_matrix.n() == 0)
     {
@@ -524,7 +524,7 @@ VectorValuedOperator<dim, number>::get_system_matrix() const
         matrix_free,
         constraints,
         system_matrix,
-        &VectorValuedOperator::do_cell_integral_local,
+        &StokesOperator::do_cell_integral_local,
         this);
     }
   return system_matrix;
@@ -536,12 +536,12 @@ VectorValuedOperator<dim, number>::get_system_matrix() const
 // call.
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::compute_inverse_diagonal(
+StokesOperator<dim, number>::compute_inverse_diagonal(
   VectorType &diagonal) const
 {
   this->matrix_free.initialize_dof_vector(diagonal);
   MatrixFreeTools::compute_diagonal(
-    matrix_free, diagonal, &VectorValuedOperator::do_cell_integral_local, this);
+    matrix_free, diagonal, &StokesOperator::do_cell_integral_local, this);
 
   for (auto &i : diagonal)
     i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
@@ -549,7 +549,7 @@ VectorValuedOperator<dim, number>::compute_inverse_diagonal(
 
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::do_cell_integral_local(
+StokesOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
   using FECellIntegratorType =
@@ -639,7 +639,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_local(
 
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::do_cell_integral_global(
+StokesOperator<dim, number>::do_cell_integral_global(
   FECellIntegrator &integrator,
   VectorType &      dst,
   const VectorType &src) const
@@ -734,7 +734,7 @@ VectorValuedOperator<dim, number>::do_cell_integral_global(
 
 template <int dim, typename number>
 void
-VectorValuedOperator<dim, number>::do_cell_integral_range(
+StokesOperator<dim, number>::do_cell_integral_range(
   const MatrixFree<dim, number> &              matrix_free,
   VectorType &                                 dst,
   const VectorType &                           src,
@@ -964,10 +964,10 @@ solve_with_gmg(SolverControl &            solver_control,
 // -∇^2 u + ∇p = f_1 and ∇ · u = f_2 using Newton's method
 // and the matrix-free approach.
 template <int dim>
-class VectorValuedProblem
+class MatrixFreeStokes
 {
 public:
-  VectorValuedProblem(const Settings &parameters);
+  MatrixFreeStokes(const Settings &parameters);
 
   void
   run();
@@ -1025,10 +1025,10 @@ private:
   DoFHandler<dim> dof_handler;
 
   AffineConstraints<double> constraints;
-  using SystemMatrixType = VectorValuedOperator<dim, double>;
+  using SystemMatrixType = StokesOperator<dim, double>;
   SystemMatrixType  system_matrix;
   MGConstrainedDoFs mg_constrained_dofs;
-  using LevelMatrixType = VectorValuedOperator<dim, double>;
+  using LevelMatrixType = StokesOperator<dim, double>;
   MGLevelObject<LevelMatrixType>                            mg_matrices;
   MGLevelObject<LevelMatrixType>                            mg_interface_in;
   MGLevelObject<LevelMatrixType>                            mg_interface_out;
@@ -1048,7 +1048,7 @@ private:
 };
 
 template <int dim>
-VectorValuedProblem<dim>::VectorValuedProblem(const Settings &parameters)
+MatrixFreeStokes<dim>::MatrixFreeStokes(const Settings &parameters)
   : triangulation(
       MPI_COMM_WORLD,
       Triangulation<dim>::limit_level_difference_at_vertices,
@@ -1067,7 +1067,7 @@ VectorValuedProblem<dim>::VectorValuedProblem(const Settings &parameters)
 
 template <int dim>
 void
-VectorValuedProblem<dim>::make_grid()
+MatrixFreeStokes<dim>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
@@ -1101,7 +1101,7 @@ VectorValuedProblem<dim>::make_grid()
 
 template <int dim>
 void
-VectorValuedProblem<dim>::setup_system()
+MatrixFreeStokes<dim>::setup_system()
 {
   TimerOutput::Scope t(computing_timer, "setup system");
 
@@ -1143,17 +1143,17 @@ VectorValuedProblem<dim>::setup_system()
 
 template <int dim>
 void
-VectorValuedProblem<dim>::evaluate_residual(
+MatrixFreeStokes<dim>::evaluate_residual(
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   system_matrix.matrix_free.cell_loop(
-    &VectorValuedProblem::local_evaluate_residual, this, dst, src, true);
+    &MatrixFreeStokes::local_evaluate_residual, this, dst, src, true);
 }
 
 template <int dim>
 void
-VectorValuedProblem<dim>::local_evaluate_residual(
+MatrixFreeStokes<dim>::local_evaluate_residual(
   const MatrixFree<dim, double> &                   data,
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src,
@@ -1254,7 +1254,7 @@ VectorValuedProblem<dim>::local_evaluate_residual(
 
 template <int dim>
 void
-VectorValuedProblem<dim>::assemble_rhs()
+MatrixFreeStokes<dim>::assemble_rhs()
 {
   TimerOutput::Scope t(computing_timer, "assemble right hand side");
 
@@ -1265,7 +1265,7 @@ VectorValuedProblem<dim>::assemble_rhs()
 
 template <int dim>
 double
-VectorValuedProblem<dim>::compute_residual(const double alpha)
+MatrixFreeStokes<dim>::compute_residual(const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
 
@@ -1288,7 +1288,7 @@ VectorValuedProblem<dim>::compute_residual(const double alpha)
 
 template <int dim>
 void
-VectorValuedProblem<dim>::compute_update()
+MatrixFreeStokes<dim>::compute_update()
 {
   TimerOutput::Scope t(computing_timer, "compute update");
 
@@ -1362,7 +1362,7 @@ VectorValuedProblem<dim>::compute_update()
 
 template <int dim>
 void
-VectorValuedProblem<dim>::solve()
+MatrixFreeStokes<dim>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -1408,7 +1408,7 @@ VectorValuedProblem<dim>::solve()
 
 template <int dim>
 void
-VectorValuedProblem<dim>::compute_solution_norm() const
+MatrixFreeStokes<dim>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
@@ -1458,7 +1458,7 @@ VectorValuedProblem<dim>::compute_solution_norm() const
 
 template <int dim>
 void
-VectorValuedProblem<dim>::compute_l2_error() const
+MatrixFreeStokes<dim>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
@@ -1505,7 +1505,7 @@ VectorValuedProblem<dim>::compute_l2_error() const
 
 template <int dim>
 void
-VectorValuedProblem<dim>::output_results(const unsigned int cycle) const
+MatrixFreeStokes<dim>::output_results(const unsigned int cycle) const
 {
   if (triangulation.n_global_active_cells() > 1e6)
     return;
@@ -1554,7 +1554,7 @@ VectorValuedProblem<dim>::output_results(const unsigned int cycle) const
 
 template <int dim>
 void
-VectorValuedProblem<dim>::run()
+MatrixFreeStokes<dim>::run()
 {
   {
     const unsigned int n_ranks =
@@ -1687,14 +1687,14 @@ main(int argc, char *argv[])
       switch (parameters.dimension)
         {
             case 2: {
-              VectorValuedProblem<2> vector_valued_problem(parameters);
+              MatrixFreeStokes<2> vector_valued_problem(parameters);
               vector_valued_problem.run();
 
               break;
             }
 
             case 3: {
-              VectorValuedProblem<3> vector_valued_problem(parameters);
+              MatrixFreeStokes<3> vector_valued_problem(parameters);
               vector_valued_problem.run();
               break;
             }

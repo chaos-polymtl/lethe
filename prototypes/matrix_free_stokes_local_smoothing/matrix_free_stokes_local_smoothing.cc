@@ -242,7 +242,7 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   // 2D Stokes analytical solution for the Rayleigh-Kothe-ish vortex
   // u=sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y)
   // v=-cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y)
-  // p=x**2.*y**2.
+  // p=sin(a*x)*sin(a*y)
   // with a = PI or any multiple of PI
   const double a = numbers::PI;
   const double x = p[0];
