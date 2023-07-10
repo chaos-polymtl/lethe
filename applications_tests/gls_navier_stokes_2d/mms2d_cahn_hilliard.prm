@@ -4,8 +4,9 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = steady
-  set output frequency = 0
+  set method            = steady
+  set number mesh adapt = 3
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
@@ -13,7 +14,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set fluid dynamics = false
+  set fluid dynamics = true
   set cahn hilliard  = true
 end
 
@@ -37,23 +38,8 @@ subsection analytical solution
   set verbosity = verbose
 
   subsection cahn hilliard
-    set Function expression = sin(pi*x)*sin(pi*y);cos(pi*x)*cos(pi*y)
+    set Function expression = sin(pi*x)*sin(pi*y);0
   end
-end
-
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform
-end
-
-#---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity = verbose
 end
 
 #---------------------------------------------------
@@ -64,7 +50,14 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : true
-  set initial refinement = 7
+  set initial refinement = 4
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                    = uniform
 end
 
 #---------------------------------------------------
@@ -72,9 +65,30 @@ end
 #---------------------------------------------------
 
 subsection cahn hilliard
-  set well height       = 0.1
-  set mobility model    = constant
-  set mobility constant = 1
+  set well height = 1.25
+
+  subsection epsilon
+    set method = manual
+    set value  = 1
+  end
+
+  subsection mobility
+    set model             = constant
+    set mobility constant = 1
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  set enable = true
+
+  subsection cahn hilliard
+    set Function constants  = W=1.25, eps=1
+    set Function expression = 0;-4*W*(sin(pi*x)^3*sin(pi*y)^3 - sin(pi*x)*sin(pi*y)) - eps*eps*2*pi*pi*sin(pi*x)*sin(pi*y)
+  end
 end
 
 #---------------------------------------------------
@@ -109,18 +123,6 @@ subsection boundary conditions cahn hilliard
 end
 
 #---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  set enable = true
-
-  subsection cahn hilliard
-    set Function expression = 2*pi*pi*cos(pi*x)*cos(pi*y);cos(pi*x)*cos(pi*y) - 4*0.1*(sin(pi*x)^3*sin(pi*y)^3 - sin(pi*x)*sin(pi*y)) - 0.03526184897173477*0.03526184897173477*2*pi*pi*sin(pi*x)*sin(pi*y)
-  end
-end
-
-#---------------------------------------------------
 # Initial conditions
 #---------------------------------------------------
 
@@ -128,16 +130,8 @@ subsection initial conditions
   set type = nodal
 
   subsection cahn hilliard
-    set Function expression = sin(pi*x)*sin(pi*y); cos(pi*x)*cos(pi*y)
+    set Function expression = sin(pi*x)*sin(pi*y); 0
   end
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
 end
 
 # --------------------------------------------------
@@ -155,13 +149,13 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                             = extra verbose
+  set verbosity                             = verbose
   set method                                = gmres
-  set max iters                             = 20000
+  set max iters                             = 2000
   set relative residual                     = 1e-3
   set minimum residual                      = 1e-12
-  set ilu preconditioner fill               = 2
+  set ilu preconditioner fill               = 1
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
-  set max krylov vectors                    = 1000
+  set max krylov vectors                    = 2000
 end
