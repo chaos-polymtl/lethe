@@ -945,8 +945,10 @@ solve_with_gmg(SolverControl &            solver_control,
     transfers,
     [&](const auto l, auto &vec) { operators[l]->initialize_dof_vector(vec); });
 
+  ConditionalOStream pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
+
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
-    std::cout << "   MG Level " << level << ": " << dof_handlers[level].n_dofs()
+    pcout << "   MG Level " << level << ": " << dof_handlers[level].n_dofs()
               << " DoFs, " << coarse_grid_triangulations[level]->n_cells(level)
               << " cells" << std::endl;
 
