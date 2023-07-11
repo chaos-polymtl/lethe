@@ -275,21 +275,6 @@ public:
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
       }
 
-    // Gather previous velocities
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values[velocities].get_function_values(
-          previous_solutions[p], previous_velocity_values[p]);
-      }
-
-    // Gather velocity stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values[velocities].get_function_values(
-          solution_stages[s], stages_velocity_values[s]);
-      }
-
-
     // Gather pressure (values, gradient)
     fe_values[pressure].get_function_values(current_solution,
                                             this->pressure_values);
@@ -297,6 +282,31 @@ public:
                                                this->pressure_gradients);
     this->pressure_scaling_factor = pressure_scaling_factor;
 
+    // Gather previous velocities and pressure values
+    if (!this->properties_manager.density_is_constant())
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        {
+          this->fe_values[velocities].get_function_values(
+            previous_solutions[p], previous_velocity_values[p]);
+
+          // Only gather the pressure when a pressure history is necessary
+          // (compressible Navier-Stokes)
+          this->fe_values[pressure].get_function_values(
+            previous_solutions[p], previous_pressure_values[p]);
+        }
+    else
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        {
+          this->fe_values[velocities].get_function_values(
+            previous_solutions[p], previous_velocity_values[p]);
+        }
+
+    // Gather velocity stages
+    for (unsigned int s = 0; s < solution_stages.size(); ++s)
+      {
+        this->fe_values[velocities].get_function_values(
+          solution_stages[s], stages_velocity_values[s]);
+      }
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
@@ -919,6 +929,8 @@ public:
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
+  double                               density_psi;
+  double                               density_ref;
   std::vector<double>                  viscosity;
   double                               viscosity_scale;
   std::vector<double>                  thermal_expansion;
@@ -967,6 +979,7 @@ public:
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
+  std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> stages_velocity_values;
 

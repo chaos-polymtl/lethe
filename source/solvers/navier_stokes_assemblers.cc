@@ -419,8 +419,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
               if (component_i == dim)
                 {
                   const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
-
-                  local_matrix_ij += phi_p_i * div_phi_u_j;
+                  local_matrix_ij += phi_p_i * div_phi_u_j; // continuity
 
                   // PSPG GLS term
                   local_matrix_ij += tau * (strong_jac * grad_phi_p_i);

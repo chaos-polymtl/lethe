@@ -26,6 +26,7 @@
 #include <core/utilities.h>
 
 #include <solvers/gls_navier_stokes.h>
+#include <solvers/isothermal_compressible_navier_stokes_assembler.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
 
 #include <deal.II/base/work_stream.h>
@@ -477,9 +478,20 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
-              this->simulation_control));
+          if (!this->simulation_parameters.physical_properties_manager
+                 .density_is_constant())
+            {
+              this->assemblers.push_back(
+                std::make_shared<
+                  GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>>(
+                  this->simulation_control));
+            }
+          else
+            {
+              this->assemblers.push_back(
+                std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
+                  this->simulation_control));
+            }
         }
       else if (is_sdirk(this->simulation_control->get_assembly_method()))
         {
@@ -512,16 +524,29 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
                  .use_default_stabilization == true) ||
               this->simulation_parameters.stabilization.stabilization ==
                 Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-            this->assemblers.push_back(
-              std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
-                this->simulation_control));
-
+            {
+              this->assemblers.push_back(
+                std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
+                  this->simulation_control));
+            }
           else if (this->simulation_parameters.stabilization.stabilization ==
                    Parameters::Stabilization::NavierStokesStabilization::gls)
-            this->assemblers.push_back(
-              std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-                this->simulation_control));
-
+            {
+              if (!this->simulation_parameters.physical_properties_manager
+                     .density_is_constant())
+                {
+                  this->assemblers.push_back(
+                    std::make_shared<
+                      GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>>(
+                      this->simulation_control));
+                }
+              else
+                {
+                  this->assemblers.push_back(
+                    std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+                      this->simulation_control));
+                }
+            }
           else
             throw std::runtime_error(
               "Using the GLS solver with a stabilization other than the pspg_supg or gls "
