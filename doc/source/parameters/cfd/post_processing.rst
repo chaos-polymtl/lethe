@@ -61,7 +61,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate VOF barycenter         = false
     set VOF barycenter name              = vof_barycenter_information
     
-      # Cahn-Hilliard statistics
+    # Cahn-Hilliard statistics
     set calculate phase statistics       = true
     set phase statistics name            = phase_statistics
 

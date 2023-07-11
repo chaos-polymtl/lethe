@@ -17,6 +17,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set tracer 			= false
 
     # Multiphase flow
+    # Volume of Fluid method
     set VOF 			= false
     
     #Cahn-Hilliard equations
