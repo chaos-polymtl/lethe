@@ -8,27 +8,28 @@ This subsection specifies the characteristics of the finite element method used 
 
    subsection FEM
      # interpolation order pressure
-     set pressure order    = 1
-  
+     set pressure order = 1
+
      # interpolation order velocity
-     set velocity order    = 1
- 
+     set velocity order = 1
+
      # interpolation order temperature
      set temperature order = 1
- 
+
      # interpolation order tracer
-     set tracer order      = 1
-   
+     set tracer order = 1
+
      # interpolation order vof
-     set VOF order         = 1
-     
+     set VOF order = 1
+
      #interpolation order cahn hilliard
-     set phase ch order    = 1
-     set potential ch order    = 1
-     
+     set phase ch order     = 1
+     set potential ch order = 1
+
      # Apply high order mapping everywhere
-     set qmapping all      = false
+     set qmapping all = false
    end
+
 
 * ``velocity order`` specifies the interpolation order for velocity.
 
