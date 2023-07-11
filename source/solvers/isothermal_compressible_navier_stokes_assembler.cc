@@ -116,6 +116,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
+          const unsigned int component_i = scratch_data.components[i];
+
           const auto &phi_u_i           = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i      = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i       = scratch_data.div_phi_u[q][i];
@@ -131,9 +133,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+              const unsigned int component_j = scratch_data.components[j];
+
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
 
               const auto &phi_p_j =
                 pressure_scaling_factor * scratch_data.phi_p[q][j];
@@ -142,23 +144,52 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
+              // $$\nabla p$$ from the momentum equation
               double local_matrix_ij =
-                // continuity
-                phi_p_i * density_psi * div_phi_u_j * pressure +
-                phi_p_i * density_psi * velocity * grad_phi_p_j +
-                phi_p_i * density * div_phi_u_j +
-                // momentum
-                phi_u_i * density * velocity_gradient_x_phi_u_j[j] +
-                phi_u_i * density * grad_phi_u_j_x_velocity[j] -
-                div_phi_u_i * phi_p_j +
-                dynamic_viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
-                phi_u_i * mass_source * phi_u_j;
+                component_j == dim ? -div_phi_u_i * phi_p_j : 0;
 
-              // PSPG GLS term
-              local_matrix_ij += tau / density * (strong_jac * grad_phi_p_i);
+              // continuity
+              if (component_i == dim)
+                {
+                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
 
-              // LSIC GLS term
-              local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
+                  local_matrix_ij +=
+                    // $$\psi \mathbf{u} \nabla p$$
+                    phi_p_i * density_psi * div_phi_u_j * pressure +
+                    phi_p_i * density_psi * velocity * grad_phi_p_j +
+
+                    // $$\rho \nabla \cdot \mathbf{u}$$
+                    phi_p_i * density * div_phi_u_j;
+
+                  // PSPG GLS term
+                  local_matrix_ij +=
+                    tau / density * (strong_jac * grad_phi_p_i);
+                }
+
+              // momentum
+              if (component_i < dim && component_j < dim)
+                {
+                  const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+                  const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+
+                  local_matrix_ij +=
+                    // $$\rho (\mathbf{u} \cdot \nabla) \mathbf{u}$$
+                    phi_u_i * density * velocity_gradient_x_phi_u_j[j] +
+                    phi_u_i * density * grad_phi_u_j_x_velocity[j];
+
+                  // LSIC GLS term
+                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
+
+                  if (component_i == component_j)
+                    {
+                      local_matrix_ij +=
+                        // weak form of $$\nabla^{2} \mathbf{u}$$
+                        dynamic_viscosity * (grad_phi_u_j[component_j] *
+                                             grad_phi_u_i[component_i]) +
+                        // volume source
+                        phi_u_i * mass_source * phi_u_j;
+                    }
+                }
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the

@@ -26,11 +26,11 @@
 
 
 /**
- * @brief Class that assembles the core of the Navier-Stokes equation.
+ * @brief Class that assembles the core of the isothermal compressible Navier-Stokes equation.
  * This class assembles the weak form of:
- * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
- * =0 $$ with a full GLS stabilization including the laplacian of the test
- * function.
+ * $$\nabla \cdot (\rho \mathbf{u}) + \rho \mathbf{u} \cdot \nabla \mathbf{u} -
+ * \nabla p - \mu \nabla^2 \mathbf{u} = 0 $$ with a full GLS stabilization
+ * including the laplacian of the test function.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -71,9 +71,10 @@ public:
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
- * integration for the Navier Stokes equations. For example, if a BDF1 scheme is
- * chosen, the following is assembled
- * $$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}
+ * integration for the isothermal compressible Navier Stokes equations. For
+ * example, if a BDF1 scheme is chosen, the following is assembled
+ * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t} +
+ * \frac{(\psi \mathbf{p})^{t+\Delta t}-(\psi \mathbf{p})^{t}{\Delta t} $$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
