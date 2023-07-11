@@ -920,6 +920,13 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
 
+      displacement.resize(
+        this->particle_handler.get_max_local_particle_index());
+      force.resize(displacement.size());
+      torque.resize(displacement.size());
+
+      this->particle_handler.exchange_ghost_particles(true);
+
       if (has_disabled_contacts && !this->simulation_control->is_at_start())
         {
           // Update the active and ghost cells set (this should be done after a
@@ -934,13 +941,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             (*this->triangulation).n_active_cells(),
             this->mpi_communicator);
         }
-
-      displacement.resize(
-        this->particle_handler.get_max_local_particle_index());
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
-
-      this->particle_handler.exchange_ghost_particles(true);
 
       // Updating moment of inertia container
       update_moment_of_inertia(this->particle_handler, MOI);
