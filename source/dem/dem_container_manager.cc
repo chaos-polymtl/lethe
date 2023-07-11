@@ -147,6 +147,7 @@ template <int dim>
 void
 DEMContainerManager<dim>::update_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler,
+  const bool                             load_balance_step,
   const bool                             has_periodic_boundaries)
 {
   // Update the iterators to local particles in a map of particles
@@ -157,14 +158,16 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::local_particle_particle>(local_adjacent_particles,
-                                          particle_container);
+                                          particle_container,
+                                          load_balance_step);
 
   // Update contact containers for ghost particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::ghost_particle_particle>(ghost_adjacent_particles,
-                                          particle_container);
+                                          particle_container,
+                                          load_balance_step);
 
   if (has_periodic_boundaries)
     {
@@ -174,7 +177,9 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
-        local_periodic_adjacent_particles, particle_container);
+        local_periodic_adjacent_particles,
+        particle_container,
+        load_balance_step);
 
       // Update contact containers for local-ghost periodic particle-particle
       // pairs in contact
@@ -182,7 +187,9 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
-        ghost_periodic_adjacent_particles, particle_container);
+        ghost_periodic_adjacent_particles,
+        particle_container,
+        load_balance_step);
 
       // Update contact containers for ghost-local periodic particle-particle
       // pairs in contact
@@ -190,7 +197,9 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_local_periodic_particle_particle>(
-        ghost_local_periodic_adjacent_particles, particle_container);
+        ghost_local_periodic_adjacent_particles,
+        particle_container,
+        load_balance_step);
     }
 
   // Update contact containers for particle-wall pairs in contact

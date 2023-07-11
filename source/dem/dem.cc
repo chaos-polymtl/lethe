@@ -1299,7 +1299,7 @@ DEMSolver<dim>::solve()
           // Updates the iterators to particles in local-local contact
           // containers
           container_manager.update_local_particles_in_cells(
-            particle_handler, has_periodic_boundaries);
+            particle_handler, load_balance_step, has_periodic_boundaries);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold

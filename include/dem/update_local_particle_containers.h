@@ -63,7 +63,8 @@ void
 update_contact_container_iterators(
   pairs_structure &pairs_in_contact,
   typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    &particle_container);
+    &        particle_container,
+  const bool load_balance_step = false);
 
 
 #endif /* locate_local_particles_h */

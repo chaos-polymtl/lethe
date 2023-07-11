@@ -116,6 +116,7 @@ public:
   void
   update_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler,
+    const bool                             load_balance_step,
     const bool                             has_periodic_boundaries = false);
 
   /**
