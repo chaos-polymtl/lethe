@@ -288,8 +288,11 @@ DEMSolver<dim>::cell_weight(
     {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
+      case parallel::distributed::Triangulation<dim>::CELL_REFINE:
+
 #else
       case CellStatus::cell_will_persist:
+      case CellStatus::cell_will_be_refined:
 #endif
         // If CELL_PERSIST, do as CELL_REFINE
         {
@@ -300,10 +303,11 @@ DEMSolver<dim>::cell_weight(
         }
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
 #else
       case CellStatus::cell_invalid:
-#endif
         break;
+#endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
         case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
@@ -373,14 +377,11 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
     {
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
-#else
-      case dealii::CellStatus::cell_will_persist:
-#endif
-        // If CELL_PERSIST, do as CELL_REFINE
-#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
         case parallel::distributed::Triangulation<dim>::CELL_REFINE:
 #else
+      case dealii::CellStatus::cell_will_persist:
         case dealii::CellStatus::cell_will_be_refined:
+
 #endif
         {
           const unsigned int n_particles_in_cell =
@@ -391,10 +392,11 @@ DEMSolver<dim>::cell_weight_with_mobility_status(
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
       case parallel::distributed::Triangulation<dim>::CELL_INVALID:
+        break;
 #else
       case dealii::CellStatus::cell_invalid:
-#endif
         break;
+#endif
 
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
         case parallel::distributed::Triangulation<dim>::CELL_COARSEN:
@@ -643,7 +645,9 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
           &cell,
         const typename parallel::distributed::Triangulation<dim>::CellStatus
-          status) -> unsigned int { return this->cell_weight(cell, status); });
+          status) -> unsigned int {
+      return this->cell_weight_with_mobility_status(cell, status);
+    });
 
 #else
   triangulation.signals.weight.connect(
@@ -654,7 +658,7 @@ DEMSolver<dim>::check_load_balance_with_disabled_contacts()
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
           &cell,
         const CellStatus status) -> unsigned int {
-      return this->cell_weight(cell, status);
+      return this->cell_weight_with_mobility_status(cell, status);
     });
 #endif
 
