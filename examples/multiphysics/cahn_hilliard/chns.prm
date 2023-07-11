@@ -10,7 +10,7 @@ subsection simulation control
   set output frequency = 1
   set output path      = ./output/
   set time end         = 20
-  set time step        = 0.1
+  set time step        = 0.01
 end
 
 #---------------------------------------------------
@@ -41,7 +41,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : true
-  set initial refinement = 6
+  set initial refinement = 5
 end
 
 #---------------------------------------------------
@@ -49,7 +49,7 @@ end
 #---------------------------------------------------
 
 subsection cahn hilliard
-  set well height = 1
+  set well height = 2.5
   subsection epsilon
     set method = automatic
   end
@@ -155,7 +155,7 @@ subsection post-processing
   # Multiphysics post-processing
   #---------------------------------------------------
   # Cahn-Hilliard statistics
-  set calculate phase statistics = true
+  set calculate phase statistics = false
   set phase statistics name      = phase_statistics
 end
 

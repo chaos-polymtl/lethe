@@ -732,12 +732,6 @@ namespace Parameters
                         "0",
                         Patterns::Double(),
                         "k_A1 parameter for linear conductivity model");
-
-      prm.declare_entry("mobility model",
-                        "constant",
-                        Patterns::Selection("constant|quadratic|quartic"),
-                        "Mobility model for the Cahn-Hilliard equations"
-                        "Choices are <constant|quadratic|quartic>.");
     }
     prm.leave_subsection();
   }

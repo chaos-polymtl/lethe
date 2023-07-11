@@ -649,7 +649,7 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
 
     prm.enter_subsection("mobility");
     {
-      const std::string op = prm.get("mobility model");
+      const std::string op = prm.get("model");
       if (op == "constant")
         mobility_model = Parameters::MobilityModel::constant;
       else if (op == "quartic")
