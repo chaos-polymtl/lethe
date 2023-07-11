@@ -486,7 +486,7 @@ CFDDEMSolver<dim>::cell_weight(
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
   else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
 #else
-  else if (status == CellStatus::cell_will_be_coarsened)
+  else if (status == CellStatus::children_will_be_coarsened)
 #endif
     {
       unsigned int n_particles_in_cell = 0;
