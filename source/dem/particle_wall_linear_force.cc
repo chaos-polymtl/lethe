@@ -285,7 +285,7 @@ ParticleWallLinearForce<dim>::calculate_particle_floating_wall_contact_force(
                       // Define the total force of contact, properties of
                       // particle as local parameters
                       auto &particle            = contact_info.particle;
-                      auto &particle_properties = particle->get_properties();
+                      auto  particle_properties = particle->get_properties();
 
                       const Point<3> &projection_point =
                         projection_points[particle_counter];

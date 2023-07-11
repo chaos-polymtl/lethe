@@ -22,7 +22,7 @@ find_particle_contact_detection_step(
   // Updating displacement
   for (auto &particle : particle_handler)
     {
-      auto &particle_properties   = particle.get_properties();
+      auto  particle_properties   = particle.get_properties();
       auto &particle_displacement = displacement[particle.get_local_index()];
 
       // Finding displacement of each particle during last step
