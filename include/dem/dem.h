@@ -97,14 +97,14 @@ private:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
+      &                                                                  cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 #  else
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
+      &              cell,
     const CellStatus status) const;
 #  endif
 
@@ -131,14 +131,14 @@ private:
   unsigned int
   cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                                                                        &cell,
+      &                                                                  cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
 #  else
   unsigned int
   cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-                    &cell,
+      &              cell,
     const CellStatus status) const;
 #  endif
 
@@ -209,7 +209,7 @@ private:
   void
   update_moment_of_inertia(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<double>                     &MOI);
+    std::vector<double> &                    MOI);
 
 
   /**
