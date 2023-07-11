@@ -79,9 +79,8 @@ public:
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
-      &                                                                  cell,
-    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
-    const;
+      &              cell,
+    const CellStatus status) const;
 
   /**
    * @brief Manages the call to the load balancing. Returns true if

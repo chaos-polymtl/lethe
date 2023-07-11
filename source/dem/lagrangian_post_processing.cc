@@ -98,7 +98,7 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
                    particles_in_cell_iterator != particles_in_cell.end();
                    ++particles_in_cell_iterator)
                 {
-                  auto &particle_properties =
+                  auto particle_properties =
                     particles_in_cell_iterator->get_properties();
 
                   for (int d = 0; d < dim; ++d)
@@ -153,7 +153,7 @@ LagrangianPostProcessing<dim>::calculate_cell_average_particles_velocity(
            particles_in_cell_iterator != particles_in_cell.end();
            ++particles_in_cell_iterator)
         {
-          auto &particle_properties =
+          auto particle_properties =
             particles_in_cell_iterator->get_properties();
 
           for (int d = 0; d < dim; ++d)

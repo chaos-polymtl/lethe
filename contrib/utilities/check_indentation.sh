@@ -32,11 +32,7 @@
 # a failure code for a pull request if this script returns a failure.
 #
 
-if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then 
-	echo "Running indentation test on master merge."
-else 
-	echo "Running indentation test on Pull Request #${TRAVIS_PULL_REQUEST}"
-fi
+echo "Running indentation test"
 
 ./contrib/utilities/indent-all
 git diff
