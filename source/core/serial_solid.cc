@@ -166,9 +166,11 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
       if (param->solid_mesh.simplex)
-        {
+        { // Grid creation
           GridIn<dim, spacedim> grid_in;
+          // Attach triangulation
           grid_in.attach_triangulation(*solid_tria);
+          // Read input gmsh file
           std::ifstream input_file(param->solid_mesh.file_name);
 
           grid_in.read_msh(input_file);
@@ -218,11 +220,10 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
       "Unsupported mesh type - solid mesh will not be created");
 
   // Translate the triangulation
-  if (param->solid_mesh.translate)
-    GridTools::shift(Point<spacedim>(param->solid_mesh.delta_x,
-                                     param->solid_mesh.delta_y,
-                                     param->solid_mesh.delta_z),
-                     *solid_tria);
+  GridTools::shift(Point<spacedim>(param->solid_mesh.translate[0],
+                                   param->solid_mesh.translate[1],
+                                   param->solid_mesh.translate[2]),
+                   *solid_tria);
   if (param->solid_mesh.rotate)
     {
       rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);

@@ -1513,7 +1513,6 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-
   void
   Mesh::declare_parameters(ParameterHandler &prm)
   {
@@ -1582,6 +1581,10 @@ namespace Parameters
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
 
+      prm.declare_entry("initial translation",
+                        "0, 0, 0",
+                        Patterns::List(Patterns::Double()),
+                        "Component of the desired translation of the mesh");
 
       prm.declare_entry(
         "translate",
@@ -1661,11 +1664,10 @@ namespace Parameters
         prm.get_bool("expand particle-wall contact search");
       target_size = prm.get_double("target size");
 
-
-      translate = prm.get_bool("translate");
-      delta_x   = prm.get_double("delta_x");
-      delta_y   = prm.get_double("delta_y");
-      delta_z   = prm.get_double("delta_z");
+      std::string              translation_str = prm.get("initial translation");
+      std::vector<std::string> translate_str_list =
+        Utilities::split_string_list(translation_str);
+      translate = Utilities::string_to_double(translate_str_list);
 
       rotate = prm.get_bool("rotate");
       axis   = prm.get_integer("axis");

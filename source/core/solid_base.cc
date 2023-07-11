@@ -214,11 +214,10 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
       "Unsupported mesh type - solid mesh will not be created");
 
   // Translate the triangulation
-  if (param->solid_mesh.translate)
-    GridTools::shift(Point<spacedim>(param->solid_mesh.delta_x,
-                                     param->solid_mesh.delta_y,
-                                     param->solid_mesh.delta_z),
-                     *solid_tria);
+  GridTools::shift(Point<spacedim>(param->solid_mesh.translate[0],
+                                   param->solid_mesh.translate[1],
+                                   param->solid_mesh.translate[2]),
+                   *solid_tria);
   // Rotate the triangulation
   if (param->solid_mesh.rotate)
     {

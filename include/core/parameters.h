@@ -923,10 +923,7 @@ namespace Parameters
     bool expand_particle_wall_contact_search;
 
     // Grid displacement at initiation
-    bool   translate;
-    double delta_x;
-    double delta_y;
-    double delta_z;
+    std::vector<double> translate;
 
     // Grid rotation at initiation
     bool   rotate;
