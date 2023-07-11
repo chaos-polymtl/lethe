@@ -135,7 +135,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &              cell,
+                        &cell,
         const CellStatus status) -> unsigned int {
       return this->cell_weight(cell, status);
     });
@@ -289,7 +289,7 @@ DEMSolver<dim>::cell_weight(
 #if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
       case parallel::distributed::Triangulation<dim>::CELL_PERSIST:
 #else
-      case CellStatus::cell_will_be_refined:
+      case CellStatus::cell_will_persist:
 #endif
         // If CELL_PERSIST, do as CELL_REFINE
         {
@@ -737,7 +737,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
