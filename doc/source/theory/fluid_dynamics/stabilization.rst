@@ -17,9 +17,9 @@ This approach consists of two new terms that are added to the classic weak formu
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k =0
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_l \partial_l v_k \right) \mathrm{d}\Omega_k =0
 
-This formulation is consistent as the added terms involve the residual and if we substitute the exact solution, the stabilization terms vanish. In the literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters. In the case of a transient problem:
+This formulation is consistent as the added terms involve the residual and if we substitute the exact solution, the stabilization terms vanish. In the literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1992) <https://doi.org/10.1016/0045-7825(92)90141-6>`_ for both stabilization parameters. In the case of a transient problem:
 
 .. math::
 
@@ -70,9 +70,9 @@ The GLS formulation is built as a generalization of the stabilization procedure 
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k 
+  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_l \partial_l v_k \right) \mathrm{d}\Omega_k
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l v_k \right) \mathrm{d}\Omega_k  
+  & - \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l v_k \right) \mathrm{d}\Omega_k
   \\
   & + \sum_{k} \int_{\Omega_k} \tau_{LSIC} (\partial_l v_l) (\partial_l u_l) \mathrm{d}\Omega_k = 0
 
