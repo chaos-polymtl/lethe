@@ -181,17 +181,16 @@ This subsection controls the post-processing other than the forces and torque on
       \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
   where :math:`\psi` is the filtered phase indicator.
+  
+  * ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution to the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation.
+  
+    .. warning::
+
+        Do not forget to ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+
+    * ``phase statistics name``: output filename for phase statistics calculations.
 
 
-* ``temperature statistics name``: output filename for temperature statistics calculations.
-
-    .. admonition:: Example of temperature statistics table:
-
-        .. code-block:: text
-
-             time  min    max    average std-dev 
-            0.0000 0.0000 3.9434  0.1515  0.6943 
-            0.2000 2.5183 4.9390  3.3917  0.7229 
 
 
         
