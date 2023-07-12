@@ -22,6 +22,7 @@ jobs:
         run: |
           pip install sphinx==${{ env.SPHINX_VERSION }}
           pip install sphinx-copybutton
+          pip install graphviz
           pip install -r doc/requirements.txt
 
       - name: Build HTML
