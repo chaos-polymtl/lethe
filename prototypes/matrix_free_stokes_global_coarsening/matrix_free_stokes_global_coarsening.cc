@@ -756,8 +756,8 @@ struct MultigridParameters
   struct
   {
     std::string  type            = "gmres_with_amg";
-    unsigned int maxiter         = 1000;
-    double       abstol          = 1e-20;
+    unsigned int maxiter         = 2000;
+    double       abstol          = 1e-14;
     double       reltol          = 1e-4;
     unsigned int smoother_sweeps = 1;
     unsigned int n_cycles        = 1;
@@ -767,8 +767,8 @@ struct MultigridParameters
   struct
   {
     std::string  type         = "relaxation";
-    unsigned int n_iterations = 1;
-    double       relaxation   = 0.7;
+    unsigned int n_iterations = 10;
+    double       relaxation   = 0.5;
   } smoother;
 };
 
@@ -1296,10 +1296,12 @@ MatrixFreeStokes<dim>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl                                           solver_control(1000,
-                               std::max(1.e-8 * system_rhs.l2_norm(), 1e-14),
+  SolverControl                                           solver_control(10000,
+                               std::max(1.e-4 * system_rhs.l2_norm(), 1e-14),
                                true,
                                true);
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>>::AdditionalData gmres_parameters;
+  gmres_parameters.max_n_tmp_vectors=1000;
   SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
 
   newton_update = 0.0;
