@@ -160,7 +160,7 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux_ch`` 
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
-    * ``noflux_ch`` (default) so that no phase leave the simulation domain.
+    * ``noflux`` (default) so that no phase leave the simulation domain.
     * ``dirichlet_phase_order`` to impose a given phase order parameter of ``phase value`` at the boundary.
-    * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It is the inner angle of contact.
+    * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact.
 
