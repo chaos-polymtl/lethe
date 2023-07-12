@@ -144,7 +144,6 @@ public:
     return tracer_diffusivity[calculate_global_id(fluid_id, material_id)];
   }
 
-
   // Vector Getters for the physical property models
   std::vector<std::shared_ptr<DensityModel>>
   get_density_vector() const

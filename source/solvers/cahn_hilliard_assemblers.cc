@@ -12,7 +12,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties
-
   const double well_height       = this->ch_parameters.well_height;
   const double mobility_constant = this->ch_parameters.mobility_constant;
   double       epsilon           = 0.0;

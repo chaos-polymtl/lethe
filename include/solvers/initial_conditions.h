@@ -100,7 +100,7 @@ namespace Parameters
     // VOF
     Functions::ParsedFunction<dim> VOF;
     // Bool to apply a Galerkin projection (with a diffusion term) to the VOF
-    // ininitial condition
+    // initial condition
     bool   enable_projection_step;
     double projection_step_diffusion_factor;
 

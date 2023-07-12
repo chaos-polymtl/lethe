@@ -642,7 +642,6 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
           epsilon_set_method = Parameters::EpsilonSetStrategy::manual;
         }
 
-      // Surface tension gradient
       epsilon = prm.get_double("value");
     }
     prm.leave_subsection();

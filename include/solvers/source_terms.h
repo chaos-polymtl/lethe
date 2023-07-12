@@ -111,10 +111,9 @@ namespace SourceTerms
     prm.leave_subsection();
 
     prm.enter_subsection("cahn hilliard");
-    tracer_source.declare_parameters(prm);
+    cahn_hilliard_source.declare_parameters(prm);
     prm.set("Function expression", "0; 0;");
     prm.leave_subsection();
-
 
     prm.leave_subsection();
   }

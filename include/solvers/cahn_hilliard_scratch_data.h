@@ -17,6 +17,7 @@
  */
 
 #include <core/multiphysics.h>
+#include <solvers/multiphysics_interface.h>
 
 #include <solvers/physical_properties_manager.h>
 
@@ -172,7 +173,8 @@ public:
          const VectorType &                                    current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
-         Function<dim> *                source_function)
+         Function<dim> *                source_function,
+         Parameters::CahnHilliard       ch_parameters)
   {
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
@@ -192,8 +194,6 @@ public:
       this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_ch.degree;
     else if (dim == 3)
       this->cell_size = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_ch.degree;
-
-
 
     // Gather Phi and eta (values, gradient and laplacian)
     this->fe_values_ch[phase_order].get_function_values(
@@ -267,7 +267,7 @@ public:
       }
 
     this->is_boundary_cell = cell->at_boundary(); //The attribute needs to be updated because the assembler for the angle of contact boundary condition needs to know if the cell is at the boundary
-    if (cell->at_boundary())
+    if (this->is_boundary_cell)
       {
         n_faces          = cell->n_faces();
         is_boundary_face = std::vector<bool>(n_faces, false);
@@ -333,18 +333,14 @@ public:
   calculate_physical_properties();
 
   // Physical properties
-  // TODO ADD Cahn-Hilliard properties
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   dealii::types::material_id           material_id;
-  double                               well_height;
   double                               epsilon;
-  double                               mobility_constant;
-  double                               angle_of_contact;
   std::vector<double>                  density;
   std::vector<double>                  viscosity;
 
-  // Auxiliary property vector for VOF simulations
+  // Auxiliary property vector for CH simulations
   std::vector<double> density_0;
   std::vector<double> viscosity_0;
 

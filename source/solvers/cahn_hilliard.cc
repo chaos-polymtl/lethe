@@ -93,7 +93,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
-  if (!cell->is_locally_owned())
+  if (!copy_data.cell_is_local)
     return;
 
   auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
@@ -103,7 +103,8 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                       this->evaluation_point,
                       this->previous_solutions,
                       this->solution_stages,
-                      &source_term);
+                      &source_term),
+                      this->simulation_parameters.multiphysics.ch_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -132,7 +133,6 @@ CahnHilliard<dim>::assemble_local_system_matrix(
       assembler->assemble_matrix(scratch_data, copy_data);
     }
 
-
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
@@ -155,7 +155,6 @@ template <int dim>
 void
 CahnHilliard<dim>::assemble_system_rhs()
 {
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
   this->system_rhs = 0;
   setup_assemblers();
 
@@ -190,7 +189,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   StabilizedMethodsCopyData &                           copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
-  if (!cell->is_locally_owned())
+  if (!copy_data.cell_is_local)
     return;
 
   auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
@@ -200,7 +199,8 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                       this->evaluation_point,
                       this->previous_solutions,
                       this->solution_stages,
-                      &source_term);
+                      &source_term),
+                      this->simulation_parameters.multiphysics.ch_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -258,11 +258,8 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
   solution_names.push_back("chemical_potential");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation;
-  data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
-  data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
+    data_component_interpretation(
+     2, DataComponentInterpretation::component_is_scalar);
 
   data_out.add_data_vector(dof_handler,
                            present_solution,
@@ -308,7 +305,7 @@ CahnHilliard<dim>::calculate_L2_error()
           fe_values[chemical_potential].get_function_values(
             evaluation_point, local_chemical_potential_values);
 
-          // Get the exact solution at all gauss points
+          // Get the exact solution at all Gauss points
           exact_solution.vector_value_list(fe_values.get_quadrature_points(),
                                            q_exactSol);
 
@@ -493,9 +490,9 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error phase order : " << phase_order_error
+          this->pcout << "L2 error phase order: " << phase_order_error
                       << std::endl;
-          this->pcout << "L2 error chemical_potential : " << potential_error
+          this->pcout << "L2 error chemical potential: " << potential_error
                       << std::endl;
         }
     }
@@ -688,7 +685,7 @@ CahnHilliard<dim>::setup_dofs()
         ComponentMask mask(2, true);
         mask.set(1, false);
 
-        // Dirichlet condition : imposed phase_order at i_bc
+        // Dirichlet condition: imposed phase_order at i_bc
         // To impose the boundary condition only on the phase order, a component
         // mask is used at the end of the interpolate_boundary_values function
         if (this->simulation_parameters.boundary_conditions_cahn_hilliard
