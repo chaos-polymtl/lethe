@@ -1643,9 +1643,9 @@ namespace Parameters
       std::string              axis_str = prm.get("initial rotation axis");
       std::vector<std::string> axis_str_list =
         Utilities::split_string_list(axis_str);
-      axis  = (Utilities::string_to_double(axis_str_list)[0],
-               Utilities::string_to_double(axis_str_list)[1],
-               Utilities::string_to_double(axis_str_list)[2]);
+      axis  = Tensor<1,3>({Utilities::string_to_double(axis_str_list[0]),
+               Utilities::string_to_double(axis_str_list[1]),
+               Utilities::string_to_double(axis_str_list[2])});
       angle = prm.get_double("initial rotation angle");
     }
     prm.leave_subsection();
