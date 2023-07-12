@@ -14,12 +14,12 @@ Multiphysics
 .. graphviz:: 
 
     digraph multiphysics_diagram {
-      graph [bgcolor="transparent", align=true];
+      graph [bgcolor="transparent", align=true, ranksep=1.5];
       node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
       edge [color=royalblue];
       rankdir="LR";
       size = "9,9";
-      
+
       multiphysics [label="Multiphysics", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/multiphysics.html"];
 
       multiphysics_1 [label="VOF", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/vof.html"];  

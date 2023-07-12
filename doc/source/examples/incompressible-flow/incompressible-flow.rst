@@ -23,14 +23,24 @@ Incompressible flow
 .. graphviz:: 
 
     digraph incompressible_diagram {
-      graph [bgcolor="transparent", align=true];
+      graph [bgcolor="transparent", align=true, ranksep=1.5];
       node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
       edge [color=royalblue];
       rankdir="LR";
       size = "9,9";
 
+      {
+      node [color=none];
+      image_1 [image="./map_images/3d-mixer-using-single-rotating-frame.png", label="", fixedsize=true, width=2, height=3]
+      }
+
       incompressible_flow [label="Incompressible \nflow", href="https://lethe-cfd.github.io/lethe/examples/incompressible-flow/incompressible-flow.html"];
 
+      {
+      node [color=none];
+      image_2 [image="./map_images/lid-driven-cavity.png", label="", fixedsize=true, width=3, height=3]
+      }
+      
       incompressible_1 [label="2D"]; 
 
       incompressible_1_1 [label="Lid-driven cavity flow",href="https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html"]; 
@@ -59,8 +69,8 @@ Incompressible flow
 
       incompressible_2_4 [label="Mixer with pitched-blade turbine impeller \nusing Nitsche immersed boundary", href="https://lethe-cfd.github.io/lethe/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html", tooltip="Mixer with pitched-blade turbine impeller using Nitsche immersed boundary"];
 
-      incompressible_flow -> incompressible_1:w;
-      incompressible_flow -> incompressible_2:w;
+      incompressible_flow:e -> incompressible_1:w;
+      incompressible_flow:e -> incompressible_2:w;
 
       incompressible_1 -> incompressible_1_1:w;
       incompressible_1 -> incompressible_1_2:w;
@@ -74,4 +84,5 @@ Incompressible flow
       incompressible_2 -> incompressible_2_2:w;
       incompressible_2 -> incompressible_2_3:w;
       incompressible_2 -> incompressible_2_4:w;
+
     }
