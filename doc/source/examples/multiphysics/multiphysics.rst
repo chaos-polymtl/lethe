@@ -24,7 +24,7 @@ Multiphysics
 
       multiphysics_1 [label="VOF", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/vof.html"];  
 
-      multiphysics_1_1 [label="Dam break", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/dam-break/dam-break.html"];  
+      multiphysics_1_1 [label="Dam-break", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/dam-break/dam-break.html"];  
 
       multiphysics_1_2 [label="Rayleigh-Taylor instability", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html"];  
 
@@ -34,7 +34,7 @@ Multiphysics
 
       multiphysics_1_5 [label="Sloshing in a rectangular tank", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/sloshing-in-rectangular-tank/sloshing-in-rectangular-tank.html"];  
 
-      multiphysics_1_6 [label="3D Dam break with an obstacle", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/3d-dam-break/3d-dam-break.html"];  
+      multiphysics_1_6 [label="3D Dam-break with an obstacle", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/3d-dam-break/3d-dam-break.html"];  
 
       multiphysics_2 [label="Heat transfer", href="https://lethe-cfd.github.io/lethe/examples/multiphysics/heat-transfer.html"];  
 

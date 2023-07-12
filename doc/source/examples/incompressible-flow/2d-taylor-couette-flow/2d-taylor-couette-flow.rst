@@ -1,5 +1,5 @@
 ==================================
-2D Taylor-Couette flow
+Taylor-Couette flow
 ==================================
 
 This example showcases another classical fluid mechanics problem, the taylor-couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.

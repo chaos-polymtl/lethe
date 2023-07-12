@@ -1,5 +1,5 @@
 ===============================
-3D Dam Break With an Obstacle
+3D Dam-break with an obstacle
 ===============================
 
 This example simulates a dam break experiment from the Maritime Research Institute Netherlands (MARIN) `[1] <https://www.spheric-sph.org/tests/test-02>`_.

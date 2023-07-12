@@ -1,5 +1,5 @@
 ******************************
-Sharp Immersed Boundary Solver
+Sharp immersed boundary solver
 ******************************
 
 .. toctree::

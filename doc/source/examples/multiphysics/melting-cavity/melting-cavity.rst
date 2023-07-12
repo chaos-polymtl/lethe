@@ -1,5 +1,5 @@
 ==========================
-Melting Cavity
+Melting cavity
 ==========================
 
 This example simulates a `two-dimensional gallium melting cavity`_. 

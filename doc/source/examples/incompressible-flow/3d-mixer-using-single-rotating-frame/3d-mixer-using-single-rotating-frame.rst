@@ -1,5 +1,5 @@
 ========================================================
-3D Ribbon mixer using a single rotating reference frame
+Ribbon mixer using a single rotating reference frame
 ========================================================
 
 When designing an industrial mixer, it is essential to evaluate the power consumed by the agitator. To do so, we usually refer to graphs correlating the power number (:math:`N_p`) as a function of the Reynolds number (:math:`Re`). :math:`N_p` is a dimensionless number that relates the power consumed by the agitator to the geometry of the system, the speed of the agitator, and the properties of the material being mixed (density :math:`\rho` and viscosity :math:`\mu`). In this example, using a single rotating frame (SRF) model, we simulate a fluid being mixed in a double helical ribbon mixer for different flow conditions (different values of :math:`Re`) to generate a numerical :math:`N_p` vs :math:`Re` curves.
