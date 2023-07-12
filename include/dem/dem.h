@@ -93,11 +93,20 @@ private:
    * repartitions the domain between ranks (the connection is created inside the
    * particles_generation() function of this class).
    */
+#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  unsigned int
+  cell_weight(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+#  else
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
       &              cell,
     const CellStatus status) const;
+#  endif
 
   /**
    * Similar to the cell_weight() function, this function is used when the cell
@@ -117,11 +126,22 @@ private:
    *
    * @param mobility_status The mobility status of the cell
    */
+
+#  if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  unsigned int
+  cell_weight_with_mobility_status(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+#  else
   unsigned int
   cell_weight_with_mobility_status(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
       &              cell,
     const CellStatus status) const;
+#  endif
+
 
   /**
    * Finds contact search steps for constant contact search method

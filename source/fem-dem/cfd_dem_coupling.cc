@@ -432,11 +432,22 @@ CFDDEMSolver<dim>::read_checkpoint()
   this->particle_handler.deserialize();
 }
 
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+template <int dim>
+unsigned int
+CFDDEMSolver<dim>::cell_weight(
+  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+  const
+#else
 template <int dim>
 unsigned int
 CFDDEMSolver<dim>::cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const CellStatus status) const
+#endif
+
+
 {
   // Assign no weight to cells we do not own.
   if (!cell->is_locally_owned())
@@ -458,14 +469,25 @@ CFDDEMSolver<dim>::cell_weight(
   // should have the status CELL_PERSIST. However this function can also
   // be used to distribute load during refinement, therefore we consider
   // refined or coarsened cells as well.
+
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
+      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
+#else
   if (status == CellStatus::cell_will_persist ||
       status == CellStatus::cell_will_be_refined)
+#endif
+
     {
       const unsigned int n_particles_in_cell =
         this->particle_handler.n_particles_in_cell(cell);
       return n_particles_in_cell * particle_weight;
     }
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
+#else
   else if (status == CellStatus::children_will_be_coarsened)
+#endif
     {
       unsigned int n_particles_in_cell = 0;
 
@@ -1374,6 +1396,22 @@ CFDDEMSolver<dim>::manage_triangulation_connections()
   if (dem_parameters.model_parameters.load_balance_method !=
       Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
     {
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+      parallel_triangulation->signals.weight.connect(
+        [](const typename Triangulation<dim>::cell_iterator &,
+           const typename Triangulation<dim>::CellStatus) -> unsigned int {
+          return 1000;
+        });
+
+      parallel_triangulation->signals.weight.connect(
+        [&](const typename parallel::distributed::Triangulation<
+              dim>::cell_iterator &cell,
+            const typename parallel::distributed::Triangulation<dim>::CellStatus
+              status) -> unsigned int {
+          return this->cell_weight(cell, status);
+        });
+
+#else
       parallel_triangulation->signals.weight.connect(
         [](const typename Triangulation<dim>::cell_iterator &,
            const CellStatus) -> unsigned int { return 1000; });
@@ -1384,6 +1422,7 @@ CFDDEMSolver<dim>::manage_triangulation_connections()
             const CellStatus       status) -> unsigned int {
           return this->cell_weight(cell, status);
         });
+#endif
     }
 }
 
