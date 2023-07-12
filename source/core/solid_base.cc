@@ -213,14 +213,14 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
     throw std::runtime_error(
       "Unsupported mesh type - solid mesh will not be created");
 
+  // Rotate the triangulation
+  rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
+
   // Translate the triangulation
   GridTools::shift(Point<spacedim>(param->solid_mesh.translate[0],
                                    param->solid_mesh.translate[1],
                                    param->solid_mesh.translate[2]),
                    *solid_tria);
-  // Rotate the triangulation
-  rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
-
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
   // afterwards
