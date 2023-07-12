@@ -266,7 +266,7 @@ public:
           }
       }
 
-    this->is_boundary_cell = cell->at_boundary();
+    this->is_boundary_cell = cell->at_boundary(); //The attribute needs to be updated because the assembler for the angle of contact boundary condition needs to know if the cell is at the boundary
     if (cell->at_boundary())
       {
         n_faces          = cell->n_faces();

@@ -6,7 +6,7 @@
 subsection simulation control
   set method = bdf1
   #set method = steady
-  set output name      = test-chns
+  set output name      = cahn_hilliard
   set output frequency = 1
   set output path      = ./output/
   set time end         = 20

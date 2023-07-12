@@ -1279,7 +1279,7 @@ namespace Parameters
         "calculate phase statistics",
         "false",
         Patterns::Bool(),
-        "Enable calculation of phase statistics (Cahn-Hilliard).");
+        "Enable calculation of phase statistics: maximum, minimum, average and integral over the domain (Cahn-Hilliard).");
 
       prm.declare_entry("phase statistics name",
                         "phase_statistics",

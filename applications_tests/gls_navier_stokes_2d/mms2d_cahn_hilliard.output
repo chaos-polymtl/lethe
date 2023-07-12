@@ -7,28 +7,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/4
 *****************************
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps
-		alpha =      1 res = 0
---------------
-Cahn-Hilliard
---------------
-Newton iteration: 0  - Residual:  0.04219
-  -Tolerance of iterative solver is : 4.219e-05
-  -Iterative solver took : 5 steps
-		alpha =      1 res = 0.0002385
-Newton iteration: 1  - Residual:  0.0002385
-  -Tolerance of iterative solver is : 2.385e-07
-  -Iterative solver took : 4 steps
-		alpha =      1 res = 1.397e-07
-Newton iteration: 2  - Residual:  1.397e-07
-  -Tolerance of iterative solver is : 1.397e-10
-  -Iterative solver took : 5 steps
-		alpha =      1 res = 5.264e-11
 L2 error velocity : 0
 L2 error phase order : 0.0110837
-L2 error chemical_potential : 2.22365e-18
+L2 error chemical_potential : inf
 
 *****************************
 Steady iteration:        2/4
@@ -37,28 +18,9 @@ Steady iteration:        2/4
    Number of degrees of freedom: 3267
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 2178
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps
-		alpha =      1 res = 0
---------------
-Cahn-Hilliard
---------------
-Newton iteration: 0  - Residual:  0.8638
-  -Tolerance of iterative solver is : 0.0008638
-  -Iterative solver took : 3 steps
-		alpha =      1 res = 0.0003005
-Newton iteration: 1  - Residual:  0.0003005
-  -Tolerance of iterative solver is : 3.005e-07
-  -Iterative solver took : 8 steps
-		alpha =      1 res = 2.729e-07
-Newton iteration: 2  - Residual:  2.729e-07
-  -Tolerance of iterative solver is : 2.729e-10
-  -Iterative solver took : 9 steps
-		alpha =      1 res = 1.534e-10
 L2 error velocity : 0
 L2 error phase order : 0.00276098
-L2 error chemical_potential : 7.8033e-18
+L2 error chemical_potential : inf
 
 *****************************
 Steady iteration:        3/4
@@ -67,28 +29,9 @@ Steady iteration:        3/4
    Number of degrees of freedom: 12675
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 8450
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps
-		alpha =      1 res = 0
---------------
-Cahn-Hilliard
---------------
-Newton iteration: 0  - Residual:  0.4351
-  -Tolerance of iterative solver is : 0.0004351
-  -Iterative solver took : 3 steps
-		alpha =      1 res = 0.0003641
-Newton iteration: 1  - Residual:  0.0003641
-  -Tolerance of iterative solver is : 3.641e-07
-  -Iterative solver took : 13 steps
-		alpha =      1 res = 3.032e-07
-Newton iteration: 2  - Residual:  3.032e-07
-  -Tolerance of iterative solver is : 3.032e-10
-  -Iterative solver took : 16 steps
-		alpha =      1 res = 2.15e-10
 L2 error velocity : 0
 L2 error phase order : 0.000689625
-L2 error chemical_potential : 8.40749e-18
+L2 error chemical_potential : inf
 
 *****************************
 Steady iteration:        4/4
@@ -97,35 +40,16 @@ Steady iteration:        4/4
    Number of degrees of freedom: 49923
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 33282
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps
-		alpha =      1 res = 0
---------------
-Cahn-Hilliard
---------------
-Newton iteration: 0  - Residual:  0.218
-  -Tolerance of iterative solver is : 0.000218
-  -Iterative solver took : 2 steps
-		alpha =      1 res = 0.0001742
-Newton iteration: 1  - Residual:  0.0001742
-  -Tolerance of iterative solver is : 1.742e-07
-  -Iterative solver took : 20 steps
-		alpha =      1 res = 1.586e-07
-Newton iteration: 2  - Residual:  1.586e-07
-  -Tolerance of iterative solver is : 1.586e-10
-  -Iterative solver took : 28 steps
-		alpha =      1 res = 1.54e-10
 L2 error velocity : 0
 L2 error phase order : 0.000172367
-L2 error chemical_potential : 3.27492e-18
+L2 error chemical_potential : inf
 cells  error_velocity   error_pressure
   256 0.000000e+00   - 0.000000e+00   -
  1024 0.000000e+00 nan 0.000000e+00 nan
  4096 0.000000e+00 nan 0.000000e+00 nan
 16384 0.000000e+00 nan 0.000000e+00 nan
 cells error_phase_order error_chemical_potential
-  256 1.108371e-02    - 2.223651e-18           -
- 1024 2.760980e-03 2.01 7.803299e-18       -1.81
- 4096 6.896253e-04 2.00 8.407487e-18       -0.11
-16384 1.723675e-04 2.00 3.274923e-18        1.36
+  256 1.108371e-02    - inf                    -
+ 1024 2.760980e-03 2.01 inf                  nan
+ 4096 6.896253e-04 2.00 inf                  nan
+16384 1.723675e-04 2.00 inf                  nan
