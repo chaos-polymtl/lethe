@@ -109,6 +109,7 @@ public:
    *
    * @tparam dim Dimensionality of the geometry which contains the particles
    * @param particle_handler The particle handler of particles
+   * @param clear_contact_structures A boolean to clear contact structures
    * @param has_periodic_boundaries A boolean to allow periodic container manipulations
    *
    */
@@ -116,7 +117,7 @@ public:
   void
   update_local_particles_in_cells(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const bool                             load_balance_step,
+    const bool                             clear_contact_structures,
     const bool                             has_periodic_boundaries = false);
 
   /**
