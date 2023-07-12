@@ -76,11 +76,21 @@ public:
    * repartitions the domain between ranks (the connection is created inside the
    * particles_generation() function of this class).
    */
+#if (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 6)
+  unsigned int
+  cell_weight(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+#else
   unsigned int
   cell_weight(
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
       &              cell,
     const CellStatus status) const;
+#endif
+
 
   /**
    * @brief Manages the call to the load balancing. Returns true if
