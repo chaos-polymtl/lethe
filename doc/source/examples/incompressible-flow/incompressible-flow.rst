@@ -24,17 +24,15 @@ Incompressible Flow
 .. graphviz:: 
 
     digraph incompressible_diagram {
-      graph [align=true];
-      node [fontname=Arial, fontsize=18,  shape=box];
-      center=true;
-      fontname="Comic Sans MS";
-      fontsize = "20";
+      graph [bgcolor="transparent", align=true];
+      node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
+      edge [color=royalblue];
       rankdir="LR";
       size = "9,9";
 
       incompressible_flow [label="Incompressible \nFlow", href="https://lethe-cfd.github.io/lethe/examples/incompressible-flow/incompressible-flow.html"];
 
-      incompressible_1 [label="2D",shape=polygon,sides=4]; 
+      incompressible_1 [label="2D"]; 
 
       incompressible_1_1 [label="1. Lid-driven cavity flow",href="https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-lid%E2%80%90driven-cavity-flow/lid%E2%80%90driven-cavity-flow.html"]; 
 

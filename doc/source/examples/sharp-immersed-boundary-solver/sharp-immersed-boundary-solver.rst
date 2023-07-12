@@ -14,11 +14,9 @@ Sharp Immersed Boundary Solver
 .. graphviz:: 
 
     digraph sharp_diagram {
-      graph [align=true];
-      node [fontname=Arial, fontsize=18, shape=box];
-      center=true;
-      fontname="Comic Sans MS";
-      fontsize = "20";
+      graph [bgcolor="transparent", align=true];
+      node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
+      edge [color=royalblue];
       rankdir="LR";
       size = "9,9";
       
@@ -40,8 +38,8 @@ Sharp Immersed Boundary Solver
 
       sharp_2_4 [label="2.4. 3D Mixer with pitched-blade turbine \nimpeller using OpenCascade \nSharp-immersed boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html"]; 
 
-      sharp_immersed_boundary_solver -> sharp_1
-      sharp_immersed_boundary_solver -> sharp_2
+      sharp_immersed_boundary_solver -> sharp_1:w;
+      sharp_immersed_boundary_solver -> sharp_2:w;
 
       sharp_1 -> sharp_1_1:w;
       sharp_1 -> sharp_1_2:w;

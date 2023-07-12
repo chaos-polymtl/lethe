@@ -15,11 +15,9 @@ Multiphysics Examples
 .. graphviz:: 
 
     digraph multiphysics_diagram {
-      graph [align=true];
-      node [fontname=Arial, fontsize=18, shape=box];
-      center=true;
-      fontname="Comic Sans MS";
-      fontsize = "20";
+      graph [bgcolor="transparent", align=true];
+      node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
+      edge [color=royalblue];
       rankdir="LR";
       size = "9,9";
       
