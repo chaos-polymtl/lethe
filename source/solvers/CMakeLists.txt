@@ -67,10 +67,7 @@ add_library(lethe-solvers
   ../../include/solvers/vof.h
   ../../include/solvers/vof_assemblers.h
   ../../include/solvers/vof_filter.h
-  ../../include/solvers/vof_scratch_data.h
-  ../../include/solvers/cahn_hilliard.h
-  ../../include/solvers/cahn_hilliard_assemblers.h
-  ../../include/solvers/cahn_hilliard_scratch_data.h)
+  ../../include/solvers/vof_scratch_data.h)
 
 deal_ii_setup_target(lethe-solvers)
 target_link_libraries(lethe-solvers lethe-core)

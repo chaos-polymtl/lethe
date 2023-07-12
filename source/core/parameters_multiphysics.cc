@@ -637,10 +637,13 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
         {
           epsilon_set_method = Parameters::EpsilonSetStrategy::automatic;
         }
-      if (op_epsilon == "manual")
+      else if (op_epsilon == "manual")
         {
           epsilon_set_method = Parameters::EpsilonSetStrategy::manual;
         }
+      else
+        throw(std::runtime_error("Invalid epsilon setting strategy. "
+                                 "Options are 'automatic' or 'manual'."));
 
       epsilon = prm.get_double("value");
     }
@@ -653,6 +656,9 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
         mobility_model = Parameters::MobilityModel::constant;
       else if (op == "quartic")
         mobility_model = Parameters::MobilityModel::quartic;
+      else
+        throw(std::runtime_error("Invalid mobility model "
+                                 "Options are 'constant' or 'quartic'."));
 
       mobility_constant = prm.get_double("mobility constant");
     }

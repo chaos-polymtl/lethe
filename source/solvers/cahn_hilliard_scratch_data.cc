@@ -79,15 +79,11 @@ template <int dim>
 void
 CahnHilliardScratchData<dim>::calculate_physical_properties()
 {
-  // TODO ADD : Blend the physical properties using the CH field (Cf heat
-  // transfer)
-
   if (material_id < 1 || properties_manager.get_number_of_solids() < 1)
     {
       switch (properties_manager.get_number_of_fluids())
         {
-          case 1:
-            {
+            case 1: {
               const auto density_model  = properties_manager.get_density();
               const auto rheology_model = properties_manager.get_rheology();
 
@@ -96,8 +92,7 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
 
               break;
             }
-          case 2:
-            {
+            case 2: {
               const auto density_models =
                 properties_manager.get_density_vector();
               const auto rheology_models =

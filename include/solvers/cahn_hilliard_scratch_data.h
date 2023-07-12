@@ -19,6 +19,7 @@
 #include <core/multiphysics.h>
 #include <solvers/multiphysics_interface.h>
 
+#include <solvers/multiphysics_interface.h>
 #include <solvers/physical_properties_manager.h>
 
 #include <deal.II/base/quadrature.h>
@@ -266,7 +267,11 @@ public:
           }
       }
 
-    this->is_boundary_cell = cell->at_boundary(); //The attribute needs to be updated because the assembler for the angle of contact boundary condition needs to know if the cell is at the boundary
+    this->is_boundary_cell =
+      cell->at_boundary(); // The attribute needs to be updated because the
+                           // assembler for the angle of contact boundary
+                           // condition needs to know if the cell is at the
+                           // boundary
     if (this->is_boundary_cell)
       {
         n_faces          = cell->n_faces();
@@ -309,6 +314,12 @@ public:
               }
           }
       }
+
+    // CH epsilon parameter
+    this->epsilon = (ch_parameters.epsilon_set_method ==
+                     Parameters::EpsilonSetStrategy::manual) ?
+                      ch_parameters.epsilon :
+                      2 * this->cell_size;
   }
 
   template <typename VectorType>

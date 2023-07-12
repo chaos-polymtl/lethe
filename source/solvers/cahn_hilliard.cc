@@ -103,7 +103,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
                       this->evaluation_point,
                       this->previous_solutions,
                       this->solution_stages,
-                      &source_term),
+                      &source_term,
                       this->simulation_parameters.multiphysics.ch_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
@@ -199,7 +199,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
                       this->evaluation_point,
                       this->previous_solutions,
                       this->solution_stages,
-                      &source_term),
+                      &source_term,
                       this->simulation_parameters.multiphysics.ch_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
@@ -259,7 +259,7 @@ CahnHilliard<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
-     2, DataComponentInterpretation::component_is_scalar);
+      2, DataComponentInterpretation::component_is_scalar);
 
   data_out.add_data_vector(dof_handler,
                            present_solution,
@@ -690,16 +690,16 @@ CahnHilliard<dim>::setup_dofs()
         // mask is used at the end of the interpolate_boundary_values function
         if (this->simulation_parameters.boundary_conditions_cahn_hilliard
               .type[i_bc] ==
-            BoundaryConditions::BoundaryType::dirichlet_phase_order)
+            BoundaryConditions::BoundaryType::ch_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
               this->simulation_parameters.boundary_conditions_cahn_hilliard
                 .id[i_bc],
-              dealii::Functions::ConstantFunction<dim>(
-                this->simulation_parameters.boundary_conditions_cahn_hilliard
-                  .phase_dirichlet_value[i_bc],
-                2),
+              CahnHilliardFunctionDefined<dim>(
+                &this->simulation_parameters.boundary_conditions_cahn_hilliard
+                   .bcFunctions[i_bc]
+                   .phi),
               nonzero_constraints,
               mask);
           }
@@ -720,7 +720,7 @@ CahnHilliard<dim>::setup_dofs()
       {
         if (this->simulation_parameters.boundary_conditions_cahn_hilliard
               .type[i_bc] ==
-            BoundaryConditions::BoundaryType::dirichlet_phase_order)
+            BoundaryConditions::BoundaryType::ch_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,

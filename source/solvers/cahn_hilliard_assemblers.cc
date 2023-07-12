@@ -14,22 +14,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   // Gather physical properties
   const double well_height       = this->ch_parameters.well_height;
   const double mobility_constant = this->ch_parameters.mobility_constant;
-  double       epsilon           = 0.0;
-
-  if (this->ch_parameters.epsilon_set_method ==
-      Parameters::EpsilonSetStrategy::automatic)
-    {
-      const double h = scratch_data.cell_size;
-      epsilon        = 2 * h;
-    }
-
-  else if (this->ch_parameters.epsilon_set_method ==
-           Parameters::EpsilonSetStrategy::manual)
-    {
-      epsilon = this->ch_parameters.epsilon;
-    }
-
-
+  double       epsilon           = scratch_data.epsilon;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -37,7 +22,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   auto &local_matrix = copy_data.local_matrix;
-
 
   if (this->ch_parameters.mobility_model == Parameters::MobilityModel::constant)
     {
@@ -93,7 +77,6 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
 
   if (this->ch_parameters.mobility_model == Parameters::MobilityModel::quartic)
     {
-      // std::cout<< "Mobility is a quartic function"<<std::endl;
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
           // Gather into local variables the relevant fields
@@ -161,32 +144,16 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties
-
   const double well_height       = this->ch_parameters.well_height;
   const double mobility_constant = this->ch_parameters.mobility_constant;
-  double       epsilon;
-
-  if (this->ch_parameters.epsilon_set_method ==
-      Parameters::EpsilonSetStrategy::automatic)
-    {
-      const double h = scratch_data.cell_size;
-      epsilon        = 2 * h;
-    }
-
-  else if (this->ch_parameters.epsilon_set_method ==
-           Parameters::EpsilonSetStrategy::manual)
-    {
-      epsilon = this->ch_parameters.epsilon;
-    }
+  double       epsilon           = scratch_data.epsilon;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
-
   auto &local_rhs = copy_data.local_rhs;
-
 
   if (this->ch_parameters.mobility_model == Parameters::MobilityModel::constant)
     {
@@ -298,27 +265,14 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
   if (!scratch_data.is_boundary_cell)
     return;
 
+  double epsilon = scratch_data.epsilon;
+
   auto &local_matrix = copy_data.local_matrix;
-
-  double epsilon;
-
-  if (this->ch_parameters.epsilon_set_method ==
-      Parameters::EpsilonSetStrategy::automatic)
-    {
-      const double h = scratch_data.cell_size;
-      epsilon        = 2 * h;
-    }
-
-  else if (this->ch_parameters.epsilon_set_method ==
-           Parameters::EpsilonSetStrategy::manual)
-    {
-      epsilon = this->ch_parameters.epsilon;
-    }
 
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
     {
       if (this->boundary_conditions_ch.type[i_bc] ==
-          BoundaryConditions::BoundaryType::angle_of_contact)
+          BoundaryConditions::BoundaryType::ch_angle_of_contact)
         {
           const double angle_of_contact =
             this->boundary_conditions_ch.angle_of_contact[i_bc];
@@ -348,7 +302,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                               local_matrix(i, j) +=
                                 -epsilon * epsilon * phi_potential_i *
                                 grad_phi_face_phase_j * face_phase_grad_value *
-                                std::cos(angle_of_contact * 2 * M_PI / 360.0) *
+                                std::cos(angle_of_contact * M_PI / 180.0) *
                                 (1.0 /
                                  (face_phase_grad_value.norm() + DBL_MIN)) *
                                 JxW_face;
@@ -370,30 +324,15 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
   if (!scratch_data.is_boundary_cell)
     return;
 
+  double epsilon = scratch_data.epsilon;
+
   auto &local_rhs = copy_data.local_rhs;
-
-  double epsilon;
-
-  if (this->ch_parameters.epsilon_set_method ==
-      Parameters::EpsilonSetStrategy::automatic)
-    {
-      const double h = scratch_data.cell_size;
-      epsilon        = 2 * h;
-    }
-
-  else if (this->ch_parameters.epsilon_set_method ==
-           Parameters::EpsilonSetStrategy::manual)
-    {
-      epsilon = this->ch_parameters.epsilon;
-    }
-
 
   for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
     {
       if (this->boundary_conditions_ch.type[i_bc] ==
-          BoundaryConditions::BoundaryType::angle_of_contact)
+          BoundaryConditions::BoundaryType::ch_angle_of_contact)
         {
-          // std::cout<<"Angle of contact BC is in action! (RHS)"<<std::endl;
           const double angle_of_contact =
             this->boundary_conditions_ch.angle_of_contact[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; f++)
@@ -416,7 +355,7 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
                           local_rhs(i) +=
                             epsilon * epsilon * phi_potential_i *
-                            std::cos(angle_of_contact * 2 * M_PI / 360.0) *
+                            std::cos(angle_of_contact * M_PI / 180.0) *
                             (face_phase_grad_value.norm()) * JxW_face;
                         }
                     }
@@ -459,8 +398,6 @@ CahnHilliardAssemblerBDF<dim>::assemble_matrix(
       phase_order[0] = scratch_data.phase_order_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
         phase_order[p + 1] = scratch_data.previous_phase_order_values[p][q];
-
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {

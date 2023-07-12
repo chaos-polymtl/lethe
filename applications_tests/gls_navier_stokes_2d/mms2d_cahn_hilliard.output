@@ -8,8 +8,8 @@ Running on 1 MPI rank(s)...
 Steady iteration:        1/4
 *****************************
 L2 error velocity : 0
-L2 error phase order : 0.0110837
-L2 error chemical_potential : inf
+L2 error phase order: 0.0110837
+L2 error chemical potential: inf
 
 *****************************
 Steady iteration:        2/4
@@ -19,8 +19,8 @@ Steady iteration:        2/4
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 2178
 L2 error velocity : 0
-L2 error phase order : 0.00276098
-L2 error chemical_potential : inf
+L2 error phase order: 0.00276098
+L2 error chemical potential: inf
 
 *****************************
 Steady iteration:        3/4
@@ -30,8 +30,8 @@ Steady iteration:        3/4
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 8450
 L2 error velocity : 0
-L2 error phase order : 0.000689625
-L2 error chemical_potential : inf
+L2 error phase order: 0.000689625
+L2 error chemical potential: inf
 
 *****************************
 Steady iteration:        4/4
@@ -41,8 +41,8 @@ Steady iteration:        4/4
    Volume of triangulation:      4
    Number of Cahn-Hilliard degrees of freedom: 33282
 L2 error velocity : 0
-L2 error phase order : 0.000172367
-L2 error chemical_potential : inf
+L2 error phase order: 0.000172367
+L2 error chemical potential: inf
 cells  error_velocity   error_pressure
   256 0.000000e+00   - 0.000000e+00   -
  1024 0.000000e+00 nan 0.000000e+00 nan

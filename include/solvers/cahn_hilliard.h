@@ -74,17 +74,17 @@ public:
         const FE_SimplexP<dim> phase_order_fe(
           simulation_parameters.fem_parameters.phase_ch_order);
         const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_order);
+          simulation_parameters.fem_parameters.potential_ch_order);
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order) +
+                   simulation_parameters.fem_parameters.potential_ch_order) +
           1);
         face_quadrature = std::make_shared<QGaussSimplex<dim - 1>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order) +
+                   simulation_parameters.fem_parameters.potential_ch_order) +
           1);
         ;
       }
@@ -94,20 +94,20 @@ public:
         const FE_Q<dim> phase_order_fe(
           simulation_parameters.fem_parameters.phase_ch_order);
         const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_order);
+          simulation_parameters.fem_parameters.potential_ch_order);
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping = std::make_shared<MappingQ<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order),
+                   simulation_parameters.fem_parameters.potential_ch_order),
           simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature = std::make_shared<QGauss<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order) +
+                   simulation_parameters.fem_parameters.potential_ch_order) +
           1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_order) +
+                   simulation_parameters.fem_parameters.potential_ch_order) +
           1);
       }
 
