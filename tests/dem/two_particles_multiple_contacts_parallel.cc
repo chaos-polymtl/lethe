@@ -185,7 +185,7 @@ test()
 
       particle_handler.exchange_ghost_particles();
 
-      container_manager.update_local_particles_in_cells(particle_handler);
+      container_manager.update_local_particles_in_cells(particle_handler, false);
 
       // Calling broad search
       container_manager.execute_particle_particle_broad_search(
