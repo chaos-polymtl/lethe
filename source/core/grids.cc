@@ -266,7 +266,6 @@ attach_grid_to_triangulation(
   else
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
-
 }
 
 

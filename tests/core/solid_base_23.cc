@@ -61,7 +61,7 @@ test()
   param->solid_mesh.initial_refinement = 1;
   param->solid_mesh.simplex            = false;
   param->number_quadrature_points      = 2;
-  param->solid_mesh.translate          = {0., 0. ,0.};
+  param->solid_mesh.translate          = {0., 0., 0.};
 
 
   // Mesh of the fluid

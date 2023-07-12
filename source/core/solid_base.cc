@@ -240,21 +240,21 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 
 template <>
 void
-SolidBase<2, 2>::rotate_grid(double angle, Tensor<1,3> /*axis*/)
+SolidBase<2, 2>::rotate_grid(double angle, Tensor<1, 3> /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }
 template <>
 void
-SolidBase<2, 3>::rotate_grid(double angle, Tensor<1,3> axis)
+SolidBase<2, 3>::rotate_grid(double angle, Tensor<1, 3> axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }
 template <>
 void
-SolidBase<3, 3>::rotate_grid(const double angle, Tensor<1,3> axis)
+SolidBase<3, 3>::rotate_grid(const double angle, Tensor<1, 3> axis)
 {
-    GridTools::rotate(axis, angle, *solid_tria);
+  GridTools::rotate(axis, angle, *solid_tria);
 }
 
 

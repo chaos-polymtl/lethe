@@ -60,8 +60,8 @@ test()
   param->solid_mesh.grid_arguments     = "0 , 0 , 0 : 0.75 : false";
   param->solid_mesh.initial_refinement = 1;
   param->solid_mesh.simplex            = false;
-  param->solid_mesh.translate          = {0., 0. ,0.};
-  param->solid_mesh.axis               = (1., 0. ,0.);
+  param->solid_mesh.translate          = {0., 0., 0.};
+  param->solid_mesh.axis               = (1., 0., 0.);
   param->solid_mesh.angle              = 0.;
   param->number_quadrature_points      = 2;
 

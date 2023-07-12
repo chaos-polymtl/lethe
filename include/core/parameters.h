@@ -926,8 +926,8 @@ namespace Parameters
     std::vector<double> translate;
 
     // Grid rotation at initiation
-    Tensor<1,3>  axis;
-    double angle;
+    Tensor<1, 3> axis;
+    double       angle;
 
     static void
     declare_parameters(ParameterHandler &prm);

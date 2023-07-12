@@ -59,8 +59,8 @@ test()
   param->solid_mesh.grid_arguments     = "-2, -1 : 2, 1 : false";
   param->solid_mesh.initial_refinement = 3;
   param->solid_mesh.simplex            = true;
-  param->solid_mesh.translate          = {0., 0. ,0.};
-  param->solid_mesh.axis               = (1., 0. ,0.);
+  param->solid_mesh.translate          = {0., 0., 0.};
+  param->solid_mesh.axis               = (1., 0., 0.);
   param->solid_mesh.angle              = 0.;
 
   SerialSolid<2, 3> solid(param, 0);

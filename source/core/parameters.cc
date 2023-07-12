@@ -1581,20 +1581,23 @@ namespace Parameters
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
 
-      prm.declare_entry("initial translation",
-                        "0, 0, 0",
-                        Patterns::List(Patterns::Double()),
-                        "Component of the desired translation of the mesh at initialization");
+      prm.declare_entry(
+        "initial translation",
+        "0, 0, 0",
+        Patterns::List(Patterns::Double()),
+        "Component of the desired translation of the mesh at initialization");
 
-      prm.declare_entry("initial rotation axis",
-                        "1, 0, 0",
-                        Patterns::List(Patterns::Double()),
-                        "Component of the desired rotation of the mesh at initialization");
+      prm.declare_entry(
+        "initial rotation axis",
+        "1, 0, 0",
+        Patterns::List(Patterns::Double()),
+        "Component of the desired rotation of the mesh at initialization");
 
-      prm.declare_entry("initial rotation angle",
-                        "0",
-                        Patterns::Double(),
-                        "Angle of rotation of the mesh at initialization around the axis in radian");
+      prm.declare_entry(
+        "initial rotation angle",
+        "0",
+        Patterns::Double(),
+        "Angle of rotation of the mesh at initialization around the axis in radian");
     }
     prm.leave_subsection();
   }
@@ -1643,9 +1646,9 @@ namespace Parameters
       std::string              axis_str = prm.get("initial rotation axis");
       std::vector<std::string> axis_str_list =
         Utilities::split_string_list(axis_str);
-      axis  = Tensor<1,3>({Utilities::string_to_double(axis_str_list[0]),
-               Utilities::string_to_double(axis_str_list[1]),
-               Utilities::string_to_double(axis_str_list[2])});
+      axis  = Tensor<1, 3>({Utilities::string_to_double(axis_str_list[0]),
+                           Utilities::string_to_double(axis_str_list[1]),
+                           Utilities::string_to_double(axis_str_list[2])});
       angle = prm.get_double("initial rotation angle");
     }
     prm.leave_subsection();
