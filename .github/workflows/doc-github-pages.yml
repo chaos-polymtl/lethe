@@ -20,7 +20,7 @@ jobs:
 
       - name: Setup Sphinx
         run: |
-          sudo apt-get install graphviz
+          sudo apt-get install -y graphviz
           pip install sphinx==${{ env.SPHINX_VERSION }}
           pip install sphinx-copybutton
           #pip install graphviz
