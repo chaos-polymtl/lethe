@@ -22,6 +22,7 @@
 #include <core/lethe_grid_tools.h>
 #include <core/sdirk.h>
 #include <core/solutions_output.h>
+#include <core/mesh_controler.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -116,7 +117,10 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       dof_handler.clear();
       dof_handler.reinit(*this->triangulation);
     }
-
+  refinement_fraction_controled=p_nsparam.mesh_adaptation.var_adaptation_param.refinement_fraction;
+  coarsening_fraction_controled=p_nsparam.mesh_adaptation.var_adaptation_param.coarsening_fraction;
+  previous_number_of_cell=0;
+  previous_mesh_control_error=0;
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
 
@@ -901,6 +905,45 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   bool first_variable(true);
 
+  double target_cell_number=this->simulation_parameters.mesh_adaptation.maximum_number_elements;
+  double current_number_of_cell= this->triangulation->n_global_active_cells();
+
+
+  double P=1;
+  double I=0.3;
+  double D=0.05;
+
+
+  double error=(target_cell_number-current_number_of_cell)/target_cell_number;
+  double previous_error=(target_cell_number-previous_number_of_cell)/target_cell_number;
+  previous_mesh_control_error=previous_mesh_control_error+error;
+
+  if constexpr (dim==3)
+    {
+      coarsening_fraction_controled = -error * P -
+                                      previous_mesh_control_error * I -(error-previous_error)*D +
+                                      refinement_fraction_controled * 8;
+    }
+  if constexpr (dim==2)
+    {
+      coarsening_fraction_controled = -error * P -
+                                      previous_mesh_control_error * I +
+                                      refinement_fraction_controled * 4;
+    }
+  if(coarsening_fraction_controled<0.0)
+    {
+      coarsening_fraction_controled=0;
+    }
+  if(coarsening_fraction_controled>1.0){
+      coarsening_fraction_controled=1;
+    }
+
+  this->pcout<<"error "<<error <<std::endl;
+  this->pcout<<"coarsening_fraction_controled "<<coarsening_fraction_controled <<std::endl;
+  this->pcout<<"refinement_fraction_controled "<<refinement_fraction_controled <<std::endl;
+
+
+
   for (const std::pair<const Parameters::MeshAdaptation::Variable,
                        Parameters::MultipleAdaptationParameters> &ivar :
        this->simulation_parameters.mesh_adaptation.variables)
@@ -941,8 +984,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           tria,
           estimated_error_per_cell,
           ivar.second.refinement_fraction,
-          ivar.second.coarsening_fraction,
-          this->simulation_parameters.mesh_adaptation.maximum_number_elements);
+          coarsening_fraction_controled,
+          this->simulation_parameters.mesh_adaptation.maximum_number_elements*1000);
 
       else if (this->simulation_parameters.mesh_adaptation.fractionType ==
                Parameters::MeshAdaptation::FractionType::fraction)
@@ -950,7 +993,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           refine_and_coarsen_fixed_fraction(tria,
                                             estimated_error_per_cell,
                                             ivar.second.refinement_fraction,
-                                            ivar.second.coarsening_fraction);
+                                            coarsening_fraction_controled);
 
       std::vector<bool> current_refine_flags;
       std::vector<bool> current_coarsen_flags;

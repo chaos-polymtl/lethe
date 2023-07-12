@@ -27,6 +27,7 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 
+
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_assemblers.h>
@@ -479,6 +480,11 @@ protected:
              average_velocities;
   VectorType average_solution;
 
+  // Refinement control
+  double refinement_fraction_controled;
+  double coarsening_fraction_controled;
+  double previous_number_of_cell;
+  double previous_mesh_control_error;
   // Convergence Analysis
   ConvergenceTable error_table;
 
