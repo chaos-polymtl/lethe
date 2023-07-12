@@ -487,6 +487,10 @@ public:
   virtual void
   clear_cache() override;
 
+  /**
+   * @brief Return the sign of the parameter. To be removed once PR#794 is merged.
+   * @param prm parameter
+   */
   inline double
   sign(const double prm) const
   {
@@ -520,36 +524,20 @@ public:
     Point<dim> gradient{};
     for (unsigned int d = 0; d < dim; d++)
       {
-        if (abs(centered_point[d]) < epsilon)
-          gradient[d] = sign(superquadric(centered_point)) * epsilon;
-        else
+        // For cases where the coordinate is of value 0, we avoid computing the
+        // gradient. That is an issue when the exponent is lower than or equal
+        // to 1
+        if (abs(centered_point[d]) > epsilon)
           gradient[d] =
             sign(centered_point[d]) * exponents[d] * (1 / half_lengths[d]) *
             pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
       }
-    return gradient / gradient.norm();
-  }
-
-  inline double
-  fonc(const Point<dim> &current_point, const Point<dim> &centered_point) const
-  {
-    return 0.1 * sign(superquadric(current_point)) *
-             (current_point - centered_point).norm_square() +
-           abs(superquadric(current_point));
-  }
-
-  inline Point<dim>
-  fonc_grad(const Point<dim> &current_point,
-            const Point<dim> &centered_point) const
-  {
-    Point<dim> gradient{};
-    Point<dim> superquadric_grad = superquadric_gradient(current_point);
-    for (unsigned int d = 0; d < dim; d++)
-      {
-        gradient[d] = 0.1 * (current_point[d] - centered_point[d] + epsilon) +
-                      superquadric_grad[d];
-      }
-    return gradient / gradient.norm();
+    if (gradient.norm() > epsilon)
+      // Because it is possible that the centroid of the superquadric overlaps
+      // with the evaluation point, we consider this exception here and avoid
+      // normalizing if the norm is null
+      gradient = gradient / gradient.norm();
+    return gradient;
   }
 
 private:

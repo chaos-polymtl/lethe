@@ -390,46 +390,38 @@ void
 Superquadric<dim>::closest_surface_point(const Point<dim> &p,
                                          Point<dim> &      closest_point) const
 {
-  using numbers::PI;
-
   auto point_in_string = this->point_to_string(p);
   auto iterator        = this->closest_point_cache.find(point_in_string);
   if (iterator == this->closest_point_cache.end())
     {
       // We align and center the evaluation point according to the shape
-      // referential
+      // referential.
       Point<dim> centered_point = this->align_and_center(p);
 
       Point<dim>   current_point = centered_point;
       unsigned int iteration     = 0;
-      unsigned int iteration_max = 100;
+      unsigned int iteration_max = 1e4;
 
       Point<dim> dx{}, distance_gradient{};
-      dx[0]             = 1;
-      double relaxation = 0.1;
-      while (iteration < iteration_max && dx.norm() > epsilon)
+      double     current_distance = superquadric(current_point);
+
+      // We scale the relaxation with the maximum blockiness, because higher
+      // blockiness makes convergence more difficult for the gradient descent.
+      const double shape_blockiness =
+        std::max(std::max(exponents[0], exponents[1]), exponents[2]);
+      double relaxation = 0.5 / shape_blockiness;
+      while (iteration < iteration_max && abs(current_distance) > epsilon)
         {
           distance_gradient = superquadric_gradient(current_point);
-          dx = -relaxation * (superquadric(current_point) * distance_gradient) /
+          if (distance_gradient.norm() < epsilon)
+            // Gradient can be null if the evaluation point is exactly on the
+            // centroid of the shape. In this case it is also the closest point.
+            break;
+          dx = -relaxation * (current_distance * distance_gradient) /
                distance_gradient.norm_square();
 
-          current_point = current_point + dx;
-
-          iteration++;
-        }
-      iteration                = 0;
-      dx[0]                    = 1;
-      double global_blockiness = exponents.norm();
-      relaxation               = 0.01 / global_blockiness;
-      iteration_max            = 100 * global_blockiness;
-      while (iteration < iteration_max && dx.norm() > epsilon)
-        {
-          distance_gradient = fonc_grad(current_point, centered_point);
-          dx                = -relaxation *
-               (fonc(current_point, centered_point) * distance_gradient) /
-               distance_gradient.norm_square();
-
-          current_point = current_point + dx;
+          current_point    = current_point + dx;
+          current_distance = superquadric(current_point);
 
           iteration++;
         }
@@ -451,6 +443,8 @@ Superquadric<dim>::value(const Point<dim> &evaluation_point,
   auto iterator        = this->value_cache.find(point_in_string);
   if (iterator == this->value_cache.end())
     {
+      // The closest point has to be found first, because it is used in value
+      // calculation.
       Point<dim> closest_point{};
       this->closest_surface_point(evaluation_point, closest_point);
 
@@ -476,7 +470,7 @@ Superquadric<dim>::value_with_cell_guess(
   if (iterator == this->value_cache.end())
     {
       // The closest point has to be found first, because it is used in value
-      // calculation
+      // calculation.
       Point<dim> closest_point{};
       this->closest_surface_point(evaluation_point, closest_point);
       Point<dim> copy_closest_point{};
