@@ -248,9 +248,11 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   const double x = p[0];
   const double y = p[1];
 
-  values(0) = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
-  values(1) = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
-  values(2) = sin(a * x) * sin(a * y);
+  values(0) =
+    std::sin(a * x) * std::sin(a * x) * std::cos(a * y) * std::sin(a * y);
+  values(1) =
+    -std::cos(a * x) * std::sin(a * x) * std::sin(a * y) * std::sin(a * y);
+  values(2) = std::sin(a * x) * std::sin(a * y);
 }
 
 
@@ -281,17 +283,23 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
   const double y = p[1];
   if (component == 0)
     {
-      return (2 * a * a * (sin(a * x) * sin(a * x) - cos(a * x) * cos(a * x)) *
-                sin(a * y) * cos(a * y) +
-              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y) +
-              a * sin(a * y) * cos(a * x));
+      return (2 * a * a *
+                (std::sin(a * x) * std::sin(a * x) -
+                 std::cos(a * x) * std::cos(a * x)) *
+                std::sin(a * y) * std::cos(a * y) +
+              4 * a * a * std::sin(a * x) * std::sin(a * x) * std::sin(a * y) *
+                std::cos(a * y) +
+              a * std::sin(a * y) * std::cos(a * x));
     }
   else if (component == 1)
     {
-      return (-2 * a * a * (sin(a * y) * sin(a * y) - cos(a * y) * cos(a * y)) *
-                sin(a * x) * cos(a * x) -
-              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x) +
-              a * sin(a * x) * cos(a * y));
+      return (-2 * a * a *
+                (std::sin(a * y) * std::sin(a * y) -
+                 std::cos(a * y) * std::cos(a * y)) *
+                std::sin(a * x) * std::cos(a * x) -
+              4 * a * a * std::sin(a * x) * std::sin(a * y) * std::sin(a * y) *
+                std::cos(a * x) +
+              a * std::sin(a * x) * std::cos(a * y));
     }
   else
     return 0;
@@ -454,13 +462,12 @@ StokesOperator<dim, fe_degree, number>::local_apply(
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
           // Evaluate source term function
-          Point<dim, VectorizedArray<double>> point_batch =
-            phi.quadrature_point(q);
-
           Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
           if (parameters.source_term == Settings::mms)
             {
+              Point<dim, VectorizedArray<double>> point_batch =
+                phi.quadrature_point(q);
               source_value =
                 evaluate_function<dim, double, dim + 1>(source_term_function,
                                                         point_batch);
@@ -555,12 +562,12 @@ StokesOperator<dim, fe_degree, number>::local_compute(
   for (unsigned int q = 0; q < phi.n_q_points; ++q)
     {
       // Evaluate source term function
-      Point<dim, VectorizedArray<double>> point_batch = phi.quadrature_point(q);
-
       Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
       if (parameters.source_term == Settings::mms)
         {
+          Point<dim, VectorizedArray<double>> point_batch =
+            phi.quadrature_point(q);
           source_value =
             evaluate_function<dim, double, dim + 1>(source_term_function,
                                                     point_batch);
@@ -984,13 +991,12 @@ MatrixFreeStokes<dim, fe_degree>::local_evaluate_residual(
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
           // Evaluate source term function
-          Point<dim, VectorizedArray<double>> point_batch =
-            phi.quadrature_point(q);
-
           Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
           if (parameters.source_term == Settings::mms)
             {
+              Point<dim, VectorizedArray<double>> point_batch =
+                phi.quadrature_point(q);
               source_value =
                 evaluate_function<dim, double, dim + 1>(source_term_function,
                                                         point_batch);
@@ -1078,11 +1084,15 @@ MatrixFreeStokes<dim, fe_degree>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl                                           solver_control(1000,
-                               std::max(1.e-8 * system_rhs.l2_norm(), 1e-14),
+  SolverControl solver_control(10000,
+                               std::max(1.e-4 * system_rhs.l2_norm(), 1e-14),
                                true,
                                true);
-  SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>>::AdditionalData
+    gmres_parameters;
+  gmres_parameters.max_n_tmp_vectors = 1000;
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(
+    solver_control, gmres_parameters);
 
   newton_update = 0.0;
 
@@ -1289,7 +1299,7 @@ MatrixFreeStokes<dim, fe_degree>::compute_solution_norm() const
 
   solution.zero_out_ghost_values();
 
-  double u_h1_norm =
+  const double u_h1_norm =
     VectorTools::compute_global_error(triangulation,
                                       norm_per_cell,
                                       VectorTools::H1_seminorm);
@@ -1307,7 +1317,7 @@ MatrixFreeStokes<dim, fe_degree>::compute_solution_norm() const
 
   solution.zero_out_ghost_values();
 
-  double p_h1_norm =
+  const double p_h1_norm =
     VectorTools::compute_global_error(triangulation,
                                       norm_per_cell,
                                       VectorTools::H1_seminorm);
@@ -1339,9 +1349,10 @@ MatrixFreeStokes<dim, fe_degree>::compute_l2_error() const
 
   solution.zero_out_ghost_values();
 
-  double u_l2_error = VectorTools::compute_global_error(triangulation,
-                                                        error_per_cell,
-                                                        VectorTools::L2_norm);
+  const double u_l2_error =
+    VectorTools::compute_global_error(triangulation,
+                                      error_per_cell,
+                                      VectorTools::L2_norm);
 
   solution.update_ghost_values();
 
@@ -1356,9 +1367,10 @@ MatrixFreeStokes<dim, fe_degree>::compute_l2_error() const
 
   solution.zero_out_ghost_values();
 
-  double p_l2_error = VectorTools::compute_global_error(triangulation,
-                                                        error_per_cell,
-                                                        VectorTools::L2_norm);
+  const double p_l2_error =
+    VectorTools::compute_global_error(triangulation,
+                                      error_per_cell,
+                                      VectorTools::L2_norm);
 
   pcout << "  u L2 norm error: " << u_l2_error << std::endl;
   pcout << "  p L2 norm error: " << p_l2_error << std::endl;

@@ -249,9 +249,11 @@ AnalyticalSolution<dim>::vector_value(const Point<dim> &p,
   const double x = p[0];
   const double y = p[1];
 
-  values(0) = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
-  values(1) = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
-  values(2) = sin(a * x) * sin(a * y);
+  values(0) =
+    std::sin(a * x) * std::sin(a * x) * std::cos(a * y) * std::sin(a * y);
+  values(1) =
+    -std::cos(a * x) * std::sin(a * x) * std::sin(a * y) * std::sin(a * y);
+  values(2) = std::sin(a * x) * std::sin(a * y);
 }
 
 // Function for the full source term
@@ -281,17 +283,23 @@ FullSourceTerm<dim>::value(const Point<dim, number> &p,
   const double y = p[1];
   if (component == 0)
     {
-      return (2 * a * a * (sin(a * x) * sin(a * x) - cos(a * x) * cos(a * x)) *
-                sin(a * y) * cos(a * y) +
-              4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y) +
-              a * sin(a * y) * cos(a * x));
+      return (2 * a * a *
+                (std::sin(a * x) * std::sin(a * x) -
+                 std::cos(a * x) * std::cos(a * x)) *
+                std::sin(a * y) * std::cos(a * y) +
+              4 * a * a * std::sin(a * x) * std::sin(a * x) * std::sin(a * y) *
+                std::cos(a * y) +
+              a * std::sin(a * y) * std::cos(a * x));
     }
   else if (component == 1)
     {
-      return (-2 * a * a * (sin(a * y) * sin(a * y) - cos(a * y) * cos(a * y)) *
-                sin(a * x) * cos(a * x) -
-              4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x) +
-              a * sin(a * x) * cos(a * y));
+      return (-2 * a * a *
+                (std::sin(a * y) * std::sin(a * y) -
+                 std::cos(a * y) * std::cos(a * y)) *
+                std::sin(a * x) * std::cos(a * x) -
+              4 * a * a * std::sin(a * x) * std::sin(a * y) * std::sin(a * y) *
+                std::cos(a * x) +
+              a * std::sin(a * x) * std::cos(a * y));
     }
   else
     return 0;
@@ -357,9 +365,9 @@ public:
   StokesOperator();
 
   StokesOperator(const MappingQ<dim> &            mapping,
-                       const DoFHandler<dim> &          dof_handler,
-                       const AffineConstraints<number> &constraints,
-                       const QGauss<1> &                quadrature);
+                 const DoFHandler<dim> &          dof_handler,
+                 const AffineConstraints<number> &constraints,
+                 const QGauss<1> &                quadrature);
 
   void
   reinit(const MappingQ<dim> &            mapping,
@@ -482,8 +490,7 @@ StokesOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
 // and evluating the integrals in the matrix-free way
 template <int dim, typename number>
 void
-StokesOperator<dim, number>::vmult(VectorType &      dst,
-                                         const VectorType &src) const
+StokesOperator<dim, number>::vmult(VectorType &dst, const VectorType &src) const
 {
   this->matrix_free.cell_loop(
     &StokesOperator::do_cell_integral_range, this, dst, src, true);
@@ -495,7 +502,7 @@ StokesOperator<dim, number>::vmult(VectorType &      dst,
 template <int dim, typename number>
 void
 StokesOperator<dim, number>::Tvmult(VectorType &      dst,
-                                          const VectorType &src) const
+                                    const VectorType &src) const
 {
   this->vmult(dst, src);
 }
@@ -520,12 +527,11 @@ StokesOperator<dim, number>::get_system_matrix() const
       dsp.compress();
       system_matrix.reinit(dsp);
 
-      MatrixFreeTools::compute_matrix(
-        matrix_free,
-        constraints,
-        system_matrix,
-        &StokesOperator::do_cell_integral_local,
-        this);
+      MatrixFreeTools::compute_matrix(matrix_free,
+                                      constraints,
+                                      system_matrix,
+                                      &StokesOperator::do_cell_integral_local,
+                                      this);
     }
   return system_matrix;
 }
@@ -540,8 +546,10 @@ StokesOperator<dim, number>::compute_inverse_diagonal(
   VectorType &diagonal) const
 {
   this->matrix_free.initialize_dof_vector(diagonal);
-  MatrixFreeTools::compute_diagonal(
-    matrix_free, diagonal, &StokesOperator::do_cell_integral_local, this);
+  MatrixFreeTools::compute_diagonal(matrix_free,
+                                    diagonal,
+                                    &StokesOperator::do_cell_integral_local,
+                                    this);
 
   for (auto &i : diagonal)
     i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
@@ -588,13 +596,12 @@ StokesOperator<dim, number>::do_cell_integral_local(
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
       // Evaluate source term function
-      Point<dim, VectorizedArray<double>> point_batch =
-        integrator.quadrature_point(q);
-
       Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
       if (parameters.source_term == Settings::mms)
         {
+          Point<dim, VectorizedArray<double>> point_batch =
+            integrator.quadrature_point(q);
           source_value =
             evaluate_function<dim, double, dim + 1>(source_term_function,
                                                     point_batch);
@@ -945,12 +952,14 @@ solve_with_gmg(SolverControl &            solver_control,
     transfers,
     [&](const auto l, auto &vec) { operators[l]->initialize_dof_vector(vec); });
 
-  ConditionalOStream pcout(std::cout, (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0));
+  ConditionalOStream pcout(std::cout,
+                           (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                            0));
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     pcout << "   MG Level " << level << ": " << dof_handlers[level].n_dofs()
-              << " DoFs, " << coarse_grid_triangulations[level]->n_cells(level)
-              << " cells" << std::endl;
+          << " DoFs, " << coarse_grid_triangulations[level]->n_cells(level)
+          << " cells" << std::endl;
 
   mg_solve(solver_control,
            dst,
@@ -1201,13 +1210,12 @@ MatrixFreeStokes<dim>::local_evaluate_residual(
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
           // Evaluate source term function
-          Point<dim, VectorizedArray<double>> point_batch =
-            phi.quadrature_point(q);
-
           Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
           if (parameters.source_term == Settings::mms)
             {
+              Point<dim, VectorizedArray<double>> point_batch =
+                phi.quadrature_point(q);
               source_value =
                 evaluate_function<dim, double, dim + 1>(source_term_function,
                                                         point_batch);
@@ -1296,13 +1304,15 @@ MatrixFreeStokes<dim>::compute_update()
 
   solution.update_ghost_values();
 
-  SolverControl                                           solver_control(10000,
+  SolverControl solver_control(10000,
                                std::max(1.e-4 * system_rhs.l2_norm(), 1e-14),
                                true,
                                true);
-  SolverGMRES<LinearAlgebra::distributed::Vector<double>>::AdditionalData gmres_parameters;
-  gmres_parameters.max_n_tmp_vectors=1000;
-  SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(solver_control);
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>>::AdditionalData
+    gmres_parameters;
+  gmres_parameters.max_n_tmp_vectors = 1000;
+  SolverGMRES<LinearAlgebra::distributed::Vector<double>> gmres(
+    solver_control, gmres_parameters);
 
   newton_update = 0.0;
 
@@ -1432,7 +1442,7 @@ MatrixFreeStokes<dim>::compute_solution_norm() const
 
   solution.zero_out_ghost_values();
 
-  double u_h1_norm =
+  const double u_h1_norm =
     VectorTools::compute_global_error(triangulation,
                                       norm_per_cell,
                                       VectorTools::H1_seminorm);
@@ -1450,7 +1460,7 @@ MatrixFreeStokes<dim>::compute_solution_norm() const
 
   solution.zero_out_ghost_values();
 
-  double p_h1_norm =
+  const double p_h1_norm =
     VectorTools::compute_global_error(triangulation,
                                       norm_per_cell,
                                       VectorTools::H1_seminorm);
@@ -1482,9 +1492,10 @@ MatrixFreeStokes<dim>::compute_l2_error() const
 
   solution.zero_out_ghost_values();
 
-  double u_l2_error = VectorTools::compute_global_error(triangulation,
-                                                        error_per_cell,
-                                                        VectorTools::L2_norm);
+  const double u_l2_error =
+    VectorTools::compute_global_error(triangulation,
+                                      error_per_cell,
+                                      VectorTools::L2_norm);
 
   solution.update_ghost_values();
 
@@ -1499,9 +1510,10 @@ MatrixFreeStokes<dim>::compute_l2_error() const
 
   solution.zero_out_ghost_values();
 
-  double p_l2_error = VectorTools::compute_global_error(triangulation,
-                                                        error_per_cell,
-                                                        VectorTools::L2_norm);
+  const double p_l2_error =
+    VectorTools::compute_global_error(triangulation,
+                                      error_per_cell,
+                                      VectorTools::L2_norm);
 
   pcout << "  u L2 norm error: " << u_l2_error << std::endl;
   pcout << "  p L2 norm error: " << p_l2_error << std::endl;
