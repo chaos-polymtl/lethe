@@ -224,10 +224,7 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
                                    param->solid_mesh.translate[1],
                                    param->solid_mesh.translate[2]),
                    *solid_tria);
-  if (param->solid_mesh.rotate)
-    {
-      rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
-    }
+  rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
 
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
@@ -277,7 +274,7 @@ SerialSolid<dim, spacedim>::get_triangulation()
 
 template <>
 void
-SerialSolid<1, 2>::rotate_grid(double /*angle*/, int /*axis*/)
+SerialSolid<1, 2>::rotate_grid(double /*angle*/, Tensor<1,3> /*axis*/)
 {
   // Not implemented right now
   throw(std::runtime_error("This is currently not implemented"));
@@ -285,14 +282,14 @@ SerialSolid<1, 2>::rotate_grid(double /*angle*/, int /*axis*/)
 
 template <>
 void
-SerialSolid<2, 2>::rotate_grid(double /*angle*/, int /*axis*/)
+SerialSolid<2, 2>::rotate_grid(double /*angle*/, Tensor<1,3> /*axis*/)
 {
   // Not implemented right now
   throw(std::runtime_error("This is currently not implemented"));
 }
 template <>
 void
-SerialSolid<3, 3>::rotate_grid(double /*angle*/, int /*axis*/)
+SerialSolid<3, 3>::rotate_grid(double /*angle*/, Tensor<1,3> /*axis*/)
 {
   // Not implemented right now
   throw(std::runtime_error("This is currently not implemented"));
@@ -300,11 +297,9 @@ SerialSolid<3, 3>::rotate_grid(double /*angle*/, int /*axis*/)
 
 template <>
 void
-SerialSolid<2, 3>::rotate_grid(const double angle, const int axis)
+SerialSolid<2, 3>::rotate_grid(const double angle, Tensor<1,3> axis)
 {
-  Tensor<1, 3> t_axis;
-  t_axis[axis] = 1;
-  GridTools::rotate(t_axis, angle, *solid_tria);
+  GridTools::rotate(axis, angle, *solid_tria);
 }
 
 template <int dim, int spacedim>

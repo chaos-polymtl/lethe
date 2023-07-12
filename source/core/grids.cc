@@ -267,10 +267,6 @@ attach_grid_to_triangulation(
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
-  // Rotate the mesh
-  if (mesh_parameters.rotate)
-    throw std::runtime_error(
-      "Main grid cannot be rotated: the solid mesh must be rotated instead. The grid will not be rotated.");
 }
 
 

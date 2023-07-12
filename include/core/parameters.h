@@ -926,8 +926,7 @@ namespace Parameters
     std::vector<double> translate;
 
     // Grid rotation at initiation
-    bool   rotate;
-    int    axis;
+    Tensor<1,3>  axis;
     double angle;
 
     static void

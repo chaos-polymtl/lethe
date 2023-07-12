@@ -195,7 +195,7 @@ public:
   print_particle_positions();
 
   void
-  rotate_grid(double angle, int axis);
+  rotate_grid(double angle, Tensor<1,3> axis);
 
   /**
    * @brief Updates the time in the function used to describe the solid temperature

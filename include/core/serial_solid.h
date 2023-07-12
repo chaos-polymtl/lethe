@@ -251,7 +251,7 @@ private:
    *
    */
   void
-  rotate_grid(const double angle, const int axis);
+  rotate_grid(const double angle, Tensor<1,3> axis);
 
   // Member variables
 
