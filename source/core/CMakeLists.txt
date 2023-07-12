@@ -28,6 +28,7 @@ add_library(lethe-core
   thermal_expansion_model.cc
   tracer_diffusivity_model.cc
   utilities.cc
+  mesh_controller.cc
   # Headers
   ../../include/core/auxiliary_math_functions.h
   ../../include/core/bdf.h
@@ -69,7 +70,8 @@ add_library(lethe-core
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/exceptions.h
-  ../../include/core/utilities.h)
+  ../../include/core/utilities.h
+  ../../include/core/mesh_controller.h)
 
 deal_ii_setup_target(lethe-core)
 target_include_directories(lethe-core PUBLIC ../../include)

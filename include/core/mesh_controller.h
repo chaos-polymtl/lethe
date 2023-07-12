@@ -22,12 +22,15 @@
 #define lethe_mesh_controler_h
 
 
-using namespace dealii;
 
 
 template <int dim>
 class MeshController
 {
+  MeshController<dim>()
+  {}
+  virtual ~MeshController()
+  {}
 public:
   double
   calculate_corsen_fraction();
