@@ -1929,7 +1929,7 @@ namespace Parameters
 
       prm.declare_entry(
         "enable mesh refinement controller",
-        "False",
+        "false",
         Patterns::Bool(),
         "Fraction of refined elements"
         "Enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");

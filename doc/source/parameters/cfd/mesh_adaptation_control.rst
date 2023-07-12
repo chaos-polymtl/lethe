@@ -38,7 +38,7 @@ This subsection controls the mesh adaptation method, with default values given b
 	  set max number elements      = 100000000
 	  
 	  # Enable the control of the mesh refinement to target a specific number of elements equal to the maximum number of elements.
-	  set enable mesh refinement controller      = False
+	  set enable mesh refinement controller      = false
 	
 	  # Number of initial (pre-solve) refinement steps
 	  set initial refinement steps = 0
