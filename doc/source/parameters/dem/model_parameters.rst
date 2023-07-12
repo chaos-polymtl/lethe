@@ -7,45 +7,50 @@ In this subsection, DEM simulation parameters are defined. These parameters incl
 
  subsection model parameters
   # Contact detection method
-  # Choices are constant|dynamic
-  set contact detection method                          = dynamic
+  subsection model contact detection
 
-  # Depending on the contact detection method, contact search size coefficient (safety factor multiplier for dynamic contact search) or contact detection frequency should be defined for dynamic and constant contact search methods, respectively.
-  set dynamic contact search size coefficient           = 0.9
-  set contact detection frequency                       = 20
+    # Choices are constant|dynamic
+    set contact detection method                       = dynamic
+
+    # Depending on the contact detection method, contact search size coefficient
+    # (safety factor multiplier for dynamic contact search) or contact detection frequency
+    # should be defined for dynamic and constant contact search methods, respectively.
+    set dynamic contact search size coefficient        = 0.9
+    set contact detection frequency                    = 20
+
+    # Particle-particle contact neighborhood size
+    set neighborhood threshold                         = 1.6
+  end
 
   # Load balancing method and its subsequent information
-  # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
-  set load balance method                               = frequent
-  set load balance frequency                            = 200000
-  set load balance particle weight                      = 10000
-  set load balance active weight factor                 = 1.0
-  set load balance inactive weight factor               = 1.0
-
-  # Particle-particle contact neighborhood size
-  set neighborhood threshold                            = 1.6
+  subsection load balancing
+    # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
+    set load balance method                            = frequent
+    set load balance frequency                         = 200000
+    set load balance particle weight                   = 10000
+  end
 
   # Particle-particle contact force model
   # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
-  set particle particle contact force method            = hertz_mindlin_limit_overlap
+  set particle particle contact force method           = hertz_mindlin_limit_overlap
 
   # Particle-wall contact force model
   # Choices are linear|nonlinear
-  set particle wall contact force method                = nonlinear
+  set particle wall contact force method               = nonlinear
 
   # Integration method
   # Choices are euler|velocity_verlet
-  set integration method                                = velocity_verlet
+  set integration method                               = velocity_verlet
 
   # Rolling resistance method
   # choices are no_resistance|constant_resistance|viscous_resistance
-  set rolling resistance torque method                  = constant_resistance
+  set rolling resistance torque method                 = constant_resistance
 
   # Disabling particle contacts
   subsection dynamic disabling contacts
-    set enable dynamic disabling contacts               = false
-    set granular temperature threshold                  = 1e-4
-    set solid fraction threshold                        = 0.4
+    set enable dynamic disabling contacts              = false
+    set granular temperature threshold                 = 1e-4
+    set solid fraction threshold                       = 0.4
   end
  end
 
@@ -81,12 +86,12 @@ where :math:`{d_p^{max}}` denotes the maximum particle size in the simulation.
 
 where :math:`{W_p}` is the ``particle weight`` and :math:`{n_p}` is the number of particles in the cell. 1000 is the default weight assigned to one cell.
 
-Selecting ``repartition method = once``, requires defining the step at which the code calls load balancing (``load balance step``). ``Dynamic`` ``repartition method`` requires defining ``load balance frequency``, and in ``dynamic`` ``repartition method``, we should define ``load balance threshold`` and ``dynamic load balance check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic load balance check frequency`` steps, and if
+Selecting ``load balance method = once``, requires defining the step at which the code calls load balancing (``load balance step``). ``load balance method = frequent`` requires defining ``load balance frequency``, and in ``load balance method = frequent``, we should define ``threshold`` and ``dynamic check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic check frequency`` steps, and if
 
 .. math::
     L_{max}-L_{min}>{\beta}\bar{L}
 
-it calls load-balancing. :math:`{L}` and :math:`{\beta}` denote computational load on a process and ``load balance threshold``, respectively.
+it executes a load balancing. :math:`{L}` and :math:`{\beta}` denote computational load on a process and ``threshold``, respectively.
 
 * Four ``particle particle contact models`` are available in Lethe-DEM (``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, and ``linear``). ``hertz_mindlin_limit_overlap`` and ``hertz_mindlin_limit_force`` are non-linear contact models in which the stiffness and damping forces in both normal and tangential directions are considered. The only difference between these models is in their limiting method of the tangential force during gross sliding (where the tangential force exceeds the coulomb's limit). In ``hertz_mindlin_limit_overlap`` model, Lethe-DEM limits the tangential overlap and with limiting the overlap, the tangential force is limited; while in ``hertz_mindlin_limit_force`` model, the tangential force is limited directly without limiting the tangential overlap. ``hertz`` is another non-linear model in which the damping force is not considered in the tangential direction and the tangential force is limited in gross sliding. Lethe-DEM also has a ``linear`` contact model (the stiffness and damping forces are linear functions of overlap and relative velocity, respectively).
 
