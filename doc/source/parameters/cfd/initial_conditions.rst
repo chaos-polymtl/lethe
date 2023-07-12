@@ -30,7 +30,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
    end
    
    subsection cahn hilliard
-     set Function expression = if (x<0.5 & y<1, 1, 0); 0
+     set Function expression = if (x<0.5 & y<1, 1, -1); 0
    end
 
    subsection ramp
