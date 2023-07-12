@@ -26,7 +26,7 @@ using namespace dealii;
 
 
 template <int dim>
-class MeshControler
+class MeshController
 {
 public:
   double

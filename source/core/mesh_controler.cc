@@ -2,7 +2,12 @@
 // Created by luckab on 12/07/23.
 //
 
-#include <core/mesh_controler.h>
+#include <core/mesh_controller.h>
 
 template <int dim>
-Meshcon
+
+
+double
+MeshController::calculate_corsen_fraction(){
+
+}
