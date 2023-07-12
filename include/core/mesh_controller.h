@@ -25,25 +25,27 @@
 
 
 /**
- * Controller that target a given number of elements in the mesh. This controller is use to define the coarsening factor.
+ * Controller that target a given number of elements in the mesh. This
+ * controller is use to define the coarsening factor.
  */
 
 class MeshController
 {
 public:
-  //Constructor with the number of elements
-  MeshController(int target_number_of_elements):
-    target_number_of_elements(target_number_of_elements)
+  // Constructor with the number of elements
+  MeshController(int target_number_of_elements)
+    : target_number_of_elements(target_number_of_elements)
   {}
   virtual ~MeshController()
   {}
   // Function that return the coarsening factor.
   double
   calculate_coarsening_factor(int current_number_of_elements);
+
 private:
   const int target_number_of_elements;
-  int previous_number_of_elements;
-  double previous_mesh_control_error;
+  int       previous_number_of_elements;
+  double    previous_mesh_control_error;
 };
 
 #endif

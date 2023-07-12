@@ -902,23 +902,23 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   std::vector<bool> global_refine_flags(dim * tria.n_active_cells(), false);
   std::vector<bool> global_coarsen_flags(dim * tria.n_active_cells(), false);
 
-  bool first_variable(true);
-  double coarsening_factor =
-    mesh_controller.calculate_coarsening_factor(
-      this->triangulation->n_global_active_cells());
+  bool   first_variable(true);
+  double coarsening_factor = mesh_controller.calculate_coarsening_factor(
+    this->triangulation->n_global_active_cells());
 
-  unsigned int maximal_number_of_element=this->simulation_parameters.mesh_adaptation.maximum_number_elements;
+  unsigned int maximal_number_of_element =
+    this->simulation_parameters.mesh_adaptation.maximum_number_elements;
   // Override the maximal number of element if the controller is use.
-  if(this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
-    maximal_number_of_element=INT_MAX;
+  if (this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
+    maximal_number_of_element = INT_MAX;
 
   for (const std::pair<const Parameters::MeshAdaptation::Variable,
                        Parameters::MultipleAdaptationParameters> &ivar :
        this->simulation_parameters.mesh_adaptation.variables)
     {
-      double ivar_coarsening_factor=ivar.second.coarsening_fraction;
-      if(this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
-        ivar_coarsening_factor=coarsening_factor;
+      double ivar_coarsening_factor = ivar.second.coarsening_fraction;
+      if (this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
+        ivar_coarsening_factor = coarsening_factor;
 
       if (ivar.first == Parameters::MeshAdaptation::Variable::pressure)
         {
