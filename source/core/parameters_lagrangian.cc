@@ -260,9 +260,9 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "non_uniform",
-                          Patterns::Selection("uniform|non_uniform|list"),
+                          Patterns::Selection("uniform|non_uniform|list|plane"),
                           "Choosing insertion method. "
-                          "Choices are <uniform|non_uniform|list>.");
+                          "Choices are <uniform|non_uniform|list|plane>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -359,6 +359,16 @@ namespace Parameters
                           "0.0",
                           Patterns::Double(),
                           "Initial omega z");
+        prm.declare_entry("insertion plane point",
+                          "0., 0., 0.",
+                          Patterns::List(Patterns::Double()),
+                          "Insertion plane point location");
+
+        prm.declare_entry("insertion plane normal vector",
+                          "1., 0., 0.",
+                          Patterns::List(Patterns::Double()),
+                          "Insertion plane normal vector");
+
       }
       prm.leave_subsection();
     }
@@ -375,6 +385,8 @@ namespace Parameters
           insertion_method = InsertionMethod::non_uniform;
         else if (insertion == "list")
           insertion_method = InsertionMethod::list;
+        else if (insertion == "plane")
+          insertion_method = InsertionMethod::plane;
         else
           {
             throw(std::runtime_error("Invalid insertion method "));
@@ -419,6 +431,27 @@ namespace Parameters
         list_x = Utilities::string_to_double(x_str_list);
         list_y = Utilities::string_to_double(y_str_list);
         list_z = Utilities::string_to_double(z_str_list);
+
+        // Insertion plane normal vector
+        std::string              plane_vector_str = prm.get("insertion plane normal vector");
+        std::vector<std::string> plane_vector_str_list =
+          Utilities::split_string_list(plane_vector_str);
+        insertion_plane_normal_vector = Tensor<1, 3>({Utilities::string_to_double(plane_vector_str_list[0]),
+            Utilities::string_to_double(plane_vector_str_list[1]),
+            Utilities::string_to_double(plane_vector_str_list[2])});
+
+
+        // Insertion plane point
+        std::string              plane_point_str = prm.get("insertion plane point");
+        std::vector<std::string> plane_point_str_list =
+          Utilities::split_string_list(plane_point_str);
+        insertion_plane_point = Point<3>({Utilities::string_to_double(plane_point_str_list[0]),
+                                                      Utilities::string_to_double(plane_point_str_list[1]),
+                                                      Utilities::string_to_double(plane_point_str_list[2])});
+
+        std::cout<<insertion_plane_normal_vector<<std::endl;
+        std::cout<<"###################"<<std::endl;
+        std::cout<<insertion_plane_point<<std::endl;
       }
       prm.leave_subsection();
     }
