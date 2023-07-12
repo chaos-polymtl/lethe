@@ -7,15 +7,15 @@
 
 using namespace std;
 double
-MeshController::calculate_corsen_fraction(int current_number_of_cell){
+MeshController::calculate_coarsening_factor(int current_number_of_cell){
   // Parameter of the controller
   double P=0.5;
   double I=0.3;
   double D=0.1;
 
   // Evaluation of the error use to control the mesh refinement.
-  double error=(target_number_of_elements-current_number_of_cell)/(double)target_cell_number;
-  double previous_error=(target_number_of_elements-previous_number_of_elements)/(double)target_cell_number;
+  double error=(target_number_of_elements-current_number_of_cell)/(double)target_number_of_elements;
+  double previous_error=(target_number_of_elements-previous_number_of_elements)/(double)target_number_of_elements;
   previous_number_of_elements=current_number_of_cell;
   previous_mesh_control_error=previous_mesh_control_error+error;
 

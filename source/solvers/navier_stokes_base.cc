@@ -904,7 +904,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   bool first_variable(true);
   double coarsening_factor =
-    mesh_controller.calculate_corsening_factor(
+    mesh_controller.calculate_coarsening_factor(
       this->triangulation->n_global_active_cells());
 
   unsigned int maximal_number_of_element=this->simulation_parameters.mesh_adaptation.maximum_number_elements;

@@ -37,9 +37,9 @@ public:
   {}
   virtual ~MeshController()
   {}
-  // Function that return the corsening factor.
+  // Function that return the coarsening factor.
   double
-  calculate_corsening_factor(int current_number_of_elements);
+  calculate_coarsening_factor(int current_number_of_elements);
 private:
   const int target_number_of_elements;
   int previous_number_of_elements;

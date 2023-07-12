@@ -94,6 +94,9 @@ This subsection controls the mesh adaptation method, with default values given b
 .. note:: 
     If the ``fraction refinement`` parameter is too high, the controller may not be able to maintain the number of elements constant. If ``fraction type = number``, the maximal ``fraction refinement`` that is stable in 3D is 0.125. In 2D, it is 0.25.
 
+.. tip:: 
+	When using the mesh refinement controller, try reducing the ``fraction refinement`` parameter if elements alternate between being refined and coarsened.
+
 .. warning::
 	If ``enable mesh refinement controller`` is set to ``False``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
 

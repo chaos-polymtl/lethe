@@ -1932,7 +1932,7 @@ namespace Parameters
         "False",
         Patterns::Bool(),
         "Fraction of refined elements"
-        "enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");
+        "Enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");
     }
     prm.leave_subsection();
   }
