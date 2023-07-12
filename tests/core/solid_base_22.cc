@@ -26,6 +26,7 @@
 
 #include <deal.II/particles/data_out.h>
 
+
 // Lethe
 #include <core/parameters.h>
 #include <core/solid_base.h>
@@ -61,9 +62,9 @@ test()
   param->solid_mesh.initial_refinement = 4;
   param->solid_mesh.simplex            = false;
   param->number_quadrature_points      = 2;
-  param->solid_mesh.translate          = {0., 0., 0.};
-  param->solid_mesh.axis               = (1., 0., 0.);
-  param->solid_mesh.angle              = 0.;
+  param->solid_mesh.translation        = {0., 0., 0.};
+  param->solid_mesh.rotation_axis      = Tensor<1, 3>({1., 0., 0.});
+  param->solid_mesh.rotation_angle     = 0.;
 
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);

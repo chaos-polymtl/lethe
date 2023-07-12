@@ -214,12 +214,13 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
       "Unsupported mesh type - solid mesh will not be created");
 
   // Rotate the triangulation
-  rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
+  rotate_grid(param->solid_mesh.rotation_angle,
+              param->solid_mesh.rotation_axis);
 
   // Translate the triangulation
-  GridTools::shift(Point<spacedim>(param->solid_mesh.translate[0],
-                                   param->solid_mesh.translate[1],
-                                   param->solid_mesh.translate[2]),
+  GridTools::shift(Point<spacedim>(param->solid_mesh.translation[0],
+                                   param->solid_mesh.translation[1],
+                                   param->solid_mesh.translation[2]),
                    *solid_tria);
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
@@ -240,19 +241,19 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 
 template <>
 void
-SolidBase<2, 2>::rotate_grid(double angle, Tensor<1, 3> /*axis*/)
+SolidBase<2, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }
 template <>
 void
-SolidBase<2, 3>::rotate_grid(double angle, Tensor<1, 3> axis)
+SolidBase<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }
 template <>
 void
-SolidBase<3, 3>::rotate_grid(const double angle, Tensor<1, 3> axis)
+SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
 }

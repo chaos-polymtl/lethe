@@ -21,7 +21,7 @@ This subsection explains the solid objects (floating meshes) information. First 
             set file name              = none
             set simplex                = true
             set initial refinement     = 0
-            set initial rotation axis  = 0, 0, 0
+            set initial rotation axis  = 1, 0, 0
             set initial rotation angle = 0
             set initial translation    = 0, 0, 0
 
@@ -48,7 +48,7 @@ This subsection explains the solid objects (floating meshes) information. First 
 
 * The ``number of solids`` parameter defines the total number of floating meshes we wish to use during the simulation.
 
-* For each floating mesh, we need a separate subsection (for instance 	``subsection solid object 0``) in which the information of the floating mesh (``type``, ``file name``, ``initial refinement``, ``initial translation``, ``initial rotation axis``, ``initial rotation angle``  ) is defined. Each component of the ``initial translation`` and of the ``initial rotation axis`` parameters represent the ``x``, ``y`` and ``z`` directions respectively. The rotation is apply before the translation.
+* For each floating mesh, we need a separate subsection (for instance 	``subsection solid object 0``) in which the information of the floating mesh (``type``, ``file name``, ``initial refinement``, ``initial translation``, ``initial rotation axis``, ``initial rotation angle``  ) is defined. Each component of the ``initial translation`` and of the ``initial rotation axis`` parameters represent the ``x``, ``y`` and ``z`` axis. The rotation is apply before the translation.
 
 * In the subsection ``translational velocity``, we define the translational velocity of the floating mesh.
 

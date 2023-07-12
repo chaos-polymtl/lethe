@@ -74,9 +74,9 @@ test()
   param->solid_mesh.simplex            = false;
   param->particles_sub_iterations      = 1;
   param->number_quadrature_points      = 2;
-  param->solid_mesh.translate          = {0., 0., 0.};
-  param->solid_mesh.axis               = (1., 0., 0.);
-  param->solid_mesh.angle              = 0.;
+  param->solid_mesh.translation        = {0., 0., 0.};
+  param->solid_mesh.rotation_axis      = Tensor<1, 3>({1., 0., 0.});
+  param->solid_mesh.rotation_angle     = 0.;
 
 
   double time_step = 0.01;
