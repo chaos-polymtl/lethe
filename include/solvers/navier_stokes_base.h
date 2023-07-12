@@ -481,10 +481,8 @@ protected:
   VectorType average_solution;
 
   // Refinement control
-  double refinement_fraction_controled;
-  double coarsening_fraction_controled;
-  double previous_number_of_cell;
-  double previous_mesh_control_error;
+  MeshController mesh_controller;
+
   // Convergence Analysis
   ConvergenceTable error_table;
 

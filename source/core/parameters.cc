@@ -1926,6 +1926,13 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Frequency of the mesh refinement");
+
+      prm.declare_entry(
+        "enable mesh refinement controller",
+        "False",
+        Patterns::Bool(),
+        "Fraction of refined elements"
+        "enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");
     }
     prm.leave_subsection();
   }
@@ -1997,6 +2004,7 @@ namespace Parameters
       maximum_refinement_level = prm.get_integer("max refinement level");
       minimum_refinement_level = prm.get_integer("min refinement level");
       frequency                = prm.get_integer("frequency");
+      enable_mesh_controller   = prm.get_bool("enable mesh refinement controller");
     }
     prm.leave_subsection();
   }

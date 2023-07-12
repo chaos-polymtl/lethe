@@ -1002,6 +1002,9 @@ namespace Parameters
     // Refinement after frequency iter
     unsigned int frequency;
 
+    // Enable the control of the mesh refinement to target a specific number of elements equal to the maximum number of elements.
+    bool enable_mesh_controller;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

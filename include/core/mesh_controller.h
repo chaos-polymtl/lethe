@@ -21,20 +21,29 @@
 #ifndef lethe_mesh_controler_h
 #define lethe_mesh_controler_h
 
+#include <iostream>
 
 
+/**
+ * Controller that target a given number of elements in the mesh. This controller is use to define the coarsening factor.
+ */
 
-template <int dim>
 class MeshController
 {
-  MeshController<dim>()
+public:
+  //Constructor with the number of elements
+  MeshController(int target_number_of_elements):
+    target_number_of_elements(target_number_of_elements)
   {}
   virtual ~MeshController()
   {}
-public:
+  // Function that return the corsening factor.
   double
-  calculate_corsen_fraction();
-
+  calculate_corsening_factor(int current_number_of_elements);
+private:
+  const int target_number_of_elements;
+  int previous_number_of_elements;
+  double previous_mesh_control_error;
 };
 
 #endif
