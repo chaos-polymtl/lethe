@@ -29,13 +29,13 @@ Sharp immersed boundary solver
 
       sharp_2 [label="Incompressible flow", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/incompressible-flow.html"];  
 
-      sharp_2_1 [label="Flow around a cylinder using \nthe sharp interface method", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html"]; 
+      sharp_2_1 [label="Flow around a cylinder using \nthe sharp interface method", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/cylinder-with-sharp-interface/cylinder-with-sharp-interface.html", tooltip="Flow around a cylinder using the sharp interface method"]; 
 
-      sharp_2_2 [label="Non-Newtonian flow \npast a sphere", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html"]; 
+      sharp_2_2 [label="Non-Newtonian flow \npast a sphere", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.html", tooltip="Non-Newtonian flow past a sphere"]; 
 
-      sharp_2_3 [label="3D Mixer with pitched-blade \nturbine impeller using Composite \nSharp-immersed boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html"]; 
+      sharp_2_3 [label="3D Mixer with pitched-blade \nturbine impeller using Composite \nSharp-immersed boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller.html", tooltip="3D Mixer with pitched-blade turbine impeller using Composite Sharp-immersed boundary"]; 
 
-      sharp_2_4 [label="3D Mixer with pitched-blade turbine \nimpeller using OpenCascade \nSharp-immersed boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html"]; 
+      sharp_2_4 [label="3D Mixer with pitched-blade turbine \nimpeller using OpenCascade \nSharp-immersed boundary", href="https://lethe-cfd.github.io/lethe/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/3d-opencascade-mixer-with-pbt-impeller.html", tooltip="3D Mixer with pitched-blade turbine impeller using OpenCascade Sharp-immersed boundary"]; 
 
       sharp_immersed_boundary_solver -> sharp_1:w;
       sharp_immersed_boundary_solver -> sharp_2:w;
