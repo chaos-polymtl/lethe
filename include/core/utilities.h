@@ -193,15 +193,15 @@ calculate_point_property(const double phase,
 
 /**
  * @brief Used in the calculate_properties_ch to retrieve the sign of the phase parameter
- * @tparam T
- * @param val
+ * @tparam T val argument's type
+ * @param val phase parameter value
  * @return an integer -1 or 1 depending of the sign of the phase parameter
  */
 template <typename T>
 int
 sgn(T val)
 {
-  return (T(0) < val) - (val < T(0));
+  return (static_cast<T>(0) < val) - (val < static_cast<T>(0));
 }
 
 /**
@@ -225,8 +225,8 @@ calculate_point_property_ch(const double phase_ch,
       phase = sgn(phase_ch);
     }
 
-  double property_avg  = (property0 + property1) / 2.0;
-  double property_diff = (property0 - property1) / 2.0;
+  double property_avg  = (property0 + property1) * 0.5;
+  double property_diff = (property0 - property1) * 0.5;
 
   double property_eq = phase * property_diff + property_avg;
 

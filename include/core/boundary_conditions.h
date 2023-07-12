@@ -805,7 +805,7 @@ namespace BoundaryConditions
       "angle value",
       "0",
       Patterns::Double(),
-      "Angle of contact between the fluid 1 and the wall (in degrees)");
+      "Inner angle of contact between the fluid 1 and the wall (in degrees)");
 
     prm.declare_entry("phase value",
                       "0",
@@ -859,7 +859,7 @@ namespace BoundaryConditions
   template <int dim>
   void
   CahnHilliardBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
-                                                      unsigned int      i_bc)
+                                                  const   unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
     if (op == "noflux_ch")

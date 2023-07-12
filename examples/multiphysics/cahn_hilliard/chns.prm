@@ -5,7 +5,6 @@
 
 subsection simulation control
   set method = bdf1
-  #set method = steady
   set output name      = cahn_hilliard
   set output frequency = 1
   set output path      = ./output/
@@ -18,7 +17,6 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set fluid dynamics = true
   set cahn hilliard  = true
 end
 
@@ -149,7 +147,6 @@ end
 
 subsection post-processing
   set verbosity        = verbose
-  set output frequency = 1
 
   #---------------------------------------------------
   # Multiphysics post-processing

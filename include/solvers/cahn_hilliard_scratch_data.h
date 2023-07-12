@@ -41,15 +41,15 @@ using namespace dealii;
 /**
  * @brief CahnHilliardScratchData class
  * stores the information required by the assembly procedure
- * for the Cahn-Hilliard equations Consequently, this class
+ * for the Cahn-Hilliard equations. Consequently, this class
  * calculates the phase field parameter Phi (values, gradients, laplacians),
  * the chemical potential eta (values, gradients, laplacians) and the shape
- * function (values, gradients, laplacians) at all the gauss points for all
+ * function (values, gradients, laplacians) at all the Gauss points for all
  * degrees of freedom and stores it into arrays. Additionally, the user can
  * request that this class gathers additional fields for physics which are
  * coupled to the Cahn-Hilliard equations, such as the velocity which is
  * required. This class serves as a separation between the evaluation at the
- * gauss point of the variables of interest and their use in the assembly, which
+ * Gauss point of the variables of interest and their use in the assembly, which
  * is carried out by the assembler functions. For more information on this
  * design, the reader can consult deal.II step-9
  * "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter
@@ -59,7 +59,7 @@ using namespace dealii;
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
  *
- * @ingroup solvers)
+ * @ingroup solvers
  **/
 
 template <int dim>

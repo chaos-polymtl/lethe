@@ -144,7 +144,6 @@ public:
   std::pair<double, double>
   calculate_L2_error();
 
-
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
@@ -166,7 +165,6 @@ public:
    */
   void
   postprocess(bool first_iteration) override;
-
 
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
@@ -205,7 +203,6 @@ public:
    */
   void
   read_checkpoint() override;
-
 
   /**
    * @brief Returns the dof_handler of the Cahn-Hilliard physics
@@ -418,7 +415,7 @@ private:
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<CahnHilliardAssemblerBase<dim>>> assemblers;
 
-  // Tracer statistics table
+  // Phase statistics table
   TableHandler statistics_table;
 };
 

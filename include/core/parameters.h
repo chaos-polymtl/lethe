@@ -332,7 +332,6 @@ namespace Parameters
     // tracer diffusivity in L^2/s
     double tracer_diffusivity;
 
-
     // Phase change parameters
     PhaseChange phase_change_parameters;
 
@@ -372,7 +371,7 @@ namespace Parameters
       phase_change
     } thermal_expansion_model;
 
-    // Linear thermal conductivity parameters : k = k_A0 + k_A1 * T
+    // Linear thermal conductivity parameters: k = k_A0 + k_A1 * T
     double k_A0;
     double k_A1;
   };
