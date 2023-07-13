@@ -87,7 +87,6 @@ update_contact_container_iterators(
 
                   if (clear_contact_structures)
                     {
-                      // Update the particle id of the particle in contact
                       adjacent_map_iterator->second.tangential_overlap.clear();
                       adjacent_map_iterator->second.tangential_relative_velocity
                         .clear();
