@@ -1,5 +1,5 @@
 ===============================================
-2D Flow around NACA0012 at low Reynolds number
+Flow around NACA0012 at low Reynolds number
 ===============================================
 
 Features

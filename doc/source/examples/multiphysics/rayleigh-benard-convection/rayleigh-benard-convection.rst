@@ -1,5 +1,5 @@
 ==========================
-Rayleigh-Bénard Convection
+Rayleigh-Bénard convection
 ==========================
 
 This example simulates `two-dimensional Rayleigh–Benard convection`_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` . 

@@ -20,6 +20,7 @@ jobs:
 
       - name: Setup Sphinx
         run: |
+          sudo apt-get install -y graphviz
           pip install sphinx==${{ env.SPHINX_VERSION }}
           pip install sphinx-copybutton
           pip install -r doc/requirements.txt

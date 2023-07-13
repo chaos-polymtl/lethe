@@ -1,5 +1,5 @@
 ======================================
-Tracer through CAD Junction in Simplex
+Tracer through CAD junction in simplex
 ======================================
 
 In this example, we solve a problem using the simplex capabilities of Lethe. 

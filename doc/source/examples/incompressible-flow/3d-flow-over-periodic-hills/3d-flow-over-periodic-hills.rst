@@ -1,5 +1,5 @@
 ======================================
-3D Flow over periodic hills
+Flow over periodic hills
 ======================================
 
 This example is a well-established benchmark for Computational Fluid Dynamics software known as the `periodic hills flow <https://kbwiki.ercoftac.org/w/index.php?title=Abstr:2D_Periodic_Hill_Flow>`_. It includes complex flow features such as the generation of an unsteady shear layer, recirculation, strong pressure gradients, attached and detached boundary layers and turbulence recycling due to the periodicity assumption. 
