@@ -359,8 +359,8 @@ CahnHilliard<dim>::calculate_phase_statistics()
   std::vector<double> local_phase_order_values(n_q_points);
 
   double integral        = 0;
-  double max_phase_value = DBL_MIN;
-  double min_phase_value = DBL_MAX;
+  double max_phase_value = std::numeric_limits<double>::min();
+  double min_phase_value = std::numeric_limits<double>::max();
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {

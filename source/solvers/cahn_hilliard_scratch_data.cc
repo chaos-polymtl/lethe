@@ -84,14 +84,8 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
       switch (properties_manager.get_number_of_fluids())
         {
             case 1: {
-          throw std::runtime_error(
-            "Cannot run CH simulations with only 1 fluid, review the Physical Properties section of the .prm");
-              const auto rheology_model = properties_manager.get_rheology();
-
-              density_model->vector_value(fields, density);
-              rheology_model->vector_value(fields, viscosity);
-
-              break;
+              throw std::runtime_error(
+                "Cannot run CH simulations with only 1 fluid, review the Physical Properties section of the .prm");
             }
             case 2: {
               const auto density_models =
@@ -105,7 +99,7 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
               density_models[1]->vector_value(fields, density_1);
               rheology_models[1]->vector_value(fields, viscosity_1);
 
-              // Blend the physical properties using the VOF field
+              // Blend the physical properties using the Cahn-Hilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
                   auto phase_order_value = this->phase_order_values[q];

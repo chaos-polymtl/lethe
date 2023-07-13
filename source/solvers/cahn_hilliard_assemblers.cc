@@ -305,8 +305,8 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
                                 -epsilon * epsilon * phi_potential_i *
                                 grad_phi_face_phase_j * face_phase_grad_value *
                                 std::cos(angle_of_contact * M_PI / 180.0) *
-                                (1.0 /
-                                 (face_phase_grad_value.norm() + DBL_MIN)) *
+                                (1.0 / (face_phase_grad_value.norm() +
+                                        std::numeric_limits<double>::min())) *
                                 JxW_face;
                             }
                         }
