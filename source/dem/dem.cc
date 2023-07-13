@@ -449,9 +449,11 @@ DEMSolver<dim>::load_balance()
 
   // Update the container with all the combinations of background and
   // solid cells
-  contact_manager.store_floating_mesh_info(triangulation,
-                                           floating_mesh_info,
-                                           solids);
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      floating_mesh_info[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
+    }
 
   if (has_periodic_boundaries)
     {
@@ -1082,9 +1084,11 @@ DEMSolver<dim>::solve()
             parameters.boundary_conditions);
 
   // Store information about floating mesh/background mesh intersection
-  contact_manager.store_floating_mesh_info(triangulation,
-                                           floating_mesh_info,
-                                           solids);
+  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+    {
+      floating_mesh_info[i_solid] =
+        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
+    }
 
   if (parameters.restart.restart == true)
     {
@@ -1249,9 +1253,12 @@ DEMSolver<dim>::solve()
           if (floating_mesh_map_step)
             {
               // Update floating mesh information in the container manager
-              contact_manager.store_floating_mesh_info(triangulation,
-                                                       floating_mesh_info,
-                                                       solids);
+              for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
+                {
+                  floating_mesh_info[i_solid] =
+                    solids[i_solid]->map_solid_in_background_triangulation(
+                      triangulation);
+                }
             }
         }
 

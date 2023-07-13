@@ -483,22 +483,5 @@ DEMContactManager<dim>::execute_particle_wall_fine_search(
     }
 }
 
-template <int dim>
-void
-DEMContactManager<dim>::store_floating_mesh_info(
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  typename dem_data_structures<dim>::floating_mesh_information
-                                                          floating_mesh_info,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
-{
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-    {
-      // Create/update a container that contains all the combinations of
-      // background and solid cells
-      floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
-    }
-}
-
 template class DEMContactManager<2>;
 template class DEMContactManager<3>;

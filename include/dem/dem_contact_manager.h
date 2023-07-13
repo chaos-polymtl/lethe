@@ -242,21 +242,6 @@ public:
     const double                                      neighborhood_threshold,
     const bool has_floating_mesh = false);
 
-  /**
-   * Carries out the storing of the floating mesh informations for background
-   * and solid cells
-   *
-   * @param triangulation The triangulation to access the information of the cells
-   * @param solids An object which manages a serial triangulation that represents a solid object.
-   */
-
-  void
-  store_floating_mesh_info(
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    typename dem_data_structures<dim>::floating_mesh_information
-                                                            floating_mesh_info,
-    std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids);
-
 
   // Container with the iterators to all local and ghost particles
   typename dem_data_structures<dim>::particle_index_iterator_map
