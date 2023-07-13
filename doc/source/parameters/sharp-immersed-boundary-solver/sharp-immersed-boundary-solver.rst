@@ -211,7 +211,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*;
 
-    * Superquadric: *x half length* (or :math:`a`), *y half length* (or :math:`b`), *z half length* (or :math:`c`), *x exponent* (or :math:`r`), *y exponent* (or :math:`s`), *z exponent* (or :math:`t`); the effective radius is the Euclidian norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by :math:`|\frac{x}{a}|^r + |\frac{y}{b}|^s + |\frac{z}{c}|^t - 1 = 0`;
+    * Superquadric: *x half length* (or :math:`a`), *y half length* (or :math:`b`), *z half length* (or :math:`c`), *x exponent* (or :math:`r`), *y exponent* (or :math:`s`), *z exponent* (or :math:`t`); the effective radius is the Euclidian norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by :math:`\left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0`;
 
     * Composite: *file name*.
    

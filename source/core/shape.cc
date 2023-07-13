@@ -362,7 +362,6 @@ Sphere<dim>::set_position(const Point<dim> &position)
 #endif
 }
 
-
 template <int dim>
 void
 Superquadric<dim>::closest_surface_point(

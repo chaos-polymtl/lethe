@@ -381,7 +381,7 @@ private:
 /**
  * @class This class defines superquadric shapes. Their signed distance function
  * is:
- * |\frac{x}{a}|^r  + |\frac{y}{b}|^s + |\frac{z}{c}|^t - 1 = 0
+ * \left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0
  * @tparam dim Dimension of the shape
  */
 template <int dim>
@@ -399,11 +399,8 @@ public:
                     const Tensor<1, dim> exponents,
                     const Point<dim> &   position,
                     const Tensor<1, 3> & orientation)
-    : Shape<dim>(half_lengths.norm(), position, orientation)
+    : Shape<dim>(half_lengths.norm(), position, orientation),half_lengths(half_lengths),exponents(exponents),epsilon(1e-12)
   {
-    this->half_lengths = half_lengths;
-    this->exponents    = exponents;
-    this->epsilon      = 1e-12;
   }
 
   /**
@@ -479,7 +476,6 @@ public:
   closest_surface_point(const Point<dim> &p,
                         Point<dim> &      closest_point) const override;
 
-
   /**
    * @brief
    * Clear the cache of the shape
@@ -511,7 +507,7 @@ public:
   {
     return pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
            pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
-           pow(abs(centered_point[2] / half_lengths[2]), exponents[2]) - 1;
+           pow(abs(centered_point[2] / half_lengths[2]), exponents[2]) - 1.0;
   }
 
   /**
