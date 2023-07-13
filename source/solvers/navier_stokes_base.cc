@@ -119,7 +119,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       dof_handler.reinit(*this->triangulation);
     }
 
-
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
 
@@ -906,9 +905,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   double coarsening_factor = mesh_controller.calculate_coarsening_factor(
     this->triangulation->n_global_active_cells());
 
-  unsigned int maximal_number_of_element =
+  unsigned int maximal_number_of_elements =
     this->simulation_parameters.mesh_adaptation.maximum_number_elements;
-  // Override the maximal number of element if the controller is use.
+  // Override the maximal number of elements if the controller is used. The controller will find a coarsening_factor that respects the user-defined maximal_number_of_elements.
   if (this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
     maximal_number_of_element = INT_MAX;
 

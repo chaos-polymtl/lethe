@@ -15,7 +15,7 @@
 
 *
 * Author: Lucka, Polytechnique Montreal, 2023 -
-                           */
+*/
 
 
 #ifndef lethe_mesh_controler_h
@@ -26,19 +26,24 @@
 
 /**
  * Controller that target a given number of elements in the mesh. This
- * controller is use to define the coarsening factor.
+ * controller is used to define the coarsening factor.
  */
 
 class MeshController
 {
 public:
-  // Constructor with the number of elements
+/**
+* @brief Constructor
+* @param target_number_of_elements
+*/
   MeshController(int target_number_of_elements)
     : target_number_of_elements(target_number_of_elements)
   {}
   virtual ~MeshController()
   {}
-  // Function that return the coarsening factor.
+/**
+* @brief Returns the coarsening factor.
+*/
   double
   calculate_coarsening_factor(int current_number_of_elements);
 

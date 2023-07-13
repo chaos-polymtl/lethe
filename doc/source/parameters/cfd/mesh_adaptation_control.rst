@@ -89,7 +89,7 @@ This subsection controls the mesh adaptation method, with default values given b
 
 * The maximum number of elements in the entire domain can be controlled with the ``max number elements`` parameter.
 
-* The boolean parameter ``enable mesh refinement controller`` activate a controller that overrides the value of the of ``fraction coarsening`` parameter. If it is activated, the controller will try to maintain the total number of elements in the domain equal to the value of ``max number elements`` parameter.
+* The boolean parameter ``enable mesh refinement controller`` activates a controller that overrides the value of the of ``fraction coarsening`` parameter. If activated, the controller will try to maintain the total number of elements in the domain equal to the value of ``max number elements`` parameter.
 
 .. note:: 
     If the ``fraction refinement`` parameter is too high, the controller may not be able to maintain the number of elements constant. If ``fraction type = number``, the maximal ``fraction refinement`` that is stable in 3D is 0.125. In 2D, it is 0.25.
@@ -98,7 +98,7 @@ This subsection controls the mesh adaptation method, with default values given b
 	When using the mesh refinement controller, try reducing the ``fraction refinement`` parameter if elements alternate between being refined and coarsened.
 
 .. warning::
-	If ``enable mesh refinement controller`` is set to ``False``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
+	If ``enable mesh refinement controller`` is set to ``false``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
 
 * The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 
