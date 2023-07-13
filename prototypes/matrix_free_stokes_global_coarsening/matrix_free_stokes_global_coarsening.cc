@@ -1337,7 +1337,7 @@ MatrixFreeStokes<dim>::compute_update()
 
           solve_with_gmg(solver_control,
                          system_matrix,
-                         solution,
+                         newton_update,
                          system_rhs,
                          mg_data,
                          mapping,
