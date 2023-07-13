@@ -56,6 +56,7 @@ update_particle_container(
  * @tparam contact_type Contact type of the contact pairs
  * @param pairs_in_contact Output of particle-object fine search
  * @param particle_container Output of update_particle_container function
+ * @param clear_contact_structures If true, the contact structures will be cleared
  */
 
 template <int dim, typename pairs_structure, ContactType contact_type>
@@ -63,7 +64,8 @@ void
 update_contact_container_iterators(
   pairs_structure &pairs_in_contact,
   typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    &particle_container);
+    &        particle_container,
+  const bool clear_contact_structures = false);
 
 
 #endif /* locate_local_particles_h */

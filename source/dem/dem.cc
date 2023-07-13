@@ -1212,17 +1212,6 @@ DEMSolver<dim>::solve()
 
           particle_handler.sort_particles_into_subdomains_and_cells();
 
-          if (has_disabled_contacts && !simulation_control->is_at_start())
-            {
-              // Compute cell mobility for all cells after the sort particles
-              // into subdomains and cells
-              disable_contacts_object.identify_mobility_status(
-                background_dh,
-                particle_handler,
-                triangulation.n_active_cells(),
-                mpi_communicator);
-            }
-
           displacement.resize(particle_handler.get_max_local_particle_index());
           force.resize(displacement.size());
           torque.resize(displacement.size());
@@ -1231,6 +1220,17 @@ DEMSolver<dim>::solve()
           update_moment_of_inertia(particle_handler, MOI);
 
           particle_handler.exchange_ghost_particles(true);
+
+          if (has_disabled_contacts && !simulation_control->is_at_start())
+            {
+              // Compute cell mobility for all cells after the sort particles
+              // into subdomains and cells and exchange ghost particles
+              disable_contacts_object.identify_mobility_status(
+                background_dh,
+                particle_handler,
+                triangulation.n_active_cells(),
+                mpi_communicator);
+            }
         }
       else
         {
@@ -1299,7 +1299,7 @@ DEMSolver<dim>::solve()
           // Updates the iterators to particles in local-local contact
           // containers
           container_manager.update_local_particles_in_cells(
-            particle_handler, has_periodic_boundaries);
+            particle_handler, load_balance_step, has_periodic_boundaries);
 
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
