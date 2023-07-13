@@ -14,7 +14,7 @@ Radioactive Particle Tracking (RPT)
 
     digraph rpt_diagram {
       graph [bgcolor="transparent", align=true, ranksep=1.5];
-      node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
+      node [fontname=Arial, fontsize=20, shape=box, fontcolor=royalblue, color=royalblue, height=1];
       edge [color=royalblue];
       rankdir="LR";
       size = "9,9";

@@ -13,8 +13,8 @@ Sharp immersed boundary solver
 .. graphviz:: 
 
     digraph sharp_diagram {
-      graph [bgcolor="transparent", align=true, ranksep=1.5];
-      node [fontname=Arial, fontsize=18, shape=box, fontcolor=royalblue, color=royalblue];
+      graph [bgcolor="transparent", align=true];
+      node [fontname=Arial, fontsize=20, shape=box, fontcolor=royalblue, color=royalblue, height=1];
       edge [color=royalblue];
       rankdir="LR";
       size = "9,9";
