@@ -75,7 +75,7 @@ and:
 .. code-block:: shell
   :class: copy-button
 
-  pip install graphviz
+  sudo apt-get install graphviz
 
 Then, install the Sphinx requirements:
 
