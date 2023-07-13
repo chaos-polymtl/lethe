@@ -1,8 +1,5 @@
-.. role:: raw-html(raw)
-    :format: html
-
 ===============================================================================
-Mixer with pitched-blade turbine impeller using Nitsche immersed boundary
+Mixer with Pitched-Blade Turbine Impeller Using Nitsche Immersed Boundary
 ===============================================================================
 
 Simulation of mixing in stirred-tanks is one important industrial application which is often simulated with Lethe. Agitated vessels are widely applied in chemical engineering as product homogenizers, heat and mass transfer enhancers, and surface area maximizers in solid-fluid processes. Batch and Continuous Stirred Tank Reactors (CSTR), for example, are among the most often reactor models applied in chemical industries that can be simulated through computational fluid dynamics.
@@ -12,27 +9,24 @@ This example illustrates how the transient flow in a stirred-tank can be simulat
 .. seealso::
 	This example is related to this article (to be published).
 
-:raw-html:`<br />`
 
 Features
-----------------------------------
+--------
 - Solvers: ``gls_nitsche_navier_stokes_33``
 - Transient problem
 - Rotating complex solid modeled with Nitsche immersed boundary
 - Calculation of the average velocity
 
 
-:raw-html:`<br />`
 
 Files Used in This Example
-----------------------------
+--------------------------
 
 * Parameter file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/mixer.prm``
 * Mesh file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.msh``
 * Geometry file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.geo``
 
 
-:raw-html:`<br />`
 
 Description of the Case
 -----------------------
@@ -92,7 +86,6 @@ where :math:`N` is the angular velocity in Hertz (or Rotation Per Second, RPS), 
 
 We investigate this case at a Reynolds number :math:`Re=300`. This example can easily be extended to higher Reynolds number values by lowering the kinematic viscosity. It would then be necessary to increase the mesh resolution for the solution to be meaningfully accurate.
 
-:raw-html:`<br />`
 
 Parameter File
 --------------
@@ -201,8 +194,8 @@ Three boundary conditions are considered:
 .. seealso::
 	The boundary conditions are described in the :doc:`../../../parameters/cfd/boundary_conditions_cfd` section of the documentation.
 
-Nitsche immersed boundary parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Nitsche Immersed Boundary Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :doc:`../../../parameters/cfd/nitsche` subsection is used to insert the immersed geometry and control its motion.
 
@@ -242,7 +235,7 @@ The :doc:`../../../parameters/cfd/nitsche` subsection is used to insert the imme
 
 
 Post-processing
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 It is often desirable to obtain the time-averaged velocity field when simulating a transient flow. This is achieved through the :doc:`../../../parameters/cfd/post_processing` section. The averaging period is started after the flows start to stabilize and reach their pseudo steady-state. In this case, we assume it happens after :math:`2~\text{sec}`. This choice is prone to error, which can be mitigated by increasing the duration of simulations and using a longer averaging interval.
 
@@ -310,7 +303,6 @@ Relatively standard parameters are used for the :doc:`../../../parameters/cfd/li
       set max krylov vectors                        = 200
     end
 
-:raw-html:`<br />`
 
 Running the Simulation
 ----------------------
@@ -329,10 +321,9 @@ Lethe generates a larger number of files when the Nitsche immersed boundary is u
 .. tip ::
 	The solid particles enable the Nitsche restriction visualization, while the solid triangulation is used for animation purposes.
 
-:raw-html:`<br />`
 
-Results
-~~~~~~~~~
+Results and Discussion
+----------------------
 
 The following movie shows the evolution of the velocity magnitude as a function of time in a cut perpendicular to the radius of the vessel with and without the mesh :
 
@@ -371,7 +362,6 @@ Although the transient flow patterns are clear, looking at the time-averaged vel
 Clearly, the fluid is descending along the shaft and rises along the lateral walls of the vessel.
 Multiple analyses can be done with this type of simulation. For example, one can monitor the torque on the impeller as a function of the Reynolds number to generate the power curve of the agitator. One could also leverage the tracer multiphysics module to measure the mixing time of the tank and/or identify the presence of dead zones.
 
-:raw-html:`<br />`
 
 Possibilities for Extension
 ----------------------------
@@ -381,7 +371,6 @@ Possibilities for Extension
 - **Calculate the mixing time using the passive tracer physics:** Using the passive tracer physics and the built-in post-processing tool, the mixing time in the vessel can be easily calculated.
 
 
-:raw-html:`<br />`
 
 References
 ----------------------------

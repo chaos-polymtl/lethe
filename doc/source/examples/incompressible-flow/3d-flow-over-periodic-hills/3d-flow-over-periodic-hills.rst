@@ -1,5 +1,5 @@
 ======================================
-Flow over periodic hills
+Flow over Periodic Hills
 ======================================
 
 This example is a well-established benchmark for Computational Fluid Dynamics software known as the `periodic hills flow <https://kbwiki.ercoftac.org/w/index.php?title=Abstr:2D_Periodic_Hill_Flow>`_. It includes complex flow features such as the generation of an unsteady shear layer, recirculation, strong pressure gradients, attached and detached boundary layers and turbulence recycling due to the periodicity assumption. 
@@ -137,7 +137,7 @@ In this section, we specify the boundary conditions taking into account the IDs 
 
 First, a ``periodic`` boundary condition is set for both the inlet id ``0`` and outlet id ``1`` of the flow. For the bottom and top walls we set ``noslip`` boundary conditions, while for the side walls id ``4`` and ``5`` we consider periodic boundary conditions too, because it allows to represent the bulk flow of the channel. All the boundary conditions are set to represent the actual benchmark case. 
 
-Flow control
+Flow Control
 ~~~~~~~~~~~~
 
 Since the flow is periodic and a specific Reynolds number is targeted for the simulation, the flow has to be controlled at each time step. To allow flow control, the subsection flow control has to be enabled. 
@@ -158,7 +158,7 @@ First we set the ``enable`` parameter to ``true`` in order to control the flow. 
 .. tip:: A good method to find a reasonable initial beta is to test two or three different initial beta parameters, write down the given flow rate at the first time step in the simulation and do a regression. The correlation is linear and giving a proper value will greatly speed up the convergence. 
 
 Post-processing
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 The post-processing subsection allows the calculation of different quantities:
 
@@ -185,7 +185,7 @@ The FEM subsection specifies the order of the elements used for both velocity an
 
 For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements. In that case, it is important to remember to add the ``set qmapping all = true`` line after the velocity and pressure orders.
 
-Non-linear solver
+Non-linear Solver
 ~~~~~~~~~~~~~~~~~
 
 The non-linear solver control section allows us to choose a method suitable for the problem that we are solving:
@@ -213,8 +213,8 @@ Lethe will generate a number of files. The most important ones have the extensio
 
 Due to the complexity of this example we recommend that you run this example using a cluster or supercomputer if available. For this it is necessary to add the ``mpirun -np X`` command at the beginning of the line. The number of processes ``X`` must be adjusted according to the machine. If you want to run this in a normal desktop we recommend that you set the parameter ``time end`` to ``5.0``; this allows you to observe the initial behavior of the simulation.
 
-Results
--------
+Results and Discussion
+----------------------
 To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp `[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. `[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_.
 
 The following image shows the average velocity profiles in the x-direction:

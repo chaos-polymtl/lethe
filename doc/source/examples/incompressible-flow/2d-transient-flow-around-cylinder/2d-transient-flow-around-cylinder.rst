@@ -1,5 +1,5 @@
 ======================================
-Transient flow around a cylinder
+Transient Flow around a Cylinder
 ======================================
 
 This example corresponds to a transient flow around a fixed cylinder at a high Reynolds number.
@@ -52,7 +52,7 @@ This example uses a 2nd order backward differentiation (``method = bdf2``) for t
       set time step        = 0.05
     end
 
-FEM interpolation
+FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
 The interpolation orders for the velocity and pressure are set to Q2-Q1 in the ``FEM`` subsection:
@@ -99,7 +99,7 @@ While the discretization in the wake of the cylinder has less impact on the forc
 Here, we are using the pressure as the variable for the `Kelly error estimator <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_, unlike the previous examples which were using the velocity. Indeed, we have observed that the refinement has less tendency to follow the vortices as they move through the wake with the pressure as the refinement indicator than if we select the velocity. Additionally, the ``fraction refinement`` and ``fraction coarsening`` are set to lower values than the previous examples (i.e., respectively 0.02 and 0.01) to enable a gradual growth of the mesh size.
 
 
-Initial and boundary conditions
+Initial and Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
@@ -291,7 +291,7 @@ Possibilities for Extension
 
 References
 ----------
-`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
+`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146. https://doi.org/10.1016/j.compchemeng.2015.10.019
 
 `[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_ Barbeau, L., Étienne, S., Béguin, C., & Blais, B. (2022). Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,
 Computers & Fluids, Volume 239, 105415, https://doi.org/10.1016/j.compfluid.2022.105415

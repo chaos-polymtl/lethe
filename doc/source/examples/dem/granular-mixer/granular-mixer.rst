@@ -137,7 +137,7 @@ Animation of the granular mixing simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ms-gAyZcOXk" frameborder="0" allowfullscreen></iframe>
 
 
-Possibility for extension
+Possibility for Extension
 -----------------------------
 
 The same simulation can be carried out with particles of different sizes and properties to study segregation.

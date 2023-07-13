@@ -248,7 +248,7 @@ The density and the kinematic viscosity of the two fluids involved in this examp
     end
 
 """"""""""""""""""""""""""""""""
-Analytical solution
+Analytical Solution
 """"""""""""""""""""""""""""""""
 
 As presented in the section :ref:`Surface tension force`, the analytical solution for this case is zero for the velocity and the pressure drop is given by :math:`\Delta p = \sigma \kappa` whit :math:`\kappa = 1/R`. For :math:`\sigma = 1.0` and :math:`R=0.5`, we have :math:`\Delta p = 2.0`.

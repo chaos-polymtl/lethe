@@ -1,6 +1,6 @@
 
 ==================================
-Flow around a sphere
+Flow around a Sphere
 ==================================
 
 In this example, a fluid flows past a sphere
@@ -142,7 +142,7 @@ Taking this into account and the fact that the sphere diameter :math:`D` is 1 m,
 By default, simulations only contain a single fluid which is labeled ``0``.
 
 
-FEM interpolation
+FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
 The default FEM parameters for this example use first order polynomials. They can be changed to Q2-Q1 elements.
@@ -257,9 +257,11 @@ or
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
+Results and Discussion
+-----------------------
 
-First case results (Re = 0.1)
------------------------------
+First Case Results (:math:`Re=0.1`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
 
@@ -283,8 +285,8 @@ We can appreciate the axisymmetrical behavior of the flow. The drag on the spher
 
 Given the flow parameters, the calculated drag coefficient is 250.50, using 6000 cells. At Re = 0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). The deviation from the analytical solution is primarily due to the size of the domain (height of the domain compared to the size of the sphere). The coarseness of the mesh can also have an impact on the result. It would be relevant to carry out a mesh refinement analysis.
 
-Second case results (Re = 150)
-------------------------------
+Second Case Results (:math:`Re=150`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We now consider the case at a Reynolds number of 150. At this value of the Reynolds number, the flow has separated, resulting in an unstable wake and recirculation. 
 
@@ -303,8 +305,8 @@ The velocity and pressure are once again visualised as well as the mesh used:
 
 The drag coefficient at Re = 150 using this example simulation is 0.798, against a predicted coefficient of 0.889 (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_).
 
-Third case results (Re = 150 with an adaptative mesh refinement)
-----------------------------------------------------------------
+Third Case Results (:math:`Re=150` With an Adaptative Mesh Refinement)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using mesh adaptative refinement, the final mesh contains slightly more than 101,000 cells. The resulting velocity profile is shown without and with the underlying mesh. Refinement around the sphere and wake can be observed:
 
@@ -327,6 +329,3 @@ Possibilities for Extension
 - **Mesh size** It would be interesting to increase the height:sphere diameter ratio and see if the drag coefficient becomes closer to the analytical one for Re = 0.1 A Mesh refinement analysis could also be carried out.
 
 - **Dynamic mesh adaptation:** To increase accuracy further, the ``max number elements`` and ``max refinement level`` parameters of the mesh adaption can be increased.
-
-
-

@@ -178,7 +178,7 @@ The following animation shows the temperature distribution in the simulations do
     <iframe width="560" height="315" src="https://www.youtube.com/embed/e9bZ_3DAyZk" frameborder="0" allowfullscreen></iframe>
 
 
-Possibility for extension
+Possibility for Extension
 -----------------------------
 
 This example can be extended to implement phase change (melting the solid block by laser and solidifying again after cooling).

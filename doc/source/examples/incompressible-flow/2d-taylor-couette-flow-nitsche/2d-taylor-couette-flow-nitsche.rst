@@ -1,12 +1,12 @@
 ========================================================
-Taylor-Couette flow using Nitsche immersed boundary
+Taylor-Couette Flow Using Nitsche Immersed Boundary
 ========================================================
 
 This example revisits the same taylor-couette flow problem in :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow`, 
 now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries without meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
 
 Features
-----------------------------------
+---------
 - Solvers: ``gls_nitsche_navier_stokes_22`` (with Q1-Q1, Q2-Q1 and Q2-Q2)
 
 .. note:: 
@@ -73,7 +73,7 @@ The last parameter specifies the ``initial refinement`` of the grid.
     :name: fluid
     :height: 10cm
 
-Nitsche mesh
+Nitsche Mesh
 ~~~~~~~~~~~~
 
 The ``Nitsche`` subsection specifies the solid geometry embedded in the fluid domain. The Nitsche Immersed Boundary (IB) uses particles located at the 
@@ -146,7 +146,7 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
     end
 
 
-FEM interpolation
+FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
 .. note::
@@ -160,7 +160,7 @@ FEM interpolation
       set pressure order = 1
     end
 
-Analytical solution
+Analytical Solution
 ~~~~~~~~~~~~~~~~~~~
 
 Like in the first Taylor-Couette example, we add an analytical solution section to the parameter handler file. This analytical solution is more complex to define, 
@@ -194,7 +194,7 @@ Simulation Control and Mesh Refinement
 As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptative mesh refinement
 
 
-Uniform mesh refinement
+Uniform Mesh Refinement
 ^^^^^^^^^^^^^^^^^^^^^^^ 
 
 The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. 
@@ -220,7 +220,7 @@ We then set the mesh adaptation ``type`` to ``uniform``.
     end
 
 
-Adaptative mesh refinement
+Adaptative Mesh Refinement
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Since the Nitsche IB method introduces additional error on the surface of the immersed geometry, it is pertinent to investigate the results it can produce with 
@@ -253,10 +253,10 @@ The mesh can be dynamically adapted using Kelly error estimates on the velocity,
     end
 
 
-Rest of the subsections
+Rest of the Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The non-linear and linear solvers subsections do not contain any new information in this example.
+The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example..
 
 
 Running the Simulation
@@ -276,10 +276,10 @@ or
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
 
-Results
----------------------------
+Results and Discussion
+----------------------
 
-Uniform mesh refinement
+Uniform Mesh Refinement
 ~~~~~~~~~~~~~~~~~~~~~~~
 For the uniform mesh refinement problem, the evolution of the L2 error is as follows:
 
@@ -322,7 +322,7 @@ The torque on the inner cylinder should be -0.83776 and we note that the torque 
 Running the simulation with finer meshes lead to this results.
 
 
-Adaptative mesh refinement
+Adaptative Mesh Refinement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Paraview, the steady-state velocity profile can be visualized for the adaptative mesh refinement case:

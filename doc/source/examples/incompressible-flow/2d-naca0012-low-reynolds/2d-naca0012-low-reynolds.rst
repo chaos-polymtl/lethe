@@ -279,13 +279,13 @@ References
 ----------
 
 `[1] <https://doi.org/10.1177/17568293211055656>`_ 
-T. Kouser, Y. Xiong, D. Yang, and S. Peng, ‘Direct Numerical Simulations on the three-dimensional wake transition of flows over NACA0012 airfoil at Re = 1000’, International Journal of Micro Air Vehicles, vol. 13, p. 175682932110556, Jan. 2021, doi: 10.1177/17568293211055656.
+Kouser T., Xiong Y., Yang D., & Peng S. (2021). Direct Numerical Simulations on the three-dimensional wake transition of flows over NACA0012 airfoil at Re = 1000. International Journal of Micro Air Vehicles, 13. https://doi.org/10.1177/17568293211055656
 
-`[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_ 
-Y. Yuta, O. Tomohisa, and M. Akinori, ‘1201 PRESSURE DISTRIBUTION ON A NACA0012 AIRFOIL AT LOW REYNOLDS NUMBERS’, ICJWSF, vol. 2013.4, no. 0, p. _1201-1 _-_1201-5 _, 2013, doi: 10.1299/jsmeicjwsf.2013.4._1201-1 _ . 
+`[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_
+Yuta, Y., Tomohisa, O., & Akinori, M. (2013). 1201 PRESSURE DISTRIBUTION ON A NACA0012 AIRFOIL AT LOW REYNOLDS NUMBERS. The Proceedings of the International Conference on Jets, Wakes and Separated Flows (ICJWSF), 4(0), 1201–1–1201–5. `<https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_
 
 `[3] <https://doi.org/10.2514/1.C031849>`_ 
-R. Kojima, T. Nonomura, A. Oyama, and K. Fujii, ‘Large-Eddy Simulation of Low-Reynolds-Number Flow Over Thick and Thin NACA Airfoils’, Journal of Aircraft, vol. 50, no. 1, pp. 187–196, Jan. 2013, doi: 10.2514/1.C031849.
+Kojima, R., Nonomura, T., Oyama, A., & Fujii, K. (2013). Large-Eddy Simulation of Low-Reynolds-Number Flow Over Thick and Thin NACA Airfoils. Journal of Aircraft, 50(1), 187–196. https://doi.org/10.2514/1.C031849
 
 
 

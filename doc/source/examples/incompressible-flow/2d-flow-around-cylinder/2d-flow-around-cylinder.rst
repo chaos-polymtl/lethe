@@ -203,8 +203,8 @@ Launching the simulation is as simple as specifying the executable name and the 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
 
-Results
--------
+Results and Discussion
+----------------------
 
 Using Paraview the following steady-state velocity and pressure profiles can be visualized:
 
@@ -258,4 +258,4 @@ Possibilities for Extension
 
 References
 ----------
-`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146.
+`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146. https://doi.org/10.1016/j.compchemeng.2015.10.019

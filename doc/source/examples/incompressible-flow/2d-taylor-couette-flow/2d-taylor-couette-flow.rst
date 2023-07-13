@@ -195,8 +195,8 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbosity = verbose`` will print out the value of the torque calculated for each mesh.
 
 
-Non-linear and Linear Solvers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Rest of the Subsections
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example.
 
@@ -210,8 +210,8 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
-Results
----------------------------
+Results and Discussion
+----------------------
 
 Using Paraview, the steady-state velocity profile can be visualized:
 

@@ -131,7 +131,7 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
       set viscous dissipation = true
     end
 
-Analytical solution
+Analytical Solution
 ~~~~~~~~~~~~~~~~~~~
 
 The ``analytical solution`` is defined, according to the fluid and simulation properties:

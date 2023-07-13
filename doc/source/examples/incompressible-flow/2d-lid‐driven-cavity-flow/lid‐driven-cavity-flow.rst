@@ -296,6 +296,6 @@ Possibilities for Extension
 References
 -----------
 
-`[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_ Ghia, U., Ghia, K. N., & Shin, C. T. (1982). High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method. Journal of Computational Physics, 48(3), 387–411. doi:10.1016/0021-9991(82)90058-4
+`[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_ Ghia, U., Ghia, K. N., & Shin, C. T. (1982). High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method. Journal of Computational Physics, 48(3), 387–411. https://doi.org/10.1016/0021-9991(82)90058-4>
 
-`[2] <https://doi.org/10.1002/fld.953>`_ Erturk, E., Corke, T. C., & Gökçöl, C. (2005). Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers. International Journal for Numerical Methods in Fluids, 48(7), 747–774. doi:10.1002/fld.953
+`[2] <https://doi.org/10.1002/fld.953>`_ Erturk, E., Corke, T. C., & Gökçöl, C. (2005). Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers. International Journal for Numerical Methods in Fluids, 48(7), 747–774. https://doi.org/10.1002/fld.953

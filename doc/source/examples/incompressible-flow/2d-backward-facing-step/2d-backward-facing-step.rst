@@ -1,5 +1,5 @@
 ====================================
-Flow past a backward-facing step  
+Flow past a Backward-Facing Step
 ====================================
 
 Features
@@ -251,8 +251,8 @@ where ``j`` is the number of CPUs used for the computations.
 Results and Discussion
 ----------------------
 
-Low Reynolds number (:math:`Re = 100`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Low Reynolds Number (:math:`Re=100`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After opening the file ``backward_facing_step_output.pvd`` with Paraview, the following results are obtained.
 
@@ -278,8 +278,8 @@ where the final value of :math:`x_r` is :math:`2.893`. We notice from the graph 
 The reference value used in the error analysis is taken from Erturk (2008).
 
 
-Higher Reynolds number (:math:`Re=1000`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Higher Reynolds Number (:math:`Re=1000`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In a similar way as we did in the last subsection, the solution for :math:`Re = 1000` can be obtained.
 
@@ -292,10 +292,10 @@ For :math:`Re = 1000` :
 On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python code as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
 
-Validation and comparison
+Validation and Comparison
 -------------------------
 
-Reattachment length
+Reattachment Length
 ~~~~~~~~~~~~~~~~~~~
 
 In this section, the solutions obtained with *Lethe* are compared with data that can be found in the scientific literature (Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_ and Velivelli and Bryden (2015) `[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_). Several studies include datasets of :math:`x_r/h = f(Re)` (reattachment length) either experimentally or numerically. The next figure illustrates some of them in comparison with *Lethe*.
@@ -314,7 +314,7 @@ First, the results provided by *Lethe* are identical or so to all of the three s
 | Erturk (2008) | :math:`10.349` | N/A            |
 +---------------+----------------+----------------+
 
-Velocity distribution
+Velocity Distribution
 ~~~~~~~~~~~~~~~~~~~~~
 
 To validate the quality of the mesh/geometry as well, it is interesting to compare the obtained velocity distributions with analytical data. The following figures illustrate the velocity distributions at the outlet (right wall) in comparison to the analytical solution.

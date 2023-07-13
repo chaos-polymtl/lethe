@@ -1,5 +1,5 @@
 ======================================
-Transient flow around an Ahmed body
+Transient Flow around an Ahmed Body
 ======================================
 
 Features
@@ -84,7 +84,7 @@ The input mesh ``Ahmed-Body-20-2D.msh`` is in the same folder as the ``.prm`` fi
 
     For further information about `Mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ generation, we refer to the reader to the :doc:`../../../tools/gmsh/gmsh` page of this documentation, or the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ on the deal.ii documentation and the `Gmsh <https://gmsh.info/#Download>`_ website.
 
-Initial and boundary conditions
+Initial and Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html>`_ and `Boundary Conditions <https://lethe-cfd.github.io/lethe/parameters/cfd/boundary_conditions_cfd.html>`_ are defined as in `Example 3 <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_.
 
@@ -211,4 +211,4 @@ Possibilities for Extension
 
 References
 ----------
-`[1] <https://www.jstor.org/stable/44434262>`_ Ahmed, S. R., Ramm, G., & Faltin, G. (1984). Some salient features of the time-averaged ground vehicle wake. SAE Transactions, 473-503.
+`[1] <https://www.jstor.org/stable/44434262>`_ Ahmed, S. R., Ramm, G., & Faltin, G. (1984). Some salient features of the time-averaged ground vehicle wake. SAE Transactions, 93, 473-503. https://www.jstor.org/stable/44434262
