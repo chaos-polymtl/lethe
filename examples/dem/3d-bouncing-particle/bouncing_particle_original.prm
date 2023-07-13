@@ -19,11 +19,15 @@ end
 #---------------------------------------------------
 
 subsection model parameters
+  subsection contact detection
   set contact detection method                = dynamic
   set dynamic contact search size coefficient = 0.9
   set neighborhood threshold                  = 20
+  end
+  subsection load balancing
   set load balance method                     = once
-  set load balance step                       = 150000
+  set step                       = 150000
+  end
   set particle particle contact force method  = linear
   set particle wall contact force method      = linear
   set integration method                      = velocity_verlet
