@@ -26,6 +26,9 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 using namespace dealii;
 
 /**
@@ -244,6 +247,38 @@ announce_string(const ConditionalOStream &pcout,
   pcout << std::string(expression.size() + 1, delimiter) << std::endl;
   pcout << expression << std::endl;
   pcout << std::string(expression.size() + 1, delimiter) << std::endl;
+}
+
+
+/**
+ * @brief Serializes a table using boost serialization feature
+ * the filename should contain the desired extension
+ *
+ * @param table The table to be serialized
+ * @param filename The file name  (including the extension) to be used
+ */
+inline void
+serialize_table(const TableHandler &table, const std::string filename)
+{
+  std::ofstream                 ofile(filename);
+  boost::archive::text_oarchive oa(ofile, boost::archive::no_header);
+  oa << table;
+}
+
+
+/**
+ * @brief Loads a table using boost serialization feature
+ * the filename should contain the desired extension
+ *
+ * @param table The table to be deserialized
+ * @param filename The file name (including the extension) to be used
+ */
+inline void
+deserialize_table(TableHandler &table, const std::string filename)
+{
+  std::ifstream                 ifile(filename);
+  boost::archive::text_iarchive ia(ifile, boost::archive::no_header);
+  ia >> table;
 }
 
 
