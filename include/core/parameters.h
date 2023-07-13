@@ -1004,7 +1004,7 @@ namespace Parameters
 
     // Enable the control of the mesh refinement to target a specific number of
     // elements equal to the maximum number of elements.
-    bool enable_mesh_controller;
+    bool mesh_controller_is_enabled;
 
     static void
     declare_parameters(ParameterHandler &prm);

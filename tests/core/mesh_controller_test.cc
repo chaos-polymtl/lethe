@@ -1,7 +1,7 @@
 /**
-* @brief Tests the composite shape representation.
-*
-*/
+ * @brief Tests the mesh controller object
+ *
+ */
 
 // Lethe
 #include <core/mesh_controller.h>
@@ -12,61 +12,72 @@
 void
 test()
 {
- deallog << "Beginning" << std::endl;
+  deallog << "Beginning" << std::endl;
 
- // Solid parameters
- Mesh
+  // Create the mesh controller object
+  MeshController mesh_controller(10000);
+  deallog << "Testing value" << std::endl;
+  // Testing value that are return by the controller for various pseudo number
+  // of elements.
 
- deallog << "Testing value" << std::endl;
- // Testing value of all shape, to confirm proper implementation
- Point<3> p({1.5, 1.8, 1.75});
- deallog << "Hex extrusion value at (1.5; 1.8; 1.75) = " << hex_step->value(p)
-         << std::endl;
- deallog << "OK" << std::endl;
-
- deallog << "Testing translation rotation" << std::endl;
- Point<3>     translation({0.2, 0., 0.3});
- Tensor<1, 3> orientation_2({1., 1., 1.});
- deallog << "Translation =(0.2; 0.; 0.3)" << std::endl;
- deallog << "Orientation =(1.; 1.; 1.)" << std::endl;
- hex_step->set_position(translation);
- hex_step->set_orientation(orientation_2);
- deallog << "Hex extrusion value at (1.5; 1.8; 1.75) = " << hex_step->value(p)
-         << std::endl;
- deallog << "OK" << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(1000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(2000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(4000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(8000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(11000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(12000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(11500) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(10500) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(10250) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(10000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(10000) << std::endl;
+  deallog << "coarsening coefficient "
+          << mesh_controller.calculate_coarsening_factor(10000) << std::endl;
+  deallog << "OK" << std::endl;
 }
 
 int
 main()
 {
- try
-   {
-     initlog();
-     test();
-   }
- catch (std::exception &exc)
-   {
-     std::cerr << std::endl
-               << std::endl
-               << "----------------------------------------------------"
-               << std::endl;
-     std::cerr << "Exception on processing: " << std::endl
-               << exc.what() << std::endl
-               << "Aborting!" << std::endl
-               << "----------------------------------------------------"
-               << std::endl;
-     return 1;
-   }
- catch (...)
-   {
-     std::cerr << std::endl
-               << std::endl
-               << "----------------------------------------------------"
-               << std::endl;
-     std::cerr << "Unknown exception!" << std::endl
-               << "Aborting!" << std::endl
-               << "----------------------------------------------------"
-               << std::endl;
-     return 1;
-   }
+  try
+    {
+      initlog();
+      test();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
 }

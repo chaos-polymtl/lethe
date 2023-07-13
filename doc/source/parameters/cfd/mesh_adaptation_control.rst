@@ -98,7 +98,7 @@ This subsection controls the mesh adaptation method, with default values given b
 	When using the mesh refinement controller, try reducing the ``fraction refinement`` parameter if elements alternate between being refined and coarsened.
 
 .. warning::
-	If ``enable mesh refinement controller`` is set to ``false``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
+	If ``mesh refinement controller`` is set to ``false``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
 
 * The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 

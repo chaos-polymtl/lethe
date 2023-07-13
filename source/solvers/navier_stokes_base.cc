@@ -910,7 +910,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // Override the maximal number of elements if the controller is used. The
   // controller will find a coarsening_factor that respects the user-defined
   // maximal_number_of_elements.
-  if (this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
+  if (this->simulation_parameters.mesh_adaptation.mesh_controller_is_enabled)
     maximal_number_of_elements = INT_MAX;
 
   for (const std::pair<const Parameters::MeshAdaptation::Variable,
@@ -918,7 +918,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
        this->simulation_parameters.mesh_adaptation.variables)
     {
       double ivar_coarsening_factor = ivar.second.coarsening_fraction;
-      if (this->simulation_parameters.mesh_adaptation.enable_mesh_controller)
+      if (this->simulation_parameters.mesh_adaptation
+            .mesh_controller_is_enabled)
         ivar_coarsening_factor = coarsening_factor;
 
       if (ivar.first == Parameters::MeshAdaptation::Variable::pressure)

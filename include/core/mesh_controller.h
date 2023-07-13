@@ -49,8 +49,8 @@ public:
 
 private:
   const unsigned int target_number_of_elements;
-  unsigned int      previous_number_of_elements;
-  double    previous_mesh_control_error;
+  unsigned int       previous_number_of_elements;
+  double             previous_mesh_control_error;
 };
 
 #endif

@@ -9,7 +9,7 @@ add_library(lethe-core
   ib_particle.cc
   ib_stencil.cc
   lethe_grid_tools.cc
-  manifolds.cc  
+  manifolds.cc
   mesh_controller.cc
   parameters.cc
   parameters_lagrangian.cc
@@ -35,7 +35,7 @@ add_library(lethe-core
   ../../include/core/boundary_conditions.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
-  ../../include/core/dimensionality.h 
+  ../../include/core/dimensionality.h
   ../../include/core/exceptions.h
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
@@ -43,7 +43,7 @@ add_library(lethe-core
   ../../include/core/inexact_newton_non_linear_solver.h
   ../../include/core/kinsol_newton_non_linear_solver.h
   ../../include/core/lethe_grid_tools.h
-  ../../include/core/manifolds.h  
+  ../../include/core/manifolds.h
   ../../include/core/mesh_controller.h
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
