@@ -1610,6 +1610,43 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
 
   multiphysics->read_checkpoint();
+
+  // Deserialize all post-processing tables that are currently used
+  {
+    const Parameters::PostProcessing post_processing =
+      simulation_parameters.post_processing;
+    std::string prefix =
+      this->simulation_parameters.simulation_control.output_folder;
+    std::string suffix = ".checkpoint";
+    if (post_processing.calculate_enstrophy)
+      deserialize_table(
+        this->enstrophy_table,
+        prefix + simulation_parameters.post_processing.enstrophy_output_name +
+          suffix);
+    if (post_processing.calculate_kinetic_energy)
+      deserialize_table(
+        this->kinetic_energy_table,
+        prefix +
+          simulation_parameters.post_processing.kinetic_energy_output_name +
+          suffix);
+    if (post_processing.calculate_apparent_viscosity)
+      deserialize_table(
+        this->apparent_viscosity_table,
+        prefix +
+          simulation_parameters.post_processing.apparent_viscosity_output_name +
+          suffix);
+    if (post_processing.calculate_flow_rate)
+      deserialize_table(
+        this->flow_rate_table,
+        prefix + simulation_parameters.post_processing.flow_rate_output_name +
+          suffix);
+    if (post_processing.calculate_pressure_drop)
+      deserialize_table(
+        this->pressure_drop_table,
+        prefix +
+          simulation_parameters.post_processing.pressure_drop_output_name +
+          suffix);
+  }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2119,6 +2156,43 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       std::string triangulationName = prefix + ".triangulation";
       tria->save(prefix + ".triangulation");
     }
+
+  // Serialize all post-processing tables that are currently used
+  {
+    const Parameters::PostProcessing post_processing =
+      simulation_parameters.post_processing;
+    std::string prefix =
+      this->simulation_parameters.simulation_control.output_folder;
+    std::string suffix = ".checkpoint";
+    if (post_processing.calculate_enstrophy)
+      serialize_table(
+        this->enstrophy_table,
+        prefix + simulation_parameters.post_processing.enstrophy_output_name +
+          suffix);
+    if (post_processing.calculate_kinetic_energy)
+      serialize_table(
+        this->kinetic_energy_table,
+        prefix +
+          simulation_parameters.post_processing.kinetic_energy_output_name +
+          suffix);
+    if (post_processing.calculate_apparent_viscosity)
+      serialize_table(
+        this->apparent_viscosity_table,
+        prefix +
+          simulation_parameters.post_processing.apparent_viscosity_output_name +
+          suffix);
+    if (post_processing.calculate_flow_rate)
+      serialize_table(
+        this->flow_rate_table,
+        prefix + simulation_parameters.post_processing.flow_rate_output_name +
+          suffix);
+    if (post_processing.calculate_pressure_drop)
+      serialize_table(
+        this->pressure_drop_table,
+        prefix +
+          simulation_parameters.post_processing.pressure_drop_output_name +
+          suffix);
+  }
 }
 
 template <int dim, typename VectorType, typename DofsType>
