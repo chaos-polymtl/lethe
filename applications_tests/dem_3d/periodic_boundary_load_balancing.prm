@@ -3,100 +3,109 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 		 = 1.5e-5
-  set time end       					 = 0.25
-  set log frequency				         = 10000
-  set output frequency            		 = 10000
+  set time step        = 1.5e-5
+  set time end         = 0.25
+  set log frequency    = 10000
+  set output frequency = 10000
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		         = dynamic
-  set load balance method                            = frequent
-  set load balance frequency                         = 10000
-  set dynamic contact search size coefficient	 	 = 0.9
-  set neighborhood threshold				         = 1.3
-  set particle particle contact force method         = hertz_mindlin_limit_overlap
-  set particle wall contact force method             = nonlinear
-  set integration method				             = velocity_verlet
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			        = 0.0
-    set gy            		 			        = -1
-    set gz            		 			        = 0.0
-    set number of particle types	            = 1
-    subsection particle type 0
-        set size distribution type		        = uniform
-        set diameter            	 	        = 0.0075
-        set number				                = 10
-        set density particles            	    = 2500
-        set young modulus particles         	= 1e6
-        set poisson ratio particles          	= 0.3
-        set restitution coefficient particles	= 0.94
-        set friction coefficient particles      = 0.2
-    end
-    set young modulus wall            			= 1e6
-    set poisson ratio wall            			= 0.3
-    set friction coefficient wall         		= 0.2
-    set restitution coefficient wall            = 0.9
+  set gx                       = 0.0
+  set gy                       = -1
+  set gz                       = 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.0075
+    set number                            = 10
+    set density particles                 = 2500
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.94
+    set friction coefficient particles    = 0.2
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.3
+  set friction coefficient wall    = 0.2
+  set restitution coefficient wall = 0.9
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				                = non_uniform
-    set inserted number of particles at each time step  = 10
-    set insertion frequency            		 	        = 50
-    set insertion box minimum x            	 	        = 0.0
-    set insertion box minimum y            	            =  0.02
-    set insertion box minimum z            	            =  0.0
-    set insertion box maximum x            	            =  0.05
-    set insertion box maximum y           	 	        =  0.035
-    set insertion box maximum z            	            =  0.05
-    set insertion distance threshold			        = 1.5
-    set insertion random number range			        = 0.1
-    set insertion random number seed			        = 20
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 10
+  set insertion frequency                            = 50
+  set insertion box minimum x                        = 0.0
+  set insertion box minimum y                        = 0.02
+  set insertion box minimum z                        = 0.0
+  set insertion box maximum x                        = 0.05
+  set insertion box maximum y                        = 0.035
+  set insertion box maximum z                        = 0.05
+  set insertion distance threshold                   = 1.5
+  set insertion random number range                  = 0.1
+  set insertion random number seed                   = 20
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type            				= hyper_rectangle
-    set grid arguments       				= 0.0, 0.0, 0.0 : 0.05, 0.05, 0.05 : true
-    set initial refinement   				= 2
-    set expand particle-wall contact search	= false
+  set type                                = dealii
+  set grid type                           = hyper_rectangle
+  set grid arguments                      = 0.0, 0.0, 0.0 : 0.05, 0.05, 0.05 : true
+  set initial refinement                  = 2
+  set expand particle-wall contact search = false
 end
 
 #---------------------------------------------------
 # Boundary conditions
 #---------------------------------------------------
+
 subsection DEM boundary conditions
-   set number of boundary conditions                     = 1
+  set number of boundary conditions = 1
 
-   subsection boundary condition 0
-       # Choices are fixed_wall|outlet|rotational|translational|periodic
-       set type                                        = periodic
-       set periodic id 0                               = 2
-       set periodic id 1                               = 3
-       set periodic direction                          = 1
-   end
-
+  subsection boundary condition 0
+    # Choices are fixed_wall|outlet|rotational|translational|periodic
+    set type               = periodic
+    set periodic id 0      = 2
+    set periodic id 1      = 3
+    set periodic direction = 1
+  end
 end
-

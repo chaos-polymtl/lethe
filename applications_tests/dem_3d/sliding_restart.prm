@@ -3,113 +3,124 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 1e-5
-  set time end       					 = 0.4
-  set log frequency				         = 1000000
-  set output frequency            			 = 1000000
+  set time step        = 1e-5
+  set time end         = 0.4
+  set log frequency    = 1000000
+  set output frequency = 1000000
 end
 
 #---------------------------------------------------
 # Restart
 #---------------------------------------------------
+
 subsection restart
-	set restart       				 = true
-	set filename      				 = sliding_restart
+  set restart  = true
+  set filename = sliding_restart
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    					 = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = constant
-  set contact detection frequency                 	 = 20
-  set neighborhood threshold				 = 1.3
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set rolling resistance torque method			 = constant_resistance
-  set integration method				 = velocity_verlet
+  subsection contact detection
+    set contact detection method = constant
+    set frequency                = 20
+    set neighborhood threshold   = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant_resistance
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Lagrangian Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0.0
-    set gy            		 			= 0.0
-    set gz						= -9.81
-    set number of particle types	                = 1
-    	subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.005
-    		set number				= 20
-    		set density particles   	 	= 2000
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.3
-    		set friction coefficient particles      = 0.1
-    		set rolling friction particles         	= 0.05
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		= 0.1
-    set rolling friction wall         	      	  	= 0.05
+  set gx                       = 0.0
+  set gy                       = 0.0
+  set gz                       = -9.81
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number                            = 20
+    set density particles                 = 2000
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.05
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.05
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 20
-    set insertion frequency            		 	= 2000000
-    set insertion box minimum x            	 	= -0.05
-    set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.06
-    set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = 0
-    set insertion distance threshold			= 2
-    set insertion random number range			= 0.2
-    set insertion random number seed			= 19
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 20
+  set insertion frequency                            = 2000000
+  set insertion box minimum x                        = -0.05
+  set insertion box minimum y                        = -0.05
+  set insertion box minimum z                        = -0.06
+  set insertion box maximum x                        = 0.05
+  set insertion box maximum y                        = 0.05
+  set insertion box maximum z                        = 0
+  set insertion distance threshold                   = 2
+  set insertion random number range                  = 0.2
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type            				= hyper_cube
-    set grid arguments       				= -0.07 : 0.07 : true
-    set initial refinement   				= 3
-    set expand particle-wall contact search		= false
+  set type                                = dealii
+  set grid type                           = hyper_cube
+  set grid arguments                      = -0.07 : 0.07 : true
+  set initial refinement                  = 3
+  set expand particle-wall contact search = false
 end
 
 #---------------------------------------------------
 #  DEM Boundary Conditions
 #---------------------------------------------------
+
 subsection DEM boundary conditions
-  set number of boundary conditions         		= 1
-    subsection boundary condition 0
-	set boundary id	 				= 4
-        set type              				= translational
-	set speed x					= 0.15
-	set speed y					= 0
-	set speed z					= 0
-    end
+  set number of boundary conditions = 1
+  subsection boundary condition 0
+    set boundary id = 4
+    set type        = translational
+    set speed x     = 0.15
+    set speed y     = 0
+    set speed z     = 0
+  end
 end

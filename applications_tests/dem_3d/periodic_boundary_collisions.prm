@@ -6,10 +6,10 @@
 #---------------------------------------------------
 
 subsection simulation control
-    set time step                = 1e-5
-    set time end       		     = 0.1
-    set log frequency			 = 10000
-    set output frequency         = 10000
+  set time step        = 1e-5
+  set time end         = 0.1
+  set log frequency    = 10000
+  set output frequency = 10000
 end
 
 #---------------------------------------------------
@@ -25,11 +25,11 @@ end
 #---------------------------------------------------
 
 subsection mesh
-    set type                 				= dealii
-    set grid type            				= subdivided_hyper_rectangle
-    set grid arguments       				= 4,2,1 : -0.01, -0.02, -0.01 : 0.01, 0.02, 0.01 : true
-    set initial refinement   				= 0
-    set expand particle-wall contact search = false
+  set type                                = dealii
+  set grid type                           = subdivided_hyper_rectangle
+  set grid arguments                      = 4,2,1 : -0.01, -0.02, -0.01 : 0.01, 0.02, 0.01 : true
+  set initial refinement                  = 0
+  set expand particle-wall contact search = false
 end
 
 # --------------------------------------------------
@@ -37,9 +37,11 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method               = constant
-  set contact detection frequency            = 100
-  set neighborhood threshold                 = 1.5
+  subsection contact detection
+    set contact detection method = constant
+    set frequency                = 100
+    set neighborhood threshold   = 1.5
+  end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
@@ -78,11 +80,11 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-    set insertion method	= list
-    set insertion frequency = 10
-    set list x              = -0.0075, 0.0015, -0.0015, 0.0015, -0.0015
-    set list y              = -0.0175, -0.012, -0.009, -0.006, -0.003
-    set list z              = 0.001, 0.001, 0.001, 0.001, 0.001
+  set insertion method    = list
+  set insertion frequency = 10
+  set list x              = -0.0075, 0.0015, -0.0015, 0.0015, -0.0015
+  set list y              = -0.0175, -0.012, -0.009, -0.006, -0.003
+  set list z              = 0.001, 0.001, 0.001, 0.001, 0.001
 end
 
 #---------------------------------------------------

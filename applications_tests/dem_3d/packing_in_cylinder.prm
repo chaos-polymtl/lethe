@@ -3,89 +3,98 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 1e-5
-  set time end       					 = 0.2
-  set log frequency				         = 1000000
-  set output frequency            			 = 1000000
+  set time step        = 1e-5
+  set time end         = 0.2
+  set log frequency    = 1000000
+  set output frequency = 1000000
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    					 = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = constant
-  set contact detection frequency                 	 = 10
-  set neighborhood threshold				 = 2
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set rolling resistance torque method			 = no_resistance
-  set integration method				 = velocity_verlet
+  subsection contact detection
+    set contact detection method = constant
+    set frequency                = 10
+    set neighborhood threshold   = 2
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = no_resistance
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Lagrangian Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0.0
-    set gy            		 			= 0.0
-    set gz						= -9.81
-    set number of particle types	                = 1
-    	subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.005
-    		set number				= 100
-    		set density particles   	 	= 2000
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.3
-    		set friction coefficient particles      = 0.1
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		= 0.1
+  set gx                       = 0.0
+  set gy                       = 0.0
+  set gz                       = -9.81
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number                            = 100
+    set density particles                 = 2000
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.1
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.1
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 200
-    set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= -0.05
-    set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.08
-    set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = 0
-    set insertion distance threshold			= 2
-    set insertion random number range			= 0.2
-    set insertion random number seed			= 19
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 200
+  set insertion frequency                            = 20000
+  set insertion box minimum x                        = -0.05
+  set insertion box minimum y                        = -0.05
+  set insertion box minimum z                        = -0.08
+  set insertion box maximum x                        = 0.05
+  set insertion box maximum y                        = 0.05
+  set insertion box maximum z                        = 0
+  set insertion distance threshold                   = 2
+  set insertion random number range                  = 0.2
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type      	     				= cylinder
-    set grid arguments       				= 0.1:0.1
-    set initial refinement   				= 3
-    set expand particle-wall contact search		= true
+  set type                                = dealii
+  set grid type                           = cylinder
+  set grid arguments                      = 0.1:0.1
+  set initial refinement                  = 3
+  set expand particle-wall contact search = true
 end

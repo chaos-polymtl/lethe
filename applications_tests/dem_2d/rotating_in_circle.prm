@@ -3,101 +3,111 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 0.00001
-  set time end       					 = 0.4
-  set log frequency				         = 1000000
-  set output frequency            			 = 1000000
+  set time step        = 0.00001
+  set time end         = 0.4
+  set log frequency    = 1000000
+  set output frequency = 1000000
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    					 = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = constant
-  set contact detection frequency                 	 = 20
-  set neighborhood threshold				 = 1.5
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set rolling resistance torque method			 = no_resistance
-  set integration method				 = velocity_verlet
+  subsection contact detection
+    set contact detection method = constant
+    set frequency                = 20
+    set neighborhood threshold   = 1.5
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = no_resistance
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Lagrangian Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0.0
-    set gy            		 			= -9.81
-    set number of particle types	                = 1
-    	subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.005
-    		set number				= 20
-    		set density particles   	 	= 2000
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.5
-    		set friction coefficient particles      = 0.1
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.5
-    set friction coefficient wall         		= 0.1
+  set gx                       = 0.0
+  set gy                       = -9.81
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number                            = 20
+    set density particles                 = 2000
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.5
+    set friction coefficient particles    = 0.1
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.5
+  set friction coefficient wall    = 0.1
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 50
-    set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= -0.05
-    set insertion box minimum y            	        = -0.05
-    set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= -0.02
-    set insertion distance threshold			= 1.5
-    set insertion random number range			= 0.1
-    set insertion random number seed			= 19
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 50
+  set insertion frequency                            = 20000
+  set insertion box minimum x                        = -0.05
+  set insertion box minimum y                        = -0.05
+  set insertion box maximum x                        = 0.05
+  set insertion box maximum y                        = -0.02
+  set insertion distance threshold                   = 1.5
+  set insertion random number range                  = 0.1
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type      	     				= hyper_ball
-    set grid arguments      			 	= 0.0, 0.0 : 0.1 : true
-    set initial refinement   				= 3
-    set expand particle-wall contact search		= true
+  set type                                = dealii
+  set grid type                           = hyper_ball
+  set grid arguments                      = 0.0, 0.0 : 0.1 : true
+  set initial refinement                  = 3
+  set expand particle-wall contact search = true
 end
 
 #---------------------------------------------------
 # DEM Boundary Conditions
 #---------------------------------------------------
+
 subsection DEM boundary conditions
-  set number of boundary conditions         		= 1
-    subsection boundary condition 0
-	set boundary id					= 0
-        set type              				= rotational
-	set rotational speed				= 0.2
-	set rotational vector x				= 0
-        set rotational vector y				= 0
-        set rotational vector z				= 1
-    end
+  set number of boundary conditions = 1
+  subsection boundary condition 0
+    set boundary id         = 0
+    set type                = rotational
+    set rotational speed    = 0.2
+    set rotational vector x = 0
+    set rotational vector y = 0
+    set rotational vector z = 1
+  end
 end

@@ -3,122 +3,130 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 0.00005
-  set time end       					 = 0.4
-  set log frequency				         = 1000
-  set output frequency            			 = 1000
-  set output path                                      = ./output_dem/
+  set time step        = 0.00005
+  set time end         = 0.4
+  set log frequency    = 1000
+  set output frequency = 1000
+  set output path      = ./output_dem/
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    					 = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Restart
 #---------------------------------------------------
+
 subsection restart
-	set checkpoint					 = true
-	set frequency 					 = 1000
-	set restart       				 = false
-	set filename      				 = dem
+  set checkpoint = true
+  set frequency  = 1000
+  set restart    = false
+  set filename   = dem
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = dynamic
-  set contact detection frequency                 	 = 10
-  set dynamic contact search size coefficient	 	 = 0.9
-  set load balance method				 = dynamic
-  set load balance threshold				 = 0.5
-  set dynamic load balance check frequency		 = 10000
-  set neighborhood threshold				 = 1.8
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set integration method				 = velocity_verlet
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.8
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
-subsection lagrangian physical properties
-    set gx            		 			= 0
-    set gy            		 			= -9.81
-    set gz						= 0
-    set number of particle types	                = 1
-    subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.003
-    		set number				= 10000
-    		set density particles         	        = 2505
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.97
-    		set friction coefficient particles      = 0.1
-    		set rolling friction particles        	= 0.2
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.33
-    set friction coefficient wall         		= 0.3
-    set rolling friction wall         	      	  	= 0.3
-end
 
+subsection lagrangian physical properties
+  set gx                       = 0
+  set gy                       = -9.81
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.003
+    set number                            = 10000
+    set density particles                 = 2505
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.97
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.33
+  set friction coefficient wall    = 0.3
+  set rolling friction wall        = 0.3
+end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 10000
-    set insertion frequency            		 	= 200
-    set insertion box minimum x            	 	= -0.05
-    set insertion box minimum y            	        = -0.04
-    set insertion box minimum z            	        = -0.05
-    set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= -0.005
-    set insertion box maximum z            	        = 0.05
-    set insertion distance threshold			= 1.05
-    set insertion random number range			= 0.02
-   set insertion random number seed			= 19
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 10000
+  set insertion frequency                            = 200
+  set insertion box minimum x                        = -0.05
+  set insertion box minimum y                        = -0.04
+  set insertion box minimum z                        = -0.05
+  set insertion box maximum x                        = 0.05
+  set insertion box maximum y                        = -0.005
+  set insertion box maximum z                        = 0.05
+  set insertion distance threshold                   = 1.05
+  set insertion random number range                  = 0.02
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
 # Floating walls
 #---------------------------------------------------
-subsection floating walls
-    set number of floating walls	                = 1
-    	subsection wall 0
-		subsection point on wall
-			set x				= 0
-			set y				= -0.04
-			set z				= 0
-		end
-		subsection normal vector
-			set nx				= 0
-			set ny				= 1
- 			set nz 				= 0
-		end
-		set start time				= 0
-		set end time				= 50
-   	end
 
+subsection floating walls
+  set number of floating walls = 1
+  subsection wall 0
+    subsection point on wall
+      set x = 0
+      set y = -0.04
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 0
+      set ny = 1
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 50
+  end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-subsection mesh
-    set type                 				= dealii
-    set grid type            				= subdivided_hyper_rectangle
-    set grid arguments       				= 15,20,15:-0.05,-0.05,-0.05:0.05,0.05,0.05:true 
-    set initial refinement   				= 0
-    set expand particle-wall contact search		= false
-end
 
+subsection mesh
+  set type                                = dealii
+  set grid type                           = subdivided_hyper_rectangle
+  set grid arguments                      = 15,20,15:-0.05,-0.05,-0.05:0.05,0.05,0.05:true
+  set initial refinement                  = 0
+  set expand particle-wall contact search = false
+end

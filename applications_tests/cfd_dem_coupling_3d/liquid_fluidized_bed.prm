@@ -88,7 +88,7 @@ subsection cfd-dem
   set drag model                    = difelice
   set coupling frequency            = 10
   set vans model                    = modelB
-  set particle statistics             = false
+  set particle statistics           = false
 end
 
 #---------------------------------------------------
@@ -192,17 +192,20 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method                = dynamic
-  set contact detection frequency             = 10
-  set dynamic contact search size coefficient = 0.9
-  set load balance method                     = dynamic
-  set load balance threshold                  = 0.5
-  set dynamic load balance check frequency    = 10000
-  set neighborhood threshold                  = 1.8
-  set particle particle contact force method  = hertz_mindlin_limit_overlap
-  set particle wall contact force method      = nonlinear
-  set integration method                      = velocity_verlet
-  set rolling resistance torque method        = no_resistance
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.8
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = no_resistance
 end
 
 #---------------------------------------------------

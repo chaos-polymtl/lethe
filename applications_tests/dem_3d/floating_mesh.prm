@@ -3,106 +3,114 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 1e-5
-  set time end       					 = 0.1
-  set log frequency				         = 100000
-  set output frequency            			 = 0
+  set time step        = 1e-5
+  set time end         = 0.1
+  set log frequency    = 100000
+  set output frequency = 0
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = dynamic
-  set dynamic contact search size coefficient	 	 = 0.5
-  set load balance method				 = frequent
-  set load balance frequency				 = 200000
-  set neighborhood threshold				 = 1.3
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set integration method				 = velocity_verlet
-  set rolling resistance torque method                  = no_resistance
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.5
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 200000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = no_resistance
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0.0
-    set gy            		 			= 0.0
-    set gz            		 			= -9.81
-    set number of particle types	                = 1
-    	subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.001
-		set number				= 500
-    		set density particles            	= 600
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.5
-    		set restitution coefficient particles	= 0.1
-    		set friction coefficient particles      = 0.5
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.5
-    set restitution coefficient wall           		= 0.1
-    set friction coefficient wall         		= 0.5
+  set gx                       = 0.0
+  set gy                       = 0.0
+  set gz                       = -9.81
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.001
+    set number                            = 500
+    set density particles                 = 600
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.5
+    set restitution coefficient particles = 0.1
+    set friction coefficient particles    = 0.5
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.5
+  set restitution coefficient wall = 0.1
+  set friction coefficient wall    = 0.5
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 20000
-    set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= 0.02
-    set insertion box minimum y            	        = 0.003
-    set insertion box minimum z            	        = 0.005
-    set insertion box maximum x            	        = 0.04
-    set insertion box maximum y           	 	= 0.007
-    set insertion box maximum z            	        = 0.01
-    set insertion distance threshold			= 1.5
-    set insertion random number range			= 0.1
-    set insertion random number seed			= 19
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 20000
+  set insertion frequency                            = 20000
+  set insertion box minimum x                        = 0.02
+  set insertion box minimum y                        = 0.003
+  set insertion box minimum z                        = 0.005
+  set insertion box maximum x                        = 0.04
+  set insertion box maximum y                        = 0.007
+  set insertion box maximum z                        = 0.01
+  set insertion distance threshold                   = 1.5
+  set insertion random number range                  = 0.1
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-        set type = dealii
-        set grid type = subdivided_hyper_rectangle
-        set grid arguments = 2, 2, 2 : 0, 0, 0 : 0.05, 0.01, 0.015 : true
-        set initial refinement = 0
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2, 2, 2 : 0, 0, 0 : 0.05, 0.01, 0.015 : true
+  set initial refinement = 0
 end
 
 #---------------------------------------------------
 # Solid Objects
 #---------------------------------------------------
+
 subsection solid objects
   set number of solids = 1
-  subsection  solid object 0
-	  subsection mesh
-      		set type                 = dealii
-      		set file name            = hyper_cube
-      		set grid arguments = 0 : 0.04 : false
-          	set simplex = true
-      		set initial refinement   = 0
-	  end
-	 
+  subsection solid object 0
+    subsection mesh
+      set type               = dealii
+      set file name          = hyper_cube
+      set grid arguments     = 0 : 0.04 : false
+      set simplex            = true
+      set initial refinement = 0
+    end
+
     subsection translational velocity
-	    set Function expression = 0 ; 0 ; 0.02
+      set Function expression = 0 ; 0 ; 0.02
     end
   end
-
 end
-
-

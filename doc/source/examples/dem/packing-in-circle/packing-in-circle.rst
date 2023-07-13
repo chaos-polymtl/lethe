@@ -148,13 +148,15 @@ In the ``model parameters`` subsection, DEM simulation parameters are defined.
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method                = dynamic
-      set dynamic contact search size coefficient = 0.7
-      set neighborhood threshold                  = 1.5
-      set particle particle contact force method  = hertz_mindlin_limit_overlap
-      set particle wall contact force method      = nonlinear
-      set integration method                      = velocity_verlet
-      set rolling resistance torque method        = constant_resistance
+      subsection contact detection
+        set contact detection method                = dynamic
+        set dynamic contact search size coefficient = 0.7
+        set neighborhood threshold                  = 1.5
+      end
+      set particle particle contact force method    = hertz_mindlin_limit_overlap
+      set particle wall contact force method        = nonlinear
+      set integration method                        = velocity_verlet
+      set rolling resistance torque method          = constant_resistance
     end
 
 These parameters include ``contact detection method`` and its subsequent information (``dynamic contact search size coefficient`` **or** ``contact detection frequency`` for ``dynamic`` **or** ``constant`` contact detection method), ``neighborhood threshold`` (which defines the contact neighbor list size: ``neighborhood threshold`` * particle diameter), ``particle particle contact force method``, ``particle wall contact force method`` and ``integration method``. All the concepts, models, and choices are explained in `DEM parameters <../../../parameters/dem/dem.html>`_.
