@@ -1,4 +1,4 @@
-iname: CI-Warnings
+name: CI-Warnings
 
 on:
   # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
