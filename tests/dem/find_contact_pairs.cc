@@ -37,7 +37,7 @@
 
 
 // Lethe
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/find_cell_neighbors.h>
 
 // Tests (with common definitions)
@@ -61,7 +61,7 @@ test()
 
   MappingQ1<dim> mapping;
 
-  DEMContainerManager<dim>        container_manager;
+  DEMContactManager<dim>          container_manager;
   Particles::ParticleHandler<dim> particle_handler(triangulation, mapping);
 
   // Finding cell neighbors list, it is required for finding the broad search

@@ -112,7 +112,7 @@ template <
 void
 ParticleParticleContactForce<dim, contact_model, rolling_friction_model>::
   calculate_particle_particle_contact_force(
-    DEMContainerManager<dim> & container_manager,
+    DEMContactManager<dim> &   container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
