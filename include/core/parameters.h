@@ -923,15 +923,11 @@ namespace Parameters
     bool expand_particle_wall_contact_search;
 
     // Grid displacement at initiation
-    bool   translate;
-    double delta_x;
-    double delta_y;
-    double delta_z;
+    Tensor<1, 3> translation;
 
     // Grid rotation at initiation
-    bool   rotate;
-    int    axis;
-    double angle;
+    Tensor<1, 3> rotation_axis;
+    double       rotation_angle;
 
     static void
     declare_parameters(ParameterHandler &prm);
