@@ -213,18 +213,12 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
     throw std::runtime_error(
       "Unsupported mesh type - solid mesh will not be created");
 
-  // Translate the triangulation
-  if (param->solid_mesh.translate)
-    GridTools::shift(Point<spacedim>(param->solid_mesh.delta_x,
-                                     param->solid_mesh.delta_y,
-                                     param->solid_mesh.delta_z),
-                     *solid_tria);
   // Rotate the triangulation
-  if (param->solid_mesh.rotate)
-    {
-      rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
-    }
+  rotate_grid(param->solid_mesh.rotation_angle,
+              param->solid_mesh.rotation_axis);
 
+  // Translate the triangulation
+  translate_grid(param->solid_mesh.translation);
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
   // afterwards
@@ -244,25 +238,42 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 
 template <>
 void
-SolidBase<2, 2>::rotate_grid(double angle, int /*axis*/)
+SolidBase<2, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }
 template <>
 void
-SolidBase<2, 3>::rotate_grid(double angle, int axis)
+SolidBase<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 {
-  Tensor<1, 3> t_axis;
-  t_axis[axis] = 1;
-  GridTools::rotate(t_axis, angle, *solid_tria);
+  GridTools::rotate(axis, angle, *solid_tria);
 }
 template <>
 void
-SolidBase<3, 3>::rotate_grid(double angle, int axis)
+SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 {
-  Tensor<1, 3> t_axis;
-  t_axis[axis] = 1;
-  GridTools::rotate(t_axis, angle, *solid_tria);
+  GridTools::rotate(axis, angle, *solid_tria);
+}
+
+template <>
+void
+SolidBase<2, 2>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
+}
+
+template <>
+void
+SolidBase<2, 3>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(translation, *solid_tria);
+}
+
+template <>
+void
+SolidBase<3, 3>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(translation, *solid_tria);
 }
 
 
