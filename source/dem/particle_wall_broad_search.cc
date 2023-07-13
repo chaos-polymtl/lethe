@@ -67,7 +67,7 @@ template <int dim>
 void
 ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
-    types::particle_index,
+    unsigned int,
     std::set<typename Triangulation<dim>::active_cell_iterator>>
     &                                    boundary_cells_for_floating_walls,
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -278,7 +278,7 @@ template <int dim>
 void
 ParticleWallBroadSearch<dim>::find_particle_floating_wall_contact_pairs(
   const std::unordered_map<
-    types::particle_index,
+    unsigned int,
     std::set<typename Triangulation<dim>::active_cell_iterator>>
     &                                    boundary_cells_for_floating_walls,
   const Particles::ParticleHandler<dim> &particle_handler,

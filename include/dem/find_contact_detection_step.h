@@ -61,7 +61,6 @@ find_particle_contact_detection_step(
  * @brief Carries out finding steps for dynamic contact search in particle-floating
  * mesh contacts
  *
- * @param particle_handler
  * @param smallest_contact_search_criterion A criterion which defines the maximal displacement that a solid face may have displaced
  * @param solids All solid objects used in the simulation
  * @return Returns true if the maximum cumulative

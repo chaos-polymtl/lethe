@@ -15,7 +15,7 @@
  */
 #include <dem/boundary_cells_info_struct.h>
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
