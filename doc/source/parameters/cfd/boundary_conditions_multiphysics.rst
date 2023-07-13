@@ -134,17 +134,19 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 Cahn-Hilliard
 ^^^^^^^^^^^^^^
 
-For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux_ch`` (default), ``dirichlet_phase_order`` and ``angle_of_contact``. The default parameters for ``dirichlet_phase_order`` and ``angle_of_contact`` are shown:
+For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (default), ``dirichlet`` and ``angle_of_contact``. The default parameters for ``dirichlet`` and ``angle_of_contact`` are shown:
 
 .. code-block:: text
 
     subsection boundary conditions cahn hilliard
     set number                  = 2
+    set time dependent          = false
         subsection bc 0
-	    set id 		= 0
-            set type            = dirichlet_phase_order
-            set phase value     = 0
-         end
+            set id 		= 0
+            set type            = dirichlet
+            subsection phi
+                set Function expression = 0
+            end
          subsection bc 1 
             set id              = 1
             set type            = angle_of_contact
@@ -157,10 +159,12 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux_ch`` 
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
+* ``time dependent`` specifies if a  boundary condition is time dependent (``true``) or steady (``false```). By default, this parameter is set to ``false``. This is there to improve the computational efficiency for transient cases in which the boundary conditions do not change. 
+
 * ``id`` is the number associated with the boundary condition. By default, Lethe assumes that the id is equivalent to the number of the bc.
 
 * ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that no phase leave the simulation domain.
-    * ``dirichlet_phase_order`` to impose a given phase order parameter of ``phase value`` at the boundary.
+    * ``dirichlet`` to impose a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
     * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact.
 
