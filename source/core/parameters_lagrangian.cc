@@ -428,77 +428,86 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        prm.declare_entry(
-          "load balance method",
-          "none",
-          Patterns::Selection(
-            "none|once|frequent|dynamic|dynamic_with_disabling_contacts"),
-          "Choosing load-balance method"
-          "Choices are <none|once|frequent|dynamic|dynamic_with_disabling_contacts>.");
+        prm.enter_subsection("load balancing");
+        {
+          prm.declare_entry(
+            "load balance method",
+            "none",
+            Patterns::Selection(
+              "none|once|frequent|dynamic|dynamic_with_disabling_contacts"),
+            "Choosing load-balance method"
+            "Choices are <none|once|frequent|dynamic|dynamic_with_disabling_contacts>.");
 
-        prm.declare_entry(
-          "load balance step",
-          "1000000000",
-          Patterns::Integer(),
-          "Step at which the triangulation is repartitioned "
-          "and load is balanced for single-step load-balancing");
+          prm.declare_entry(
+            "step",
+            "1000000000",
+            Patterns::Integer(),
+            "Step at which the triangulation is repartitioned "
+            "and load is balanced for single-step load-balancing");
 
-        prm.declare_entry(
-          "load balance frequency",
-          "1000000000",
-          Patterns::Integer(),
-          "Frequency at which the triangulation is repartitioned "
-          "and load is balanced for frequent load-balancing");
+          prm.declare_entry(
+            "frequency",
+            "1000000000",
+            Patterns::Integer(),
+            "Frequency at which the triangulation is repartitioned "
+            "and load is balanced for frequent load-balancing");
 
-        prm.declare_entry("load balance threshold",
-                          "1",
-                          Patterns::Double(),
-                          "Threshold for dynamic load-balancing");
+          prm.declare_entry("threshold",
+                            "1",
+                            Patterns::Double(),
+                            "Threshold for dynamic load-balancing");
 
-        prm.declare_entry("dynamic load balance check frequency",
-                          "100000",
-                          Patterns::Integer(),
-                          "Checking frequency for dynamic load-balancing");
+          prm.declare_entry("dynamic check frequency",
+                            "100000",
+                            Patterns::Integer(),
+                            "Checking frequency for dynamic load-balancing");
 
-        prm.declare_entry(
-          "load balance particle weight",
-          "10000",
-          Patterns::Integer(),
-          "The particle weight based on a default cell weight of 1000");
+          prm.declare_entry(
+            "particle weight",
+            "10000",
+            Patterns::Integer(),
+            "The particle weight based on a default cell weight of 1000");
 
-        prm.declare_entry(
-          "load balance active weight factor",
-          "1.0",
-          Patterns::Double(),
-          "Factor applied on the particle weight in load balancing if the cell is active");
+          prm.declare_entry(
+            "active weight factor",
+            "1.0",
+            Patterns::Double(),
+            "Factor applied on the particle weight in load balancing if the cell is active");
 
-        prm.declare_entry(
-          "load balance inactive weight factor",
-          "1.0",
-          Patterns::Double(),
-          "Factor applied on the particle weight in load balancing if the cell is inactive");
+          prm.declare_entry(
+            "inactive weight factor",
+            "1.0",
+            Patterns::Double(),
+            "Factor applied on the particle weight in load balancing if the cell is inactive");
+        }
+        prm.leave_subsection();
 
-        prm.declare_entry("contact detection method",
-                          "dynamic",
-                          Patterns::Selection("constant|dynamic"),
-                          "Choosing contact detection method"
-                          "Choices are <constant|dynamic>.");
+        prm.enter_subsection("contact detection");
+        {
+          prm.declare_entry("contact detection method",
+                            "dynamic",
+                            Patterns::Selection("constant|dynamic"),
+                            "Choosing contact detection method"
+                            "Choices are <constant|dynamic>.");
 
-        prm.declare_entry("contact detection frequency",
-                          "1",
-                          Patterns::Integer(),
-                          "Particle-particle contact list");
+          prm.declare_entry("frequency",
+                            "1",
+                            Patterns::Integer(),
+                            "Particle-particle contact list");
 
-        prm.declare_entry("dynamic contact search size coefficient",
-                          "0.8",
-                          Patterns::Double(),
-                          "Security coefficient for dynamic contact detection");
+          prm.declare_entry(
+            "dynamic contact search size coefficient",
+            "0.8",
+            Patterns::Double(),
+            "Security coefficient for dynamic contact detection");
 
-        prm.declare_entry(
-          "neighborhood threshold",
-          "1",
-          Patterns::Double(),
-          "Contact search zone diameter to particle diameter ratio");
+          prm.declare_entry(
+            "neighborhood threshold",
+            "1",
+            Patterns::Double(),
+            "Contact search zone diameter to particle diameter ratio");
+        }
+        prm.leave_subsection();
 
         prm.declare_entry(
           "particle particle contact force method",
@@ -561,8 +570,6 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        const std::string load_balance = prm.get("load balance method");
-
         prm.enter_subsection("dynamic disabling contacts");
         {
           disable_particle_contacts =
@@ -575,82 +582,89 @@ namespace Parameters
         }
         prm.leave_subsection();
 
-        load_balance_particle_weight =
-          prm.get_integer("load balance particle weight");
+        prm.enter_subsection("load balancing");
+        {
+          const std::string load_balance = prm.get("load balance method");
 
-        if (load_balance == "once")
-          {
-            load_balance_method = LoadBalanceMethod::once;
+          if (load_balance == "once")
+            {
+              load_balance_method = LoadBalanceMethod::once;
+              load_balance_step   = prm.get_integer("step");
+            }
+          else if (load_balance == "frequent")
+            {
+              load_balance_method    = LoadBalanceMethod::frequent;
+              load_balance_frequency = prm.get_integer("frequency");
+            }
+          else if (load_balance == "dynamic")
+            {
+              load_balance_method    = LoadBalanceMethod::dynamic;
+              load_balance_threshold = prm.get_double("threshold");
+              dynamic_load_balance_check_frequency =
+                prm.get_integer("dynamic check frequency");
+            }
+          else if (load_balance == "dynamic_with_disabling_contacts")
+            {
+              // Check if dynamic disabling contacts is enabled, otherwise throw
+              // an error message indicating that the user should use dynamic
+              // load balancing instead or enable dynamic disabling contacts
+              if (disable_particle_contacts)
+                {
+                  load_balance_method =
+                    LoadBalanceMethod::dynamic_with_disabling_contacts;
+                  load_balance_threshold = prm.get_double("threshold");
+                  dynamic_load_balance_check_frequency =
+                    prm.get_integer("dynamic check frequency");
 
-            load_balance_step = prm.get_integer("load balance step");
-          }
-        else if (load_balance == "frequent")
-          {
-            load_balance_method    = LoadBalanceMethod::frequent;
-            load_balance_frequency = prm.get_integer("load balance frequency");
-          }
-        else if (load_balance == "dynamic")
-          {
-            load_balance_method    = LoadBalanceMethod::dynamic;
-            load_balance_threshold = prm.get_double("load balance threshold");
-            dynamic_load_balance_check_frequency =
-              prm.get_integer("dynamic load balance check frequency");
-          }
-        else if (load_balance == "dynamic_with_disabling_contacts")
-          {
-            // Check if dynamic disabling contacts is enabled, otherwise throw
-            // an error message indicating that the user should use dynamic
-            // load balancing instead or enable dynamic disabling contacts
-            if (disable_particle_contacts)
-              {
-                load_balance_method =
-                  LoadBalanceMethod::dynamic_with_disabling_contacts;
-                load_balance_threshold =
-                  prm.get_double("load balance threshold");
-                dynamic_load_balance_check_frequency =
-                  prm.get_integer("dynamic load balance check frequency");
+                  // Weights for load balancing of active and inactive cells
+                  active_load_balancing_factor =
+                    prm.get_double("active weight factor");
+                  inactive_load_balancing_factor =
+                    prm.get_double("inactive weight factor");
+                }
+              else
+                {
+                  throw(std::runtime_error(
+                    "Invalid contact detection method: dynamic disabling contacts is not enabled "
+                    "while dynamic_with_disabling_contacts is selected, use dynamic instead"));
+                }
+            }
+          else if (load_balance == "none")
+            {
+              load_balance_method = LoadBalanceMethod::none;
+            }
+          else
+            {
+              throw(std::runtime_error("Invalid load-balance method "));
+            }
 
-                // Weights for load balancing of active and inactive cells
-                active_load_balancing_factor =
-                  prm.get_double("load balance active weight factor");
-                inactive_load_balancing_factor =
-                  prm.get_double("load balance inactive weight factor");
-              }
-            else
-              {
-                throw(std::runtime_error(
-                  "Invalid contact detection method: dynamic disabling contacts is not enabled "
-                  "while dynamic_with_disabling_contacts is selected, use dynamic instead"));
-              }
-          }
-        else if (load_balance == "none")
-          {
-            load_balance_method = LoadBalanceMethod::none;
-          }
-        else
-          {
-            throw(std::runtime_error("Invalid load-balance method "));
-          }
+          load_balance_particle_weight = prm.get_integer("particle weight");
+        }
+        prm.leave_subsection();
 
-        const std::string contact_search = prm.get("contact detection method");
-        if (contact_search == "constant")
-          {
-            contact_detection_method = ContactDetectionMethod::constant;
-            contact_detection_frequency =
-              prm.get_integer("contact detection frequency");
-          }
-        else if (contact_search == "dynamic")
-          {
-            contact_detection_method = ContactDetectionMethod::dynamic;
-            dynamic_contact_search_factor =
-              prm.get_double("dynamic contact search size coefficient");
-          }
-        else
-          {
-            throw(std::runtime_error("Invalid contact detection method "));
-          }
+        prm.enter_subsection("contact detection");
+        {
+          const std::string contact_search =
+            prm.get("contact detection method");
+          if (contact_search == "constant")
+            {
+              contact_detection_method    = ContactDetectionMethod::constant;
+              contact_detection_frequency = prm.get_integer("frequency");
+            }
+          else if (contact_search == "dynamic")
+            {
+              contact_detection_method = ContactDetectionMethod::dynamic;
+              dynamic_contact_search_factor =
+                prm.get_double("dynamic contact search size coefficient");
+            }
+          else
+            {
+              throw(std::runtime_error("Invalid contact detection method "));
+            }
 
-        neighborhood_threshold = prm.get_double("neighborhood threshold");
+          neighborhood_threshold = prm.get_double("neighborhood threshold");
+        }
+        prm.leave_subsection();
 
         const std::string ppcf =
           prm.get("particle particle contact force method");

@@ -33,9 +33,11 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method               = dynamic
-  set contact detection frequency            = 10
-  set neighborhood threshold                 = 1.8
+  subsection contact detection
+    set contact detection method = dynamic
+    set frequency                = 10
+    set neighborhood threshold   = 1.8
+  end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
   set rolling resistance torque method       = no_resistance

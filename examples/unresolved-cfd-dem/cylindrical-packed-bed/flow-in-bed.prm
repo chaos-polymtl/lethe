@@ -5,14 +5,15 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output name       = result
-  set output path       = ./output/
+  set method      = steady
+  set output name = result
+  set output path = ./output/
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1

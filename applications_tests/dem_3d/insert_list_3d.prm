@@ -3,84 +3,93 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 1e-5
-  set time end       					 = 0.11
-  set log frequency				         = 10000
-  set output frequency            			 = 1000000
+  set time step        = 1e-5
+  set time end         = 0.11
+  set log frequency    = 10000
+  set output frequency = 1000000
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    					 = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = dynamic
-  set dynamic contact search size coefficient	 	 = 0.9
-  set neighborhood threshold				 = 1.3
-  set particle particle contact force method             = hertz_mindlin_limit_overlap
-  set particle wall contact force method                 = nonlinear
-  set rolling resistance torque method			 = constant_resistance
-  set integration method				 = velocity_verlet
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant_resistance
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Lagrangian Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0.0
-    set gy            		 			= -10.0
-    set gz						= 0.0
-    set number of particle types	                = 1
-    	subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.005
-    		set number				= 9
-    		set density particles 	 		= 1000
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.3
-    		set friction coefficient particles      = 0.1
-    		set rolling friction particles         	= 0.05
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		= 0.1
-    set rolling friction wall         	      	  	= 0.05
+  set gx                       = 0.0
+  set gy                       = -10.0
+  set gz                       = 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number                            = 9
+    set density particles                 = 1000
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.05
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.05
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= list
-    set insertion frequency            		 	= 5000
-    set list x = 0, 0.01, 0.01
-    set list y = 0.05, 0.06, 0.07
-    set list z = 0., 0.02, 0.04
+  set insertion method    = list
+  set insertion frequency = 5000
+  set list x              = 0, 0.01, 0.01
+  set list y              = 0.05, 0.06, 0.07
+  set list z              = 0., 0.02, 0.04
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type            				= hyper_cube
-    set grid arguments       				= -0.11 : 0.111 : false
-    set initial refinement   				= 3
-    set expand particle-wall contact search		= false
+  set type                                = dealii
+  set grid type                           = hyper_cube
+  set grid arguments                      = -0.11 : 0.111 : false
+  set initial refinement                  = 3
+  set expand particle-wall contact search = false
 end

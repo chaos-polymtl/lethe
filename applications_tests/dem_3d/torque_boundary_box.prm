@@ -3,89 +3,101 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			    = 1e-5
-  set time end       					        = 2e-2
-  set log frequency				                = 10000
-  set output frequency            			    = 10000
+  set time step        = 1e-5
+  set time end         = 2e-2
+  set log frequency    = 10000
+  set output frequency = 10000
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable 						 = true
+  set enable = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-    set contact detection method   			                = dynamic
-    set dynamic contact search size coefficient             = 0.5
-    set neighborhood threshold				                = 1.4
-    set particle particle contact force method              = hertz_mindlin_limit_overlap
-    set particle wall contact force method                  = nonlinear
-    set rolling resistance torque method			        = constant_resistance
-    set integration method				                    = velocity_verlet
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.5
+    set neighborhood threshold                  = 1.4
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant_resistance
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Lagrangian Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			            = 0
-    set gy            		 			            = 0
-    set gz            		 			            = -10
-    set number of particle types	                = 1
-    subsection particle type 0
-        set size distribution type		                = uniform
-        set diameter            	 	                = 0.005
-        set number				                        = 10
-        set density particles           	 		    = 2000
-        set young modulus particles         	        = 10000000
-        set poisson ratio particles          	        = 0.3
-        set restitution coefficient particles	        = 0.3
-        set friction coefficient particles              = 0.1
-        set rolling friction particles         	        = 0.05
-    end
-    set young modulus wall            			    = 10000000
-    set poisson ratio wall            			    = 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		    = 0.1
-    set rolling friction wall         	      	  	= 0.05
+  set gx                       = 0
+  set gy                       = 0
+  set gz                       = -10
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.005
+    set number                            = 10
+    set density particles                 = 2000
+    set young modulus particles           = 10000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.3
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.05
+  end
+  set young modulus wall           = 10000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.3
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.05
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				                = list
-    set list x = 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100
-    set list y = 0.0025, 0.0085, 0.0145, 0.0205, 0.0265, 0.0735, 0.0795, 0.0855, 0.0915, 0.0975
-    set list z = 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
-    set insertion frequency            		 	        = 100
+  set insertion method    = list
+  set list x              = 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100
+  set list y              = 0.0025, 0.0085, 0.0145, 0.0205, 0.0265, 0.0735, 0.0795, 0.0855, 0.0915, 0.0975
+  set list z              = 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025, 0.0025
+  set insertion frequency = 100
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				            = dealii
-    set grid type      	     				            = hyper_cube
-    set grid arguments       				            = 0:0.1:true
-    set initial refinement   				            = 4
-    set expand particle-wall contact search			    = false
+  set type                                = dealii
+  set grid type                           = hyper_cube
+  set grid arguments                      = 0:0.1:true
+  set initial refinement                  = 4
+  set expand particle-wall contact search = false
 end
 
+#---------------------------------------------------
+# Boundary forces
+#---------------------------------------------------
+
 subsection boundary forces
-    set calculation               	                                            = true
-    set verbosity                                                               = verbose
-    set filename     	     		                                            = force_and_torque
-    set output frequency                                                        = 2000
-    subsection center of mass coordinate
-        set x                                                                       = 0.05
-        set y                                                                       = 0.05
-        set z                                                                       = 0
-    end
+  set calculation      = true
+  set verbosity        = verbose
+  set filename         = force_and_torque
+  set output frequency = 2000
+  subsection center of mass coordinate
+    set x = 0.05
+    set y = 0.05
+    set z = 0
+  end
 end
