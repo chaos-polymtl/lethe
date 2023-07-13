@@ -7,57 +7,55 @@ In this subsection, DEM simulation parameters are defined. These parameters incl
 
  subsection model parameters
   # Contact detection method
-  subsection model contact detection
+  subsection contact detection
 
     # Choices are constant|dynamic
-    set contact detection method                       = dynamic
+    set contact detection method                = dynamic
 
     # Depending on the contact detection method, contact search size coefficient
     # (safety factor multiplier for dynamic contact search) or contact detection frequency
     # should be defined for dynamic and constant contact search methods, respectively.
-    set dynamic contact search size coefficient        = 0.9
-    set contact detection frequency                    = 20
+    set dynamic contact search size coefficient = 0.8
+    set frequency                               = 1
 
     # Particle-particle contact neighborhood size
-    set neighborhood threshold                         = 1.6
+    set neighborhood threshold                  = 1
   end
 
   # Load balancing method and its subsequent information
   subsection load balancing
     # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
-    set load balance method                            = frequent
-    set load balance frequency                         = 200000
-    set load balance particle weight                   = 10000
+    set load balance method                     = none
   end
 
   # Particle-particle contact force model
   # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
-  set particle particle contact force method           = hertz_mindlin_limit_overlap
+  set particle particle contact force method    = hertz_mindlin_limit_overlap
 
   # Particle-wall contact force model
   # Choices are linear|nonlinear
-  set particle wall contact force method               = nonlinear
+  set particle wall contact force method        = nonlinear
 
   # Integration method
   # Choices are euler|velocity_verlet
-  set integration method                               = velocity_verlet
+  set integration method                        = velocity_verlet
 
   # Rolling resistance method
   # choices are no_resistance|constant_resistance|viscous_resistance
-  set rolling resistance torque method                 = constant_resistance
+  set rolling resistance torque method          = constant_resistance
 
   # Disabling particle contacts
   subsection dynamic disabling contacts
-    set enable dynamic disabling contacts              = false
-    set granular temperature threshold                 = 1e-4
-    set solid fraction threshold                       = 0.4
+    set enable dynamic disabling contacts       = false
+    set granular temperature threshold          = 1e-4
+    set solid fraction threshold                = 0.4
   end
  end
 
 
 Particle-particle contact search is a costly operation in DEM simulations. If the contact detection is not carried out as optimally as possible, DEM simulations can be slowed down significantly. Lethe supports two mechanisms to detect the contact between particles.
  
-* By setting ``contact detection method = constant``. contact search will be carried out at constant frequency (every ``contact detection frequency`` iterations). Normally, the ``contact detection frequency`` should be a value between 5 and 50. The contact frequency should be chosen such that the particles do not travel more than half a cell between two contact detection. Small values of ``contact detection frequency`` lead to long simulation times, while large values of ``contact detection frequency`` may lead to late detection of collisions. Late detection of collisions can result in very large particles velocities (popcorn jump of particles in a simulation) or particles leaving the simulation domain.
+* By setting ``contact detection method = constant``. contact search will be carried out at constant frequency (every ``frequency`` iterations). Normally, the ``frequency`` should be a value between 5 and 50. The contact frequency should be chosen such that the particles do not travel more than half a cell between two contact detection. Small values of ``frequency`` lead to long simulation times, while large values of ``frequency`` may lead to late detection of collisions. Late detection of collisions can result in very large particles velocities (popcorn jump of particles in a simulation) or particles leaving the simulation domain.
 
 * By setting ``contact detection method = dynamic``, Lethe-DEM rebuilds the contact lists automatically. In this mode, Lethe-DEM stores the displacements of each particle in the simulation since the last contact detection. If the maximum displacement of a particle exceeds the smallest contact search criterion (explained in the following), then the iteration is a contact search iteration and the contact list is rebuilt.
 
@@ -86,7 +84,7 @@ where :math:`{d_p^{max}}` denotes the maximum particle size in the simulation.
 
 where :math:`{W_p}` is the ``particle weight`` and :math:`{n_p}` is the number of particles in the cell. 1000 is the default weight assigned to one cell.
 
-Selecting ``load balance method = once``, requires defining the step at which the code calls load balancing (``load balance step``). ``load balance method = frequent`` requires defining ``load balance frequency``, and in ``load balance method = frequent``, we should define ``threshold`` and ``dynamic check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic check frequency`` steps, and if
+Selecting ``load balance method = once``, requires defining the step at which the code calls load balancing (``step``). ``load balance method = frequent`` requires defining ``frequency``, and in ``load balance method = frequent``, we should define ``threshold`` and ``dynamic check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic check frequency`` steps, and if
 
 .. math::
     L_{max}-L_{min}>{\beta}\bar{L}
