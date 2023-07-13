@@ -5,10 +5,10 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set time step         = 1e-5
-  set time end          = 0.2
-  set log frequency     = 1000
-  set output frequency  = 0
+  set time step        = 1e-5
+  set time end         = 0.2
+  set log frequency    = 1000
+  set output frequency = 0
 end
 
 # --------------------------------------------------
@@ -30,6 +30,7 @@ end
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
   set gx                       = 0
   set gy                       = -9.81
@@ -84,9 +85,10 @@ end
 #---------------------------------------------------
 # Lagrangian Post-processing
 #---------------------------------------------------
+
 subsection post-processing
- # Enable output of grid, granular temperature, and particles' average velocity
- set Lagrangian post-processing = true
+  # Enable output of grid, granular temperature, and particles' average velocity
+  set Lagrangian post-processing = true
 end
 
 #---------------------------------------------------
