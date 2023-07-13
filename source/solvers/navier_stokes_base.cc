@@ -1611,7 +1611,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   multiphysics->read_checkpoint();
 
-  // Deserialize all of the post-processing tables that are currently used
+  // Deserialize all post-processing tables that are currently used
   {
     const Parameters::PostProcessing post_processing =
       simulation_parameters.post_processing;
@@ -2157,11 +2157,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       tria->save(prefix + ".triangulation");
     }
 
-  // Serialize all of the post-processing tables that are currently used
+  // Serialize all post-processing tables that are currently used
   {
     const Parameters::PostProcessing post_processing =
       simulation_parameters.post_processing;
-
     std::string prefix =
       this->simulation_parameters.simulation_control.output_folder;
     std::string suffix = ".checkpoint";

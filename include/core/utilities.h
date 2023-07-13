@@ -255,7 +255,7 @@ announce_string(const ConditionalOStream &pcout,
  * the filename should contain the desired extension
  *
  * @param table The table to be serialized
- * @param filename The file name  (including the extension) to be used
+ * @param filename The file name (including the extension) to be used
  */
 inline void
 serialize_table(const TableHandler &table, const std::string filename)
