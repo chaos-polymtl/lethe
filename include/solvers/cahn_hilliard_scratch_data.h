@@ -17,7 +17,6 @@
  */
 
 #include <core/multiphysics.h>
-#include <solvers/multiphysics_interface.h>
 
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physical_properties_manager.h>
