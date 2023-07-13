@@ -11,18 +11,18 @@ Features
 - Load-balancing
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. The rotation of the cylinder is applied using a ``rotational`` boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of ``boundary condition`` and load-balancing are explained in this example.
 
 
-Parameter file
+Parameter File
 --------------
 
 Mesh
@@ -147,7 +147,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -159,7 +159,7 @@ Simulation control
       set output frequency = 1000
     end
 
-Running the simulation
+Running the Simulation
 ----------------------
 This simulation can be launched (in parallel mode on 64 processes) by:
 

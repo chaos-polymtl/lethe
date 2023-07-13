@@ -18,13 +18,13 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/melting-cavity/melting-cavity.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 The melting of metals (gallium in this example) with natural convection within a cavity is a well-known benchmark. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -64,7 +64,7 @@ where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expan
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 2nd order backward differentiation scheme 
@@ -189,7 +189,7 @@ The solid block melts into liquid in this example, hence in the ``physical prope
     end
 
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  

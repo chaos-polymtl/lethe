@@ -12,18 +12,18 @@ Features
 - Checkpointing (restart)
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-silo/silo-Golshan.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This simulation consists of two stages: filling (0-4 s) and discharge (4-40 s) of particles. During the filling stage, we use a stopper (floating wall) to keep the inserted particles in the hopper region of the silo. When all the particles are inserted and packed in the hopper, we remove the stopper and particles leave the hopper.
 
 
-Parameter file
+Parameter File
 --------------
 
 Mesh
@@ -114,7 +114,7 @@ Model parameters
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -170,7 +170,7 @@ In this simulation, we need a stopper (floating wall) in the filling stage (0-4 
     end
 
 
-Running the simulation
+Running the Simulation
 ----------------------
 This simulation can be launched in parallel (e.g. using 8 processes) by running:
 

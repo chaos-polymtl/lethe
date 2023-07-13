@@ -13,11 +13,11 @@ Features
 - Displays the use of the tracer physics
 - Displays the use of a simplex mesh generated with a CAD platform
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.prm``
 
-Description of the case
+Description of the Case
 -----------------------
 
 A junction of pipes following an arbitrary path is difficult to mesh properly with hexaedral elements. 
@@ -75,7 +75,7 @@ The ``Physical Volume`` must also be specified for compatibility with deal.II, a
 
 The last step in Gmsh is to generate the 3D mesh, and then save it to a ``.msh`` file.
 
-Parameter file
+Parameter File
 --------------
 
 Using Lethe requires a solver executable, in this case ``gls_navier_stokes_3d``, and a ``.prm`` file. This second one can be setup in many ways, but for this specific case two aspects must be treated with more care: the enabling of simplex mode, and the setup of the tracer physics. 

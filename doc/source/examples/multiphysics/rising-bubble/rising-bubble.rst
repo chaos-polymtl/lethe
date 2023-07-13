@@ -18,14 +18,14 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 - Parameter file: ``examples/multiphysics/rising-bubble/rising_bubble.prm``
 - Python file to generate plot: ``examples/multiphysics/rising-bubble/rising_bubble.py``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionless) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
@@ -44,7 +44,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme `(bdf1)`, for a :math:`3~\text{s}` simulation time with an initial time step of :math:`0.001~\text{s}`.
@@ -250,7 +250,7 @@ To compare our simulation results to the literature, we extract the position and
 
 
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  

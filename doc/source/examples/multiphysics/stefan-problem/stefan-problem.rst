@@ -16,12 +16,12 @@ Features
 - Phase change specific heat model
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/stefan-problem/stefan.prm``
 
 
-Description of the case
+Description of the Case
 -------------------------
 
 The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature `[1] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:
@@ -66,7 +66,7 @@ Lethe uses a specific heat phase change model to solve this type of problem. Thi
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 We first define the geometry in which the simulation is carried out using the mesh subsection:
@@ -169,7 +169,7 @@ The following image compares the results obtained with Lethe with the analytical
 Refining the mesh, decreasing the time step and decreasing the phase change interval (by decreasing ``liquidus temperature``) would increase the accuracy of the solution since the analytical solution of the Stefan problem is defined for a pure fluid (for which the liquid and the solidus temperatures are equal).
 
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - **Consider different Stefan numbers:** The solver in Lethe is sufficiently robust to simulate a large range of Stefan numbers. You can try to simulate the problem with different Stefan number and see how the value of the Stefan number affects the solution.

@@ -14,18 +14,18 @@ Features
 - Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
 - Periodic boundaries in DEM (see section :ref:`ref-periodic-hopper`)
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-rectangular-hopper/hopper.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand et al. uses periodic boundaries in the z axis allowing to use a thin width for simulation.
 In the main exemple, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
 
-Parameter file
+Parameter File
 --------------
 
 Mesh
@@ -150,7 +150,7 @@ Model parameters are based on the `Silo example <../silo/silo.html>`_.
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 The time end of the simulation is 7.5 where most of the particles are discharged and the DEM time step is 1e-5 s which corresponds to 2.9% of Rayleigh time step.
@@ -193,7 +193,7 @@ Floating wall in this example is handled as explained in the `Silo example <../s
     end
 
 
-Running the simulation
+Running the Simulation
 ----------------------
 This simulation can be launched by
 
@@ -271,7 +271,7 @@ The hopper in this case has the same shape with a depth reduces by a factor of 6
 
     Rectangular periodic hopper packed with particle before the discharge with a 3d view.
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The previous example did not need any parameters on a section for the boundary conditions since all walls are treated as solid boundaries by default.

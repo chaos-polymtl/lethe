@@ -8,13 +8,13 @@ Features
 - Explains how to set sharp interface immersed boundary to represent a particle
 - Displays the use of non-uniform mesh adaptation 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 
 - Parameter file: ``/examples/sharp-immersed-boundary-solver/cylinder-with-sharp-interface/cylinder-with-sharp-interface.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 In this example, we study the flow around a static cylinder in 2D using the sharp-interface method to represent the cylinder. The geometry of the flow takes the same basic case defined in 

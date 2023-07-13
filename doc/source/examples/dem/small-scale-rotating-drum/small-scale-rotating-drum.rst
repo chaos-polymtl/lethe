@@ -15,7 +15,7 @@ Features
 
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 
 - Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
@@ -23,14 +23,14 @@ Files used in this example
 
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This example simulates a rolling regime in a small scale rotating drum. First, we use Lethe-DEM to fill the bed with 20000 particles. We enable check-pointing in order to write the DEM checkpoint files for the packing which then will be used as the starting point of the DEM simulation of the rotating drum. The solver ``dem_3d`` is used to simulate the behaviour of dry granular flow within the rotating drum.
 
 
 
-Parameter file
+Parameter File
 --------------
 
 Mesh
@@ -149,7 +149,7 @@ The rotation of the cylinder is applied using a rotational boundary condition wi
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The packing dem simulation was run for 2 seconds in real time.
@@ -176,7 +176,7 @@ The actual rotation of the drum is 3 seconds in real time. We set the time equal
       set output path      = ./output_dem/
     end
 
-Running the simulation
+Running the Simulation
 -----------------------
 
 The simulation is launched in two steps: the first step packs the particle in the cylinder, while the second step rotates the drum and simulates the movement of the particles. 
@@ -199,7 +199,7 @@ The following movie displays the rolling regime inside the rotating drum obtaine
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/F-uo2lzhObk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - Use two types of particles with different radius to prove the Brazil-Nut effect.

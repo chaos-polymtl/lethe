@@ -16,17 +16,17 @@ Features
 - Displays the capability of the resolved CFD-DEM solver for the flow around multiple particles
 - Displays the robustness of the resolved CFD-DEM Solver.
 
-Files used in this example
+Files Used in This Example
 ---------------------------
  ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/sedimentation-64-particle.prm``
  
  ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/particles.input``
 
-Description of the case
+Description of the Case
 -----------------------
 The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25 cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
-Parameter file
+Parameter File
 ---------------
 
 We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters we suggest visiting the :doc:`../../../parameters/parameters`.
@@ -55,7 +55,7 @@ Simulation and IO control
 
 
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -101,8 +101,8 @@ The domain is a rectangular box: we can directly use a subdivided hyper rectangl
 * The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit finer than the particle size.
 
 
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 .. code-block:: text
 
     subsection mesh adaptation
@@ -130,7 +130,7 @@ Mesh adaptation control
 
 
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -177,8 +177,8 @@ Initial condition
 
 The initial condition for this case is simple to define. At the start of the simulation, we assume that the particle and the fluid are at rest. From there, we define a uniform velocity field of 0 everywhere. To do that, we used the ``type = nodal`` and then specified a function expression of 0 for all the velocity components.  
 
-Non-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -202,8 +202,8 @@ Non-Linear solver control
 	* reevaluate the RHS to check the convergence.
 	
 	
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 .. code-block:: text
 
     subsection linear solver

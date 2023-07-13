@@ -11,18 +11,18 @@ Features
 - Displays the selection of models and physical properties
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/2d-packing-in-circle/packing-in-circle.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 Packing in a circle is the most basic example in Lethe-DEM. In this example, 50 two-dimensional particles are inserted in a circle. Due to the action of gravity, they accelerate in the defined direction of gravity. Upon reaching the outer periphery of the circle (the boundary walls of the triangulation), the particle-wall contact stops the particles from leaving the triangulation. Finally a balance forms between the particle-particle and particle-wall contact force and the gravity force. Particles lose kinetic energy (and velocity), get packed on the triangulation boundary, and remain at rest.
 
 
-Parameter file
+Parameter File
 --------------
 
 Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.ii library from which Lethe derives. For more information on this class, we refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_. 
@@ -175,7 +175,7 @@ where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon
 ``dynamic contact search size coefficient``, as illustrated in the equation above, is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value for ``dynamic contact search size coefficient``.
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The last subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation.
@@ -189,7 +189,7 @@ The last subsection, which is generally the one we put at the top of the paramet
       set output frequency = 10000
     end
 
-Running the simulation
+Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_2d`` executable is within your path, the simulation can be launched by typing:
 

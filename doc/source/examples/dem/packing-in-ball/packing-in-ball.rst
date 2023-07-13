@@ -11,12 +11,12 @@ Features
 - Parallelism
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 Packing in ball example is the three-dimensional version of the packing in circle example.
@@ -25,7 +25,7 @@ Packing in ball example is the three-dimensional version of the packing in circl
 	Two-dimensional DEM solver (dem_2d) is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. dem_2d solver may only be used for simple basic analyses before performing three-dimensional simulations with dem_3d solver becomes necessary.
 
 
-Parameter file
+Parameter File
 --------------
 
 The parameter file of packing in ball example is very similar to packing in circle example. We only explain the parts that are different because of the three-dimensional example.
@@ -115,7 +115,7 @@ Model parameters
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -127,7 +127,7 @@ Simulation control
       set output frequency = 10000
     end
 
-Running the simulation
+Running the Simulation
 ----------------------
 This simulation can be launched by:
 

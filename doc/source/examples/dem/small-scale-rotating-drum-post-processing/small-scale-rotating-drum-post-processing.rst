@@ -20,7 +20,7 @@ Features
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 
 - Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
@@ -29,7 +29,7 @@ Files used in this example
 - Python script using module for rotating drum post-processing: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 In this example, we illustrate the mixing inside a rotating drum by coloring the particles according to their radial position right after their full packing. To do so, we post-process Lethe-DEM data using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
@@ -315,7 +315,7 @@ For ``set rotational speed = 2``, the following is observed:
 
 As shown, neither of the mixing indices point to a full mixing of the particles, even at higher simulation times. NNM is always above Doucet, indicating that the main mixing component must not be the radius. Higher rotating velocities can improve results.
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - Give a different ``condition`` to create the ``particle_color`` array

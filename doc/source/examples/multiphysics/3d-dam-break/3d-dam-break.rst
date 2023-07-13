@@ -17,7 +17,7 @@ Features
 - The use of a python script for post-processing data
 
 
-Files used in this example
+Files Used in This Example
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
 - Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
@@ -28,7 +28,7 @@ Files used in this example
 .. _Description of the case:
 
 -------------------------
-Description of the case
+Description of the Case
 -------------------------
 
 For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0 \ \text{s}`, the gate opens instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00 \ \text{m}`. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
@@ -77,10 +77,10 @@ Along the x-axis, the water height is measured at 4 different positions. These p
 +-------------------------------------------------------------------------------------------------------------------+
 
 -----------------
-Parameter file
+Parameter File
 -----------------
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
@@ -125,7 +125,7 @@ Note that the fluid dynamics are solved by default.
       set VOF = true
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{\text{kg}}{\text{m}^3}` (air) and :math:`1000 \ \frac{\text{kg}}{\text{m}^3}` (water). However, the current numerical model was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
@@ -251,7 +251,7 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 
 
 -----------------------
-Running the simulation
+Running the Simulation
 -----------------------
 
 We call the gls_navier_stokes_3d by invoking:

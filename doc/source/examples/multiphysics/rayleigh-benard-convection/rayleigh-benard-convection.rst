@@ -16,14 +16,14 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra10k.prm``
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra25k.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 In this example, we evaluate the performance of the ``gls_navier_stokes_2d`` solver in the simulation of the stability of natural convection within a two-dimensional rectangular domain. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -59,7 +59,7 @@ In this example, we simulate the Rayleigh-Bénard convection problem at two Rayl
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme 
@@ -143,7 +143,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
     end
 
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  

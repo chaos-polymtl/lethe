@@ -11,7 +11,7 @@ Features
 - Displays the use of the Monte Carlo method in the calculation of photon count
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 - Parameter file: ``examples/rpt/count-calculation/rpt-count-calculation.prm``
 - File containing detector positions: ``examples/rpt/count-calculation/positions.detector``
@@ -22,7 +22,7 @@ Files used in this example
 - Python script for post-processing the data: ``examples/rpt/count-calculation/rpt_count-calculation_plot.py``
 
 
-Description of the case
+Description of the Case
 -------------------------
 In this example, four different sets of particle positions are studied for a given detector position. The four different scenarios studied in this example are:
 
@@ -107,7 +107,7 @@ where
 - :math:`\omega(\theta)` is the weighting factor associated with the angle :math:`\theta`.
 
 
-Parameter file
+Parameter File
 ----------------
 
 RPT parameters
@@ -162,7 +162,7 @@ In the subsection ``detector parameters``, we specify the file that contains two
     The parameters ``dead time``, ``activity`` and ``attenuation coefficient reactor`` are obtained using the blackbox optimization software `NOMAD <https://www.gerad.ca/en/software/nomad/>`_ . The second example :doc:`../tuning-parameters-with-nomad/tuning-parameters-with-nomad` explains how we can obtain the values of these parameters using NOMAD.
 
 
-Running the simulation
+Running the Simulation
 ----------------------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``rpt_3d`` executable is within your path, the simulation can be launched by typing:
 

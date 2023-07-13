@@ -19,7 +19,7 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-sharpening.prm``
 
@@ -27,7 +27,7 @@ Files used in this example
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 In this example, we simulate the Rayleigh-Taylor instability benchmark. In this benchmark, a dense fluid, as shown in the following figure, is located on top of a fluid with a smaller density. 
@@ -58,7 +58,7 @@ A perturbed interface defined as :math:`2H + 0.1 H \cos{(2 \pi x / H)}` separate
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme 
@@ -300,7 +300,7 @@ The ``phase filtration`` is enabled in this example. We refer the reader to the 
 documentation for more explanation on the phase filtration.
 
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  

@@ -10,13 +10,13 @@ Features
 - Transient problem
 - Rotating complex solid, defined by a step file using the OpenCascade shape, modelled with sharp immersed boundary
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 
 * Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/mixer.prm``
 * Step file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/impeller.step``
 
-Description of the case
+Description of the Case
 -----------------------
 
 In this example, we simulate a mixer using a PBT impeller through the usage of a step file with the OpenCascade shape feature of the sharp immersed boundary solver.

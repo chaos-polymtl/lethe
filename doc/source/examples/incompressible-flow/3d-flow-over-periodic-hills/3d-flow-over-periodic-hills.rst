@@ -10,12 +10,12 @@ Features
 - Solver: ``gls_navier_stokes_3d`` (with Q1-Q1) 
 - Transient problem
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 
 - Parameter file: ``/examples/incompressible-flow/3d-periodic-hills/periodic-hills.prm``
 
-Description of the case
+Description of the Case
 -----------------------
 In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC `[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_):
 
@@ -26,12 +26,12 @@ In this case a well-defined flow passes over a series of hills which repeat alon
 
 As the flow passes over the hill, it is subjected to the effects of both the curvature of the hill and the pressure gradient. The adverse pressure gradient on the leeward side of the hill and resulting deceleration of the flow causes the boundary layer to separate from the curved hill surface. The flow then recirculates on the leeward side of the hill and reattaches in the base of the channel before the next hill. There is a short distance remaining before the subsequent hill which allows the boundary layer to recover. The flow then accelerates up and over the second hill, and the flow pattern repeats in a periodic manner.
 
-Parameter file
+Parameter File
 --------------
 
 All the sections of the parameter file used in this case have been already explained in previous examples. However, for the sake of completeness, the important sections are briefly explained.
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~
 
 This section controls the flow of the simulation. 
@@ -52,7 +52,7 @@ The ``method`` parameter specifies the time-stepping scheme chosen for this simu
 .. warning:: It is important to remember that the output path folder, in this case ``output`` must exist before running the simulation.
 
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 The physical properties section is used to target a specific Reynolds number:
@@ -100,7 +100,7 @@ The following image displays a coarse mesh for this example. It can be seen that
     :align: center
     :name: mesh_periodic_hills_3d
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~
 In this section, we specify the boundary conditions taking into account the IDs presented in the following scheme:
 
@@ -185,8 +185,8 @@ The FEM subsection specifies the order of the elements used for both velocity an
 
 For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements. In that case, it is important to remember to add the ``set qmapping all = true`` line after the velocity and pressure orders.
 
-Non-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear solver
+~~~~~~~~~~~~~~~~~
 
 The non-linear solver control section allows us to choose a method suitable for the problem that we are solving:
 
@@ -201,7 +201,7 @@ The non-linear solver control section allows us to choose a method suitable for 
 
 In this case, we use the ``inexact_newton`` method that reuses the Jacobian matrix between iterations. This is a known strategy to reduce the cost of reassembling the Jacobian in every iteration. 
 
-Running the simulation
+Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
@@ -240,7 +240,7 @@ and the Reynolds shear stress:
 
 It can be seen that there is a very good agreement of the Lethe average velocity with the values of both benchmarks. Especially at the lower wall and in the bulk of the flow. The Reynolds stresses are more sensitive than the average velocity, as we can see a bigger difference near to the separation of the flow and the reattachment zone. For the periodic hills case, the reattachment point is a good indicator of the accuracy of the simulation at the near wall region. The reattachment point reported experimentally is 4.83 and for the LESOCC code is 5.09. The value obtained with this simulation is 4.73. This is shorter than the ones reported in the literature and a possible reason for the under-prediction is the coarse mesh that is being used. This value could be further improved by using a finer mesh. In general, this example shows that Lethe can be used to simulate complex flow problems with good accuracy and coarse meshes.
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - **Parameter tuning**: It is possible to play with different parameters of the simulation such as time average, time step and number of cells of the mesh and see the effects on the results.

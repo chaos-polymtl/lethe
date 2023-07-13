@@ -20,13 +20,13 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/laser-meltpool/laser-meltpool.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A Ti-6Al-4 V powder bed (assumed as a solid block in this example) melts using a laser beam that is emitted perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the solid block melts in the direction of the laser. The corresponding parameter file is 
@@ -41,7 +41,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 2nd order backward differentiation scheme 
@@ -247,7 +247,7 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
     
 
 ----------------------
-Running the simulation
+Running the Simulation
 ----------------------
 
 Call the gls_navier_stokes_2d by invoking:  

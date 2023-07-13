@@ -13,14 +13,14 @@ Features
 - Displays the effect of the Reynolds number on the convergence
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 - For Re = 0.1 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
 - For Re = 150 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
 - For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 The following schematic describes the simulation and its boundary condition indices.
@@ -35,7 +35,7 @@ Note that the sphere surface has a boundary index of ``0``, the inlet ``1`` and 
 As this examples allows for two different Reynolds numbers as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
 
 
-Parameter file
+Parameter File
 --------------
 
 We first establish the parameters.
@@ -75,7 +75,7 @@ In the parameter file, the mesh is read this way:
   The ``initial refinement`` is set to 1 only for the second example (Re = 150 without mesh adaptation). This is added so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains a bit more than 46,000 cells.
 
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` subsection establishes the constraints on different parts of the domain. They are the same for all three parameter sets.
@@ -107,7 +107,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 There are three boundary conditions, as shown in the figure above. A ``noslip`` condition is applied on the surface of the sphere, where the velocity should be 0. The inlet velocity is set to `u=1m/s`, and the boundaries of the domain that are parallel to the flow direction have a ``slip`` boundary condition.
 
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 This is where the parameters differ from the first and the two last examples.
@@ -161,7 +161,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
     If you choose to use the ``gd_navier_stokes_3d`` solver; only Q2-Q1 elements are supported. 
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 The parameters also slightly differ from one problem to another as different examples experience different flow regimes.
@@ -211,8 +211,8 @@ An initial condition is introduced for the Re = 150 problem. This way, a Re = 10
     end
 
 
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 
 To increase the accuracy of the drag coefficient, the mesh must be refined in areas of interest, such as on the front face of the sphere and in the developing wake. Therefore, a dynamic adaptive mesh was introduced to refine the mesh in such regions.
 
@@ -235,7 +235,7 @@ The mesh is dynamically adapted based on an estimate of the error of the solutio
 The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than this, not coarser. The ``max refinement level`` is set at 3, giving a maximum possible number of cells of 3 million. However, the ``max number elements`` limits the number of cells to 50,000 to keep the simulation within feasible computational expense.
 
 
-Running the simulation
+Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
@@ -319,7 +319,7 @@ Using mesh adaptative refinement, the final mesh contains slightly more than 101
 It is possible the acknowledge how better the mesh fits the velocity profile than in the previous example. The resulting drag coefficient of 0.880 is more accurate than determined using the static mesh, and does not take much more time to execute than the previous example. 
 
 
-Possibilities for extension
+Possibilities for Extension
 ---------------------------
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 

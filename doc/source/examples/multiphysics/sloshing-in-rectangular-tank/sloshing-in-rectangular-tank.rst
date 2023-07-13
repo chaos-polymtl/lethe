@@ -14,7 +14,7 @@ Features
 - Usage of a python script for post-processing data
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
@@ -22,7 +22,7 @@ Files used in this example
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas). Yet, simulating their dynamics is difficult, especially for high Reynolds number values . Indeed, in this case, the amplitude of the waves dampen very slowly. This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver. 
@@ -36,7 +36,7 @@ In this problem, we simulate the damping of a small amplitude wave in a rectangu
 Four values of the Reynolds number are investigated: 2, 20, 200 and 2000. 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time step. The ``adaptive time step scaling`` is set to 1.025 to ensure that the time-step does not rise too quickly during wave oscillations.
@@ -143,7 +143,7 @@ The ``source term`` subsection is used to enable the gravitational acceleration 
 
 
 -----------------------
-Running the simulation
+Running the Simulation
 -----------------------
 
 We can call the gls_navier_stokes_2d for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:

@@ -17,14 +17,14 @@ Features
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/static-bubble/static_bubble.prm``
 - Python file to generate plots: ``examples/multiphysics/static-bubble/static_bubble.py``
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a two-dimensional squared domain of side length :math:`L=5.0` filled with air. The gravitational force is neglected, such as in a microgravity environment, and the ratio of density between the droplet and the air is 1, meaning that buoyancy is also neglected. Therefore, without any external force, the bubble and the air are at rest, and only the surface tension effects are involved, maintaining the droplet in its circular shape. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -112,7 +112,7 @@ The phase fraction gradient filter :math:`\eta_n` and the curvature filter value
 where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` is the cell size.
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme (BDF1), for a :math:`6~\text{s}` simulation time with a constant time step of :math:`0.005~\text{s}`.
@@ -165,7 +165,7 @@ The computational domain is defined by a square with opposite corners located at
     end
 
 """"""""""""""""""""""""""""""""
-Initial conditions
+Initial Conditions
 """"""""""""""""""""""""""""""""
 
 In the ``initial condition`` subsection, the initial velocity and initial position of the droplet are defined. The droplet is initially
@@ -271,7 +271,7 @@ When providing the analytical solution in the ``analytical solution`` subsection
     end
 
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the ``gls_navier_stokes_2d`` by invoking:

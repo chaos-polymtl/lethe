@@ -12,12 +12,12 @@ Features
 - Simulates a solid-gas fluidized bed.
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
 ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
 
-Description of the case
+Description of the Case
 -----------------------
 
 
@@ -47,7 +47,7 @@ In this example, we are simulating a squared fluidized bed that has a half lengt
       set initial refinement = 3
     end
     
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log, and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 1 s was chosen with a time step of 0.000005. It is important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder output_dem:
@@ -203,7 +203,7 @@ CFD-DEM parameter file
 
 The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here.
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation is run for 1 s with a time step of 0.002 s. The time scheme chosen for the simulation is first order backward difference method (BDF1). The simulation control section is shown:
@@ -220,7 +220,7 @@ The simulation is run for 1 s with a time step of 0.002 s. The time scheme chose
       set output path          = ./output/
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of 1 and viscosity of 0.00001 as to simulate the flow of air. 
@@ -235,8 +235,8 @@ The physical properties subsection allows us to determine the density and viscos
     end
 
 
-Initial conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 For the initial conditions, we choose zero initial conditions for the velocity. 
 
@@ -250,7 +250,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
     end
  
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the boundary conditions, we choose a slip boundary condition on the walls of the square bed (IDs = 0, 1, 4, 5) and an inlet velocity of 0.2 m/s at the lower face of the bed (ID = 2).
@@ -335,8 +335,8 @@ We determine the drag model to be used for the calculation of particle-fluid for
 
 Finally, the linear and non-linear solver controls are defined.
 
-Non-linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 We use the inexact Newton non-linear solver to minimize the number of time the matrix of the system is assembled. This is used to increase the speed of the simulation, since the matrix assembly requires significant computations.
 
@@ -350,8 +350,8 @@ We use the inexact Newton non-linear solver to minimize the number of time the m
     set verbosity        = verbose
   end
     
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 .. code-block:: text
 

@@ -12,18 +12,18 @@ Features
 - Bidispersed particles (same size and properties, but different types)
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This simulation consists of two stages: packing (0-0.5 s) and mixing (0.5-5 s) of particles. There are two types of particles in this simulation (bidispersed system), that are inserted on top of each other during the packing stage. The size and properties of the two particle types are the same, we only need to define two particle types to make the visualization easier during post-processing. At :math:`t=0.5` s, the pitched-blade impeller starts rotating with an angular velocity of 6 rad/s and mixes the particles.
 
 
-Parameter file
+Parameter File
 --------------
 
 Mesh
@@ -115,7 +115,7 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
     end
 
 
-Running the simulation
+Running the Simulation
 ----------------------
 This simulation can be launched by (in parallel mode on 8 processes):
 

@@ -17,13 +17,13 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/dam-break/``
 
 
 ---------------------------
-Description of the case
+Description of the Case
 ---------------------------
 
 A liquid is fixed behind a dam at the left most corner of
@@ -44,7 +44,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 1st order backward differentiation scheme 
@@ -267,7 +267,7 @@ is adapted to the initial condition for the phase.
     end
 
 ----------------------
-Running the simulation
+Running the Simulation
 ----------------------
 
 Call the gls_navier_stokes_2d by invoking:  

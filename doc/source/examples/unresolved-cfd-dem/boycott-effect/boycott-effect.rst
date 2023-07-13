@@ -12,13 +12,13 @@ Features
 - Simulates a solid-liquid sedimentation
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
 ``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This example simulates the sedimentation of a group of particles in a viscous fluid. Two cases were simulated. In the first case, the channel is placed vertically. In the second case, the channel is inclined at :math:`20^{\circ}` with respect to the gravity. First, we use Lethe-DEM to insert the particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the sedimentation of particles by initially reading the checkpoint files from the DEM simulation.
@@ -48,7 +48,7 @@ In this example, we are simulating a rectangular channel. We use the deal.II Gri
 
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time step in this case is the same as the time end. Since we only seek to insert the particles at the top of the channel, we only require 1 insertion time step. We do not need the particles to be packed, therefore by doing this, the particles will be inserted, but will not fall under the action of gravity.
@@ -176,7 +176,7 @@ CFD-DEM parameter file
 
 The CFD simulation is to be carried out using the particles inserted within the previous step. We will discuss the different parameter file sections. Some sections are identical to that of the DEM so they will not be shown again.
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The time scheme chosen for the simulation is first order backward difference method (BDF1). The simulation control section is shown:
@@ -193,7 +193,7 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
       set output path          = ./output/
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`1115.6` and a kinematic viscosity of :math:`0.00000177` as to simulate the flow of a sugar-water solution with :math:`20` % by weight sugar at :math:`20^{\circ}` C.
@@ -210,8 +210,8 @@ The dynamic viscosity of a 20 % sugar-water solution by weight at :math:`20^{\ci
     end
 
 
-Initial conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 For the initial conditions, we choose zero initial conditions for the velocity.
 
@@ -225,7 +225,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
     end
 
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the boundary conditions, we choose a slip boundary condition on all the walls of the channel and the channel except the bottom and the top of the channel where a no-slip boundary condition is imposed. For more information about the boundary conditions, please refer to the `Boundary Conditions Section <../../../parameters/cfd/boundary_conditions_cfd.html>`_
@@ -309,8 +309,8 @@ We determine the drag model to be used for the calculation of particle-fluid for
 
 Finally, the linear and non-linear solver controls are defined.
 
-Non-linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -324,8 +324,8 @@ Non-linear solver control
 
 We use the ``inexact_newton`` solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
 
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 .. code-block:: text
 

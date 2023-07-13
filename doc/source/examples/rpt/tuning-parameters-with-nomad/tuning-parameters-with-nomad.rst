@@ -16,7 +16,7 @@ Features
 - Displays the use of NOMAD to calibrate the parameters of the Beam model
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 - Parameter file for tuning parameters: ``examples/rpt/parameters-tuning/rpt-parameters.prm``
 - Parameter file for calculating photon counts: ``examples/rpt/parameters-tuning/rpt-count-calculation.prm``
@@ -28,7 +28,7 @@ Files used in this example
 - Python script for post-processing the data: ``examples/rpt/parameters-tuning/rpt_parameter_tuning_plot.py``
 
 
-Description of the case
+Description of the Case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
@@ -187,8 +187,8 @@ The ``param-nomad.txt`` file is used when running NOMAD. This file provides init
 .. note::
     In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
 
-Running the simulation
-----------------------------------
+Running the Simulation
+----------------------
 
 Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may run NOMAD by typing :
 

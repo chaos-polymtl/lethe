@@ -11,14 +11,14 @@ Features
 - Transient problem
 - Usage of Gnuplot and Python scripts for the data post-processing
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 
 - Parameter file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder.prm``
 - Mesh file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.msh``
 - Geometry file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.geo``
 
-Description of the case
+Description of the Case
 -----------------------
 We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais et al. `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
 
@@ -34,10 +34,10 @@ The flow field features a stable laminar boundary layer at the cylinder leading 
 
 where :math:`D` is the diameter of the cylinder, :math:`f_v` is the frequency of the shedding and :math:`U_\infty` is the upstream velocity.
 
-Parameter file
+Parameter File
 --------------
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 This example uses a 2nd order backward differentiation (``method = bdf2``) for the time integration scheme. The simulation time is set to 200 seconds with the ``time end`` parameter and a time step of 0.05 seconds is used (``time step = 0.05``).
 
@@ -77,10 +77,10 @@ The initial mesh is generated with `Gmsh <https://gmsh.info/#Download>`_ and imp
       set initial refinement = 1
     end
 
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 
-While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation Control`` subsection:
+While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the ``Mesh Adaptation`` subsection:
 
 .. code-block:: text
 
@@ -147,8 +147,8 @@ The Reynolds number must be high enough to capture a transient flow and study th
     end
   end
 
-Linear solver
-~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 For 2D problems, the AMG preconditioner is an adequate preconditioner. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
 
@@ -199,7 +199,7 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
   The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. It is a good practice to set ``output frequency`` to higher values, such as 10-100, to reduce the computational cost.
 
 
-Running the simulation
+Running the Simulation
 ----------------------
 The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
@@ -282,7 +282,7 @@ Using Paraview the following velocity and pressure fields can be visualized in t
     :align: center
     :name: pressure
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 - Study the vortex shedding of other bluff bodies.
 - Increase the Reynolds number to study a completely turbulent wake and the drag crisis phenomenon.

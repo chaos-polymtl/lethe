@@ -10,13 +10,13 @@ Features
 - Displays how to import and easily adapt a gmsh file
 - Displays how to run case in parallel with mpirun
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 - Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
 - Geometry file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.geo``
 - Mesh file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.msh``
 
-Description of the case
+Description of the Case
 --------------------------
 In this example, a flow is passing across a fixed Ahmed body (simplified version of a car, classical benchmark for aerodynamic simulation tools). The velocity profile of the flow is simulated. The parameter file used is ``ahmed.prm``.
 
@@ -39,7 +39,7 @@ The basic geometry for the Ahmed body is given below, as defined in Ahmed et al.
     :align: center
     :name: geometry_detailed
 
-Parameter file
+Parameter File
 --------------
 First, we import the mesh as in the `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
 
@@ -119,7 +119,7 @@ The `Initial Condition <https://lethe-cfd.github.io/lethe/parameters/cfd/initial
       end
     end
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 Time integration is defined by a 1st order backward differentiation (``bdf1``), for a 4 seconds simulation (``time end``) with a 0.01 second ``time step``. The ``output path`` is defined to save obtained results in a sub-directory, as stated in `Simulation Control <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`_:
 
@@ -201,7 +201,7 @@ The mesh and processors load is adapted dynamically throughout the simulation, a
 | t = 4 s     | .. image:: images/Re720-mesh-t4.png    |
 +-------------+----------------------------------------+
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 * Change the ``phi`` value to see the effect of the angle in the streamline.

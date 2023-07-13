@@ -11,14 +11,14 @@ Features
 - Heat transfer physics
 - Conjugated heat transfer
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 - Parameter file: ``examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.prm``
 - GMSH file: ``examples/multiphysics/concentric-heat-exchanger/concentric-cylinders.geo``
 - Correlation calculation: ``examples/multiphysics/concentric-heat-exchanger/correlation_calculation.py``
 - Plot generator: ``examples/multiphysics/concentric-heat-exchanger/plot_temperature_over_line.py.``
 
-Description of the case
+Description of the Case
 -------------------------
 
 Heat exchangers are common unit operations used in many types of industries to transfer energy from one fluid to another. In this case, we simulate the most simple heat exchanger geometry, which is a concentric tube in which the hot fluid circulates within the inner tube, and a cold fluid circulates within the outer tube. We model the full heat transfer by simulating the motion of the fluid in both regions and the heat transfer within the entire domain. 
@@ -41,7 +41,7 @@ Using the NTU approach, the thermal effectiveness can be calculated and, from it
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 We first enable the heat transfer multiphysics component:
@@ -214,7 +214,7 @@ The following image shows the temperature profile along the length of the inner 
 Using paraview, the velocity and temperature profiles can be explored in depth.
 
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - **Investigate co-current flow:** By inverting the inlet and the outlet on the outer pipe, this case can be changed from a counter-current to a co-current heat exchanger.

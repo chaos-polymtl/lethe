@@ -16,13 +16,13 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/laser-heating/laser-heating.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A laser beam heats a three-dimensional solid block. The laser beam is emitted perpendicular to the top surface of the block in the negative z direction. The following schematic describes the geometry and dimensions of block and laser beam:
@@ -36,7 +36,7 @@ The laser path changes with time. The laser beam radius and penetration depth ar
 ``laser-heating.prm``.
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 2nd order backward differentiation scheme `(bdf2)` (for a better temporal accuracy), for a :math:`0.003` seconds simulation time with a constant
@@ -150,7 +150,7 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
     end
 
 ----------------------
-Running the simulation
+Running the Simulation
 ----------------------
 
 Call the gls_navier_stokes_3d by invoking:  

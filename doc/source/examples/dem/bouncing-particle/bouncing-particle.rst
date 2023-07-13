@@ -10,7 +10,7 @@ Features
 - Solvers: ``dem_3d``
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 
 - ``/examples/dem/3d-bouncing-particle/bouncing_particle_original.prm``
@@ -18,12 +18,12 @@ Files used in this example
 - ``/examples/dem/3d-bouncing-particle/bouncing_particle_post-processing.py``
 
 
-Description of the case
+Description of the Case
 -------------------------
 
 This simulation consists of a single particle bouncing on a flat plane. The particle start at a rest position in the air and accelerate due to the action of gravity. Upon reaching the outer limit of the domain, the particle-wall contact stops the particles form leaving the triangulation. Depending on the values of spring constant and restitution coefficient used, the particle will lose some kinetic energy and the height of the next bounce will decrease until the particle comes to a complete stop.
 
-Parameter file
+Parameter File
 ---------------
 
 Mesh
@@ -95,7 +95,7 @@ As you can see, the ``young modulus particles`` and the ``restitution coefficien
 
 Where ``5000000`` represent the normal spring constant that is wish to be used for the simulations. This code will generate 6 files named ``bouncing_particle_XX.prm``, where ``XX`` represent the value of the restitution coefficient used in it.
 
-Running the simulation
+Running the Simulation
 ----------------------
 Once all 6 parameter file are created, the simulation can be launched one after the other using the following line (parallel mode is not recommend since there is only one particle):
 
@@ -122,7 +122,7 @@ Once the 6 simulations have been run, use the following line in your command lin
 
 A figure will be generated which compares the analytical solution with the simulation results.
 
-Results and discussion
+Results and Discussion
 ----------------------
 Animation of a bouncing particle with different restitution coefficient (:math:`K_n` = 5E6 N/m):
 

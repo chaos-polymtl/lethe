@@ -12,11 +12,11 @@ Features
 * Displays the use of heat transfer physics
 * Analytical solution
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/warming-up-viscous-fluid``
 
-Description of the case
+Description of the Case
 ------------------------
 A viscous fluid lays between two parallel plates: one fixed and insulated, and the other moving and heated. The velocity profile and the temperature evolution are simulated. The parameter file used is ``warming-up-viscous-fluid.prm``.
 
@@ -33,10 +33,10 @@ The following schematic describes the simulation.
 .. important:: 
     The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
 
-Parameter file
+Parameter File
 ---------------
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 Time integration is defined by a 2nd order backward differentiation (``bdf2``), for a 7.0 seconds simulation (``time end``) with a 0.05 second ``time step``, as stated in the subsection ``simulation control``:
@@ -73,7 +73,7 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
       set temperature order = 2
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 The fluid's ``physical properties`` are defined in the following subsection, according to the properties of oil.
@@ -158,7 +158,7 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
       end
     end
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` are set for:
@@ -204,7 +204,7 @@ The ``boundary conditions`` are set for:
       end
     end
 
-Running the simulation
+Running the Simulation
 -----------------------
 
 The simulation is launched in the same folder as the ``.prm`` file, using the ``gls_navier_stokes_2d`` solver. It takes only about 5 seconds with one cpu:
@@ -377,7 +377,7 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 	* the index in ``set id = ..`` is coherent with the ``id`` of the boundary in the mesh (here, the deal.II generated mesh).
 
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 * Study the **sensitivity to the time step**, namely to assess how large the ``time step`` can be before stating any difference in the heat transfer solution.

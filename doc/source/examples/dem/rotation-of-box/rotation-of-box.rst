@@ -10,18 +10,18 @@ Features
 - Rotating a triangulation
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 4000 particles are inserted in a rotating box and rotate with the box. In this example, the whole triangulation is rotated.
 
 
-Parameter file
+Parameter File
 --------------
 
 Mesh
@@ -111,7 +111,7 @@ Model parameters
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -123,7 +123,7 @@ Simulation control
       set output frequency = 1000
     end
 
-Running the simulation
+Running the Simulation
 ----------------------
 This simulation can be launched by:
 

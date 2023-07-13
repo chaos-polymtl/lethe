@@ -19,13 +19,13 @@ Features
 - Displays the calculation of the torque induced by the fluid on a boundary
 
 
-Files used in this example
+Files Used in This Example
 ----------------------------
 ``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
 ``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. 
@@ -39,7 +39,7 @@ The following figure shows the geometry of this problem and the corresponding bo
     :name: geometry
     :height: 10cm
 
-Parameter file
+Parameter File
 --------------
 
 We first establish the meshes used for the simulation. Using Nitsche immersed boundaries, two meshes are to be defined : the fluid mesh and the geometry mesh (i.e. the inner cylinder).
@@ -113,7 +113,7 @@ The following figure illustrates the background mesh as well as the particles us
     :name: nitsche_particles
     :height: 10cm
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` subsection becomes simple since the inner cylinder boundaries were specified in the previous section.
@@ -132,7 +132,7 @@ The ``boundary conditions`` subsection becomes simple since the inner cylinder b
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The outer cylinder (``0``) is static and, consequently, a ``noslip`` boundary condition is applied. 
 
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 The analytical solution for the Taylor-Couette problem is only valid at low Reynolds number. We thus set the kinematic viscosity to 1.
@@ -188,7 +188,7 @@ By setting ``calculate torque = true``, the calculation of the torque resulting 
 Setting ``verbosity=verbose`` will print out the value of the torque calculated for each mesh. 
 
 
-Simulation control and mesh refinement
+Simulation Control and Mesh Refinement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As stated above, this problem can either be solved using a uniform mesh refinement or using an adaptative mesh refinement
@@ -259,7 +259,7 @@ Rest of the subsections
 The non-linear and linear solvers subsections do not contain any new information in this example.
 
 
-Running the simulation
+Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_nitsche_navier_stokes_22`` executable is within your path, the simulation can be launched by typing:
 
@@ -362,7 +362,7 @@ Correspondingly, the torque on the inner cylinder:
 We see that even for a small number of cells (~18k), the error on the torque is less than 0.5%.
 
 
-Possibilities for extension
+Possibilities for Extension
 ----------------------------
 
 - Calculate formally the order of convergence for the torque :math:`T_z`.

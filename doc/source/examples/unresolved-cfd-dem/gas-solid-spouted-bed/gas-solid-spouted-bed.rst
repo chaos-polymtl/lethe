@@ -12,13 +12,13 @@ Features
 - Simulates a solid-gas spouted bed
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.prm``
 ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/dem-packing-in-spouted-bed.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This example simulates the spouting of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the spouting of the particles by initially reading the checkpoint files from the DEM simulation.
@@ -48,7 +48,7 @@ In this example, we are simulating a rectangular spouted bed. In order to ensure
 
 where the file name includes the path to the mesh file.
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, ``end time``, ``log frequency``, and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 1 s was chosen with a time step of 0.000005. It is important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder ``output_dem``:
@@ -204,7 +204,7 @@ CFD-DEM parameter file
 
 The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here.
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation is run for 5 s with a time step of 0.0001 s. The time scheme chosen for the simulation is first order backward difference method (BDF1). The simulation control section is shown:
@@ -224,7 +224,7 @@ The simulation is run for 5 s with a time step of 0.0001 s. The time scheme chos
       set output path          = ./output/
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of 1 and a viscosity of 0.0000181 as to simulate the flow of air.
@@ -239,8 +239,8 @@ The physical properties subsection allows us to determine the density and viscos
     end
 
 
-Initial conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 For the initial conditions, we choose zero initial conditions for the velocity.
 
@@ -254,7 +254,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
     end
 
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the boundary conditions, we choose a slip boundary condition on all the walls of the bed and the channel except the inlet at the bottom of the channel and the bottom of the bed and the outlet on the top of the bed where an outlet boundary conditions was imposed.  At the base of the channel and bottom walls of the bed, we impose a Dirichlet boundary condition with an inlet velocity of 0.2 m/s and a background velocity of 1.25 respectively. For more information about the boundary conditions, please refer to the `Boundary Conditions Section <../../../parameters/cfd/boundary_conditions_cfd.html>`_
@@ -348,8 +348,8 @@ We determine the drag model to be used for the calculation of particle-fluid for
 
 Finally, the linear and non-linear solver controls are defined.
 
-Non-linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -363,8 +363,8 @@ Non-linear solver control
 
 We use the inexact_newton solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refere to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
 
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 .. code-block:: text
 

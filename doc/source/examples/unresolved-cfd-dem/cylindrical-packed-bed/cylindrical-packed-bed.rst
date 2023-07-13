@@ -12,13 +12,13 @@ Features
 - Displays the selection of models and physical properties
 
 
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``/examples/unresolved-cfd-dem/cylindrical-packed-bed/flow-in-bed.prm``
 ``/examples/unresolved-cfd-dem/cylindrical-packed-bed/packing-in-cylinder.prm``
 
 
-Description of the case
+Description of the Case
 -----------------------
 
 This example simulates air flow through a packing of particles. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``gls_vans_3d`` solver within Lethe to simulate air flow through the packed bed.
@@ -44,7 +44,7 @@ The ``mesh`` subsection specifies the computational grid:
       set initial refinement = 1
     end
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 0.6 s was chosen with a time step of 1e-5 s. It it important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder ``output_dem``:
@@ -208,7 +208,7 @@ VANS parameter file
 
 The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here. 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation is run in steady state. The simulation control section is shown:
@@ -221,7 +221,7 @@ The simulation is run in steady state. The simulation control section is shown:
       set output path       = ./output/
     end
    
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of 1 and viscosity of 0.00001 as to simulate the flow of air. 
@@ -235,8 +235,8 @@ The physical properties subsection allows us to determine the density and viscos
       end
     end
 
-Initial conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 For the initial conditions, we choose zero initial conditions for the velocity. 
 
@@ -249,7 +249,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
       end
     end
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the boundary conditions, we choose a slip boundary condition on the walls of the cylinder (ID = 0) and an inlet velocity of 0.2 m/s at the lower face of the cylinder (ID = 1). 
@@ -319,8 +319,8 @@ We determine the ``drag model`` to be used for the calculation of particle-fluid
 
 Finally, the linear and non-linear solver controls are defined.
 
-Non-linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -330,8 +330,8 @@ Non-linear solver control
     set verbosity      = verbose
   end
     
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 .. code-block:: text
 
