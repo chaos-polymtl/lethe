@@ -32,18 +32,18 @@
 class MeshController
 {
 public:
-/**
-* @brief Constructor
-* @param target_number_of_elements
-*/
+  /**
+   * @brief Constructor
+   * @param target_number_of_elements
+   */
   MeshController(int target_number_of_elements)
     : target_number_of_elements(target_number_of_elements)
   {}
   virtual ~MeshController()
   {}
-/**
-* @brief Returns the coarsening factor.
-*/
+  /**
+   * @brief Returns the coarsening factor.
+   */
   double
   calculate_coarsening_factor(int current_number_of_elements);
 

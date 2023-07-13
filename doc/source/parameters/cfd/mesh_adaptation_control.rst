@@ -89,7 +89,7 @@ This subsection controls the mesh adaptation method, with default values given b
 
 * The maximum number of elements in the entire domain can be controlled with the ``max number elements`` parameter.
 
-* The boolean parameter ``enable mesh refinement controller`` activates a controller that overrides the value of the of ``fraction coarsening`` parameter. If activated, the controller will try to maintain the total number of elements in the domain equal to the value of ``max number elements`` parameter.
+* The boolean parameter ``enable mesh refinement controller`` activates a controller that overrides the value of the of ``fraction coarsening`` parameter. If activated, the controller will try to maintain the total number of elements in the domain equal to the value of ``max number elements`` parameter. The control is done using a PID controller.
 
 .. note:: 
     If the ``fraction refinement`` parameter is too high, the controller may not be able to maintain the number of elements constant. If ``fraction type = number``, the maximal ``fraction refinement`` that is stable in 3D is 0.125. In 2D, it is 0.25.

@@ -3,7 +3,7 @@
 
 using namespace std;
 double
-MeshController::calculate_coarsening_factor(int current_number_of_cells)
+MeshController::calculate_coarsening_factor(int current_number_of_elements)
 {
   // Parameters of the controller
   double P = 0.5;
@@ -11,12 +11,12 @@ MeshController::calculate_coarsening_factor(int current_number_of_cells)
   double D = 0.1;
 
   // Evaluation of the error used to control the mesh refinement.
-  double error = (target_number_of_elements - current_number_of_cell) /
+  double error = (target_number_of_elements - current_number_of_elements) /
                  (double)target_number_of_elements;
   double previous_error =
     (target_number_of_elements - previous_number_of_elements) /
     (double)target_number_of_elements;
-  previous_number_of_elements = current_number_of_cell;
+  previous_number_of_elements = current_number_of_elements;
   previous_mesh_control_error = previous_mesh_control_error + error;
 
   // Calculate the coarsening factor
