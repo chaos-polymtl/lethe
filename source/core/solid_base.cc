@@ -257,16 +257,16 @@ SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 
 template <>
 void
-SolidBase<2, 3>::translate_grid(const Tensor<1, 3> translation)
+SolidBase<2, 2>::translate_grid(const Tensor<1, 3> translation)
 {
-  GridTools::shift(translation, *solid_tria);
+  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
 }
 
 template <>
 void
-SolidBase<2, 2>::translate_grid(const Tensor<1, 3> translation)
+SolidBase<2, 3>::translate_grid(const Tensor<1, 3> translation)
 {
-  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
+  GridTools::shift(translation, *solid_tria);
 }
 
 template <>
