@@ -1,5 +1,7 @@
+=============================
 Floating Mesh (Solid Objects)
---------------------------------------
+=============================
+
 Floating meshes (solid objects) are finite (limited) auxiliary objects that can be stationary or moving. Rotating impellers, sliding surfaces, and finite stoppers are examples of floating meshes. The main differences between floating meshes and floating walls are:
 1. floating wall is a surface, while a floating mesh can be a volume or a plane
 2. floating wall is infinite, while floating mesh is finite

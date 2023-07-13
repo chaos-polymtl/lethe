@@ -1,33 +1,34 @@
-Laser heat source
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=================
+Laser Heat Source
+=================
 
 If a laser heat source is present in a simulation, it can be added in this section. The default parameters are:
 
 .. code-block:: text
 
-   subsection laser parameters
-      set enable                 = false
-      set concentration factor   = 2.0
-      set power                  = 100.0
-      set absorptivity           = 0.5
-      set penetration depth      = 0.0
-      set beam radius            = 0.0
-      set start time             = 0.0
-      set end time               = 1.0
-      set beam orientation       = z-
+  subsection laser parameters
+    set enable               = false
+    set concentration factor = 2.0
+    set power                = 100.0
+    set absorptivity         = 0.5
+    set penetration depth    = 0.0
+    set beam radius          = 0.0
+    set start time           = 0.0
+    set end time             = 1.0
+    set beam orientation     = z-
 
-      subsection path
-          set Function expression  =  0.0; 0.0
-      end
+    subsection path
+      set Function expression = 0.0; 0.0
+    end
 
-      subsection free surface radiation
-          set enable                    = false
-          set emissivity                = 0.6
-          set Tinf                      = 0.0
-          set Stefan-Boltzmann constant = 5.6703e-8
-      end
+    subsection free surface radiation
+      set enable                    = false
+      set emissivity                = 0.6
+      set Tinf                      = 0.0
+      set Stefan-Boltzmann constant = 5.6703e-8
+    end
+  end
 
-   end
 
 * The ``enable`` parameter is set to true if the problem has a laser heat source term and enables its calculation.
 

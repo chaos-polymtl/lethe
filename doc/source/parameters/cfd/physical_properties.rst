@@ -1,5 +1,7 @@
+===================
 Physical Properties
----------------------
+===================
+
 .. note:: 
     Lethe supports single phase, two phase (using VOF) and conjugate simulations. This is managed using the fluid and solid subsections.
 

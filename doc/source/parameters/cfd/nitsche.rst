@@ -1,5 +1,6 @@
+=========================
 Nitsche Immersed Boundary
---------------------------
+=========================
 
 These parameters are used for simulations using the Nitsche immersed boundary method. Nitsche immersed boundary method works by forcing the fluid at the location of the Gauss points of the solid triangulation in order to apply the ``noslip`` boundary condition within the solid object.
 
@@ -19,21 +20,21 @@ These parameters are used for simulations using the Nitsche immersed boundary me
     #---------------------------------------------------
     # General parameters
     #---------------------------------------------------
-    set verbosity = quiet
+    set verbosity        = quiet
     set number of solids = 0
 
-    #---------------------------------------------------    
+    #---------------------------------------------------
     # Solid parameters
     #---------------------------------------------------
-    subsection nitsche solid 0    
+    subsection nitsche solid 0
       # Solid Mesh
       #=================================================
       subsection mesh
-	set type = dealii
-	set grid type = hyper_ball
-	set grid arguments = 0, 0 : 0.25 : true
-	set initial refinement = 5
-	set simplex = false
+        set type               = dealii
+        set grid type          = hyper_ball
+        set grid arguments     = 0, 0 : 0.25 : true
+        set initial refinement = 5
+        set simplex            = false
       end
 
       # Velocity boundary condition parameters
@@ -43,11 +44,11 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
       # Solid velocity
       subsection solid velocity
-	# Default values in 2D
-	set Function expression = 0 ; 0
-	# in 3D: set Function expression = 0 ; 0 ; 0
+        # Default values in 2D
+        set Function expression = 0 ; 0
+        # in 3D: set Function expression = 0 ; 0 ; 0
       end
-      
+
       # Condition on the motion of particles
       set enable particles motion = false
 
@@ -63,22 +64,22 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
       # Solid temperature
       subsection solid temperature
-	set Function expression = 0
+        set Function expression = 0
       end
 
       # Post-processing parameters
       #=================================================
       # Force and torque calculation on solid
-      set calculate force on solid = false
-      set solid force name = force_solid
+      set calculate force on solid  = false
+      set solid force name          = force_solid
       set calculate torque on solid = false
-      set solid torque name = torque_solid
+      set solid torque name         = torque_solid
 
       # Center of rotation, used for torque calculation
       subsection center of rotation
-	set x = 0
-	set y = 0
-	# in 3D: set z = 0
+        set x = 0
+        set y = 0
+        # in 3D: set z = 0
       end
 
       # Simulation control parameters

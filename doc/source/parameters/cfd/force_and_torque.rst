@@ -1,35 +1,36 @@
-Force and torque calculation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================
+Force and Torque Calculation
+============================
 
 This subsection controls the post-processing of the force and the torque on the boundary conditions. Using these options, the user can calculate the force  acting on a wall or the torque acting on a boundary. 
 
 .. code-block:: text
 
-   subsection forces
-     # Enable calculation of force
-     set calculate force      = true
-   
-     # Enable calculation of torque
-     set calculate torque     = true
-   
-     # Calculation frequency
-     set calculation frequency = 1
-   
-     # File output force prefix
-     set force name            = force
+  subsection forces
+    # Enable calculation of force
+    set calculate force       = true
 
-     # File output torque prefix
-     set torque name           = torque
-   
-     # Output frequency
-     set output frequency      = 1
-   
-     # Calculation frequency
-     set output precision      = 10
-   
-     # State whether information from the non-linear solver should be printed (quiet or verbose).
-     set verbosity             = quiet
-   end
+    # Enable calculation of torque
+    set calculate torque      = true
+
+    # Calculation frequency
+    set calculation frequency = 1
+
+    # File output force prefix
+    set force name            = force
+
+    # File output torque prefix
+    set torque name           = torque
+
+    # Output frequency
+    set output frequency      = 1
+
+    # Calculation frequency
+    set output precision      = 10
+
+    # State whether information from the non-linear solver should be printed (quiet or verbose).
+    set verbosity             = quiet
+  end
 
 * ``calculate force`` enables the calculation of the force on all boundaries. If multiple walls bear the same ID, the total force for this ID will be calculated.
 

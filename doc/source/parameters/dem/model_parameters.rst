@@ -1,61 +1,61 @@
+================
 Model Parameters
--------------------
-In this subsection, contact detection, force models, time integration, load balancing and dynamic contact disabling parameters are defined. 
+================
 
+In this subsection, contact detection, force models, time integration, load balancing and dynamic contact disabling parameters are defined.
 
 .. code-block:: text
 
- subsection model parameters
+  subsection model parameters
+    subsection contact detection
+      # Contact detection method
+      # Choices are constant|dynamic
+      set contact detection method                = dynamic
 
-  subsection contact detection
-    # Contact detection method
-    # Choices are constant|dynamic
-    set contact detection method                = dynamic
+      # Particle-particle contact neighborhood size
+      set neighborhood threshold                  = 1.3
 
-    # Particle-particle contact neighborhood size
-    set neighborhood threshold                  = 1.3
+      set dynamic contact search size coefficient = 0.8
+      set frequency                               = 10
+    end
 
-    set dynamic contact search size coefficient = 0.8
-    set frequency                               = 10
+    subsection load balancing
+      # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
+      set load balance method     = none
+      set particle weight         = 10000  # Every method, except none
+      set step                    = 100000 # if method = once
+      set frequency               = 100000 # if method = frequent
+      set dynamic check frequency = 10000  # if method = dynamic
+      set threshold               = 0.5    # if method = dynamic
+    end
+
+    # Particle-particle contact force model
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
+    set particle particle contact force method = hertz_mindlin_limit_overlap
+
+    # Integration method
+    # Choices are euler|velocity_verlet
+    set integration method                     = velocity_verlet
+
+    # Integration method
+    # Choices are euler|velocity_verlet
+    set integration method                     = velocity_verlet
+
+    # Rolling resistance method
+    # Choices are no_resistance|constant_resistance|viscous_resistance
+    set rolling resistance torque method       = constant_resistance
+
+    subsection dynamic disabling contacts
+      set enable dynamic disabling contacts = false
+      set granular temperature threshold    = 1e-4
+      set solid fraction threshold          = 0.4
+    end
   end
 
-  subsection load balancing
-    # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
-    set load balance method                     = none
-    set particle weight                         = 10000      # Every method, except none
-    set step                                    = 100000     # if method = once
-    set frequency                               = 100000     # if method = frequent
-    set dynamic check frequency                 = 10000      # if method = dynamic
-    set threshold                               = 0.5        # if method = dynamic
-  end
-  
-  # Particle-particle contact force model
-  # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
-  set particle particle contact force method    = hertz_mindlin_limit_overlap
-
-  # Particle-wall contact force model
-  # Choices are linear|nonlinear
-  set particle wall contact force method        = nonlinear
-
-  # Integration method
-  # Choices are euler|velocity_verlet
-  set integration method                        = velocity_verlet
-
-  # Rolling resistance method
-  # Choices are no_resistance|constant_resistance|viscous_resistance
-  set rolling resistance torque method          = constant_resistance
-
-  subsection dynamic disabling contacts
-    set enable dynamic disabling contacts       = false
-    set granular temperature threshold          = 1e-4
-    set solid fraction threshold                = 0.4
-  end
- end
 
 --------------------
 Contact detection
 --------------------
-
 
 Particle-particle contact search is a costly operation in DEM simulations. Contact detection parameters must be optimized to ensure a fast and physically accurate DEM simulation.
 

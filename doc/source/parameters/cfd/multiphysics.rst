@@ -1,25 +1,27 @@
+============
 Multiphysics
---------------
+============
+
 This subsection defines the multiphysics interface of Lethe and enables the solution of Auxiliary Physics in addition to traditional fluid dynamics simulations.
 
 .. code-block:: text
 
   subsection multiphysics
-    set fluid dynamics = true
+    set fluid dynamics                  = true
 
     # Thermal physics
-    set heat transfer       = false
-    set viscous dissipation = false
-    set buoyancy force      = false
+    set heat transfer                   = false
+    set viscous dissipation             = false
+    set buoyancy force                  = false
 
     # Tracer
-    set tracer = false
+    set tracer                          = false
 
     # Multiphase flow
     # Volume of Fluid method
-    set VOF = false
+    set VOF                             = false
     # Cahn-Hilliard equations
-    set cahn hilliard = false
+    set cahn hilliard                   = false
 
     set use time average velocity field = false
   end

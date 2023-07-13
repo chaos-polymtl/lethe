@@ -1,5 +1,6 @@
-Dynamic flow control
-~~~~~~~~~~~~~~~~~~~~
+====================
+Dynamic Flow Control
+====================
 
 The purpose of this subsection is to enable dynamic flow control. It is important when we want to simulate an average
 velocity on a specific boundary (CFD) or the whole domain (for CFD-DEM). To control the average velocity of the flow, the code

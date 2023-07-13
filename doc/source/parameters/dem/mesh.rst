@@ -1,11 +1,13 @@
+====
 Mesh
--------------------
+====
+
 The mesh subsection of DEM simulations is almost identical to the `CFD <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_ in Lethe. There are two additional parameters mainly used in DEM and CFD-DEM simulations. These parameters are ``check diamond cells`` and ``expand particle-wall contact search``.
 
 .. code-block:: text
 
  subsection mesh
-    set check diamond cells		           = false
+    set check diamond cells                 = false
 
     set expand particle-wall contact search = false
  end

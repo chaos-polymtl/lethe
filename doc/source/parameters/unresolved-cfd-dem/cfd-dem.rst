@@ -1,29 +1,29 @@
-***********************************************
+=======
 CFD-DEM
-***********************************************
+=======
 This subsection includes parameters related to multiphase flow simulations using the both the gls_vans solver and the cfd-dem_coupling solver within Lethe.
 
 .. code-block:: text
 
-   subsection cfd-dem
-      set grad div = true
-      set void fraction time derivative = true
-      set interpolated void fraction = true
-      set vans model = modelA
-      set drag force = true
-      set drag model = difelice
-      set saffman lift force = false
-      set magnus lift force = false
-      set rotational viscous torque = false
-      set vortical viscous torque = false
-      set buoyancy force = true
-      set shear force = true
-      set pressure force = true
-      set coupling frequency = 100
-      set implicit stabilization = true
-      set grad-div length scale = 1
-      set particle statistics = true
-   end
+  subsection cfd-dem
+    set grad div                      = true
+    set void fraction time derivative = true
+    set interpolated void fraction    = true
+    set vans model                    = modelA
+    set drag force                    = true
+    set drag model                    = difelice
+    set saffman lift force            = false
+    set magnus lift force             = false
+    set rotational viscous torque     = false
+    set vortical viscous torque       = false
+    set buoyancy force                = true
+    set shear force                   = true
+    set pressure force                = true
+    set coupling frequency            = 100
+    set implicit stabilization        = true
+    set grad-div length scale         = 1
+    set particle statistics           = true
+  end
 
 
 * The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_. This allows for a much better mass conservation of the system.

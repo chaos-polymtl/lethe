@@ -1,5 +1,6 @@
+=================================
 Volume of Fluid (Multiphase Flow)
-----------------------------------
+=================================
 
 In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (VOF) are specified. 
 
@@ -14,13 +15,11 @@ The default values of the VOF parameters are given in the text box below.
 
 .. code-block:: text
 
-  subsection VOF	
-
+  subsection VOF
     subsection interface sharpening
       set enable                  = false
-      set frequency               = 10			
+      set frequency               = 10
       set interface sharpness     = 2
-
       set type                    = constant
 
       # parameter for constant sharpening
@@ -34,11 +33,11 @@ The default values of the VOF parameters are given in the text box below.
     end
 
     subsection phase filtration
-      set type            = none
-      set verbosity       = quiet
+      set type      = none
+      set verbosity = quiet
 
       # parameter for the tanh filter
-      set beta            = 20
+      set beta      = 20
     end
 
     subsection surface tension force
@@ -48,7 +47,7 @@ The default values of the VOF parameters are given in the text box below.
       set surface tension coefficient           = 0.0
       set phase fraction gradient filter factor = 4
       set curvature filter factor               = 1
-            
+
       subsection marangoni effect
         set enable                   = false
         set surface tension gradient = 0.0
@@ -56,24 +55,23 @@ The default values of the VOF parameters are given in the text box below.
     end
 
     set viscous dissipative fluid = fluid 1
-    set diffusivity = 0
+    set diffusivity               = 0
 
     subsection peeling wetting
-      set enable peeling	= false
-      set enable wetting	= false
-      set verbosity 		= quiet
+      set enable peeling = false
+      set enable wetting = false
+      set verbosity      = quiet
     end
 
     subsection mass conservation
-      set conservative fluid    = both
-      set monitoring 		= false
-      set monitored fluid 	= fluid 1
+      set conservative fluid = both
+      set monitoring         = false
+      set monitored fluid    = fluid 1
 
       # parameters used with adaptative sharpening
-      set tolerance		= 1e-6
-      set verbosity 		= quiet
+      set tolerance          = 1e-6
+      set verbosity          = quiet
     end
-
   end
 
 
