@@ -1,4 +1,4 @@
-Boundary conditions - CFD
+Boundary Conditions - CFD
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports the following boundary conditions:

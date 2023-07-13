@@ -1,5 +1,5 @@
-Mesh Adaptation Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 
 This subsection controls the mesh adaptation method, with default values given below.
 

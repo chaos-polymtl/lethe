@@ -1,5 +1,5 @@
-Non-linear Solver Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 The Navier-Stokes equations (and other) are non-linear equations. The parameters in ``subsection non-linear solver``, whose default values are given in the text block below, control the non-linear solver used within Lethe.
 
 .. code-block:: text
