@@ -7,41 +7,41 @@ This subsection controls the mesh adaptation method, with default values given b
 
 	subsection mesh adaptation
 	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
-	  set type                     = none
+	  set type                              = none
 
 	  # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
 	  # For multi-variables refinement, separate the different variables with a comma
-	  set variable                 = velocity
+	  set variable                          = velocity
 
 	  # Frequency of the mesh refinement
-	  set frequency                = 1
+	  set frequency                         = 1
 
 	  # Minimum refinement level
-	  set min refinement level     = 0
+	  set min refinement level              = 0
 
 	  # Maximum refinement level
-	  set max refinement level     = 10
+	  set max refinement level              = 10
 
 	  # Fraction of coarsened elements
 	  # For multi-variables refinement, separate the different fractions with a comma
-	  set fraction coarsening      = 0.05
+	  set fraction coarsening               = 0.05
 
 	  # Fraction of refined elements
 	  # For multi-variables refinement, separate the different fractions with a comma
-	  set fraction refinement      = 0.1
+	  set fraction refinement               = 0.1
 
 	  # How the fraction of refinement/coarsening are interpreted
 	  # Choices are number or fraction 
-	  set fraction type            = number
+	  set fraction type                     = number
 
 	  # Maximum number of elements
-	  set max number elements      = 100000000
+	  set max number elements               = 100000000
 	  
 	  # Enable the control of the mesh refinement to target a specific number of elements equal to the maximum number of elements.
-	  set enable mesh refinement controller      = false
+	  set enable mesh refinement controller = false
 	
 	  # Number of initial (pre-solve) refinement steps
-	  set initial refinement steps = 0
+	  set initial refinement steps          = 0
 	end
 
 
