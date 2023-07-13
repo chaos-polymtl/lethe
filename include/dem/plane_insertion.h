@@ -107,6 +107,25 @@ private:
   // Number of particles of each type that remain to be inserted in the
   // upcoming insertion steps
   unsigned int remained_particles_of_each_type;
+
+  /**
+   * @brief
+   */
+  void
+  find_plane_cells_for_plane_insertion(
+    const parallel::distributed::Triangulation<dim> &triangulation);
+
+  /**
+   * @brief
+   */
+
+  void
+  find_center_of_in_plane_cells();
+
+  Tensor<1, 3> insertion_plane_normal_vector;
+  Point<3> insertion_plane_point;
+  std::set<typename Triangulation<dim>::active_cell_iterator> plane_cells_for_insertion;
+  std::unordered_map<unsigned int, Point<dim>> 
 };
 
 #endif /* plane_insertion_h */

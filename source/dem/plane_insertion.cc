@@ -20,6 +20,8 @@ PlaneInsertion<dim>::PlaneInsertion(
   this->inserted_this_step = 0;
 
   this->maximum_diameter = maximum_particle_diameter;
+  this->insertion_plane_normal_vector = dem_parameters.insertion_info.insertion_plane_normal_vector;
+  this->insertion_plane_point = dem_parameters.insertion_info.insertion_plane_point;
 }
 
 // The main insertion function. Insert_global_function is utilized to insert the
@@ -51,53 +53,54 @@ PlaneInsertion<dim>::create_random_number_container(
     }
 }
 
-// This function assigns the insertion points of the inserted particles
 template <>
 void
-PlaneInsertion<3>::find_insertion_location_plane(
-  Point<3> &                                   insertion_location,
-  const unsigned int                           id,
-  const double                                 random_number1,
-  const double                                 random_number2,
-  const Parameters::Lagrangian::InsertionInfo &insertion_information)
+PlaneInsertion<3>::find_plane_cells_for_plane_insertion(
+  const parallel::distributed::Triangulation<3> &triangulation)
 {
-  std::vector<int> insertion_index;
-  insertion_index.resize(3);
+  const double maximal_cell_diameter =
+    GridTools::maximal_cell_diameter(triangulation);
 
-  unsigned int axis_0, axis_1, axis_2;
-  int          number_of_particles_0, number_of_particles_1;
+  // Looping through cells
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      // If the cell is owned by owned by the processor
+      if (cell->is_locally_owned())
+        {
+          bool cell_in_plane = true;
+          for (unsigned int vertex_id = 0; vertex_id < cell->n_vertices(); ++vertex_id)
+          {
+            Tensor<1,3> connecting_vector =
+            cell->vertex(vertex_id) - insertion_plane_point;
+            double vertex_wall_distance = std::abs(connecting_vector * insertion_plane_normal_vector);
 
-  // First direction (axis) to have particles inserted
-  axis_0                  = insertion_information.axis_0;
-  number_of_particles_0   = this->number_of_particles_directions[axis_0];
-  insertion_index[axis_0] = id % number_of_particles_0;
-  insertion_location[axis_0] =
-    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number1) *
-                               this->maximum_diameter;
-
-  // Second direction (axis) to have particles inserted
-  axis_1                = insertion_information.axis_1;
-  number_of_particles_1 = this->number_of_particles_directions[axis_1];
-  insertion_index[axis_1] =
-    static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
-    (number_of_particles_0);
-  insertion_location[axis_1] =
-    this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number2) *
-                               this->maximum_diameter;
-
-  // Third direction (axis) to have particles inserted
-  axis_2 = insertion_information.axis_2;
-  insertion_index[axis_2] =
-    static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
-  insertion_location[axis_2] =
-    this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number1) *
-                               this->maximum_diameter;
+            if ( vertex_wall_distance > maximal_cell_diameter)
+              {
+                cell_in_plane = false;
+                break;
+              }
+          }
+          if (cell_in_plane)
+          {
+            plane_cells_for_insertion.insert(cell);
+          }
+        }
+    }
 }
+
+template <>
+void
+PlaneInsertion<3>::find_center_of_in_plane_cells()
+{
+  for (const auto &cell : plane_cells_for_insertion)
+    {
+
+    }
+
+}
+
+
+
+;
 template class PlaneInsertion<2>;
 template class PlaneInsertion<3>;

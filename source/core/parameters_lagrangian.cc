@@ -449,9 +449,7 @@ namespace Parameters
                                                       Utilities::string_to_double(plane_point_str_list[1]),
                                                       Utilities::string_to_double(plane_point_str_list[2])});
 
-        std::cout<<insertion_plane_normal_vector<<std::endl;
-        std::cout<<"###################"<<std::endl;
-        std::cout<<insertion_plane_point<<std::endl;
+
       }
       prm.leave_subsection();
     }
