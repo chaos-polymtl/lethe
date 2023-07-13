@@ -1,4 +1,4 @@
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/particle_particle_fine_search.h>
 
 using namespace dealii;

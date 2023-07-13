@@ -2,7 +2,7 @@ add_library(lethe-dem
   # Sources
   data_containers.cc
   dem.cc
-  dem_container_manager.cc
+  dem_contact_manager.cc
   dem_solver_parameters.cc
   explicit_euler_integrator.cc
   disable_contacts.cc

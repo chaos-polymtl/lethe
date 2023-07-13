@@ -19,7 +19,7 @@
 #include <core/serial_solid.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/disable_contacts.h>
 #include <dem/find_boundary_cells_information.h>
@@ -339,14 +339,13 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  DEMContainerManager<dim>           container_manager;
+  DEMContactManager<dim>             contact_manager;
   std::shared_ptr<SimulationControl> simulation_control;
   BoundaryCellsInformation<dim>      boundary_cell_object;
   std::shared_ptr<GridMotion<dim>>   grid_motion_object;
   ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>>   integrator_object;
   std::shared_ptr<Insertion<dim>>    insertion_object;
-  PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
@@ -360,8 +359,23 @@ private:
   std::vector<Tensor<1, 3>> force;
   std::vector<double>       displacement;
   std::vector<double>       MOI;
-  Tensor<1, dim>            periodic_offset;
-  bool                      has_periodic_boundaries;
+
+  // Mesh and boundary information
+  typename dem_data_structures<dim>::floating_mesh_information
+    floating_mesh_info;
+  typename dem_data_structures<dim>::boundary_points_and_normal_vectors
+    updated_boundary_points_and_normal_vectors;
+  typename dem_data_structures<dim>::vector_on_boundary
+    forces_boundary_information;
+  typename dem_data_structures<dim>::vector_on_boundary
+    torques_boundary_information;
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    periodic_boundaries_cells_information;
+
+  // Information for periodic boundaries
+  PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
+  Tensor<1, dim>                     periodic_offset;
+  bool                               has_periodic_boundaries;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

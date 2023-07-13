@@ -39,7 +39,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -122,7 +122,7 @@ test()
   typename dem_data_structures<2>::adjacent_particle_pairs
     cleared_ghost_adjacent_particles;
 
-  DEMContainerManager<dim> container_manager;
+  DEMContactManager<dim> container_manager;
 
   // Finding cell neighbors
   FindCellNeighbors<dim> cell_neighbor_object;
