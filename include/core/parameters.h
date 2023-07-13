@@ -923,7 +923,7 @@ namespace Parameters
     bool expand_particle_wall_contact_search;
 
     // Grid displacement at initiation
-    std::vector<double> translation;
+    Tensor<1, 3> translation;
 
     // Grid rotation at initiation
     Tensor<1, 3> rotation_axis;

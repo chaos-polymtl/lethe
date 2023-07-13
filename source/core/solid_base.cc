@@ -218,10 +218,7 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
               param->solid_mesh.rotation_axis);
 
   // Translate the triangulation
-  GridTools::shift(Point<spacedim>(param->solid_mesh.translation[0],
-                                   param->solid_mesh.translation[1],
-                                   param->solid_mesh.translation[2]),
-                   *solid_tria);
+  translate_grid(param->solid_mesh.translation);
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
   // afterwards
@@ -256,6 +253,27 @@ void
 SolidBase<3, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 {
   GridTools::rotate(axis, angle, *solid_tria);
+}
+
+template <>
+void
+SolidBase<2, 3>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(translation, *solid_tria);
+}
+
+template <>
+void
+SolidBase<2, 2>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
+}
+
+template <>
+void
+SolidBase<3, 3>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(translation, *solid_tria);
 }
 
 

@@ -1640,7 +1640,10 @@ namespace Parameters
       std::string              translation_str = prm.get("initial translation");
       std::vector<std::string> translate_str_list =
         Utilities::split_string_list(translation_str);
-      translation = Utilities::string_to_double(translate_str_list);
+      translation =
+        Tensor<1, 3>({Utilities::string_to_double(translate_str_list[0]),
+                      Utilities::string_to_double(translate_str_list[1]),
+                      Utilities::string_to_double(translate_str_list[2])});
 
       // Initial rotation
       // Create a string from the input file, split the string into smaller
