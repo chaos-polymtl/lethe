@@ -894,7 +894,6 @@ namespace BoundaryConditions
         prm.enter_subsection("phi");
         bcFunctions[i_bc].phi.parse_parameters(prm);
         prm.leave_subsection();
-        // this->phase_dirichlet_value[i_bc] = prm.get_double("phase value");
       }
     if (op == "angle_of_contact")
       {

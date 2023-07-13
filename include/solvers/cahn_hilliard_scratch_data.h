@@ -337,7 +337,6 @@ public:
    * that may be required by the Cahn-Hilliard equations. Namely W the potential
    * well height, the mobility function M, the mobility factor D and the
    * interface thickness epsilon.
-   *
    */
   void
   calculate_physical_properties();
@@ -357,11 +356,8 @@ public:
   std::vector<double> density_1;
   std::vector<double> viscosity_1;
 
-
-
   FEValuesExtractors::Scalar phase_order;
   FEValuesExtractors::Scalar chemical_potential;
-
 
   // FEValues for the Cahn-Hilliard problem
   FEValues<dim> fe_values_ch;

@@ -84,7 +84,8 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
       switch (properties_manager.get_number_of_fluids())
         {
             case 1: {
-              const auto density_model  = properties_manager.get_density();
+          throw std::runtime_error(
+            "Cannot run CH simulations with only 1 fluid, review the Physical Properties section of the .prm");
               const auto rheology_model = properties_manager.get_rheology();
 
               density_model->vector_value(fields, density);

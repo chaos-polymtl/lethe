@@ -194,7 +194,7 @@ calculate_point_property(const double phase,
 /**
  * @brief Used in the calculate_properties_ch to retrieve the sign of the phase parameter
  * @tparam T val argument's type
- * @param val phase parameter value
+ * @param val value of the variable for which we want to evaluate the sign
  * @return an integer -1 or 1 depending of the sign of the phase parameter
  */
 template <typename T>
