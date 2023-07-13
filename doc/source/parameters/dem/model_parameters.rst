@@ -15,11 +15,11 @@ In this subsection, DEM simulation parameters are defined. These parameters incl
     # Depending on the contact detection method, contact search size coefficient
     # (safety factor multiplier for dynamic contact search) or contact detection frequency
     # should be defined for dynamic and constant contact search methods, respectively.
-    set dynamic contact search size coefficient = 0.9
-    set frequency                               = 20
+    set dynamic contact search size coefficient = 0.8
+    set frequency                               = 1
 
     # Particle-particle contact neighborhood size
-    set neighborhood threshold                  = 1.6
+    set neighborhood threshold                  = 1
   end
 
   # Load balancing method and its subsequent information
