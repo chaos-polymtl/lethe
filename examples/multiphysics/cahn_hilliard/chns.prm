@@ -4,7 +4,7 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method = bdf1
+  set method           = bdf1
   set output name      = cahn_hilliard
   set output frequency = 1
   set output path      = ./output/
@@ -17,7 +17,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set cahn hilliard  = true
+  set cahn hilliard = true
 end
 
 #---------------------------------------------------
@@ -146,7 +146,7 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity        = verbose
+  set verbosity = verbose
 
   #---------------------------------------------------
   # Multiphysics post-processing
@@ -181,4 +181,3 @@ subsection linear solver
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 2000
 end
-
