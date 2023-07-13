@@ -9,7 +9,7 @@ subsection simulation control
   set method            = steady
   set output name       = couette
   set subdivision       = 2
-  set number mesh adapt = 3 # If steady, no mesh adaptation
+  set number mesh adapt = 3 # time-stepping method must be "steady"
 end
 
 #---------------------------------------------------
