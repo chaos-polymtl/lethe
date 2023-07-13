@@ -165,16 +165,14 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 {
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
+      // Grid creation
+      GridIn<dim, spacedim> grid_in;
+      // Attach triangulation
+      grid_in.attach_triangulation(*solid_tria);
+      // Read input gmsh file
+      std::ifstream input_file(param->solid_mesh.file_name);
 
-          // Grid creation
-          GridIn<dim, spacedim> grid_in;
-          // Attach triangulation
-          grid_in.attach_triangulation(*solid_tria);
-          // Read input gmsh file
-          std::ifstream input_file(param->solid_mesh.file_name);
-
-          grid_in.read_msh(input_file);
-
+      grid_in.read_msh(input_file);
     }
   else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
@@ -265,8 +263,7 @@ SerialSolid<dim, spacedim>::get_triangulation()
 
 template <>
 void
-SerialSolid<1, 2>::rotate_grid(const double angle,
-                               const Tensor<1, 3> /*axis*/)
+SerialSolid<1, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }
