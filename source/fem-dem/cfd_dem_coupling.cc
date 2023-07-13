@@ -992,8 +992,9 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
 
       // Updates the iterators to particles in local-local contact
       // containers
-      contact_manager.update_local_particles_in_cells(
-        this->particle_handler, load_balance_step, has_periodic_boundaries);
+      contact_manager.update_local_particles_in_cells(this->particle_handler,
+                                                      load_balance_step,
+                                                      has_periodic_boundaries);
 
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
