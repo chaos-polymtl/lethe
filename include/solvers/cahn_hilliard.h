@@ -355,7 +355,7 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Calculate phase order parameter integral for monitoring purpose
+   * @brief Calculate phase order parameter integral for monitoring purposes
    */
   void
   calculate_phase_statistics();

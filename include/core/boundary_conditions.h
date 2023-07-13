@@ -820,7 +820,7 @@ namespace BoundaryConditions
       "angle value",
       "0",
       Patterns::Double(),
-      "Inner angle of contact between the fluid 1 and the wall (in degrees)");
+      "Inner angle of contact between the fluid 1 and the boundary (in degrees)");
 
     prm.enter_subsection("phi");
     bcFunctions[i_bc].phi.declare_parameters(prm, 1);

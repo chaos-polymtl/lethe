@@ -37,7 +37,7 @@ subsection analytical solution
   set verbosity = verbose
 
   subsection cahn hilliard
-    set Function expression = sin(pi*x)*sin(pi*y); 1/0.0 #This is to make the test more robust on all configuration. Only the phase (first component) is being tested, the potential is not tested, the numerical solution converges to zero extremely fast.
+    set Function expression = sin(pi*x)*sin(pi*y); 1/0.0 #This is to make the test more robust on every configuration. Only the phase (first component) is being tested, the potential is not tested, the numerical solution converges to zero extremely fast.
   end
 end
 
