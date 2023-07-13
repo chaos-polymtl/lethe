@@ -1,5 +1,5 @@
 =======================================================
-Tuning Count Calculation Model Parameters with NOMAD
+Tuning count calculation model parameters with NOMAD
 =======================================================
 
 

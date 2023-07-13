@@ -70,6 +70,13 @@ To install additional packages:
 
   pip install sphinx-copybutton
 
+and:
+
+.. code-block:: shell
+  :class: copy-button
+
+  sudo apt-get install graphviz
+
 Then, install the Sphinx requirements:
 
 .. code-block:: shell

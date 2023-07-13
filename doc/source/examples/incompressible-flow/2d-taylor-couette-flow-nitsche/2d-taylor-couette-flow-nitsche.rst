@@ -1,5 +1,5 @@
 ========================================================
-2D Taylor-Couette flow using Nitsche immersed boundary
+Taylor-Couette flow using Nitsche immersed boundary
 ========================================================
 
 This example revisits the same taylor-couette flow problem in :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow`, 

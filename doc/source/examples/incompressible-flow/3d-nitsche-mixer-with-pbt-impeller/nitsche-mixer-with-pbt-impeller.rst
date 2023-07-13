@@ -2,7 +2,7 @@
     :format: html
 
 ===============================================================================
-3D Mixer with pitched-blade turbine impeller using Nitsche immersed boundary
+Mixer with pitched-blade turbine impeller using Nitsche immersed boundary
 ===============================================================================
 
 Simulation of mixing in stirred-tanks is one important industrial application which is often simulated with Lethe. Agitated vessels are widely applied in chemical engineering as product homogenizers, heat and mass transfer enhancers, and surface area maximizers in solid-fluid processes. Batch and Continuous Stirred Tank Reactors (CSTR), for example, are among the most often reactor models applied in chemical industries that can be simulated through computational fluid dynamics.

@@ -1,5 +1,5 @@
 ==========================
-Warming Up a Viscous Fluid
+Warming up a viscous fluid
 ==========================
 
 This example introduces how to solve another physics along with the CFD solver.

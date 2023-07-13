@@ -1,5 +1,5 @@
 ==================================
-2D Lid-driven cavity flow
+Lid-driven cavity flow
 ==================================
 
 This is the first Lethe example. It showcases a classical fluid mechanics problem, the lid-driven cavity. This example also introduces the concept of parameter files to parametrize Lethe simulations.

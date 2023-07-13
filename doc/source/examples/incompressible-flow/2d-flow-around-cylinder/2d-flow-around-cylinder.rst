@@ -1,5 +1,5 @@
 ======================================
-2D Flow around a cylinder
+Flow around a cylinder
 ======================================
 
 This example corresponds to a flow around a fixed cylinder. This is a classical problem studied in fluid mechanics. This example introduces several important features supported by Lethe.

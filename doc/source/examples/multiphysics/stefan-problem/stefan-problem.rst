@@ -1,5 +1,5 @@
 ====================================
-Stefan problem : melting of a solid
+Stefan problem: melting of a solid
 ====================================
 
 This example simulates the `Stefan`_ problem following the approach taken by `Blais & Ilinca (2018)`_

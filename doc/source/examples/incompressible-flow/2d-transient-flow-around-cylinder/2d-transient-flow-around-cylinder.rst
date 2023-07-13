@@ -1,5 +1,5 @@
 ======================================
-2D Transient flow around a cylinder
+Transient flow around a cylinder
 ======================================
 
 This example corresponds to a transient flow around a fixed cylinder at a high Reynolds number.

@@ -34,7 +34,8 @@ extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.githubpages',
     'sphinx.ext.todo',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'sphinx.ext.graphviz',
 ]
 
 # Create a copybitton selector to be able to turn on a copybutton in a code

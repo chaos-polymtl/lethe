@@ -1,6 +1,6 @@
 
 ==================================
-3D Flow around a sphere
+Flow around a sphere
 ==================================
 
 In this example, a fluid flows past a sphere

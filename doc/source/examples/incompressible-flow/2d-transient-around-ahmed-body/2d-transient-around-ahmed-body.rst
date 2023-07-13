@@ -1,5 +1,5 @@
 ======================================
-2D Transient flow around an Ahmed body
+Transient flow around an Ahmed body
 ======================================
 
 Features
