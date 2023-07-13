@@ -37,16 +37,20 @@ end
 #---------------------------------------------------
 
 subsection model parameters
-  set contact detection method                = dynamic
-  set dynamic contact search size coefficient = 0.9
-  set neighborhood threshold                  = 1.2
-  set load balance method                     = dynamic
-  set load balance threshold                  = 0.5
-  set dynamic load balance check frequency    = 10000
-  set particle particle contact force method  = hertz_mindlin_limit_overlap
-  set particle wall contact force method      = nonlinear
-  set rolling resistance torque method        = constant_resistance
-  set integration method                      = velocity_verlet
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.9
+    set neighborhood threshold                  = 1.2
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set rolling resistance torque method       = constant_resistance
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
@@ -59,16 +63,15 @@ subsection lagrangian physical properties
   set gz                       = 0
   set number of particle types = 1
   subsection particle type 0
-    set size distribution type                 = uniform
-    set diameter                               = 0.003
-    set number                                 = 20000
-    set density particles                      = 2500
-    set young modulus particles                = 1e8
-    set poisson ratio particles                = 0.24
-    set restitution coefficient particles      = 0.97
-    set friction coefficient particles         = 0.3
-    set rolling friction particles             = 0.1
-
+    set size distribution type            = uniform
+    set diameter                          = 0.003
+    set number                            = 20000
+    set density particles                 = 2500
+    set young modulus particles           = 1e8
+    set poisson ratio particles           = 0.24
+    set restitution coefficient particles = 0.97
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.1
   end
   set young modulus wall           = 1e8
   set poisson ratio wall           = 0.24
@@ -76,7 +79,6 @@ subsection lagrangian physical properties
   set friction coefficient wall    = 0.3
   set rolling friction wall        = 0.1
 end
-
 
 #---------------------------------------------------
 # Insertion Info
@@ -105,6 +107,6 @@ subsection mesh
   set type                                = dealii
   set grid type                           = cylinder
   set grid arguments                      = 0.056:0.051
-  set initial refinement                  = 3 
+  set initial refinement                  = 3
   set expand particle-wall contact search = true
 end

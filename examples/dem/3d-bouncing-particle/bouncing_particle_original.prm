@@ -59,11 +59,11 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = list
-  set insertion frequency                            = 10000
-  set list x = 1.
-  set list y = 1.
-  set list z = 0.5
+  set insertion method    = list
+  set insertion frequency = 10000
+  set list x              = 1.
+  set list y              = 1.
+  set list z              = 0.5
 end
 
 #---------------------------------------------------

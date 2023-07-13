@@ -89,11 +89,15 @@ In this example, we use the ``frequent`` load balancing method to ensure that th
 .. code-block:: text
 
   subsection model parameters
-    set contact detection method                = dynamic
-    set dynamic contact search size coefficient = 0.9
-    set load balance method                     = frequent
-    set load balance frequency                  = 10000
-    set neighborhood threshold                  = 1.3
+    subsection contact detection
+      set contact detection method                = dynamic
+      set dynamic contact search size coefficient = 0.9
+    end
+    subsection load balancing
+      set load balance method                     = frequent
+      set frequency                               = 10000
+      set threshold                               = 1.3
+    end
     set particle particle contact force method  = hertz_mindlin_limit_overlap
     set rolling resistance torque method        = constant_resistance
     set particle wall contact force method      = nonlinear

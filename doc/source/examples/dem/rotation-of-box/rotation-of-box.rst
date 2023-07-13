@@ -99,13 +99,15 @@ Model parameters
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method                = dynamic
-      set dynamic contact search size coefficient = 0.9
-      set neighborhood threshold                  = 1.3
-      set particle particle contact force method  = hertz_mindlin_limit_overlap
-      set particle wall contact force method      = nonlinear
-      set rolling resistance torque method        = constant_resistance
-      set integration method                      = velocity_verlet
+      subsection contact detection
+        set contact detection method                = dynamic
+        set dynamic contact search size coefficient = 0.9
+        set neighborhood threshold                  = 1.3
+      end
+      set particle particle contact force method    = hertz_mindlin_limit_overlap
+      set particle wall contact force method        = nonlinear
+      set rolling resistance torque method          = constant_resistance
+      set integration method                        = velocity_verlet
     end
 
 
