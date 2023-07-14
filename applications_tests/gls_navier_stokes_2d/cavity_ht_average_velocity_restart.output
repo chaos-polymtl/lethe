@@ -1,0 +1,34 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1
+   Number of degrees of freedom: 12
+   Volume of triangulation:      1
+   Number of thermal degrees of freedom: 4
+   Number of VOF degrees of freedom: 4
+************************
+---> Simulation Restart 
+************************
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      1
+   Number of thermal degrees of freedom: 4225
+   Number of VOF degrees of freedom: 4225
+Reading heat transfer checkpoint
+Reading VOF checkpoint
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 5.35622 
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 5.29755e-15
+	     Max : 0.963681
+	 Average : 0.0556333
+	 Std-Dev : 0.165684
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 5.27749 
+*******************************************************************************
+Temperature statistics on fluid : 
+	     Min : 2.9635e-14
+	     Max : 0.971081
+	 Average : 0.0642934
+	 Std-Dev : 0.177604
