@@ -381,7 +381,8 @@ private:
 /**
  * @class This class defines superquadric shapes. Their signed distance function
  * is:
- * \left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0
+ * \left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s +
+ * \left|\frac{z}{c}\right|^t - 1 = 0
  * @tparam dim Dimension of the shape
  */
 template <int dim>
@@ -399,9 +400,11 @@ public:
                     const Tensor<1, dim> exponents,
                     const Point<dim> &   position,
                     const Tensor<1, 3> & orientation)
-    : Shape<dim>(half_lengths.norm(), position, orientation),half_lengths(half_lengths),exponents(exponents),epsilon(1e-12)
-  {
-  }
+    : Shape<dim>(half_lengths.norm(), position, orientation)
+    , half_lengths(half_lengths)
+    , exponents(exponents)
+    , epsilon(1e-12)
+  {}
 
   /**
    * @brief Return the evaluation of the signed distance function of this solid
