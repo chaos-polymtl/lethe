@@ -182,7 +182,7 @@ where the curvature :math:`\kappa` is computed according to:
 
     \kappa = - \nabla \cdot \bf{n}
 
-and the unit normal vector of the free surface is obtained with:
+and the unit normal vector of the free surface, pointing from fluid 0 to 1, is obtained with:
 
 .. math::
 
