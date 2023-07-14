@@ -113,6 +113,7 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_hessian = properties_manager.is_non_newtonian();
+    gather_ch      = false;
   }
 
   /**
@@ -153,6 +154,8 @@ public:
     gather_particles_information             = false;
     gather_temperature                       = false;
     gather_hessian = properties_manager.is_non_newtonian();
+    gather_ch      = false;
+
 
     if (sd.gather_vof)
       enable_vof(sd.fe_values_vof->get_fe(),
@@ -181,9 +184,9 @@ public:
                            sd.fe_values_temperature->get_quadrature(),
                            sd.fe_values_temperature->get_mapping());
     if (sd.gather_ch)
-        enable_cahn_hilliard(sd.fe_values_ch->get_fe(),
-                             sd.fe_values_ch->get_quadrature(),
-                             sd.fe_values_ch->get_mapping());
+      enable_cahn_hilliard(sd.fe_values_ch->get_fe(),
+                           sd.fe_values_ch->get_quadrature(),
+                           sd.fe_values_ch->get_mapping());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -934,19 +937,15 @@ public:
                        const Mapping<dim> &      mapping);
 
 
-  /** @brief Reinitialize the content of the scratch for the vof
+  /** @brief Reinitialize the content of the scratch for CH
    *
    * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the VOF FE and not the
+   * This cell must be compatible with the CH FE and not the
    * Navier-Stokes FE
    *
-   * @param current_solution The present value of the solution for [alpha]
+   * @param current_solution The present value of the solution for [phi]
    *
-   * @param current_filtered_solution The present value of the solution for [alpha]_filtered
-   *
-   * @param previous_solutions The solutions at the previous time steps for [alpha]
-   *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [alpha]
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [phi]
    *
    */
 
@@ -955,26 +954,50 @@ public:
   reinit_cahn_hilliard(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> & /*solution_stages*/)
+    const std::vector<VectorType> & /*solution_stages*/,
+    Parameters::CahnHilliard ch_parameters)
   {
     this->fe_values_ch->reinit(cell);
+
+    this->phase_order.component        = 0;
+    this->chemical_potential.component = 1;
+
     // Gather phase fraction (values, gradient)
-    this->fe_values_ch[phase_order]->get_function_values(
+    this->fe_values_ch->operator[](phase_order)
+      .get_function_values(current_solution, this->phase_order_ch_values);
+    this->fe_values_ch->operator[](chemical_potential)
+      .get_function_values(current_solution,
+                           this->chemical_potential_ch_values);
+    this->fe_values_ch->operator[](phase_order)
+      .get_function_gradients(current_solution, this->phase_order_ch_gradients);
+    this->fe_values_ch->operator[](chemical_potential)
+      .get_function_gradients(current_solution,
+                              this->chemical_potential_ch_gradients);
+
+    // Initialize parameters
+    this->epsilon           = (ch_parameters.epsilon_set_method ==
+                     Parameters::EpsilonSetStrategy::manual) ?
+                                ch_parameters.epsilon :
+                                2 * this->cell_size;
+    this->well_height       = ch_parameters.well_height;
+    this->mobility_constant = ch_parameters.mobility_constant;
+
+    // TODO erase
+    /*this->fe_values_ch[phase_order]->get_function_values(
       current_solution, this->phase_order_ch_values);
     this->fe_values_ch[chemical_potential]->get_function_values(
-      current_solution, this->chemical_potential_values);
+      current_solution, this->chemical_potential_ch_values);
     this->fe_values_ch[phase_order]->get_function_gradients(
       current_solution, this->phase_order_ch_gradients);
-    this->fe_values_ch[phase_order]->get_function_gradients(
-      current_solution, this->chemical_potential_gradients);
-
-    // Gather previous phase fraction values for CahnHilliard physics
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values_ch[phase_order]->get_function_values(
-          previous_solutions[p], previous_phase_values[p]);
-      }
+    this->fe_values_ch[chemical_potential]->get_function_gradients(
+      current_solution, this->chemical_potential_ch_gradients);
+*/
+    //    // Gather previous phase fraction values for CahnHilliard physics
+    //    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+    //      {
+    //        this->fe_values_ch[phase_order]->get_function_values(
+    //          previous_solutions[p], previous_phase_values[p]);
+    //      }
   }
 
 
@@ -1002,7 +1025,7 @@ public:
   // pressure
   double pressure_scaling_factor;
 
-  // For VOF simulations. Present properties for fluid 0 and 1.
+  // For VOF and CH simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;
   std::vector<double> density_1;
   std::vector<double> viscosity_0;
@@ -1124,13 +1147,18 @@ public:
   /**
    * Scratch component for the CahnHilliard auxiliary physics
    */
-  bool                             gather_ch;
-  unsigned int                     n_dofs_ch;
-  std::vector<double>              phase_order_ch_values;
-  std::vector<Tensor<1, dim>>      phase_order_ch_gradients;
-  std::vector<std::vector<double>> previous_phase_ch_values;
-  std::vector<double>              chemical_potential_values;
-  std::vector<Tensor<1, dim>>      chemical_potential_gradients;
+  double                      epsilon;
+  double                      well_height;
+  double                      mobility_constant;
+  double                      density_diff;
+  bool                        gather_ch;
+  unsigned int                n_dofs_ch;
+  std::vector<double>         phase_order_ch_values;
+  std::vector<Tensor<1, dim>> phase_order_ch_gradients;
+  // TODO erase
+  //  std::vector<std::vector<double>> previous_phase_ch_values;
+  std::vector<double>         chemical_potential_ch_values;
+  std::vector<Tensor<1, dim>> chemical_potential_ch_gradients;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_ch;
 

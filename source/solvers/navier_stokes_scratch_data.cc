@@ -174,12 +174,13 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate CahnHilliard values
-  phase_order_ch_values     = std::vector<double>(this->n_q_points);
-  chemical_potential_values = std::vector<double>(this->n_q_points);
+  phase_order_ch_values        = std::vector<double>(this->n_q_points);
+  chemical_potential_ch_values = std::vector<double>(this->n_q_points);
 
   // Allocate CahnHilliard gradients
-  phase_order_ch_gradients     = std::vector<Tensor<1, dim>>(this->n_q_points);
-  chemical_potential_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
+  phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
+  chemical_potential_ch_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
   density_0           = std::vector<double>(n_q_points);
@@ -188,6 +189,7 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
+  surface_tension     = std::vector<double>(n_q_points);
 }
 
 
@@ -355,6 +357,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_0 = properties_manager.get_rheology(0);
           const auto density_model_1  = properties_manager.get_density(1);
           const auto rheology_model_1 = properties_manager.get_rheology(1);
+          const auto material_interaction_id = properties_manager.get_material_interaction_id("fluid-fluid", 0,1);
+          const auto surface_tension_model =
+            properties_manager.get_surface_tension(material_interaction_id);
 
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)
@@ -375,6 +380,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           density_model_1->vector_value(fields, density_1);
           rheology_model_1->vector_value(fields, viscosity_1);
 
+          surface_tension_model->vector_value(fields, surface_tension);
+
           if (gather_temperature)
             {
               const auto thermal_expansion_model_0 =
@@ -392,6 +399,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
+                  this->density_diff =
+                    0.5 * std::abs(density_0[q] - density_1[q]);
+
                   double phase_order_ch_value = this->phase_order_ch_values[q];
 
                   density[q] = calculate_point_property_ch(phase_order_ch_value,
@@ -410,23 +420,27 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                 }
 
 
-              for (unsigned p = 0; p < previous_phase_values.size(); ++p)
-                {
-                  // Blend the physical properties using the CahnHilliard field
-                  for (unsigned int q = 0; q < this->n_q_points; ++q)
-                    {
-                      // Calculate previous density (right now assumes constant
-                      // density model per phase)
-                      previous_density[p][q] = calculate_point_property_ch(
-                        this->previous_phase_ch_values[p][q],
-                        this->density_0[q],
-                        this->density_1[q]);
-                    }
-                }
+              //              for (unsigned p = 0; p <
+              //              previous_phase_values.size(); ++p)
+              //                {
+              //                  // Blend the physical properties using the
+              //                  CahnHilliard field for (unsigned int q = 0; q
+              //                  < this->n_q_points; ++q)
+              //                    {
+              //                      // Calculate previous density (right now
+              //                      assumes constant
+              //                      // density model per phase)
+              //                      previous_density[p][q] =
+              //                      calculate_point_property_ch(
+              //                        this->previous_phase_ch_values[p][q],
+              //                        this->density_0[q],
+              //                        this->density_1[q]);
+              //                    }
+              //                }
               break;
             }
 
-          else //VOF by default with two fluids
+          else // VOF by default with two fluids
             {
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
