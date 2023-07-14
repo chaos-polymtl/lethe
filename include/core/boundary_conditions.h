@@ -58,9 +58,9 @@ namespace BoundaryConditions
     pw,
     vof_dirichlet,
     // for cahn hilliard
-    dirichlet_phase_order,
-    dirichlet_potential,
-    angle_of_contact,
+    ch_noflux,
+    ch_dirichlet_phase_order,
+    ch_angle_of_contact,
   };
 
   /**
@@ -114,6 +114,20 @@ namespace BoundaryConditions
 
     // Point for the center of rotation
     Point<dim> center_of_rotation;
+  };
+
+  /**
+   * @brief This class manages the functions associated with function-type boundary conditions
+   * of the Cahn-Hilliard equations
+   *
+   */
+  template <int dim>
+  class CahnHilliardBoundaryFunctions
+  {
+  public:
+    // Cahn-Hilliard variables
+    Functions::ParsedFunction<dim> phi;
+    Functions::ParsedFunction<dim> eta;
   };
 
   /**
@@ -762,6 +776,10 @@ namespace BoundaryConditions
   class CahnHilliardBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
+    std::vector<double>                 angle_of_contact;
+    std::vector<double>                 phase_dirichlet_value;
+    CahnHilliardBoundaryFunctions<dim> *bcFunctions;
+
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
     void
@@ -786,16 +804,30 @@ namespace BoundaryConditions
     ParameterHandler &prm,
     unsigned int      i_bc)
   {
-    prm.declare_entry("type",
-                      "none",
-                      Patterns::Selection("none"),
-                      "Type of boundary condition for Cahn-Hilliard"
-                      "Choices are <none>.");
+    prm.declare_entry(
+      "type",
+      "noflux",
+      Patterns::Selection("noflux|dirichlet|angle_of_contact"),
+      "Type of boundary condition for the Cahn-Hilliard equations"
+      "Choices are <noflux|dirichlet|angle_of_contact>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.declare_entry(
+      "angle value",
+      "0",
+      Patterns::Double(),
+      "Inner angle of contact between the fluid 1 and the boundary (in degrees)");
+
+    prm.enter_subsection("phi");
+    bcFunctions[i_bc].phi.declare_parameters(prm, 1);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
+
+    return;
   }
 
   /**
@@ -816,8 +848,15 @@ namespace BoundaryConditions
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
+      prm.declare_entry(
+        "time dependent",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the boundary condition is time dependent");
+
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
+      bcFunctions = new CahnHilliardBoundaryFunctions<dim>[this->max_size];
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -845,10 +884,23 @@ namespace BoundaryConditions
                                                       const unsigned int i_bc)
   {
     const std::string op = prm.get("type");
-    if (op == "none")
+    if (op == "noflux")
       {
-        this->type[i_bc] = BoundaryType::none;
+        this->type[i_bc] = BoundaryType::ch_noflux;
       }
+    if (op == "dirichlet")
+      {
+        this->type[i_bc] = BoundaryType::ch_dirichlet_phase_order;
+        prm.enter_subsection("phi");
+        bcFunctions[i_bc].phi.parse_parameters(prm);
+        prm.leave_subsection();
+      }
+    if (op == "angle_of_contact")
+      {
+        this->type[i_bc]             = BoundaryType::ch_angle_of_contact;
+        this->angle_of_contact[i_bc] = prm.get_double("angle value");
+      }
+
     this->id[i_bc] = prm.get_integer("id");
   }
 
@@ -865,7 +917,12 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions cahn hilliard");
     {
-      this->size = prm.get_integer("number");
+      this->size           = prm.get_integer("number");
+      this->time_dependent = prm.get_bool("time dependent");
+      this->type.resize(this->size);
+      this->id.resize(this->size);
+      this->phase_dirichlet_value.resize(this->size);
+      this->angle_of_contact.resize(this->size);
 
       for (unsigned int n = 0; n < this->size; n++)
         {
@@ -1131,6 +1188,51 @@ NavierStokesPressureFunctionDefined<dim>::value(
     {
       return p->value(point);
     }
+  return 0.;
+}
+
+/**
+ * @brief This class implements a boundary conditions for the Cahn-Hilliard equation
+ * where the phase and chemical potential are defined using individual functions
+ */
+template <int dim>
+class CahnHilliardFunctionDefined : public Function<dim>
+{
+private:
+  Functions::ParsedFunction<dim> *phi;
+
+public:
+  CahnHilliardFunctionDefined(Functions::ParsedFunction<dim> *p_phi)
+    : Function<dim>(2)
+    , phi(p_phi)
+  {}
+
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override;
+};
+
+
+/**
+ * @brief Calculates the value of a Function-type for the Cahn-Hilliard equations
+ *
+ * @param p A point (generally a gauss point)
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
+template <int dim>
+double
+CahnHilliardFunctionDefined<dim>::value(const Point<dim> & p,
+                                        const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components)) if (component == 0)
+  {
+    return phi->value(p);
+  }
+  else if (component == 1)
+  {
+    return 0.;
+  }
   return 0.;
 }
 

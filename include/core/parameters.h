@@ -687,6 +687,12 @@ namespace Parameters
     // Enable smoothing postprocessed vectors and scalars
     bool smoothed_output_fields;
 
+    // Enable phase statistics
+    bool calculate_phase_statistics;
+
+    // Prefix for the phase output
+    std::string phase_output_name;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -970,7 +976,9 @@ namespace Parameters
       velocity,
       pressure,
       phase,
-      temperature
+      temperature,
+      phase_ch,
+      chemical_potential_ch
     } variable;
 
     // Map containing the refinement variables

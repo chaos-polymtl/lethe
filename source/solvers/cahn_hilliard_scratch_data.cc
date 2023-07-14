@@ -14,13 +14,14 @@ CahnHilliardScratchData<dim>::allocate()
   this->JxW = std::vector<double>(n_q_points);
 
   // Forcing term array
-  this->source = std::vector<double>(n_q_points);
+  this->source_phase_order        = std::vector<double>(n_q_points);
+  this->source_chemical_potential = std::vector<double>(n_q_points);
 
   // Initialize arrays related to phase order and chemical potential
   this->phase_order.component        = 0;
   this->chemical_potential.component = 1;
 
-  // Tracer
+  // Variables for the Cahn-Hilliard equations
   this->phase_order_values            = std::vector<double>(n_q_points);
   this->phase_order_gradients         = std::vector<Tensor<1, dim>>(n_q_points);
   this->phase_order_laplacians        = std::vector<double>(n_q_points);
@@ -28,8 +29,7 @@ CahnHilliardScratchData<dim>::allocate()
   this->chemical_potential_gradients  = std::vector<Tensor<1, dim>>(n_q_points);
   this->chemical_potential_laplacians = std::vector<double>(n_q_points);
 
-
-  // Velocity for BDF schemes
+  // Phase order for BDF schemes
   this->previous_phase_order_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(n_q_points));
@@ -66,6 +66,26 @@ CahnHilliardScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<2, dim>>(n_dofs));
   this->laplacian_phi_potential =
     std::vector<std::vector<double>>(n_q_points, std::vector<double>(n_dofs));
+
+  // Velocity values
+  this->velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
+    maximum_number_of_previous_solutions(),
+    std::vector<Tensor<1, dim>>(this->n_q_points));
+  this->velocity_gradient_values =
+    std::vector<Tensor<2, dim>>(this->n_q_points);
+}
+
+/*
+ * DO NOT USE TWO FLUIDS WITH CAHN-HILLIARD FOR THE MOMENT, IT'LL ONLY PRODUCE A
+ * SEGFAULT SINCE IT'LL TRY TO RERIEVE UN-INITIALIZED VARIABLES SINCE VOF IS
+ * DESACTIVATED
+ */
+template <int dim>
+void
+CahnHilliardScratchData<dim>::calculate_physical_properties()
+{
+  return;
 }
 
 template class CahnHilliardScratchData<2>;

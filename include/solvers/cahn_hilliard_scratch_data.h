@@ -18,6 +18,7 @@
 
 #include <core/multiphysics.h>
 
+#include <solvers/multiphysics_interface.h>
 #include <solvers/physical_properties_manager.h>
 
 #include <deal.II/base/quadrature.h>
@@ -41,17 +42,17 @@ using namespace dealii;
 /**
  * @brief CahnHilliardScratchData class
  * stores the information required by the assembly procedure
- * for the Cahn-Hilliard equations Consequently, this class
+ * for the Cahn-Hilliard equations. Consequently, this class
  * calculates the phase field parameter Phi (values, gradients, laplacians),
  * the chemical potential eta (values, gradients, laplacians) and the shape
- *function (values, gradients, laplacians) at all the gauss points for all
- *degrees of freedom and stores it into arrays. Additionally, the user can
- *request that this class gathers additional fields for physics which are
- *coupled to the Cahn-Hilliard equations, such as the velocity which is
- *required. This class serves as a separation between the evaluation at the
- *gauss point of the variables of interest and their use in the assembly, which
- *is carried out by the assembler functions. For more information on this
- *design, the reader can consult deal.II step-9
+ * function (values, gradients, laplacians) at all the Gauss points for all
+ * degrees of freedom and stores it into arrays. Additionally, the user can
+ * request that this class gathers additional fields for physics which are
+ * coupled to the Cahn-Hilliard equations, such as the velocity which is
+ * required. This class serves as a separation between the evaluation at the
+ * Gauss point of the variables of interest and their use in the assembly, which
+ * is carried out by the assembler functions. For more information on this
+ * design, the reader can consult deal.II step-9
  * "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter
  * example, the scratch is a struct instead of a templated class because of the
  * simplicity of step-9.
@@ -87,7 +88,8 @@ public:
                           const FESystem<dim> &            fe_ch,
                           const Quadrature<dim> &          quadrature,
                           const Mapping<dim> &             mapping,
-                          const FiniteElement<dim> &       fe_fd)
+                          const FiniteElement<dim> &       fe_fd,
+                          const Quadrature<dim - 1> &      face_quadrature)
     : properties_manager(properties_manager)
     , fe_values_ch(mapping,
                    fe_ch,
@@ -95,6 +97,11 @@ public:
                    update_values | update_quadrature_points |
                      update_JxW_values | update_gradients | update_hessians)
     , fe_values_fd(mapping, fe_fd, quadrature, update_values)
+    , fe_face_values_ch(mapping,
+                        fe_ch,
+                        face_quadrature,
+                        update_values | update_quadrature_points |
+                          update_JxW_values | update_gradients)
   {
     allocate();
   }
@@ -123,6 +130,11 @@ public:
                    sd.fe_values_fd.get_fe(),
                    sd.fe_values_fd.get_quadrature(),
                    update_values)
+    , fe_face_values_ch(sd.fe_face_values_ch.get_mapping(),
+                        sd.fe_face_values_ch.get_fe(),
+                        sd.fe_face_values_ch.get_quadrature(),
+                        update_values | update_quadrature_points |
+                          update_JxW_values | update_gradients)
   {
     allocate();
   }
@@ -161,14 +173,22 @@ public:
          const VectorType &                                    current_solution,
          const std::vector<VectorType> &previous_solutions,
          const std::vector<VectorType> &solution_stages,
-         Function<dim> *                source_function)
+         Function<dim> *                source_function,
+         Parameters::CahnHilliard       ch_parameters)
   {
+    this->phase_order.component        = 0;
+    this->chemical_potential.component = 1;
+
     this->fe_values_ch.reinit(cell);
 
     quadrature_points = this->fe_values_ch.get_quadrature_points();
     auto &fe_ch       = this->fe_values_ch.get_fe();
 
-    source_function->value_list(quadrature_points, source);
+    source_function->value_list(quadrature_points, source_phase_order, 0);
+    source_function->value_list(quadrature_points,
+                                source_chemical_potential,
+                                1);
+
 
     if (dim == 2)
       this->cell_size = std::sqrt(4. * cell->measure() / M_PI) / fe_ch.degree;
@@ -182,6 +202,13 @@ public:
       current_solution, this->phase_order_gradients);
     this->fe_values_ch[phase_order].get_function_laplacians(
       current_solution, this->phase_order_laplacians);
+
+    this->fe_values_ch[chemical_potential].get_function_values(
+      current_solution, this->chemical_potential_values);
+    this->fe_values_ch[chemical_potential].get_function_gradients(
+      current_solution, this->chemical_potential_gradients);
+    this->fe_values_ch[chemical_potential].get_function_laplacians(
+      current_solution, this->chemical_potential_laplacians);
 
 
     // Gather previous phase order values
@@ -238,6 +265,60 @@ public:
               trace(this->hess_phi_potential[q][k]);
           }
       }
+
+    this->is_boundary_cell =
+      cell->at_boundary(); // The attribute needs to be updated because the
+                           // assembler for the angle of contact boundary
+                           // condition needs to know if the cell is at the
+                           // boundary
+    if (this->is_boundary_cell)
+      {
+        n_faces          = cell->n_faces();
+        is_boundary_face = std::vector<bool>(n_faces, false);
+        n_faces_q_points = fe_face_values_ch.get_quadrature().size();
+        boundary_face_id = std::vector<unsigned int>(n_faces);
+
+        face_JxW = std::vector<std::vector<double>>(
+          n_faces, std::vector<double>(n_faces_q_points));
+
+        this->grad_phi_face_phase =
+          std::vector<std::vector<std::vector<Tensor<1, dim>>>>(
+            n_faces,
+            std::vector<std::vector<Tensor<1, dim>>>(
+              n_faces_q_points, std::vector<Tensor<1, dim>>(n_dofs)));
+
+        this->face_phase_grad_values = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
+        for (const auto face : cell->face_indices())
+          {
+            this->is_boundary_face[face] = cell->face(face)->at_boundary();
+            if (this->is_boundary_face[face])
+              {
+                fe_face_values_ch.reinit(cell, face);
+                boundary_face_id[face] = cell->face(face)->boundary_id();
+
+                this->fe_face_values_ch[phase_order].get_function_gradients(
+                  current_solution, this->face_phase_grad_values[face]);
+
+                for (unsigned int q = 0; q < n_faces_q_points; ++q)
+                  {
+                    face_JxW[face][q] = fe_face_values_ch.JxW(q);
+                    for (const unsigned int k : fe_face_values_ch.dof_indices())
+                      {
+                        this->grad_phi_face_phase[face][q][k] =
+                          this->fe_face_values_ch[phase_order].gradient(k, q);
+                      }
+                  }
+              }
+          }
+      }
+
+    // CH epsilon parameter
+    this->epsilon = (ch_parameters.epsilon_set_method ==
+                     Parameters::EpsilonSetStrategy::manual) ?
+                      ch_parameters.epsilon :
+                      2 * this->cell_size;
   }
 
   template <typename VectorType>
@@ -245,6 +326,7 @@ public:
   reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
                   const VectorType &current_solution)
   {
+    FEValuesExtractors::Vector velocities(0);
     this->fe_values_fd.reinit(cell);
 
     this->fe_values_fd[velocities].get_function_values(current_solution,
@@ -255,26 +337,33 @@ public:
    * that may be required by the Cahn-Hilliard equations. Namely W the potential
    * well height, the mobility function M, the mobility factor D and the
    * interface thickness epsilon.
-   *
    */
-  //  void
-  //  calculate_physical_properties();
+  void
+  calculate_physical_properties();
 
   // Physical properties
-  // TODO ADD Cahn-Hilliard properties
-  // (W,M,D,epsilon)
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
+  dealii::types::material_id           material_id;
+  double                               epsilon;
+  std::vector<double>                  density;
+  std::vector<double>                  viscosity;
 
+  // Auxiliary property vector for CH simulations
+  std::vector<double> density_0;
+  std::vector<double> viscosity_0;
 
+  std::vector<double> density_1;
+  std::vector<double> viscosity_1;
 
-  // FEValues for the Cahn-Hilliard problem
-  FEValues<dim>              fe_values_ch;
-  unsigned int               n_dofs;
-  unsigned int               n_q_points;
-  double                     cell_size;
   FEValuesExtractors::Scalar phase_order;
   FEValuesExtractors::Scalar chemical_potential;
+
+  // FEValues for the Cahn-Hilliard problem
+  FEValues<dim> fe_values_ch;
+  unsigned int  n_dofs;
+  unsigned int  n_q_points;
+  double        cell_size;
 
   // Quadrature
   std::vector<double>     JxW;
@@ -294,7 +383,8 @@ public:
   std::vector<std::vector<double>> stages_chemical_potential_values;
 
   // Source term
-  std::vector<double> source;
+  std::vector<double> source_phase_order;
+  std::vector<double> source_chemical_potential;
 
   // Shape functions for the phase order and the chemical potential
   std::vector<std::vector<double>>         phi_phase;
@@ -306,14 +396,32 @@ public:
   std::vector<std::vector<double>>         laplacian_phi_potential;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi_potential;
 
-
   /**
    * Scratch component for the Navier-Stokes component
    */
   FEValuesExtractors::Vector velocities;
   // This FEValues must be instantiated for the velocity
-  FEValues<dim>               fe_values_fd;
-  std::vector<Tensor<1, dim>> velocity_values;
+  FEValues<dim>                            fe_values_fd;
+  std::vector<Tensor<1, dim>>              velocity_values;
+  std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
+  std::vector<Tensor<2, dim>>              velocity_gradient_values;
+
+  // Scratch for the face boundary condition
+  FEFaceValues<dim>                fe_face_values_ch;
+  std::vector<std::vector<double>> face_JxW;
+
+  unsigned int n_faces;
+  unsigned int n_faces_q_points;
+
+  // Is boundary cell indicator
+  bool                      is_boundary_cell;
+  std::vector<bool>         is_boundary_face;
+  std::vector<unsigned int> boundary_face_id;
+
+  // First vector is face number, second quadrature point, third DOF
+  std::vector<std::vector<std::vector<Tensor<1, dim>>>> grad_phi_face_phase;
+  // First vector is face number, second quadrature point
+  std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_values;
 };
 
 #endif

@@ -57,6 +57,18 @@ namespace Parameters
     tanh
   };
 
+  enum class EpsilonSetStrategy
+  {
+    automatic,
+    manual
+  };
+
+  enum class MobilityModel
+  {
+    constant,
+    quartic
+  };
+
 
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
@@ -228,6 +240,32 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct CahnHilliard
+  {
+    // Well height value (W) in the Cahn-Hilliard equations
+    double well_height;
+
+    // Epsilon set strategy (automatic|manual)
+    Parameters::EpsilonSetStrategy epsilon_set_method;
+
+    // Epsilon value in the Cahn-Hilliard equations
+    double epsilon;
+
+    // Mobility model (constant|quartic) in the Cahn-Hilliard
+    // equations
+    Parameters::MobilityModel mobility_model;
+
+    // Mobility constant in the Cahn-Hilliard equations
+    double mobility_constant;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+
   /**
    * @brief Multiphysics - the parameters for multiphysics simulations
    * and handles sub-physics parameters.
@@ -246,7 +284,8 @@ namespace Parameters
     bool viscous_dissipation;
     bool buoyancy_force;
 
-    Parameters::VOF vof_parameters;
+    Parameters::VOF          vof_parameters;
+    Parameters::CahnHilliard ch_parameters;
 
     void
     declare_parameters(ParameterHandler &prm);
