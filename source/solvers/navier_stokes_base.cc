@@ -1631,16 +1631,19 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
+  if (simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
+    }
+
   if (simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
     }
-
-  this->average_velocities->calculate_average_velocities(
-    this->local_evaluation_point,
-    simulation_parameters.post_processing,
-    simulation_control->get_current_time(),
-    simulation_control->get_time_step());
 
   multiphysics->read_checkpoint();
 
