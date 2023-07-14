@@ -46,7 +46,7 @@ test()
     std::make_shared<CylindricalHelix<3>>(
       radius, 0.3 * radius, height, pitch, position, orientation);
   std::shared_ptr<Shape<3>> superquadric = std::make_shared<Superquadric<3>>(
-    half_lengths, exponents_superquadric, position, orientation);
+    half_lengths, exponents_superquadric, 1e-12, position, orientation);
 
 
   deallog << "Testing value" << std::endl;

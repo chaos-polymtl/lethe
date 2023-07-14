@@ -298,6 +298,7 @@ protected:
   // reevaluation of the shape.
   std::unordered_map<std::string, double>         value_cache;
   std::unordered_map<std::string, Tensor<1, dim>> gradient_cache;
+  std::unordered_map<std::string, Point<dim>>     closest_point_cache;
 };
 
 
@@ -393,17 +394,19 @@ public:
    * @brief Constructor for a superquadric shape
    * @param half_lengths The half-lengths of each direction
    * @param exponents The blockiness in each direction
+   * @param epsilon The tolerance for surface representation
    * @param position The superquadric center
    * @param orientation The superquadric orientation
    */
   Superquadric<dim>(const Tensor<1, dim> half_lengths,
                     const Tensor<1, dim> exponents,
+                    const double         epsilon,
                     const Point<dim> &   position,
                     const Tensor<1, 3> & orientation)
     : Shape<dim>(half_lengths.norm(), position, orientation)
     , half_lengths(half_lengths)
     , exponents(exponents)
-    , epsilon(1e-12)
+    , epsilon(epsilon)
   {}
 
   /**
@@ -480,13 +483,6 @@ public:
                         Point<dim> &      closest_point) const override;
 
   /**
-   * @brief
-   * Clear the cache of the shape
-   */
-  virtual void
-  clear_cache() override;
-
-  /**
    * @brief Return the sign of the parameter. To be removed once PR#794 is merged.
    * @param prm parameter
    */
@@ -527,15 +523,15 @@ public:
         // gradient. That is an issue when the exponent is lower than or equal
         // to 1
         if (abs(centered_point[d]) > epsilon)
-          gradient[d] =
-            sign(centered_point[d]) * exponents[d] * (1 / half_lengths[d]) *
-            pow(abs(centered_point[d] / half_lengths[d]), exponents[d] - 1);
+          gradient[d] = exponents[d] *
+                        pow(abs(half_lengths[d]), -exponents[d]) *
+                        pow(abs(centered_point[d]), exponents[d]) /
+                        (centered_point[d] + DBL_MIN);
+        else
+          gradient[d] = exponents[d] *
+                        pow(abs(half_lengths[d]), -exponents[d]) *
+                        pow(abs(epsilon), exponents[d]) / (epsilon + DBL_MIN);
       }
-    if (gradient.norm() > epsilon)
-      // Because it is possible that the centroid of the superquadric overlaps
-      // with the evaluation point, we consider this exception here and avoid
-      // normalizing if the norm is null
-      gradient = gradient / gradient.norm();
     return gradient;
   }
 
@@ -543,10 +539,6 @@ private:
   Tensor<1, dim> half_lengths;
   Tensor<1, dim> exponents;
   double         epsilon;
-
-  // The cache of the evaluation of the shape. This is used to avoid costly
-  // reevaluation of the shape.
-  std::unordered_map<std::string, Point<dim>> closest_point_cache;
 };
 
 template <int dim>

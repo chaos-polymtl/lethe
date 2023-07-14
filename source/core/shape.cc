@@ -43,6 +43,7 @@ Shape<dim>::clear_cache()
 {
   value_cache.clear();
   gradient_cache.clear();
+  closest_point_cache.clear();
 }
 
 template <int dim>
@@ -379,6 +380,8 @@ Superquadric<dim>::closest_surface_point(
       for (unsigned int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
       this->closest_point_cache[point_in_string] = copy_closest_point;
+      this->value_cache[point_in_string]         = this->value(p);
+      this->gradient_cache[point_in_string]      = this->gradient(p);
     }
   else
     closest_point = iterator->second;
@@ -393,22 +396,18 @@ Superquadric<dim>::closest_surface_point(const Point<dim> &p,
   auto iterator        = this->closest_point_cache.find(point_in_string);
   if (iterator == this->closest_point_cache.end())
     {
-      // We align and center the evaluation point according to the shape
-      // referential.
-      Point<dim> centered_point = this->align_and_center(p);
+      // The initial guess is chosen as the centered point (i.e. evaluation
+      // point, in the superquadric referential). It should already be somewhat
+      // close to the closest point, and it is already in the right octant.
+      Point<dim> current_point = this->align_and_center(p);
 
-      Point<dim>   current_point = centered_point;
-      unsigned int iteration     = 0;
-      unsigned int iteration_max = 1e4;
+      unsigned int       iteration     = 0;
+      const unsigned int iteration_max = 1e2;
 
       Point<dim> dx{}, distance_gradient{};
       double     current_distance = superquadric(current_point);
 
-      // We scale the relaxation with the maximum blockiness, because higher
-      // blockiness makes convergence more difficult for the gradient descent.
-      const double shape_blockiness =
-        std::max(std::max(exponents[0], exponents[1]), exponents[2]);
-      double relaxation = 0.5 / shape_blockiness;
+      const double relaxation = 0.5;
       while (iteration < iteration_max && abs(current_distance) > epsilon)
         {
           distance_gradient = superquadric_gradient(current_point);
@@ -475,10 +474,12 @@ Superquadric<dim>::value_with_cell_guess(
       Point<dim> copy_closest_point{};
       for (unsigned int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
-      this->closest_point_cache[point_in_string] = copy_closest_point;
 
-      double levelset                    = this->value(evaluation_point);
-      this->value_cache[point_in_string] = levelset;
+      double levelset = this->value(evaluation_point);
+
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+      this->value_cache[point_in_string]         = levelset;
+      this->gradient_cache[point_in_string] = this->gradient(evaluation_point);
       return levelset;
     }
   else
@@ -489,17 +490,13 @@ template <int dim>
 std::shared_ptr<Shape<dim>>
 Superquadric<dim>::static_copy() const
 {
-  std::shared_ptr<Shape<dim>> copy = std::make_shared<Superquadric<dim>>(
-    this->half_lengths, this->exponents, this->position, this->orientation);
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<Superquadric<dim>>(this->half_lengths,
+                                        this->exponents,
+                                        this->epsilon,
+                                        this->position,
+                                        this->orientation);
   return copy;
-}
-
-template <int dim>
-void
-Superquadric<dim>::clear_cache()
-{
-  Shape<dim>::clear_cache();
-  this->closest_point_cache.clear();
 }
 
 template <int dim>
@@ -541,9 +538,10 @@ Superquadric<dim>::gradient_with_cell_guess(
       Point<dim> copy_closest_point{};
       for (unsigned int d = 0; d < dim; d++)
         copy_closest_point[d] = closest_point[d];
-      this->closest_point_cache[point_in_string] = copy_closest_point;
 
-      Tensor<1, dim> gradient               = this->gradient(evaluation_point);
+      Tensor<1, dim> gradient = this->gradient(evaluation_point);
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+      this->value_cache[point_in_string]    = this->value(evaluation_point);
       this->gradient_cache[point_in_string] = gradient;
       return gradient;
     }

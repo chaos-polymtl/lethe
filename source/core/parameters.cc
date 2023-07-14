@@ -2227,8 +2227,10 @@ namespace Parameters
       "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers."
       "The parameters for a superquadric are, in order: "
-      "a, b, c, r, s, t. The first three are half-lengths in x, y, and z."
-      "The last three are the blockiness in the x, y, and z directions."
+      "a, b, c, r, s, t, epsilon. "
+      "The first three are half-lengths in x, y, and z."
+      "The next three are the blockiness in the x, y, and z directions."
+      "The last is the tolerance of the found surface."
       "The parameter for an rbf is the file name."
       "The parameter for a composite is the file name.");
     prm.declare_entry("shape arguments",

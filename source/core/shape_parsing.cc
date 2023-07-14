@@ -72,10 +72,9 @@ ShapeGenerator::initialize_shape_from_vector(
               half_lengths[d] = shape_arguments[d];
               exponents[d]    = shape_arguments[d + dim];
             }
-          shape = std::make_shared<Superquadric<dim>>(half_lengths,
-                                                      exponents,
-                                                      position,
-                                                      orientation);
+          const double epsilon = shape_arguments[3 + dim];
+          shape                = std::make_shared<Superquadric<dim>>(
+            half_lengths, exponents, epsilon, position, orientation);
         }
     }
   else if (type == "torus")
