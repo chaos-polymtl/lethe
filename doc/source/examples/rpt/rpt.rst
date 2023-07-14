@@ -9,6 +9,7 @@ Radioactive Particle Tracking (RPT)
 
     photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel
     tuning-parameters-with-nomad/tuning-parameters-with-nomad
+    particle-fem-reconstruction/particle-fem-reconstruction
 
 .. graphviz:: 
 
