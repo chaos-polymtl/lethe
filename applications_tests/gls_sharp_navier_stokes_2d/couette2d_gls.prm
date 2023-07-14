@@ -87,7 +87,7 @@ subsection analytical solution
 end
 
 # --------------------------------------------------
-# IB particules
+# IB particles
 #---------------------------------------------------
  subsection particles
     	set number of particles                     = 2
@@ -125,7 +125,7 @@ end
         end
 	    set pressure location = 0.40001;0.00001
 	    set type       = sphere
-            set shape arguments = 0.5
+        set shape arguments = 0.5
     end
 end
 
