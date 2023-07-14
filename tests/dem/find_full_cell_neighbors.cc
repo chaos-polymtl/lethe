@@ -28,6 +28,7 @@
 #include <deal.II/grid/tria.h>
 
 // Lethe
+#include <dem/data_containers.h>
 #include <dem/find_cell_neighbors.h>
 
 // Tests (with common definitions)
@@ -50,9 +51,7 @@ test()
   triangulation.refine_global(refinement_number);
 
   // Neighbor cells with repetition
-  std::unordered_map<
-    types::global_cell_index,
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  typename DEM::dem_data_structures<dim>::cells_total_neighbor_list
     cells_total_neighbor_list;
 
   FindCellNeighbors<dim> cell_neighbor_object;

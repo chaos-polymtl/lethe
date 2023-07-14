@@ -15,10 +15,12 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &                  contact_pair_candidates,
+                      &contact_pair_candidates,
   const double         neighborhood_threshold,
   const Tensor<1, dim> periodic_offset)
 {
+  // BB Optimization remaining to be done here.
+
   // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
        adjacent_particles | boost::adaptors::map_values)
@@ -31,10 +33,10 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
         {
           // Getting contact information and particles I and II as local
           // variables
-          auto adjacent_pair_information =
+          auto &adjacent_pair_information =
             adjacent_particles_list_iterator->second;
-          auto particle_one = adjacent_pair_information.particle_one;
-          auto particle_two = adjacent_pair_information.particle_two;
+          auto &particle_one = adjacent_pair_information.particle_one;
+          auto &particle_two = adjacent_pair_information.particle_two;
 
           // Finding the properties of the particles in contact
           Point<dim, double> particle_one_location =

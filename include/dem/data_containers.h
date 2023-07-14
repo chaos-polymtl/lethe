@@ -64,7 +64,7 @@ namespace DEM
   template <int dim>
   struct cell_comparison
   {
-    bool
+    inline bool
     operator()(
       const typename Triangulation<dim>::active_cell_iterator &cell_1,
       const typename Triangulation<dim>::active_cell_iterator &cell_2) const
@@ -81,7 +81,7 @@ namespace DEM
   template <int dim>
   struct particle_comparison
   {
-    bool
+    inline bool
     operator()(const Particles::ParticleIterator<dim> &particle_1,
                const Particles::ParticleIterator<dim> &particle_2)
     {
@@ -97,7 +97,7 @@ namespace DEM
   template <int dim>
   struct cut_cell_comparison
   {
-    bool
+    inline bool
     operator()(
       const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_1,
       const typename Triangulation<dim - 1, dim>::active_cell_iterator &cell_2)
@@ -159,7 +159,7 @@ namespace DEM
     // <particle id, <global_face_id, particle-wall info>>
     typedef ankerl::unordered_dense::map<
       types::particle_index,
-      std::map<global_face_id, particle_wall_contact_info<dim>>>
+      std::unordered_map<global_face_id, particle_wall_contact_info<dim>>>
       particle_wall_in_contact;
 
     // <particle id, <particle id, particle-particle info>>
@@ -214,14 +214,14 @@ namespace DEM
       cells_total_neighbor_list;
 
     // <global_face_id, (tensor, point)>
-    typedef ankerl::unordered_dense::map<global_face_id,
-                                         std::pair<Tensor<1, 3>, Point<3>>>
+    typedef std::unordered_map<global_face_id,
+                               std::pair<Tensor<1, 3>, Point<3>>>
       boundary_points_and_normal_vectors;
 
     // <unsigned int, <global_face_id, tensor>>
-    typedef ankerl::unordered_dense::
-      map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
-        vector_on_boundary;
+    typedef std::unordered_map<unsigned int,
+                               std::map<types::boundary_id, Tensor<1, 3>>>
+      vector_on_boundary;
 
     // [cell iterators]
     typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
