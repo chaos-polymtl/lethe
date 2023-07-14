@@ -26,6 +26,9 @@ Radioactive Particle Tracking (RPT)
 
       rpt_2 [label="Tuning Count Calculation Model \nParameters with NOMAD", href="https://lethe-cfd.github.io/lethe/examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html", tooltip="Tuning count calculation model parameters with NOMAD"];
 
+      rpt_3 [label="Particle FEM reconstruction", href="https://lethe-cfd.github.io/lethe/examples/rpt/particle_fem_reconstruction/particle_fem_reconstruction.html", tooltip="Particle FEM reconstruction"];
+
       rpt -> rpt_1:w;
       rpt -> rpt_2:w;  
+      rpt -> rpt_3:w;
     }
