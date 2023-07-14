@@ -743,7 +743,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
-  some_particle_coupled = false;
+  some_particles_are_coupled = false;
   // initialized the particles
   if (this->simulation_parameters.particlesParameters
         ->load_particles_from_file == false)
@@ -760,7 +760,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
               if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
                   "Shape other than sphere cannot have their motion integrate");
-              some_particle_coupled = true;
+              some_particles_are_coupled = true;
             }
         }
     }
@@ -776,7 +776,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
               if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
                   "Shape other than sphere cannot have their motion integrate");
-              some_particle_coupled = true;
+              some_particles_are_coupled = true;
             }
         }
     }
@@ -2022,7 +2022,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
              .is_non_newtonian() and
            this->simulation_parameters.particlesParameters
              ->enable_lubrication_force and
-           some_particle_coupled),
+           some_particles_are_coupled),
          RequiresConstantViscosity(
            "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
 
@@ -2038,7 +2038,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     }
 
   particle_residual = 0;
-  if (some_particle_coupled && time > 0)
+  if (some_particles_are_coupled && time > 0)
     {
       Assert(this->simulation_parameters.physical_properties_manager
                .density_is_constant(),
@@ -2599,7 +2599,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (some_particle_coupled &&
+      if (some_particles_are_coupled &&
           this->simulation_parameters.particlesParameters->print_dem)
         {
           this->pcout << "particle " << p << " position "
@@ -2634,7 +2634,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
-          if (some_particle_coupled)
+          if (some_particles_are_coupled)
             {
               table_p[p].add_value("omega_x", particles[p].omega[0]);
               table_p[p].set_precision(
@@ -2654,7 +2654,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
-          if (some_particle_coupled)
+          if (some_particles_are_coupled)
             {
               table_p[p].add_value("omega_y", particles[p].omega[1]);
               table_p[p].set_precision(
@@ -2673,7 +2673,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_all_p.add_value("T_z", particles[p].fluid_torque[2]);
       table_all_p.set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
-      if (some_particle_coupled)
+      if (some_particles_are_coupled)
         {
           table_p[p].add_value("omega_z", particles[p].omega[2]);
           table_p[p].set_precision(
@@ -2691,7 +2691,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         "f_x", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
-      if (some_particle_coupled)
+      if (some_particles_are_coupled)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
@@ -2718,7 +2718,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
       table_all_p.set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
-      if (some_particle_coupled)
+      if (some_particles_are_coupled)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
           table_p[p].add_value("p_y", particles[p].position[1]);
@@ -2748,7 +2748,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
-          if (some_particle_coupled)
+          if (some_particles_are_coupled)
             {
               table_p[p].add_value("v_z", particles[p].velocity[2]);
               table_p[p].add_value("p_z", particles[p].position[2]);
@@ -4494,7 +4494,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           this->update_boundary_conditions();
         }
 
-      if (some_particle_coupled == false)
+      if (some_particles_are_coupled == false)
         integrate_particles();
 
 
