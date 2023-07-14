@@ -901,8 +901,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   std::vector<bool> global_refine_flags(dim * tria.n_active_cells(), false);
   std::vector<bool> global_coarsen_flags(dim * tria.n_active_cells(), false);
 
-  bool   first_variable(true);
-  double coarsening_factor = mesh_controller.calculate_coarsening_factor(
+  bool         first_variable(true);
+  const double coarsening_factor = mesh_controller.calculate_coarsening_factor(
     this->triangulation->n_global_active_cells());
 
   unsigned int maximal_number_of_elements =
