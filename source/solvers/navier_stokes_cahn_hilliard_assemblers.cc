@@ -151,20 +151,20 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
           const auto &phi_p_i      = scratch_data.phi_p[q][i];
           const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
-          // Store these temporary products in auxiliary variables for speed
-          const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
-          const auto strong_residual_x_grad_phi_u_i =
-            strong_residual * grad_phi_u_i;
+            // Store these temporary products in auxiliary variables for speed
+            const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
+            const auto strong_residual_x_grad_phi_u_i =
+                    strong_residual * grad_phi_u_i;
 
-          for (unsigned int j = 0; j < n_dofs; ++j)
+          for (unsigned int j = 0; i < n_dofs; ++i)
             {
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
               const auto &shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
-              const auto &phi_p_j =
-                scratch_data.phi_p[q][j] * pressure_scaling_factor;
+                const auto &phi_p_j =
+                        scratch_data.phi_p[q][j] * pressure_scaling_factor;
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
