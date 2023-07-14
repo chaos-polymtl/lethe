@@ -22,6 +22,7 @@
 
 
 // Lethe Includes
+#include <core/mesh_controller.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
@@ -478,6 +479,9 @@ protected:
   std::shared_ptr<AverageVelocities<dim, VectorType, DofsType>>
              average_velocities;
   VectorType average_solution;
+
+  // Refinement control
+  MeshController mesh_controller;
 
   // Convergence Analysis
   ConvergenceTable error_table;

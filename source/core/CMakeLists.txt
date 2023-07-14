@@ -10,6 +10,7 @@ add_library(lethe-core
   ib_stencil.cc
   lethe_grid_tools.cc
   manifolds.cc
+  mesh_controller.cc
   parameters.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
@@ -35,6 +36,7 @@ add_library(lethe-core
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
+  ../../include/core/exceptions.h
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
@@ -42,6 +44,7 @@ add_library(lethe-core
   ../../include/core/kinsol_newton_non_linear_solver.h
   ../../include/core/lethe_grid_tools.h
   ../../include/core/manifolds.h
+  ../../include/core/mesh_controller.h
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
   ../../include/core/non_linear_solver.h
@@ -68,7 +71,6 @@ add_library(lethe-core
   ../../include/core/thermal_expansion_model.h
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
-  ../../include/core/exceptions.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)

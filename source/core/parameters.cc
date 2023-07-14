@@ -1913,6 +1913,13 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Frequency of the mesh refinement");
+
+      prm.declare_entry(
+        "mesh refinement controller",
+        "false",
+        Patterns::Bool(),
+        "Fraction of refined elements"
+        "Enable a controller that will target a specific number of elements in the mesh equal to the maximum number of elements");
     }
     prm.leave_subsection();
   }
@@ -1980,10 +1987,11 @@ namespace Parameters
         fractionType = FractionType::number;
       if (fop == "fraction")
         fractionType = FractionType::fraction;
-      maximum_number_elements  = prm.get_integer("max number elements");
-      maximum_refinement_level = prm.get_integer("max refinement level");
-      minimum_refinement_level = prm.get_integer("min refinement level");
-      frequency                = prm.get_integer("frequency");
+      maximum_number_elements    = prm.get_integer("max number elements");
+      maximum_refinement_level   = prm.get_integer("max refinement level");
+      minimum_refinement_level   = prm.get_integer("min refinement level");
+      frequency                  = prm.get_integer("frequency");
+      mesh_controller_is_enabled = prm.get_bool("mesh refinement controller");
     }
     prm.leave_subsection();
   }
