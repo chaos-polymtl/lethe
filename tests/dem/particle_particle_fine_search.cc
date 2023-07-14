@@ -36,7 +36,7 @@
 #include <deal.II/particles/particle_iterator.h>
 
 // Lethe
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_particle_contact_info.h>
@@ -66,7 +66,7 @@ test()
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties());
 
-  DEMContainerManager<dim> container_manager;
+  DEMContactManager<dim> container_manager;
 
   // Finding cell neighbors
   FindCellNeighbors<dim> cell_neighbor_object;

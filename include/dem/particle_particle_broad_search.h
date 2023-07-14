@@ -28,7 +28,7 @@
 #include <deal.II/particles/particle_iterator.h>
 
 template <int dim>
-class DEMContainerManager;
+class DEMContactManager;
 
 using namespace dealii;
 
@@ -65,7 +65,7 @@ public:
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContainerManager<dim> &               container_manager);
+    DEMContactManager<dim> &                 container_manager);
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which shows the
@@ -86,7 +86,7 @@ public:
   void
   find_particle_particle_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContainerManager<dim> &               container_manager,
+    DEMContactManager<dim> &                 container_manager,
     const DisableContacts<dim> &             disable_contacts_object);
 
   /**
@@ -104,7 +104,7 @@ public:
   void
   find_particle_particle_periodic_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContainerManager<dim> &               container_manager);
+    DEMContactManager<dim> &                 container_manager);
 
   /**
    * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -125,7 +125,7 @@ public:
   void
   find_particle_particle_periodic_contact_pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    DEMContainerManager<dim> &               container_manager,
+    DEMContactManager<dim> &                 container_manager,
     const DisableContacts<dim> &             disable_contacts_object);
 
 private:

@@ -38,7 +38,7 @@
 // Lethe
 #include <core/dem_properties.h>
 
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -92,7 +92,7 @@ test()
 
   // Creating containers manager for finding cell neighbor and also broad and
   // fine particle-particle search objects
-  DEMContainerManager<dim> container_manager;
+  DEMContactManager<dim> container_manager;
 
   // Finding cell neighbors
   FindCellNeighbors<dim> cell_neighbor_object;

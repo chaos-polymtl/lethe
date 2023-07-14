@@ -30,7 +30,7 @@
 #include <boost/range/adaptor/map.hpp>
 
 template <int dim>
-class DEMContainerManager;
+class DEMContactManager;
 
 using namespace dealii;
 

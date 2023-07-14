@@ -21,7 +21,7 @@
 #include <core/dem_properties.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/particle_particle_contact_info.h>
 #include <dem/rolling_resistance_torque_models.h>
@@ -71,7 +71,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContainerManager<dim> & container_manager,
+    DEMContactManager<dim> &   container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,
@@ -167,7 +167,7 @@ public:
    */
   virtual void
   calculate_particle_particle_contact_force(
-    DEMContainerManager<dim> & container_manager,
+    DEMContactManager<dim> &   container_manager,
     const double               dt,
     std::vector<Tensor<1, 3>> &torque,
     std::vector<Tensor<1, 3>> &force,

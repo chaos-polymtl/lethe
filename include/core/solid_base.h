@@ -194,8 +194,24 @@ public:
   void
   print_particle_positions();
 
+  /**
+   * @brief Rotates the grid by a given angle around an axis
+   *
+   * @param angle The angle (in rad) with which the grid is rotated
+   *
+   * @param axis The axis over which the grid is rotated.
+   *
+   */
   void
-  rotate_grid(double angle, int axis);
+  rotate_grid(const double angle, const Tensor<1, 3> axis);
+
+  /**
+   * @brief Translate the grid. In spacedim=2, the third component is ignore
+   *
+   * @param translate The vector with which the solid is translated.
+   */
+  void
+  translate_grid(const Tensor<1, 3> translate);
 
   /**
    * @brief Updates the time in the function used to describe the solid temperature

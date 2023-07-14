@@ -13,7 +13,7 @@
 // Lethe
 #include <core/dem_properties.h>
 
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/particle_particle_broad_search.h>
@@ -97,7 +97,7 @@ test()
   typename dem_data_structures<2>::adjacent_particle_pairs
     cleared_ghost_adjacent_particles;
 
-  DEMContainerManager<dim> container_manager;
+  DEMContactManager<dim> container_manager;
 
   // Finding cell neighbors
   FindCellNeighbors<dim> cell_neighbor_object;
@@ -185,7 +185,8 @@ test()
 
       particle_handler.exchange_ghost_particles();
 
-      container_manager.update_local_particles_in_cells(particle_handler);
+      container_manager.update_local_particles_in_cells(particle_handler,
+                                                        false);
 
       // Calling broad search
       container_manager.execute_particle_particle_broad_search(

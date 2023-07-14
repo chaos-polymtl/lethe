@@ -165,23 +165,14 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 {
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
-      if (param->solid_mesh.simplex)
-        {
-          GridIn<dim, spacedim> grid_in;
-          grid_in.attach_triangulation(*solid_tria);
-          std::ifstream input_file(param->solid_mesh.file_name);
+      // Grid creation
+      GridIn<dim, spacedim> grid_in;
+      // Attach triangulation
+      grid_in.attach_triangulation(*solid_tria);
+      // Read input gmsh file
+      std::ifstream input_file(param->solid_mesh.file_name);
 
-          grid_in.read_msh(input_file);
-        }
-      else
-        { // Grid creation
-          GridIn<dim, spacedim> grid_in;
-          // Attach triangulation to the grid
-          grid_in.attach_triangulation(*solid_tria);
-          // Read input gmsh file
-          std::ifstream input_file(param->solid_mesh.file_name);
-          grid_in.read_msh(input_file);
-        }
+      grid_in.read_msh(input_file);
     }
   else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
@@ -217,16 +208,12 @@ SerialSolid<dim, spacedim>::setup_triangulation(const bool restart)
 
       "Unsupported mesh type - solid mesh will not be created");
 
+  // Rotate the triangulation
+  rotate_grid(param->solid_mesh.rotation_angle,
+              param->solid_mesh.rotation_axis);
+
   // Translate the triangulation
-  if (param->solid_mesh.translate)
-    GridTools::shift(Point<spacedim>(param->solid_mesh.delta_x,
-                                     param->solid_mesh.delta_y,
-                                     param->solid_mesh.delta_z),
-                     *solid_tria);
-  if (param->solid_mesh.rotate)
-    {
-      rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
-    }
+  translate_grid(param->solid_mesh.translation);
 
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
@@ -276,34 +263,57 @@ SerialSolid<dim, spacedim>::get_triangulation()
 
 template <>
 void
-SerialSolid<1, 2>::rotate_grid(double /*angle*/, int /*axis*/)
+SerialSolid<1, 2>::rotate_grid(const double angle, const Tensor<1, 3> /*axis*/)
 {
-  // Not implemented right now
-  throw(std::runtime_error("This is currently not implemented"));
+  GridTools::rotate(angle, *solid_tria);
 }
 
 template <>
 void
-SerialSolid<2, 2>::rotate_grid(double /*angle*/, int /*axis*/)
+SerialSolid<2, 2>::rotate_grid(double angle, const Tensor<1, 3> /*axis*/)
 {
-  // Not implemented right now
-  throw(std::runtime_error("This is currently not implemented"));
-}
-template <>
-void
-SerialSolid<3, 3>::rotate_grid(double /*angle*/, int /*axis*/)
-{
-  // Not implemented right now
-  throw(std::runtime_error("This is currently not implemented"));
+  GridTools::rotate(angle, *solid_tria);
 }
 
 template <>
 void
-SerialSolid<2, 3>::rotate_grid(const double angle, const int axis)
+SerialSolid<2, 3>::rotate_grid(const double angle, const Tensor<1, 3> axis)
 {
-  Tensor<1, 3> t_axis;
-  t_axis[axis] = 1;
-  GridTools::rotate(t_axis, angle, *solid_tria);
+  GridTools::rotate(axis, angle, *solid_tria);
+}
+template <>
+void
+SerialSolid<3, 3>::rotate_grid(double angle, const Tensor<1, 3> axis)
+{
+  GridTools::rotate(axis, angle, *solid_tria);
+}
+
+template <>
+void
+SerialSolid<1, 2>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
+}
+
+template <>
+void
+SerialSolid<2, 2>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(Tensor<1, 2>({translation[0], translation[1]}), *solid_tria);
+}
+
+template <>
+void
+SerialSolid<2, 3>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(translation, *solid_tria);
+}
+
+template <>
+void
+SerialSolid<3, 3>::translate_grid(const Tensor<1, 3> translation)
+{
+  GridTools::shift(translation, *solid_tria);
 }
 
 template <int dim, int spacedim>

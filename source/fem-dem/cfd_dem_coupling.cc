@@ -550,15 +550,15 @@ CFDDEMSolver<dim>::load_balance()
   if (has_periodic_boundaries)
     {
       periodic_boundaries_object.map_periodic_cells(
-        *parallel_triangulation,
-        container_manager.periodic_boundaries_cells_information);
+        *parallel_triangulation, periodic_boundaries_cells_information);
 
       periodic_offset =
         periodic_boundaries_object.get_periodic_offset_distance();
     }
 
-  container_manager.update_cell_neighbors(*parallel_triangulation,
-                                          has_periodic_boundaries);
+  contact_manager.update_cell_neighbors(*parallel_triangulation,
+                                        periodic_boundaries_cells_information,
+                                        has_periodic_boundaries);
 
 
   boundary_cell_object.build(
@@ -680,8 +680,7 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
         dem_parameters.boundary_conditions.periodic_direction);
 
       periodic_boundaries_object.map_periodic_cells(
-        *parallel_triangulation,
-        container_manager.periodic_boundaries_cells_information);
+        *parallel_triangulation, periodic_boundaries_cells_information);
 
       // Temporary offset calculation : works only for one set of periodic
       // boundary on an axis.
@@ -698,8 +697,10 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     }
 
   // Finding cell neighbors
-  container_manager.execute_cell_neighbors_search(*parallel_triangulation,
-                                                  has_periodic_boundaries);
+  contact_manager.execute_cell_neighbors_search(
+    *parallel_triangulation,
+    periodic_boundaries_cells_information,
+    has_periodic_boundaries);
 
   // Finding boundary cells with faces
   boundary_cell_object.build(
@@ -838,7 +839,7 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
   // Particle-particle contact force
   particle_particle_contact_force_object
     ->calculate_particle_particle_contact_force(
-      container_manager, dem_time_step, torque, force, periodic_offset);
+      contact_manager, dem_time_step, torque, force, periodic_offset);
 
   // Particles-walls contact force:
   particle_wall_contact_force();
@@ -915,10 +916,16 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Particles displacement if passing through a periodic boundary
       if (has_periodic_boundaries)
         periodic_boundaries_object.execute_particles_displacement(
-          this->particle_handler,
-          container_manager.periodic_boundaries_cells_information);
+          this->particle_handler, periodic_boundaries_cells_information);
 
       this->particle_handler.sort_particles_into_subdomains_and_cells();
+
+      displacement.resize(
+        this->particle_handler.get_max_local_particle_index());
+      force.resize(displacement.size());
+      torque.resize(displacement.size());
+
+      this->particle_handler.exchange_ghost_particles(true);
 
       if (has_disabled_contacts && !this->simulation_control->is_at_start())
         {
@@ -934,13 +941,6 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
             (*this->triangulation).n_active_cells(),
             this->mpi_communicator);
         }
-
-      displacement.resize(
-        this->particle_handler.get_max_local_particle_index());
-      force.resize(displacement.size());
-      torque.resize(displacement.size());
-
-      this->particle_handler.exchange_ghost_particles(true);
 
       // Updating moment of inertia container
       update_moment_of_inertia(this->particle_handler, MOI);
@@ -959,25 +959,27 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // contact pair candidates
       if (!contacts_are_disabled(counter))
         {
-          container_manager.execute_particle_particle_broad_search(
+          contact_manager.execute_particle_particle_broad_search(
             this->particle_handler, has_periodic_boundaries);
 
-          container_manager.execute_particle_wall_broad_search(
+          contact_manager.execute_particle_wall_broad_search(
             this->particle_handler,
             boundary_cell_object,
+            floating_mesh_info,
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time());
         }
       else // disabling particle contacts are enabled & counter > 1
         {
-          container_manager.execute_particle_particle_broad_search(
+          contact_manager.execute_particle_particle_broad_search(
             this->particle_handler,
             disable_contacts_object,
             has_periodic_boundaries);
 
-          container_manager.execute_particle_wall_broad_search(
+          contact_manager.execute_particle_wall_broad_search(
             this->particle_handler,
             boundary_cell_object,
+            floating_mesh_info,
             dem_parameters.floating_walls,
             this->simulation_control->get_current_time(),
             disable_contacts_object);
@@ -986,23 +988,24 @@ CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
       // Update contacts, remove replicates and add new contact pairs
       // to the contact containers when particles are exchanged between
       // processors
-      container_manager.update_contacts(has_periodic_boundaries);
+      contact_manager.update_contacts(has_periodic_boundaries);
 
       // Updates the iterators to particles in local-local contact
       // containers
-      container_manager.update_local_particles_in_cells(
-        this->particle_handler, has_periodic_boundaries);
+      contact_manager.update_local_particles_in_cells(this->particle_handler,
+                                                      load_balance_step,
+                                                      has_periodic_boundaries);
 
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
-      container_manager.execute_particle_particle_fine_search(
+      contact_manager.execute_particle_particle_fine_search(
         neighborhood_threshold_squared,
         has_periodic_boundaries,
         periodic_offset);
 
       // Execute fine search by updating particle-wall contact containers
       // regards the neighborhood threshold
-      container_manager.execute_particle_wall_fine_search(
+      contact_manager.execute_particle_wall_fine_search(
         dem_parameters.floating_walls,
         this->simulation_control->get_current_time(),
         neighborhood_threshold_squared);
@@ -1054,16 +1057,15 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-    container_manager.particle_wall_in_contact, dem_time_step, torque, force);
+    contact_manager.particle_wall_in_contact, dem_time_step, torque, force);
 
   if (this->cfd_dem_simulation_parameters.dem_parameters.forces_torques
         .calculate_force_torque)
     {
-      container_manager.forces_boundary_information[this->simulation_control
-                                                      ->get_step_number()] =
+      forces_boundary_information[this->simulation_control->get_step_number()] =
         particle_wall_contact_force_object->get_force();
-      container_manager.torques_boundary_information[this->simulation_control
-                                                       ->get_step_number()] =
+      torques_boundary_information[this->simulation_control
+                                     ->get_step_number()] =
         particle_wall_contact_force_object->get_torque();
     }
 
@@ -1071,7 +1073,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
   if (dem_parameters.floating_walls.floating_walls_number > 0)
     {
       particle_wall_contact_force_object->calculate_particle_wall_contact_force(
-        container_manager.particle_floating_wall_in_contact,
+        contact_manager.particle_floating_wall_in_contact,
         dem_time_step,
         torque,
         force);
@@ -1079,7 +1081,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(
-      &container_manager.particle_points_in_contact,
+      &contact_manager.particle_points_in_contact,
       dem_parameters.lagrangian_physical_properties,
       force);
 
@@ -1087,7 +1089,7 @@ CFDDEMSolver<dim>::particle_wall_contact_force()
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(
-          &container_manager.particle_lines_in_contact,
+          &contact_manager.particle_lines_in_contact,
           dem_parameters.lagrangian_physical_properties,
           force);
     }

@@ -1513,7 +1513,6 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-
   void
   Mesh::declare_parameters(ParameterHandler &prm)
   {
@@ -1582,47 +1581,23 @@ namespace Parameters
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
 
+      prm.declare_entry(
+        "initial translation",
+        "0, 0, 0",
+        Patterns::List(Patterns::Double()),
+        "Component of the desired translation of the mesh at initialization");
 
       prm.declare_entry(
-        "translate",
-        "false",
-        Patterns::Bool(),
-        "Indicates that the mesh should be translated. To be "
-        "used to reposition solid grids relative to the fluid grid.");
-
-      prm.declare_entry("delta_x",
-                        "0 ",
-                        Patterns::Double(),
-                        "X component of the desired translation of the mesh");
-
-      prm.declare_entry("delta_y",
-                        "0 ",
-                        Patterns::Double(),
-                        "Y component of the desired translation of the mesh");
-
-      prm.declare_entry("delta_z",
-                        "0 ",
-                        Patterns::Double(),
-                        "Z component of the desired translation of the mesh");
-
-      // Grid rotation at initiation
-      prm.declare_entry(
-        "rotate",
-        "false",
-        Patterns::Bool(),
-        "Indicates that the mesh should be rotated. To be "
-        "used to reposition solid grids relative to the fluid grid.");
+        "initial rotation axis",
+        "1, 0, 0",
+        Patterns::List(Patterns::Double()),
+        "Component of the desired rotation of the mesh at initialization");
 
       prm.declare_entry(
-        "axis",
+        "initial rotation angle",
         "0",
-        Patterns::Integer(),
-        "Axis around which the rotation should occur (0 for x, 1 for y, 2 for z)");
-
-      prm.declare_entry("angle",
-                        "0 ",
-                        Patterns::Double(),
-                        "Angle of rotation around the axis in radian");
+        Patterns::Double(),
+        "Angle of rotation of the mesh at initialization around the axis in radian");
     }
     prm.leave_subsection();
   }
@@ -1661,15 +1636,27 @@ namespace Parameters
         prm.get_bool("expand particle-wall contact search");
       target_size = prm.get_double("target size");
 
+      // Initial translation
+      std::string              translation_str = prm.get("initial translation");
+      std::vector<std::string> translate_str_list =
+        Utilities::split_string_list(translation_str);
+      translation =
+        Tensor<1, 3>({Utilities::string_to_double(translate_str_list[0]),
+                      Utilities::string_to_double(translate_str_list[1]),
+                      Utilities::string_to_double(translate_str_list[2])});
 
-      translate = prm.get_bool("translate");
-      delta_x   = prm.get_double("delta_x");
-      delta_y   = prm.get_double("delta_y");
-      delta_z   = prm.get_double("delta_z");
-
-      rotate = prm.get_bool("rotate");
-      axis   = prm.get_integer("axis");
-      angle  = prm.get_double("angle");
+      // Initial rotation
+      // Create a string from the input file, split the string into smaller
+      // strings and store them in a vector, transform the strings into doubles
+      // and stores those in a tensor
+      std::string              axis_str = prm.get("initial rotation axis");
+      std::vector<std::string> axis_str_list =
+        Utilities::split_string_list(axis_str);
+      rotation_axis =
+        Tensor<1, 3>({Utilities::string_to_double(axis_str_list[0]),
+                      Utilities::string_to_double(axis_str_list[1]),
+                      Utilities::string_to_double(axis_str_list[2])});
+      rotation_angle = prm.get_double("initial rotation angle");
     }
     prm.leave_subsection();
   }

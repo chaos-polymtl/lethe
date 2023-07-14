@@ -21,7 +21,7 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #include <dem/data_containers.h>
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/disable_contacts.h>
 #include <dem/find_contact_detection_step.h>
@@ -260,20 +260,34 @@ private:
   double                    standard_deviation_multiplier;
   double                    smallest_contact_search_criterion;
   double                    triangulation_cell_diameter;
-  Tensor<1, dim>            periodic_offset;
-  bool                      has_periodic_boundaries;
 
-  DEMContainerManager<dim>           container_manager;
-  ParticlePointLineForce<dim>        particle_point_line_contact_force_object;
-  PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
-  std::shared_ptr<Integrator<dim>>   integrator_object;
-  std::shared_ptr<Insertion<dim>>    insertion_object;
+  DEMContactManager<dim>           contact_manager;
+  ParticlePointLineForce<dim>      particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>> integrator_object;
+  std::shared_ptr<Insertion<dim>>  insertion_object;
   std::shared_ptr<ParticleParticleContactForceBase<dim>>
     particle_particle_contact_force_object;
   std::shared_ptr<ParticleWallContactForce<dim>>
                                 particle_wall_contact_force_object;
   Visualization<dim>            visualization_object;
   BoundaryCellsInformation<dim> boundary_cell_object;
+
+  // Mesh and boundary information
+  typename dem_data_structures<dim>::floating_mesh_information
+    floating_mesh_info;
+  typename dem_data_structures<dim>::boundary_points_and_normal_vectors
+    updated_boundary_points_and_normal_vectors;
+  typename dem_data_structures<dim>::vector_on_boundary
+    forces_boundary_information;
+  typename dem_data_structures<dim>::vector_on_boundary
+    torques_boundary_information;
+  typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+    periodic_boundaries_cells_information;
+
+  // Information for periodic boundaries
+  PeriodicBoundariesManipulator<dim> periodic_boundaries_object;
+  Tensor<1, dim>                     periodic_offset;
+  bool                               has_periodic_boundaries;
 
   DisableContacts<dim> disable_contacts_object;
   bool                 has_disabled_contacts;

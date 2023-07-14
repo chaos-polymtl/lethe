@@ -247,11 +247,19 @@ private:
    *
    * @param angle The angle (in rad) with which the solid is rotated
    *
-   * @param axis The axis over which the solid is rotated. Currently, only (x=0, y=1, z=2) are supported
+   * @param axis The axis over which the solid is rotated.
    *
    */
   void
-  rotate_grid(const double angle, const int axis);
+  rotate_grid(const double angle, const Tensor<1, 3> axis);
+
+  /**
+   * @brief Translate the grid. In spacedim=2, the third component is ignore
+   *
+   * @param translate The vector with which the solid is translated.
+   */
+  void
+  translate_grid(const Tensor<1, 3> translate);
 
   // Member variables
 

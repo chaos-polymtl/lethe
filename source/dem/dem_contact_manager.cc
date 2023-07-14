@@ -16,14 +16,16 @@
  *
  */
 
-#include <dem/dem_container_manager.h>
+#include <dem/dem_contact_manager.h>
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_cell_neighbors_search(
+DEMContactManager<dim>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const bool                                       has_periodic_boundaries,
-  const bool                                       has_floating_mesh)
+  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
+             periodic_boundaries_cells_information,
+  const bool has_periodic_boundaries,
+  const bool has_floating_mesh)
 {
   // Find cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
@@ -51,7 +53,7 @@ DEMContainerManager<dim>::execute_cell_neighbors_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::update_contacts(const bool has_periodic_boundaries)
+DEMContactManager<dim>::update_contacts(const bool has_periodic_boundaries)
 {
   // Update particle-particle contacts in local_adjacent_particles of fine
   // search step with local_contact_pair_candidates
@@ -145,8 +147,9 @@ DEMContainerManager<dim>::update_contacts(const bool has_periodic_boundaries)
 
 template <int dim>
 void
-DEMContainerManager<dim>::update_local_particles_in_cells(
+DEMContactManager<dim>::update_local_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler,
+  const bool                             clear_contact_structures,
   const bool                             has_periodic_boundaries)
 {
   // Update the iterators to local particles in a map of particles
@@ -157,14 +160,16 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::local_particle_particle>(local_adjacent_particles,
-                                          particle_container);
+                                          particle_container,
+                                          clear_contact_structures);
 
   // Update contact containers for ghost particle-particle pairs in contact
   update_contact_container_iterators<
     dim,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
     ContactType::ghost_particle_particle>(ghost_adjacent_particles,
-                                          particle_container);
+                                          particle_container,
+                                          clear_contact_structures);
 
   if (has_periodic_boundaries)
     {
@@ -174,7 +179,9 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
-        local_periodic_adjacent_particles, particle_container);
+        local_periodic_adjacent_particles,
+        particle_container,
+        clear_contact_structures);
 
       // Update contact containers for local-ghost periodic particle-particle
       // pairs in contact
@@ -182,7 +189,9 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
-        ghost_periodic_adjacent_particles, particle_container);
+        ghost_periodic_adjacent_particles,
+        particle_container,
+        clear_contact_structures);
 
       // Update contact containers for ghost-local periodic particle-particle
       // pairs in contact
@@ -190,7 +199,9 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
         dim,
         typename DEM::dem_data_structures<dim>::adjacent_particle_pairs,
         ContactType::ghost_local_periodic_particle_particle>(
-        ghost_local_periodic_adjacent_particles, particle_container);
+        ghost_local_periodic_adjacent_particles,
+        particle_container,
+        clear_contact_structures);
     }
 
   // Update contact containers for particle-wall pairs in contact
@@ -236,7 +247,7 @@ DEMContainerManager<dim>::update_local_particles_in_cells(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_particle_broad_search(
+DEMContactManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const bool                               has_periodic_boundaries)
 {
@@ -252,7 +263,7 @@ DEMContainerManager<dim>::execute_particle_particle_broad_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_particle_broad_search(
+DEMContactManager<dim>::execute_particle_particle_broad_search(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const DisableContacts<dim> &             disable_contacts_object,
   const bool                               has_periodic_boundaries)
@@ -271,9 +282,11 @@ DEMContainerManager<dim>::execute_particle_particle_broad_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_wall_broad_search(
-  const Particles::ParticleHandler<dim> &           particle_handler,
-  BoundaryCellsInformation<dim> &                   boundary_cell_object,
+DEMContactManager<dim>::execute_particle_wall_broad_search(
+  const Particles::ParticleHandler<dim> &particle_handler,
+  BoundaryCellsInformation<dim> &        boundary_cell_object,
+  const typename dem_data_structures<dim>::floating_mesh_information
+                                                    floating_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const bool                                        has_floating_mesh)
@@ -322,9 +335,11 @@ DEMContainerManager<dim>::execute_particle_wall_broad_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_wall_broad_search(
-  const Particles::ParticleHandler<dim> &           particle_handler,
-  BoundaryCellsInformation<dim> &                   boundary_cell_object,
+DEMContactManager<dim>::execute_particle_wall_broad_search(
+  const Particles::ParticleHandler<dim> &particle_handler,
+  BoundaryCellsInformation<dim> &        boundary_cell_object,
+  const typename dem_data_structures<dim>::floating_mesh_information
+                                                    floating_mesh_info,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const DisableContacts<dim> &                      disable_contacts_object,
@@ -380,7 +395,7 @@ DEMContainerManager<dim>::execute_particle_wall_broad_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_particle_fine_search(
+DEMContactManager<dim>::execute_particle_particle_fine_search(
   const double         neighborhood_threshold,
   const bool           has_periodic_boundaries,
   const Tensor<1, dim> periodic_offset)
@@ -429,7 +444,7 @@ DEMContainerManager<dim>::execute_particle_particle_fine_search(
 
 template <int dim>
 void
-DEMContainerManager<dim>::execute_particle_wall_fine_search(
+DEMContactManager<dim>::execute_particle_wall_fine_search(
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_walls,
   const double                                      simulation_time,
   const double                                      neighborhood_threshold,
@@ -468,20 +483,5 @@ DEMContainerManager<dim>::execute_particle_wall_fine_search(
     }
 }
 
-template <int dim>
-void
-DEMContainerManager<dim>::store_floating_mesh_info(
-  const parallel::distributed::Triangulation<dim> &       triangulation,
-  std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> solids)
-{
-  for (unsigned int i_solid = 0; i_solid < solids.size(); ++i_solid)
-    {
-      // Create/update a container that contains all the combinations of
-      // background and solid cells
-      floating_mesh_info[i_solid] =
-        solids[i_solid]->map_solid_in_background_triangulation(triangulation);
-    }
-}
-
-template class DEMContainerManager<2>;
-template class DEMContainerManager<3>;
+template class DEMContactManager<2>;
+template class DEMContactManager<3>;
