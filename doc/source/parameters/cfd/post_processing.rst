@@ -182,7 +182,7 @@ This subsection controls the post-processing other than the forces and torque on
 
   where :math:`\psi` is the filtered phase indicator.
   
-  * ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution to the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation.
+  * ``calculate phase statistics``: controls if calculation of phase statistics coming from the solution of the Cahn-Hilliard equations is enabled. Statistics include: minimum, maximum, average and standard-deviation of the phase order parameter.
   
     .. warning::
 

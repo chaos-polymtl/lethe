@@ -154,8 +154,6 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (de
          end
     end
     
-.. warning::
-   The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
@@ -166,5 +164,5 @@ For Cahn-Hilliard boundary conditions, the possible ``types`` are ``noflux`` (de
 * ``type``: This is the type of boundary condition being imposed. At the moment, choices are:
     * ``noflux`` (default) so that no phase leave the simulation domain.
     * ``dirichlet`` to impose a given phase order parameter function on the boundary. This function can depend on position (:math:`x,y,z`) and on time (:math:`t`).
-    * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact.
+    * ``angle_of_contact`` to impose a given angle of contact ``angle value`` between the two phases at the boundary. It refers to the inner angle of contact, in degrees (°).
 
