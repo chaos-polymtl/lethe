@@ -174,7 +174,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
     std::max_element(std::begin(phase_values), std::end(phase_values));
   bool solve_continuity(true);
 
-  if (vof_parameters.conservation.conservative_fluid ==
+  /*if (vof_parameters.conservation.conservative_fluid ==
       Parameters::FluidIndicator::fluid0)
     {
       if (*max_phase_cell > 1. - phase_cutoff)
@@ -185,7 +185,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
     {
       if (*max_phase_cell < phase_cutoff)
         solve_continuity = false;
-    }
+    }*/
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
@@ -295,12 +295,13 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
               local_rhs(i) += -phi_p_i * pressure * JxW;
             }
 
-          // SUPG GLS term
-          if (SUPG)
-            {
-              local_rhs(i) +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
-            }
+          //          // SUPG GLS term
+          //          if (SUPG)
+          //            {
+          //              local_rhs(i) +=
+          //                -tau * (strong_residual * (grad_phi_u_i * velocity))
+          //                * JxW;
+          //            }
         }
     }
 }

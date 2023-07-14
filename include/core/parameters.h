@@ -311,6 +311,20 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief SurfaceTensionParameters - Defines parameters for surface tension models
+   */
+  struct MobilityCahnHilliardParameters
+  {
+    // Mobility constant (M) in m^2/s
+    double mobility_ch_constant;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
   /**
    * @brief Material - Class that defines the physical property of a material.
@@ -411,6 +425,15 @@ namespace Parameters
       constant
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
+
+    // Mobility CH models
+    enum class MobilityCahnHilliardModel
+    {
+      constant,
+      quartic
+    } mobility_ch_model;
+    MobilityCahnHilliardParameters mobility_ch_parameters;
+
 
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;

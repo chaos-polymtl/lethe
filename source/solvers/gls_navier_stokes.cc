@@ -939,7 +939,8 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        std::vector<TrilinosWrappers::MPI::Vector>(),
+        this->simulation_parameters.multiphysics.ch_parameters);
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)

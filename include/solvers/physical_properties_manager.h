@@ -20,6 +20,7 @@
 #define lethe_physical_properties_manager_h
 
 #include <core/density_model.h>
+#include <core/mobility_ch_model.h>
 #include <core/rheological_model.h>
 #include <core/specific_heat_model.h>
 #include <core/surface_tension_model.h>
@@ -161,6 +162,12 @@ public:
     return surface_tension[material_interaction_id];
   }
 
+  std::shared_ptr<MobilityCahnHilliardModel>
+  get_mobility_ch(const unsigned int material_interaction_id = 0) const
+  {
+    return mobility_ch[material_interaction_id];
+  }
+
   // Vector Getters for the physical property models
   std::vector<std::shared_ptr<DensityModel>>
   get_density_vector() const
@@ -300,13 +307,14 @@ public:
   bool is_initialized;
 
 private:
-  std::vector<std::shared_ptr<DensityModel>>             density;
-  std::vector<std::shared_ptr<SpecificHeatModel>>        specific_heat;
-  std::vector<std::shared_ptr<ThermalConductivityModel>> thermal_conductivity;
-  std::vector<std::shared_ptr<RheologicalModel>>         rheology;
-  std::vector<std::shared_ptr<ThermalExpansionModel>>    thermal_expansion;
-  std::vector<std::shared_ptr<TracerDiffusivityModel>>   tracer_diffusivity;
-  std::vector<std::shared_ptr<SurfaceTensionModel>>      surface_tension;
+  std::vector<std::shared_ptr<DensityModel>>              density;
+  std::vector<std::shared_ptr<SpecificHeatModel>>         specific_heat;
+  std::vector<std::shared_ptr<ThermalConductivityModel>>  thermal_conductivity;
+  std::vector<std::shared_ptr<RheologicalModel>>          rheology;
+  std::vector<std::shared_ptr<ThermalExpansionModel>>     thermal_expansion;
+  std::vector<std::shared_ptr<TracerDiffusivityModel>>    tracer_diffusivity;
+  std::vector<std::shared_ptr<SurfaceTensionModel>>       surface_tension;
+  std::vector<std::shared_ptr<MobilityCahnHilliardModel>> mobility_ch;
 
   std::map<field, bool> required_fields;
 

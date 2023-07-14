@@ -357,9 +357,12 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_0 = properties_manager.get_rheology(0);
           const auto density_model_1  = properties_manager.get_density(1);
           const auto rheology_model_1 = properties_manager.get_rheology(1);
-          const auto material_interaction_id = properties_manager.get_material_interaction_id("fluid-fluid", 0,1);
+          const auto material_interaction_id =
+            properties_manager.get_material_interaction_id("fluid-fluid", 0, 1);
           const auto surface_tension_model =
             properties_manager.get_surface_tension(material_interaction_id);
+          const auto mobility_ch_model =
+            properties_manager.get_mobility_ch(material_interaction_id);
 
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)

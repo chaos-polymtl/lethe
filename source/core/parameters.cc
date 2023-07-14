@@ -437,6 +437,23 @@ namespace Parameters
   }
 
   void
+  MobilityCahnHilliardParameters::declare_parameters(
+    dealii::ParameterHandler &prm)
+  {
+    prm.declare_entry(
+      "cahn hilliard mobility constant",
+      "1",
+      Patterns::Double(),
+      "Cahn-Hilliard mobility constant for the corresponding pair of fluids");
+  }
+
+  void
+  MobilityCahnHilliardParameters::parse_parameters(ParameterHandler &prm)
+  {
+    mobility_ch_constant = prm.get_double("cahn hilliard mobility constant");
+  }
+
+  void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("stabilization");
@@ -978,6 +995,15 @@ namespace Parameters
           "Model used for the calculation of the surface tension coefficient"
           "At the moment, the only choice is <constant>");
         surface_tension_parameters.declare_parameters(prm);
+
+        // Cahn-Hilliard mobility
+        prm.declare_entry(
+          "cahn hilliard mobility model",
+          "constant",
+          Patterns::Selection("constant|quartic"),
+          "Model used for the calculation of the mobility in Cahn-Hilliard equations"
+          "Choices are <constant|quartic>");
+        mobility_ch_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
 
