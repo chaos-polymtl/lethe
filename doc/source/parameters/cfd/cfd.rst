@@ -10,6 +10,7 @@ General, CFD and Multiphysics
    boundary_conditions_cfd
    boundary_conditions_multiphysics
    box_refinement
+   cahn_hilliard
    dimensionality
    dynamic_flow_control
    fem

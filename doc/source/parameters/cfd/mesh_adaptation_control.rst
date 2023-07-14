@@ -9,7 +9,8 @@ This subsection controls the mesh adaptation method, with default values given b
 	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
 	  set type                              = none
 
-	  # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
+	  # Variable(s) for kelly estimation. Choices are velocity, pressure, phase, temperature,
+	  # phase_ch or potential_ch.
 	  # For multi-variables refinement, separate the different variables with a comma
 	  set variable                          = velocity
 

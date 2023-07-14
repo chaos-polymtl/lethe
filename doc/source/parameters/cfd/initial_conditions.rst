@@ -28,6 +28,10 @@ It is often necessary to set-up complex initial conditions when simulating trans
    subsection temperature
      set Function expression = 0
    end
+   
+   subsection cahn hilliard
+     set Function expression = if (x<0.5 & y<1, 1, -1); 0
+   end
 
    subsection ramp
     subsection viscosity
@@ -50,6 +54,8 @@ It is often necessary to set-up complex initial conditions when simulating trans
 * The ``subsection uvwp`` allows the user to select a function (velocity-pressure) to set a nodal or L2 projection initial condition.
 
 * The ``subsection VOF`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). In this example, the ``Function expression`` is used with a boolean condition to establish the region where the fluid indicator is 0 or 1: ``if (condition, value if true, value if false)``. ``if (x<0.5 & y<1, 1, 0)`` means that ``fluid 1`` initially fills the surface where ``x<0.5`` and ``y<1``, the rest being filled with ``fluid 0``.
+
+* The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection VOF`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at 0.
 
   .. note::
     The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``

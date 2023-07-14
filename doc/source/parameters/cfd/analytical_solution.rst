@@ -24,6 +24,9 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection VOF
       set Function expression = 0
     end
+    subsection cahn hilliard
+      set Function expression = 0; 0 # phase order parameter; chemical potential
+    end
    end
 
 * The ``enable`` parameter is set to true if the problem has an analytical solution. This enables the calculation of the analytical solution and the :math:`L^2` norm of the error.
@@ -56,6 +59,10 @@ If there is an analytical solution for a tracer, enter the ``tracer`` subsection
 If there is an analytical solution for the VOF physics, enter the ``VOF`` subsection.
 
 * The ``Function expression`` parameter sets the expression of the VOF indicator.
+
+If there is an analytical solution for the Cahn-Hilliard physics, enter the ``cahn hilliard`` subsection.
+
+* The ``Function expression`` parameter sets the expression of the phase order parameter and the chemical potential.
 
 .. note:: 
     The variables *x*, *y*, *z* (3D) and *t* (time-dependant) can be used in the function expressions.
