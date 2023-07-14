@@ -1,7 +1,7 @@
 The Volume of Fluid (VOF) method
 #############################################
 
-Numerous exemples of flow encountered in engineering involve multiple fluid: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between the fluids.
+Numerous exemples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between the fluids.
 
 Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid 0 and 1, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method [`1 <https://doi.org/10.1016/0021-9991(81)90145-5>`_], we define the scalar function :math:`\phi` as a phase indicator such that:
 
@@ -83,13 +83,13 @@ Find :math:`\phi^h \in V^h \times [0,T]` such that
 Stabilization
 --------------
 
-The numerical resolution of the advection equation requires stabilization because of its purely convective character. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across :math:`\Gamma` and perpendicular to the streamlines. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used [`2 <https://doi.org/10.1002/fld.505>`_].
+The numerical resolution of the advection equation requires stabilization because of its purely convective character. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across :math:`\Gamma` and perpendicular to the streamlines. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used [`2 <https://doi.org/10.1002/fld.505>`_]:
 
 .. math::
 
   &\int_\Omega v^h \left( \partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h\right) d \Omega \\
   &\quad + \sum_k \int_{\Omega_k}\tau_\mathrm{SUPG} u_i\partial_i v^h\left(\partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h \right) d \Omega_k \\
-  &\qquad + \sum_k \int_{\Omega_k}v_\mathrm{DCDD}f_\mathrm{DCDD} \partial_i v^h \partial_i \phi^h  d \Omega_k  = 0 \quad \forall v^h\in V^h\times [0,T]
+  &\qquad + \sum_k \int_{\Omega_k}v_\mathrm{DCDD}f_\mathrm{DCDD} \partial_i v^h \partial_i \phi^h  d \Omega_k  = 0
 
 where the first element wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formualtion is used (see :doc:`./stabilization`). The terms of the DCDD scheme are:
 
@@ -154,7 +154,7 @@ where :math:`\phi'` is the filtered phase fraction value, and :math:`\beta` is a
 Surface tension
 ---------------
 
-When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. For exemple, it corresponds to the force that drives a droplet into its spherical shape.
+When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. For exemple, it corresponds to the force that drives a droplet into its spherical shape [`3 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_].
 
 Resolution of the interface motion via the advection equation allows to compute the surface tension term and add its effect in the Navier-Stokes momentum equation.
 
