@@ -192,8 +192,8 @@ namespace DEM
       particle_floating_mesh_in_contact;
 
     // <particle id, [particle id]>
-    typedef ankerl::unordered_dense::map<types::particle_index,
-                                         std::vector<types::particle_index>>
+    typedef std::unordered_map<types::particle_index,
+                               std::vector<types::particle_index>>
       particle_particle_candidates;
 
     // [[cell iterator]]
@@ -214,14 +214,14 @@ namespace DEM
       cells_total_neighbor_list;
 
     // <global_face_id, (tensor, point)>
-    typedef std::unordered_map<global_face_id,
-                               std::pair<Tensor<1, 3>, Point<3>>>
+    typedef ankerl::unordered_dense::map<global_face_id,
+                                         std::pair<Tensor<1, 3>, Point<3>>>
       boundary_points_and_normal_vectors;
 
     // <unsigned int, <global_face_id, tensor>>
-    typedef std::unordered_map<unsigned int,
-                               std::map<types::boundary_id, Tensor<1, 3>>>
-      vector_on_boundary;
+    typedef ankerl::unordered_dense::
+      map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
+        vector_on_boundary;
 
     // [cell iterators]
     typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
@@ -232,12 +232,12 @@ namespace DEM
       cell_set;
 
     // <cell id, periodic cells info>
-    typedef std::unordered_map<types::global_cell_index,
-                               periodic_boundaries_cells_info_struct<dim>>
-      periodic_boundaries_cells_info;
+    typedef ankerl::unordered_dense::
+      map<types::global_cell_index, periodic_boundaries_cells_info_struct<dim>>
+        periodic_boundaries_cells_info;
 
     // <cell id, integer value>
-    typedef std::unordered_map<types::global_cell_index, unsigned int>
+    typedef ankerl::unordered_dense::map<types::global_cell_index, unsigned int>
       cell_index_int_map;
   };
 
