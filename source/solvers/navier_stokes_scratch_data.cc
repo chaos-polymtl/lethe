@@ -119,7 +119,6 @@ NavierStokesScratchData<dim>::enable_vof(
   surface_tension            = std::vector<double>(n_q_points);
   surface_tension_gradient   = std::vector<double>(n_q_points);
   compressibility_multiplier = std::vector<double>(n_q_points);
-
   // Create filter
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
 }
