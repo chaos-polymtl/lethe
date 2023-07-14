@@ -55,7 +55,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 * ``use time average velocity field``:  controls if the advection of the subphysics is done using the average velocity field instead of the current velocity field. This is useful when the flow dynamics and the subphysics reach a pseudo-steady state at different time scales. To use this feature, the user should launch a simulation with the fluid mechanics solver and use the time averaging feature. Once the time average of the velocity field is sufficiently established, the simulation should be stopped and restarted without the fluid mechanics solver. The subphysics can then be solved using a larger time step.
 
 .. important::
-   The subphysic must also be enabled in the first part of the simulation (for example, ``set heat transfer = true``)
+   The subphysic must also be enabled in the first part of the simulation (for example, ``set heat transfer = true``).
    
 .. seealso::
 
