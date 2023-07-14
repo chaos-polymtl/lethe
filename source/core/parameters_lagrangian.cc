@@ -491,7 +491,7 @@ namespace Parameters
                             "Choices are <constant|dynamic>.");
 
           prm.declare_entry("frequency",
-                            "1",
+                            "10",
                             Patterns::Integer(),
                             "Particle-particle contact list");
 
@@ -503,7 +503,7 @@ namespace Parameters
 
           prm.declare_entry(
             "neighborhood threshold",
-            "1",
+            "1.3",
             Patterns::Double(),
             "Contact search zone diameter to particle diameter ratio");
         }
