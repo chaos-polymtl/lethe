@@ -657,6 +657,20 @@ namespace Parameters
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
     }
+    // Definition of interactions between materials
+    prm.declare_entry(
+      "number of material interactions",
+      "0",
+      Patterns::Integer(),
+      "Number of material interactions (either fluid-fluid or fluid-solid)");
+
+    for (unsigned int i_material_interaction = 0;
+         i_material_interaction < max_material_interactions;
+         ++i_material_interaction)
+      {
+        material_interactions[i_material_interaction].declare_parameters(
+          prm, i_material_interaction);
+      }
 
     // Definition of interactions between materials
     prm.declare_entry(

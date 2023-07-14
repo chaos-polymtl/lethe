@@ -310,6 +310,7 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
   /**
    * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility
    * models used in the Cahn-Hilliard equations.
