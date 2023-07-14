@@ -26,8 +26,8 @@
 #include <dem/input_parameter_inspection.h>
 #include <dem/list_insertion.h>
 #include <dem/non_uniform_insertion.h>
-#include <dem/plane_insertion.h>
 #include <dem/particle_wall_nonlinear_force.h>
+#include <dem/plane_insertion.h>
 #include <dem/post_processing.h>
 #include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
@@ -906,8 +906,10 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
-      insertion_object = std::make_shared<PlaneInsertion<dim>>(parameters,
-                                                               maximum_particle_diameter);
+      insertion_object =
+        std::make_shared<PlaneInsertion<dim>>(parameters,
+                                              maximum_particle_diameter,
+                                              triangulation);
     }
   else
     {

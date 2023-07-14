@@ -368,7 +368,6 @@ namespace Parameters
                           "1., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
-
       }
       prm.leave_subsection();
     }
@@ -433,23 +432,23 @@ namespace Parameters
         list_z = Utilities::string_to_double(z_str_list);
 
         // Insertion plane normal vector
-        std::string              plane_vector_str = prm.get("insertion plane normal vector");
+        std::string plane_vector_str = prm.get("insertion plane normal vector");
         std::vector<std::string> plane_vector_str_list =
           Utilities::split_string_list(plane_vector_str);
-        insertion_plane_normal_vector = Tensor<1, 3>({Utilities::string_to_double(plane_vector_str_list[0]),
-            Utilities::string_to_double(plane_vector_str_list[1]),
-            Utilities::string_to_double(plane_vector_str_list[2])});
+        insertion_plane_normal_vector =
+          Tensor<1, 3>({Utilities::string_to_double(plane_vector_str_list[0]),
+                        Utilities::string_to_double(plane_vector_str_list[1]),
+                        Utilities::string_to_double(plane_vector_str_list[2])});
 
 
         // Insertion plane point
-        std::string              plane_point_str = prm.get("insertion plane point");
+        std::string plane_point_str = prm.get("insertion plane point");
         std::vector<std::string> plane_point_str_list =
           Utilities::split_string_list(plane_point_str);
-        insertion_plane_point = Point<3>({Utilities::string_to_double(plane_point_str_list[0]),
-                                                      Utilities::string_to_double(plane_point_str_list[1]),
-                                                      Utilities::string_to_double(plane_point_str_list[2])});
-
-
+        insertion_plane_point =
+          Point<3>({Utilities::string_to_double(plane_point_str_list[0]),
+                    Utilities::string_to_double(plane_point_str_list[1]),
+                    Utilities::string_to_double(plane_point_str_list[2])});
       }
       prm.leave_subsection();
     }

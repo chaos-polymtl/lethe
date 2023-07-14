@@ -51,8 +51,10 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  PlaneInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                           const double maximum_particle_diameter);
+  PlaneInsertion<dim>(
+    const DEMSolverParameters<dim> &                 dem_parameters,
+    const double                                     maximum_particle_diameter,
+    const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
    * Carries out the non-uniform insertion of particles.
@@ -116,16 +118,19 @@ private:
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
-   * @brief
+   * @brief Store the location of all the cells that are in the plane
    */
 
   void
-  find_center_of_in_plane_cells();
+  find_center_of_inplane_cells();
 
   Tensor<1, 3> insertion_plane_normal_vector;
-  Point<3> insertion_plane_point;
-  std::set<typename Triangulation<dim>::active_cell_iterator> plane_cells_for_insertion;
-  std::unordered_map<unsigned int, Point<dim>> 
+  Point<3>     insertion_plane_point;
+  std::set<typename Triangulation<dim>::active_cell_iterator>
+                                               plane_cells_for_insertion;
+  std::unordered_map<unsigned int, Point<dim>> cells_centers;
+  unsigned int                                 particle_counter;
+  double                                       minimal_cell_diameter;
 };
 
 #endif /* plane_insertion_h */
