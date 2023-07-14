@@ -78,7 +78,7 @@ where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the th
 Two phase simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. note:: 
-  Two phase simulations require that ``set VOF = true`` in the :doc:`multiphysics` subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
+  Two phase simulations require that either ``set VOF = true`` or ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
 
 For two phases, the properties are defined for each fluid. Default values are:
 
