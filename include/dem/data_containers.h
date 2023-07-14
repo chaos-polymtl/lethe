@@ -118,8 +118,8 @@ namespace DEM
   struct dem_data_structures
   {
     // <particle id, particle iterator>
-    typedef std::unordered_map<types::particle_index,
-                               Particles::ParticleIterator<dim>>
+    typedef ankerl::unordered_dense::map<types::particle_index,
+                                         Particles::ParticleIterator<dim>>
       particle_index_iterator_map;
 
     // <particle id, point-line info>
@@ -140,14 +140,14 @@ namespace DEM
       particle_point_candidates;
 
     // <particle id, <global face id, particle iterator>>
-    typedef std::unordered_map<
+    typedef ankerl::unordered_dense::map<
       types::particle_index,
       std::unordered_map<global_face_id, Particles::ParticleIterator<dim>>>
       particle_floating_wall_candidates;
 
     // <particle id, <global_face_id, (particle iterator, tensor, point,
     // boundary id, cell id)>>
-    typedef std::unordered_map<
+    typedef ankerl::unordered_dense::map<
       types::particle_index,
       std::unordered_map<global_face_id,
                          std::tuple<Particles::ParticleIterator<dim>,
@@ -192,8 +192,8 @@ namespace DEM
       particle_floating_mesh_in_contact;
 
     // <particle id, [particle id]>
-    typedef std::unordered_map<types::particle_index,
-                               std::vector<types::particle_index>>
+    typedef ankerl::unordered_dense::map<types::particle_index,
+                                         std::vector<types::particle_index>>
       particle_particle_candidates;
 
     // [[cell iterator]]
@@ -208,20 +208,20 @@ namespace DEM
       floating_mesh_information;
 
     // <cell id, [cell iterator]>
-    typedef std::unordered_map<
+    typedef ankerl::unordered_dense::map<
       types::global_cell_index,
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       cells_total_neighbor_list;
 
     // <global_face_id, (tensor, point)>
-    typedef std::unordered_map<global_face_id,
-                               std::pair<Tensor<1, 3>, Point<3>>>
+    typedef ankerl::unordered_dense::map<global_face_id,
+                                         std::pair<Tensor<1, 3>, Point<3>>>
       boundary_points_and_normal_vectors;
 
     // <unsigned int, <global_face_id, tensor>>
-    typedef std::unordered_map<unsigned int,
-                               std::map<types::boundary_id, Tensor<1, 3>>>
-      vector_on_boundary;
+    typedef ankerl::unordered_dense::
+      map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
+        vector_on_boundary;
 
     // [cell iterators]
     typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
