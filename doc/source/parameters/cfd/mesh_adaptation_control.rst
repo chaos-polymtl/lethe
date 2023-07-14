@@ -7,38 +7,41 @@ This subsection controls the mesh adaptation method, with default values given b
 
 	subsection mesh adaptation
 	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
-	  set type                     = none
+	  set type                              = none
 
 	  # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
 	  # For multi-variables refinement, separate the different variables with a comma
-	  set variable                 = velocity
+	  set variable                          = velocity
 
 	  # Frequency of the mesh refinement
-	  set frequency                = 1
+	  set frequency                         = 1
 
 	  # Minimum refinement level
-	  set min refinement level     = 0
+	  set min refinement level              = 0
 
 	  # Maximum refinement level
-	  set max refinement level     = 10
+	  set max refinement level              = 10
 
 	  # Fraction of coarsened elements
 	  # For multi-variables refinement, separate the different fractions with a comma
-	  set fraction coarsening      = 0.05
+	  set fraction coarsening               = 0.05
 
 	  # Fraction of refined elements
 	  # For multi-variables refinement, separate the different fractions with a comma
-	  set fraction refinement      = 0.1
+	  set fraction refinement               = 0.1
 
 	  # How the fraction of refinement/coarsening are interpreted
 	  # Choices are number or fraction 
-	  set fraction type            = number
+	  set fraction type                     = number
 
 	  # Maximum number of elements
-	  set max number elements      = 100000000
+	  set max number elements               = 100000000
+	  
+	  # Enable the control of the mesh refinement to target a specific number of elements equal to the maximum number of elements.
+	  set enable mesh refinement controller = false
 	
 	  # Number of initial (pre-solve) refinement steps
-	  set initial refinement steps = 0
+	  set initial refinement steps          = 0
 	end
 
 
@@ -86,8 +89,16 @@ This subsection controls the mesh adaptation method, with default values given b
 
 * The maximum number of elements in the entire domain can be controlled with the ``max number elements`` parameter.
 
+* The boolean parameter ``enable mesh refinement controller`` activates a controller that overrides the value of the of ``fraction coarsening`` parameter. If activated, the controller will try to maintain the total number of elements in the domain equal to the value of ``max number elements`` parameter. The control is done using a PID controller.
+
+.. note:: 
+    If the ``fraction refinement`` parameter is too high, the controller may not be able to maintain the number of elements constant. If ``fraction type = number``, the maximal ``fraction refinement`` that is stable in 3D is 0.125. In 2D, it is 0.25.
+
+.. tip:: 
+	When using the mesh refinement controller, try reducing the ``fraction refinement`` parameter if elements alternate between being refined and coarsened.
+
 .. warning::
-	The ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased.
+	If ``mesh refinement controller`` is set to ``false``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
 
 * The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 

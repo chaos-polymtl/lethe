@@ -20,6 +20,7 @@
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
+#include <core/mesh_controller.h>
 #include <core/sdirk.h>
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
@@ -74,6 +75,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
+  , mesh_controller(p_nsparam.mesh_adaptation.maximum_number_elements)
 {
   if (simulation_parameters.mesh.simplex)
     {
@@ -899,12 +901,27 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   std::vector<bool> global_refine_flags(dim * tria.n_active_cells(), false);
   std::vector<bool> global_coarsen_flags(dim * tria.n_active_cells(), false);
 
-  bool first_variable(true);
+  bool         first_variable(true);
+  const double coarsening_factor = mesh_controller.calculate_coarsening_factor(
+    this->triangulation->n_global_active_cells());
+
+  unsigned int maximal_number_of_elements =
+    this->simulation_parameters.mesh_adaptation.maximum_number_elements;
+  // Override the maximal number of elements if the controller is used. The
+  // controller will find a coarsening_factor that respects the user-defined
+  // maximal_number_of_elements.
+  if (this->simulation_parameters.mesh_adaptation.mesh_controller_is_enabled)
+    maximal_number_of_elements = INT_MAX;
 
   for (const std::pair<const Parameters::MeshAdaptation::Variable,
                        Parameters::MultipleAdaptationParameters> &ivar :
        this->simulation_parameters.mesh_adaptation.variables)
     {
+      double ivar_coarsening_factor = ivar.second.coarsening_fraction;
+      if (this->simulation_parameters.mesh_adaptation
+            .mesh_controller_is_enabled)
+        ivar_coarsening_factor = coarsening_factor;
+
       if (ivar.first == Parameters::MeshAdaptation::Variable::pressure)
         {
           KellyErrorEstimator<dim>::estimate(
@@ -941,8 +958,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           tria,
           estimated_error_per_cell,
           ivar.second.refinement_fraction,
-          ivar.second.coarsening_fraction,
-          this->simulation_parameters.mesh_adaptation.maximum_number_elements);
+          ivar_coarsening_factor,
+          maximal_number_of_elements);
 
       else if (this->simulation_parameters.mesh_adaptation.fractionType ==
                Parameters::MeshAdaptation::FractionType::fraction)
@@ -950,7 +967,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
           refine_and_coarsen_fixed_fraction(tria,
                                             estimated_error_per_cell,
                                             ivar.second.refinement_fraction,
-                                            ivar.second.coarsening_fraction);
+                                            ivar_coarsening_factor);
 
       std::vector<bool> current_refine_flags;
       std::vector<bool> current_coarsen_flags;
