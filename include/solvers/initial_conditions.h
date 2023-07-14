@@ -81,7 +81,6 @@ namespace Parameters
   public:
     InitialConditions()
       : uvwp(dim + 1)
-      , cahn_hilliard(2)
     {}
 
     InitialConditionType type;
@@ -101,7 +100,7 @@ namespace Parameters
     // VOF
     Functions::ParsedFunction<dim> VOF;
     // Bool to apply a Galerkin projection (with a diffusion term) to the VOF
-    // intinitial condition
+    // initial condition
     bool   enable_projection_step;
     double projection_step_diffusion_factor;
 
@@ -109,7 +108,8 @@ namespace Parameters
     Ramp ramp;
 
     // Cahn-Hilliard
-    Functions::ParsedFunction<dim> cahn_hilliard;
+    Functions::ParsedFunction<dim> cahn_hilliard =
+      Functions::ParsedFunction<dim>(2);
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -169,12 +169,12 @@ namespace Parameters
       prm.leave_subsection();
       prm.leave_subsection();
 
-      ramp.declare_parameters(prm);
-
       prm.enter_subsection("cahn hilliard");
       cahn_hilliard.declare_parameters(prm, 2);
-      prm.set("Function expression", "0; 0");
+      prm.set("Function expression", "0; 0;");
       prm.leave_subsection();
+
+      ramp.declare_parameters(prm);
     }
     prm.leave_subsection();
   }

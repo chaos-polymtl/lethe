@@ -4,12 +4,9 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set output name      = cahn_hilliard
-  set output frequency = 1
-  set output path      = ./output/
-  set time end         = 20
-  set time step        = 0.01
+  set method            = steady
+  set number mesh adapt = 3
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
@@ -32,6 +29,19 @@ subsection FEM
 end
 
 #---------------------------------------------------
+# Analytical solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+
+  subsection cahn hilliard
+    set Function expression = sin(pi*x)*sin(pi*y); 1/0.0 #This is to make the test more robust on every configuration. Only the phase (first component) is being tested, the potential is not tested, the numerical solution converges to zero extremely fast.
+  end
+end
+
+#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
@@ -39,7 +49,15 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : true
-  set initial refinement = 5
+  set initial refinement = 4
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
 end
 
 #---------------------------------------------------
@@ -47,14 +65,29 @@ end
 #---------------------------------------------------
 
 subsection cahn hilliard
-  set well height = 2.5
+  set well height = 1.25
+
   subsection epsilon
-    set method = automatic
+    set method = manual
+    set value  = 1
   end
 
   subsection mobility
     set model             = constant
     set mobility constant = 1
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  set enable = true
+
+  subsection cahn hilliard
+    set Function constants  = W=1.25, eps=1
+    set Function expression = 0;-4*W*(sin(pi*x)^3*sin(pi*y)^3 - sin(pi*x)*sin(pi*y)) - eps*eps*2*pi*pi*sin(pi*x)*sin(pi*y)
   end
 end
 
@@ -65,66 +98,31 @@ end
 subsection boundary conditions cahn hilliard
   set number = 4
   subsection bc 0
-    set id          = 0
-    set type        = angle_of_contact
-    set angle value = 135
-  end
-  subsection bc 1
-    set id          = 1
-    set type        = angle_of_contact
-    set angle value = 135
-  end
-  subsection bc 2
-    set id          = 2
-    set type        = angle_of_contact
-    set angle value = 135
-  end
-  subsection bc 3
-    set id          = 3
-    set type        = angle_of_contact
-    set angle value = 135
-  end
-end
-
-#---------------------------------------------------
-# Boundary conditions
-#---------------------------------------------------
-
-subsection boundary conditions
-  set number         = 4
-  set time dependent = true
-
-  subsection bc 0
-    set id   = 2
-    set type = function
-
-    subsection u
-      set Function expression = 3
-    end
-  end
-
-  subsection bc 1
-    set id   = 3
-    set type = function
-
-    subsection u
-      set Function expression = -3
-    end
-  end
-  subsection bc 2
     set id   = 0
-    set type = function
-
-    subsection v
-      set Function expression = -3
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0
     end
   end
   subsection bc 3
-    set id   = 1
-    set type = function
-
-    subsection v
-      set Function expression = 1
+    set id   = 3
+    set type = dirichlet
+    subsection phi
+      set Function expression = 0
     end
   end
 end
@@ -137,23 +135,8 @@ subsection initial conditions
   set type = nodal
 
   subsection cahn hilliard
-    set Function expression = if( (x)^2 + (y-1)^2 < 0.45^2,-1,1) ; 0
+    set Function expression = sin(pi*x)*sin(pi*y); 0
   end
-end
-
-#---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity = verbose
-
-  #---------------------------------------------------
-  # Multiphysics post-processing
-  #---------------------------------------------------
-  # Cahn-Hilliard statistics
-  set calculate phase statistics = false
-  set phase statistics name      = phase_statistics
 end
 
 # --------------------------------------------------
@@ -161,9 +144,9 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-7
+  set tolerance      = 1e-9
   set max iterations = 20
-  set verbosity      = verbose
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
@@ -171,11 +154,11 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set verbosity                             = verbose
+  set verbosity                             = quiet
   set method                                = gmres
-  set max iters                             = 20000
+  set max iters                             = 2000
   set relative residual                     = 1e-3
-  set minimum residual                      = 1e-10
+  set minimum residual                      = 1e-12
   set ilu preconditioner fill               = 1
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00

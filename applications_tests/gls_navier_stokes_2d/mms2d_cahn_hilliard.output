@@ -1,0 +1,55 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      4
+   Number of Cahn-Hilliard degrees of freedom: 578
+
+*****************************
+Steady iteration:        1/4
+*****************************
+L2 error velocity : 0
+L2 error phase order: 0.0110837
+L2 error chemical potential: inf
+
+*****************************
+Steady iteration:        2/4
+*****************************
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      4
+   Number of Cahn-Hilliard degrees of freedom: 2178
+L2 error velocity : 0
+L2 error phase order: 0.00276098
+L2 error chemical potential: inf
+
+*****************************
+Steady iteration:        3/4
+*****************************
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      4
+   Number of Cahn-Hilliard degrees of freedom: 8450
+L2 error velocity : 0
+L2 error phase order: 0.000689625
+L2 error chemical potential: inf
+
+*****************************
+Steady iteration:        4/4
+*****************************
+   Number of active cells:       16384
+   Number of degrees of freedom: 49923
+   Volume of triangulation:      4
+   Number of Cahn-Hilliard degrees of freedom: 33282
+L2 error velocity : 0
+L2 error phase order: 0.000172367
+L2 error chemical potential: inf
+cells  error_velocity   error_pressure
+  256 0.000000e+00   - 0.000000e+00   -
+ 1024 0.000000e+00 nan 0.000000e+00 nan
+ 4096 0.000000e+00 nan 0.000000e+00 nan
+16384 0.000000e+00 nan 0.000000e+00 nan
+cells error_phase_order error_chemical_potential
+  256 1.108371e-02    - inf                    -
+ 1024 2.760980e-03 2.01 inf                  nan
+ 4096 6.896253e-04 2.00 inf                  nan
+16384 1.723675e-04 2.00 inf                  nan

@@ -19,12 +19,10 @@
  * dPhi/dt +  u * gradPhi =  div(M(Phi)*grad eta)
  * eta - f(Phi) + epsilon^2 * div(grad Phi) = 0
  * with Phi the phase field parameter (or phase order), eta the chemical
- * potential. The phase field parameter (or phase order, denoted by Phi) must
- not be confused with the order (respectively
- * phase_ch_order and potential_ch_order) of the finite elements.
- * elements related to the phase field parameter and the chemical potential
- * M the mobility function and epsilon the interface thickness
- *
+ * potential, and M the mobility function and epsilon the interface thickness.
+ * The phase field parameter must not be confused with the order (respectively
+ * phase_ch_order and potential_ch_order) of the finite elements related to the
+ * phase field parameter and the chemical potential.
  */
 
 #ifndef cahn_hilliard_h
@@ -80,7 +78,15 @@ public:
         fe =
           std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
-        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_ch_order) +
+          1);
+        face_quadrature = std::make_shared<QGaussSimplex<dim - 1>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_ch_order) +
+          1);
+        ;
       }
     else
       {
@@ -96,6 +102,10 @@ public:
                    simulation_parameters.fem_parameters.potential_ch_order),
           simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature = std::make_shared<QGauss<dim>>(
+          std::max(simulation_parameters.fem_parameters.phase_ch_order,
+                   simulation_parameters.fem_parameters.potential_ch_order) +
+          1);
+        face_quadrature = std::make_shared<QGauss<dim - 1>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
                    simulation_parameters.fem_parameters.potential_ch_order) +
           1);
@@ -155,6 +165,7 @@ public:
    */
   void
   postprocess(bool first_iteration) override;
+
   /**
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
    * mesh refinement/coarsening
@@ -177,13 +188,9 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   void
-  compute_kelly(
-    const std::pair<const Parameters::MeshAdaptation::Variable,
-                    Parameters::MultipleAdaptationParameters> & /*ivar*/,
-    dealii::Vector<float> & /*estimated_error_per_cell*/) override
-  {
-    return;
-  }
+  compute_kelly(const std::pair<const Parameters::MeshAdaptation::Variable,
+                                Parameters::MultipleAdaptationParameters> &ivar,
+                dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
    * @brief Prepares Cahn-Hilliard to write checkpoint
@@ -196,6 +203,7 @@ public:
    */
   void
   read_checkpoint() override;
+
   /**
    * @brief Returns the dof_handler of the Cahn-Hilliard physics
    */
@@ -300,7 +308,10 @@ private:
    * the results of the assembly over a cell
    */
   virtual void
-  assemble_local_system_matrix();
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    CahnHilliardScratchData<dim> &                        scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -316,7 +327,10 @@ private:
    * the results of the assembly over a cell
    */
   virtual void
-  assemble_local_system_rhs();
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    CahnHilliardScratchData<dim> &                        scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
@@ -330,15 +344,27 @@ private:
    */
 
   virtual void
-  copy_local_matrix_to_global_matrix();
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsCopyData &copy_data);
 
   /**
    * @brief Copy local cell rhs information to global rhs
    */
 
   virtual void
-  copy_local_rhs_to_global_rhs();
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
+  /**
+   * @brief Calculate phase order parameter integral for monitoring purposes
+   */
+  void
+  calculate_phase_statistics();
+
+  /**
+   * @brief Writes the phase integral to an output file
+   */
+  void
+  write_phase_statistics();
 
 
   MultiphysicsInterface<dim> *     multiphysics;
@@ -353,8 +379,9 @@ private:
   // Finite element space
   std::shared_ptr<FESystem<dim>> fe;
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>    mapping;
-  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
 
   ConvergenceTable error_table;
@@ -387,6 +414,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<CahnHilliardAssemblerBase<dim>>> assemblers;
+
+  // Phase statistics table
+  TableHandler statistics_table;
 };
 
 
