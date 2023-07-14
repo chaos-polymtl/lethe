@@ -138,7 +138,7 @@ load balancing will be executed. :math:`{L}` and :math:`{\beta}` denote computat
 
 ---------------------------
 Dynamic disabling contacts
-----------------------------
+---------------------------
 
 The dynamic disabling controls the disabling contact mechanism for performance enhancement. This feature dynamically searches for cells with low particle motion (granular temperature), disabling the computation of contacts for particles within these cells.
 
