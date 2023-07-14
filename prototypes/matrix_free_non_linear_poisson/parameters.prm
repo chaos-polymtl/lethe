@@ -1,34 +1,45 @@
 # Listing of Parameters
 # ---------------------
 # The problem dimension <2|3>
-set dim                = 3
+
+set dim = 3
 
 # Order of FE element <1|2|3>
-set element order      = 1
+
+set element order = 1
 
 # Geometry <hyperball|hypercube|hyperrectangle>
-set geometry           = hyperrectangle
+
+set geometry = hyperrectangle
 
 # Global refinement 1st cycle
+
 set initial refinement = 3
 
 # Number of cycles <1 up to 9-dim >
-set number of cycles   = 1
+
+set number of cycles = 1
 
 # Output vtu files <true|false>
-set output             = false
+
+set output = false
 
 # Name for vtu files
-set output name        = solution
+
+set output name = solution
 
 # Path for vtu output files
-set output path        = ./output/
+
+set output path = ./output/
 
 # Preconditioner <GMG>
-set preconditioner     = GMG
+
+set preconditioner = GMG
 
 # Repetitions in z direction for the hyper rectangle
-set repetitions        = 2
+
+set repetitions = 2
 
 # Source term <zero|mms>
-set source term        = zero
+
+set source term = zero

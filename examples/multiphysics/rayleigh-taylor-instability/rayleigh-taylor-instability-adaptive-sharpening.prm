@@ -35,10 +35,10 @@ subsection restart
   set frequency  = 30
 
   #Output/input files
-  set filename   = restart
+  set filename = restart
 
   #Restarting parameters
-  set restart    = false
+  set restart = false
 end
 
 #---------------------------------------------------
@@ -53,12 +53,11 @@ subsection initial conditions
 
   subsection VOF
     set Function expression = if (y>(0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) , 1, 0)
-    
+
     subsection projection step
       set enable           = true
       set diffusion factor = 1
     end
-    
   end
 end
 
@@ -136,9 +135,9 @@ subsection VOF
   end
 
   subsection phase filtration
-    set type  = tanh
+    set type      = tanh
     set verbosity = quiet
-    set beta = 10
+    set beta      = 10
   end
 end
 

@@ -93,7 +93,7 @@ subsection particles
     set length ratio  = 2
     set stencil order = 3
   end
-  
+
   subsection local mesh refinement
     set initial refinement                = 6
     set refine mesh inside radius factor  = 0.8
@@ -106,7 +106,7 @@ subsection particles
       set Function expression = 0;-981;0
     end
   end
-  
+
   subsection particle info 0
     set type             = sphere
     set shape arguments  = 0.75
@@ -116,10 +116,10 @@ subsection particles
     end
     subsection velocity
       set Function expression = 0;0;0
-    end  
-    
+    end
+
     subsection physical properties
-      set density         = 0.001120
+      set density = 0.001120
     end
   end
 end

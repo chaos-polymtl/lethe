@@ -3,57 +3,62 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set number mesh adapt       = 0
-  set time end                = 1
-  set time step               = 0.2
-  set output name             = vof_ht_heated-walls
-  set output frequency        = 0
+  set method            = bdf1
+  set number mesh adapt = 0
+  set time end          = 1
+  set time step         = 0.2
+  set output name       = vof_ht_heated-walls
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-	set heat transfer = true
-	set VOF 	  = true
+  set heat transfer = true
+  set VOF           = true
 end
 
 #---------------------------------------------------
 # VOF
 #---------------------------------------------------
-subsection VOF	
-	subsection interface sharpening
-		set enable = true
-		set frequency   = 1
-		set interface sharpness    = 1.5
-	end
+
+subsection VOF
+  subsection interface sharpening
+    set enable              = true
+    set frequency           = 1
+    set interface sharpness = 1.5
+  end
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    subsection VOF
-	set Function expression = if (x<=0,1,0)
-    end
+  subsection VOF
+    set Function expression = if (x<=0,1,0)
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     = 2
+  set number of fluids = 2
   subsection fluid 1
     set density              = 1
-    set specific heat 	     = 1
+    set specific heat        = 1
     set thermal conductivity = 2
     set kinematic viscosity  = 1
   end
   subsection fluid 0
     set density              = 1
-    set specific heat 	     = 1
+    set specific heat        = 1
     set thermal conductivity = 0.1
     set kinematic viscosity  = 1
   end
@@ -62,25 +67,27 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-  set type = dealii
-  set grid type = hyper_rectangle
-  set grid arguments = -0.5, -0.1 : 0.5, 0.1 : true
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -0.5, -0.1 : 0.5, 0.1 : true
   set initial refinement = 5
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable     = true
-  set verbosity  = verbose
+  set enable    = true
+  set verbosity = verbose
   subsection temperature
     set Function constants = k1=2, k0=0.1, T1=5, T0=1, L=0.5
     #temperature for fluid 1 (x<=0) : T = k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
     #temperature for fluid 0 (x>0) : T = k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
     set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
-  end  
+  end
   subsection VOF
     set Function expression = if(x<=0,1,0)
   end
@@ -89,30 +96,33 @@ end
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions heat transfer
-  set number                = 2
-    subsection bc 0  #left wall
-      set id = 0
-      set type		    = temperature
-      set value		    = 5
-    end
-    subsection bc 1  #right wall
-      set id = 1
-      set type		    = temperature
-      set value		    = 1
-    end
+  set number = 2
+  subsection bc 0 #left wall
+    set id    = 0
+    set type  = temperature
+    set value = 5
+  end
+  subsection bc 1 #right wall
+    set id    = 1
+    set type  = temperature
+    set value = 1
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity = quiet 
+  set verbosity = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
   set verbosity = quiet
 end

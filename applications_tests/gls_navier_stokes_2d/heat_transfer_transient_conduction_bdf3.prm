@@ -2,128 +2,140 @@
 # ---------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  		= bdf3
-  set time end                		= 2
-  set time step               		= 0.5
-  set number mesh adapt       		= 0
-  set output name             		= conduction
-  set output frequency        		= 0
+  set method            = bdf3
+  set time end          = 2
+  set time step         = 0.5
+  set number mesh adapt = 0
+  set output name       = conduction
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-	set heat transfer  = true
+  set heat transfer = true
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-        set Function expression 	= 0; 0; 0
-    end
-    subsection temperature
-    	set Function expression 	= 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 0
+  end
 end
 
 #---------------------------------------------------
 # Source term
 #---------------------------------------------------
-subsection source term
-    set enable = false
-    subsection xyz
-        set Function expression = 0; 0; 0
-    end
 
-    subsection heat transfer
-        set Function expression =(2*(2*pi)^2 + 1)*exp(t)*sin(2*pi*x)*sin(2*pi*y)
-    end
+subsection source term
+  set enable = false
+  subsection xyz
+    set Function expression = 0; 0; 0
+  end
+
+  subsection heat transfer
+    set Function expression = (2*(2*pi)^2 + 1)*exp(t)*sin(2*pi*x)*sin(2*pi*y)
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     = 1
-    subsection fluid 0
-    set thermal conductivity model 	= constant
-    set thermal conductivity 		= 1
-    set specific heat model 		= constant
-    set specific heat 			= 1
-    
-    set density              		= 1
-    set kinematic viscosity  		= 0.01
-    end
+  set number of fluids = 1
+  subsection fluid 0
+    set thermal conductivity model = constant
+    set thermal conductivity       = 1
+    set specific heat model        = constant
+    set specific heat              = 1
+
+    set density             = 1
+    set kinematic viscosity = 0.01
+  end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-        set type = dealii
-        set grid type = subdivided_hyper_rectangle
-        set grid arguments = 1, 1: -1, -1 : 1, 1 : false
-        set initial refinement = 6
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1, 1: -1, -1 : 1, 1 : false
+  set initial refinement = 6
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions heat transfer
-  set number                  = 1
-    subsection bc 0
-    	set id = 0
-	  set type	      = temperature
-        set value	      = 0
-    end
+  set number = 1
+  subsection bc 0
+    set id    = 0
+    set type  = temperature
+    set value = 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
+  set enable    = true
   set verbosity = verbose
-    subsection uvwp
-            set Function expression =  0 ; 0 ; 0
-    end
-    subsection temperature
-            set Function expression =  sin(2*pi*x)*sin(2*pi*y)*exp(t)
-    end
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  subsection temperature
+    set Function expression = sin(2*pi*x)*sin(2*pi*y)*exp(t)
+  end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-    set temperature order         = 2
+  set velocity order    = 1
+  set pressure order    = 1
+  set temperature order = 2
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 100
-  set verbosity               = quiet
+  set tolerance      = 1e-8
+  set max iterations = 100
+  set verbosity      = quiet
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               		           = quiet
-  set method                                 = gmres
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-8
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-12
-  set ilu preconditioner relative tolerance  = 1.00
-  set max krylov vectors                     = 200
+  set verbosity                             = quiet
+  set method                                = gmres
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-8
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors                    = 200
 end

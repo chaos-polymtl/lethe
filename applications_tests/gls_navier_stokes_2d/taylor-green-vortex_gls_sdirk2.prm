@@ -1,123 +1,134 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = sdirk2
-  set time step               = 0.100    # Time step
-  set number mesh adapt       = 0       # If steady, nb mesh adaptation
-  set time end                = 0.10      # End time of simulation
-  set output name             = tgv # Prefix for VTU outputs
-  set output frequency        = 0       # Frequency of simulation output
+  set method            = sdirk2
+  set time step         = 0.100 # Time step
+  set number mesh adapt = 0     # If steady, nb mesh adaptation
+  set time end          = 0.10  # End time of simulation
+  set output name       = tgv   # Prefix for VTU outputs
+  set output frequency  = 0     # Frequency of simulation output
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-subsection FEM
-    set velocity order            = 2
-    set pressure order            = 1
-end
 
+subsection FEM
+  set velocity order = 2
+  set pressure order = 1
+end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none                                  # <none|iteration|end>
+  set type = none # <none|iteration|end>
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = L2projection
-    subsection uvwp
-            set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
-    end
+  set type = L2projection
+  subsection uvwp
+    set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
+  end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
-subsection analytical solution
-  set verbosity              = verbose
-  set enable                 = true
-    subsection uvwp
-            set Function constants = viscosity=1
-            set Function expression =exp(-2*viscosity*t)*   cos(x) * sin(y) ; -sin(x) * cos(y) * exp(-2*viscosity*t); 0
-    end
-end
 
+subsection analytical solution
+  set verbosity = verbose
+  set enable    = true
+  subsection uvwp
+    set Function constants  = viscosity=1
+    set Function expression = exp(-2*viscosity*t)*   cos(x) * sin(y) ; -sin(x) * cos(y) * exp(-2*viscosity*t); 0
+  end
+end
 
 #---------------------------------------------------
 # Post-Processing
 #---------------------------------------------------
+
 subsection post-processing
-    set verbosity = verbose
-    set calculate enstrophy = true
-    set calculate kinetic energy = true
+  set verbosity                = verbose
+  set calculate enstrophy      = true
+  set calculate kinetic energy = true
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type       = hyper_cube
-    set grid arguments  = 0 : 6.28318530718 : true
-    set initial refinement   = 6                        # initial mesh refinement
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = 0 : 6.28318530718 : true
+  set initial refinement = 6 # initial mesh refinement
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 2
-    subsection bc 0
-        set type                = periodic
-        set id                  = 0
-        set periodic_id         = 1
-        set periodic_direction  = 0
-    end
-    subsection bc 1
-        set type                = periodic
-        set id                  = 2
-        set periodic_id         = 3
-        set periodic_direction  = 1
-    end
-end
 
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 2
+    set periodic_id        = 3
+    set periodic_direction = 1
+  end
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-6
-  set max iterations          = 5
+  set verbosity      = quiet
+  set tolerance      = 1e-6
+  set max iterations = 5
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
   set verbosity                             = quiet
   set method                                = gmres

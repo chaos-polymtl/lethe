@@ -1,144 +1,155 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output name             = couette
-  set output frequency        = 0
-  set number mesh adapt       = 1      # If steady, nb mesh adaptation
-  set log precision           = 3         # Log precision
+  set method            = steady
+  set output name       = couette
+  set output frequency  = 0
+  set number mesh adapt = 1 # If steady, nb mesh adaptation
+  set log precision     = 3 # Log precision
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-    set qmapping all              = true
+  set velocity order = 1
+  set pressure order = 1
+  set qmapping all   = true
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity            = 1.0000
+    set kinematic viscosity = 1.0000
   end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            # A= -(eta_ * eta_) / (1. - eta_ * eta_);
-            # B= ri_ * ri_ / (1. - eta_ * eta_);
-            set Function constants = eta=0.25, ri=0.25
-            set Function expression = - y; x ; 0
-    end
+  set enable = true
+  subsection uvwp
+    # A= -(eta_ * eta_) / (1. - eta_ * eta_);
+    # B= ri_ * ri_ / (1. - eta_ * eta_);
+    set Function constants  = eta=0.25, ri=0.25
+    set Function expression = - y; x ; 0
+  end
 end
 
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate force       = false     # Enable force calculation
-    set calculate torque      = true     # Enable torque calculation
-    set force name            = force     # Name prefix of force files
-    set torque name           = torque    # Name prefix of torque files
-    set output precision      = 10        # Output precision
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
+  set verbosity             = verbose # Output force and torques in log <quiet|verbose>
+  set calculate force       = false   # Enable force calculation
+  set calculate torque      = true    # Enable torque calculation
+  set force name            = force   # Name prefix of force files
+  set torque name           = torque  # Name prefix of torque files
+  set output precision      = 10      # Output precision
+  set calculation frequency = 1       # Frequency of the force calculation
+  set output frequency      = 1       # Frequency of file update
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type = hyper_shell
-    set grid arguments = 0, 0 : 0.25 : 1 : 4:  true
-    set initial refinement   = 2
+  set type               = dealii
+  set grid type          = hyper_shell
+  set grid arguments     = 0, 0 : 0.25 : 1 : 4:  true
+  set initial refinement = 2
 end
 
 # --------------------------------------------------
-# Boundary Conditions 
+# Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 2
-    subsection bc 1
-        set type              = function
-        subsection u
-            set Function expression = -y
-        end
-        subsection v
-            set Function expression = x
-        end
-        subsection w
-            set Function expression = 0
-        end
+  set number = 2
+  subsection bc 1
+    set type = function
+    subsection u
+      set Function expression = -y
     end
-    subsection bc 0
-        set type              = function
-        subsection u
-            set Function expression = -y
-        end
-        subsection v
-            set Function expression = x
-        end
-        subsection w
-            set Function expression = 0
-        end
+    subsection v
+      set Function expression = x
     end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 0
+    set type = function
+    subsection u
+      set Function expression = -y
+    end
+    subsection v
+      set Function expression = x
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
 end
 
 #--------------------------------------------------
 # Velocity Source
 #--------------------------------------------------
+
 subsection velocity source
-    set type=srf
-    set omega_z=-1
+  set type    = srf
+  set omega_z = -1
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = uniform
+  set type = uniform
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 10
-  set residual precision      = 2
-  set verbosity               = quiet
+  set tolerance          = 1e-8
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                    = amg
-  set max iters                 = 100
-  set relative residual         = 1e-4
-  set minimum residual          = 1e-11
-  set amg preconditioner ilu fill                  = 1
-  set amg preconditioner ilu absolute tolerance    = 1e-10
-  set amg preconditioner ilu relative tolerance    = 1.00
-  set amg aggregation threshold = 1e-14  # Aggregation
-  set amg n cycles              = 1      # Number of AMG cycles
-  set amg w cycles              = true  # W cycles, otherwise V cycles
-  set amg smoother sweeps       = 2      # Sweeps
-  set amg smoother overlap      = 1      # Overlap
-  set verbosity               = quiet
+  set method                                    = amg
+  set max iters                                 = 100
+  set relative residual                         = 1e-4
+  set minimum residual                          = 1e-11
+  set amg preconditioner ilu fill               = 1
+  set amg preconditioner ilu absolute tolerance = 1e-10
+  set amg preconditioner ilu relative tolerance = 1.00
+  set amg aggregation threshold                 = 1e-14 # Aggregation
+  set amg n cycles                              = 1     # Number of AMG cycles
+  set amg w cycles                              = true  # W cycles, otherwise V cycles
+  set amg smoother sweeps                       = 2     # Sweeps
+  set amg smoother overlap                      = 1     # Overlap
+  set verbosity                                 = quiet
 end

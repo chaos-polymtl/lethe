@@ -1,123 +1,133 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 0
-  set output name             = poiseuille
+  set method            = steady
+  set number mesh adapt = 0
+  set output name       = poiseuille
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 2
-    set pressure order            = 1
+  set velocity order = 2
+  set pressure order = 1
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    set viscosity = 1
-    subsection uvwp
-            set Function expression = 0; 0; 0;
-    end
+  set type      = nodal
+  set viscosity = 1
+  subsection uvwp
+    set Function expression = 0; 0; 0;
+  end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
 
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = 1; 0 ; 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = 1; 0 ; 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function constants = H=1, G=1, mu=1
-            set Function expression =  0.5 * G / mu * (y) * (H - y) ; 0 ; 0
-    end
+  set enable = true
+  subsection uvwp
+    set Function constants  = H=1, G=1, mu=1
+    set Function expression = 0.5 * G / mu * (y) * (H - y) ; 0 ; 0
+  end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-subsection mesh
-    set type                 = gmsh
-    set file name            = ../../2d_channel.msh
 
+subsection mesh
+  set type      = gmsh
+  set file name = ../../2d_channel.msh
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform
-  set max number elements     = 20000
-  set max refinement level    = 3
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.1
-  set fraction coarsening     = 0.1
-end
 
+subsection mesh adaptation
+  set type                 = uniform
+  set max number elements  = 20000
+  set max refinement level = 3
+  set min refinement level = 0
+  set frequency            = 1
+  set fraction refinement  = 0.1
+  set fraction coarsening  = 0.1
+end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 3
-    subsection bc 0
-        set type                = periodic
-        set id                  = 0
-        set periodic_id         = 1
-        set periodic_direction  = 0
-    end
-    subsection bc 1
-        set type              = noslip
-        set id                = 2
-    end
-end
 
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set type               = periodic
+    set id                 = 0
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
+  subsection bc 1
+    set type = noslip
+    set id   = 2
+  end
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-6
-  set max iterations          = 3
+  set verbosity      = quiet
+  set tolerance      = 1e-6
+  set max iterations = 3
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-8
-  set minimum residual        = 1e-9
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-8
+  set minimum residual                      = 1e-9
   set ilu preconditioner fill               = 1
   set ilu preconditioner absolute tolerance = 1e-5
   set ilu preconditioner relative tolerance = 1.00

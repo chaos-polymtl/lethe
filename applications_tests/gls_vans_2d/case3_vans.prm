@@ -3,134 +3,140 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set number mesh adapt       = 0
-  set output name              = result_
-  set output frequency        = 0
-  set startup time scaling         = 0.6
-  set time end                     = 1
-  set time step                    = 0.1
-  set subdivision             = 1  
+  set method               = bdf1
+  set number mesh adapt    = 0
+  set output name          = result_
+  set output frequency     = 0
+  set startup time scaling = 0.6
+  set time end             = 1
+  set time step            = 0.1
+  set subdivision          = 1
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -1 : 1 : false
-    set initial refinement   = 6
-end
 
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 6
+end
 
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
+
 subsection void fraction
-   set mode = function
-     subsection function
-     set Function expression = (1 - 0.1*cos(2*pi*t)*exp(-sin(pi*x)*sin(pi*y)))/exp(1)
-     end
+  set mode = function
+  subsection function
+    set Function expression = (1 - 0.1*cos(2*pi*t)*exp(-sin(pi*x)*sin(pi*y)))/exp(1)
+  end
 end
 
 #---------------------------------------------------
 # CFD-DEM
 #---------------------------------------------------
+
 subsection cfd-dem
-   set grad div = false
-   set vans model = modelB
-   set pressure force = false
-   set shear force = false
+  set grad div       = false
+  set vans model     = modelB
+  set pressure force = false
+  set shear force    = false
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = L2projection
-    subsection uvwp
-            set Function expression = cos(pi*x)*cos(pi*y); cos(pi*x)*cos(pi*y);  0
-    end
+  set type = L2projection
+  subsection uvwp
+    set Function expression = cos(pi*x)*cos(pi*y); cos(pi*x)*cos(pi*y);  0
+  end
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 0
-
+  set number = 0
 end
-
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(-(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*(x + y))*cos(2*pi*t) + 0.2*sin(2*pi*t) + 0.1*sin(pi*x)*cos(2*pi*t)^2*cos(pi*x)*cos(pi*y)^2 + 0.1*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x)^2*cos(pi*y))*exp(-sin(pi*x)*sin(pi*y) - 1)
-
-
-
-
-end
+  set enable = true
+  subsection xyz
+    set Function expression = pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(-(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*(x + y))*cos(2*pi*t) + 0.2*sin(2*pi*t) + 0.1*sin(pi*x)*cos(2*pi*t)^2*cos(pi*x)*cos(pi*y)^2 + 0.1*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x)^2*cos(pi*y))*exp(-sin(pi*x)*sin(pi*y) - 1)
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y); cos(2*pi*t)*cos(pi*x)*cos(pi*y); 0
+  set enable = true
+  subsection uvwp
+    set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y); cos(2*pi*t)*cos(pi*x)*cos(pi*y); 0
+  end
 end
-end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = none
-end
 
+subsection mesh adaptation
+  set type = none
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 10
-  set verbosity               = quiet
+  set tolerance      = 1e-8
+  set max iterations = 10
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 5000
-  set relative residual                      = 1e-4
-  set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-10
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
 end

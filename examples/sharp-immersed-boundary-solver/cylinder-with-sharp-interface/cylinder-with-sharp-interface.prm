@@ -115,7 +115,7 @@ subsection particles
     set refine mesh inside radius factor  = 0.8
     set refine mesh outside radius factor = 1.2
   end
-  subsection particle info 0    
+  subsection particle info 0
     set type            = sphere
     set shape arguments = 0.5
     subsection position

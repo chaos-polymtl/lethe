@@ -3,73 +3,78 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set time end                = 0.04
-  set time step               = 0.01
-  set output frequency        = 0
+  set method           = bdf1
+  set time end         = 0.04
+  set time step        = 0.01
+  set output frequency = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
   set VOF = true
 end
 
-subsection VOF	
+subsection VOF
   subsection interface sharpening
-    set enable		 	= true
-    set threshold 		= 0.5
-    set interface sharpness 	= 3
-    set frequency 		= 2
+    set enable              = true
+    set threshold           = 0.5
+    set interface sharpness = 3
+    set frequency           = 2
   end
 end
-
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
-    subsection VOF
-                set Function constants = eta=5, ri=0.8, ro=2.5
-            set Function expression =    if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , (if ((x-eta)*(x-eta)+(y-eta)*(y-eta)<ri*ri , 1 , -(1/(ro-ri)) * sqrt((x-eta)*(x-eta)+(y-eta)*(y-eta)) + (ro/(ro-ri)))) , 0)
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function constants  = eta=5, ri=0.8, ro=2.5
+    set Function expression = if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , (if ((x-eta)*(x-eta)+(y-eta)*(y-eta)<ri*ri , 1 , -(1/(ro-ri)) * sqrt((x-eta)*(x-eta)+(y-eta)*(y-eta)) + (ro/(ro-ri)))) , 0)
+  end
 end
 
 #---------------------------------------------------
 # Source term
 #---------------------------------------------------
-subsection source term
-    set enable = true
 
-    subsection xyz
-        set Function expression = 0; 0; 0
-    end
+subsection source term
+  set enable = true
+
+  subsection xyz
+    set Function expression = 0; 0; 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     = 2
-  subsection fluid 1	#water
-    set density              = 0.9982
-    set kinematic viscosity  = 0.01
+  set number of fluids = 2
+  subsection fluid 1 #water
+    set density             = 0.9982
+    set kinematic viscosity = 0.01
   end
-  subsection fluid 0	#air
-    set density              = 0.02
-    set kinematic viscosity  = 0.05
+  subsection fluid 0 #air
+    set density             = 0.02
+    set kinematic viscosity = 0.05
   end
 end
 
 #--------------------------------------------------
 # Restart
 #--------------------------------------------------
+
 subsection restart
   set checkpoint = true
   set restart    = false
@@ -80,84 +85,89 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = 0, 0 : 14., 10. : true
-		set initial refinement = 6
-end
 
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 14., 10. : true
+  set initial refinement = 6
+end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-   set type = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 3
-    subsection bc 0
-        set id = 0
-        set type              = slip
-    end
-    subsection bc 1
-	set id = 1
-        set type              = slip
-    end
-    subsection bc 2
-	set id = 2
-        set type              = slip
-    end
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-end
 
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-4
-  set max iterations          = 100
-  set verbosity               = quiet 
+  set tolerance      = 1e-4
+  set max iterations = 100
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                                 = gmres
-  set max iters                              = 8000
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-5
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-12
-  set ilu preconditioner relative tolerance  = 1.00
-  set max krylov vectors                     = 200
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 8000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-5
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors                    = 200
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable     	= true
-  set verbosity 	= verbose
-      subsection uvwp
-            set Function expression = 0; 0; 0
-    end
-    subsection VOF
-                set Function constants = eta=5, ro=1.65
-            set Function expression =    if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , 1 , 0)
-    end
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function constants  = eta=5, ro=1.65
+    set Function expression = if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , 1 , 0)
+  end
 end

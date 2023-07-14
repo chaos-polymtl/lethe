@@ -111,7 +111,6 @@ subsection particles
   end
 end
 
-
 subsection non-linear solver
   set tolerance      = 1e-4
   set max iterations = 10
