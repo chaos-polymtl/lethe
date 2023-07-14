@@ -121,17 +121,42 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(
-        velocity_cell,
-        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-        *multiphysics->get_block_previous_solutions(PhysicsID::fluid_dynamics));
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_time_average_solution(
+              PhysicsID::fluid_dynamics),
+            *multiphysics->get_block_previous_solutions(
+              PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            *multiphysics->get_block_previous_solutions(
+              PhysicsID::fluid_dynamics));
+        }
     }
   else
     {
-      scratch_data.reinit_velocity(
-        velocity_cell,
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+        }
     }
 
   copy_data.reset();
@@ -214,17 +239,42 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(
-        velocity_cell,
-        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-        *multiphysics->get_block_previous_solutions(PhysicsID::fluid_dynamics));
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_time_average_solution(
+              PhysicsID::fluid_dynamics),
+            *multiphysics->get_block_previous_solutions(
+              PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            *multiphysics->get_block_previous_solutions(
+              PhysicsID::fluid_dynamics));
+        }
     }
   else
     {
-      scratch_data.reinit_velocity(
-        velocity_cell,
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+        }
+      else
+        {
+          scratch_data.reinit_velocity(
+            velocity_cell,
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            *multiphysics->get_previous_solutions(PhysicsID::fluid_dynamics));
+        }
     }
 
   copy_data.reset();
@@ -794,17 +844,39 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
       if (multiphysics->fluid_dynamics_is_block())
         {
-          position_and_velocity =
-            calculate_barycenter(this->present_solution,
-                                 *multiphysics->get_block_solution(
-                                   PhysicsID::fluid_dynamics));
+          if (this->simulation_parameters.multiphysics
+                .use_time_average_velocity_field)
+            {
+              position_and_velocity = calculate_barycenter(
+                this->present_solution,
+                *multiphysics->get_block_time_average_solution(
+                  PhysicsID::fluid_dynamics));
+            }
+          else
+            {
+              position_and_velocity =
+                calculate_barycenter(this->present_solution,
+                                     *multiphysics->get_block_solution(
+                                       PhysicsID::fluid_dynamics));
+            }
         }
       else
         {
-          position_and_velocity =
-            calculate_barycenter(this->present_solution,
-                                 *multiphysics->get_solution(
-                                   PhysicsID::fluid_dynamics));
+          if (this->simulation_parameters.multiphysics
+                .use_time_average_velocity_field)
+            {
+              position_and_velocity =
+                calculate_barycenter(this->present_solution,
+                                     *multiphysics->get_time_average_solution(
+                                       PhysicsID::fluid_dynamics));
+            }
+          else
+            {
+              position_and_velocity =
+                calculate_barycenter(this->present_solution,
+                                     *multiphysics->get_solution(
+                                       PhysicsID::fluid_dynamics));
+            }
         }
       if (this_mpi_process == 0)
         {
@@ -2525,14 +2597,37 @@ VolumeOfFluid<dim>::handle_peeling_wetting()
           // Parse fluid present solution to apply_peeling_wetting method
           if (multiphysics->fluid_dynamics_is_block())
             {
-              apply_peeling_wetting(i_bc,
-                                    *multiphysics->get_block_solution(
-                                      PhysicsID::fluid_dynamics));
+              if (this->simulation_parameters.multiphysics
+                    .use_time_average_velocity_field)
+                {
+                  apply_peeling_wetting(
+                    i_bc,
+                    *multiphysics->get_block_time_average_solution(
+                      PhysicsID::fluid_dynamics));
+                }
+              else
+                {
+                  apply_peeling_wetting(i_bc,
+                                        *multiphysics->get_block_solution(
+                                          PhysicsID::fluid_dynamics));
+                }
             }
           else
             {
-              apply_peeling_wetting(
-                i_bc, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+              if (this->simulation_parameters.multiphysics
+                    .use_time_average_velocity_field)
+                {
+                  apply_peeling_wetting(
+                    i_bc,
+                    *multiphysics->get_time_average_solution(
+                      PhysicsID::fluid_dynamics));
+                }
+              else
+                {
+                  apply_peeling_wetting(i_bc,
+                                        *multiphysics->get_solution(
+                                          PhysicsID::fluid_dynamics));
+                }
             }
         }
     } // end loop on boundary_conditions_vof
@@ -2609,19 +2704,44 @@ VolumeOfFluid<dim>::apply_peeling_wetting(const unsigned int i_bc,
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      pressure_monitored_avg = find_monitored_fluid_avg_pressure(
-        this->present_solution,
-        *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-        this->simulation_parameters.multiphysics.vof_parameters.conservation
-          .monitored_fluid);
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
+        {
+          pressure_monitored_avg = find_monitored_fluid_avg_pressure(
+            this->present_solution,
+            *multiphysics->get_block_time_average_solution(
+              PhysicsID::fluid_dynamics),
+            this->simulation_parameters.multiphysics.vof_parameters.conservation
+              .monitored_fluid);
+        }
+      else
+        {
+          pressure_monitored_avg = find_monitored_fluid_avg_pressure(
+            this->present_solution,
+            *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.multiphysics.vof_parameters.conservation
+              .monitored_fluid);
+        }
     }
   else
     {
-      pressure_monitored_avg = find_monitored_fluid_avg_pressure(
-        this->present_solution,
-        *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-        this->simulation_parameters.multiphysics.vof_parameters.conservation
-          .monitored_fluid);
+      if (this->simulation_parameters.multiphysics
+            .use_time_average_velocity_field)
+        {
+          pressure_monitored_avg = find_monitored_fluid_avg_pressure(
+            this->present_solution,
+            *multiphysics->get_time_average_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.multiphysics.vof_parameters.conservation
+              .monitored_fluid);
+        }
+      else
+        {
+          pressure_monitored_avg = find_monitored_fluid_avg_pressure(
+            this->present_solution,
+            *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+            this->simulation_parameters.multiphysics.vof_parameters.conservation
+              .monitored_fluid);
+        }
     }
 
   // Loop on cell_vof
