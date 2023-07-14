@@ -37,14 +37,15 @@
  * @ingroup assemblers
  */
 template <int dim>
-class GLSNavierStokesCahnHilliardAssemblerCore : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesCahnHilliardAssemblerCore
+  : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesCahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
-    , ch_parameters(nsparam.multiphysics.vof_parameters)
+    , ch_parameters(nsparam.multiphysics.ch_parameters)
   {}
 
   /**
@@ -65,10 +66,8 @@ public:
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool SUPG = true;
-
   std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::CahnHilliard             ch_parameters;
+  const Parameters::CahnHilliard     ch_parameters;
 };
 
 /**
@@ -84,7 +83,8 @@ public:
  */
 
 template <int dim>
-class GLSNavierStokesCahnHilliardAssemblerBDF : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesCahnHilliardAssemblerBDF
+  : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSNavierStokesCahnHilliardAssemblerBDF(

@@ -13,143 +13,129 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-    const double well_height       = this->ch_parameters.well_height;
-    const double mobility_constant = this->ch_parameters.mobility_constant;
-    double       epsilon           = 0.0;
+  const double well_height       = scratch_data.well_height;
+  const double mobility_constant = scratch_data.mobility_constant;
+  const double epsilon           = scratch_data.epsilon;
+  const double density_diff      = scratch_data.density_diff;
 
-    if (this->ch_parameters.epsilon_set_method ==
-        Parameters::EpsilonSetStrategy::automatic)
-    {
-        const double h = scratch_data.cell_size;
-        epsilon        = 2 * h;
-    }
-
-    else if (this->ch_parameters.epsilon_set_method ==
-             Parameters::EpsilonSetStrategy::manual)
-    {
-        epsilon = this->ch_parameters.epsilon;
-    }
-
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual_vec = copy_data.strong_residual;
-  auto &strong_jacobian_vec = copy_data.strong_jacobian;
-  auto &local_matrix        = copy_data.local_matrix;
-
+  auto &local_matrix = copy_data.local_matrix;
 
   std::vector<double> &phase_values = scratch_data.phase_order_ch_values;
 
+  // Equations are formulated in incompressible form (density must be constant)
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix"));
 
-
-  // Loop over the quadrature points
-  for (unsigned int q = 0; q < n_q_points; ++q)
+  // Constant mobility model
+  if (this->ch_parameters.mobility_model == Parameters::MobilityModel::constant)
     {
-      // Gather into local variables the relevant fields
-      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-      const Tensor<2, dim> velocity_gradient =
-        scratch_data.velocity_gradients[q];
-
-
-
-      // Forcing term
-      Tensor<1, dim> force = scratch_data.force[q];
-
-      // Calculation of the magnitude of the velocity for the
-      // stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
-
-      // Store JxW in local variable for faster access;
-      const double JxW = JxW_vec[q];
-
-      // Calculation of the equivalent properties at the quadrature point
-      double       density_eq           = scratch_data.density[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_eq * viscosity_eq;
-
-
-      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
-      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
-
-
-      // We loop over the column first to prevent recalculation
-      // of the strong jacobian in the inner loop
-      for (unsigned int j = 0; j < n_dofs; ++j)
+      // Loop over the quadrature points
+      for (unsigned int q = 0; q < n_q_points; ++q)
         {
-          const auto &phi_u_j           = scratch_data.phi_u[q][j];
-          const auto &grad_phi_u_j      = scratch_data.grad_phi_u[q][j];
-          const auto &laplacian_phi_u_j = scratch_data.laplacian_phi_u[q][j];
-          
-        }
+          // Gather into local variables the relevant fields
+          const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+          const Tensor<2, dim> velocity_gradient =
+            scratch_data.velocity_gradients[q];
+          const Tensor<1, dim> relative_diffusive_flux =
+            -density_diff * mobility_constant *
+            scratch_data.chemical_potential_ch_gradients[q];
+          const double potential_value =
+            scratch_data.chemical_potential_ch_values[q];
+          const Tensor<1, dim> phase_order_gradient =
+            scratch_data.phase_order_ch_gradients[q];
+
+          // Forcing term
+          Tensor<1, dim> force = scratch_data.force[q];
+
+          // Store JxW in local variable for faster access;
+          const double JxW = JxW_vec[q];
+
+          // Calculation of the equivalent properties at the quadrature point
+          double       density_eq           = scratch_data.density[q];
+          double       viscosity_eq         = scratch_data.viscosity[q];
+          const double dynamic_viscosity_eq = density_eq * viscosity_eq;
 
 
+          std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+          std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
 
-      for (unsigned int i = 0; i < n_dofs; ++i)
-        {
-          const auto &phi_u_i      = scratch_data.phi_u[q][i];
-          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
-          const auto &phi_p_i      = scratch_data.phi_p[q][i];
-          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          // Pressure scaling factor
+          const double pressure_scaling_factor =
+            scratch_data.pressure_scaling_factor;
 
-          // Store these temporary products in auxiliary variables for speed
-          const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
-          const auto strong_residual_x_grad_phi_u_i =
-            strong_residual * grad_phi_u_i;
-
-          for (unsigned int j = 0; j < n_dofs; ++j)
+          for (unsigned int i = 0; i < n_dofs; ++i)
             {
-              const auto &phi_u_j      = scratch_data.phi_u[q][j];
-              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto &grad_shear_rate_j =
-                grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto &phi_u_i      = scratch_data.phi_u[q][i];
+              const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+              const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+              const auto &phi_p_i      = scratch_data.phi_p[q][i];
+              const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
-              const auto &phi_p_j =
-                scratch_data.phi_p[q][j] * pressure_scaling_factor;
+              // Store these temporary products in auxiliary variables for speed
+              const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
 
-              const auto &strong_jac = strong_jacobian_vec[q][j];
-
-              double local_matrix_ij =
-                dynamic_viscosity_eq *
-                  scalar_product(grad_shear_rate_j, grad_phi_u_i) +
-                density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
-                density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
-                div_phi_u_i * phi_p_j;
-
-              if (solve_continuity)
+              for (unsigned int j = 0; j < n_dofs; ++j)
                 {
-                  // Continuity
-                  local_matrix_ij += phi_p_i * div_phi_u_j;
+                  const auto &phi_u_j      = scratch_data.phi_u[q][j];
+                  const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+                  const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+                  const auto &grad_shear_rate_j =
+                    grad_phi_u_j + transpose(grad_phi_u_j);
 
-                  // PSPG GLS term
-                  local_matrix_ij +=
-                    tau / density_eq * (strong_jac * grad_phi_p_i);
-                }
-              else
-                {
-                  // assemble Jacobian corresponding to p = 0
-                  local_matrix_ij += phi_p_i * phi_p_j;
-                }
+                  const auto &phi_p_j =
+                    scratch_data.phi_p[q][j] * pressure_scaling_factor;
 
-              // Jacobian is currently incomplete
-              if (SUPG)
-                {
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
+                  double local_matrix_ij =
+                    // Momentum terms
+                    dynamic_viscosity_eq *
+                      scalar_product(grad_shear_rate_j, grad_phi_u_i) +
+                    density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                    density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
+                    div_phi_u_i * phi_p_j +
+                    // Continuity terms
+                    phi_p_i * div_phi_u_j -
+                    // Relative diffusive flux term
+                    relative_diffusive_flux * grad_phi_u_j * phi_u_i;
+                  // TODO (other mobility + RHS)
+                  // Surface tension term (in RHS only)
+                  //                    -curvature * potential_value *
+                  //                    phase_order_gradient * phi_u_i
+
+
+
+                  //              if (solve_continuity)
+                  //                {
+                  //                  // Continuity
+                  //                  local_matrix_ij += phi_p_i * div_phi_u_j;
+                  //
+                  //                  // PSPG GLS term
+                  //                  local_matrix_ij +=
+                  //                    tau / density_eq * (strong_jac *
+                  //                    grad_phi_p_i);
+                  //                }
+                  //              else
+
+                  // TODO Uncover this mystery
+                  //                {
+                  //                  // assemble Jacobian corresponding to p =
+                  //                  0 local_matrix_ij += phi_p_i * phi_p_j;
+                  //                }
+
+                  local_matrix_ij *= JxW;
+                  local_matrix(i, j) += local_matrix_ij;
                 }
-              local_matrix_ij *= JxW;
-              local_matrix(i, j) += local_matrix_ij;
             }
         }
     }
+  else
+    {}
 }
 
 
@@ -443,6 +429,3 @@ GLSNavierStokesCahnHilliardAssemblerBDF<dim>::assemble_rhs(
 
 template class GLSNavierStokesCahnHilliardAssemblerBDF<2>;
 template class GLSNavierStokesCahnHilliardAssemblerBDF<3>;
-
-
-

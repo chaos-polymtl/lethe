@@ -261,6 +261,25 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief SurfaceTensionForce - Defines the parameters for
+   * the calculation of surface tension force in the Cahn-Hilliard solver.
+   */
+  struct CahnHilliard_SurfaceTensionForce
+  {
+    bool enable;
+
+    bool output_vof_auxiliary_fields;
+
+    // Type of verbosity for the surface tension force calculation
+    Parameters::Verbosity verbosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
 
   /**
