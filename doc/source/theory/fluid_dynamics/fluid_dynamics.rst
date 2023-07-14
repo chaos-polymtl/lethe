@@ -12,3 +12,4 @@ Fluid Dynamics
     stabilization
     linear_solvers
     rheology
+    vof
