@@ -757,6 +757,9 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             this->simulation_parameters.particlesParameters->particles[i];
           if (particles[i].integrate_motion == true)
             {
+              if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+                throw std::runtime_error(
+                  "Shape other than sphere cannot have their motion integrate");
               some_particle_coupled = true;
             }
         }
@@ -770,6 +773,9 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         {
           if (particles[i].integrate_motion == true)
             {
+              if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+                throw std::runtime_error(
+                  "Shape other than sphere cannot have their motion integrate");
               some_particle_coupled = true;
             }
         }
@@ -1104,7 +1110,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // IB stencil to extrapolate the fluid stress tensor.
 
                       std::vector<Tensor<2, dim>>
-                                                  local_face_viscous_stress_tensor(dofs_per_face);
+                        local_face_viscous_stress_tensor(dofs_per_face);
                       std::vector<Tensor<2, dim>> local_face_pressure_tensor(
                         dofs_per_face);
                       for (unsigned int i = 0;

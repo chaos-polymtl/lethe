@@ -262,31 +262,44 @@ IB Particles
 .. code-block:: text
 
     subsection particles
-      set number of particles                     = 1
-      set stencil order                           = 3
-      set refine mesh inside radius factor        = 0.8
-      set refine mesh outside radius factor       = 1.3
-      set initial refinement                      = 6
-      set integrate motion                        = true
       set assemble Navier-Stokes inside particles = false
-      set length ratio                            = 2
-      set particle nonlinear tolerance            = 1e-5
-      set alpha                                   = 1
-      subsection gravity
-        set Function expression = 0;-981;0
+      set number of particles                     = 1
+      subsection extrapolation function
+        set length ratio  = 2
+        set stencil order = 3
       end
+      
+      subsection local mesh refinement
+        set initial refinement                = 6
+        set refine mesh inside radius factor  = 0.8
+        set refine mesh outside radius factor = 1.3
+      end
+
+      subsection DEM
+        set particle nonlinear tolerance = 1e-5
+        subsection gravity
+          set Function expression = 0;-981;0
+        end
+      end
+      
       subsection particle info 0
+        set type             = sphere
+        set shape arguments  = 0.75
+        set integrate motion = true
         subsection position
           set Function expression = 5;12.75;5
         end
         subsection velocity
           set Function expression = 0;0;0
+        end  
+        
+        subsection physical properties
+          set density         = 0.001120
         end
-        set type            = sphere
-        set shape arguments = 0.75
-        set density         = 0.001120
       end
     end
+
+
 
 In this subsection, we define most of the parameters that are related to the particle.
 
@@ -300,8 +313,6 @@ In this subsection, we define most of the parameters that are related to the par
 * The ``refine mesh outside radius factor`` is set to 1.3. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 
 * The ``initial refinement`` is set to 6. Here we want to have the mesh as small as possible for the first time step. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 6 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle is as small as possible. This number of refinement is 1 more than necessary. This is to avoid having part of the particle not properly refined as the initial mesh is big enough that some elements cut by the IB may not be properly detected at the beginning of the process. Doing one more refinement ensures that all the elements are properly refined. 
-
-* The ``fluid density`` is set to 0.000960 according to the description of the problem. As mentioned above, this parameter is a duplication of the density parameter in the physics properties. This will be changed soon, and this parameter will be removed.
 
 * The ``integrate motion`` is set to true because we are interested in the dynamic of the particle as it sediments in the rectangular box.
 
