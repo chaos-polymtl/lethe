@@ -474,8 +474,8 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
     }
 
-  if (this->simulation_parameters.multiphysics.cahn_hilliard)
-    {}
+  //  if (this->simulation_parameters.multiphysics.cahn_hilliard)
+  //    {}
 
   else
     {

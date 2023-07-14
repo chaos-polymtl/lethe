@@ -91,8 +91,11 @@ CahnHilliardScratchData<dim>::calculate_physical_properties()
           // Cannot proceed a two-phase flow simulations if only one fluid is
           // defined. This error must have been thrown a long time ago by the
           // code, it is repeated here for clarity.
-          throw std::runtime_error(
-            "Cannot run Cahn-Hilliard simulations with only 1 fluid, review the Physical Properties section of the .prm");
+          // TODO uncomment
+          /*throw std::runtime_error(
+            "Cannot run Cahn-Hilliard simulations with only 1 fluid, review the
+            Physical Properties section of the .prm");*/
+          return;
         }
         case 2: {
           const auto density_models = properties_manager.get_density_vector();

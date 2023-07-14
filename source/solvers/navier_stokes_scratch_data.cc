@@ -121,7 +121,6 @@ NavierStokesScratchData<dim>::enable_vof(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
-  surface_tension     = std::vector<double>(n_q_points);
 
   // Create filter
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
@@ -156,7 +155,6 @@ NavierStokesScratchData<dim>::enable_vof(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
-  surface_tension     = std::vector<double>(n_q_points);
 
   // Create filter
   this->filter = filter;
@@ -165,9 +163,9 @@ NavierStokesScratchData<dim>::enable_vof(
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_cahn_hilliard(
-  const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const FESystem<dim> &  fe,
+  const Quadrature<dim> &quadrature,
+  const Mapping<dim> &   mapping)
 {
   gather_ch    = true;
   fe_values_ch = std::make_shared<FEValues<dim>>(
@@ -183,13 +181,14 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
     std::vector<Tensor<1, dim>>(this->n_q_points);
 
   // Allocate physical properties
-  density_0           = std::vector<double>(n_q_points);
-  density_1           = std::vector<double>(n_q_points);
-  viscosity_0         = std::vector<double>(n_q_points);
-  viscosity_1         = std::vector<double>(n_q_points);
-  thermal_expansion_0 = std::vector<double>(n_q_points);
-  thermal_expansion_1 = std::vector<double>(n_q_points);
-  surface_tension     = std::vector<double>(n_q_points);
+  density_0            = std::vector<double>(n_q_points);
+  density_1            = std::vector<double>(n_q_points);
+  viscosity_0          = std::vector<double>(n_q_points);
+  viscosity_1          = std::vector<double>(n_q_points);
+  thermal_expansion_0  = std::vector<double>(n_q_points);
+  thermal_expansion_1  = std::vector<double>(n_q_points);
+  surface_tension      = std::vector<double>(n_q_points);
+  mobility_constant_ch = std::vector<double>(n_q_points);
 }
 
 
@@ -357,12 +356,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_0 = properties_manager.get_rheology(0);
           const auto density_model_1  = properties_manager.get_density(1);
           const auto rheology_model_1 = properties_manager.get_rheology(1);
-          const auto material_interaction_id =
-            properties_manager.get_material_interaction_id("fluid-fluid", 0, 1);
-          const auto surface_tension_model =
-            properties_manager.get_surface_tension(material_interaction_id);
-          const auto mobility_ch_model =
-            properties_manager.get_mobility_ch(material_interaction_id);
 
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)
@@ -383,8 +376,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           density_model_1->vector_value(fields, density_1);
           rheology_model_1->vector_value(fields, viscosity_1);
 
-          surface_tension_model->vector_value(fields, surface_tension);
-
           if (gather_temperature)
             {
               const auto thermal_expansion_model_0 =
@@ -399,6 +390,18 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
           if (gather_ch)
             {
+              const auto material_interaction_id =
+                properties_manager.get_material_interaction_id("fluid-fluid",
+                                                               0,
+                                                               1);
+              const auto surface_tension_model =
+                properties_manager.get_surface_tension(material_interaction_id);
+              const auto mobility_ch_model =
+                properties_manager.get_mobility_ch(material_interaction_id);
+
+              surface_tension_model->vector_value(fields, surface_tension);
+              mobility_ch_model->vector_value(fields, mobility_constant_ch);
+
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {

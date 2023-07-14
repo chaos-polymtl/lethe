@@ -932,9 +932,9 @@ public:
    */
 
   void
-  enable_cahn_hilliard(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+  enable_cahn_hilliard(const FESystem<dim> &  fe,
+                       const Quadrature<dim> &quadrature,
+                       const Mapping<dim> &   mapping);
 
 
   /** @brief Reinitialize the content of the scratch for CH
@@ -962,17 +962,18 @@ public:
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
 
-    // Gather phase fraction (values, gradient)
-    this->fe_values_ch->operator[](phase_order)
-      .get_function_values(current_solution, this->phase_order_ch_values);
-    this->fe_values_ch->operator[](chemical_potential)
-      .get_function_values(current_solution,
-                           this->chemical_potential_ch_values);
-    this->fe_values_ch->operator[](phase_order)
-      .get_function_gradients(current_solution, this->phase_order_ch_gradients);
-    this->fe_values_ch->operator[](chemical_potential)
-      .get_function_gradients(current_solution,
-                              this->chemical_potential_ch_gradients);
+    //    // Gather phase fraction (values, gradient)
+    //    this->fe_values_ch->operator[](phase_order)
+    //      .get_function_values(current_solution, this->phase_order_ch_values);
+    //    this->fe_values_ch->operator[](chemical_potential)
+    //      .get_function_values(current_solution,
+    //                           this->chemical_potential_ch_values);
+    //    this->fe_values_ch->operator[](phase_order)
+    //      .get_function_gradients(current_solution,
+    //      this->phase_order_ch_gradients);
+    //    this->fe_values_ch->operator[](chemical_potential)
+    //      .get_function_gradients(current_solution,
+    //                              this->chemical_potential_ch_gradients);
 
     // Initialize parameters
     this->epsilon           = (ch_parameters.epsilon_set_method ==
@@ -1033,6 +1034,7 @@ public:
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;
+  std::vector<double> mobility_constant_ch;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
