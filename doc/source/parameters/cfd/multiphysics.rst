@@ -19,10 +19,11 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Volume of Fluid method
     set VOF = false
     # Cahn-Hilliard equations
-    set cahn hilliard           = false
+    set cahn hilliard = false
 
     set use time average velocity field = false
   end
+
 
 
 * ``fluid dynamics``: controls if the fluid dynamics are solved. This is ``true`` by default and can be turned to ``false`` to enable calculation of an auxiliary physic only. When appropriate, this can decrease drastically the computation time. 
