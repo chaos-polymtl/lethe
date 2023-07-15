@@ -146,15 +146,16 @@ test()
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
 
   // Inserting two particles in contact
-  Point<2>                 position1 = {0, 0.003};
-  int                      id1       = 0;
-  Point<2>                 position2 = {0, -0.003};
-  int                      id2       = 1;
-  Particles::Particle<dim> particle1(position1, position1, id1);
+  Point<2> position1 = {0, 0.003};
+  int      id1       = 0;
+  Point<2> position2 = {0, -0.003};
+  int      id2       = 1;
 
   // Particle 1 is inserted in a cell owned by process1
   if (this_mpi_process == 1)
     {
+      Particles::Particle<dim> particle1(position1, position1, id1);
+
       typename Triangulation<dim>::active_cell_iterator cell1 =
         GridTools::find_active_cell_around_point(triangulation,
                                                  particle1.get_location());

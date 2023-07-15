@@ -99,13 +99,7 @@ test()
 
   // Calling particle-wall broad search
   ParticleWallBroadSearch<dim> broad_search_object;
-  std::unordered_map<
-    unsigned int,
-    std::unordered_map<unsigned int,
-                       std::tuple<Particles::ParticleIterator<dim>,
-                                  Tensor<1, dim>,
-                                  Point<dim>,
-                                  unsigned int>>>
+  typename DEM::dem_data_structures<dim>::particle_wall_candidates
     particle_wall_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
