@@ -163,7 +163,7 @@ public:
     Point<dim> &                                          closest_point,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
   virtual void
-  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point);
+  closest_surface_point(const Point<dim> &p, Point<dim> &closest_point) const;
 
   /**
    * @brief
@@ -298,6 +298,7 @@ protected:
   // reevaluation of the shape.
   std::unordered_map<std::string, double>         value_cache;
   std::unordered_map<std::string, Tensor<1, dim>> gradient_cache;
+  std::unordered_map<std::string, Point<dim>>     closest_point_cache;
 };
 
 
@@ -376,6 +377,168 @@ private:
 #else
   std::shared_ptr<Functions::SignedDistance::Sphere<dim>> sphere_function;
 #endif
+};
+
+/**
+ * @class This class defines superquadric shapes. Their signed distance function
+ * is:
+ * \left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s +
+ * \left|\frac{z}{c}\right|^t - 1 = 0
+ * @tparam dim Dimension of the shape
+ */
+template <int dim>
+class Superquadric : public Shape<dim>
+{
+public:
+  /**
+   * @brief Constructor for a superquadric shape
+   * @param half_lengths The half-lengths of each direction
+   * @param exponents The blockiness in each direction
+   * @param epsilon The tolerance for surface representation
+   * @param position The superquadric center
+   * @param orientation The superquadric orientation
+   */
+  Superquadric<dim>(const Tensor<1, dim> half_lengths,
+                    const Tensor<1, dim> exponents,
+                    const double         epsilon,
+                    const Point<dim> &   position,
+                    const Tensor<1, 3> & orientation)
+    : Shape<dim>(half_lengths.norm(), position, orientation)
+    , half_lengths(half_lengths)
+    , exponents(exponents)
+    , epsilon(epsilon)
+  {}
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point.
+   *
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value(const Point<dim> & evaluation_point,
+        const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the evaluation of the signed distance function of this solid
+   * at the given point evaluation point with a guess for the cell containing
+   * the evaluation point
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  double
+  value_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int /*component = 0*/) override;
+
+  /**
+   * @brief Return a pointer to a copy of the Shape
+   */
+  std::shared_ptr<Shape<dim>>
+  static_copy() const override;
+
+  /**
+   * @brief Return the analytical gradient of the distance
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param component This parameter is not used, but it is necessary because Shapes inherit from the Function class of deal.II.
+   */
+  Tensor<1, dim>
+  gradient(const Point<dim> & evaluation_point,
+           const unsigned int component = 0) const override;
+
+  /**
+   * @brief Return the gradient of the distance function
+   * @param evaluation_point The point at which the function will be evaluated
+   * @param cell The cell that is likely to contain the evaluation point
+   * @param component Not applicable
+   */
+  Tensor<1, dim>
+  gradient_with_cell_guess(
+    const Point<dim> &                                   evaluation_point,
+    const typename DoFHandler<dim>::active_cell_iterator cell,
+    const unsigned int component = 0) override;
+
+  /**
+   * @brief
+   * Sets the closest_point parameter to be the point on the surface of the
+   * shape which has the minimal distance from the given point p. Since this
+   * function is at the core of the calculations for superquadrics, it is
+   * redefined here.
+   *
+   * @param p The point at which the evaluation is performed
+   * @param closest_point The reference to the closest point. This point will be modified by the function.
+   * @param cell_guess A guess of the cell containing the evaluation point, which
+   * is useful to reduce computation time
+   */
+  void
+  closest_surface_point(
+    const Point<dim> &                                    p,
+    Point<dim> &                                          closest_point,
+    const typename DoFHandler<dim>::active_cell_iterator &cell_guess) override;
+  void
+  closest_surface_point(const Point<dim> &p,
+                        Point<dim> &      closest_point) const override;
+
+  /**
+   * @brief Return the sign of the parameter. To be removed once PR#794 is merged.
+   * @param prm parameter
+   */
+  inline double
+  sign(const double prm) const
+  {
+    if (prm > 0)
+      return 1;
+    else if (prm < 0)
+      return -1;
+    else
+      return 0;
+  }
+
+  /**
+   * @brief Computes the value of the superquadric from its equation
+   * @param centered_point point at which we make the evaluation, in the shape referential
+   */
+  inline double
+  superquadric(const Point<dim> &centered_point) const
+  {
+    return pow(abs(centered_point[0] / half_lengths[0]), exponents[0]) +
+           pow(abs(centered_point[1] / half_lengths[1]), exponents[1]) +
+           pow(abs(centered_point[2] / half_lengths[2]), exponents[2]) - 1.0;
+  }
+
+  /**
+   * @brief Computes the gradient of the superquadric from its equation
+   * @param centered_point point at which we make the evaluation, in the shape referential
+   */
+  inline Point<dim>
+  superquadric_gradient(const Point<dim> &centered_point) const
+  {
+    Point<dim> gradient{};
+    for (unsigned int d = 0; d < dim; d++)
+      {
+        // For cases where the coordinate is of value 0, we avoid computing the
+        // gradient. That is an issue when the exponent is lower than or equal
+        // to 1
+        if (abs(centered_point[d]) > epsilon)
+          gradient[d] = exponents[d] *
+                        pow(abs(half_lengths[d]), -exponents[d]) *
+                        pow(abs(centered_point[d]), exponents[d]) /
+                        (centered_point[d] + DBL_MIN);
+        else
+          gradient[d] = exponents[d] *
+                        pow(abs(half_lengths[d]), -exponents[d]) *
+                        pow(abs(epsilon), exponents[d]) / (epsilon + DBL_MIN);
+      }
+    return gradient;
+  }
+
+private:
+  Tensor<1, dim> half_lengths;
+  Tensor<1, dim> exponents;
+  double         epsilon;
 };
 
 template <int dim>
@@ -859,7 +1022,6 @@ public:
   /**
    * @brief
    * Clear the cache of the shape
-   *
    */
   virtual void
   clear_cache() override;

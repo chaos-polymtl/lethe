@@ -2203,9 +2203,9 @@ namespace Parameters
       "type",
       "sphere",
       Patterns::Selection(
-        "sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|opencascade|composite"),
+        "sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|superquadric|rbf|opencascade|composite"),
       "The type of shape considered."
-      "Choices are <sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|rbf|opencascade|composite>."
+      "Choices are <sphere|hyper rectangle|ellipsoid|torus|cone|cylinder|cylindrical tube|cylindrical helix|cut hollow sphere|death star|superquadric|rbf|opencascade|composite>."
       "The parameter for a sphere is: radius. "
       "The parameters for a hyper rectangle are, in order: x half length,"
       "y half length, z half length."
@@ -2226,6 +2226,11 @@ namespace Parameters
       "cut thickness, wall thickness. "
       "The parameters for a death star are, in order: sphere radius,"
       "smaller sphere radius, distance between centers."
+      "The parameters for a superquadric are, in order: "
+      "a, b, c, r, s, t, epsilon. "
+      "The first three are half-lengths in x, y, and z."
+      "The next three are the blockiness in the x, y, and z directions."
+      "The last is the tolerance of the found surface."
       "The parameter for an rbf is the file name."
       "The parameter for a composite is the file name.");
     prm.declare_entry("shape arguments",

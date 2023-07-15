@@ -17,6 +17,7 @@ test()
   double                    radius    = 2;
   double                    thickness = 0.2;
   Tensor<1, 3>              half_lengths({1., 1., 3.});
+  Tensor<1, 3>              exponents_superquadric({1., 1.5, 2.});
   double                    tan_theta = 2.;
   double                    height    = 1.5;
   double                    pitch     = 1;
@@ -44,11 +45,16 @@ test()
   std::shared_ptr<Shape<3>> cylindrical_helix =
     std::make_shared<CylindricalHelix<3>>(
       radius, 0.3 * radius, height, pitch, position, orientation);
+  std::shared_ptr<Shape<3>> superquadric = std::make_shared<Superquadric<3>>(
+    half_lengths, exponents_superquadric, 1e-12, position, orientation);
 
 
   deallog << "Testing value" << std::endl;
   // Testing value of all shape, to confirm proper implementation
   Point<3> p({1., 0.8, 0.75});
+  Point<3> p_superquadric_1({0, 0, 3});
+  Point<3> p_superquadric_2({0, 0, -3});
+  Point<3> p_superquadric_3({1, 1, 3});
   deallog << " Sphere , SD = " << sphere->value(p) << std::endl;
   deallog << " HyperRectangle , SD = " << rectangle->value(p) << std::endl;
   deallog << " Ellipsoid , SD = " << ellipsoid->value(p) << std::endl;
@@ -60,6 +66,12 @@ test()
   deallog << " Cylindrical Tube , SD = " << cylindrical_tube->value(p)
           << std::endl;
   deallog << " Cylindrical Helix , SD = " << cylindrical_helix->value(p)
+          << std::endl;
+  deallog << " Superquadric 1 , SD = " << superquadric->value(p_superquadric_1)
+          << std::endl;
+  deallog << " Superquadric 2 , SD = " << superquadric->value(p_superquadric_2)
+          << std::endl;
+  deallog << " Superquadric 3 , SD = " << superquadric->value(p_superquadric_3)
           << std::endl;
   deallog << "OK" << std::endl;
 
@@ -88,6 +100,12 @@ test()
           << std::endl;
   deallog << " Gradient for ellipsoid at p[2] = " << gradient_ellipsoid[2]
           << std::endl;
+  deallog << " Superquadric 1 , SD = "
+          << superquadric->gradient(p_superquadric_1) << std::endl;
+  deallog << " Superquadric 2 , SD = "
+          << superquadric->gradient(p_superquadric_2) << std::endl;
+  deallog << " Superquadric 3 , SD = "
+          << superquadric->gradient(p_superquadric_3) << std::endl;
   deallog << "OK" << std::endl;
 
   deallog << "Testing copy" << std::endl;
