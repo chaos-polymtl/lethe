@@ -567,23 +567,34 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  // If the fluid dynamics is not to be solved, but rather specified
-  // via an initial condition. Update condition and move on.
+  // If the fluid dynamics is not to be solved, but rather specified. Update
+  // condition and move on.
   if (!simulation_parameters.multiphysics.fluid_dynamics)
     {
-      // Solve and percolate the auxiliary physics that should be treated BEFORE
-      // the fluid dynamics
+      // Solve and percolate the auxiliary physics that should be treated
+      // BEFORE the fluid dynamics
       multiphysics->solve(false,
                           simulation_parameters.simulation_control.method);
       multiphysics->percolate_time_vectors(false);
 
-      this->simulation_parameters.initial_condition->uvwp.set_time(
-        this->simulation_control->get_current_time());
-      set_initial_condition_fd(
-        this->simulation_parameters.initial_condition->type);
+      if (simulation_parameters.multiphysics.use_time_average_velocity_field)
+        {
+          // We get the solution via the average solution
+          this->local_evaluation_point =
+            this->average_velocities->get_average_velocities();
+          present_solution = this->local_evaluation_point;
+        }
+      else
+        {
+          // We get the solution via an initial condition
+          this->simulation_parameters.initial_condition->uvwp.set_time(
+            this->simulation_control->get_current_time());
+          set_initial_condition_fd(
+            this->simulation_parameters.initial_condition->type);
+        }
 
-      // Solve and percolate the auxiliary physics that should be treated AFTER
-      // the fluid dynamics
+      // Solve and percolate the auxiliary physics that should be treated
+      // AFTER the fluid dynamics
       multiphysics->solve(true,
                           simulation_parameters.simulation_control.method);
       multiphysics->percolate_time_vectors(true);
@@ -1620,11 +1631,19 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
       previous_solutions[i] = distributed_previous_solutions[i];
     }
 
+  if (simulation_parameters.post_processing.calculate_average_velocities)
+    {
+      this->average_velocities->calculate_average_velocities(
+        this->local_evaluation_point,
+        simulation_parameters.post_processing,
+        simulation_control->get_current_time(),
+        simulation_control->get_time_step());
+    }
+
   if (simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
     }
-
 
   multiphysics->read_checkpoint();
 
