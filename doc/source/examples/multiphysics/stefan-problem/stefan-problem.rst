@@ -1,5 +1,5 @@
 ====================================
-Stefan problem: melting of a solid
+Stefan Problem: Melting of a Solid
 ====================================
 
 This example simulates the `Stefan`_ problem following the approach taken by `Blais & Ilinca (2018)`_
@@ -16,11 +16,13 @@ Features
 - Phase change specific heat model
 
 
+---------------------------
 Files Used in This Example
 ---------------------------
 ``examples/multiphysics/stefan-problem/stefan.prm``
 
 
+-------------------------
 Description of the Case
 -------------------------
 
@@ -69,6 +71,9 @@ Lethe uses a specific heat phase change model to solve this type of problem. Thi
 Parameter File
 --------------
 
+Mesh
+~~~~
+
 We first define the geometry in which the simulation is carried out using the mesh subsection:
 
 .. code-block:: text
@@ -84,6 +89,10 @@ We first define the geometry in which the simulation is carried out using the me
     end
 
 We use the ``dealii`` GridGenerator to generate a ``subdivided_hyper_rectangle``. This rectangle contains 100 cells in the x direction and 1 in the y direction. It is created from two points, :math:`(0,0)` and :math:`(1,0.1)`. Finally, we give a different id to each boundary of the domain, hence the colorize option is set to true.
+
+
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
 
 The next step is establishing the boundary conditions:
 
@@ -105,6 +114,10 @@ Note that we only set one boundary condition for the temperature, which is a con
 
 .. math::
   \nabla T \cdot \mathbf{n} = 0
+
+
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 Next, we define the physical properties:
 
@@ -138,7 +151,10 @@ Next, we define the physical properties:
 
 This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
 
-Finally, the only remaining section is the simulation control, which controls the flow of the simulation. We simulate until a :math:`t=5s` using a time step of :math:`\Delta t=0.02s` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
+Finally, the only remaining section is the ``simulation control``, which controls the flow of the simulation. We simulate until a :math:`t=5s` using a time step of :math:`\Delta t=0.02s` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
 
 .. code-block:: text
 
@@ -169,6 +185,7 @@ The following image compares the results obtained with Lethe with the analytical
 Refining the mesh, decreasing the time step and decreasing the phase change interval (by decreasing ``liquidus temperature``) would increase the accuracy of the solution since the analytical solution of the Stefan problem is defined for a pure fluid (for which the liquid and the solidus temperatures are equal).
 
 
+----------------------------
 Possibilities for Extension
 ----------------------------
 

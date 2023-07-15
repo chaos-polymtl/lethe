@@ -1,5 +1,6 @@
-Rheology and non-Newtonian fluids
-----------------------------------------
+==================================
+Rheology and Non-Newtonian Fluids
+==================================
 
 For numerous flows that we encounter in chemical engineering, Newton's equation for viscosity is insufficient to describe the rheological behavior of the fluids. For these problems, the viscosity is not constant anymore. Lethe supports the simulation of non-Newtonian fluids by using generalized Newtonian models. In these models, the viscosity depends on the magnitude of the shear-rate tensor :math:`\dot{\gamma}`. In this case, the viscosity cannot be assumed to be constant anymore and the incompressible Navier-Stokes equations take the following form:
 
@@ -36,16 +37,3 @@ where :math:`\eta_\infty` is the viscosity in the high-shear rate plateau, :math
 
 .. note::
     Numerically, the Power-law model is ill-posed because it presumes an infinite viscosity in regions of no-shear. Consequently, we generally advise the users to use the Carreau model since it is much more robust.
-
-
-
-
- 
-
-
-
-
-
-
-
-

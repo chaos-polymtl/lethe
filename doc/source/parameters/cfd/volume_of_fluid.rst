@@ -8,7 +8,7 @@ In this method, the two fluids considered are given index of :math:`0` and :math
 
 .. note::
 
-  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the VOF initial conditions and :ref:`Physical properties - Two phase simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set VOF = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the VOF initial conditions and :ref:`Physical properties - Two Phase Simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set VOF = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
 
 The default values of the VOF parameters are given in the text box below.
@@ -221,7 +221,7 @@ The default values of the VOF parameters are given in the text box below.
 
   * ``conservative fluid``: defines fluid(s) for which conservation is solved. 
 
-    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+    Choices are: ``fluid 0``, ``fluid 1`` or ``both`` (default), with the fluid IDs defined in :ref:`Physical properties - Two Phase Simulations<two phase simulations>`.
 
   * ``monitoring``: controls if conservation is monitored at each iteration, through the volume (3D) or surface (2D) computation of the fluid given as ``monitored fluid`` (``fluid 1`` (default) or ``fluid 0``). Results are outputted in a data table (`VOF_monitoring_fluid_0.dat` or `VOF_monitoring_fluid_1.dat`).
 
@@ -260,7 +260,7 @@ The default values of the VOF parameters are given in the text box below.
 
 .. _improve wetting:
 
-Improving the Wetting mechanism
+Improving the Wetting Mechanism
 +++++++++++++++++++++++++++++++++++
 
 In the framework of incompressible fluids, a layer of the lowest density fluid (e.g. air) can form between the highest density fluid (e.g. water) and the boundary, preventing its wetting. Two strategies can be used to improve the wetting mechanism:
@@ -268,7 +268,7 @@ In the framework of incompressible fluids, a layer of the lowest density fluid (
 1. Increase the ``diffusivity`` to the transport equation (e.g. ``set diffusivity = 1e-2``), so that the higher density fluid spreads even more to the boundary location. 
 
 .. tip::
-  It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2`` or even ``1``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, sharpening will not prevent the wetting from occuring.
+  It is strongly advised to sharpen the interface more often (e.g. ``set frequency = 2`` or even ``1``) to limit interface blurriness due the added diffusivity. As peeling-wetting is handled after the transport equation is solved, but before interface sharpening, sharpening will not prevent the wetting from occurring.
 
 2. Remove the conservation condition on the lowest density fluid (e.g. ``set conservative fluid = fluid 1``). The mass conservation equation in the cells of interest is replaced by a zero-pressure condition, to allow the fluid to get out of the domain. 
 
@@ -278,7 +278,7 @@ In the framework of incompressible fluids, a layer of the lowest density fluid (
 
 .. _choosing values for the surface tension force filters:
 
-Choosing values for the surface tension force filters
+Choosing Values for the Surface Tension Force Filters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The following procedure is recommended to choose proper values for the ``phase fraction gradient filter factor`` and ``curvature filter factor``:

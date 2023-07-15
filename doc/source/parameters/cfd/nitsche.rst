@@ -40,7 +40,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
       # Velocity boundary condition parameters
       #=================================================
       # Penalization term for Nitsche method, on the velocity
-      set beta = 10
+      set beta                           = 10
 
       # Solid velocity
       subsection solid velocity
@@ -50,17 +50,17 @@ These parameters are used for simulations using the Nitsche immersed boundary me
       end
 
       # Condition on the motion of particles
-      set enable particles motion = false
+      set enable particles motion        = false
 
       # Number of sub iterations for the motion of the particles
-      set particles sub iterations = 1
+      set particles sub iterations       = 1
 
       # Heat boundary condition parameters
       #=================================================
       set enable heat boundary condition = false
 
       # Penalization term for Nitsche method, on the energy equation
-      set beta heat = 10
+      set beta heat                      = 10
 
       # Solid temperature
       subsection solid temperature
@@ -70,10 +70,10 @@ These parameters are used for simulations using the Nitsche immersed boundary me
       # Post-processing parameters
       #=================================================
       # Force and torque calculation on solid
-      set calculate force on solid  = false
-      set solid force name          = force_solid
-      set calculate torque on solid = false
-      set solid torque name         = torque_solid
+      set calculate force on solid       = false
+      set solid force name               = force_solid
+      set calculate torque on solid      = false
+      set solid torque name              = torque_solid
 
       # Center of rotation, used for torque calculation
       subsection center of rotation
@@ -85,10 +85,10 @@ These parameters are used for simulations using the Nitsche immersed boundary me
       # Simulation control parameters
       #=================================================
       # Enable stopping the simulation if Nitsche particles have been lost
-      set stop if particles lost = true
+      set stop if particles lost         = true
 
       # Number of Nitsche (quadrature) points to insert in a 1D cell
-      set number quadrature points = 2
+      set number quadrature points       = 2
     end
   end
 

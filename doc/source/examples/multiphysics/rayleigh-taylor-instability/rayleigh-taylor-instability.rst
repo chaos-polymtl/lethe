@@ -1,5 +1,5 @@
 ============================
-Rayleigh-Taylor instability
+Rayleigh-Taylor Instability
 ============================
 
 This example simulates the dynamic evolution of the single-mode `Rayleigh-Taylor instability`_ by density contrast. 
@@ -7,9 +7,9 @@ This example simulates the dynamic evolution of the single-mode `Rayleigh-Taylor
 .. _Rayleigh-Taylor instability: https://www.sciencedirect.com/science/article/pii/S0021999199962575
 
 
-----------------------------------
+--------
 Features
-----------------------------------
+--------
 - Solver: ``gls_navier_stokes_2d`` 
 - Mesh adaptation using phase fraction
 - Periodic boundary condition
@@ -18,17 +18,17 @@ Features
 - Interface sharpening
 
 
----------------------------
+--------------------------
 Files Used in This Example
----------------------------
+--------------------------
 ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-sharpening.prm``
 
 ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-sharpening.prm``
 
 
------------------------------
+-----------------------
 Description of the Case
------------------------------
+-----------------------
 
 In this example, we simulate the Rayleigh-Taylor instability benchmark. In this benchmark, a dense fluid, as shown in the following figure, is located on top of a fluid with a smaller density. 
 
@@ -61,6 +61,9 @@ A perturbed interface defined as :math:`2H + 0.1 H \cos{(2 \pi x / H)}` separate
 Parameter File
 --------------
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 Time integration is handled by a 1st order backward differentiation scheme 
 (`bdf1`), for a :math:`0.75` s simulation time with an initial 
 time step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt=true``
@@ -88,6 +91,8 @@ and the max CFL is :math:`0.9`.
       set output time    = 0.005
     end
 
+Multiphysics
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``VOF`` and ``fluid dynamics`` are chosen (``fluid dynamics`` is true by default).
 
@@ -99,13 +104,16 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
     subsection multiphysics
       set VOF = true
     end 
-    
+
+Source Term
+~~~~~~~~~~~
+
 The ``source term`` subsection defines gravitational acceleration.
 
 .. code-block:: text
     
     #---------------------------------------------------
-    # Source term
+    # Source Term
     #---------------------------------------------------
     subsection source term
       set enable = true
@@ -114,6 +122,8 @@ The ``source term`` subsection defines gravitational acceleration.
       end
     end
 
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` subsection defines the physical properties of the fluid. In this example, we need two fluids with densities of 100 and 300 and with an equal kinematic viscosity (0.00153).
 
@@ -135,15 +145,17 @@ The ``physical properties`` subsection defines the physical properties of the fl
      end
    end
 
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
-In the ``initial condition`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial condition``. The interface between the two fluids is made smoother with the `projection step`_ parameter.
+In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the `projection step`_ parameter.
 
 .. _projection step: https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html
 
 .. code-block:: text
 
    #---------------------------------------------------
-   # Initial Condition
+   # Initial Conditions
    #---------------------------------------------------
 
    subsection initial conditions
@@ -163,6 +175,9 @@ In the ``initial condition`` subsection, we need to define the interface between
      end
    end
 
+Mesh
+~~~~
+
 In the ``mesh`` subsection we configure the simulation domain. The ``initial refinement`` of the mesh is equal to 5, but we use mesh adaptation to coarsen the mesh in cells far from the interface to improve the computation performance.
 
 .. code-block:: text
@@ -178,7 +193,8 @@ In the ``mesh`` subsection we configure the simulation domain. The ``initial ref
       set initial refinement = 5
     end
 
-
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 
 The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase`` as the ``refinement variable`` and 5 as the ``min refinement level``.
 We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field. 
@@ -201,6 +217,8 @@ We set ``initial refinement steps = 4`` to adapt the mesh to the initial value o
       set initial refinement steps = 4
     end
 
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
 
 The boundary conditions applied on the left and right boundaries are ``periodic``, while a ``noslip`` boundary condition is used for the top and bottom walls. In the definition of a ``periodic`` boundary, we need to specify the ``periodic_id`` and the ``periodic_direction`` (in this example, 0 which shows the x direction).
 
@@ -228,6 +246,8 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
       end
     end
 
+VOF
+~~~
 
 In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the interface and keep it sharp during the simulation. Note that here we use the ``constant`` and ``adaptive`` methods for interface sharpening. The ``mass conservation`` results show that choosing a ``constant`` method does not affect the mass conservation significantly. Hence, the results of both methods are almost identical. For the ``constant`` refinement we use
 
@@ -299,6 +319,7 @@ and for the ``adaptive`` refinement
 The ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid`
 documentation for more explanation on the phase filtration.
 
+
 ---------------------------
 Running the Simulation
 ---------------------------
@@ -316,9 +337,9 @@ to run the simulations using eight CPU cores. Feel free to use more.
     :math:`\approx` 10 minutes on 8 processes.
 
 
--------
-Results
--------
+-----------------------
+Results and Discussion
+-----------------------
 
 In the following picture, the boundary between the two fluids is compared with (right) and without (left) ``projection step`` :
 

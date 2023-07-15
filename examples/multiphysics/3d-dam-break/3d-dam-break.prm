@@ -63,7 +63,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Initial Condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -78,7 +78,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

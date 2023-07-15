@@ -15,41 +15,41 @@ Particle insertion information is defined in this section. This information incl
   subsection insertion info
     # Insertion method
     # Choices are uniform|non_uniform
-    set insertion method = non_uniform
+    set insertion method                               = non_uniform
 
     # Number of inserted particles at each insertion step. This value may change automatically if the insertion box is not adequately large to handle all the inserted particles
     set inserted number of particles at each time step = 100
 
     # Insertion frequency
-    set insertion frequency = 20000
+    set insertion frequency                            = 20000
 
     # Insertion box dimensions (xmin, xmax, ymin, ymax, zmin, zmax)
-    set insertion box minimum x = -0.05
-    set insertion box minimum y = -0.05
-    set insertion box minimum z = -0.03
-    set insertion box maximum x = 0.05
-    set insertion box maximum y = 0.05
-    set insertion box maximum z = 0.07
+    set insertion box minimum x                        = -0.05
+    set insertion box minimum y                        = -0.05
+    set insertion box minimum z                        = -0.03
+    set insertion box maximum x                        = 0.05
+    set insertion box maximum y                        = 0.05
+    set insertion box maximum z                        = 0.07
 
     # Directions of insertion (0: x, 1: y, 2: z)
-    set insertion first direction  = 0
-    set insertion second direction = 1
-    set insertion third direction  = 2
+    set insertion first direction                      = 0
+    set insertion second direction                     = 1
+    set insertion third direction                      = 2
 
     # Initial conditions at insertion
-    set velocity x = 0.0
-    set velocity y = 0.0
-    set velocity z = 0.0
-    set omega x    = 0.0
-    set omega y    = 0.0
-    set omega z    = 0.0
+    set velocity x                                     = 0.0
+    set velocity y                                     = 0.0
+    set velocity z                                     = 0.0
+    set omega x                                        = 0.0
+    set omega y                                        = 0.0
+    set omega z                                        = 0.0
 
     # insertion distance threshold controls the distance between the center of inserted particles (the distance is: [distance threshold] * [diameter of particles]). The distance is modified by a random number if non_uniform insertion is chosen
-    set insertion distance threshold = 2
+    set insertion distance threshold                   = 2
 
     # Random number range and seed for non_uniform insertion
-    set insertion random number range = 0.75
-    set insertion random number seed  = 19
+    set insertion random number range                  = 0.75
+    set insertion random number seed                   = 19
   end
 
 * The ``insertion method`` parameter chooses the type of insertion. Acceptable choices are ``uniform`` and ``non_uniform``.

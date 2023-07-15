@@ -1,5 +1,5 @@
 ==========================
-Dam-break
+Dam-Break
 ==========================
 
 This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
@@ -47,6 +47,9 @@ The following schematic describes the geometry and dimensions of the simulation 
 Parameter File
 --------------
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`4.1` s simulation time with an initial 
 time step of :math:`0.01` seconds.
@@ -72,6 +75,9 @@ time step of :math:`0.01` seconds.
       set output path      = ./output/
     end
 
+Multiphysics
+~~~~~~~~~~~~
+
 The ``multiphysics`` subsection enables to turn on `(true)` 
 and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 
@@ -86,10 +92,11 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
     end 
 
 
-""""""""""""""""""""""""""""""""
 Interface sharpening parameters
-""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+VOF
+***
 
 If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). The current ``interface sharpening`` method consists of two steps:
 
@@ -158,18 +165,20 @@ documentation for more explanation on the phase filtration.
       end
     end
 
-""""""""""""""""""""""""""
-Fluid phase parameters 
-""""""""""""""""""""""""""
+Fluid phase parameters
+~~~~~~~~~~~~~~~~~~~~~~
 
-In the ``initial condition``, the initial velocity and initial position 
+Initial Conditions
+******************
+
+In the ``initial conditions``, the initial velocity and initial position
 of the liquid phase are defined. The liquid phase is initially 
 defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
 
 .. code-block:: text
 
     #---------------------------------------------------
-    # Initial condition
+    # Initial Conditions
     #---------------------------------------------------
     subsection initial conditions
       set type = nodal
@@ -181,12 +190,15 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
       end
     end
 
+Source Term
+***********
+
 The ``source term`` subsection defines the gravitational acceleration:
 
 .. code-block:: text
     
     #---------------------------------------------------
-    # Source term
+    # Source Term
     #---------------------------------------------------
     subsection source term
       set enable = true
@@ -194,6 +206,9 @@ The ``source term`` subsection defines the gravitational acceleration:
         set Function expression = 0;-1.0; 0
       end
     end
+
+Physical Properties
+*******************
 
 Two fluids are present in this simulation, hence in the ``physical 
 properties`` subsection, their physical properties should be defined:
@@ -220,9 +235,9 @@ We define two fluids here simply by setting the number of fluids to be :math:`2`
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
 Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
 
-""""""""""""""""""""""""""""""""
+
 Mesh
-""""""""""""""""""""""""""""""""
+~~~~
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
 :math:`[14,10]`. The first :math:`14,10` couple defines the number of initial grid subdivisions along the length and height of the rectangle. 
@@ -266,6 +281,7 @@ is adapted to the initial condition for the phase.
       set initial refinement steps = 4
     end
 
+
 ----------------------
 Running the Simulation
 ----------------------
@@ -283,9 +299,9 @@ to run the simulation using two CPU cores. Feel free to use more.
     run in parallel using mpirun 
 
 
--------
-Results
--------
+-----------------------
+Results and Discussion
+-----------------------
 
 The following image shows the screenshots of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds,
 of the phase results without and with phase filtering.
@@ -318,6 +334,7 @@ and refines the meshes on the interface.
 .. image:: images/refinement.png
     :alt: refinement
     :align: center
+
 
 ----------------------------
 References

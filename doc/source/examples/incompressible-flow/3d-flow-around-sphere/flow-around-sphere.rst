@@ -198,8 +198,8 @@ At Re = 150, the flow has separated, resulting in an unstable wake and recircula
 The ``steady_bdf`` method solves for a steady-state simulation using adjoint time stepping with a bdf1 scheme. An initial time step is used to complete a transient iteration, and with each iteration, the time step is increased. The simulation is considered to have reached steady-state when the L2 norm of the initial residual is lower than stop tolerance at the start of a non-linear solution step, i.e. until the time step is large enough that a pseudo-steady-state has been reached.
 
 
-Initial condition
-~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 An initial condition is introduced for the Re = 150 problem. This way, a Re = 10 initial condition is set. Since the solution can easily be found at Re = 10, this is used as an initial attempt to find the solution at Re=150.
 

@@ -1,4 +1,4 @@
-Fluid dynamics
+Fluid Dynamics
 ----------------
 
 

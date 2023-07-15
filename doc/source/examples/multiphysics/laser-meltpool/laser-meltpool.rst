@@ -1,5 +1,5 @@
 ==========================
-Laser meltpool
+Laser Meltpool
 ==========================
 
 This example simulates a `two-dimensional melt pool with a laser`_. 
@@ -49,6 +49,9 @@ Time integration is handled by a 2nd order backward differentiation scheme
 time step of :math:`5.0 \times 10^{-6}` seconds.
 
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
     # --------------------------------------------------
@@ -63,6 +66,9 @@ time step of :math:`5.0 \times 10^{-6}` seconds.
       set output path      = ./output/
     end
 
+
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
 
 All the four boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation`` with a convective heat transfer coefficient of 80 :math:`\text{W}\text{m}^{-2}\text{K}^{-1}`, ambient temperature is 20 :math:`^{\circ}\text{C}`, and emissivity is 0.6.
 
@@ -123,6 +129,9 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
     end
 
 
+Multiphysics
+~~~~~~~~~~~~
+
 The ``multiphysics`` subsection enables to turn on (``true``) 
 and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
 
@@ -137,7 +146,10 @@ and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy 
       set buoyancy force = true
       set fluid dynamics = true
     end
-    
+
+
+Laser Parameters
+~~~~~~~~~~~~~~~~
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
@@ -172,6 +184,9 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
       end
     end  
 
+
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. Interested readers may find more information on phase change model in the `Stefan problem example <https://lethe-cfd.github.io/lethe/examples/multiphysics/stefan-problem/stefan-problem.html>`_ . In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
 
@@ -228,6 +243,9 @@ The laser heat source locally melts the material, which is initially in the soli
     Using a ``phase_change`` model for the thermal conductivity, the thermal conductivity of the material varies linearly between ``thermal conductivity solid`` and ``thermal conductivity liquid`` when the temperature is in the range of the solidus and liquidus temperatures.
 
 
+Mesh
+~~~~
+
 We start the simulation with a rectangular mesh that spans the domain defined by the corner points situated at :math:`[-0.0001, 0]` and
 :math:`[0.0009, 0.0005]`. The first :math:`[4,2]` couple of the ``set grid arguments`` parameter defines the number of initial grid subdivisions along the length and height of the rectangle. 
 This allows for the initial mesh to be composed of perfect squares. We proceed then to redefine the mesh globally seven times by setting
@@ -261,7 +279,6 @@ to run the simulation using twelve CPU cores. Feel free to use more.
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. This simulation takes
     :math:`\approx` 3 hours on 12 processes.
-
 
 
 -------

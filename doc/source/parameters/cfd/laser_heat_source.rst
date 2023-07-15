@@ -72,6 +72,6 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 -----------
 References
 -----------
-`[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_ Zhang, Z., Huang, Y., Kasinathan, A.R., Shahabad, S.I., Ali, U., Mahmoodkhani, Y. and Toyserkani, E., 2019. 3-Dimensional heat transfer modeling for laser powder-bed fusion additive manufacturing with volumetric heat sources based on varied thermal conductivity and absorptivity. Optics & Laser Technology, 109, pp.297-312.
+`[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_ Z. Zhang *et al.*, “3-Dimensional heat transfer modeling for laser powder-bed fusion additive manufacturing with volumetric heat sources based on varied thermal conductivity and absorptivity,” *Opt. Laser Technol.*, vol. 109, pp. 297–312, Jan. 2019, doi: 10.1016/j.optlastec.2018.08.012.
 
-`[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X., 2018. Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis. Materials & Design, 142, pp.319-328.
+`[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ 	S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” *Mater. Des.*, vol. 142, pp. 319–328, Mar. 2018, doi: 10.1016/j.matdes.2018.01.022.

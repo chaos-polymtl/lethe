@@ -1,9 +1,11 @@
 ================================
-Non-Newtonian flow past a sphere
+Non-Newtonian Flow past a Sphere
 ================================
 
 This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the `Carreau rheological model <https://en.wikipedia.org/wiki/Carreau_fluid>`_.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1-Q1) 
@@ -12,12 +14,15 @@ Features
 - Ramping initial condition
 - Non-uniform mesh adaptation 
 
+
+---------------------------
 Files Used in This Example
 ---------------------------
 
-- Parameter file: ``/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-inferface.prm``
+- Parameter file: ``/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
@@ -28,6 +33,8 @@ and the flow domain located between :math:`(-18,-15,-15)` and :math:`(42,15,15)`
     :alt: Simulation schematic
     :align: center
 
+
+-----------------------
 Parameter File
 -----------------------
 
@@ -226,6 +233,8 @@ In order to generate an additional refinement zone around the immersed boundary,
       set variable = velocity
     end
 
+
+---------------
 Results
 ---------------
 
@@ -263,8 +272,10 @@ We get the following torques and forces applied on the particle for each of the 
 .. note:: 
 	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at :math:`Re = 50`, the drag force would be :math:`0.6165`. Therefore, the drag force was decreased using a shear-thinning fluid.
 
+-----------------------------
 Possibilities for Extension
 -----------------------------	
+
 * **High-order methods** : Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers.
 * **Reynolds number** : By changing the inlet velocity, it can be interesting to see the impact of the shear-thinning behavior on the effective drag force.
 * **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the change in behavior.

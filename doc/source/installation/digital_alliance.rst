@@ -1,12 +1,10 @@
-###############################################################
-Running Lethe on Digital Research Alliance of Canada clusters
-###############################################################
+=============================================================
+Running Lethe on Digital Research Alliance of Canada Clusters
+=============================================================
 
 
-
-================================
-Setting-up the folder structure
-================================
+Setting-up the Folder Structure
+-------------------------------
 
 In your ``$HOME``, create a "dealii" folder and a "lethe" folder, each containing "build" and "inst" folders:
 
@@ -27,12 +25,11 @@ Folders can be open with the ``cd`` command (``cd $folder_path``).
 
 For the sake of clarity, this is the folder structure considered for the rest of this tutorial.
 
-================================
 Installing deal.II
-================================
+------------------
 
 On Niagara, Beluga, Narval, Graham or Cedar
-----------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All operations must be performed on login nodes.
 
@@ -79,9 +76,8 @@ and:
 
 The argument ``-jX`` specifies the number of processors used for the compilation. On login nodes, a maximum of 8 cores should be used in order to ensure that other users can continue using the cluster without slowdowns. In addition, the ``nice`` command can be used at the beginning of the call to give a lower priority to this task.
 
-================================
 Installing Lethe
-================================
+----------------
 
 After installing deal.II, compiling Lethe is relatively straightforward, especially since all of these clusters share a very similar environment. To compile Lethe, the ``Trilinos``, ``Parmetis`` and ``P4est`` modules should be loaded.
 
@@ -101,8 +97,8 @@ To install Lethe in the ``$HOME/lethe/inst`` directory (applications will be in 
   make install -j8
 
 
-Installing numdiff to enable tests
-------------------------------------
+Installing Numdiff to Enable Tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You will need to have numdiff installed to enable the test suite, otherwise you will have an error at the cmake step of Lethe's installation when using ``-DBUILD_TESTING=ON``, stating that this module is missing. To install the package manually use the following steps:
 
@@ -127,9 +123,8 @@ You will need to have numdiff installed to enable the test suite, otherwise you 
 
 .. _copying-local-files:
 
-================================
-Copying local files
-================================
+Copying Local Files
+-------------------
 
 On Linux, use ``scp`` (for secure copy) to copy needed files for the simulation (``prm``, ``msh``):
 
@@ -151,9 +146,8 @@ Simulation files must be in scratch. To get the address of your scratch folder, 
 On Windows, use third-party, such as ``PuTTY`` (see the `wiki page on Transferring data <https://docs.computecanada.ca/wiki/Transferring_data>`_))
 
 
-================================
 Creating a .dealii
-================================
+------------------
 
 In order to call your deal.II local installation, it is convenient to create a ``.dealii`` file in your ``$HOME`` directory:
 
@@ -191,9 +185,8 @@ You can then source it on the terminal with:
 
 and use it in your ``.sh`` script (see Launching simulations below).
 
-================================
-Launching simulations
-================================
+Launching Simulations
+---------------------
 
 Simulations are sent to the scheduler via batch scripts. Visit the Digital Research Alliance of Canada (Alliance) wiki page for more information about the `scheduler <https://docs.alliancecan.ca/wiki/What_is_a_scheduler%3F>`_ and `running jobs <https://docs.alliancecan.ca/wiki/Running_jobs>`_. For your convenience, an example of ``job.sh`` used on Beluga is given below:
 
@@ -234,9 +227,8 @@ Console outputs are written in ``slurm-$jobID.out``. For instance, to display th
  If you need to launch multiple simulations, such as with varying parameter, feel free to adapt one of the scripts provided on `lethe-utils <https://github.com/lethe-cfd/lethe-utils/tree/master/python/cluster>`_.
 
 
-================================
-Saving a SSH key (linux)
-================================
+Saving a SSH Key (Linux)
+------------------------
 
 To save your key on the cluster, so that it is not asked for each log or ``scp``, generate your ssh-key with:
 

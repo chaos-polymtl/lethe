@@ -42,7 +42,7 @@ subsection laser parameters
 end
 
 # --------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

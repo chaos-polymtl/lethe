@@ -1,11 +1,10 @@
 ==========================
-Rayleigh-Bénard convection
+Rayleigh-Bénard Convection
 ==========================
 
 This example simulates `two-dimensional Rayleigh–Benard convection`_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` . 
 
 .. _two-dimensional Rayleigh–Benard convection: https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/stochastic-bifurcation-analysis-of-rayleighbenard-convection/019773F174C453F84E7EB179CB1C89F1
-
 
 ----------------------------------
 Features
@@ -62,6 +61,9 @@ In this example, we simulate the Rayleigh-Bénard convection problem at two Rayl
 Parameter File
 --------------
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`10000` s simulation time with an initial 
 time step of :math:`0.01` second.
@@ -93,6 +95,8 @@ time step of :math:`0.01` second.
       set output path                  = ./output/
     end
 
+Multiphysics
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
 
@@ -106,13 +110,16 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
       set heat transfer  = true
       set fluid dynamics = true
     end
-    
+
+Source Term
+~~~~~~~~~~~
+
 The ``source term`` subsection defines gravitational acceleration.
 
 .. code-block:: text
     
     #---------------------------------------------------
-    # Source term
+    # Source Term
     #---------------------------------------------------
     subsection source term
       set enable = true
@@ -121,6 +128,8 @@ The ``source term`` subsection defines gravitational acceleration.
       end
     end
 
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.0625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
 
@@ -141,6 +150,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
         set specific heat        = 100
       end
     end
+
 
 ---------------------------
 Running the Simulation
@@ -175,6 +185,7 @@ The following animation shows the results of this simulation:
 
 
 Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
+
 
 -----------
 References

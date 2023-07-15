@@ -1,5 +1,5 @@
 ==========================
-Melting cavity
+Melting Cavity
 ==========================
 
 This example simulates a `two-dimensional gallium melting cavity`_. 
@@ -67,6 +67,9 @@ where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expan
 Parameter File
 --------------
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 Time integration is handled by a 2nd order backward differentiation scheme 
 `(bdf2)`, for a :math:`40000` s simulation time with an initial 
 time step of :math:`0.1` second.
@@ -95,6 +98,8 @@ time step of :math:`0.1` second.
       set output path                  = ./output/      
     end
 
+Multiphysics
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
 
@@ -109,13 +114,15 @@ The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` th
       set fluid dynamics = true
     end 
     
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 In the ``initial condition``, the initial velocity and initial temperature in the simulation domain are defined. The initial velocity is equal to zero as the block is in the solid phase at :math:`t = 0` s. The initial temperature is chosen slightly (0.1 :math:`^{\circ} C`) smaller than the melting point temperature.
 
 .. code-block:: text
 
     #---------------------------------------------------
-    # Initial condition
+    # Initial Conditions
     #---------------------------------------------------
     subsection initial conditions
       set type = nodal
@@ -127,12 +134,15 @@ In the ``initial condition``, the initial velocity and initial temperature in th
       end
     end
 
+Source Term
+~~~~~~~~~~~
+
 The ``source term`` subsection defines the gravitational acceleration. The value of the gravitational acceleration in this example is selected to satisfy the desired values of Ra and Gr numbers.
 
 .. code-block:: text
     
     #---------------------------------------------------
-    # Source term
+    # Source Term
     #---------------------------------------------------
     subsection source term
       set enable = true
@@ -140,6 +150,9 @@ The ``source term`` subsection defines the gravitational acceleration. The value
         set Function expression = 0 ; -0.00516 ; 0
       end
     end
+
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan-problem/stefan-problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
 
@@ -187,6 +200,7 @@ The solid block melts into liquid in this example, hence in the ``physical prope
         end
       end
     end
+
 
 ---------------------------
 Running the Simulation

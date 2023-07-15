@@ -14,25 +14,25 @@ This subsection contains the general information of the simulation, including th
 
   subsection simulation control
     # Time-stepping method
-    set method = steady
+    set method                       = steady
 
     #---------------------------------------------------
     # Steady-state simulation parameters
     #---------------------------------------------------
     # Number of mesh adaptation
-    set number mesh adapt = 0
+    set number mesh adapt            = 0
 
     # Tolerance at which the simulation is stopped
-    set stop tolerance    = 1e-10
+    set stop tolerance               = 1e-10
 
     #---------------------------------------------------
     # BDF scheme parameters
     #---------------------------------------------------
     # Method used to startup high order BDF methods
-    set bdf startup method   = multiple step bdf
+    set bdf startup method           = multiple step bdf
 
     # Scaling factor used in the iterations necessary to startup the BDF schemes
-    set startup time scaling = 0.4
+    set startup time scaling         = 0.4
 
     #---------------------------------------------------
     # Transient simulations parameters
@@ -56,37 +56,37 @@ This subsection contains the general information of the simulation, including th
     # Log file parameters
     #---------------------------------------------------
     # Log frequency
-    set log frequency = 1
+    set log frequency                = 1
 
     # Display precision when writing to log
-    set log precision = 6
+    set log precision                = 6
 
     #---------------------------------------------------
     # Output file parameters
     #---------------------------------------------------
     # File output path
-    set output path       = ./
+    set output path                  = ./
 
     # File output prefix
-    set output name       = out
+    set output name                  = out
 
     # The control for the output of the simulation results
-    set output control    = iteration
+    set output control               = iteration
 
     # Output frequency
-    set output frequency  = 1
+    set output frequency             = 1
 
     # Output time
-    set output time       = 1
+    set output time                  = 1
 
     # Maximal number of vtu output files
-    set group files       = 1
+    set group files                  = 1
 
     # Output the boundaries of the domain along with their ID
-    set output boundaries = false
+    set output boundaries            = false
 
     # Subdivision of mesh cell in postprocessing
-    set subdivision       = 1
+    set subdivision                  = 1
   end
 
 * ``method``: time-stepping method used. The available options are: 

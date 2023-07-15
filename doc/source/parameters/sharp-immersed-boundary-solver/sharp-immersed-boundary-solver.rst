@@ -260,4 +260,4 @@ Therefore, the near-particle zone around each particle is refined ``mesh``:``ini
 
 Reference
 ---------------
-`[1] <https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ Kim, Sangtae, and Seppo J. Karrila. Microhydrodynamics: principles and selected applications. Courier Corporation, 2013.
+`[1] <https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ S. Kim and S. J. Karrila, *Microhydrodynamics: Principles and Selected Applications*. Courier Corporation, 2005.

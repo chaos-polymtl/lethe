@@ -1,11 +1,13 @@
 ======================================
-Tracer through CAD junction in simplex
+Tracer through CAD Junction in Simplex
 ======================================
 
 In this example, we solve a problem using the simplex capabilities of Lethe. 
 The simplex grids can be generated easily to represent complex geometries, such as a junction of channels made from boolean addition. 
 We will also demonstrate the tracer physics capabilities.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solver: ``gls_navier_stokes_3d`` 
@@ -13,10 +15,15 @@ Features
 - Displays the use of the tracer physics
 - Displays the use of a simplex mesh generated with a CAD platform
 
+
+---------------------------
 Files Used in This Example
 ---------------------------
 ``examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.prm``
 
+
+
+-----------------------
 Description of the Case
 -----------------------
 
@@ -27,7 +34,7 @@ In this example, we consider a junction of pipes that follow orthogonal sinusoid
 This case shows how a passive tracer injected in such a geometry can be used to visualize preferential paths.
 
 
-Generating a geometry with SALOME
+Generating a Geometry with SALOME
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Complex geometries can be set up and meshed with the SALOME platform. 
@@ -49,7 +56,7 @@ Second, the mesh module can be loaded to generate a ``.mesh`` file. A new mesh m
     :align: center
 
 
-Adding the boundary IDs from Gmsh
+Adding the Boundary IDs from Gmsh
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A criterion for the use of ``.msh`` file in Lethe is that the boundaries have an associated ID number. These numbers can be added in Gmsh.
@@ -75,13 +82,18 @@ The ``Physical Volume`` must also be specified for compatibility with deal.II, a
 
 The last step in Gmsh is to generate the 3D mesh, and then save it to a ``.msh`` file.
 
+
+--------------
 Parameter File
 --------------
 
 Using Lethe requires a solver executable, in this case ``gls_navier_stokes_3d``, and a ``.prm`` file. This second one can be setup in many ways, but for this specific case two aspects must be treated with more care: the enabling of simplex mode, and the setup of the tracer physics. 
 
-Enabling the Simplex mode
+Enabling the Simplex Mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mesh
+****
 
 In the ``subsection mesh``, the simplex mode can be enabled with ``set simplex = true``. Also, the mesh in the ``.msh`` file must obviously be built with simplex elements.
 
@@ -97,16 +109,19 @@ In the ``subsection mesh``, the simplex mode can be enabled with ``set simplex =
       set simplex            = true
     end
 
-.. warning:: 
+.. warning::
     If the mesh type is set to ``dealii`` instead of ``gmsh``, the deal.II generated mesh will be properly built with simplices.
 
 .. warning:: 
     [2022-01-19] It is crucial to consider a current limitation : simplex grid refinement isn't implemented in Lethe.
 
-Setting up the tracer physics
+Setting up the Tracer Physics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the tracer physics requires four elements: activating the physics, setting the tracer diffusivity, setting the tracer elements order and setting the boundary conditions. These elements are provided as such:
+
+Multiphysics
+************
 
 .. code-block:: text
 
@@ -116,6 +131,9 @@ Using the tracer physics requires four elements: activating the physics, setting
     subsection multiphysics
       set tracer = true
     end
+
+Physical Properties
+*******************
 
 .. code-block:: text
 
@@ -129,6 +147,9 @@ Using the tracer physics requires four elements: activating the physics, setting
       end
     end
 
+FEM
+***
+
 .. code-block:: text
 
     #---------------------------------------------------
@@ -139,6 +160,9 @@ Using the tracer physics requires four elements: activating the physics, setting
       set pressure order = 1
       set tracer order   = 1
     end
+
+Tracer Boundary Conditions
+**************************
 
 .. code-block:: text
 
@@ -171,6 +195,9 @@ which is a zero gradient condition.
 .. note:: 
     The ``boundary conditions tracer`` subsection is different from the general ``boundary conditions`` 
     which concerns the flow. 
+
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` subsection for the flow is setup as follows. The inlet with a high tracer concentration (``id = 2``)
 is given a higher velocity than the other two (``id = 1``). The walls of the junction (``id = 3``) are given a ``no slip`` type.
@@ -217,8 +244,11 @@ must be applied to the outlet flow.
       end
     end
 
-Simulation and results
-------------------------
+
+----------------------
+Running the Simulation
+----------------------
+
 The case must be run with the solver and the parameter file. 
 The simulation is launched in the same folder as the ``.prm`` file,
 using the ``gls_navier_stokes_3d`` solver. It takes a long time since problem is 
@@ -228,6 +258,10 @@ transient and the time steps are short:
     
     ../../exe/bin/gls_navier_stokes_3d tracer-through-cad-junction.prm
 
+
+-------
+Results
+-------
 
 The results in ``.pvd`` format can then be viewed using visualisation software such as Paraview. 
 

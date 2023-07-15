@@ -1,5 +1,5 @@
 ===============================
-Introduction on how to use GMSH
+Introduction on How to Use GMSH
 ===============================
 
 .. seealso::
@@ -25,7 +25,7 @@ This guide uses mainly this simple geometry:
     :name: geometry
 
 """"""""""""""""""""""""""""""""""
-Create and Edit the ``.geo`` file
+Create and Edit the ``.geo`` File
 """"""""""""""""""""""""""""""""""
 The geometry is written in a ``.geo`` file:
 
@@ -116,7 +116,7 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 .. _opencascade kernel:
 
 """"""""""""""""""""""""""
-OpenCASCADE kernel
+OpenCASCADE Kernel
 """"""""""""""""""""""""""
 In the GMSH geometry section of the GMSH GUI (see ``Left pannel: Modules > Geometry > Elementary entities > Add``), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. GMSH will automatically open a window where you can easily set the characteristic lenghts of the geometry, and update the ``.geo`` file.
 
@@ -144,7 +144,7 @@ For our example (circle in a rectangle in 2D):
 	BooleanDifference{ Surface{1}; Delete; }{ Surface{2}; Delete; }
 	
 """"""""""""""""""""""""""
-Import CAD file
+Import CAD File
 """"""""""""""""""""""""""
 Importing CAD files (``.step`` or ``.stp`` format) can be particularly convenient for more complex fluid geometries (like pipes) or immersed solids (like an impeller):
 
@@ -159,7 +159,7 @@ Importing CAD files (``.step`` or ``.stp`` format) can be particularly convenien
   You can find a step-by-step video `here <https://www.youtube.com/watch?v=e7zA3joOWX8>`_, with very useful tools as how to inspect your mesh.
 
 --------------------------
-Physical groups
+Physical Groups
 --------------------------
 
 .. warning::
@@ -252,7 +252,7 @@ By following all the previous steps, the mesh generated looks like below.
     :name: unstructured mesh
 
 """"""""""""""""""""""""""""""""""""
-Attractors for local mesh refinement
+Attractors for Local Mesh Refinement
 """"""""""""""""""""""""""""""""""""
 Attractors can also be used to refine the mesh towards specific edges or surfaces. In this example, attractors could be interesting if the mesh needs to be finer around the sphere. Attractors can only be added by code with the ``Field`` attribute.
 
@@ -305,7 +305,7 @@ Here is the mesh generated with an attractor around the sphere:
 .. _structured mesh:
 
 """"""""""""""""""""""""""
-Structured - Quad mesh
+Structured - Quad Mesh
 """"""""""""""""""""""""""
 .. warning::
 	The ``.geo`` file must be built with the :ref:`built-in kernel`.
@@ -455,7 +455,7 @@ You now know everything about boundary layer meshing. Here is an example on a na
 
 
 --------------------------
-Other tips
+Other Tips
 --------------------------
 - Use variables and functions to make your ``.geo`` file more adaptative
 	* Example: 

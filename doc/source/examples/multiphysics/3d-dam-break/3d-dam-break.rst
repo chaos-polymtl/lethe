@@ -1,5 +1,5 @@
 ===============================
-3D Dam-break with an obstacle
+3D Dam-Break with an Obstacle
 ===============================
 
 This example simulates a dam break experiment from the Maritime Research Institute Netherlands (MARIN) `[1] <https://www.spheric-sph.org/tests/test-02>`_.
@@ -17,12 +17,13 @@ Features
 - The use of a python script for post-processing data
 
 
+--------------------------
 Files Used in This Example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
-- Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
-- Python script for post-processing data: ``examples/multiphysics/3d-dam-break/3d-dam-break_postprocess.py``
+--------------------------
 - Experimental data file: ``examples/multiphysics/3d-dam-break/experimental_data.txt``
+- Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
+- Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
+- Python script for post-processing data: ``examples/multiphysics/3d-dam-break/3d-dam-break_postprocess.py``
 
 
 .. _Description of the case:
@@ -76,12 +77,13 @@ Along the x-axis, the water height is measured at 4 different positions. These p
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
+
 -----------------
 Parameter File
 -----------------
 
 Simulation Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
 and the max CFL is :math:`0.5`.
@@ -109,7 +111,7 @@ and the max CFL is :math:`0.5`.
     end
 
 Multiphysics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)`
 and off `(false)` the physics of interest. Here ``VOF`` is chosen.
@@ -126,7 +128,7 @@ Note that the fluid dynamics are solved by default.
     end
 
 Physical Properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{\text{kg}}{\text{m}^3}` (air) and :math:`1000 \ \frac{\text{kg}}{\text{m}^3}` (water). However, the current numerical model was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
 
@@ -151,15 +153,15 @@ The ``physical properties`` subsection defines the physical properties of the fl
       end
     end
 
-Initial condition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
-In the ``initial condition`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial condition``.
+In the ``initial conditions`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of ``initial conditions``.
 
 .. code-block:: text
 
     #---------------------------------------------------
-    # Initial Condition
+    # Initial Conditions
     #---------------------------------------------------
 
     subsection initial conditions
@@ -173,15 +175,15 @@ In the ``initial condition`` subsection, we need to define the interface between
       end
     end
 
-Source term
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Source Term
+~~~~~~~~~~~
 
 In the ``source term`` subsection, we define the gravitational acceleration.
 
 .. code-block:: text
 
     #---------------------------------------------------
-    # Source term
+    # Source Term
     #---------------------------------------------------
 
     subsection source term
@@ -192,7 +194,7 @@ In the ``source term`` subsection, we define the gravitational acceleration.
     end
 
 VOF
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.
 
@@ -210,7 +212,7 @@ In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fra
     end
 
 Mesh
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example can be generated from the ``tank.geo`` file using `Gmsh <https://gmsh.info/#Download>`_. The initial refinement is set to :math:`3`.
 
@@ -227,7 +229,7 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The struct
 
 
 Mesh Adaptation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase`` and ``pressure`` as the ``refinement variables``. The maximum and minimum refinement levels are respectively set to :math:`4` and :math:`2`.
 

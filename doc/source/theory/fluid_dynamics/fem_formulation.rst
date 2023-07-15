@@ -1,5 +1,6 @@
-Origin of the finite element formulation
-##########################################
+========================================
+Origin of the Finite Element Formulation
+========================================
 
 This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain the weak-form. We then briefly discuss the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them.
 
@@ -47,9 +48,8 @@ which can be seen as an outlet boundary condition where the normal stress is zer
 This weak form is non-linear because of :math:`u_l \partial_l u_k` term. 
 
 
-
- 
-Solving the non-linear problem
+----------------------------------
+Solving the Non-linear Problem
 ----------------------------------
 
 To solve non-linear problem, Lethe uses the `Newton-Raphson method <https://en.wikipedia.org/wiki/Newton%27s_method>`_. This method proceeds by solving recurrently for the correction vector :math:`\mathbf{\delta x}` which is obtained by solving the following system:
@@ -93,17 +93,5 @@ The Jacobian is:
     +   \int_{\Omega}  v_k \left(\partial_t \phi_{k,j}+ \phi_{l,j} \partial_l u_k + u_l \partial_l \phi_{k,j}  \right) \mathrm{d}\Omega \\
     &  - \int_{\Omega} \psi_j  \left( \partial_k   v_k \right)\mathrm{d}\Omega  
     + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l \phi_{k,j}  \right) \mathrm{d}\Omega  
-
-
-
-    
-
-
-
-
-
-
-
-
 
 

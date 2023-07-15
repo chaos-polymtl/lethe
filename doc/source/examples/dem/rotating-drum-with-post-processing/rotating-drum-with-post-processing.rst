@@ -1,9 +1,10 @@
 ==================================
-Rotating drum with post-processing
+Rotating Drum with Post-processing
 ==================================
 
 This is a mini-example that only adds Lagrangian post-processing features to the rotating drum example (example 3). Hence, we only explain the post-processing subsection in this example.
 
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
@@ -12,17 +13,20 @@ Features
 - Lagrangian post-processing
 
 
+----------------------------
 Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-rotating-drum-with-post-processing/rotating-drum-with-post-processing.prm``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
 This example is identical the rotating drum example. The only difference is that in this example, we use Lagrangian post-processing to obtain granular temperature and average velocity (averaged in cells) distribution.
 
 
+--------------
 Parameter File
 --------------
 

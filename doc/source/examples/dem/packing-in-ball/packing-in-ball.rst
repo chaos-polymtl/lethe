@@ -1,9 +1,11 @@
 ==================================
-Packing in ball
+Packing in Ball
 ==================================
 
 This example is the three-dimensional version of the ``packing_in_circle`` example. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
@@ -16,6 +18,7 @@ Files Used in This Example
 ``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
@@ -25,6 +28,7 @@ Packing in ball example is the three-dimensional version of the packing in circl
 	Two-dimensional DEM solver (dem_2d) is not an accurate model, since several phenomena including torque on particles are intrinsically three-dimensional. dem_2d solver may only be used for simple basic analyses before performing three-dimensional simulations with dem_3d solver becomes necessary.
 
 
+--------------
 Parameter File
 --------------
 
@@ -46,7 +50,7 @@ In a three-dimensional simulation, ``hyper_ball`` creates a three-dimensional ba
     end
 
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
 In a three-dimensional simulation, we have to define the minimum and maximum dimensions of the insertion box with three components in `x`, `y`, and `z` directions.
@@ -69,7 +73,7 @@ In a three-dimensional simulation, we have to define the minimum and maximum dim
     end
 
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Gravitational acceleration has three components in three directions.
@@ -98,7 +102,7 @@ Gravitational acceleration has three components in three directions.
     end
 
 
-Model parameters
+Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -127,6 +131,8 @@ Simulation Control
       set output frequency = 10000
     end
 
+
+----------------------
 Running the Simulation
 ----------------------
 This simulation can be launched by:
@@ -144,6 +150,8 @@ We can also launch this simulation in parallel mode. For example, to launch the 
 .. note::
 	The parallel simulations are generally faster than simulations on a single process. However, to leverage the full performance of a parallel simulation, it should be performed with a load-balancing strategy throughout the simulation. Load-balancing is explained in the `next example <../rotating-drum/rotating-drum.html>`_.
 
+
+---------
 Results
 ---------
 

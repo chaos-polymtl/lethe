@@ -1,6 +1,6 @@
-####################
+================
 Windows with WSL
-####################
+================
 
 .. figure:: ./images/windows.png
    :height: 100px
@@ -75,7 +75,7 @@ When prompted "do you want to continue?", proceed by typing ``y`` and hitting ``
 	You can find `here <https://linuxconfig.org/linux-commands>`_ a thorough guide for the most basic Linux commands.
 
 
-Installing deal.II using candi (Step #1)
+Installing deal.II using Candi (Step #1)
 -----------------------------------------
 
 .. important::
@@ -298,7 +298,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 
 Congratulations, you are now ready to use lethe! For instance, proceed to :doc:`../first_simulation`.
 
-Updating deal.II and lethe
+Updating deal.II and Lethe
 -------------------------------------
 
 If you have already installed deal.II and lethe, you can update them without doing the entire installation from scratch:
@@ -328,7 +328,7 @@ Troubleshooting
 
 .. _change compiler default version:
 
-Change compiler default version
+Change Compiler Default Version
 +++++++++++++++++++++++++++++++++++++
 
 |linux_shell| After you installed ``gcc-10``, ``g++-10`` and ``gfortran-10``, manually update default versions in the terminal:
@@ -353,7 +353,7 @@ Should return ``gcc (Ubuntu 10.X.X...) 10.X.X``.
 
 .. _modify candi installation parameters with nano:
 
-Modify candi installation parameters with nano
+Modify Candi Installation Parameters with Nano
 +++++++++++++++++++++++++++++++++++++++++++++++
 
 |linux_shell| If you do not see the Ubuntu mount in the Windows file manager, you can modify the candi parameter files in the Ubuntu terminal directly. 

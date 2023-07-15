@@ -1,9 +1,11 @@
 ==========================
-Warming up a viscous fluid
+Warming up a Viscous Fluid
 ==========================
 
 This example introduces how to solve another physics along with the CFD solver.
 
+
+--------------
 Features
 --------------
 * Solver: ``gls_navier_stokes_2d``
@@ -12,10 +14,14 @@ Features
 * Displays the use of heat transfer physics
 * Analytical solution
 
+
+---------------------------
 Files Used in This Example
 ---------------------------
 ``examples/multiphysics/warming-up-viscous-fluid``
 
+
+------------------------
 Description of the Case
 ------------------------
 A viscous fluid lays between two parallel plates: one fixed and insulated, and the other moving and heated. The velocity profile and the temperature evolution are simulated. The parameter file used is ``warming-up-viscous-fluid.prm``.
@@ -33,6 +39,8 @@ The following schematic describes the simulation.
 .. important:: 
     The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
 
+
+---------------
 Parameter File
 ---------------
 
@@ -204,6 +212,9 @@ The ``boundary conditions`` are set for:
       end
     end
 
+
+
+-----------------------
 Running the Simulation
 -----------------------
 
@@ -213,6 +224,8 @@ The simulation is launched in the same folder as the ``.prm`` file, using the ``
     
     ../../exe/bin/gls_navier_stokes_2d warming-up-viscous-fluid.prm
 
+
+--------------
 Results
 --------------
 
@@ -252,15 +265,17 @@ Temperature evolution over time:
     :align: center
 
 
-Physical interpretation
+Physical Interpretation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 From :math:`t=0s` to :math:`t=2s`, the right plate (:math:`T=80^\circ`) heats up the fluid (initially at :math:`T=0^\circ`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80^\circ`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80^\circ` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
 
+
+--------------
 Bonuses
 --------------
 
-Results for water
+Results for Water
 ~~~~~~~~~~~~~~~~~
 
 For water, ``physical properties`` are:
@@ -300,7 +315,7 @@ As water has a higher thermal conductivity than oil, the temperature becomes qua
     :width: 30%
 
 
-Results without viscous dissipation
+Results without Viscous Dissipation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The viscous dissipation can be disabled physically, if the two plates remain fixed (``v=0`` for ``bc 1``), or numerically with ``set viscous dissipation = false``. Both cases give the same results shown below. The fluid considered is still water.
@@ -325,7 +340,7 @@ After the fluid has been heated up by the right plate, the temperature is really
     :width: 30%
 
 
-Horizontal domain
+Horizontal Domain
 ~~~~~~~~~~~~~~~~~
 
 Several adjustments have to be made in the `.prm` to turn the domain clockwise, so that it becomes horizontal, with the upper wall being the no slip and thermal insulation boundary condition, and the lower wall with the flow in the y-direction (:math:`v=2`) and heating at Tw:
@@ -377,6 +392,7 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 	* the index in ``set id = ..`` is coherent with the ``id`` of the boundary in the mesh (here, the deal.II generated mesh).
 
 
+----------------------------
 Possibilities for Extension
 ----------------------------
 

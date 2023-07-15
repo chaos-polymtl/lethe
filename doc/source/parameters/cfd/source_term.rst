@@ -58,7 +58,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
 .. _ex function:
 
-Examples of Function expression
+Examples of Function Expression
 --------------------------------
 
 CFD source term with ``Function constants``:

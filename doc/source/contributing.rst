@@ -5,7 +5,7 @@
 Contributing
 ############
 
-Pull requests
+Pull Requests
 =============
 
 Title
@@ -19,14 +19,14 @@ Format
 Lethe uses clang-format to have a uniform indentation across all source files. You should always run the indentation script in the contrib folder before creating a PR: ``contrib/utilities/indent-all``. If there are compatibility issues, you can run before that script either ``./contrib/utilities/download_clang_format`` or  ``./contrib/utilities/compile_clang_format``. For parameter files, there is a specific script that can be run as follows:  ``prmindent -i name_of_file.prm``.
 
 
-Review process
+Review Process
 --------------
 
 * At least 2 reviewers for minor changes, like a bug fix or a small feature
 * At least 3 reviewers for bigger changes like bigger features and architectural reconfiguration.
 * The reviewer should be notified before opening the pull request. The reviewers should be selected from already existing contributor to the code. (See section: Insights\Contributors).
 
-Review responsibility
+Review Responsibility
 ---------------------
 
 * Give a review of the code implementation and general functionality of the code.

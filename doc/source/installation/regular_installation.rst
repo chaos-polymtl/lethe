@@ -1,6 +1,6 @@
-##############################
-Regular installation on Linux
-##############################
+==============================
+Regular Installation on Linux
+==============================
 
 .. figure:: ./images/linux.png
    :height: 100px
@@ -30,7 +30,7 @@ Regular installation on Linux
 	On a single core computer with 8GB of RAM, count up to 8 hours for a first installation, and 3 hours for a deal.II update. On a machine with 16 cores and 32GB of RAM, this process will take less than an hour or so. The installation of deal.II and its dependencies (especially trilinos), can be extremely RAM consuming. Installation on a machine with less than 8GB of RAM is difficult at best, impossible at worst.
 
 
-Installing deal.II using candi (Step #1)
+Installing deal.II using Candi (Step #1)
 -----------------------------------------
 
 To install the dependencies (MPI, p4est, trilinos and METIS) all together using candi, the `procedure <https://github.com/dealii/candi.git>`_ on the candi repository can be followed.
@@ -60,7 +60,7 @@ After installation, add an environment variable to your ``.bashrc`` either manua
 
   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.bashrc
 
-Installing deal.II manually (Step #1)
+Installing deal.II Manually (Step #1)
 --------------------------------------
 .. note:: 
   If you have installed deal.II through candi, you can skip right away to :ref:`install-lethe`
@@ -88,7 +88,7 @@ In Manjaro or other arch based linux distribution:
   sudo pacman -Sy openmpi
 
 
-numdiff
+Numdiff
 ~~~~~~~~
 
 numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. numdiff can be installed directly from your package manager.
@@ -98,7 +98,7 @@ numdiff is used within the automatic testing procedure of Lethe to compare files
 
   sudo apt-get install numdiff
 
-Regrettably, numdiff is not available in the pacman package manager. It can be downloaded from the following `website <http://www.nongnu.org/numdiff/>`_. If you are using an arch distribution, we assume that you will already know how to carry on with the installation of numdiff. 
+Regrettably, numdiff is not available in the pacman package manager. It can be downloaded from the following `website <http://www.nongnu.org/numdiff/>`_. If you are using an arch distribution, we assume that you will already know how to carry on with the installation of numdiff.
 
 P4est
 ~~~~~~~
@@ -169,7 +169,7 @@ It is generally recommended to add the variable to your bashrc so it is always l
 
 .. _install-lethe:
 
-Installing lethe (Step #2)
+Installing Lethe (Step #2)
 -------------------------------
 
 Clone lethe from the `Lethe official repository <https://github.com/lethe-cfd/lethe>`_.
@@ -208,7 +208,7 @@ Then you can compile:
 
   make -j<numprocs>
 
-Testing your installation (Step #3)
+Testing Your Installation (Step #3)
 -------------------------------------
 
 Lethe comes pre-packaged with an extensive test suit for all of its modules. It can be used to test the validity of your installation. Within the build folder, the test suite can be launched with the following command:
@@ -225,11 +225,11 @@ where $numprocs can be the number of physical cores on your machine.
 Updating deal.II
 -------------------
 
-Through the git repository
+Through the Git Repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The deal.II version supported by Lethe is updated and tested every week or so, see the repository `here <https://github.com/lethe-cfd/dealii>`_. If Lethe was installed with this forked version of deal.II, updating your deal.II installation is as simple as pulling the repository and recompiling the deal.II library. If your deal.II was installed manually using the deal.II master repository, the same process can be used.
 
-With candi
+With Candi
 ~~~~~~~~~~~~~
 In the candi folder (for instance, ``/home/username/software/candi``), modify the ``candi.cfg`` to get the latest dealii version, by changing the ``DEAL_II_VERSION`` variable in the case of an official release, or by changing the ``STABLE_BUILD`` in the case of a development release. The ``candi.cfg`` should contain:
 
