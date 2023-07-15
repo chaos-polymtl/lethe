@@ -35,7 +35,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
              adjacent_particles_list.begin();
            adjacent_particles_list_iterator != adjacent_particles_list.end();)
         {
-          // Getting contact information and particle II as local
+          // Getting contact information and particle 2 as local
           // variables
           auto &adjacent_pair_information =
             adjacent_particles_list_iterator->second;
