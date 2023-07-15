@@ -11,6 +11,9 @@ DEAL:: Death Star , SD = 1.27344
 DEAL:: Cylinder , SD = 0.00000
 DEAL:: Cylindrical Tube , SD = -0.280625
 DEAL:: Cylindrical Helix , SD = 0.202481
+DEAL:: Superquadric 1 , SD = 0.00000
+DEAL:: Superquadric 2 , SD = 0.00000
+DEAL:: Superquadric 3 , SD = 1.24326
 DEAL::OK
 DEAL::Testing rotation and translation
 DEAL:: New distance for hyper rectangle , SD = 0.141370
@@ -22,6 +25,9 @@ DEAL:: Gradient for sphere at p[2] = 0.505363
 DEAL:: Gradient for ellipsoid at p[0] = 0.773081
 DEAL:: Gradient for ellipsoid at p[1] = 0.618465
 DEAL:: Gradient for ellipsoid at p[2] = 0.0783615
+DEAL:: Superquadric 1 , SD = 0.00000 0.00000 0.00000
+DEAL:: Superquadric 2 , SD = 0.00000 0.00000 0.00000
+DEAL:: Superquadric 3 , SD = 0.611102 0.693294 0.381966
 DEAL::OK
 DEAL::Testing copy
 DEAL:: Position of original cone[0] = 0.00000

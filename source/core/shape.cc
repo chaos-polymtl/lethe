@@ -43,6 +43,7 @@ Shape<dim>::clear_cache()
 {
   value_cache.clear();
   gradient_cache.clear();
+  closest_point_cache.clear();
 }
 
 template <int dim>
@@ -248,7 +249,7 @@ Shape<dim>::closest_surface_point(
 template <int dim>
 void
 Shape<dim>::closest_surface_point(const Point<dim> &p,
-                                  Point<dim> &      closest_point)
+                                  Point<dim> &      closest_point) const
 {
   Tensor<1, dim> actual_gradient;
   double         distance_from_surface;
@@ -362,6 +363,191 @@ Sphere<dim>::set_position(const Point<dim> &position)
 #endif
 }
 
+template <int dim>
+void
+Superquadric<dim>::closest_surface_point(
+  const Point<dim> &p,
+  Point<dim> &      closest_point,
+  const typename DoFHandler<dim>::active_cell_iterator & /*cell_guess*/)
+{
+  auto point_in_string = this->point_to_string(p);
+  auto iterator        = this->closest_point_cache.find(point_in_string);
+  if (iterator == this->closest_point_cache.end())
+    {
+      this->closest_surface_point(p, closest_point);
+
+      Point<dim> copy_closest_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        copy_closest_point[d] = closest_point[d];
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+      this->value_cache[point_in_string]         = this->value(p);
+      this->gradient_cache[point_in_string]      = this->gradient(p);
+    }
+  else
+    closest_point = iterator->second;
+}
+
+template <int dim>
+void
+Superquadric<dim>::closest_surface_point(const Point<dim> &p,
+                                         Point<dim> &      closest_point) const
+{
+  auto point_in_string = this->point_to_string(p);
+  auto iterator        = this->closest_point_cache.find(point_in_string);
+  if (iterator == this->closest_point_cache.end())
+    {
+      // The initial guess is chosen as the centered point (i.e. evaluation
+      // point, in the superquadric referential). It should already be somewhat
+      // close to the closest point, and it is already in the right octant.
+      Point<dim> current_point = this->align_and_center(p);
+
+      unsigned int       iteration     = 0;
+      const unsigned int iteration_max = 1e2;
+
+      Point<dim> dx{}, distance_gradient{};
+      double     current_distance = superquadric(current_point);
+
+      const double relaxation = 0.5;
+      while (iteration < iteration_max && abs(current_distance) > epsilon)
+        {
+          distance_gradient = superquadric_gradient(current_point);
+          if (distance_gradient.norm() < epsilon)
+            // Gradient can be null if the evaluation point is exactly on the
+            // centroid of the shape. In this case it is also the closest point.
+            break;
+          dx = -relaxation * (current_distance * distance_gradient) /
+               distance_gradient.norm_square();
+
+          current_point    = current_point + dx;
+          current_distance = superquadric(current_point);
+
+          iteration++;
+        }
+
+      closest_point = this->reverse_align_and_center(current_point);
+    }
+  else
+    closest_point = iterator->second;
+}
+
+template <int dim>
+double
+Superquadric<dim>::value(const Point<dim> &evaluation_point,
+                         const unsigned int /*component*/) const
+{
+  using numbers::PI;
+
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end())
+    {
+      // The closest point has to be found first, because it is used in value
+      // calculation.
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+
+      Point<dim> centered_point = this->align_and_center(evaluation_point);
+      if (superquadric(centered_point) > 0)
+        return (closest_point - evaluation_point).norm();
+      else
+        return -(closest_point - evaluation_point).norm();
+    }
+  else
+    return iterator->second;
+}
+
+template <int dim>
+double
+Superquadric<dim>::value_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component = 0*/)
+{
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->value_cache.find(point_in_string);
+  if (iterator == this->value_cache.end())
+    {
+      // The closest point has to be found first, because it is used in value
+      // calculation.
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+      Point<dim> copy_closest_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        copy_closest_point[d] = closest_point[d];
+
+      double levelset = this->value(evaluation_point);
+
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+      this->value_cache[point_in_string]         = levelset;
+      this->gradient_cache[point_in_string] = this->gradient(evaluation_point);
+      return levelset;
+    }
+  else
+    return iterator->second;
+}
+
+template <int dim>
+std::shared_ptr<Shape<dim>>
+Superquadric<dim>::static_copy() const
+{
+  std::shared_ptr<Shape<dim>> copy =
+    std::make_shared<Superquadric<dim>>(this->half_lengths,
+                                        this->exponents,
+                                        this->epsilon,
+                                        this->position,
+                                        this->orientation);
+  return copy;
+}
+
+template <int dim>
+Tensor<1, dim>
+Superquadric<dim>::gradient(const Point<dim> &evaluation_point,
+                            const unsigned int /*component*/) const
+{
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end())
+    {
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+
+      Tensor<1, dim> gradient =
+        (evaluation_point - closest_point) /
+        ((evaluation_point - closest_point).norm() + 1e-16);
+      return gradient;
+    }
+  else
+    return iterator->second;
+}
+
+template <int dim>
+Tensor<1, dim>
+Superquadric<dim>::gradient_with_cell_guess(
+  const Point<dim> &evaluation_point,
+  const typename DoFHandler<dim>::active_cell_iterator /*cell*/,
+  const unsigned int /*component*/)
+{
+  auto point_in_string = this->point_to_string(evaluation_point);
+  auto iterator        = this->gradient_cache.find(point_in_string);
+  if (iterator == this->gradient_cache.end())
+    {
+      // The closest point has to be found first, because it is used in value
+      // calculation
+      Point<dim> closest_point{};
+      this->closest_surface_point(evaluation_point, closest_point);
+      Point<dim> copy_closest_point{};
+      for (unsigned int d = 0; d < dim; d++)
+        copy_closest_point[d] = closest_point[d];
+
+      Tensor<1, dim> gradient = this->gradient(evaluation_point);
+      this->closest_point_cache[point_in_string] = copy_closest_point;
+      this->value_cache[point_in_string]    = this->value(evaluation_point);
+      this->gradient_cache[point_in_string] = gradient;
+      return gradient;
+    }
+  else
+    return iterator->second;
+}
 
 template <int dim>
 double
@@ -1196,8 +1382,7 @@ template <int dim>
 void
 CompositeShape<dim>::clear_cache()
 {
-  this->value_cache.clear();
-  this->gradient_cache.clear();
+  Shape<dim>::clear_cache();
   // The constituents themselves don't need to have their cache cleared, because
   // everytime the value or gradient functions are called the evaluation point
   // is modified (the relationships between the constituents don't change).
@@ -2078,6 +2263,7 @@ template class Sphere<2>;
 template class Sphere<3>;
 template class HyperRectangle<2>;
 template class HyperRectangle<3>;
+template class Superquadric<3>;
 template class Ellipsoid<2>;
 template class Ellipsoid<3>;
 template class Torus<3>;

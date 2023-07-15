@@ -164,7 +164,7 @@ The following properties are used if the particle impact one of the boundaries o
 .. warning::
     Currently this feature works only for spherical particles.
 
-* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, hyper rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file.
+* The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, hyper rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9, superquadric=10. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separately.
 
@@ -188,7 +188,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
 * The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to ``true`` to define the pressure reference point.
 
-* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``hyper rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``cut hollow sphere``, ``torus``, ``cylinder``, ``cylindrical tube``, ``cylindrical helix``, ``composite``, ``rbf``, ``opencascade``. An ``rbf`` geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a `bitpit <https://github.com/optimad/bitpit>`_-based script, namely example `RBF_example_00001 <https://github.com/optimad/bitpit/blob/master/examples/RBF_example_00001.cpp>`_.
+* The ``type`` parameter is used to define the geometry type of the particle. The alternatives in 2D are: ``sphere``, ``ellipsoid``, ``hyper rectangle``. In 3D, in addition to the previous shapes, alternatives include: ``cone``, ``death star``, ``superquadric``, ``cut hollow sphere``, ``torus``, ``cylinder``, ``cylindrical tube``, ``cylindrical helix``, ``composite``, ``rbf``, ``opencascade``. An ``rbf`` geometry is a flexible object described by a weighted sum of radial basis functions. The RBF data of an object can be generated from an STL file using a `bitpit <https://github.com/optimad/bitpit>`_-based script, namely example `RBF_example_00001 <https://github.com/optimad/bitpit/blob/master/examples/RBF_example_00001.cpp>`_.
 
 * The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``;``. The required arguments and the effective radius, used for near-particle refinement, are:
     * Sphere: *radius*; the effective radius is the *radius*;
@@ -209,7 +209,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Cut Hollow Sphere: *radius*, *cut height*, *wall thickness*; the effective radius is the *radius*;
 
-    * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*.
+    * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*;
+
+    * Superquadric: *x half length* (or :math:`a`), *y half length* (or :math:`b`), *z half length* (or :math:`c`), *x exponent* (or :math:`r`), *y exponent* (or :math:`s`), *z exponent* (or :math:`t`); the effective radius is the Euclidian norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by :math:`\left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0`;
 
     * Composite: *file name*.
    
