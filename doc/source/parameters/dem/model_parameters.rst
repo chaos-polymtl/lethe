@@ -22,6 +22,11 @@ In this subsection, contact detection, force models, time integration, load bala
   subsection load balancing
     # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
     set load balance method                     = none
+    set particle weight                         = 10      # Every method, except none
+    set step                                    = 1000    # if method = once
+    set frequency                               = 1000    # if method = frequent
+    set dynamic check frequency                 = 1000    # if method = dynamic
+    set threshold                               = 1.3     # if method = dynamic
   end
   
   # Particle-particle contact force model
@@ -69,7 +74,7 @@ Lethe rebuilds the contact lists automatically. In this mode, Lethe stores the d
 
 where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon}`, and :math:`{\alpha}` denote smallest contact search criterion, minimum cell size (in the triangulation), maximum particle radius (in polydisperse simulations), ``dynamic contact search size coefficient``, and ``neighborhood threshold``.
 
-* ``dynamic contact search size coefficient`` is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value for ``dynamic contact search size coefficient``.
+* ``dynamic contact search size coefficient`` is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value.
 
 
 =======================================
@@ -90,7 +95,7 @@ All contact force models are described in the :doc:`../../theory/dem/dem` sectio
 
 * ``particle particle contact force method`` control the particle-particle contact force model used. Four models are available in Lethe: ``hertz_mindlin_limit_overlap``, ``hertz_mindlin_limit_force``, ``hertz``, and ``linear``. 
   
-* ``particle wall contact force method`` controls the particle-wall contact force model used. Two modelsa are available: ``linear`` and ``non-linear``.
+* ``particle wall contact force method`` controls the particle-wall contact force model used. Two models are available: ``linear`` and ``non-linear``.
 
 * ``rolling resistance method`` controls the rolling resistance model used. Three rolling resistance models are available: ``no_resistance``, ``constant_resistance``, ``viscous_resistance``
 
@@ -99,7 +104,7 @@ All contact force models are described in the :doc:`../../theory/dem/dem` sectio
 Load balancing
 -----------------------
 
-Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe-DEM: ``once``, ``frequent``, or ``dynamic``. 
+Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe: ``once``, ``frequent``, or ``dynamic``. 
 
 The total weight of each cell with particles in load-balancing is defined as:
 
@@ -107,7 +112,7 @@ The total weight of each cell with particles in load-balancing is defined as:
     W=1000+W_pn_p
 
 where :math:`{W_p}` is the ``particle weight`` and :math:`{n_p}` is the number of particles in the cell. 1000 is the default weight assigned to one cell.
-
+* ``particle weight`` must be defined for every ``load balance method ``.
 
 ================================
 ``load balance method = once``
@@ -145,8 +150,7 @@ The dynamic disabling controls the disabling contact mechanism for performance e
 * ``enable dynamic disabling contacts`` enables the feature.
 
 * ``granular temperature threshold`` is the threshold of the granular temperature below which the contacts are disabled.
-* 
 * ``solid fraction threshold`` is the minimum solid fraction of the cell in which the contacts may be disabled.
 
 Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
-Note: The ``load balance method`` may be set to ``dynamic_with_disabling_contacts`` and factors of the weight of the cells by mobility status (only active and inactive, mobile factor is always 1) may be adjusted using the ``load balance active weight factor`` and ``load balance inactive weight factor`` parameters.
+Note: The ``load balance method`` may be set to ``dynamic_with_disabling_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1. 
