@@ -11,48 +11,35 @@ using namespace DEM;
 // and number_of_particles_z_direction) are also obtained
 template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
-  const DEMSolverParameters<dim> &                 dem_parameters,
-  const double                                     maximum_particle_diameter,
+  const DEMSolverParameters<dim> &dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation)
+  : remained_particles_of_each_type(
+      dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-
-
+  // Initializing current inserting particle type
+  current_inserting_particle_type = 0;
   this->inserted_this_step = 0;
-  this->maximum_diameter   = maximum_particle_diameter;
+  particle_counter = 0;
+
+  // Information about the plane --> Peut être directement un input à find_inplane_cells()
   this->insertion_plane_normal_vector =
     dem_parameters.insertion_info.insertion_plane_normal_vector;
   this->insertion_plane_point =
     dem_parameters.insertion_info.insertion_plane_point;
 
-  current_inserting_particle_type = 0;
-  particle_counter                = 0;
-  minimal_cell_diameter = GridTools::minimal_cell_diameter(triangulation) / std::sqrt(3.);
+  // À changer pour safe_distance dans le .prm
+  minimal_cell_diameter =
+    GridTools::minimal_cell_diameter(triangulation) / std::sqrt(3.);
   srand(dem_parameters.insertion_info.random_number_seed);
 
-  find_plane_cells_for_plane_insertion(triangulation);
-  find_center_of_inplane_cells();
-}
-
-// This function creates a vector of random doubles using the input parameters
-// in the parameter handler
-template <int dim>
-void
-PlaneInsertion<dim>::create_random_number_container(
-  std::vector<double> &random_container,
-  const double         random_number_range,
-  const int            random_number_seed)
-{
-  for (unsigned int i = 0; i < this->inserted_this_step; ++i)
-    {
-      srand(random_number_seed * (i + 1));
-      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
-                                 random_number_range);
-    }
+  // Initializing the cell that are close to the plan
+  find_inplane_cells(triangulation);
+  find_centers_of_inplane_cells();
 }
 
 template <int dim>
 void
-PlaneInsertion<dim>::find_plane_cells_for_plane_insertion(
+PlaneInsertion<dim>::find_inplane_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 { // Looping through cells
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -92,7 +79,7 @@ PlaneInsertion<dim>::find_plane_cells_for_plane_insertion(
 
 template <int dim>
 void
-PlaneInsertion<dim>::find_center_of_inplane_cells()
+PlaneInsertion<dim>::find_centers_of_inplane_cells()
 {
   for (const auto &cell : plane_cells_for_insertion)
     {
@@ -101,7 +88,7 @@ PlaneInsertion<dim>::find_center_of_inplane_cells()
 }
 
 // The main insertion function. insert_particle is utilized to insert the
-// particle at the cell center with a rawdom shifts particles
+// particle at the cell center with a random shifts particles
 template <int dim>
 void
 PlaneInsertion<dim>::insert(
@@ -109,78 +96,98 @@ PlaneInsertion<dim>::insert(
   const parallel::distributed::Triangulation<dim> & /*triangulation*/,
   const DEMSolverParameters<dim> &dem_parameters)
 {
-  double type = 0;
-  double diameter =
-    dem_parameters.lagrangian_physical_properties.particle_average_diameter.at(
-      type);
-  double density =
-    dem_parameters.lagrangian_physical_properties.density_particle.at(type);
-  double vel_x        = dem_parameters.insertion_info.vel_x;
-  double vel_y        = dem_parameters.insertion_info.vel_y;
-  double vel_z        = dem_parameters.insertion_info.vel_z;
-  double omega_x      = dem_parameters.insertion_info.omega_x;
-  double omega_y      = dem_parameters.insertion_info.omega_y;
-  double omega_z      = dem_parameters.insertion_info.omega_z;
-  double fem_force_x  = 0.;
-  double fem_force_y  = 0.;
-  double fem_force_z  = 0.;
-  double fem_torque_x = 0.;
-  double fem_torque_y = 0.;
-  double fem_torque_z = 0.;
-  double mass         = density * 4. / 3. * M_PI *
-                Utilities::fixed_power<3, double>(diameter * 0.5);
-  double volumetric_contribution = 0.;
-
-  std::vector<double> properties_of_one_particle{type,
-                                                 diameter,
-                                                 vel_x,
-                                                 vel_y,
-                                                 vel_z,
-                                                 omega_x,
-                                                 omega_y,
-                                                 omega_z,
-                                                 fem_force_x,
-                                                 fem_force_y,
-                                                 fem_force_z,
-                                                 fem_torque_x,
-                                                 fem_torque_y,
-                                                 fem_torque_z,
-                                                 mass,
-                                                 volumetric_contribution};
-  // Loop over the cell inplane
-  for (const auto &cell : plane_cells_for_insertion)
+  if (remained_particles_of_each_type == 0 &&
+      current_inserting_particle_type !=
+        dem_parameters.lagrangian_physical_properties.particle_type_number - 1)
     {
-     Point<dim> particle_location= cells_centers.at(
-        cell->active_cell_index());
-      Point<dim> ref_point;
-      // if the cell is empty
-      if (particle_handler.n_particles_in_cell(cell) == 0)
+      remained_particles_of_each_type =
+        dem_parameters.lagrangian_physical_properties.number.at(
+          ++current_inserting_particle_type);
+    }
+  if (remained_particles_of_each_type != 0)
+    {
+      // Loop over the cell inplane
+      for (const auto &cell : plane_cells_for_insertion)
         {
-                   particle_location(0) += static_cast<double>(rand()) /
-                         static_cast<double>(RAND_MAX) *
-                         dem_parameters.insertion_info.random_number_range;
+          Point<dim> ref_point;
+          Point<dim> particle_location =
+            cells_centers.at(cell->active_cell_index());
 
-          particle_location(1) += static_cast<double>(rand()) /
-                         static_cast<double>(RAND_MAX) *
-                         dem_parameters.insertion_info.random_number_range;
-
-          if constexpr (dim == 3)
+          // if the cell is empty
+          if (particle_handler.n_particles_in_cell(cell) == 0)
             {
-              particle_location(2) += static_cast<double>(rand()) /
-                             static_cast<double>(RAND_MAX) *
-                             dem_parameters.insertion_info.random_number_range;
+              double     type = current_inserting_particle_type;
+              double diameter = dem_parameters.lagrangian_physical_properties
+                                  .particle_average_diameter.at(type);
+              double density  =
+                dem_parameters.lagrangian_physical_properties.density_particle.at(type);
+              double vel_x        = dem_parameters.insertion_info.vel_x;
+              double vel_y        = dem_parameters.insertion_info.vel_y;
+              double vel_z        = dem_parameters.insertion_info.vel_z;
+              double omega_x      = dem_parameters.insertion_info.omega_x;
+              double omega_y      = dem_parameters.insertion_info.omega_y;
+              double omega_z      = dem_parameters.insertion_info.omega_z;
+              double fem_force_x  = 0.;
+              double fem_force_y  = 0.;
+              double fem_force_z  = 0.;
+              double fem_torque_x = 0.;
+              double fem_torque_y = 0.;
+              double fem_torque_z = 0.;
+              double mass         = density * 4. / 3. * M_PI *
+                            Utilities::fixed_power<3, double>(diameter * 0.5);
+              double volumetric_contribution = 0.;
+
+              std::vector<double> properties_of_one_particle{
+                type,
+                diameter,
+                vel_x,
+                vel_y,
+                vel_z,
+                omega_x,
+                omega_y,
+                omega_z,
+                fem_force_x,
+                fem_force_y,
+                fem_force_z,
+                fem_torque_x,
+                fem_torque_y,
+                fem_torque_z,
+                mass,
+                volumetric_contribution};
+
+              // Generate the random point of insertion
+              particle_location(0) +=
+                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+                dem_parameters.insertion_info.random_number_range;
+
+              particle_location(1) +=
+                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+                dem_parameters.insertion_info.random_number_range;
+
+              if constexpr (dim == 3)
+                {
+                  particle_location(2) +=
+                    static_cast<double>(rand()) /
+                    static_cast<double>(RAND_MAX) *
+                    dem_parameters.insertion_info.random_number_range;
+                }
+              // Insert a particle in the middle of the cell
+              particle_handler.insert_particle(particle_location,
+                                               ref_point,
+                                               particle_counter++,
+                                               cell,
+                                               properties_of_one_particle);
+              
+              // Break the loop if all the particle of a certain type are inserted
+              if(--remained_particles_of_each_type == 0)
+                {
+                  break;
+                }
+
             }
-          // insert a particle in the middle of the cell
-          particle_handler.insert_particle(particle_location,
-                                           ref_point,
-                                           particle_counter++,
-                                           cell,
-                                           properties_of_one_particle);
         }
     }
 }
-
-
 
 ;
 template class PlaneInsertion<2>;

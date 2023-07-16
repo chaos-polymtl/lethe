@@ -14,7 +14,7 @@ NonUniformInsertion<dim>::NonUniformInsertion(
   : remained_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-  // Inializing current inserting particle type
+  // Initializing current inserting particle type
   current_inserting_particle_type = 0;
 
   this->inserted_this_step = 0;

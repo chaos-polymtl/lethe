@@ -908,7 +908,6 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
     {
       insertion_object =
         std::make_shared<PlaneInsertion<dim>>(parameters,
-                                              maximum_particle_diameter,
                                               triangulation);
     }
   else

@@ -28,7 +28,7 @@
 #  define plane_insertion_h
 
 /**
- * Plane insertion of particles
+ * Insertion of particles using cell located in a plane
  *
  * @note
  *
@@ -48,16 +48,14 @@ public:
    * number_of_particles_y_direction and number_of_particles_z_direction).
    *
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param maximum_particle_diameter Maximum particle diameter based on values
-   * defined in the parameter handler
+   * @param triangulation Triangulation object used in the simulation.
    */
   PlaneInsertion<dim>(
     const DEMSolverParameters<dim> &                 dem_parameters,
-    const double                                     maximum_particle_diameter,
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
-   * Carries out the non-uniform insertion of particles.
+   * Carries out the insertion of particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -67,70 +65,38 @@ public:
    *
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &                particle_handler,
+  insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
 private:
   /**
-   * Creates a vector of random numbers with size of particles which are going
-   * to be inserted at each insertion step
-   *
-   * @param random_container A vector of random numbers
-   * @param random_number_range The range in which the random numbers will be
-   * generated
-   * @param random_number_seed random number seed
+   * @brief Store the cells that sufficiently close to the plane.
    */
   void
-  create_random_number_container(std::vector<double> &random_container,
-                                 const double         random_number_range,
-                                 const int            random_number_seed);
-
-  /**
-   * Converts id of particles to non-uniform insertion location
-   *
-   * @param insertion_location Insertion location of the particle
-   * @param id Particle_id
-   * @param random_number1 A random number to create randomness in non-uniform insertion
-   * @param random_number2 A random number to create randomness in non-uniform insertion
-   * @param insertion_information DEM insertion parameters declared in the .prm
-   * file
-   */
-  void
-  find_insertion_location_plane(
-    Point<dim> &                                 insertion_location,
-    const unsigned int                           id,
-    const double                                 random_number1,
-    const double                                 random_number2,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information);
-
-  unsigned int current_inserting_particle_type;
-
-  // Number of particles of each type that remain to be inserted in the
-  // upcoming insertion steps
-  unsigned int remained_particles_of_each_type;
-
-  /**
-   * @brief
-   */
-  void
-  find_plane_cells_for_plane_insertion(
+  find_inplane_cells(
     const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
-   * @brief Store the location of all the cells that are in the plane
+   * @brief Store the location of the centers of all the cells that are in the plane
    */
-
   void
-  find_center_of_inplane_cells();
+  find_centers_of_inplane_cells();
 
+
+  //
   Tensor<1, 3> insertion_plane_normal_vector;
   Point<3>     insertion_plane_point;
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
-  std::unordered_map<unsigned int, Point<dim>> cells_centers;
   unsigned int                                 particle_counter;
+  unsigned int                                 remained_particles_of_each_type;
+  unsigned int                                 current_inserting_particle_type;
   double                                       minimal_cell_diameter;
+  std::unordered_map<unsigned int, Point<dim>> cells_centers;
+  std::unordered_map<unsigned int, double>     number_particles_to_insert;
+  std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
 };
+
 
 #endif /* plane_insertion_h */
