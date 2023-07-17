@@ -29,6 +29,16 @@ Computational Fluid Dynamics
 
     fluid_dynamics/fluid_dynamics
 
+Multiphysics
+=============================
+
+.. toctree::
+    :maxdepth: 3
+    :glob:
+    :titlesonly:
+
+    multiphysics/multiphysics
+
 Heat transfer
 ----------------
 

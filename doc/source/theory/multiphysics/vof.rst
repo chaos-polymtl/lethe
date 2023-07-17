@@ -1,9 +1,9 @@
 The Volume of Fluid (VOF) method
 #############################################
 
-Numerous exemples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between the fluids.
+Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid 0 and 1, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method [`1 <https://doi.org/10.1016/0021-9991(81)90145-5>`_], we define the scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method [`1 <https://doi.org/10.1016/0021-9991(81)90145-5>`_], we define the scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -12,7 +12,7 @@ Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, 
     1 \quad \forall \vec{x} \in \Omega_1
   \end{cases}
 
-This phase indicator (or phase fraction) changes rapidly but smoothly from 0 to 1 at the interface such that :math:`\Gamma` is located at the iso-contour :math:`\phi=0.5`, as illustrated below.
+This phase indicator (or phase fraction) changes rapidly but smoothly from :math:`0` to :math:`1` at the interface such that :math:`\Gamma` is located at the iso-contour :math:`\phi=0.5`, as illustrated below.
 
 .. image:: images/vof.png
     :alt: Schematic
@@ -46,36 +46,36 @@ where :math:`n_i` represent the outward pointing unit normal vector of :math:`\p
 Finite element formulation
 ---------------------------
 
-To obtain the finite element formulation, we first need the weak formulation. Therefore, let :math:`v` be an arbitrary continous scalar function on :math:`\Omega`. To obtained the weak form, we multiply the strong problem by :math:`v` and integrate over :math:`\Omega`:
+To obtain the finite element formulation, we first need the weak formulation. Therefore, let :math:`v` be an arbitrary scalar function on :math:`\Omega`. To obtain the weak form, we multiply the strong problem by :math:`v` and integrate over :math:`\Omega`:
 
 .. math::
   \int_\Omega v \left( \partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi\right) d \Omega = 0
 
-To insure that those integrals are well defined in :math:`\Omega`, we chose the appropriate solution spaces:
+To ensure that those integrals are well defined in :math:`\Omega`, we chose the appropriate solution spaces:
 
 .. math::
   \phi \in \Phi(\Omega) = H^1(\Omega)
 
 .. math::
-  v \in V(\Omega) = H^1(\Omega)
+  v \in V(\Omega) = L^2(\Omega)
 
-Since :math:`\Phi=V`, the weak problem is:
+Thus, the weak problem is:
 
-Find :math:`\phi \in V \times [0,T]` such that
+Find :math:`\phi \in \Phi(\Omega) \times [0,T]` such that
 
 .. math::
   \int_\Omega v \left( \partial_t \phi + \phi\partial_i u_i + u_i\partial_i\phi\right) d \Omega = 0 \quad \forall v\in V
 
-Using Galerkin method, the finite element formulation reads:
+Using Petrov-Galerkin method, the finite element formulation reads:
 
-Find :math:`\phi^h \in V^h \times [0,T]` such that
+Find :math:`\phi^h \in \Phi^h \times [0,T]` such that
 
 .. math::
   \int_\Omega v^h \left( \partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h\right) d \Omega = 0 \quad \forall v^h\in V^h\times [0,T]
 
-where :math:`V^h` is the finite element space, and :math:`\phi^h(\vec{x},t) = \sum_{j=1}^N \phi_j(t)\psi_j(\vec{x})`. In standard notation, this formulation corresponds to:
+where :math:`\Phi^h` and :math:`V^h` are finite element spaces, and :math:`\phi^h(\vec{x},t) = \sum_{j=1}^N \phi_j(t)\psi_j(\vec{x})`. In standard notation, this formulation corresponds to:
 
-Find :math:`\phi^h \in V^h \times [0,T]` such that
+Find :math:`\phi^h \in \Phi^h \times [0,T]` such that
 
 .. math::
   \int_\Omega v^h \left(\frac{\partial \phi^h}{\partial t} + \phi^h \nabla \cdot \vec{u} + \vec{u}\cdot \nabla \phi^h \right) d \Omega = 0 \quad \forall v^h\in V^h\times [0,T]
@@ -83,7 +83,7 @@ Find :math:`\phi^h \in V^h \times [0,T]` such that
 Stabilization
 --------------
 
-The numerical resolution of the advection equation requires stabilization because of its purely convective character. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across :math:`\Gamma` and perpendicular to the streamlines. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used [`2 <https://doi.org/10.1002/fld.505>`_]:
+The numerical resolution of the advection equation requires stabilization because of its purely advective character, which makes the equation hyperbolic. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across :math:`\Gamma`. Since SUPG only adds diffusion along the streamlines, crosswind oscillations may occur if no appropriate shock capturing scheme is used. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used [`2 <https://doi.org/10.1002/fld.505>`_]:
 
 .. math::
 
@@ -91,21 +91,21 @@ The numerical resolution of the advection equation requires stabilization becaus
   &\quad + \sum_k \int_{\Omega_k}\tau_\mathrm{SUPG} u_i\partial_i v^h\left(\partial_t \phi^h + \phi^h\partial_i u_i + u_i\partial_i\phi^h \right) d \Omega_k \\
   &\qquad + \sum_k \int_{\Omega_k}v_\mathrm{DCDD}f_\mathrm{DCDD} \partial_i v^h \partial_i \phi^h  d \Omega_k  = 0
 
-where the first element wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formualtion is used (see :doc:`./stabilization`). The terms of the DCDD scheme are:
+where the first element wise summation represents the SUPG stabilization term and the second is the shock capturing scheme. The same SUPG stabilization as in the Navier-Stokes finite element formulation is used (see :doc:`../fluid_dynamics/stabilization`). The terms of the DCDD scheme are:
 
 .. math::
 
   &v_\mathrm{DCDD} = \frac{1}{2} h^2 \|\vec{u}\| \| \nabla \phi^h \| \\
   &f_\mathrm{DCDD} = \frac{\nabla \phi^h}{\| \nabla \phi^h \|} \frac{\nabla \phi^h}{\| \nabla \phi^h \|}
 
-The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`f_\mathrm{DCDD}` is intended to add diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization. However, for now, diffusivity is added in every directions where there is a phase gradient.
+The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where there is a large phase gradient and a non-zero velocity, i.e., where the interface :math:`\Gamma` is in motion. The term :math:`f_\mathrm{DCDD}` is intended to add diffusivity only in the crosswind direction, since streamline diffusion is already added by the SUPG stabilization. However, for now, diffusivity is added in every direction where there is a phase gradient.
 
 The DCDD scheme leads to a non-linear finite element formulation. Thus, the latter is resolved with the Newton-Raphson method.
 
 Interface diffusion and sharpening
 -----------------------------------
 
-The VOF method tends to diffuse the interface: over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` happens on a larger distance.
+The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` happens on a larger distance.
 
 Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Two methods are currently available: interface sharpening and interface filtration.
 
@@ -154,9 +154,9 @@ where :math:`\phi'` is the filtered phase fraction value, and :math:`\beta` is a
 Surface tension
 ---------------
 
-When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. For exemple, it corresponds to the force that drives a droplet into its spherical shape [`3 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_].
+When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape [`3 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_].
 
-Resolution of the interface motion via the advection equation allows to compute the surface tension term and add its effect in the Navier-Stokes momentum equation.
+Resolution of the interface motion via the advection equation allows to compute the surface tension term and add its effect to the Navier-Stokes momentum equations.
 
 As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface force. It is applied at the interface between two immiscible fluids and is given by:
 
@@ -218,7 +218,7 @@ The phase fraction gradient filter :math:`\eta_n` and the curvature filter value
 
   \eta_\kappa = \beta h^2
 
-where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` is the cell size.
+where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` is the cell size. Recommended values are :math:`\alpha = 4.0` and :math:`\beta = 1.0`.
 
 
 References
