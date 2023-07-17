@@ -22,11 +22,11 @@ In this subsection, contact detection, force models, time integration, load bala
   subsection load balancing
     # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
     set load balance method                     = none
-    set particle weight                         = 10      # Every method, except none
-    set step                                    = 1000    # if method = once
-    set frequency                               = 1000    # if method = frequent
-    set dynamic check frequency                 = 1000    # if method = dynamic
-    set threshold                               = 1.3     # if method = dynamic
+    set particle weight                         = 10000      # Every method, except none
+    set step                                    = 100000     # if method = once
+    set frequency                               = 100000     # if method = frequent
+    set dynamic check frequency                 = 10000      # if method = dynamic
+    set threshold                               = 0.5        # if method = dynamic
   end
   
   # Particle-particle contact force model
@@ -112,7 +112,8 @@ The total weight of each cell with particles in load-balancing is defined as:
     W=1000+W_pn_p
 
 where :math:`{W_p}` is the ``particle weight`` and :math:`{n_p}` is the number of particles in the cell. 1000 is the default weight assigned to one cell.
-* ``particle weight`` must be defined for every ``load balance method ``.
+
+* ``particle weight`` must be defined for every ``load balance method``.
 
 ================================
 ``load balance method = once``
