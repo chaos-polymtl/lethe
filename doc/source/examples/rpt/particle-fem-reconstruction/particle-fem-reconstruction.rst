@@ -129,7 +129,6 @@ In the subsection ``FEM reconstruction parameters``, we specify the file that co
       set nodal counts file        = temp_nodal_counts_detector00.counts, temp_nodal_counts_detector01.counts, temp_nodal_counts_detector02.counts, temp_nodal_counts_detector03.counts
     end
 
-:math:`C_{exp}`
 
 Running the simulation
 ----------------------------------
@@ -151,14 +150,10 @@ Results
 With the figure shown below we assess the validity of the reconstruction algorithm with a reconstruction of a set of experimental points. It shows the real positions of the particle and the reconstructed positions.
 
 .. image::  images/results_2.png
-    :alt: The geometry
+    :alt: The geometryew 
     :align: center
-    :name: results
+    :name: results from the fem reconstruction
     :width: 600
-
-
-
-
 
 
 References
