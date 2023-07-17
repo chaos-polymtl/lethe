@@ -97,6 +97,49 @@ To build standalone HTML files like the CI would, enter the following commands:
 
 The generated files should be in the ``build/html`` directory. Open ``index.html`` in a browser to view the rendered documents.
 
+General Rules and Format
+------------------------
+
+Throughout the documentation, you may notice that the different pages follow a certain format to ensure uniformity of the documentation and help user's navigate more fluidly. Here are the different elements that must be considered when contributing to the documentation of Lethe:
+
+- Titles and subtitles must be capitalized following the *Chicago Manual of Style*:
+
+  - First and last words of the title/subtitle must be capitalized.
+  - Capitalize:
+
+    - adjectives (e.g. small, large)
+    - adverbs (e.g. warmly, rapidly)
+    - nouns (e.g. ball, cylinder)
+    - pronouns (e.g. they, she, he)
+    - subordinating conjunction when fewer than 5 letters (e.g. when, once)
+    - verbs (e.g. melt, create)
+
+  - **Do not** capitalize:
+
+    - articles (e.g a, an, the)
+    - coordinating conjunctions (e.g. and, but, for)
+    - words with less than four letters
+    - prepositions (e.g. at, by, to)
+
+  .. tip::
+
+    If you are unsure of the capitalization of your title or subtitle, you can use `online tools <https://capitalizemytitle.com/style/Chicago/>`_ to help you out.
+
+- Examples generally contain the following subsections in the listed order:
+
+  - **Features**: lists of features of the examples.
+  - **Files Used in This Examples**: lists of files used in the example in alphabetical order.
+  - **Description of the Case**: describes the system studied in the example.
+  - **Parameter File**: describes the different parameter subsections involved in the example. Each subsection of the parameter file is also begins with its name as a sub-heading.
+  - **Running the Simulation**: displays the command used to run the example and gives an scale of the running duration.
+  - **Results** or **Results and Discussion**: displays results of the simulation and comments on them
+  - **Possibility for Extension**: lists different interesting ways to extend the example.
+  - **References**: lists references used in the example in IEEE referencing style format.
+
+  .. note::
+
+    These subheadings can take the singular or plural form depending on the example. Feel free to adapt them and add more layers to structure your own examples.
+
 Equations
 ---------
 
