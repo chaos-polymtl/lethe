@@ -107,19 +107,19 @@ Throughout the documentation, you may notice that the different pages follow a c
   - First and last words of the title/subtitle must be capitalized.
   - Capitalize:
 
-    - adjectives (e.g. small, large)
-    - adverbs (e.g. warmly, rapidly)
-    - nouns (e.g. ball, cylinder)
-    - pronouns (e.g. they, she, he)
-    - subordinating conjunction when fewer than 5 letters (e.g. when, once)
-    - verbs (e.g. melt, create)
+    - adjectives (e.g., small, large)
+    - adverbs (e.g., warmly, rapidly)
+    - nouns (e.g., ball, cylinder)
+    - pronouns (e.g., they, she, he)
+    - subordinating conjunction when fewer than 5 letters (e.g., when, once)
+    - verbs (e.g., melt, create)
 
   - **Do not** capitalize:
 
-    - articles (e.g a, an, the)
-    - coordinating conjunctions (e.g. and, but, for)
+    - articles (e.g., a, an, the)
+    - coordinating conjunctions (e.g., and, but, for)
     - words with less than four letters
-    - prepositions (e.g. at, by, to)
+    - prepositions (e.g., at, by, to)
 
   .. tip::
 
@@ -127,12 +127,12 @@ Throughout the documentation, you may notice that the different pages follow a c
 
 - Examples generally contain the following subsections in the listed order:
 
-  - **Features**: lists of features of the examples.
+  - **Features**: lists of features of the example.
   - **Files Used in This Examples**: lists of files used in the example in alphabetical order.
   - **Description of the Case**: describes the system studied in the example.
-  - **Parameter File**: describes the different parameter subsections involved in the example. Each subsection of the parameter file is also begins with its name as a sub-heading.
+  - **Parameter File**: describes the different parameter subsections involved in the example. Each subsection of the parameter file begins with its name as a sub-heading.
   - **Running the Simulation**: displays the command used to run the example and gives an scale of the running duration.
-  - **Results** or **Results and Discussion**: displays results of the simulation and comments on them
+  - **Results** or **Results and Discussion**: displays results of the simulation and comments on them.
   - **Possibility for Extension**: lists different interesting ways to extend the example.
   - **References**: lists references used in the example in IEEE referencing style format.
 

@@ -5,7 +5,7 @@ Folder Structure of Lethe
 The folder structure of Lethe is relatively complex. Once you have cloned and compiled Lethe, it is normal that you might be confused as to the meaning of the various folders in the cloned directory (which we will refer to as the lethe folder) or in the build folder. This section of the documentation aims at demystifying these elements.
 
 ================
-The lethe Folder
+The Lethe Folder
 ================
 In this folder, the following structure is present:
 

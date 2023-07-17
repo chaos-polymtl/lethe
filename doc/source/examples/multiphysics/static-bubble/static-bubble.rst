@@ -14,7 +14,7 @@ Features
 - Solver: ``gls_navier_stokes_2d``
 - Two phase flow handled by the Volume of fluids (VOF) approach with surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
-- Unsteady problem handled by a BDF1 time-stepping schemegit
+- Unsteady problem handled by a BDF1 time-stepping scheme
 
 ---------------------------
 Files Used in This Example

@@ -159,7 +159,7 @@ To monitor the error in a simulation, we must set ``enable = true``. We must con
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt = 3`` we configure to simulation to carry out to solve the fluid dynamics on the mesh and on two subsequently refined mesh. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision = 2`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
+The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt = 3`` we configure the simulation to solve the fluid dynamics on the mesh and on two subsequently refined meshes. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision = 2`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
 
 .. code-block:: text
 
