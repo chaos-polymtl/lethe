@@ -4,9 +4,11 @@ Laser Heating
 
 This example simulates a three-dimensional solid block heated with a laser beam which follows a complex path. This mimics an additive manufacturing process.
 
+
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_3d`` 
 - Laser heat source
 - Convection-radiation heat transfer boundary condition
@@ -49,9 +51,6 @@ Simulation Control
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf2
       set time end         = 0.003
@@ -69,9 +68,6 @@ All the boundary conditions are ``noslip``, and the heat transfer boundary condi
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 1
       subsection bc 0
@@ -97,9 +93,6 @@ and off (``false``) the physics of interest. Here only ``heat transfer`` is enab
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer = true
     end
@@ -110,8 +103,8 @@ Laser Parameters
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
-    .. math:: 
-        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+.. math::
+    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
 where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in the `laser parameters <https://lethe-cfd.github.io/lethe/parameters/cfd/laser_heat_source.html>`_.
@@ -123,9 +116,6 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Laser parameters
-    #---------------------------------------------------
     subsection laser parameters
       set enable               = true
       set concentration factor = 50
@@ -149,9 +139,6 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
     subsection mesh adaptation
       set type                 = kelly
       set variable             = temperature

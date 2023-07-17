@@ -10,6 +10,7 @@ This example simulates a `two-dimensional gallium melting cavity`_.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
@@ -20,6 +21,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/melting-cavity/melting-cavity.prm``
 
 
@@ -83,9 +85,6 @@ time step of :math:`0.1` second.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                       = bdf2
       set time end                     = 40000
@@ -105,9 +104,6 @@ The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` th
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer  = true
       set buoyancy force = true
@@ -121,9 +117,6 @@ In the ``initial condition``, the initial velocity and initial temperature in th
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -141,9 +134,6 @@ The ``source term`` subsection defines the gravitational acceleration. The value
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source Term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -159,9 +149,6 @@ The solid block melts into liquid in this example, hence in the ``physical prope
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
@@ -251,6 +238,7 @@ contains the simulation results. In post-processing, the position of the solid-l
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ Blais, B. and Ilinca, F., 2018. Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection. Computers & Fluids, 172, pp.564-581.
 
 `[2] <https://doi.org/10.1115/1.3246884>`_ Gau, C. and Viskanta, R., 1986. Melting and solidification of a pure metal on a vertical wall.

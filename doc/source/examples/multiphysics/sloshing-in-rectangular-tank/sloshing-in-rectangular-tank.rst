@@ -8,6 +8,7 @@ This example simulates the damping of a small amplitude wave for Reynolds number
 --------
 Features
 --------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Volume of fluid (VOF)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
@@ -17,6 +18,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
@@ -49,9 +51,6 @@ The results for this problem are highly sensitive to the accuracy of the time-st
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                       = bdf2
       set time end                     = 50
@@ -71,9 +70,6 @@ The ``multiphysics`` subsection is used to enable the VOF solver.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF  = true
     end 
@@ -85,9 +81,6 @@ In the ``initial conditions``, we define the initial height of the wave, such th
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -106,10 +99,6 @@ In the ``mesh`` subsection, we define a hyper rectangle with appropriate dimensi
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # Mesh
-  #---------------------------------------------------
-
   subsection mesh
     set type               = dealii
     set grid type          = subdivided_hyper_rectangle
@@ -124,10 +113,6 @@ The ``physical properties`` are mainly used to establish the Reynolds number of 
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # Physical Properties
-  #---------------------------------------------------
-  
   subsection physical properties
     set number of fluids = 2
     subsection fluid 0
@@ -147,10 +132,6 @@ The ``source term`` subsection is used to enable the gravitational acceleration 
 
 .. code-block:: text
 
-  # --------------------------------------------------
-  # Source Term
-  #---------------------------------------------------
-  
   subsection source term
     set enable = true
     subsection xyz
@@ -210,6 +191,7 @@ The following table presents a comparison between the analytical results and the
 ----------
 References
 ----------
+
 `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ Carrica, P. M., Wilson, R. V., & Stern, F. (2007). An unsteady single‐phase level set method for viscous free surface flows. International Journal for Numerical Methods in Fluids, 53(2), 229-256.
 
 

@@ -10,6 +10,7 @@ This example simulates a dam break experiment from the Maritime Research Institu
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_3d`` (Q1-Q1)
 - Two phase flow handled by the Volume-of-Fluids (VOF) approach with phase fraction filtration
 - Mesh adaptation using phase fraction
@@ -20,6 +21,7 @@ Features
 --------------------------
 Files Used in This Example
 --------------------------
+
 - Experimental data file: ``examples/multiphysics/3d-dam-break/experimental_data.txt``
 - Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
 - Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
@@ -93,10 +95,6 @@ and the max CFL is :math:`0.5`.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
-
     subsection simulation control
       set method                       = bdf1
       set time end                     = 6
@@ -119,10 +117,6 @@ Note that the fluid dynamics are solved by default.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
-
     subsection multiphysics
       set VOF = true
     end
@@ -136,10 +130,6 @@ The ``physical properties`` subsection defines the physical properties of the fl
     Altering the dynamic viscosities of the fluids will surely have an impact on the results. We will show this impact in the `<Results_>`_ section.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
 
     subsection physical properties
       set number of fluids = 2
@@ -160,10 +150,6 @@ In the ``initial conditions`` subsection, we need to define the interface betwee
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
-
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -182,10 +168,6 @@ In the ``source term`` subsection, we define the gravitational acceleration.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Source Term
-    #---------------------------------------------------
-
     subsection source term
       set enable = true
       subsection xyz
@@ -199,10 +181,6 @@ VOF
 In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
 
     subsection VOF
       subsection phase filtration
@@ -218,9 +196,6 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The struct
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
         set type                 = gmsh
         set file name            = tank.msh
@@ -234,10 +209,6 @@ Mesh Adaptation
 The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase`` and ``pressure`` as the ``refinement variables``. The maximum and minimum refinement levels are respectively set to :math:`4` and :math:`2`.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
 
     subsection mesh adaptation
       set type                     = kelly

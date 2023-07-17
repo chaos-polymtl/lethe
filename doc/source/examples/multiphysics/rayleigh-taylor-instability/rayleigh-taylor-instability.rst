@@ -10,6 +10,7 @@ This example simulates the dynamic evolution of the single-mode `Rayleigh-Taylor
 --------
 Features
 --------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Mesh adaptation using phase fraction
 - Periodic boundary condition
@@ -21,6 +22,7 @@ Features
 --------------------------
 Files Used in This Example
 --------------------------
+
 ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-constant-sharpening.prm``
 
 ``examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability-adaptive-sharpening.prm``
@@ -76,9 +78,6 @@ and the max CFL is :math:`0.9`.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method         = bdf1
       set time end       = 0.75
@@ -98,9 +97,6 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF = true
     end 
@@ -112,9 +108,6 @@ The ``source term`` subsection defines gravitational acceleration.
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source Term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -130,9 +123,6 @@ The ``physical properties`` subsection defines the physical properties of the fl
 
 .. code-block:: text
 
-   #---------------------------------------------------
-   # Physical Properties
-   #---------------------------------------------------
    subsection physical properties
      set number of fluids = 2
      subsection fluid 0
@@ -153,10 +143,6 @@ In the ``initial conditions`` subsection, we need to define the interface betwee
 .. _projection step: https://lethe-cfd.github.io/lethe/parameters/cfd/initial_conditions.html
 
 .. code-block:: text
-
-   #---------------------------------------------------
-   # Initial Conditions
-   #---------------------------------------------------
 
    subsection initial conditions
      set type = nodal
@@ -182,10 +168,6 @@ In the ``mesh`` subsection we configure the simulation domain. The ``initial ref
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
-    
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -202,9 +184,6 @@ We set ``initial refinement steps = 4`` to adapt the mesh to the initial value o
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
     subsection mesh adaptation
       set type                     = kelly
       set variable                 = phase
@@ -225,9 +204,6 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 3
       subsection bc 0
@@ -253,10 +229,6 @@ In the ``VOF`` subsection, we enable ``interface sharpening`` to reconstruct the
 
 
 .. code-block:: text
-
-   #---------------------------------------------------
-   # VOF
-   #---------------------------------------------------
 
    subsection VOF
      subsection interface sharpening
@@ -286,10 +258,6 @@ and for the ``adaptive`` refinement
 
 
 .. code-block:: text
-
-   #---------------------------------------------------
-   # VOF
-   #---------------------------------------------------
 
    subsection VOF
      subsection interface sharpening

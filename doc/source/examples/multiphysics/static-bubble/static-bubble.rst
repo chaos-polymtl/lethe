@@ -16,12 +16,14 @@ Features
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
+
 ---------------------------
 Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/static-bubble/static_bubble.prm``
 - Python file to generate plots: ``examples/multiphysics/static-bubble/static_bubble.py``
+
 
 -----------------------------
 Description of the Case
@@ -120,9 +122,6 @@ Time integration is handled by a 1st order backward differentiation scheme (BDF1
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set time end         = 6.0
@@ -142,9 +141,6 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``surface
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF = true
     end
@@ -156,10 +152,6 @@ Mesh
 The computational domain is defined by a square with opposite corners located at :math:`(-2.5,-2.5)` and :math:`(2.5,2.5)`. In the ``mesh`` subsection, the parameter ``grid type`` is set to ``hyper_rectangle`` since the discretization is uniform in both direction and the parameter ``grid arguments`` defines the opposite corners of the domain. The latter is discretized by an uniform mesh and the refinement level is set to 7 with the parameter ``initial refinement``.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
 
     subsection mesh
       set type               = dealii
@@ -175,10 +167,6 @@ In the ``initial conditions`` subsection, the initial velocity and initial posit
 defined as a circle with a radius :math:`R= 0.5` in the center of the defined computational domain at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution is sufficiently smooth and avoid a staircase representation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
 
     subsection initial conditions
       set type = nodal
@@ -201,10 +189,6 @@ VOF
 The surface tension force computation is enabled in the ``VOF`` subsection. The surface tension coefficient :math:`\sigma` is set to :math:`1.0` with the parameter ``surface tension coefficient``. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
 
     subsection VOF
       subsection surface tension force
@@ -233,10 +217,6 @@ The density and the kinematic viscosity of the two fluids involved in this examp
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
-
     subsection physical properties
       set number of fluids = 2
       subsection fluid 1
@@ -259,10 +239,6 @@ When providing the analytical solution in the ``analytical solution`` subsection
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Analytical solution
-    #---------------------------------------------------
-
     subsection analytical solution
       set enable                = true
       set verbosity             = quiet
@@ -271,6 +247,7 @@ When providing the analytical solution in the ``analytical solution`` subsection
        set Function expression = 0; 0; if (x^2 + y^2 < 0.5^2 , 2, 0)
       end
     end
+
 
 ---------------------------
 Running the Simulation
@@ -287,6 +264,7 @@ to run the simulation using eight CPU cores. Feel free to use more.
     Make sure to compile Lethe in `Release` mode and
     run in parallel using mpirun. This simulation takes
     :math:`\approx` 10 mins on 8 processes.
+
 
 -----------------------
 Results and Discussion
@@ -320,6 +298,7 @@ Four levels of refinement are studied (6 to 9) by changing the parameter ``initi
 Finally, the time evolution of the :math:`\mathcal{L}^2` norm of the error on the velocity magnitude for each refinement level can be plotted:
 
 .. image:: images/mesh-convergence-study-time.png
+
 
 -----------
 References

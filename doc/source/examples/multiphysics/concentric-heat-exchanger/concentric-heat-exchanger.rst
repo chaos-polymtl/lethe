@@ -7,6 +7,7 @@ This example simulates a heat exchanger which is made of two concentric pipes in
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_3d`` 
 - Heat transfer physics
 - Conjugated heat transfer
@@ -15,6 +16,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 - Parameter file: ``examples/multiphysics/concentric-heat-exchanger/concentric-heat-exchanger.prm``
 - GMSH file: ``examples/multiphysics/concentric-heat-exchanger/concentric-cylinders.geo``
 - Correlation calculation: ``examples/multiphysics/concentric-heat-exchanger/correlation_calculation.py``
@@ -55,9 +57,6 @@ We first enable the heat transfer multiphysics component:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
        set heat transfer = true
     end
@@ -69,9 +68,6 @@ Conjugated heat transfer simulations require meshes in which the fluid and the s
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
         set type                 = gmsh
         set file name            = concentric-cylinders.msh
@@ -85,9 +81,6 @@ The next step is establishing the boundary conditions for the fluid flow. We spe
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number                  = 3
     
@@ -132,9 +125,6 @@ On the heat transfer side, we apply temperature boundary conditions at both inle
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions Heat Transfer
-    #---------------------------------------------------
     subsection boundary conditions heat transfer
       set number                  = 5
         subsection bc 0
@@ -195,9 +185,6 @@ To enable a more complete analysis of the case, we enable the heat flux post-pro
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Post-processing
-    #---------------------------------------------------
     subsection post-processing
         set verbosity = verbose
         set calculate heat flux = true
@@ -210,9 +197,6 @@ Finally, we are interested in steady-state results and we thus specify a steady-
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                  = steady
       set output frequency        = 1

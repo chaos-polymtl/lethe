@@ -2,7 +2,6 @@
 Tuning Count Calculation Model Parameters with NOMAD
 =======================================================
 
-
 In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbox optimization software is used to estimate the unknown variables of the Beam *et al.* (1978) `[1] <https://doi.org/10.1016/0029-554X(78)90081-2>`_ model. The three unknowns of our studied system are:
 
 - the detector's ``dead time`` (:math:`\tau`)
@@ -12,6 +11,7 @@ In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbo
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``rpt_3d``
 - Displays the use of NOMAD to calibrate the parameters of the Beam model
 
@@ -19,6 +19,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 - File containing experimental particle counts: ``examples/rpt/parameters-tuning/counts.experimental``
 - File containing detector positions: ``examples/rpt/parameters-tuning/positions.detector``
 - File containing particle positions: ``examples/rpt/parameters-tuning/positions.particle``
@@ -105,9 +106,6 @@ As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindri
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # RPT Monte Carlo technique
-    #---------------------------------------------------
     subsection rpt parameters
       set particle positions file          = positions.particle
       set verbosity                        = quiet
@@ -134,9 +132,6 @@ In the subsection ``parameter tuning``, we enable parameters tuning, we specify 
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Tuning with NOMAD
-    #---------------------------------------------------
     subsection parameter tuning
       set tuning                 = true
       set cost function type     = larachi
@@ -151,9 +146,6 @@ In the subsection ``detector parameters``, we specify the file that contains the
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Detector parameters
-    #---------------------------------------------------
     subsection detector parameters
       set detector positions file         = positions.detector
       set radius                          = 0.0381

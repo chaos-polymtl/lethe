@@ -10,6 +10,7 @@ We will also demonstrate the tracer physics capabilities.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_3d`` 
 - Transient problem
 - Displays the use of the tracer physics
@@ -19,6 +20,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/tracer-through-cad-junction/tracer-through-cad-junction.prm``
 
 
@@ -99,9 +101,6 @@ In the ``subsection mesh``, the simplex mode can be enabled with ``set simplex =
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = gmsh
       set file name          = vessels.msh
@@ -125,9 +124,6 @@ Multiphysics
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set tracer = true
     end
@@ -137,9 +133,6 @@ Physical Properties
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       subsection fluid 0
         set kinematic viscosity = 1
@@ -152,9 +145,6 @@ FEM
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # FEM
-    #---------------------------------------------------
     subsection FEM
       set velocity order = 1
       set pressure order = 1
@@ -166,9 +156,6 @@ Tracer Boundary Conditions
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Tracer Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions tracer
       set number = 2
       subsection bc 0
@@ -206,9 +193,6 @@ must be applied to the outlet flow.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 3
       subsection bc 0

@@ -8,6 +8,7 @@ This example introduces how to solve another physics along with the CFD solver.
 --------------
 Features
 --------------
+
 * Solver: ``gls_navier_stokes_2d``
 * Transient problem
 * Multiphysics
@@ -18,12 +19,14 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/warming-up-viscous-fluid``
 
 
 ------------------------
 Description of the Case
 ------------------------
+
 A viscous fluid lays between two parallel plates: one fixed and insulated, and the other moving and heated. The velocity profile and the temperature evolution are simulated. The parameter file used is ``warming-up-viscous-fluid.prm``.
 
 The following schematic describes the simulation.
@@ -51,9 +54,6 @@ Time integration is defined by a 2nd order backward differentiation (``bdf2``), 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf2
       set time step        = 0.05
@@ -72,9 +72,6 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # FEM
-    #---------------------------------------------------
     subsection FEM
       set velocity order    = 1
       set pressure order    = 1
@@ -88,9 +85,6 @@ The fluid's ``physical properties`` are defined in the following subsection, acc
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       subsection fluid 0
         set density              = 0.9
@@ -111,9 +105,6 @@ The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid typ
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = hyper_rectangle
@@ -131,9 +122,6 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer       = true
       set viscous dissipation = true
@@ -151,9 +139,6 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Analytical Solution
-    #---------------------------------------------------
     subsection analytical solution
       set enable    = true
       set verbosity = verbose
@@ -176,9 +161,6 @@ The ``boundary conditions`` are set for:
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 2
       subsection bc 0
@@ -211,7 +193,6 @@ The ``boundary conditions`` are set for:
         set value = 80
       end
     end
-
 
 
 -----------------------
@@ -264,7 +245,6 @@ Temperature evolution over time:
     :height: 15cm
     :align: center
 
-
 Physical Interpretation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -282,9 +262,6 @@ For water, ``physical properties`` are:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       subsection fluid 0
        set density              = 1
@@ -338,7 +315,6 @@ After the fluid has been heated up by the right plate, the temperature is really
 .. image:: images/domain-t7-water-rescale-nodiss.png
     :alt: Rescaled domain with temperature (t = 7)
     :width: 30%
-
 
 Horizontal Domain
 ~~~~~~~~~~~~~~~~~

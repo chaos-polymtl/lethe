@@ -10,6 +10,7 @@ This example simulates a `two-dimensional melt pool with a laser`_.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Laser heat source
 - Phase change (solid-liquid)
@@ -54,9 +55,6 @@ Simulation Control
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf2
       set time end         = 0.005
@@ -74,9 +72,6 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 4
       subsection bc 0
@@ -138,9 +133,6 @@ and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer  = true
       set buoyancy force = true
@@ -153,8 +145,8 @@ Laser Parameters
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
-    .. math:: 
-        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{(-\eta \frac{r^2}{R^2})} \exp{(- \frac{|z|}{\mu})}
+.. math::
+    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
 where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in `laser parameters <https://lethe-cfd.github.io/lethe/parameters/cfd/laser_heat_source.html>`_.
@@ -166,9 +158,6 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Laser parameters
-    #---------------------------------------------------
     subsection laser parameters
       set enable               = true
       set concentration factor = 2
@@ -193,9 +182,6 @@ The laser heat source locally melts the material, which is initially in the soli
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
@@ -253,9 +239,6 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
 
 .. code-block:: text
         
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -296,6 +279,7 @@ The following animation shows the temperature distribution in the simulations do
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X., 2018. Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis. Materials & Design, 142, pp.319-328.
 
 `[2] <https://doi.org/10.1016/j.powtec.2022.117533>`_ Li, E., Zhou, Z., Wang, L., Zheng, Q., Zou, R. and Yu, A., 2022. Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process. Powder Technology, p.117533.

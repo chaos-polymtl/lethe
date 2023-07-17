@@ -116,14 +116,10 @@ Parameter File
 RPT Parameters
 ~~~~~~~~~~~~~~~
 
-
 In the subsection ``rpt parameters``, we define the values of the set of parameters necessary for calculating the counts using the Monte Carlo method.  Among these parameters, we have the name of the file which contains a set of different positions of the particle inside the vessel (``particle position file``), the number of Monte Carlo iterations (``monte carlo iteration``), the seed that is used to generate a random number (``random number seed``) and other parameters that describe the studied :math:`\gamma`-ray model. We also define the name of the file in which the counts for each position will be exported in with the parameter ``counts file``. These common parameters used for the RPT simulation are described in the :doc:`../../../parameters/rpt/rpt_parameters` documentation page.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # RPT Monte Carlo technique
-    #---------------------------------------------------
     subsection rpt parameters
       set particle positions file          = positions-horizontalx.particle
       set verbosity                        = verbose
@@ -143,15 +139,11 @@ In the subsection ``rpt parameters``, we define the values of the set of paramet
 Detector Parameters
 ~~~~~~~~~~~~~~~~~~~~
 
-
 In the subsection ``detector parameters``, we specify the file that contains two positions located on the axis of symmetry of the detector. The first point is on the surface facing the vessel (face of the detector), and the second point can be any point located inside the detector. In the current example, the center position of the face is :math:`(0.200, 0, 0.075)`, and the second point on the axis is :math:`(0.238, 0, 0.075)`. We also specify the radius (``radius``) and the length (``length``) of the detector. A detailed description of these parameters can be found in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Detector parameters
-    #---------------------------------------------------
     subsection detector parameters
       set detector positions file         = positions.detector
       set radius                          = 0.0381

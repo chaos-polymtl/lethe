@@ -9,6 +9,7 @@ This example simulates `two-dimensional Rayleigh–Benard convection`_ at Raylei
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Buoyant force (natural convection)
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
@@ -17,6 +18,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra10k.prm``
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra25k.prm``
 
@@ -77,9 +79,6 @@ time step of :math:`0.01` second.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                       = bdf1
       set time end                     = 10000
@@ -102,9 +101,6 @@ The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` th
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set buoyancy force = true
       set heat transfer  = true
@@ -118,9 +114,6 @@ The ``source term`` subsection defines gravitational acceleration.
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source Term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -136,9 +129,6 @@ The ``physical properties`` subsection defines the physical properties of the fl
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
@@ -190,6 +180,7 @@ Note that at Ra=10000, two vortices exist in the fluid, while an extra (relative
 -----------
 References
 -----------
+
 [1] Venturi, D., Wan, X. and Karniadakis, G.E., 2010. Stochastic bifurcation analysis of Rayleigh–Bénard convection. Journal of fluid mechanics, 650, pp.391-413.
 
 [2] `https://www.mis.mpg.de/applan/research/rayleigh.html`_

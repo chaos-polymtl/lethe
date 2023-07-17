@@ -7,9 +7,11 @@ This example simulates the `Stefan`_ problem following the approach taken by `Bl
 .. _Stefan: https://en.wikipedia.org/wiki/Stefan_problem
 .. _Blais & Ilinca (2018): https://doi.org/10.1016/j.compfluid.2018.03.037
 
+
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Heat transfer pĥysics
 - Unsteady problem handled by a BDF1 time-stepping scheme
@@ -19,6 +21,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/stefan-problem/stefan.prm``
 
 
@@ -78,9 +81,6 @@ We first define the geometry in which the simulation is carried out using the me
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -98,9 +98,6 @@ The next step is establishing the boundary conditions:
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions heat transfer
       set number = 1
       subsection bc 0
@@ -158,9 +155,6 @@ Finally, the only remaining section is the ``simulation control``, which control
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set output frequency = 1
@@ -169,7 +163,6 @@ Finally, the only remaining section is the ``simulation control``, which control
       set time end         = 5
       set time step        = 0.02
     end
-
 
 
 -------
@@ -192,6 +185,7 @@ Possibilities for Extension
 - **Consider different Stefan numbers:** The solver in Lethe is sufficiently robust to simulate a large range of Stefan numbers. You can try to simulate the problem with different Stefan number and see how the value of the Stefan number affects the solution.
 
 - **Simulate a more complex geometry:** The phase change model can be readily used in any sort of geometry using, for example, a simplex mesh. An easy extension of this problem is to consider any 2D or 3D geometry.
+
 
 ----------------------------
 References

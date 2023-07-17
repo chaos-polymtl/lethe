@@ -10,6 +10,7 @@ This example simulates the dam break experiments of `Martin and Moyce (1952)`_.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d``  (with Q1-Q1)
 - Two phase flow handled by the Volume of fluids (VOF) approach with interface sharpening
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
@@ -19,6 +20,7 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/dam-break/``
 
 
@@ -61,9 +63,6 @@ time step of :math:`0.01` seconds.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set time end         = 4.1
@@ -84,9 +83,6 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF = true
     end 
@@ -147,9 +143,6 @@ documentation for more explanation on the phase filtration.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
     subsection VOF
       subsection interface sharpening
         set enable              = true
@@ -177,9 +170,6 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -197,9 +187,6 @@ The ``source term`` subsection defines the gravitational acceleration:
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source Term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -216,9 +203,6 @@ properties`` subsection, their physical properties should be defined:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 2
       subsection fluid 0
@@ -246,9 +230,6 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
 
 .. code-block:: text
         
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -266,9 +247,6 @@ is adapted to the initial condition for the phase.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
     subsection mesh adaptation
       set type                     = kelly
       set variable                 = phase

@@ -10,6 +10,7 @@ This example simulates a `two-dimensional rising bubble`_.
 --------
 Features
 --------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
@@ -58,9 +59,6 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set time end         = 3
@@ -81,9 +79,6 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``phase f
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF = true
     end
@@ -95,9 +90,6 @@ The ``source term`` subsection defines the gravitational acceleration:
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source Term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -115,9 +107,6 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # VOF
-  #---------------------------------------------------
   subsection VOF
     subsection interface sharpening
       set enable              = true
@@ -151,9 +140,6 @@ sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` e
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -179,9 +165,6 @@ A similar procedure is done for the phase associated with a VOF indicator of 1 i
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 2
       subsection fluid 0
@@ -204,9 +187,6 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
 
 .. code-block:: text
         
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -223,9 +203,6 @@ To capture the bubble adequately, we set ``initial refinement steps = 5`` so tha
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
     subsection mesh adaptation
       set type                     = kelly
       set variable                 = phase
@@ -244,10 +221,6 @@ Post-processing: Fluid Barycenter Position and Velocity
 To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``vof_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Post-processing
-    #---------------------------------------------------
 
     subsection post-processing
       set verbosity                = quiet
@@ -305,6 +278,7 @@ Animation of the rising bubble example:
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ Brackbill, J.U., Kothe, D.B. and Zemach, C., 1992. A continuum method for modeling surface tension. Journal of computational physics, 100(2), pp.335-354.
 
 `[2] <https://doi.org/10.1002/fld.2643>`_ Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.

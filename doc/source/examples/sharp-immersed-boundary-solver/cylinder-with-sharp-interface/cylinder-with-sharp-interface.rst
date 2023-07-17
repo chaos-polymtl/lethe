@@ -39,9 +39,6 @@ The mesh is defined using the following subsection.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
         set type               = dealii
         set grid type          = subdivided_hyper_rectangle
@@ -56,10 +53,6 @@ As for the :doc:`../../incompressible-flow/2d-flow-around-cylinder/2d-flow-aroun
 
 
 .. code-block:: text
-
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
 
     subsection boundary conditions
       set number = 3
@@ -94,9 +87,6 @@ The initial condition has been modified compared to the initial solution propose
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial Conditions
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -112,9 +102,6 @@ In this case, we want to define a circular boundary of radius 0.5 center at (8,8
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # IB Particles
-    #---------------------------------------------------
     subsection particles
       set number of particles                     = 1
       set stencil order                           = 2
@@ -159,6 +146,7 @@ All the other parameters have been set to their default values since they do not
 ---------------
 Results
 ---------------
+
 The simulation of this case results in the following solution for the velocity and pressure field. 
 
 
