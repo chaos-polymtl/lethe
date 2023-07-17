@@ -114,11 +114,11 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
     
-    * The ``print DEM`` parameter is a boolean that define if particles' informations are printed on the terminal when particles' time-step is finished
+    * The ``print DEM`` parameter is a boolean that define if particles' informations are printed on the terminal when particles' time-step is finished.
 
-    * When the ``enable extra sharp interface vtu output field`` parameter is set to ``true``, it enables the output of additional value fields in the vtu file produce by the simulation. Currently, these additional output fields consist of: the cell id that cut a specific cell (``cell_cut``).
+    * When the ``enable extra sharp interface vtu output field`` parameter is set to ``true``, it enables the output of additional value fields in the vtu file produced by the simulation. Currently, these additional output fields consist of: the id of the cell that cuts a specific cell (``cell_cut``).
     
-* The ``local mesh refinement`` subsection contains the parameters associated with the local refinement around the particle. This refinement aims to forme a near-surface zone of refined cells between two thresholds: :math:`\textit{inside factor} * \textit{radius}` and :math:`\textit{outside factor} * \textit{radius}`. An effective radius, for non spheres, is calculated at the shape initialization and its definition is given further below.
+* The ``local mesh refinement`` subsection contains the parameters associated with the local refinement around the particle. This refinement aims to form a near-surface zone of refined cells between two thresholds: :math:`\textit{inside factor} * \textit{radius}` and :math:`\textit{outside factor} * \textit{radius}`. An effective radius, for non spheres, is calculated at the shape initialization and its definition is given further below.
     * The ``initial refinement`` parameter controls the number of refinement cycles in the near-particle refinement zone around every particle before the simulation starts.
 
     * The ``refine mesh inside radius factor`` parameter defines how deep inside the solid that cells can be refined. If the absolute distance between a cell's degree of freedom and the solid's surface is lower than :math:`(1 - \textit{inside factor}) * \textit{radius}`, one of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the inside radius factor of 0.8, the inside reach of the refinement zone would be 0.4 (see example below).
@@ -188,7 +188,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     .. warning::
         Currently this feature works only for spherical particles.
 
-    * The ``particles file`` The file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, hyper rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file. if integrate motion is not equal to 0 the particle dynamics is integrated.
+    * The ``particles file`` is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, hyper rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file. If integrate motion is not equal to 0 the particle dynamics is integrated.
 
 The following parameter and subsection are all inside the subsection ``particle info 0`` and have to be redefined for all particles separately.
 
@@ -241,7 +241,7 @@ The following parameter and subsection are all inside the subsection ``particle 
     .. note::
         As could be expected, using this type of shape requires that ``dealii`` be compiled with OpenCascade. This module can be installed with candi, by uncommenting the appropriate line in ``candi.cfg``.
 
-* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``ìntegrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
+* The ``integrate motion`` parameter controls if the dynamics equations of the particles are calculated. If this parameter is set to false, the particles position, velocity, and angular velocity are defined directly by the functions. If ``integrate motion=true`` the position and the velocity will be defined by the integration of the particle dynamic.
 
 * The ``pressure location`` parameter is used to define the X, Y, and Z coordinate offsets of the pressure reference point relative to the center of the particle. These parameters are used when the ``assemble Navier-Stokes inside particles`` parameter is set to ``true`` to define the pressure reference point.
 
@@ -257,7 +257,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 .. warning::
     Concerning ``omega`` and ``orientation``, it's important to note that even the 2D solver uses the rotational velocity in 3D. In that case, it will only use the Z component of the rotational velocity, but all three should be defined.
     
-* The ``physical properties`` subsection contains all the parameters associated with the particle physical properties
+* The ``physical properties`` subsection contains all the parameters associated with the particle physical properties.
     * The ``density`` parameter is used to define the density of the particle.
     
     * The ``inertia`` parameter is used to define one of the diagonal elements of the rotational inertia matrix. Since we are defining spherical particles, we assume a uniform distribution of mass, and as such, all the diagonal elements of the rotational inertia matrix are the same.

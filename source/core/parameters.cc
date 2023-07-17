@@ -2169,7 +2169,7 @@ namespace Parameters
       "integrate motion",
       "false",
       Patterns::Bool(),
-      "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+      "Bool to define if the particle trajectory is integrated meaning its velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
 
     prm.enter_subsection("position");
     particles[index].f_position =

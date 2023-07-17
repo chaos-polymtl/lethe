@@ -759,7 +759,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             {
               if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
-                  "Shape other than sphere cannot have their motion integrate");
+                  "Shape other than sphere cannot have their motion integrated through fluid-structure interaction");
               some_particles_are_coupled = true;
             }
         }
@@ -775,7 +775,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             {
               if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
-                  "Shape other than sphere cannot have their motion integrate");
+                  "Shape other than sphere cannot have their motion integrated through fluid-structure interaction");
               some_particles_are_coupled = true;
             }
         }
@@ -2126,7 +2126,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                          DBL_MIN);
                 }
               // Relaxation parameter for the particle dynamics.
-              double local_alpha = 1;
+              double local_alpha = 1.;
               // We keep in memory the state of the particle before the update
               // in case something went wrong and the particle is now outside of
               // the domain. If this is the case, the particle won't be updated.
@@ -2134,7 +2134,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
               bool            save_particle_state_is_used = false;
               // Define the correction vector.
               Tensor<1, 3> velocity_correction_vector =
-                residual_velocity * 1 /
+                residual_velocity * 1. /
                 inverse_of_relaxation_coefficient_velocity;
 
               // Update the particle state and keep in memory the last iteration
