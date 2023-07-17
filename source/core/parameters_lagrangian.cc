@@ -440,25 +440,25 @@ namespace Parameters
 
           prm.declare_entry(
             "step",
-            "1000000000",
+            "100000",
             Patterns::Integer(),
             "Step at which the triangulation is repartitioned "
             "and load is balanced for single-step load-balancing");
 
           prm.declare_entry(
             "frequency",
-            "1000000000",
+            "100000",
             Patterns::Integer(),
             "Frequency at which the triangulation is repartitioned "
             "and load is balanced for frequent load-balancing");
 
           prm.declare_entry("threshold",
-                            "1",
+                            "0.5",
                             Patterns::Double(),
                             "Threshold for dynamic load-balancing");
 
           prm.declare_entry("dynamic check frequency",
-                            "100000",
+                            "10000",
                             Patterns::Integer(),
                             "Checking frequency for dynamic load-balancing");
 
@@ -491,7 +491,7 @@ namespace Parameters
                             "Choices are <constant|dynamic>.");
 
           prm.declare_entry("frequency",
-                            "1",
+                            "10",
                             Patterns::Integer(),
                             "Particle-particle contact list");
 
@@ -503,7 +503,7 @@ namespace Parameters
 
           prm.declare_entry(
             "neighborhood threshold",
-            "1",
+            "1.3",
             Patterns::Double(),
             "Contact search zone diameter to particle diameter ratio");
         }
