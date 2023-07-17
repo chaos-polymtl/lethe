@@ -65,7 +65,7 @@ public:
    *
    */
   virtual void
-  insert(Particles::ParticleHandler<dim>                 &particle_handler,
+  insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
@@ -75,7 +75,10 @@ private:
    */
   void
   find_inplane_cells(
-    const parallel::distributed::Triangulation<dim> &triangulation);
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    Point<3>                                         plane_point,
+    Tensor<1, 3>                                     plane_normal_vector,
+    double                                           plane_threshold_distance);
 
   /**
    * @brief Store the location of the centers of all the cells that are in the plane
@@ -85,14 +88,11 @@ private:
 
 
   //
-  Tensor<1, 3> insertion_plane_normal_vector;
-  Point<3>     insertion_plane_point;
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
   unsigned int                                 particle_counter;
   unsigned int                                 remained_particles_of_each_type;
   unsigned int                                 current_inserting_particle_type;
-  double                                       minimal_cell_diameter;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
   std::unordered_map<unsigned int, double>     number_particles_to_insert;
   std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;

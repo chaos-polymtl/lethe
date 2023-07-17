@@ -11,36 +11,34 @@ using namespace DEM;
 // and number_of_particles_z_direction) are also obtained
 template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
-  const DEMSolverParameters<dim> &dem_parameters,
+  const DEMSolverParameters<dim> &                 dem_parameters,
   const parallel::distributed::Triangulation<dim> &triangulation)
   : remained_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
   // Initializing current inserting particle type
   current_inserting_particle_type = 0;
-  this->inserted_this_step = 0;
-  particle_counter = 0;
-
-  // Information about the plane --> Peut être directement un input à find_inplane_cells()
-  this->insertion_plane_normal_vector =
-    dem_parameters.insertion_info.insertion_plane_normal_vector;
-  this->insertion_plane_point =
-    dem_parameters.insertion_info.insertion_plane_point;
-
-  // À changer pour safe_distance dans le .prm
-  minimal_cell_diameter =
-    GridTools::minimal_cell_diameter(triangulation) / std::sqrt(3.);
-  srand(dem_parameters.insertion_info.random_number_seed);
+  this->inserted_this_step        = 0;
+  particle_counter                = 0;
 
   // Initializing the cell that are close to the plan
-  find_inplane_cells(triangulation);
+  find_inplane_cells(
+    triangulation,
+    dem_parameters.insertion_info.insertion_plane_point,
+    dem_parameters.insertion_info.insertion_plane_normal_vector,
+    dem_parameters.insertion_info.insertion_plane_threshold_distance);
+
+  // Initializing the cell centers
   find_centers_of_inplane_cells();
 }
 
 template <int dim>
 void
 PlaneInsertion<dim>::find_inplane_cells(
-  const parallel::distributed::Triangulation<dim> &triangulation)
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  Point<3>                                         plane_point,
+  Tensor<1, 3>                                     plane_normal_vector,
+  double                                           plane_threshold_distance)
 { // Looping through cells
   for (const auto &cell : triangulation.active_cell_iterators())
     {
@@ -54,15 +52,15 @@ PlaneInsertion<dim>::find_inplane_cells(
             {
               // Vector that goes from the plane reference point to the vertice
               Tensor<1, 3> connecting_vector =
-                point_nd_to_3d(cell->vertex(vertex_id)) - insertion_plane_point;
+                point_nd_to_3d(cell->vertex(vertex_id)) - plane_point;
 
               // Normal distance of that vector
               double vertex_wall_distance =
-                std::abs(connecting_vector * insertion_plane_normal_vector);
+                std::abs(connecting_vector * plane_normal_vector);
 
               // If the distance of one of the vertices if more than the
               // minima_cell_diameter, than the cell is not in the plane.
-              if (vertex_wall_distance > (minimal_cell_diameter))
+              if (vertex_wall_distance > plane_threshold_distance)
                 {
                   cell_in_plane = false;
                   break; // If so, we brake the loop, and go to the next cell
@@ -116,11 +114,11 @@ PlaneInsertion<dim>::insert(
           // if the cell is empty
           if (particle_handler.n_particles_in_cell(cell) == 0)
             {
-              double     type = current_inserting_particle_type;
+              double type     = current_inserting_particle_type;
               double diameter = dem_parameters.lagrangian_physical_properties
                                   .particle_average_diameter.at(type);
-              double density  =
-                dem_parameters.lagrangian_physical_properties.density_particle.at(type);
+              double density = dem_parameters.lagrangian_physical_properties
+                                 .density_particle.at(type);
               double vel_x        = dem_parameters.insertion_info.vel_x;
               double vel_y        = dem_parameters.insertion_info.vel_y;
               double vel_z        = dem_parameters.insertion_info.vel_z;
@@ -177,13 +175,13 @@ PlaneInsertion<dim>::insert(
                                                particle_counter++,
                                                cell,
                                                properties_of_one_particle);
-              
-              // Break the loop if all the particle of a certain type are inserted
-              if(--remained_particles_of_each_type == 0)
+
+              // Break the loop if all the particle of a certain type are
+              // inserted
+              if (--remained_particles_of_each_type == 0)
                 {
                   break;
                 }
-
             }
         }
     }

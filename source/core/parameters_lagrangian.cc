@@ -368,6 +368,12 @@ namespace Parameters
                           "1., 0., 0.",
                           Patterns::List(Patterns::Double()),
                           "Insertion plane normal vector");
+
+        prm.declare_entry(
+          "insertion plane threshold distance",
+          "0.",
+          Patterns::Double(),
+          "If all the vertices of a cell are closer or equal to this value, than this cell is in the plane");
       }
       prm.leave_subsection();
     }
@@ -449,6 +455,12 @@ namespace Parameters
           Point<3>({Utilities::string_to_double(plane_point_str_list[0]),
                     Utilities::string_to_double(plane_point_str_list[1]),
                     Utilities::string_to_double(plane_point_str_list[2])});
+
+        // Insertion plane threshold distance
+        std::string plane_threshold_distance =
+          prm.get("insertion plane threshold distance");
+        insertion_plane_threshold_distance =
+          Utilities::string_to_double(plane_threshold_distance);
       }
       prm.leave_subsection();
     }

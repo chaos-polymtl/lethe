@@ -907,8 +907,7 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::plane)
     {
       insertion_object =
-        std::make_shared<PlaneInsertion<dim>>(parameters,
-                                              triangulation);
+        std::make_shared<PlaneInsertion<dim>>(parameters, triangulation);
     }
   else
     {
