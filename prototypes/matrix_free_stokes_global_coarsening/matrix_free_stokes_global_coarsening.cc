@@ -415,11 +415,6 @@ private:
   do_cell_integral_local(FECellIntegrator &integrator) const;
 
   void
-  do_cell_integral_global(FECellIntegrator &integrator,
-                          VectorType &      dst,
-                          const VectorType &src) const;
-
-  void
   do_cell_integral_range(
     const MatrixFree<dim, number> &              matrix_free,
     VectorType &                                 dst,
@@ -680,77 +675,6 @@ StokesOperator<dim, number>::do_cell_integral_local(
 
 template <int dim, typename number>
 void
-StokesOperator<dim, number>::do_cell_integral_global(
-  FECellIntegrator &integrator,
-  VectorType &      dst,
-  const VectorType &src) const
-{
-  using FECellIntegratorType =
-    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
-
-  FullSourceTerm<dim> source_term_function;
-
-  integrator.gather_evaluate(src,
-                             EvaluationFlags::values |
-                               EvaluationFlags::gradients |
-                               EvaluationFlags::hessians);
-
-  auto tau = integrator.read_cell_data(stabilization_parameter);
-
-  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
-    {
-      // Evaluate source term function
-      Tensor<1, dim + 1, VectorizedArray<double>> source_value;
-
-      if (parameters.source_term == Settings::mms)
-        {
-          Point<dim, VectorizedArray<double>> point_batch =
-            integrator.quadrature_point(q);
-          source_value =
-            evaluate_function<dim, double, dim + 1>(source_term_function,
-                                                    point_batch);
-        }
-
-      // Gather the original value/gradient
-      typename FECellIntegratorType::value_type value = integrator.get_value(q);
-      typename FECellIntegratorType::gradient_type gradient =
-        integrator.get_gradient(q);
-      typename FECellIntegratorType::gradient_type hessian_diagonal =
-        integrator.get_hessian_diagonal(q);
-
-      // Result value/gradient we will use
-      typename FECellIntegratorType::value_type    value_result;
-      typename FECellIntegratorType::gradient_type gradient_result;
-
-      // Assemble -nabla u + nabla p = 0 for the first 3 components
-      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
-      // ; Assemble q div(u) = 0 for the last component
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          gradient_result[i] = gradient[i];
-          gradient_result[i][i] += -value[dim];
-
-          value_result[dim] += gradient[i][i];
-        }
-
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          for (unsigned int k = 0; k < dim; ++k)
-            gradient_result[dim][i] += -tau * hessian_diagonal[i][k];
-        }
-      gradient_result[dim] += tau * gradient[dim];
-
-      integrator.submit_gradient(gradient_result, q);
-      integrator.submit_value(value_result, q);
-    }
-
-  integrator.integrate_scatter(EvaluationFlags::values |
-                                 EvaluationFlags::gradients,
-                               dst);
-}
-
-template <int dim, typename number>
-void
 StokesOperator<dim, number>::do_cell_integral_range(
   const MatrixFree<dim, number> &              matrix_free,
   VectorType &                                 dst,
@@ -763,7 +687,11 @@ StokesOperator<dim, number>::do_cell_integral_range(
     {
       integrator.reinit(cell);
 
-      do_cell_integral_global(integrator, dst, src);
+      integrator.read_dof_values(src);
+
+      do_cell_integral_local(integrator);
+
+      integrator.distribute_local_to_global(dst);
     }
 }
 
@@ -1055,7 +983,8 @@ private:
   MGLevelObject<LinearAlgebra::distributed::Vector<double>> mg_solution;
   MGTransferMatrixFree<dim, double>                         mg_transfer;
   MGLevelObject<AffineConstraints<double>>                  level_constraints;
-  TrilinosWrappers::SparseMatrix                            mb_system_matrix;
+
+  TrilinosWrappers::SparseMatrix mb_system_matrix;
   TrilinosWrappers::SparseMatrix mb_system_matrix_coarse;
 
   LinearAlgebra::distributed::Vector<double> solution;
