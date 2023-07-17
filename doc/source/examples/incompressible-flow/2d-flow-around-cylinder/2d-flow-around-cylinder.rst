@@ -4,6 +4,8 @@ Flow around a Cylinder
 
 This example corresponds to a flow around a fixed cylinder. This is a classical problem studied in fluid mechanics. This example introduces several important features supported by Lethe.
 
+
+---------
 Features
 ---------
 
@@ -14,12 +16,17 @@ Features
 - Specifies an initial condition
 - Displays the use of non-uniform mesh adaptation 
 
+
+----------------------------
 Files Used in This Example
 ----------------------------
 
 - Geometry file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder-structured.geo``
+- Mesh file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder-structured.msh``
 - Parameter file: ``/examples/incompressible-flow/2d-flow-around-cylinder/cylinder.prm``
 
+
+-----------------------
 Description of the Case
 -----------------------
 We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. The following schematic describes the geometry with its relevant quantities (taken from the article by Blais *et al.* `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_):
@@ -29,6 +36,8 @@ We simulate the flow around a fixed cylinder with a constant upstream fluid velo
     :align: center
     :name: geometry_description
 
+
+--------------
 Parameter File
 --------------
 
@@ -192,6 +201,8 @@ To calculate forces acting on the boundary conditions, for example, the forces a
 
 To print the values of the forces in the terminal we set ``verbosity`` to ``verbose``. The calculation of the forces in all boundaries is set by the ``set calculate force = true`` line. A ``.dat`` file is created with the corresponding data. Therefore, one can specify the prefix of the file by the ``force name`` parameter, the number of significant digits for the force values by the ``output precision`` and the frequency of calculation and output which are set to ``1``. 
 
+
+----------------------
 Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
@@ -203,6 +214,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
 
+----------------------
 Results and Discussion
 ----------------------
 
@@ -250,12 +262,16 @@ where :math:`U_\infty` is the upstream velocity and :math:`D` is the diameter of
 
 We can see that the simulation is mesh convergent, as the last three values of the force in the x-direction and therefore the drag coefficient differ in less than 1%. An experimental value of the drag coefficient as a function of the Reynolds number is available in the `Drag Coefficient Calculator <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_ , and for a Reynolds number of 1, it corresponds to a value of :math:`C_D = 11.9`. The value calculated by Lethe differs from the theoretical value because of the slip boundary condition at the top and bottom walls, along with the short distance to them from the surface of the cylinder. To obtain a more accurate drag coefficient, the geometry should be enlarged.
 
+
+----------------------------
 Possibilities for Extension
 ----------------------------
 - Play with the size of geometry to observe the effect on the calculation of the drag forces.
 - Increase the Reynolds number and perform an unsteady simulation to observe the famous von Kármán vortex street pattern.
 - It would be interesting to try the same example in 3D and observe what happens with the drag and lift forces.
 
-References
 ----------
-`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146. https://doi.org/10.1016/j.compchemeng.2015.10.019
+Reference
+----------
+
+`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ 	B. Blais, M. Lassaigne, C. Goniva, L. Fradette, and F. Bertrand, “A semi-implicit immersed boundary method and its application to viscous mixing,” *Comput. Chem. Eng.*, vol. 85, pp. 136–146, Feb. 2016, doi: 10.1016/j.compchemeng.2015.10.019.

@@ -5,21 +5,27 @@ Flow around a Sphere
 
 In this example, a fluid flows past a sphere
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_navier_stokes_3d`` (with Q1-Q1) or  ``gd_navier_stokes_3d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the importance of adaptative mesh refinement
 - Displays the effect of the Reynolds number on the convergence
 
 
+----------------------------
 Files Used in This Example
 ----------------------------
-- For Re = 0.1 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
-- For Re = 150 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
-- For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
+
+- Parameter file for :math:`Re=0.1`: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
+- Parameter file For :math:`Re=150`: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
+- Parameter file for :math:`Re=150` using adaptative mesh refinement: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
@@ -35,6 +41,7 @@ Note that the sphere surface has a boundary index of ``0``, the inlet ``1`` and 
 As this examples allows for two different Reynolds numbers as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
 
 
+--------------
 Parameter File
 --------------
 
@@ -235,8 +242,10 @@ The mesh is dynamically adapted based on an estimate of the error of the solutio
 The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than this, not coarser. The ``max refinement level`` is set at 3, giving a maximum possible number of cells of 3 million. However, the ``max number elements`` limits the number of cells to 50,000 to keep the simulation within feasible computational expense.
 
 
+----------------------
 Running the Simulation
 ----------------------
+
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
@@ -257,6 +266,8 @@ or
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
+
+-----------------------
 Results and Discussion
 -----------------------
 
@@ -321,6 +332,7 @@ Using mesh adaptative refinement, the final mesh contains slightly more than 101
 It is possible the acknowledge how better the mesh fits the velocity profile than in the previous example. The resulting drag coefficient of 0.880 is more accurate than determined using the static mesh, and does not take much more time to execute than the previous example. 
 
 
+---------------------------
 Possibilities for Extension
 ---------------------------
 

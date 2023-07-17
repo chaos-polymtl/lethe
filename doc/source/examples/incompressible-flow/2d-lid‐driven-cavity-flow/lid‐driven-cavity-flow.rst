@@ -4,15 +4,20 @@ Lid-Driven Cavity Flow
 
 This example showcases a classical fluid mechanics problem, the lid-driven cavity. This example also introduces the concept of parameter files to parametrize Lethe simulations.
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the use of adjoint time-stepping for steady-state problems
 
 
+----------------------------
 Files Used in This Example
 ----------------------------
+
 - Base case parameter file (:math:`Re=400`): ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
 - Experimental data file from Ghia `et al.` (1982) `[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_: ``examples/incompressible-flow/2d-lid-driven-cavity/ref-2d-ghia-u.txt``
 - Experimental data file from Erturk `et al.` (2005) `[2] <https://doi.org/10.1002/fld.953>`_: ``examples/incompressible-flow/2d-lid-driven-cavity/ref-2d-erturk-u.txt``
@@ -21,6 +26,7 @@ Files Used in This Example
 - Python script for postprocessing the :math:`Re=7500` case: ``examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/post_process_Reynolds_7500.py``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
@@ -37,6 +43,7 @@ Only the upper wall boundary moves in the x direction with a constant velocity (
 We first investigate this case at a Reynolds number of 400 for which a steady-state solution can be easily obtained. Later, we will increase this Reynolds number to 7500 and leverage some of the advanced functionalities of Lethe to reach a steady-state solution. 
 
 
+--------------
 Parameter File
 --------------
 
@@ -51,7 +58,6 @@ Parameter files are made of subsections which describe a portion of the simulati
 The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. For a full list of the parameters within Lethe, we refer to the :doc:`parameter page <../../../parameters/parameters>`.
 
 To set-up the lid-driven cavity case, we first need to establish the mesh used for the simulation.
-
 
 Mesh
 ~~~~~
@@ -74,7 +80,6 @@ Since the lid-driven cavity problem domain is a square, we use the ``hyper_cube`
 It is a bit surprising that the position of the bottom left and the top right corner are specified by a single value. Since the geometry is a square, the position of the corner is specified using a single number, assuming that this identifies both the x and y value associated with that point. Other grid generators, such as the ``hyper_rectangle``, allow for more flexibility.
 
 The last parameter specifies the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. For example, the ``hyper_cube`` mesh is made of a single cell. Indicating an ``initial refinement=6`` implies that the initial mesh is refined 6 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of :math:`2^{(2\cdot6)}=4096` cells.
-
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -111,7 +116,6 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expressions which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
 
-
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
@@ -126,7 +130,6 @@ For the base case, we wish to simulate the lid-driven cavity at a Reynolds numbe
     end
 
 By default, simulations only contain a single fluid which is labeled ``0``.
-
 
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
@@ -188,6 +191,8 @@ The last subsection, which is generally the one we put at the top of the paramet
     set output name = output_cavity
   end
 
+
+-----------------------
 Running the Simulations
 -----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
@@ -199,6 +204,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
 
+-----------------------
 Results and Discussion
 -----------------------
 
@@ -221,8 +227,6 @@ We note that the agreement is perfect. This is not surprising, especially consid
 
 .. note:: 
     The vtu files generated by Lethe are compressed archives. Consequently, they cannot be postprocessed directly. Although they can be easily post-processed using Paraview, it is sometimes necessary to be able to work with the raw data. The python library `PyVista <https://www.pyvista.org/>`_  allows us to do this.
-
-
 
 Higher-Reynolds Case (:math:`Re=7500`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -283,6 +287,7 @@ Increasing the number of cells by a factor 4 (to :math:`\approx` 65k cells) allo
     :align: center
 
 
+----------------------------
 Possibilities for Extension
 ----------------------------
 
@@ -293,9 +298,10 @@ Possibilities for Extension
 - **Dynamic mesh adaptation:** Lethe supports dynamic mesh adaptation. Running this case with dynamic mesh adaptation could potentially yield better results.
 
 
+-----------
 References
 -----------
 
-`[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_ Ghia, U., Ghia, K. N., & Shin, C. T. (1982). High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method. Journal of Computational Physics, 48(3), 387–411. https://doi.org/10.1016/0021-9991(82)90058-4>
+`[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_ U. Ghia, K. N. Ghia, and C. T. Shin, “High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method,” *J. Comput. Phys.*, vol. 48, no. 3, pp. 387–411, Dec. 1982, doi: 10.1016/0021-9991(82)90058-4.
 
-`[2] <https://doi.org/10.1002/fld.953>`_ Erturk, E., Corke, T. C., & Gökçöl, C. (2005). Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers. International Journal for Numerical Methods in Fluids, 48(7), 747–774. https://doi.org/10.1002/fld.953
+`[2] <https://doi.org/10.1002/fld.953>`_ E. Erturk, T. C. Corke, and C. Gökçöl, “Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers,” *Int. J. Numer. Methods Fluids*, vol. 48, no. 7, pp. 747–774, 2005, doi: 10.1002/fld.953.

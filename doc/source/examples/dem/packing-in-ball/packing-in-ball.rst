@@ -8,13 +8,16 @@ This example is the three-dimensional version of the ``packing_in_circle`` examp
 ----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``dem_3d``
 - Three-dimensional problem
 - Parallelism
 
 
+----------------------------
 Files Used in This Example
 ----------------------------
+
 ``/examples/dem/3d-packing-in-ball/packing-in-ball.prm``
 
 
@@ -51,7 +54,7 @@ In a three-dimensional simulation, ``hyper_ball`` creates a three-dimensional ba
 
 
 Insertion Info
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 In a three-dimensional simulation, we have to define the minimum and maximum dimensions of the insertion box with three components in `x`, `y`, and `z` directions.
 
@@ -120,7 +123,7 @@ Model Parameters
 
 
 Simulation Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -135,6 +138,7 @@ Simulation Control
 ----------------------
 Running the Simulation
 ----------------------
+
 This simulation can be launched by:
 
 .. code-block:: text

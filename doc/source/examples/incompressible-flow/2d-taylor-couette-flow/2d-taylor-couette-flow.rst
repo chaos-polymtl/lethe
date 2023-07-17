@@ -4,20 +4,26 @@ Taylor-Couette Flow
 
 This example showcases another classical fluid mechanics problem, the Taylor-Couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
 
+
+---------
 Features
 ---------
+
 - Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1 and Q2-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the use of the analytical solution to calculate the mesh convergence 
 - Displays the calculation of the torque induced by the fluid on a boundary
 
 
+----------------------------
 Files Used in This Example
 ----------------------------
+
 - Parameter file: ``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
 - Python script for postprocessing: ``examples/incompressible-flow/2d-taylor-couette/post_process_taylor_couette.py``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
@@ -44,6 +50,8 @@ where :math:`u_{\theta}` is the angular velocity, :math:`R` is the radius of the
 
 where :math:`\mu` is the dynamic viscosity and :math:`L` is the height of the cylinder. Since we simulate the problem in 2D, we assume that :math:`L=1` without loss of generality.
 
+
+--------------
 Parameter File
 --------------
 
@@ -67,7 +75,6 @@ The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh gen
 
 
 The last parameter specifies the ``initial refinement`` of the grid. Most deal.II grid generators contain a minimal number of cells. The *hyper_shell* mesh is made of four cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 256 cells.
-
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -110,7 +117,6 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
       end
     end
 
-
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
@@ -125,7 +131,6 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
 
 .. note::
     With the ``gls_navier_stokes_2d`` solver, Q2-Q2 elements could also be used. However, we have not found that these lead to better results when the flows are at a low Reynolds number.
-
 
 Analytical Solution
 ~~~~~~~~~~~~~~~~~~~~
@@ -151,8 +156,6 @@ where :math:`u` is the numerical solution, :math:`u_a` is the analytical solutio
 
 To monitor the error in a simulation, we must set ``enable = true``. We must convert the analytical solution from cylindrical coordinates to Cartesian and this is why the resulting ``Function expression`` is slightly barbaric. Notably, this explains why we often see the occurrence of the term ``sqrt(x^2+y^2)`` which is in fact the radius :math:`r=\sqrt{x^2+y^2}`.
 
-
-
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -167,7 +170,6 @@ The ``simulation control`` subsection controls the flow of the simulation. Two a
       set number mesh adapt = 3 # time-stepping method must be "steady"
     end
 
-
 Mesh Adaptation
 ~~~~~~~~~~~~~~~~~~
 
@@ -178,7 +180,6 @@ Mesh adaptation is quite complex in Lethe. The mesh can be dynamically adapted u
     subsection mesh adaptation
       set type = uniform
     end
-
 
 Forces
 ~~~~~~~
@@ -194,12 +195,13 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
 
 By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbosity = verbose`` will print out the value of the torque calculated for each mesh.
 
-
 Rest of the Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example.
 
+
+----------------------
 Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
@@ -210,6 +212,8 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
+
+----------------------
 Results and Discussion
 ----------------------
 
@@ -273,6 +277,8 @@ For the boundary 1, the following torques are obtained:
 
 The analytical value of the torque is : :math:`T_z=0.837758`. Two main conclusions can be drawn. First, the torque obtained from the simulation on both boundaries converges to the analytical solution (at a second-order rate). Secondly, the torque on the difference between the torque on the outer and the inner cylinder converges to zero. This is what we would expect due to Newton's third law (action-reaction). However, it is only reached once the mesh is sufficiently fine and we note a significant (:math:`\approx 2\%`) disagreement between the two torques for the coarsest mesh.
 
+
+----------------------------
 Possibilities for Extension
 ----------------------------
 
@@ -280,7 +286,8 @@ Possibilities for Extension
 - It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
 
 
+------------
 References
 ------------
 
-[1] Bird, R. B., Stewart, W. E., & Lightfoot, E. N. (2006). Transport phenomena (Vol. 1). John Wiley & Sons.
+[1] R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006.

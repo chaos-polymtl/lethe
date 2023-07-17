@@ -4,19 +4,26 @@ Flow over Periodic Hills
 
 This example is a well-established benchmark for Computational Fluid Dynamics software known as the `periodic hills flow <https://kbwiki.ercoftac.org/w/index.php?title=Abstr:2D_Periodic_Hill_Flow>`_. It includes complex flow features such as the generation of an unsteady shear layer, recirculation, strong pressure gradients, attached and detached boundary layers and turbulence recycling due to the periodicity assumption. 
 
+
+---------
 Features
 ---------
 
 - Solver: ``gls_navier_stokes_3d`` (with Q1-Q1) 
 - Transient problem
 
+
+----------------------------
 Files Used in This Example
 ----------------------------
 
 - Parameter file: ``/examples/incompressible-flow/3d-periodic-hills/periodic-hills.prm``
 
+
+-----------------------
 Description of the Case
 -----------------------
+
 In this case a well-defined flow passes over a series of hills which repeat along a channel in a periodic fashion as it can be seen in the following figure (taken from ERCOFTAC `[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_):
 
 .. image:: images/geometry-description.jpg
@@ -26,6 +33,8 @@ In this case a well-defined flow passes over a series of hills which repeat alon
 
 As the flow passes over the hill, it is subjected to the effects of both the curvature of the hill and the pressure gradient. The adverse pressure gradient on the leeward side of the hill and resulting deceleration of the flow causes the boundary layer to separate from the curved hill surface. The flow then recirculates on the leeward side of the hill and reattaches in the base of the channel before the next hill. There is a short distance remaining before the subsequent hill which allows the boundary layer to recover. The flow then accelerates up and over the second hill, and the flow pattern repeats in a periodic manner.
 
+
+--------------
 Parameter File
 --------------
 
@@ -201,8 +210,11 @@ The non-linear solver control section allows us to choose a method suitable for 
 
 In this case, we use the ``inexact_newton`` method that reuses the Jacobian matrix between iterations. This is a known strategy to reduce the cost of reassembling the Jacobian in every iteration. 
 
+
+----------------------
 Running the Simulation
 ----------------------
+
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
@@ -213,6 +225,8 @@ Lethe will generate a number of files. The most important ones have the extensio
 
 Due to the complexity of this example we recommend that you run this example using a cluster or supercomputer if available. For this it is necessary to add the ``mpirun -np X`` command at the beginning of the line. The number of processes ``X`` must be adjusted according to the machine. If you want to run this in a normal desktop we recommend that you set the parameter ``time end`` to ``5.0``; this allows you to observe the initial behavior of the simulation.
 
+
+----------------------
 Results and Discussion
 ----------------------
 To summarize, a coarse mesh of 250K cells was simulated, using a time step of 0.1 and taking average quantities between 207s and 1000s. The results are compared against established test data from both experiments and another CFD simulation. The experimental data corresponds to the data obtained from Rapp `[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ and the computational data is extracted from the results of the LESOCC CFD code by Breuer et al. `[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_.
@@ -240,6 +254,8 @@ and the Reynolds shear stress:
 
 It can be seen that there is a very good agreement of the Lethe average velocity with the values of both benchmarks. Especially at the lower wall and in the bulk of the flow. The Reynolds stresses are more sensitive than the average velocity, as we can see a bigger difference near to the separation of the flow and the reattachment zone. For the periodic hills case, the reattachment point is a good indicator of the accuracy of the simulation at the near wall region. The reattachment point reported experimentally is 4.83 and for the LESOCC code is 5.09. The value obtained with this simulation is 4.73. This is shorter than the ones reported in the literature and a possible reason for the under-prediction is the coarse mesh that is being used. This value could be further improved by using a finer mesh. In general, this example shows that Lethe can be used to simulate complex flow problems with good accuracy and coarse meshes.
 
+
+----------------------------
 Possibilities for Extension
 ----------------------------
 
@@ -249,10 +265,13 @@ Possibilities for Extension
 
 - **High Reynolds numbers**: The example could be run at higher Reynolds numbers. In fact, one can find experimental and numerical results in the literature for Reynolds numbers equal to 10600 or 37000. This comes of course with a higher computational effort.
 
+
+----------
 References
 ----------
-`[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_ ERCOFTAC. File: hill3d.jpg. 2010. URL https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg.
 
-`[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ Rapp C. Experimentelle studie der turbulenten strömung über periodische hügel. Ph.D. thesis; Technische Universität München; 2009
+`[1] <https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg>`_ ERCOFTAC. "File: hill3d.jpg". 2010. https://kbwiki.ercoftac.org/w/index.php/File:Hill3d.jpg.
 
-`[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_ Breuer M, Peller N, Rapp C, Manhart M. Flow over periodic hills – numerical and experimental study in a wide range of Reynolds numbers. Computers & Fluids 2009;38(2):433–32, https://doi.org/10.1016/j.compfluid.2008.05.002.
+`[2] <https://mediatum.ub.tum.de/doc/677970/677970.pdf>`_ C. R. Rapp, "Experimentelle studie der turbulenten strömung über periodische hügel", PhD dissertation, Technische Universität München, Munich, Germany, 2009. [Online] Available: https://mediatum.ub.tum.de/doc/677970/677970.pdf
+
+`[3] <https://doi.org/10.1016/j.compfluid.2008.05.002>`_ M. Breuer, N. Peller, Ch. Rapp, and M. Manhart, “Flow over periodic hills – Numerical and experimental study in a wide range of Reynolds numbers,” *Comput. Fluids*, vol. 38, no. 2, pp. 433–457, Feb. 2009, doi: 10.1016/j.compfluid.2008.05.002.

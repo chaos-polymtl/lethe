@@ -129,7 +129,7 @@ In the rotating drum simulation, we use a ``once`` load-balancing method, since 
     end
 
 
-Boundary Conditions
+DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined. There are four boundary types: ``fixed_wall``, ``outlet``, ``rotational`` (around the center), and ``translational``. For ``rotational`` motion, ``rotational speed`` and ``rotational vector`` are required, while for ``translational`` motion, the ``speed`` should be defined in each direction.

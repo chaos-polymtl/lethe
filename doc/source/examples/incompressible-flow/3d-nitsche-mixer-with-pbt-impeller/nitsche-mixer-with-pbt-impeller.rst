@@ -10,24 +10,26 @@ This example illustrates how the transient flow in a stirred-tank can be simulat
 	This example is related to this article (to be published).
 
 
+--------
 Features
 --------
+
 - Solvers: ``gls_nitsche_navier_stokes_33``
 - Transient problem
 - Rotating complex solid modeled with Nitsche immersed boundary
 - Calculation of the average velocity
 
 
-
+--------------------------
 Files Used in This Example
 --------------------------
 
-* Parameter file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/mixer.prm``
-* Mesh file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.msh``
-* Geometry file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.geo``
+- Geometry file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.geo``
+- Mesh file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/pbt.msh``
+- Parameter file: ``/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/mixer.prm``
 
 
-
+-----------------------
 Description of the Case
 -----------------------
 
@@ -87,6 +89,7 @@ where :math:`N` is the angular velocity in Hertz (or Rotation Per Second, RPS), 
 We investigate this case at a Reynolds number :math:`Re=300`. This example can easily be extended to higher Reynolds number values by lowering the kinematic viscosity. It would then be necessary to increase the mesh resolution for the solution to be meaningfully accurate.
 
 
+--------------
 Parameter File
 --------------
 
@@ -319,9 +322,10 @@ Lethe generates a larger number of files when the Nitsche immersed boundary is u
 * the ``mixer_solid_particles_00.pvd``, corresponding to the discrete particles inserted at the Gauss points of the solid triangulation. 
 
 .. tip ::
-	The solid particles enable the Nitsche restriction visualization, while the solid triangulation is used for animation purposes.
+  The solid particles enable the Nitsche restriction visualization, while the solid triangulation is used for animation purposes.
 
 
+----------------------
 Results and Discussion
 ----------------------
 
@@ -363,6 +367,7 @@ Clearly, the fluid is descending along the shaft and rises along the lateral wal
 Multiple analyses can be done with this type of simulation. For example, one can monitor the torque on the impeller as a function of the Reynolds number to generate the power curve of the agitator. One could also leverage the tracer multiphysics module to measure the mixing time of the tank and/or identify the presence of dead zones.
 
 
+----------------------------
 Possibilities for Extension
 ----------------------------
 
@@ -372,7 +377,9 @@ Possibilities for Extension
 
 
 
-References
-----------------------------
+---------
+Reference
+---------
 
-`[1] <https://onlinelibrary.wiley.com/doi/book/10.1002/0471451452>`_ Paul, Edward L., Victor A. Atiemo-Obeng, and Suzanne M. Kresta, eds. Handbook of industrial mixing: science and practice. Vol. 1. John Wiley & Sons, 2003.
+`[1] <https://onlinelibrary.wiley.com/doi/book/10.1002/0471451452>`_  E. L. Paul, V. A. Atiemo-Obeng, and S. M. Kresta,
+*Handbook of Industrial Mixing*, John Wiley & Sons, Ltd, 2003. doi: 10.1002/0471451452.

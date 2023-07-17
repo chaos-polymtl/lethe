@@ -4,6 +4,7 @@ Transient Flow around a Cylinder
 
 This example corresponds to a transient flow around a fixed cylinder at a high Reynolds number.
 
+---------
 Features
 ---------
 
@@ -11,16 +12,21 @@ Features
 - Transient problem
 - Usage of Gnuplot and Python scripts for the data post-processing
 
+
+----------------------------
 Files Used in This Example
 ----------------------------
 
-- Parameter file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder.prm``
-- Mesh file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.msh``
 - Geometry file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.geo``
+- Mesh file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder-structured.msh``
+- Parameter file: ``/examples/incompressible-flow/2d-transient-flow-around-cylinder/cylinder.prm``
 
+
+-----------------------
 Description of the Case
 -----------------------
-We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais et al. `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
+
+We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_, which were taken from Blais *et al.* `[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_:
 
 .. image:: images/geometry-description.png
     :alt: The geometry
@@ -34,6 +40,8 @@ The flow field features a stable laminar boundary layer at the cylinder leading 
 
 where :math:`D` is the diameter of the cylinder, :math:`f_v` is the frequency of the shedding and :math:`U_\infty` is the upstream velocity.
 
+
+--------------
 Parameter File
 --------------
 
@@ -199,8 +207,10 @@ As we set ``calculation frequency`` to 1, the forces on each boundary are comput
   The computational cost of writing this output file at each time step by setting ``output frequency`` to 1 can be significant, as explained in `Force and torque calculation <https://lethe-cfd.github.io/lethe/parameters/cfd/force_and_torque.html>`_. It is a good practice to set ``output frequency`` to higher values, such as 10-100, to reduce the computational cost.
 
 
+----------------------
 Running the Simulation
 ----------------------
+
 The simulation is launched in parallel using 10 CPUs, as explained in `2D Transient flow around an Ahmed body <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-transient-around-ahmed-body/2d-transient-around-ahmed-body.html>`_ :
 
 .. code-block:: text
@@ -211,6 +221,8 @@ The simulation is launched in parallel using 10 CPUs, as explained in `2D Transi
 
   The estimated time to simulate 200 seconds is about 3 hours with 10 CPUs.
 
+
+-------
 Results
 -------
 
@@ -282,6 +294,8 @@ Using Paraview the following velocity and pressure fields can be visualized in t
     :align: center
     :name: pressure
 
+
+----------------------------
 Possibilities for Extension
 ----------------------------
 - Study the vortex shedding of other bluff bodies.
@@ -289,11 +303,13 @@ Possibilities for Extension
 - Repeat the same example in 3D for a cylinder/sphere and study the effect on the drag and lift forces.
 - Investigate the impact of the time-step and the time-stepping scheme (e.g., sdirk 3 or bdf 3)
 
+
+----------
 References
 ----------
-`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ Blais, B., Lassaigne, M., Goniva, C., Fradette, L., & Bertrand, F. (2016). A semi-implicit immersed boundary method and its application to viscous mixing. Comput. Chem. Eng., 85, 136-146. https://doi.org/10.1016/j.compchemeng.2015.10.019
 
-`[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_ Barbeau, L., Étienne, S., Béguin, C., & Blais, B. (2022). Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,
-Computers & Fluids, Volume 239, 105415, https://doi.org/10.1016/j.compfluid.2022.105415
+`[1] <https://doi.org/10.1016/j.compchemeng.2015.10.019>`_ B. Blais, M. Lassaigne, C. Goniva, L. Fradette, and F. Bertrand, “A semi-implicit immersed boundary method and its application to viscous mixing,” *Comput. Chem. Eng.*, vol. 85, pp. 136–146, Feb. 2016, doi: 10.1016/j.compchemeng.2015.10.019.
 
-`[3] <https://doi.org/10.1017/S0022112086003014>`_ Braza, M., Chassaing, P. & Ha Minh, H. (1986). Numerical Study and Physical Analysis of the Pressure and Velocity Field in the Near Wake of a Circular Cylinder. Journal of Fluid Mechanics. Volume 165. 79-130, https://doi.org/10.1017/S0022112086003014
+`[2] <https://doi.org/10.1016/j.compfluid.2022.105415>`_ L. Barbeau, S. Étienne, C. Béguin, and B. Blais, “Development of a high-order continuous Galerkin sharp-interface immersed boundary method and its application to incompressible flow problems,” *Comput. Fluids*, vol. 239, p. 105415, May 2022, doi: 10.1016/j.compfluid.2022.105415.
+
+`[3] <https://doi.org/10.1017/S0022112086003014>`_ 	M. Braza, P. Chassaing, and H. H. Minh, “Numerical study and physical analysis of the pressure and velocity fields in the near wake of a circular cylinder,” *J. Fluid Mech.*, vol. 165, pp. 79–130, Apr. 1986, doi: 10.1017/S0022112086003014.

@@ -2,6 +2,7 @@
 Flow past a Backward-Facing Step
 ====================================
 
+--------
 Features
 --------
 
@@ -10,6 +11,8 @@ Features
 - Comparison with benchmark solutions
 - Mesh refinement and error analysis
 
+
+----------------------------
 Files Used in This Example
 ----------------------------
 
@@ -17,6 +20,7 @@ Files Used in This Example
 - Higher-Reynolds case (:math:`Re \geq 700`): ``/examples/incompressible-flow/2d-backward-facing-step/Reynolds700-1000.prm``
 
 
+-----------------------
 Description of the Case
 -----------------------
 
@@ -26,6 +30,8 @@ In this example, a bidimensional flow goes past a backward-facing step. The flow
 
 The backward-facing step problem is a classical computational fluid dynamics problem. The fact that it features a non-trivial solution while maintaining simple geometry and boundary conditions makes this problem a good candidate for validation purposes as well as to test the robustness of a given CFD method. First, the basic parameters used to solve the backward-facing step problem will be exposed. A solution to several Reynolds numbers (from :math:`Re = 100` to :math:`Re =1000`) will then be presented and compared to experimental and numerical data. A mesh adaptation and numerical error analysis will be carried on.
 
+
+--------------
 Parameter File
 --------------
 
@@ -229,7 +235,9 @@ For :math:`Re \geq 700`, however, it is often necessary to set ``ilu precondtion
 	
 .. tip::
 	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the nonlinear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
-	
+
+
+-----------------------
 Running the Simulations
 -----------------------
 
@@ -248,6 +256,7 @@ However, mpi can be used to lower calculation time by using several CPUs (especi
 where ``j`` is the number of CPUs used for the computations.
 
 
+----------------------
 Results and Discussion
 ----------------------
 
@@ -275,7 +284,7 @@ where the final value of :math:`x_r` is :math:`2.893`. We notice from the graph 
 
 .. image:: image/Reynolds100-error-analysis.png
 
-The reference value used in the error analysis is taken from Erturk (2008).
+The reference value used in the error analysis is taken from Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_.
 
 
 Higher Reynolds Number (:math:`Re=1000`)
@@ -292,6 +301,7 @@ For :math:`Re = 1000` :
 On the contrary of what we saw in the :math:`Re = 100` case, it is clearly noticeable that there is much less diffusion within the flow. This is once more coherent with the theory. The same eddy as mentioned in the previous section is still present, but grows as the Reynolds number is increased. Furthermore, a second principal eddy can be seen adjacent to the top wall in the range :math:`x \in [25,37]`. This "oscillating flow" characteristic is expected of a higher Reynolds flow such as this one. Finally, the :math:`x_r` variable is evaluated visually at :math:`x_r \simeq 12.5` (:math:`x \simeq 27.5`). By using the same Python code as before, we obtain :math:`x_r = 12.637` as a precise numerical result.
 
 
+-------------------------
 Validation and Comparison
 -------------------------
 
@@ -302,7 +312,7 @@ In this section, the solutions obtained with *Lethe* are compared with data that
 
 .. image:: image/xr-comparison.png
 
-First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ diverge from the experimental data of Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_. According to `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less significant but clearly noticeable error between *Lethe* and Erturk  `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_: the fact that certain tolerances have been set higher for higher Reynolds number cases might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds numbers, however, at a higher computational cost. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
+First, the results provided by *Lethe* are identical or so to all of the three selected studies for low Reynolds numbers (:math:`Re \leq 400`). After that point, both results form *Lethe* and from Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ diverge from the experimental data of Armaly and al. (1983) `[2] <https://doi.org/10.1017/S0022112083002839>`_. According to `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_, this error is due to 3D effects that are more potent as the flow becomes more and more turbulent. Furthermore, there is also a less significant but clearly noticeable error between *Lethe* and Erturk (2008) `[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_: the fact that certain tolerances have been set higher for higher Reynolds number cases might have underestimated the reattachment length. Also, first order elements have been used throughout the whole simulation process. Using second order elements for velocity, for instance, could yield better results for higher Reynolds numbers, however, at a higher computational cost. The following table illustrates the error at :math:`Re = 600` for first and second order velocity elements.
 
 +---------------+----------------+----------------+
 | Order         | :math:`x_r/h`  | Error          |
@@ -330,6 +340,7 @@ For :math:`Re = 1000`:
 For :math:`Re = 1000`, an error in the velocity profile is visually noticeable. We can assume that the outlet is not long enough for the flow to be fully developed at its end, meaning that there is still traction on the fluid. Consequently, increasing this length is essential in order to be able to validate cases where :math:`Re \geq 1000`.
 
 
+---------------------------
 Possibilities for Extension
 ---------------------------
 
@@ -337,14 +348,16 @@ Possibilities for Extension
 - **Use second order elements for higher Reynolds simulations**: Using second order elements can improve accuracy for more turbulent flows. Also, it can be very powerful in this particular example, since quadratic elements can theoretically interpolate *Poiseuille* flows with genuinely no numerical error. Consequently, the method can yield incredibly precise results while maintaining a very coarse mesh far from the step. 
 - **Validate for even higher Reynolds numbers**: Some studies compute their simulations up to :math:`Re = 3000`. It would also be interesting to visualize the formation of more eddies further downstream of the step.
 
+
+----------
 References
 ----------
 
-`[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ Erturk, E. (2008). Numerical solutions of 2-d steady incompressible flow over a backward-facing step, part i: high reynolds number solutions. Computers and Fluids, 37(6), 633–655. https://doi.org/10.1016/j.compfluid.2007.09.003
+`[1] <https://doi.org/10.1016/j.compfluid.2007.09.003>`_ E. Erturk, “Numerical solutions of 2-D steady incompressible flow over a backward-facing step, Part I: High Reynolds number solutions,” *Comput. Fluids*, vol. 37, no. 6, pp. 633–655, Jul. 2008, doi: 10.1016/j.compfluid.2007.09.003.
 
-`[2] <https://doi.org/10.1017/S0022112083002839>`_ Armaly, B. F., Durst, F., Pereira, J. C. F., &amp; Schönung B. (1983). Experimental and theoretical investigation of backward-facing step flow. Journal of Fluid Mechanics, 127(-1), 473–473. https://doi.org/10.1017/S0022112083002839
+`[2] <https://doi.org/10.1017/S0022112083002839>`_ B. F. Armaly, F. Durst, J. C. F. Pereira, and B. Schönung, “Experimental and theoretical investigation of backward-facing step flow,” *J. Fluid Mech.*, vol. 127, pp. 473–496, Feb. 1983, doi: 10.1017/S0022112083002839.
 
-`[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_ Velivelli, A. C., &amp; Bryden, K. M. (2015). Domain decomposition based coupling between the lattice boltzmann method and traditional cfd methods – part ii: numerical solution to the backward facing step flow. Advances in Engineering Software, 82(C). https://doi.org/10.1016/j.advengsoft.2014.11.006
+`[3] <https://doi.org/10.1016/j.advengsoft.2014.11.006>`_ A. C. Velivelli and K. M. Bryden, “Domain decomposition based coupling between the lattice Boltzmann method and traditional CFD methods – Part II: Numerical solution to the backward facing step flow,” *Adv. Eng. Softw.*, vol. 82, pp. 65–74, Apr. 2015, doi: 10.1016/j.advengsoft.2014.11.006.
 
 
 

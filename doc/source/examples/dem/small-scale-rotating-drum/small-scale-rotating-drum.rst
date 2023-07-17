@@ -129,8 +129,8 @@ In this example, we use the ``dynamic`` load balancing method. This method check
       set integration method                        = velocity_verlet
     end
 
-Boundary condition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DEM Boundary Conditions
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The rotation of the cylinder is applied using a rotational boundary condition with a value of 1 rad/s over the x axis. Based on `deal.II boundary colouring <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the hull of the cylinder (rotating drum) has an id = 0.
 

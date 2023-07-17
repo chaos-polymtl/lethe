@@ -5,8 +5,11 @@ Taylor-Couette Flow Using Nitsche Immersed Boundary
 This example revisits the same taylor-couette flow problem in :doc:`../2d-taylor-couette-flow/2d-taylor-couette-flow`, 
 now using immersed boundaries to represent the inner cylinder. This example demonstrates some of the capabilities of Lethe to simulate the flow around complex geometries without meshing them explicitly with a conformal mesh, but instead by using the Nitsche immersed boundary method available within Lethe.
 
+
+---------
 Features
 ---------
+
 - Solvers: ``gls_nitsche_navier_stokes_22`` (with Q1-Q1, Q2-Q1 and Q2-Q2)
 
 .. note:: 
@@ -19,18 +22,21 @@ Features
 - Displays the calculation of the torque induced by the fluid on a boundary
 
 
+----------------------------
 Files Used in This Example
 ----------------------------
-``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
-``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
+
+- Parameter file with uniform mesh refinement: ``examples/incompressible-flow/2d-nitsche-taylor-couette/uniform-nitsche-taylor-couette.prm``
+- Parameter file with adaptative mesh refinement: ``examples/incompressible-flow/2d-nitsche-taylor-couette/adaptative-nitsche-taylor-couette.prm``
 
 
+
+-----------------------
 Description of the Case
 -----------------------
 
-The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. 
-We simulate the same case as the regular Taylor-Couette flow where the inner cylinder rotates at a constant angular anti-clockwise velocity :math:`\omega`, 
-while the outer cylinder is fixed. 
+Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities.
+We simulate the same case as the regular Taylor-Couette flow where the inner cylinder rotates at a constant angular anti-clockwise velocity :math:`\omega`, while the outer cylinder is fixed.
 The following figure shows the geometry of this problem and the corresponding boundary conditions. 
 
 .. image:: images/taylor-couette.svg
@@ -39,11 +45,12 @@ The following figure shows the geometry of this problem and the corresponding bo
     :name: geometry
     :height: 10cm
 
+
+--------------
 Parameter File
 --------------
 
 We first establish the meshes used for the simulation. Using Nitsche immersed boundaries, two meshes are to be defined : the fluid mesh and the geometry mesh (i.e. the inner cylinder).
-
 
 Mesh
 ~~~~~
@@ -195,7 +202,7 @@ As stated above, this problem can either be solved using a uniform mesh refineme
 
 
 Uniform Mesh Refinement
-^^^^^^^^^^^^^^^^^^^^^^^ 
+***********************
 
 The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. 
 By setting ``number mesh adapt=4`` we configure the simulation to solve the fluid dynamics on the mesh and on four(4) subsequently refined mesh. 
@@ -221,7 +228,7 @@ We then set the mesh adaptation ``type`` to ``uniform``.
 
 
 Adaptative Mesh Refinement
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+**************************
 
 Since the Nitsche IB method introduces additional error on the surface of the immersed geometry, it is pertinent to investigate the results it can produce with 
 adaptive mesh refinement. We now consider the following option:
@@ -259,6 +266,7 @@ Rest of the Subsections
 The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example..
 
 
+----------------------
 Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_nitsche_navier_stokes_22`` executable is within your path, the simulation can be launched by typing:
@@ -276,6 +284,7 @@ or
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
 
+----------------------
 Results and Discussion
 ----------------------
 
@@ -362,6 +371,7 @@ Correspondingly, the torque on the inner cylinder:
 We see that even for a small number of cells (~18k), the error on the torque is less than 0.5%.
 
 
+----------------------------
 Possibilities for Extension
 ----------------------------
 
@@ -369,7 +379,8 @@ Possibilities for Extension
 - It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
 
 
-References
+------------
+Reference
 ------------
 
-[1] Bird, R. B., Stewart, W. E., & Lightfoot, E. N. (2006). Transport phenomena (Vol. 1). John Wiley & Sons.
+[1] R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006.

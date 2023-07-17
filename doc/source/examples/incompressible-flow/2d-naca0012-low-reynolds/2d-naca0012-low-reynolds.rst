@@ -2,6 +2,8 @@
 Flow around NACA0012 at Low Reynolds Number
 ===============================================
 
+
+--------
 Features
 --------
 
@@ -10,6 +12,8 @@ Features
 - Boundary Layer Mesh - Transfinite Mesh
 - Spectral analysis - Fourier transform
 
+
+--------------------------
 Files Used in This Example
 --------------------------
 
@@ -17,6 +21,8 @@ Files Used in This Example
 - Geometry file: ``/examples/incompressible-flow/2d-naca0012-low-reynolds/c_type_mesh.geo``
 - Python script for postprocessing: ``examples/incompressible-flow/2d-naca0012-low-reynolds/post_processing.py``
 
+
+-----------------------
 Description of the Case
 -----------------------
 
@@ -26,6 +32,8 @@ In this example, a two-dimensional flow around a NACA airfoil is studied. Accord
 
 These airfoils, though created almost 100 years ago, are still very popular in aerodynamic fields where they often serve as a *base* choice, which is then modified to fit the constructor's constraints. The literature on numerical simulations of NACAs with high Reynolds numbers (:math:`Re>10^6`) is abundant. However, recent technological developments in the field of Micro Air Vehicles (MAVs) created a need for low Reynolds simulations (:math:`Re<10^4`) since these vehicles operate at Reynolds numbers much smaller than usual aircraft. In this example, a 2D simulation around a NACA0012 at :math:`Re=1000` will be performed in order to retrieve significant quantities such as drag, lift, and pressure coefficients, respectively denoted by :math:`C_D`, :math:`C_L` and :math:`C_p`. Elements of order 1 will be used for pressure and velocity. A spectral analysis will then be performed to analyze the vortex shedding frequency.
 
+
+--------------
 Parameter File
 --------------
 
@@ -64,7 +72,6 @@ where :math:`C` is the chord length of the airfoil, :math:`u_{\infty}` is the ma
         set kinematic viscosity = 0.001
       end
     end
-
 
 Forces
 ~~~~~~
@@ -192,7 +199,9 @@ Again, in order to reduce the computational time, the ``minimum residual`` for t
 	
 .. tip::
 	It is important to note that the ``minimum residual`` of the linear solver is smaller than the ``tolerance`` of the non-linear solver. The reader can consult the `Parameters Guide <https://lethe-cfd.github.io/lethe/parameters/cfd/linear_solver_control.html>`_ for more information.
-	
+
+
+-----------------------
 Running the Simulations
 -----------------------
 
@@ -212,6 +221,8 @@ with X the number of processors used to run it.
 	
 However, it is highly recommended to launch the simulation on a supercomputer. To launch on a desktop machine, the ``time end`` can be set to ``3.0`` to see the beginning of the simulation. However, to get relevant results about the forces, it is better to simulate at least for 10 seconds so that a pseudo-steady regime settles.
 
+
+----------------------
 Results and Discussion
 ----------------------
 
@@ -265,6 +276,7 @@ The best mathematical tool available to make a spectral analysis is a Fourier tr
 The fundamental frequency is :math:`f_1=0.72 \ \text{Hz}`, which gives a shedding period :math:`T = 1.39 \ \text{s}` that is coherent with the instantaneous velocity field above.
 
 
+---------------------------
 Possibilities for Extension
 ---------------------------
 
@@ -275,17 +287,14 @@ Possibilities for Extension
 - **Validate for higher Reynolds numbers**: Literature is available for comparison at :math:`Re=10000` at Yamaguchi *et al.* (2013) `[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_ and :math:`Re=23000` at Kojima *et al.* (2013) `[3] <https://doi.org/10.2514/1.C031849>`_.
 
 
+----------
 References
 ----------
 
-`[1] <https://doi.org/10.1177/17568293211055656>`_ 
-Kouser T., Xiong Y., Yang D., & Peng S. (2021). Direct Numerical Simulations on the three-dimensional wake transition of flows over NACA0012 airfoil at Re = 1000. International Journal of Micro Air Vehicles, 13. https://doi.org/10.1177/17568293211055656
+`[1] <https://doi.org/10.1177/17568293211055656>`_ T. Kouser, Y. Xiong, D. Yang, and S. Peng, “Direct Numerical Simulations on the three-dimensional wake transition of flows over NACA0012 airfoil at Re=1000,” *Int. J. Micro Air Veh.*, vol. 13, p. 17568293211055656, Jan. 2021, doi: 10.1177/17568293211055656.
 
-`[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_
-Yuta, Y., Tomohisa, O., & Akinori, M. (2013). 1201 PRESSURE DISTRIBUTION ON A NACA0012 AIRFOIL AT LOW REYNOLDS NUMBERS. The Proceedings of the International Conference on Jets, Wakes and Separated Flows (ICJWSF), 4(0), 1201–1–1201–5. `<https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_
+`[2] <https://doi.org/10.1299/jsmeicjwsf.2013.4._1201-1_>`_ Y. Yuta, O. Tomohisa, and M. Akinori, “1201 Pressure Distribution on a Naca0012 Airfoil at Low Reynolds Numbers,” *Proc. Int. Conf. Jets Wakes Separated Flows ICJWSF*, vol. 2013.4, p. 1201-1 - 1201-5 , 2013, doi: 10.1299/jsmeicjwsf.2013.4._1201-\1_.
 
-`[3] <https://doi.org/10.2514/1.C031849>`_ 
-Kojima, R., Nonomura, T., Oyama, A., & Fujii, K. (2013). Large-Eddy Simulation of Low-Reynolds-Number Flow Over Thick and Thin NACA Airfoils. Journal of Aircraft, 50(1), 187–196. https://doi.org/10.2514/1.C031849
-
+`[3] <https://doi.org/10.2514/1.C031849>`_ R. Kojima, T. Nonomura, A. Oyama, and K. Fujii, “Large-Eddy Simulation of Low-Reynolds-Number Flow Over Thick and Thin NACA Airfoils,” *J. Aircr.*, vol. 50, no. 1, pp. 187–196, Jan. 2013, doi: 10.2514/1.C031849.
 
 

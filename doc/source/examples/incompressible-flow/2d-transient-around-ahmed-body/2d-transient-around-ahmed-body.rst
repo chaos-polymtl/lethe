@@ -2,6 +2,8 @@
 Transient Flow around an Ahmed Body
 ======================================
 
+
+---------
 Features
 ---------
 
@@ -10,12 +12,17 @@ Features
 - Displays how to import and easily adapt a gmsh file
 - Displays how to run case in parallel with mpirun
 
+
+----------------------------
 Files Used in This Example
 ----------------------------
-- Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
+
 - Geometry file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.geo``
 - Mesh file: ``/examples/incompressible-flow/2d-ahmed-body/Ahmed-Body-20-2D.msh``
+- Parameter file: ``/examples/incompressible-flow/2d-ahmed-body/ahmed.prm``
 
+
+--------------------------
 Description of the Case
 --------------------------
 In this example, a flow is passing across a fixed Ahmed body (simplified version of a car, classical benchmark for aerodynamic simulation tools). The velocity profile of the flow is simulated. The parameter file used is ``ahmed.prm``.
@@ -39,8 +46,11 @@ The basic geometry for the Ahmed body is given below, as defined in Ahmed et al.
     :align: center
     :name: geometry_detailed
 
+
+--------------
 Parameter File
 --------------
+
 First, we import the mesh as in the `2D Flow around a cylinder <https://lethe-cfd.github.io/lethe/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html>`_. 
 
 Mesh
@@ -166,6 +176,8 @@ Alternatively, specify the path to the ``gls_navier_stokes_2d`` in your ``build/
 
 Guidelines for parameters other than the previous mentioned are found at the `Parameters guide <https://lethe-cfd.github.io/lethe/parameters/parameters.html>`_.
 
+
+-------
 Results
 -------
 Transient results are shown for three ``Re`` values:
@@ -201,14 +213,17 @@ The mesh and processors load is adapted dynamically throughout the simulation, a
 | t = 4 s     | .. image:: images/Re720-mesh-t4.png    |
 +-------------+----------------------------------------+
 
+
+----------------------------
 Possibilities for Extension
 ----------------------------
 
 * Change the ``phi`` value to see the effect of the angle in the streamline.
 * Vary the Reynolds number, or the initial and boundary conditions.
-* Make a three-dimentional mesh, or even add other features to it, such as sharpen the edges.
+* Make a three-dimensional mesh, or even add other features to it, such as sharpen the edges.
 * Test higher order elements (e.g., Q2-Q1).
 
-References
 ----------
-`[1] <https://www.jstor.org/stable/44434262>`_ Ahmed, S. R., Ramm, G., & Faltin, G. (1984). Some salient features of the time-averaged ground vehicle wake. SAE Transactions, 93, 473-503. https://www.jstor.org/stable/44434262
+Reference
+----------
+`[1] <https://www.jstor.org/stable/44434262>`_ Ahmed, S. R., et al. “Some Salient Features of the Time -Averaged Ground Vehicle Wake.” *SAE Transactions*, vol. 93, 1984, pp. 473–503. http://www.jstor.org/stable/44434262.
