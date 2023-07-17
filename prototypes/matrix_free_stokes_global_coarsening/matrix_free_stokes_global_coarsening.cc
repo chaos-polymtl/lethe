@@ -367,13 +367,18 @@ public:
   StokesOperator(const MappingQ<dim> &            mapping,
                  const DoFHandler<dim> &          dof_handler,
                  const AffineConstraints<number> &constraints,
-                 const QGauss<1> &                quadrature);
+                 const QGauss<1> &                quadrature,
+                 const Settings &                 parameters);
 
   void
   reinit(const MappingQ<dim> &            mapping,
          const DoFHandler<dim> &          dof_handler,
          const AffineConstraints<number> &constraints,
-         const QGauss<1> &                quadrature);
+         const QGauss<1> &                quadrature,
+         const Settings &                 parameters);
+
+  void
+  compute_stabilization_parameter();
 
   types::global_dof_index
   m() const;
@@ -396,6 +401,12 @@ public:
   const TrilinosWrappers::SparseMatrix &
   get_system_matrix() const;
 
+  const MatrixFree<dim, number> &
+  get_system_matrix_free() const;
+
+  const AlignedVector<VectorizedArray<number>>
+  get_stabilization_parameter() const;
+
   void
   compute_inverse_diagonal(VectorType &diagonal) const;
 
@@ -415,13 +426,12 @@ private:
     const VectorType &                           src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
-public:
-  MatrixFree<dim, number> matrix_free;
-
 private:
+  MatrixFree<dim, number>                matrix_free;
   AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   Settings                               parameters;
+  AlignedVector<VectorizedArray<number>> stabilization_parameter;
 };
 
 template <int dim, typename number>
@@ -433,9 +443,10 @@ StokesOperator<dim, number>::StokesOperator(
   const MappingQ<dim> &            mapping,
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
-  const QGauss<1> &                quadrature)
+  const QGauss<1> &                quadrature,
+  const Settings &                 parameters)
 {
-  this->reinit(mapping, dof_handler, constraints, quadrature);
+  this->reinit(mapping, dof_handler, constraints, quadrature, parameters);
 }
 
 template <int dim, typename number>
@@ -444,7 +455,8 @@ StokesOperator<dim, number>::reinit(
   const MappingQ<dim> &            mapping,
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
-  const QGauss<1> &                quadrature)
+  const QGauss<1> &                quadrature,
+  const Settings &                 parameters)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -456,6 +468,37 @@ StokesOperator<dim, number>::reinit(
 
   matrix_free.reinit(
     mapping, dof_handler, constraints, quadrature, additional_data);
+
+  this->parameters = parameters;
+
+  this->compute_stabilization_parameter();
+}
+
+template <int dim, typename number>
+void
+StokesOperator<dim, number>::compute_stabilization_parameter()
+{
+  unsigned int n_cells =
+    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+  stabilization_parameter.resize(n_cells);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      for (auto lane = 0u;
+           lane < matrix_free.n_active_entries_per_cell_batch(cell);
+           lane++)
+        {
+          double h_k = matrix_free.get_cell_iterator(cell, lane)->measure();
+
+          if (dim == 2)
+            stabilization_parameter[cell][lane] =
+              std::sqrt(4. * h_k / M_PI) * std::sqrt(4. * h_k / M_PI);
+          else if (dim == 3)
+            stabilization_parameter[cell][lane] =
+              std::pow(6 * h_k / M_PI, 1. / 3.) *
+              std::pow(6 * h_k / M_PI, 1. / 3.);
+        }
+    }
 }
 
 template <int dim, typename number>
@@ -536,6 +579,20 @@ StokesOperator<dim, number>::get_system_matrix() const
   return system_matrix;
 }
 
+template <int dim, typename number>
+const MatrixFree<dim, number> &
+StokesOperator<dim, number>::get_system_matrix_free() const
+{
+  return this->matrix_free;
+}
+
+template <int dim, typename number>
+const AlignedVector<VectorizedArray<number>>
+StokesOperator<dim, number>::get_stabilization_parameter() const
+{
+  return stabilization_parameter;
+}
+
 // The diagonal of the matrix is needed, e.g., for smoothers used in
 // multigrid. Thereforem it is computed by a sequence of operator
 // evaluations to unit basis vectors using the optimized compute_diagonal
@@ -568,30 +625,7 @@ StokesOperator<dim, number>::do_cell_integral_local(
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                       EvaluationFlags::hessians);
 
-  const unsigned int cell = integrator.get_current_cell_index();
-
-  VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-  std::array<number, VectorizedArray<number>::size()> h_k;
-  std::array<number, VectorizedArray<number>::size()> h;
-
-  for (auto lane = 0u; lane < matrix_free.n_active_entries_per_cell_batch(cell);
-       lane++)
-    {
-      h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
-    }
-
-  for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-    {
-      if (dim == 2)
-        {
-          h[v] = std::sqrt(4. * h_k[v] / M_PI);
-        }
-      else if (dim == 3)
-        {
-          h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
-        }
-      tau[v] = h[v] * h[v];
-    }
+  auto tau = integrator.read_cell_data(stabilization_parameter);
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
@@ -661,41 +695,17 @@ StokesOperator<dim, number>::do_cell_integral_global(
                                EvaluationFlags::gradients |
                                EvaluationFlags::hessians);
 
-  const unsigned int cell = integrator.get_current_cell_index();
-
-  VectorizedArray<number> tau = VectorizedArray<number>(0.0);
-  std::array<number, VectorizedArray<number>::size()> h_k;
-  std::array<number, VectorizedArray<number>::size()> h;
-
-  for (auto lane = 0u; lane < matrix_free.n_active_entries_per_cell_batch(cell);
-       lane++)
-    {
-      h_k[lane] = matrix_free.get_cell_iterator(cell, lane)->measure();
-    }
-
-  for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
-    {
-      if (dim == 2)
-        {
-          h[v] = std::sqrt(4. * h_k[v] / M_PI);
-        }
-      else if (dim == 3)
-        {
-          h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
-        }
-      tau[v] = h[v] * h[v];
-    }
+  auto tau = integrator.read_cell_data(stabilization_parameter);
 
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
       // Evaluate source term function
-      Point<dim, VectorizedArray<double>> point_batch =
-        integrator.quadrature_point(q);
-
       Tensor<1, dim + 1, VectorizedArray<double>> source_value;
 
       if (parameters.source_term == Settings::mms)
         {
+          Point<dim, VectorizedArray<double>> point_batch =
+            integrator.quadrature_point(q);
           source_value =
             evaluate_function<dim, double, dim + 1>(source_term_function,
                                                     point_batch);
@@ -868,7 +878,8 @@ solve_with_gmg(SolverControl &            solver_control,
                const MultigridParameters &mg_data,
                const MappingQ<dim>        mapping,
                const DoFHandler<dim> &    dof_handler,
-               const QGauss<1> &          quadrature)
+               const QGauss<1> &          quadrature,
+               const Settings &           parameters)
 {
   MGLevelObject<DoFHandler<dim>>                     dof_handlers;
   MGLevelObject<std::unique_ptr<OperatorType>>       operators;
@@ -936,10 +947,8 @@ solve_with_gmg(SolverControl &            solver_control,
 
       constraint.close();
 
-      operators[level] = std::make_unique<OperatorType>(mapping,
-                                                        dof_handler,
-                                                        constraint,
-                                                        quadrature);
+      operators[level] = std::make_unique<OperatorType>(
+        mapping, dof_handler, constraint, quadrature, parameters);
     }
 
   for (unsigned int level = minlevel; level < maxlevel; ++level)
@@ -1145,7 +1154,8 @@ MatrixFreeStokes<dim>::setup_system()
   system_matrix.reinit(mapping,
                        dof_handler,
                        constraints,
-                       QGauss<1>(element_order + 1));
+                       QGauss<1>(element_order + 1),
+                       parameters);
 
   system_matrix.initialize_dof_vector(solution);
   system_matrix.initialize_dof_vector(newton_update);
@@ -1158,7 +1168,7 @@ MatrixFreeStokes<dim>::evaluate_residual(
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
-  system_matrix.matrix_free.cell_loop(
+  system_matrix.get_system_matrix_free().cell_loop(
     &MatrixFreeStokes::local_evaluate_residual, this, dst, src, true);
 }
 
@@ -1183,29 +1193,8 @@ MatrixFreeStokes<dim>::local_evaluate_residual(
       phi.read_dof_values_plain(src);
       phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                    EvaluationFlags::hessians);
-
-      VectorizedArray<double> tau = VectorizedArray<double>(0.0);
-      std::array<double, VectorizedArray<double>::size()> h_k;
-      std::array<double, VectorizedArray<double>::size()> h;
-
-      for (auto lane = 0u; lane < data.n_active_entries_per_cell_batch(cell);
-           lane++)
-        {
-          h_k[lane] = data.get_cell_iterator(cell, lane)->measure();
-        }
-
-      for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
-        {
-          if (dim == 2)
-            {
-              h[v] = std::sqrt(4. * h_k[v] / M_PI);
-            }
-          else if (dim == 3)
-            {
-              h[v] = std::pow(6 * h_k[v] / M_PI, 1. / 3.);
-            }
-          tau[v] = h[v] * h[v];
-        }
+      auto tau =
+        phi.read_cell_data(system_matrix.get_stabilization_parameter());
 
       for (unsigned int q = 0; q < phi.n_q_points; ++q)
         {
@@ -1342,7 +1331,8 @@ MatrixFreeStokes<dim>::compute_update()
                          mg_data,
                          mapping,
                          dof_handler,
-                         QGauss<1>(element_order + 1));
+                         QGauss<1>(element_order + 1),
+                         parameters);
           break;
         }
         case Settings::ilu: {
