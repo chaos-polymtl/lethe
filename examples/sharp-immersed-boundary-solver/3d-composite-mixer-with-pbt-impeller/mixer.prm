@@ -96,7 +96,7 @@ subsection particles
   end
   subsection particle info 0
     subsection position
-      set Function expression = -0.25;0;0
+      set Function expression = 0;0;0
     end
     subsection velocity
       set Function expression = 0;0;0

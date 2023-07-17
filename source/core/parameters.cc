@@ -2298,7 +2298,7 @@ namespace Parameters
         "number of particles",
         "1",
         Patterns::Integer(),
-        "Number of particles reprensented by IB max number of particles = 10 ");
+        "The number of particles represented by IB. The maximal number of particles = 10 when defined individually. If particles are loaded from a file, this parameter is overridden, and there is no limit to the number of particles.");
 
       prm.declare_entry(
         "levels not precalculated",

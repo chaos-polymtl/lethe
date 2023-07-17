@@ -172,21 +172,24 @@ This subsection contains the parameters related to the sharp immersed boundary s
     * The subsection ``gravity`` defines the value of the gravity used in the simulation. This gravity can be defined as a function that evolves in time and space. Each component of the ``Function expression`` corresponds respectively to its magnitude in X, Y, and Z.
 
     * The ``wall physical properties`` subsection contains the properties of the wall that are used if the particle impact one of the boundaries of the domain. The effective properties used for calculating the impact force are calculated using a harmonic mean of the properties of the wall and the particle.
-        * The ``wall friction coefficient`` parameter is the coefficient of friction of the wall. This parameter is used to define the effective coefficient of friction between the wall and the particles. At this point in time, all the walls have the same properties.
+        * The ``wall friction coefficient`` parameter is the coefficient of friction of the wall. This parameter is used to define the effective coefficient of friction between the wall and the particles.
 
-        * The ``wall poisson ratio`` parameter is the Poisson's ratio of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At this point in time, all the walls have the same properties.
+        * The ``wall poisson ratio`` parameter is the Poisson's ratio of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. 
 
-        * The ``wall restitution coefficient`` parameter is the restitution coefficient of the wall's material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall. At this point in time, all the walls have the same properties.
+        * The ``wall restitution coefficient`` parameter is the restitution coefficient of the wall's material. This parameter is used to define the effective restitution coefficient for the impact of a particle and the wall. 
+        
+        * The ``wall rolling friction coefficient`` parameter is the rolling friction coefficient of the wall. This parameter is used to define the effective rolling friction coefficient between the wall and the particles.
 
-        * The ``wall rolling friction coefficient`` parameter is the rolling friction coefficient of the wall. This parameter is used to define the effective rolling friction coefficient between the wall and the particles. At this point in time, all the walls have the same properties.
-
-        * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall. At this point in time, all the walls have the same properties.
+        * The ``wall youngs modulus`` parameter is the Young's modulus of the wall's material. This parameter is used to define the nonlinear spring constant used when a particle impacts a wall.
+        
+        .. note::
+            At this point in time, all the walls have the same properties.
 
 * The ``input file`` contains the parameter needed if the particles are loaded from a file.
     * The ``load particles from file`` boolean defines whether the particles are generated from an external file instead of the prm file. If this parameter is activated, the number of particles is defined directly from the file, that is, the particle's subsection and the number of particles are ignored.
 
     .. warning::
-        Currently this feature works only for spherical particles.
+        Currently, this feature works only for shapes defined by less than three parameters. 
 
     * The ``particles file`` is the file from which the particles are defined. Each line corresponds to a particle and all the relevant variables. The file must contain the following information for each particle (the header must be defined accordingly): type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion. The particle type is defined by the shape index. The shape indices are as follows: sphere=0, hyper rectangle=1, ellipsoid=2, torus=3, cone=4, cylinder=5, cylindrical tube=6, cylindrical helix=7, cut hollow sphere=8, death star=9. Currently, the composite, the RBF, and the OpenCascade shapes cannot be loaded from a file. If integrate motion is not equal to 0 the particle dynamics is integrated.
 
