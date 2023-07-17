@@ -27,7 +27,7 @@ Review Process
 * The reviewer should be notified before opening the pull request. The reviewers should be selected from already existing contributor to the code. (See section: Insights\Contributors).
 
 Reviewers Responsibility
----------------------
+------------------------
 
 * Give a review of the code implementation and general functionality of the code.
 * Give a review on the code description and comments.
@@ -102,7 +102,7 @@ General Rules and Format
 
 Throughout the documentation, you may notice that the different pages follow a certain format to ensure uniformity and help users to navigate more fluidly. Here are the different elements that must be considered when contributing to the documentation of Lethe:
 
-- Titles and subtitles must be capitalized following the *Chicago Manual of Style*:
+- Titles and subtitles must be capitalized following the `Chicago Manual of Style <https://www.chicagomanualofstyle.org/book/ed17/frontmatter/toc.html>`_:
 
   - First and last words of the title/subtitle must be capitalized.
   - Capitalize:
@@ -118,8 +118,9 @@ Throughout the documentation, you may notice that the different pages follow a c
 
     - articles (e.g., a, an, the)
     - coordinating conjunctions (e.g., and, but, for)
-    - words with less than four letters
     - prepositions (e.g., at, by, to)
+    - second word after a hyphenated prefix (e.g., Mid-, Non-) in compound modifiers (e.g., Mid-year, Non-linear)
+    - words with less than four letters
 
   .. tip::
 
@@ -127,14 +128,41 @@ Throughout the documentation, you may notice that the different pages follow a c
 
 - Examples generally contain the following subsections in the listed order:
 
-  - **Features**: lists of features of the example.
-  - **Files Used in This Examples**: lists of files used in the example in alphabetical order.
-  - **Description of the Case**: describes the system studied in the example.
-  - **Parameter File**: describes the different parameter subsections involved in the example. Each subsection of interest of the parameter file begins with its name as a sub-heading.
-  - **Running the Simulation**: displays the command used to run the example and gives an scale of the running duration.
-  - **Results** or **Results and Discussion**: displays results of the simulation and comments on them.
-  - **Possibility for Extension**: lists different interesting ways to extend the example.
-  - **References**: lists references used in the example in IEEE referencing style format.
+  - **Features** lists features of the example.
+  - **Files Used in This Examples** lists files used in the example in alphabetical order.
+  - **Description of the Case** describes the system studied in the example.
+  - **Parameter File** describes the different parameter subsections involved in the example. Each subsection of interest of the parameter file begins with its name as a sub-heading.
+  - **Running the Simulation** displays the command used to run the example and gives an scale of the running duration.
+  - **Results** or **Results and Discussion** displays results of the simulation and comments on them.
+  - **Possibility for Extension** lists different interesting ways to extend the example.
+  - **References** lists references used in the example in IEEE referencing style format.
+
+    .. seealso::
+
+      More information on the IEEE referencing style can by found in the `IEEE Reference Guide <https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf>`_.
+
+      Here is an example of how references should appear in:
+
+      - In-text citation:
+
+        The *Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows* article by Blais *et al.* `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ is used as an example.
+
+      - The ``References`` list:
+
+        `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ B. Blais *et al.*, “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” *SoftwareX*, vol. 12, p. 100579, Jul. 2020, doi: 10.1016/j.softx.2020.100579.
+
+        Following the format:
+
+        .. container::
+
+          [#] A. A. Author, "Name of the paper," *Abbreviated Title of the Journal*, vol. x, no. x, pp. xxx-xxx, Abbreviated month, year, doi: xxx.
+
+        .. Important::
+
+          When citing, the "*et al.*" notation is used in:
+
+          - In-text citation if there are three or more authors for a given reference.
+          - The ``References`` list if there are six or more authors for a given reference.
 
   .. note::
 
