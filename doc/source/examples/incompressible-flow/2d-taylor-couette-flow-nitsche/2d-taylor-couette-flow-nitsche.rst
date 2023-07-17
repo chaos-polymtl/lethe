@@ -263,7 +263,7 @@ The mesh can be dynamically adapted using Kelly error estimates on the velocity,
 Rest of the Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example..
+The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example.
 
 
 ----------------------

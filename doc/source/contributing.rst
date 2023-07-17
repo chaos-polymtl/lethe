@@ -26,7 +26,7 @@ Review Process
 * At least 3 reviewers for bigger changes like bigger features and architectural reconfiguration.
 * The reviewer should be notified before opening the pull request. The reviewers should be selected from already existing contributor to the code. (See section: Insights\Contributors).
 
-Review Responsibility
+Reviewers Responsibility
 ---------------------
 
 * Give a review of the code implementation and general functionality of the code.
@@ -100,19 +100,19 @@ The generated files should be in the ``build/html`` directory. Open ``index.html
 General Rules and Format
 ------------------------
 
-Throughout the documentation, you may notice that the different pages follow a certain format to ensure uniformity of the documentation and help user's navigate more fluidly. Here are the different elements that must be considered when contributing to the documentation of Lethe:
+Throughout the documentation, you may notice that the different pages follow a certain format to ensure uniformity and help users to navigate more fluidly. Here are the different elements that must be considered when contributing to the documentation of Lethe:
 
 - Titles and subtitles must be capitalized following the *Chicago Manual of Style*:
 
   - First and last words of the title/subtitle must be capitalized.
   - Capitalize:
 
-    - adjectives (e.g., small, large)
-    - adverbs (e.g., warmly, rapidly)
-    - nouns (e.g., ball, cylinder)
-    - pronouns (e.g., they, she, he)
-    - subordinating conjunction when fewer than 5 letters (e.g., when, once)
-    - verbs (e.g., melt, create)
+    - adjectives (e.g., Small, Large)
+    - adverbs (e.g., Warmly, Rapidly)
+    - nouns (e.g., Ball, Cylinder)
+    - pronouns (e.g., They, She, He)
+    - subordinating conjunction when fewer than 5 letters (e.g., When, Once)
+    - verbs (e.g., Melt, Create)
 
   - **Do not** capitalize:
 
@@ -130,7 +130,7 @@ Throughout the documentation, you may notice that the different pages follow a c
   - **Features**: lists of features of the example.
   - **Files Used in This Examples**: lists of files used in the example in alphabetical order.
   - **Description of the Case**: describes the system studied in the example.
-  - **Parameter File**: describes the different parameter subsections involved in the example. Each subsection of the parameter file begins with its name as a sub-heading.
+  - **Parameter File**: describes the different parameter subsections involved in the example. Each subsection of interest of the parameter file begins with its name as a sub-heading.
   - **Running the Simulation**: displays the command used to run the example and gives an scale of the running duration.
   - **Results** or **Results and Discussion**: displays results of the simulation and comments on them.
   - **Possibility for Extension**: lists different interesting ways to extend the example.

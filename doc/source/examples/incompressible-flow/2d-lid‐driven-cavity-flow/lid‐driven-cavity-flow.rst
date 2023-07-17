@@ -291,7 +291,7 @@ Increasing the number of cells by a factor 4 (to :math:`\approx` 65k cells) allo
 Possibilities for Extension
 ----------------------------
 
-- **Validate at even higher Reynolds numbers:** The Erturk (2005 `[2] <https://doi.org/10.1002/fld.953>`_ data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping ``steady_bdf`` scheme.
+- **Validate at even higher Reynolds numbers:** The Erturk `[2] <https://doi.org/10.1002/fld.953>`_ data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping ``steady_bdf`` scheme.
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
 
