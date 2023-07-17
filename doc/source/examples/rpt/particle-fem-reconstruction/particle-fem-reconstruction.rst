@@ -1,5 +1,5 @@
 ==================================================
-Particle FEM Reconstruction
+Particle FEM reconstruction
 ==================================================
 In this example, we use the inverse of Finite Element Method (FEM) to reconstruct positions from a radioactive particle tracking experiment.
 The calculation is performed for a given set of positions inside a square.
@@ -23,7 +23,7 @@ The purpose of the Finite Element Method based Position Reconstruction (FEM-PR) 
 orthogonal projection of the Monte Carlo model onto the domain. Then, the algorithm searches through the cells and it
 minimizes the least-squares error between the photon count obtained from the FEM interpolation and the experimental count for all the detectors in each cell.
 The 3D domain is discretized using linear tetrahedral elements and an approximation of the physical values inside an element can be written in terms of shape functions and natural
-coordinates as :
+coordinates as:
 
 
 
@@ -47,7 +47,7 @@ where :math:`C_{num}` and :math:`C_{exp}` are the numerical and experimental cou
 
 
 This example shows how using the tuned parameters of each detector we generate the dictionary for the corresponding geometry
-(shown with the illustration below) and then we reconstruct the positions of radioactive particle based on the received photon counts by the detectors.
+(shown in the illustration below) and then we reconstruct the positions of radioactive particles based on the received photon counts by the detectors.
 
 
 .. image::  images/syst-from-above.png
@@ -62,7 +62,7 @@ Parameter file
 ----------------
 
 *rpt-fem-reconstruction.prm* file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 RPT parameters
 ^^^^^^^^^^^^^^^^
@@ -90,7 +90,7 @@ As seen in the previous examples (:doc:`../photon-count-calculation-in-a-cylindr
 Detector parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-In the subsection ``detector parameters``, we specify the file that contains the position of the detectors face center and the position of a point inside the detectors on their axis. In The detector parameters are described in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
+In the subsection ``detector parameters``, we specify the file that contains the position of the detectors' face center and the position of a point inside the detectors on their axis. The detector parameters are described in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
 
 .. code-block:: text
 
@@ -139,9 +139,7 @@ Assuming that ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` executa
 
     rpt_l2_projection_3d rpt-fem-reconstruction.prm
 
-This step using L2 projection technique smooth the noise of the Monte Carlo method and calculates the photon counts at the nodes.
-After this part is done, the program generates the file of nodal counts from each detector as such : ``temp_nodal_counts_detector00.counts``.
-Next step would be Launching the position reconstruction by:
+This step uses the L2 projection technique to smooth the noise of the Monte Carlo method and calculates the photon counts at the nodes. After this part is done, the program generates the file of nodal counts from each detector as such : ``temp_nodal_counts_detector00.counts``. The next step is to launch the position reconstruction as follows:
 
 .. code-block:: text
 
@@ -150,8 +148,7 @@ Next step would be Launching the position reconstruction by:
 
 Results
 --------
-With the figure shown above we assess the validity of the reconstruction algorithm with a reconstruction of a set of experimental points.
-It shows the real positions of the particle and the reconstructed positions.
+With the figure shown below we assess the validity of the reconstruction algorithm with a reconstruction of a set of experimental points. It shows the real positions of the particle and the reconstructed positions.
 
 .. image::  images/results_2.png
     :alt: The geometry
@@ -167,4 +164,4 @@ It shows the real positions of the particle and the reconstructed positions.
 References
 -----------
 
-[1] Mirakhori, G., Collard-Daigneault, A., Alphonius, A., Doucet, J., Blais, B., & Chaouki, J. (2023a). An improved position reconstruction method for radioactive particle tracking. *Nuclear Instruments and Methods in Physics Research*. 168504. https://doi.org/10.1016/j.nima.2023.168504
+`[1] <https://doi.org/10.1016/j.nima.2023.168504>`_  Mirakhori, G., Collard-Daigneault, A., Alphonius, A., Doucet, J., Blais, B., & Chaouki, J. (2023a). An improved position reconstruction method for radioactive particle tracking. *Nuclear Instruments and Methods in Physics Research*. 168504. 
