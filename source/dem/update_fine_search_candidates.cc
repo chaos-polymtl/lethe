@@ -8,7 +8,7 @@ template <int dim,
           typename candidates_structure,
           ContactType contact_type>
 void
-update_fine_search_candidates(pairs_structure      &pairs_in_contact,
+update_fine_search_candidates(pairs_structure &     pairs_in_contact,
                               candidates_structure &contact_candidates)
 {
   for (auto pairs_in_contact_iterator = pairs_in_contact.begin();
