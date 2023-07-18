@@ -94,52 +94,7 @@ Interface sharpening parameters
 VOF
 ***
 
-If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). The current ``interface sharpening`` method consists of two steps:
-
-
-1. Phase fraction limiter   
-
-.. math:: 
-
-    \phi := min \left( max \left(\phi^{old},0 \right),1 \right)
- 
-The phase fraction :math:`\phi` is a physical parameter that is bounded in the interval :math:`[0,1]`.
-The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
-  
-
-2. Interface sharpening 
-
-.. math::
-
-    \phi :=
-    \begin{cases}
-    c^{1-\alpha} \phi^{\alpha} &  (0 \leq \phi < c  ) \\
-    1-(1-c)^{1-\alpha}(1-\phi)^{\alpha} & (c \leq \phi \leq 1  ) 
-    \end{cases}
-
-``frequency`` is an integer parameter that defines the 
-frequency of the interface sharpening; ``threshold`` defines 
-a phase fraction threshold for interface sharpening (generally :math:`0.5`);
-and ``interface sharpness`` is a model parameter which is generally in
-the range of :math:`(1,2]`.
-
-where :math:`\phi`, :math:`c`, and :math:`\alpha` denote phase fraction, 
-sharpening threshold, and interface sharpness respectively. 
-This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.  
-
-.. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
-
-
-``Sharpening frequency`` is an integer parameter that defines the 
-frequency of interface sharpening; sharpening threshold defines 
-a phase fraction threshold for interface sharpening (generally :math:`0.5`).
-Interface sharpness is a model parameter which is generally in
-the range of :math:`(1,2]`.
-
-3. Phase filtering
-
-The phase filtration is enabled in this example. We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid`
-documentation for more explanation on the phase filtration.
+If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters/cfd/volume_of_fluid>` subsection, the interface between phases will become blurry (due to diffusion). Futhermore, the phase filtration is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphysics/vof` documentation for more explanation both methods.
 
 .. code-block:: text
 

@@ -29,6 +29,16 @@ Computational Fluid Dynamics
 
     fluid_dynamics/fluid_dynamics
 
+Multiphysics
+=============================
+
+.. toctree::
+    :maxdepth: 3
+    :glob:
+    :titlesonly:
+
+    multiphysics/multiphysics
+
 Heat transfer
 ----------------
 
@@ -38,12 +48,6 @@ Heat transfer
 Advection-diffusion of a passive tracer
 ----------------------------------------
 **Under construction**
-
-
-Volume-of-Fluid method for two-phase flows
--------------------------------------------
-**Under construction**
-
 
 Discrete Element Method
 =============================
@@ -86,4 +90,3 @@ References
 `[7] <https://books.google.ca/books?id=7DQWDQAAQBAJ&lpg=PA11&ots=9K7iyGPERX&dq=Coupled%20CFD-DEM%20modeling%3A%20formulation%2C%20implementation%20an&lr&hl=pt-BR&pg=PA11#v=onepage&q=Coupled%20CFD-DEM%20modeling:%20formulation,%20implementation%20an&f=false>`_ Norouzi, Hamid Reza, et al. Coupled CFD-DEM modeling: formulation, implementation and application to multiphase flows. John Wiley & Sons, 2016.
 
 `[8] <https://doi.org/10.1002/cjce.23686>`_ Bérard, Ariane, Gregory S. Patience, and Bruno Blais. Experimental methods in chemical engineering: Unresolved CFD‐DEM. The Canadian Journal of Chemical Engineering 98.2 (2020): 424-440.
-
