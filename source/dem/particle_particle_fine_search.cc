@@ -15,7 +15,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &                  contact_pair_candidates,
+                      &contact_pair_candidates,
   const double         neighborhood_threshold,
   const Tensor<1, dim> periodic_offset)
 {
@@ -62,7 +62,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
   // Now iterating over contact_pair_candidates (maps of pairs), which
   // is the output of broad search. If a pair is in vicinity (distance <
   // threshold), it is added to the adjacent_particles
-  for (auto const &[particle_one_id, second_particle_container] :
+  for (auto &[particle_one_id, second_particle_container] :
        contact_pair_candidates)
     {
       if (second_particle_container.empty())
@@ -71,6 +71,7 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
       auto               particle_one = particle_container[particle_one_id];
       Point<dim, double> particle_one_location = particle_one->get_location();
 
+      // Getting the particle one contact list and particle two id
       for (const unsigned int &particle_two_id : second_particle_container)
         {
           auto               particle_two = particle_container[particle_two_id];
@@ -84,7 +85,6 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
           // If the particles distance is less than the threshold
           if (square_distance < neighborhood_threshold)
             {
-              // Getting the particle one contact list and particle two id
               auto particle_one_contact_list =
                 &adjacent_particles[particle_one_id];
 
