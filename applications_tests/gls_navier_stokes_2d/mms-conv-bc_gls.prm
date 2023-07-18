@@ -1,134 +1,154 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output frequency        = 0
+  set method            = steady
+  set number mesh adapt = 2
+  set output frequency  = 0
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
-    set temperature order     = 1
+  set velocity order    = 1
+  set pressure order    = 1
+  set temperature order = 1
 end
+
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none                                  # <none|iteration|end>
+  set type = none # <none|iteration|end>
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity            = 1.0
+    set kinematic viscosity = 1.0
   end
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-        set type = dealii
-        set grid type = hyper_rectangle
-        set grid arguments = 0, 0 : 1, 1 : true
-        set initial refinement = 2
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 1, 1 : true
+  set initial refinement = 2
 end
+
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-    set heat transfer = true
+  set heat transfer = true
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
+  set enable    = true
   set verbosity = verbose
-    subsection uvwp
-            set Function expression =  0 ; 0 ; 0
-    end
-    subsection temperature
-            set Function constants = S=20, h=1, Tinf=10
-            set Function expression =  (-0.5*h*S + h*Tinf - S)/(1+h) * x + 0.5*S*x^2
-    end
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  subsection temperature
+    set Function constants  = S=20, h=1, Tinf=10
+    set Function expression = (-0.5*h*S + h*Tinf - S)/(1+h) * x + 0.5*S*x^2
+  end
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = uniform
+  set type = uniform
 end
+
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
+  set number = 4
 end
 
 subsection boundary conditions heat transfer
-  set number                  = 2
-    subsection bc 0
-    set id = 0
-	set type	      = temperature
-        set value	      = 0
-    end
-    subsection bc 1
-    set id = 1
-	set type	      = convection-radiation
-        set h	      = 1
-        set Tinf	      = 10
-    end
+  set number = 2
+  subsection bc 0
+    set id    = 0
+    set type  = temperature
+    set value = 0
+  end
+  subsection bc 1
+    set id   = 1
+    set type = convection-radiation
+    set h    = 1
+    set Tinf = 10
+  end
 end
+
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection heat transfer
-	    set Function expression =-20	
-    end
+  set enable = true
+  subsection heat transfer
+    set Function expression = -20
+  end
 end
+
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-12
-  set max iterations          = 5
+  set verbosity      = quiet
+  set tolerance      = 1e-12
+  set max iterations = 5
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-13
-  set minimum residual        = 1e-13
-  set ilu preconditioner fill = 0
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-13
+  set minimum residual                      = 1e-13
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end
-

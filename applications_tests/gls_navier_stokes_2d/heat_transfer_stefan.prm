@@ -1,144 +1,160 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set output frequency        = 0
-  set output name             = stefan
-  set time end = 5
-  set time step = 0.02
+  set method           = bdf1
+  set output frequency = 0
+  set output name      = stefan
+  set time end         = 5
+  set time step        = 0.02
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
-    set temperature order     = 1
+  set velocity order    = 1
+  set pressure order    = 1
+  set temperature order = 1
 end
+
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set thermal conductivity model = constant
-    set thermal conductivity = 1
+    set thermal conductivity       = 1
 
     set specific heat model = phase_change
     subsection phase change
       # Enthalpy of the phase change
-      set latent enthalpy      = 100
+      set latent enthalpy = 100
 
       # Temperature of the liquidus
       set liquidus temperature = 0.02
 
       # Temperature of the solidus
-      set solidus temperature  = 0
+      set solidus temperature = 0
 
       # Specific heat of the liquid phase
       set specific heat liquid = 1
 
       # Specific heat of the solid phase
-      set specific heat solid  = 1
+      set specific heat solid = 1
     end
-
   end
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-        set type = dealii
-        set grid type = subdivided_hyper_rectangle
-        set grid arguments = 100, 1 : 0, 0 : 1, 0.1 : true
-        set initial refinement = 0
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 100, 1 : 0, 0 : 1, 0.1 : true
+  set initial refinement = 0
 end
+
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-    set fluid dynamics = false
-    set heat transfer = true
+  set fluid dynamics = false
+  set heat transfer  = true
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-  set verbosity                = verbose
-    subsection uvwp
-            set Function expression =  0 ; 0 ; 0
-    end
-    # This is not exactly the analytical solution, but until we have 
-    # erf support in deal.II, this is as close as it gets
-    subsection temperature
-            set Function constants = beta=0.07059328
-            set Function expression =  if (x<(2*beta*sqrt(t)), ((2*beta*sqrt(t))-x)/(2*beta*sqrt(t)),0)
-    end
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  # This is not exactly the analytical solution, but until we have
+  # erf support in deal.II, this is as close as it gets
+  subsection temperature
+    set Function constants  = beta=0.07059328
+    set Function expression = if (x<(2*beta*sqrt(t)), ((2*beta*sqrt(t))-x)/(2*beta*sqrt(t)),0)
+  end
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = none
+  set type = none
 end
+
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
+  set number = 4
 end
 
 subsection boundary conditions heat transfer
-  set number                  = 1
-    subsection bc 0
-    set id = 0
-	      set type	      = temperature
-        set value	      = 1
-    end
+  set number = 1
+  subsection bc 0
+    set id    = 0
+    set type  = temperature
+    set value = 1
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-12
-  set max iterations          = 10
+  set verbosity      = quiet
+  set tolerance      = 1e-12
+  set max iterations = 10
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set relative residual       = 1e-13
-  set minimum residual        = 1e-13
-  set ilu preconditioner fill = 0
+  set verbosity                             = quiet
+  set method                                = gmres
+  set relative residual                     = 1e-13
+  set minimum residual                      = 1e-13
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end
-

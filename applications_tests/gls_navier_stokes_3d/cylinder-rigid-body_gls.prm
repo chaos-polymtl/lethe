@@ -1,137 +1,148 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output name             = cylinder
-  set output frequency        = 0
-  set number mesh adapt       = 0      # If steady, nb mesh adaptation
-  set log precision           = 3         # Log precision
+  set method            = steady
+  set output name       = cylinder
+  set output frequency  = 0
+  set number mesh adapt = 0 # If steady, nb mesh adaptation
+  set log precision     = 3 # Log precision
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-    set qmapping all              = false
+  set velocity order = 1
+  set pressure order = 1
+  set qmapping all   = false
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 0.0200
+    set kinematic viscosity = 0.0200
   end
 end
 
 #--------------------------------------------------
 # Velocity Source
 #--------------------------------------------------
+
 subsection velocity source
-    set type=srf
-    set omega_z=-6.28318
+  set type    = srf
+  set omega_z = -6.28318
 end
+
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function expression = -6.28318*y; 6.28318*x ; 0 ;  0 ; 
-    end
+  set enable = true
+  subsection uvwp
+    set Function expression = -6.28318*y; 6.28318*x ; 0 ;  0 ;
+  end
 end
 
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate force       = false     # Enable force calculation
-    set calculate torque      = true      # Enable torque calculation
-    set force name            = force     # Name prefix of force files
-    set torque name           = torque    # Name prefix of torque files
-    set output precision      = 10        # Output precision
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
+  set verbosity             = verbose # Output force and torques in log <quiet|verbose>
+  set calculate force       = false   # Enable force calculation
+  set calculate torque      = true    # Enable torque calculation
+  set force name            = force   # Name prefix of force files
+  set torque name           = torque  # Name prefix of torque files
+  set output precision      = 10      # Output precision
+  set calculation frequency = 1       # Frequency of the force calculation
+  set output frequency      = 1       # Frequency of file update
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = uniform
-  set variable                = velocity
-  set fraction type           = number
-  set max number elements     = 600000
-  set max refinement level    = 5
-  set min refinement level    = -1
-  set frequency               = 1
-  set fraction refinement     = 0.06
-  set fraction coarsening     = 0.00
+  set type                 = uniform
+  set variable             = velocity
+  set fraction type        = number
+  set max number elements  = 600000
+  set max refinement level = 5
+  set min refinement level = -1
+  set frequency            = 1
+  set fraction refinement  = 0.06
+  set fraction coarsening  = 0.00
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = gmsh
-    set file name            = ../cylinder_unstructured.msh
-    set initial refinement   = 0
+  set type               = gmsh
+  set file name          = ../cylinder_unstructured.msh
+  set initial refinement = 0
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 1
-    subsection bc 1
-        set id = 1
-        set type              = noslip
-    end
-    subsection bc 0
-        set id  = 0
-        set type              = function
-        subsection u
-            set Function expression = -2*3.14159*y
-        end
-        subsection v
-            set Function expression = 2*3.14159*x
-        end
-        subsection w
-            set Function expression = 0
-        end
-    end
-    subsection bc 2
-        set id = 2
-        set type              = slip
-    end
 
+subsection boundary conditions
+  set number = 1
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = -2*3.14159*y
+    end
+    subsection v
+      set Function expression = 2*3.14159*x
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-9
-  set max iterations          = 10
-  set verbosity               = quiet
-  end
+  set tolerance      = 1e-9
+  set max iterations = 10
+  set verbosity      = quiet
+end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                    = gmres
-  set max iters                 = 1000
-  set relative residual         = 1e-4
-  set minimum residual          = 1e-11
-  set verbosity               = quiet
-  set ilu preconditioner fill = 0
+  set method                                = gmres
+  set max iters                             = 1000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-11
+  set verbosity                             = quiet
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-10
 end

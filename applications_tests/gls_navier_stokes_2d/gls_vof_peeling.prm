@@ -3,166 +3,177 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set number mesh adapt       = 0
-  set time end                = 0.04
-  set time step               = 0.02
-  set output name             = drop_peeling_VOF
-  set output frequency        = 0
+  set method            = bdf1
+  set number mesh adapt = 0
+  set time end          = 0.04
+  set time step         = 0.02
+  set output name       = drop_peeling_VOF
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-	set VOF = true
+  set VOF = true
 end
 
 #---------------------------------------------------
 # VOF
 #---------------------------------------------------
-subsection VOF	
-	subsection peeling wetting
-		set enable peeling = true
-		set verbosity = verbose
-	end
-	subsection interface sharpening
-		set enable = true
-		set frequency   = 1
-		set interface sharpness    = 2
-		set threshold   = 0.5
-	end
+
+subsection VOF
+  subsection peeling wetting
+    set enable peeling = true
+    set verbosity      = verbose
+  end
+  subsection interface sharpening
+    set enable              = true
+    set frequency           = 1
+    set interface sharpness = 2
+    set threshold           = 0.5
+  end
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
-    subsection VOF
-	set Function expression = if ( (y>0.1&x>-0.05&x<0.05) ,1,0)
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function expression = if ( (y>0.1&x>-0.05&x<0.05) ,1,0)
+  end
 end
 
 #---------------------------------------------------
 # Source term
 #---------------------------------------------------
-subsection source term
-    set enable = true
 
-    subsection xyz
-        set Function expression = 0; -10; 0
-    end
+subsection source term
+  set enable = true
+
+  subsection xyz
+    set Function expression = 0; -10; 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     = 2
+  set number of fluids = 2
   subsection fluid 1
-    set density              = 1
-    set kinematic viscosity  = 0.01
+    set density             = 1
+    set kinematic viscosity = 0.01
   end
   subsection fluid 0
-    set density              = 0.005
-    set kinematic viscosity  = 0.1
+    set density             = 0.005
+    set kinematic viscosity = 0.1
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = -0.1, 0 : 0.1, 0.2 : true
-		set initial refinement = 4
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -0.1, 0 : 0.1, 0.2 : true
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-   set type = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 0
-        set id = 0
-        set type              = slip
-    end
-    subsection bc 1
-	set id = 1
-        set type              = slip
-    end
-    subsection bc 2
-        set id = 2
-        set type              = noslip
-    end
-    subsection bc 3
-        set id = 3
-        set type              = noslip
-    end
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
 end
 
 subsection boundary conditions VOF
-  set number                  = 4
-    subsection bc 2 #lower wall
-	set id = 2
-        set type              = peeling/wetting
-    end
-    subsection bc 3 #upper wall
-	set id = 3
-        set type              = peeling/wetting
-    end
+  set number = 4
+  subsection bc 2 #lower wall
+    set id   = 2
+    set type = peeling/wetting
+  end
+  subsection bc 3 #upper wall
+    set id   = 3
+    set type = peeling/wetting
+  end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-end
 
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-    set type                    = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-9
-  set max iterations          = 10
-  set residual precision      = 2
-  set verbosity               = quiet 
+  set tolerance          = 1e-9
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
-subsection linear solver
-  set verbosity               = quiet
-  set method                                 = gmres
-  set relative residual                      = 1e-9
-  set minimum residual                       = 1e-11
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-12
-  set ilu preconditioner relative tolerance  = 1.00
-  set max krylov vectors                     = 200
-end
 
+subsection linear solver
+  set verbosity                             = quiet
+  set method                                = gmres
+  set relative residual                     = 1e-9
+  set minimum residual                      = 1e-11
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors                    = 200
+end

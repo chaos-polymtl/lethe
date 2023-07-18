@@ -4,38 +4,40 @@
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 0
-  set output name             = apparent_viscosity
-  set output frequency        = 0
-  set subdivision             = 1
+  set method            = steady
+  set number mesh adapt = 0
+  set output name       = apparent_viscosity
+  set output frequency  = 0
+  set subdivision       = 1
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
-subsection FEM
-    set velocity order        = 2
-    set pressure order        = 1
-end
 
+subsection FEM
+  set velocity order = 2
+  set pressure order = 1
+end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-   	set rheological model 	= carreau
+    set rheological model = carreau
     subsection non newtonian
-    	subsection carreau
-	    	set viscosity_0		= 1.0
-	    	set viscosity_inf 	= 0
-	    	set lambda	      	= 1
-	    	set a	      		= 2.0
-	    	set n	      		= 0.5
-	end
+      subsection carreau
+        set viscosity_0   = 1.0
+        set viscosity_inf = 0
+        set lambda        = 1
+        set a             = 2.0
+        set n             = 0.5
+      end
     end
   end
 end
@@ -43,99 +45,104 @@ end
 #--------------------------------------------------
 # Initial conditions
 #--------------------------------------------------
+
 subsection initial conditions
-  set type      = nodal
+  set type = nodal
 
   subsection uvwp
-    set Function expression = y*y; 0; y*y 
+    set Function expression = y*y; 0; y*y
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
-subsection mesh
-	set type = dealii
-	set grid type = hyper_rectangle
-	set grid arguments = 0, 0 : 1, 1.0 : true
-	set initial refinement = 2
-end
 
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 1, 1.0 : true
+  set initial refinement = 2
+end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 3
-    subsection bc 0
-    set id = 2
-        set type              = noslip
-    end
 
-    subsection bc 1
-    set id = 3
-        set type              = function
-        subsection u
-            set Function expression = 1
-        end
-        subsection v
-            set Function expression = 0
-        end
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 2
+    set type = noslip
+  end
+
+  subsection bc 1
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = 1
     end
-    subsection bc 2
-        set type                = periodic
-        set id                  = 0
-        set periodic_id         = 1
-        set periodic_direction  = 0
+    subsection v
+      set Function expression = 0
     end
+  end
+  subsection bc 2
+    set type               = periodic
+    set id                 = 0
+    set periodic_id        = 1
+    set periodic_direction = 0
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
-subsection source term
-  set enable                 = true
-    subsection xyz
-    	set Function expression = 0.707106781186548*(y^2)^1.0/((y^2)^1.0 + 0.25)^1.25 - 1.4142135623731/((y^2)^1.0 + 0.25)^0.25; 2*y; 0
 
-    end
+subsection source term
+  set enable = true
+  subsection xyz
+    set Function expression = 0.707106781186548*(y^2)^1.0/((y^2)^1.0 + 0.25)^1.25 - 1.4142135623731/((y^2)^1.0 + 0.25)^0.25; 2*y; 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
+  set enable    = true
   set verbosity = verbose
-    subsection uvwp
-            set Function expression =  y*y; 0; y*y
-    end
+  subsection uvwp
+    set Function expression = y*y; 0; y*y
+  end
 end
 
 subsection post-processing
-	set calculate apparent viscosity = true
-	set verbosity = verbose
+  set calculate apparent viscosity = true
+  set verbosity                    = verbose
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-12
-  set max iterations          = 100
+  set verbosity      = quiet
+  set tolerance      = 1e-12
+  set max iterations = 100
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-14
-  set ilu preconditioner fill = 2
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-14
+  set ilu preconditioner fill               = 2
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end

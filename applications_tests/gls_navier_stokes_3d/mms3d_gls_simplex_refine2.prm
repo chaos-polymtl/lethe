@@ -3,104 +3,111 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output name              = mms3d_
-  set output frequency        = 0
+  set method           = steady
+  set output name      = mms3d_
+  set output frequency = 0
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -1 : 1 : false
-    set initial refinement   = 2
-    set simplex              = true
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 2
+  set simplex            = true
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-  set number                  = 1
-    subsection bc 0
-        set type              = noslip
-    end
-end
 
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set type = noslip
+  end
+end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = 2*pi*pi*(-3*cos(2*pi*x)+2.)*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)+pi*(2*(cos(pi* y)^2)-(cos(pi*z)^2))*(sin(pi*x)^3)*(sin(pi * y)^2)*(sin(pi * z)^2) * cos(pi*x)    ;     2*pi*pi*(-3*cos(2*pi*y)+2) * sin(pi*x) * sin(pi*z) * cos(pi*x) * cos(pi*z)+pi*(2*(cos(pi* x)^2) -(cos(pi* z)^2)) * (sin(pi * x)^2) * (sin(pi * y)^3) * (sin(pi*z)^2) * cos(pi * y)   ; 4*pi*pi*(3*cos(2*pi*z)-2) * sin(pi*x) * sin(pi*y) * cos(pi*x) * cos(pi*y)+2*pi*((cos(pi * x)^2) + (cos(pi * y)^2)) * (sin(pi * x)^2) * (sin(pi*y)^2) * (sin(pi*z)^3) * cos(pi*z); 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = 2*pi*pi*(-3*cos(2*pi*x)+2.)*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)+pi*(2*(cos(pi* y)^2)-(cos(pi*z)^2))*(sin(pi*x)^3)*(sin(pi * y)^2)*(sin(pi * z)^2) * cos(pi*x)    ;     2*pi*pi*(-3*cos(2*pi*y)+2) * sin(pi*x) * sin(pi*z) * cos(pi*x) * cos(pi*z)+pi*(2*(cos(pi* x)^2) -(cos(pi* z)^2)) * (sin(pi * x)^2) * (sin(pi * y)^3) * (sin(pi*z)^2) * cos(pi * y)   ; 4*pi*pi*(3*cos(2*pi*z)-2) * sin(pi*x) * sin(pi*y) * cos(pi*x) * cos(pi*y)+2*pi*((cos(pi * x)^2) + (cos(pi * y)^2)) * (sin(pi * x)^2) * (sin(pi*y)^2) * (sin(pi*z)^3) * cos(pi*z); 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
-subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function expression = sin(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);  cos(pi * x) * sin(pi * x) * sin(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);-2 * cos(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * sin(pi * z) * sin(pi * z) ; 0
-    end
-end
 
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = sin(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);  cos(pi * x) * sin(pi * x) * sin(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);-2 * cos(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * sin(pi * z) * sin(pi * z) ; 0
+  end
+end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = none
-end
 
+subsection mesh adaptation
+  set type = none
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 10
-  set residual precision      = 2
-  set verbosity               = quiet
+  set tolerance          = 1e-8
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                       = amg
-  set max iters                                    = 5000
-  set relative residual                            = 1e-4
-  set minimum residual                             = 1e-9
-  set amg preconditioner ilu fill                  = 0
-  set amg preconditioner ilu absolute tolerance    = 1e-10
-  set amg preconditioner ilu relative tolerance    = 1.00
-  set amg aggregation threshold                    = 1e-12
-  set amg n cycles                                 = 1
-  set amg w cycles              = false
-  set amg smoother sweeps       = 2
-  set amg smoother overlap      = 1
-  set verbosity               = quiet
+  set method                                    = amg
+  set max iters                                 = 5000
+  set relative residual                         = 1e-4
+  set minimum residual                          = 1e-9
+  set amg preconditioner ilu fill               = 0
+  set amg preconditioner ilu absolute tolerance = 1e-10
+  set amg preconditioner ilu relative tolerance = 1.00
+  set amg aggregation threshold                 = 1e-12
+  set amg n cycles                              = 1
+  set amg w cycles                              = false
+  set amg smoother sweeps                       = 2
+  set amg smoother overlap                      = 1
+  set verbosity                                 = quiet
 end

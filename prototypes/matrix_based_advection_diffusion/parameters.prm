@@ -1,46 +1,61 @@
 # Listing of Parameters
 # ---------------------
 # The problem dimension <2|3>
-set dim                = 2
+
+set dim = 2
 
 # Order of FE element <1|2|3>
-set element order      = 1
+
+set element order = 1
 
 # Geometry <hyperball|hypercube|hypercube with hole|hyperrectangle>
-set geometry           = hyperball
+
+set geometry = hyperball
 
 # Global refinement 1st cycle
+
 set initial refinement = 1
 
 # Add exponential nonlinearity <true|false>
-set nonlinearity       = false
+
+set nonlinearity = false
 
 # Number of cycles <1 up to 9-dim >
-set number of cycles   = 1
+
+set number of cycles = 1
 
 # Output vtu files <true|false>
-set output             = false
+
+set output = false
 
 # Name for vtu files
-set output name        = solution
+
+set output name = solution
 
 # Path for vtu output files
-set output path        = ./
+
+set output path = ./
 
 # Peclet number
-set peclet number      = 10
+
+set peclet number = 10
 
 # GMRES Preconditioner <AMG|GMG|ILU>
-set preconditioner     = AMG
+
+set preconditioner = AMG
 
 # Problem type <boundary layer|double glazing|boundary layer with hole>
-set problem type       = boundary layer
+
+set problem type = boundary layer
 
 # Repetitions in one direction for the hyperrectangle
-set repetitions        = 1
+
+set repetitions = 1
 
 # Source term <zero|mms>
-set source term        = zero
+
+set source term = zero
 
 # Enable stabilization <true|false>
-set stabilization      = false
+
+set stabilization = false

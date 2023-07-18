@@ -90,16 +90,27 @@ The section defining each parameter for the particles has certain requirements:
 .. code-block:: text
 
     subsection particles
-      set number of particles                           = 1
-      set stencil order                                 = 2
-      set refine mesh inside radius factor              = 0.0
-      set refine mesh outside radius factor             = 1.1
-      set length ratio                                  = 3
-      set initial refinement                            = 3
-      set integrate motion                              = false
-      set assemble Navier-Stokes inside particles       = false
-
+      set number of particles                     = 1
+      set assemble Navier-Stokes inside particles = false
+      subsection extrapolation function
+        set stencil order = 2
+        set length ratio  = 3
+      end
+      subsection local mesh refinement
+        set initial refinement                = 3
+        set refine mesh inside radius factor  = 0.0
+        set refine mesh outside radius factor = 1.1
+      end
+      subsection output
+        set enable extra sharp interface vtu output field = true
+      end
       subsection particle info 0
+        subsection position
+          set Function expression = 0;0;0
+        end
+        subsection velocity
+          set Function expression = 0;0;0
+        end
         subsection orientation
           set Function expression = -1*2*pi*t;pi/2;0
         end

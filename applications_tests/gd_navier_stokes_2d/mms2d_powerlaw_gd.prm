@@ -3,116 +3,127 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output name             = mms2d_powerlaw
+  set method            = steady
+  set number mesh adapt = 2
+  set output name       = mms2d_powerlaw
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-set number of fluids = 1
+  set number of fluids = 1
   subsection fluid 0
-   	set rheological model	= power-law
+    set rheological model = power-law
 
     subsection non newtonian
-    	subsection power-law
-	    	set K 		   = 1.0
-	    	set n 		   = 0.7
-	    	set shear rate min = 1e-8
-	end
+      subsection power-law
+        set K              = 1.0
+        set n              = 0.7
+        set shear rate min = 1e-8
+      end
     end
-end
+  end
 end
 
 #---------------------------------------------------
 # Force
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = quiet
+  set verbosity = quiet
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -1 : 1 : false
-    set initial refinement   = 4
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 4
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
   # interpolation order velocity
-  set velocity order    = 2
+  set velocity order = 2
   # interpolation order pressure
-  set pressure order    = 1
+  set pressure order = 1
   # Apply high order mapping everywhere
-  set qmapping all      = false
+  set qmapping all = false
 end
+
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 1
-    subsection bc 0
-        set type              = noslip
-    end
+  set number = 1
+  subsection bc 0
+    set type = noslip
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = 2.63901582154579*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 - 2.63901582154579*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 - 2.63901582154579*pi*(0.3*pi^3*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x)*cos(pi*y)^2 - 0.3*pi^3*sin(pi*x)*sin(pi*y)^2*cos(pi*x)^3*cos(pi*y)^2 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(4*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 4*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2))*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 + 2*pi*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x)*cos(pi*y)^2 + pi*cos(pi*x) - (-pi*sin(pi*x)^2*sin(pi*y)^2 + pi*sin(pi*x)^2*cos(pi*y)^2)*sin(pi*x)*sin(pi*y)^2*cos(pi*x) - 0.659753955386447*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(0.3*pi^3*sin(pi*x)^2*sin(pi*y)^3*cos(pi*x)^2*cos(pi*y) - 0.3*pi^3*sin(pi*x)^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)^3 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(-4*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 4*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)))/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 - 0.659753955386447*(-2*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 2*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y))/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15; -2.63901582154579*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 + 2.63901582154579*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 + 2.63901582154579*pi*(0.3*pi^3*sin(pi*x)^2*sin(pi*y)^3*cos(pi*x)^2*cos(pi*y) - 0.3*pi^3*sin(pi*x)^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)^3 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(-4*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 4*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)))*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 + 2*pi*sin(pi*x)^2*sin(pi*y)^3*cos(pi*x)^2*cos(pi*y) + pi*cos(pi*y) + (pi*sin(pi*x)^2*sin(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 0.659753955386447*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(0.3*pi^3*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x)*cos(pi*y)^2 - 0.3*pi^3*sin(pi*x)*sin(pi*y)^2*cos(pi*x)^3*cos(pi*y)^2 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(4*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 4*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2))/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 - 0.659753955386447*(2*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 2*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15; 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = 2.63901582154579*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 - 2.63901582154579*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 - 2.63901582154579*pi*(0.3*pi^3*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x)*cos(pi*y)^2 - 0.3*pi^3*sin(pi*x)*sin(pi*y)^2*cos(pi*x)^3*cos(pi*y)^2 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(4*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 4*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2))*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 + 2*pi*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x)*cos(pi*y)^2 + pi*cos(pi*x) - (-pi*sin(pi*x)^2*sin(pi*y)^2 + pi*sin(pi*x)^2*cos(pi*y)^2)*sin(pi*x)*sin(pi*y)^2*cos(pi*x) - 0.659753955386447*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(0.3*pi^3*sin(pi*x)^2*sin(pi*y)^3*cos(pi*x)^2*cos(pi*y) - 0.3*pi^3*sin(pi*x)^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)^3 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(-4*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 4*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)))/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 - 0.659753955386447*(-2*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 2*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y))/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15; -2.63901582154579*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 + 2.63901582154579*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15 + 2.63901582154579*pi*(0.3*pi^3*sin(pi*x)^2*sin(pi*y)^3*cos(pi*x)^2*cos(pi*y) - 0.3*pi^3*sin(pi*x)^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)^3 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(-4*pi^2*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 4*pi^2*sin(pi*y)*cos(pi*x)^2*cos(pi*y)))*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 + 2*pi*sin(pi*x)^2*sin(pi*y)^3*cos(pi*x)^2*cos(pi*y) + pi*cos(pi*y) + (pi*sin(pi*x)^2*sin(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 0.659753955386447*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(0.3*pi^3*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x)*cos(pi*y)^2 - 0.3*pi^3*sin(pi*x)*sin(pi*y)^2*cos(pi*x)^3*cos(pi*y)^2 - 0.009375*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)*(4*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 4*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2))/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^1.15 - 0.659753955386447*(2*pi^2*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 2*pi^2*sin(pi*x)*cos(pi*x)*cos(pi*y)^2)/(pi^2*sin(pi*x)^2*sin(pi*y)^2*cos(pi*x)^2*cos(pi*y)^2 + 0.0625*(pi*sin(pi*x)^2*cos(pi*y)^2 - pi*sin(pi*y)^2*cos(pi*x)^2)^2)^0.15; 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
-subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)+sin(pi*y)
-    end
-end
 
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)+sin(pi*y)
+  end
+end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform
-end
 
+subsection mesh adaptation
+  set type = uniform
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 10
-  set residual precision      = 2
-  set verbosity               = quiet
+  set tolerance          = 1e-8
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 5000
-  set relative residual                      = 1e-9
-  set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 1
-  set ilu preconditioner absolute tolerance  = 1e-3
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-9
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 1
+  set ilu preconditioner absolute tolerance = 1e-3
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
 end

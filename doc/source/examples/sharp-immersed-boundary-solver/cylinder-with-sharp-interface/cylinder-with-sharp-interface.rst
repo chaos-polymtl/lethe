@@ -104,24 +104,28 @@ In this case, we want to define a circular boundary of radius 0.5 center at (8,8
 
     subsection particles
       set number of particles                     = 1
-      set stencil order                           = 2
-      set refine mesh inside radius factor        = 0.8
-      set refine mesh outside radius factor       = 1.2
-      set initial refinement                      = 0
-      set integrate motion                        = false
       set assemble Navier-Stokes inside particles = false
-      subsection particle info 0
+      subsection extrapolation function
+        set stencil order = 2
+      end
+      subsection local mesh refinement
+        set initial refinement                = 0
+        set refine mesh inside radius factor  = 0.8
+        set refine mesh outside radius factor = 1.2
+      end
+      subsection particle info 0    
+        set type             = sphere
+        set shape arguments  = 0.5
+        set integrate motion = false
         subsection position
           set Function expression = 8;8
         end
         subsection velocity
           set Function expression = 0;0
         end
-        set type            = sphere
-        set shape arguments = 0.5
       end
     end
-
+    
 * The ``number of particles`` is set to one as we only want one particle.
 
 * The ``stencil order`` is set to 2 as this is the highest order that is compatible with the FEM scheme and it does not lead to Runge instability. The highest order of stencil compatible with a FEM scheme is defined by the polynomial order of the scheme time the number of dimensions. In this case 2.

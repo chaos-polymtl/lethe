@@ -1141,7 +1141,6 @@ namespace Parameters
     double      particle_nonlinear_tolerance;
     double      length_ratio;
     double      alpha;
-    bool        integrate_motion;
     bool        print_dem;
     std::string ib_particles_pvd_file;
   };

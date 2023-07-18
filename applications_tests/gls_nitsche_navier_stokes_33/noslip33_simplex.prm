@@ -1,150 +1,160 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output name             = noslip33_simplex
-  set log precision           = 0
+  set method        = steady
+  set output name   = noslip33_simplex
+  set log precision = 0
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = uniform
+  set type = uniform
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate force       = true      # Enable force calculation
-    set calculate torque      = false     # Enable torque calculation
-    set force name            = force     # Name prefix of force files
-    set torque name           = torque    # Name prefix of torque files
-    set output precision      = 10        # Output precision
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
+  set verbosity             = verbose # Output force and torques in log <quiet|verbose>
+  set calculate force       = true    # Enable force calculation
+  set calculate torque      = false   # Enable torque calculation
+  set force name            = force   # Name prefix of force files
+  set torque name           = torque  # Name prefix of torque files
+  set output precision      = 10      # Output precision
+  set calculation frequency = 1       # Frequency of the force calculation
+  set output frequency      = 1       # Frequency of file update
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.0
+    set kinematic viscosity = 1.0
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-	set type = dealii
-	set grid type = subdivided_cylinder
-	set grid arguments = 10 : 0.75 : 0.7
-	set initial refinement = 1
-	set simplex = false
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 10 : 0.75 : 0.7
+  set initial refinement = 1
+  set simplex            = false
 end
 
 #---------------------------------------------------
 # Nitsche
 #---------------------------------------------------
+
 subsection nitsche
-  	set verbosity = verbose
-  	set number of solids = 1
+  set verbosity        = verbose
+  set number of solids = 1
 
-  	subsection nitsche solid 0
-		set beta = 10
-		subsection mesh
-	  		set simplex = true
-		  	set type = gmsh
-			set file name = ../../sphere.msh
-		end
-		set calculate torque on solid = true
-	end
+  subsection nitsche solid 0
+    set beta = 10
+    subsection mesh
+      set simplex   = true
+      set type      = gmsh
+      set file name = ../../sphere.msh
+    end
+    set calculate torque on solid = true
+  end
 end
-
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 2
-    subsection bc 0
-        set type              = noslip
+  set number = 2
+  subsection bc 0
+    set type = noslip
+  end
+  subsection bc 1
+    set type = function
+    subsection u
+      set Function expression = (0.75*0.75-sqrt(y*y+z*z))
     end
-    subsection bc 1
-        set type              = function
-        subsection u
-            set Function expression = (0.75*0.75-sqrt(y*y+z*z))
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 0
-        end
+    subsection v
+      set Function expression = 0
     end
+    subsection w
+      set Function expression = 0
+    end
+  end
 end
 
 # --------------------------------------------------
 # Initial conditions
 #---------------------------------------------------
+
 subsection initial conditions
-	set type       = nodal
-	subsection uvwp
-		set Function expression = 0; 0; 0; 0
-	end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0; 0
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-8
-  set max iterations          = 10
+  set verbosity      = quiet
+  set tolerance      = 1e-8
+  set max iterations = 10
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 500
-  set max krylov vectors      = 30
-  set relative residual       = 1e-3
-  set minimum residual        = 1e-10
-  set ilu preconditioner fill = 3
-  set ilu preconditioner absolute tolerance = 1e-12
-  set ilu preconditioner relative tolerance = 1.00
-  set amg preconditioner ilu fill = 5
+  set verbosity                                 = quiet
+  set method                                    = gmres
+  set max iters                                 = 500
+  set max krylov vectors                        = 30
+  set relative residual                         = 1e-3
+  set minimum residual                          = 1e-10
+  set ilu preconditioner fill                   = 3
+  set ilu preconditioner absolute tolerance     = 1e-12
+  set ilu preconditioner relative tolerance     = 1.00
+  set amg preconditioner ilu fill               = 5
   set amg preconditioner ilu absolute tolerance = 1e-6
   set amg preconditioner ilu relative tolerance = 1.00
-  set amg n cycles            = 1
-  set amg w cycles            = false
-  set amg smoother sweeps     = 2
-  set amg smoother overlap    = 1
+  set amg n cycles                              = 1
+  set amg w cycles                              = false
+  set amg smoother sweeps                       = 2
+  set amg smoother overlap                      = 1
 end

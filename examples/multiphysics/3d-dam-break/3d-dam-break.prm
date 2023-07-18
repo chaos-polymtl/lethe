@@ -1,4 +1,3 @@
-
 # Listing of Parameters
 # ---------------------
 #---------------------------------------------------
@@ -55,7 +54,7 @@ end
 
 #---------------------------------------------------
 # FEM
-#--------------------------------------------------- 
+#---------------------------------------------------
 
 subsection FEM
   set velocity order = 1
@@ -91,10 +90,11 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = gmsh
-    set file name            = tank_with_obstacle.msh
-    set initial refinement   = 3
+  set type               = gmsh
+  set file name          = tank_with_obstacle.msh
+  set initial refinement = 3
 end
 
 #---------------------------------------------------
@@ -157,7 +157,7 @@ subsection non-linear solver
   set tolerance      = 1e-4
   set max iterations = 5
   set verbosity      = verbose
-  set solver  = inexact_newton
+  set solver         = inexact_newton
 end
 
 # --------------------------------------------------
@@ -167,7 +167,7 @@ end
 subsection linear solver
   set verbosity                             = verbose
   set method                                = gmres
-  set max iters                             = 1000  
+  set max iters                             = 1000
   set max krylov vectors                    = 750
   set relative residual                     = 1e-3
   set minimum residual                      = 1e-7

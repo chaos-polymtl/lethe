@@ -3,93 +3,100 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set time step                 			 = 0.0001
-  set time end       					 = 0.0001
-  set log frequency				         = 1000
-  set output frequency            			 = 1
-  set output path                                      = ./output_dem/
+  set time step        = 0.0001
+  set time end         = 0.0001
+  set log frequency    = 1000
+  set output frequency = 1
+  set output path      = ./output_dem/
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    					 = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Restart
 #---------------------------------------------------
+
 subsection restart
-	set checkpoint					 = true
-	set frequency 					 = 1
-	set restart       				 = false
-	set filename      				 = dem
+  set checkpoint = true
+  set frequency  = 1
+  set restart    = false
+  set filename   = dem
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
+
 subsection model parameters
-  set contact detection method 		   		 = dynamic
-  set contact detection frequency                 	 = 10
-  set neighborhood threshold				 = 1.8
-  set particle particle contact force method             = hertz_mindlin_limit_force
-  set particle wall contact force method                 = nonlinear
-  set integration method				 = velocity_verlet
+  set contact detection method               = dynamic
+  set contact detection frequency            = 10
+  set neighborhood threshold                 = 1.8
+  set particle particle contact force method = hertz_mindlin_limit_force
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection lagrangian physical properties
-    set gx            		 			= 0.0
-    set gy            		 			= 0.0
-    set gz						= 0
-    set number of particle types	                = 1
-    subsection particle type 0
-		set size distribution type		= uniform
-    		set diameter            	 	= 0.002
-    		set number				= 1
-    		set density particles         	        = 2500
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.2
-    		set friction coefficient particles      = 0.1
-    		set rolling friction particles        	= 0.2
-	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.2
-    set friction coefficient wall         		= 0.1
-    set rolling friction wall         	      	  	= 0.3
+  set gx                       = 0.0
+  set gy                       = 0.0
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.002
+    set number                            = 1
+    set density particles                 = 2500
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.2
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.2
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.3
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
+
 subsection insertion info
-    set insertion method				= uniform
-    set inserted number of particles at each time step  = 1
-    set insertion frequency            		 	= 2000
-    set insertion box minimum x            	 	= -0.02
-    set insertion box minimum y            	        = -0.002
-    set insertion box minimum z            	        = -0.002
-    set insertion box maximum x            	        = 0.2
-    set insertion box maximum y           	 	= 0.002
-    set insertion box maximum z            	        = 0.002
-    set insertion distance threshold			= 1.5
-    set insertion random number range			= 0.5
-    set insertion random number seed			= 19
+  set insertion method                               = uniform
+  set inserted number of particles at each time step = 1
+  set insertion frequency                            = 2000
+  set insertion box minimum x                        = -0.02
+  set insertion box minimum y                        = -0.002
+  set insertion box minimum z                        = -0.002
+  set insertion box maximum x                        = 0.2
+  set insertion box maximum y                        = 0.002
+  set insertion box maximum z                        = 0.002
+  set insertion distance threshold                   = 1.5
+  set insertion random number range                  = 0.5
+  set insertion random number seed                   = 19
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 				= dealii
-    set grid type            				= subdivided_cylinder
-    set grid arguments       				= 5:0.05:0.1
-    set initial refinement   				= 1
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 5:0.05:0.1
+  set initial refinement = 1
 end

@@ -3,41 +3,46 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = -1
-  set output name              = initial_conditions
+  set method            = steady
+  set number mesh adapt = -1
+  set output name       = initial_conditions
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
+
 subsection test
-    set enable = true
+  set enable = true
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set initial refinement   = 3
+  set type               = dealii
+  set initial refinement = 3
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
+  set verbosity = quiet
 end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = L2projection     # Type of ways to set initial conditions <none|L2Projection|viscous>
-    set viscosity = 1   # Viscosity used for viscous solution
-    subsection uvwp
-            set Function expression = x; y; y # Analytical formula used for the L2 projection
-    end
+  set type      = L2projection # Type of ways to set initial conditions <none|L2Projection|viscous>
+  set viscosity = 1            # Viscosity used for viscous solution
+  subsection uvwp
+    set Function expression = x; y; y # Analytical formula used for the L2 projection
+  end
 end
-
-

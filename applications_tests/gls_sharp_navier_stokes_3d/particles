@@ -1,6 +1,6 @@
-type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient
-0.0 0.75 0.75 0.75 5 12.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0
-0.0 0.75 0.75 0.75 7 12.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0
-0.0 0.75 0.75 0.75 3 12.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0
-0.0 0.75 0.75 0.75 5 10.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0
-0.0 0.75 0.75 0.75 5 8.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0
+type shape_argument_0 shape_argument_1 shape_argument_2 p_x p_y p_z v_x v_y v_z omega_x omega_y omega_z orientation_x orientation_y orientation_z density inertia pressure_x pressure_y pressure_z youngs_modulus restitution_coefficient friction_coefficient poisson_ratio rolling_friction_coefficient integrate_motion
+0.0 0.75 0.75 0.75 5 12.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0 1.0
+0.0 0.75 0.75 0.75 7 12.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0 1.0
+0.0 0.75 0.75 0.75 3 12.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0 1.0
+0.0 0.75 0.75 0.75 5 10.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0 1.0 
+0.0 0.75 0.75 0.75 5 8.75 5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.00112 1.0 0.0 0.0 0.0 10000000000.0 0.9 0.1 0.3 1.0 1.0
