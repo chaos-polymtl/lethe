@@ -36,6 +36,7 @@ test()
   Parameters::PhysicalProperties physical_properties;
   physical_properties.number_of_fluids = 2;
   physical_properties.number_of_solids = 2;
+  physical_properties.number_of_material_interactions = 0; // for now
 
 
   physical_properties.fluids.resize(2);
