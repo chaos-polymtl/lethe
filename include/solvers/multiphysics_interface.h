@@ -848,7 +848,7 @@ private:
                                             {VOF, true},
                                             {heat_transfer, false},
                                             {tracer, false},
-                                            {cahn_hilliard, false}};
+                                            {cahn_hilliard, true}};
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper memory management.

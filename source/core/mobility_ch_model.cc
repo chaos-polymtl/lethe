@@ -23,6 +23,7 @@ MobilityCahnHilliardModel::model_cast(
   if (material_interaction_properties.mobility_ch_model ==
       Parameters::MaterialInteractions::MobilityCahnHilliardModel::quartic)
     {
+      std::cout<<"mobility ch_constant = "<< material_interaction_properties.mobility_ch_parameters.mobility_ch_constant<<std::endl;
       return std::make_shared<MobilityCahnHilliardModelQuartic>(
         material_interaction_properties.mobility_ch_parameters
           .mobility_ch_constant);

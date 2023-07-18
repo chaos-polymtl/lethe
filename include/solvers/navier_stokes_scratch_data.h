@@ -32,6 +32,7 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
+#include <deal.II/hp/fe_collection.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -112,8 +113,9 @@ public:
     gather_void_fraction                     = false;
     gather_particles_information             = false;
     gather_temperature                       = false;
-    gather_hessian = properties_manager.is_non_newtonian();
     gather_ch      = false;
+    gather_hessian = properties_manager.is_non_newtonian();
+
   }
 
   /**
@@ -153,8 +155,9 @@ public:
     gather_void_fraction                     = false;
     gather_particles_information             = false;
     gather_temperature                       = false;
-    gather_hessian = properties_manager.is_non_newtonian();
     gather_ch      = false;
+    gather_hessian = properties_manager.is_non_newtonian();
+
 
 
     if (sd.gather_vof)
@@ -184,9 +187,22 @@ public:
                            sd.fe_values_temperature->get_quadrature(),
                            sd.fe_values_temperature->get_mapping());
     if (sd.gather_ch)
-      enable_cahn_hilliard(sd.fe_values_ch->get_fe(),
-                           sd.fe_values_ch->get_quadrature(),
-                           sd.fe_values_ch->get_mapping());
+    {
+        std::cout<< sd.fe_values_ch->get_fe().get_name() << std::endl;
+        //this->phase_order.component        = 0;
+      //this->chemical_potential.component = 1;
+        enable_cahn_hilliard(sd.fe_values_ch->get_fe(),
+                             sd.fe_values_ch->get_quadrature(),
+                             sd.fe_values_ch->get_mapping());
+//     enable_cahn_hilliard(sd.fe_phase_values_ch->get_fe(),
+//                          sd.fe_potential_values_ch->get_fe(),
+//                           sd.fe_phase_values_ch->get_quadrature(),
+//                           sd.fe_phase_values_ch->get_mapping());
+//          enable_cahn_hilliard(std::make_shared<FEValuesViews::Scalar<dim>>(sd.fe_values_ch->operator[](phase_order)),
+//                               std::make_shared<FEValuesViews::Scalar<dim>>(sd.fe_values_ch->operator[](chemical_potential)),
+//                               sd.fe_values_ch->get_quadrature(),
+//                               sd.fe_values_ch->get_mapping());
+                              }
 
     gather_hessian = sd.gather_hessian;
   }
@@ -931,10 +947,43 @@ public:
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    */
 
+//  void
+//  enable_cahn_hilliard(const std::shared_ptr<FEValues<dim>>  fe_values,
+//                       const Quadrature<dim> &quadrature,
+//                       const Mapping<dim> &   mapping);
+
+//  void
+//  enable_cahn_hilliard(const FESystem<dim>  &fe,
+//                       const Quadrature<dim> &quadrature,
+//                       const Mapping<dim> &   mapping);
+
   void
-  enable_cahn_hilliard(const FESystem<dim> &  fe,
+  enable_cahn_hilliard(const FiniteElement<dim>  &fe,
                        const Quadrature<dim> &quadrature,
                        const Mapping<dim> &   mapping);
+
+//    void
+//    enable_cahn_hilliard(const std::shared_ptr<FEValuesViews::Scalar<dim>>  & fe_view_phase,
+//                         const std::shared_ptr<FEValuesViews::Scalar<dim>>  & fe_view_potential,
+//                         const Quadrature<dim> &quadrature,
+//                         const Mapping<dim> &   mapping);
+
+//    void
+//    enable_cahn_hilliard(const FiniteElement<dim> &fe_phase,
+//                         const FiniteElement<dim> &fe_potential,
+//                         const Quadrature<dim> &quadrature,
+//                         const Mapping<dim> &   mapping);
+
+//  void
+//  enable_cahn_hilliard(const hp::FECollection<dim,dim>  & fe_collection,
+//                       const Quadrature<dim> &quadrature,
+//                       const Mapping<dim> &   mapping);
+
+//  void
+//  enable_cahn_hilliard(const FiniteElement<dim> &fe_phase,
+//                         const FiniteElement<dim> &fe_potential,
+//                         const Quadrature<dim> &quadrature,
+//                         const Mapping<dim> &   mapping);
 
 
   /** @brief Reinitialize the content of the scratch for CH
@@ -958,22 +1007,59 @@ public:
     Parameters::CahnHilliard ch_parameters)
   {
     this->fe_values_ch->reinit(cell);
+    //this->fe_values_ch.reinit(cell);
+//    this->fe_phase_values_ch->reinit(cell);
+//    this->fe_potential_values_ch->reinit(cell);
+
+      std::vector<bool> vector_mask_phase({true,false});
+      std::vector<bool> vector_mask_potential({false,true});
+      ComponentMask component_mask_phase(vector_mask_phase);
+      ComponentMask component_mask_potential(vector_mask_potential);
 
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
 
-    //    // Gather phase fraction (values, gradient)
-    //    this->fe_values_ch->operator[](phase_order)
-    //      .get_function_values(current_solution, this->phase_order_ch_values);
-    //    this->fe_values_ch->operator[](chemical_potential)
-    //      .get_function_values(current_solution,
-    //                           this->chemical_potential_ch_values);
-    //    this->fe_values_ch->operator[](phase_order)
-    //      .get_function_gradients(current_solution,
-    //      this->phase_order_ch_gradients);
-    //    this->fe_values_ch->operator[](chemical_potential)
-    //      .get_function_gradients(current_solution,
-    //                              this->chemical_potential_ch_gradients);
+//         Gather phase fraction (values, gradient)
+        this->fe_values_ch->operator[](phase_order)
+          .get_function_values(current_solution, this->phase_order_ch_values);
+        this->fe_values_ch->operator[](chemical_potential)
+          .get_function_values(current_solution,
+                               this->chemical_potential_ch_values);
+        this->fe_values_ch->operator[](phase_order)
+          .get_function_gradients(current_solution,
+          this->phase_order_ch_gradients);
+        this->fe_values_ch->operator[](chemical_potential)
+          .get_function_gradients(current_solution,
+                                  this->chemical_potential_ch_gradients);
+
+//      this->fe_values_view_phase_ch->get_function_values(current_solution, this->phase_order_ch_values);
+//      this->fe_values_view_potential_ch->get_function_values(current_solution,
+//                                   this->chemical_potential_ch_values);
+//      this->fe_values_view_phase_ch->get_function_gradients(current_solution,
+//                                      this->phase_order_ch_gradients);
+//      this->fe_values_view_potential_ch->get_function_gradients(current_solution,this->chemical_potential_ch_gradients);
+
+//      this->fe_values_ch->get_sub_fe(component_mask_phase)
+//              .get_function_values(current_solution, this->phase_order_ch_values);
+//      this->fe_values_ch->get_sub_fe(component_mask_potential)
+//              .get_function_values(current_solution,
+//                                   this->chemical_potential_ch_values);
+//      this->fe_values_ch->get_sub_fe(component_mask_phase)
+//              .get_function_gradients(current_solution,
+//                                      this->phase_order_ch_gradients);
+//      this->fe_values_ch->get_sub_fe(component_mask_potential)
+//              .get_function_gradients(current_solution,
+//                                      this->chemical_potential_ch_gradients);
+
+
+//      // Gather phase fraction & chemical potential (values, gradient) with the corresponding FEValues object
+//        this->fe_phase_values_ch->get_function_values(current_solution, this->phase_order_ch_values);
+//        this->fe_potential_values_ch->get_function_values(current_solution,
+//                               this->chemical_potential_ch_values);
+//        this->fe_phase_values_ch->get_function_gradients(current_solution,
+//          this->phase_order_ch_gradients);
+//        this->fe_potential_values_ch->get_function_gradients(current_solution,
+//                                  this->chemical_potential_ch_gradients);
 
     // Initialize parameters
     this->epsilon           = (ch_parameters.epsilon_set_method ==
@@ -981,18 +1067,19 @@ public:
                                 ch_parameters.epsilon :
                                 2 * this->cell_size;
     this->well_height       = ch_parameters.well_height;
-    this->mobility_constant = ch_parameters.mobility_constant;
+    //this->mobility_constant = ch_parameters.mobility_constant;
+
 
     // TODO erase
-    /*this->fe_values_ch[phase_order]->get_function_values(
-      current_solution, this->phase_order_ch_values);
-    this->fe_values_ch[chemical_potential]->get_function_values(
-      current_solution, this->chemical_potential_ch_values);
-    this->fe_values_ch[phase_order]->get_function_gradients(
-      current_solution, this->phase_order_ch_gradients);
-    this->fe_values_ch[chemical_potential]->get_function_gradients(
-      current_solution, this->chemical_potential_ch_gradients);
-*/
+//    this->fe_values_ch[phase_order]->get_function_values(
+//      current_solution, this->phase_order_ch_values);
+//    this->fe_values_ch[chemical_potential]->get_function_values(
+//      current_solution, this->chemical_potential_ch_values);
+//    this->fe_values_ch[phase_order]->get_function_gradients(
+//      current_solution, this->phase_order_ch_gradients);
+//    this->fe_values_ch[chemical_potential]->get_function_gradients(
+//      current_solution, this->chemical_potential_ch_gradients);
+
     //    // Gather previous phase fraction values for CahnHilliard physics
     //    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
     //      {
@@ -1153,6 +1240,7 @@ public:
   double                      well_height;
   double                      mobility_constant;
   double                      density_diff;
+  double                      curvature_ch;
   bool                        gather_ch;
   unsigned int                n_dofs_ch;
   std::vector<double>         phase_order_ch_values;
@@ -1162,7 +1250,12 @@ public:
   std::vector<double>         chemical_potential_ch_values;
   std::vector<Tensor<1, dim>> chemical_potential_ch_gradients;
   // This is stored as a shared_ptr because it is only instantiated when needed
+  //FEValues<dim> *fe_values_ch;
   std::shared_ptr<FEValues<dim>> fe_values_ch;
+  std::shared_ptr<FEValues<dim>> fe_phase_values_ch;
+  std::shared_ptr<FEValues<dim>> fe_potential_values_ch;
+  std::shared_ptr<FEValuesViews::Scalar<dim>> fe_values_view_phase_ch;
+  std::shared_ptr<FEValuesViews::Scalar<dim>> fe_values_view_potential_ch;
 
   FEValuesExtractors::Scalar phase_order;
   FEValuesExtractors::Scalar chemical_potential;

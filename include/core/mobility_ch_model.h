@@ -121,7 +121,9 @@ public:
    */
   MobilityCahnHilliardModelQuartic(const double p_mobility_ch)
     : mobility_ch(p_mobility_ch)
-  {}
+  {
+      this->model_depends_on[field::phase_order_ch] = true;
+  }
 
   /**
    * @brief value Calculates the mobility_ch
