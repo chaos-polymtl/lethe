@@ -79,6 +79,7 @@ struct Settings
   {
     amg,
     gcmg,
+    lsmg,
     ilu,
     none
   };
@@ -151,8 +152,8 @@ Settings::try_parse(const std::string &prm_filename)
                     "Path for vtu output files");
   prm.declare_entry("preconditioner",
                     "AMG",
-                    Patterns::Selection("AMG|GCMG|ILU|none"),
-                    "GMRES Preconditioner <AMG|GCMG|ILU|none>");
+                    Patterns::Selection("AMG|LSMG|GCMG|ILU|none"),
+                    "GMRES Preconditioner <AMG|LSMG|GCMG|ILU|none>");
   prm.declare_entry("source term",
                     "zero",
                     Patterns::Selection("zero|mms"),
@@ -187,6 +188,8 @@ Settings::try_parse(const std::string &prm_filename)
     this->preconditioner = amg;
   else if (prm.get("preconditioner") == "GCMG")
     this->preconditioner = gcmg;
+  else if (prm.get("preconditioner") == "LSMG")
+    this->preconditioner = lsmg;
   else if (prm.get("preconditioner") == "ILU")
     this->preconditioner = ilu;
   else if (prm.get("preconditioner") == "none")
@@ -368,14 +371,16 @@ public:
                  const DoFHandler<dim> &          dof_handler,
                  const AffineConstraints<number> &constraints,
                  const QGauss<1> &                quadrature,
-                 const Settings &                 parameters);
+                 const Settings &                 parameters,
+                 const unsigned int               mg_level);
 
   void
   reinit(const MappingQ<dim> &            mapping,
          const DoFHandler<dim> &          dof_handler,
          const AffineConstraints<number> &constraints,
          const QGauss<1> &                quadrature,
-         const Settings &                 parameters);
+         const Settings &                 parameters,
+         const unsigned int               mg_level);
 
   void
   compute_stabilization_parameter();
@@ -397,6 +402,12 @@ public:
 
   void
   Tvmult(VectorType &dst, const VectorType &src) const;
+
+  void
+  vmult_interface_down(VectorType &dst, VectorType const &src) const;
+
+  void
+  vmult_interface_up(VectorType &dst, VectorType const &src) const;
 
   const TrilinosWrappers::SparseMatrix &
   get_system_matrix() const;
@@ -421,12 +432,23 @@ private:
     const VectorType &                           src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
+  static IndexSet
+  get_refinement_edges(const MatrixFree<dim, number> &matrix_free);
+
 private:
   MatrixFree<dim, number>                matrix_free;
   AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   Settings                               parameters;
   AlignedVector<VectorizedArray<number>> stabilization_parameter;
+
+  // Variables needed for local smoothing
+  std::vector<unsigned int>                      constrained_indices;
+  mutable std::vector<std::pair<number, number>> constrained_values;
+  std::vector<unsigned int>                      edge_constrained_indices;
+  bool has_edge_constrained_indices = false;
+  mutable std::vector<std::pair<number, number>> edge_constrained_values;
+  std::vector<bool>                              edge_constrained_cell;
 };
 
 template <int dim, typename number>
@@ -439,9 +461,11 @@ StokesOperator<dim, number>::StokesOperator(
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
   const QGauss<1> &                quadrature,
-  const Settings &                 parameters)
+  const Settings &                 parameters,
+  const unsigned int               mg_level)
 {
-  this->reinit(mapping, dof_handler, constraints, quadrature, parameters);
+  this->reinit(
+    mapping, dof_handler, constraints, quadrature, parameters, mg_level);
 }
 
 template <int dim, typename number>
@@ -451,7 +475,8 @@ StokesOperator<dim, number>::reinit(
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
   const QGauss<1> &                quadrature,
-  const Settings &                 parameters)
+  const Settings &                 parameters,
+  const unsigned int               mg_level)
 {
   this->system_matrix.clear();
   this->constraints.copy_from(constraints);
@@ -460,6 +485,7 @@ StokesOperator<dim, number>::reinit(
   additional_data.mapping_update_flags =
     (update_values | update_gradients | update_JxW_values |
      update_quadrature_points | update_hessians);
+  additional_data.mg_level = mg_level;
 
   matrix_free.reinit(
     mapping, dof_handler, constraints, quadrature, additional_data);
@@ -467,6 +493,80 @@ StokesOperator<dim, number>::reinit(
   this->parameters = parameters;
 
   this->compute_stabilization_parameter();
+
+  constrained_indices.clear();
+  for (auto i : this->matrix_free.get_constrained_dofs())
+    constrained_indices.push_back(i);
+  constrained_values.resize(constrained_indices.size());
+
+  if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+    {
+      std::vector<types::global_dof_index> interface_indices;
+      IndexSet                             refinement_edge_indices;
+      refinement_edge_indices = get_refinement_edges(this->matrix_free);
+      refinement_edge_indices.fill_index_vector(interface_indices);
+
+      edge_constrained_indices.clear();
+      edge_constrained_indices.reserve(interface_indices.size());
+      edge_constrained_values.resize(interface_indices.size());
+      const IndexSet &locally_owned =
+        this->matrix_free.get_dof_handler().locally_owned_mg_dofs(
+          this->matrix_free.get_mg_level());
+      for (unsigned int i = 0; i < interface_indices.size(); ++i)
+        if (locally_owned.is_element(interface_indices[i]))
+          edge_constrained_indices.push_back(
+            locally_owned.index_within_set(interface_indices[i]));
+
+      this->has_edge_constrained_indices =
+        Utilities::MPI::max(edge_constrained_indices.size(),
+                            dof_handler.get_communicator()) > 0;
+
+      if (this->has_edge_constrained_indices)
+        {
+          edge_constrained_cell.resize(matrix_free.n_cell_batches(), false);
+
+          VectorType temp;
+          matrix_free.initialize_dof_vector(temp);
+
+          for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
+            temp.local_element(edge_constrained_indices[i]) = 1.0;
+
+          temp.update_ghost_values();
+
+          FECellIntegrator integrator(matrix_free);
+
+          for (unsigned int cell = 0; cell < matrix_free.n_cell_batches();
+               ++cell)
+            {
+              integrator.reinit(cell);
+              integrator.read_dof_values(temp);
+
+              for (unsigned int i = 0; i < integrator.dofs_per_cell; ++i)
+                if ((integrator.begin_dof_values()[i] ==
+                     VectorizedArray<number>()) == false)
+                  {
+                    edge_constrained_cell[cell] = true;
+                    break;
+                  }
+            }
+
+          unsigned int count = 0;
+          for (const auto i : edge_constrained_cell)
+            if (i)
+              count++;
+
+          const unsigned int count_global =
+            Utilities::MPI::sum(count, dof_handler.get_communicator());
+
+          const unsigned int count_cells_global =
+            Utilities::MPI::sum(matrix_free.n_cell_batches(),
+                                dof_handler.get_communicator());
+
+          if (Utilities::MPI::this_mpi_process(
+                dof_handler.get_communicator()) == 0)
+            std::cout << count_global << " " << count_cells_global << std::endl;
+        }
+    }
 }
 
 template <int dim, typename number>
@@ -500,7 +600,11 @@ template <int dim, typename number>
 types::global_dof_index
 StokesOperator<dim, number>::m() const
 {
-  return matrix_free.get_dof_handler().n_dofs();
+  if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+    return this->matrix_free.get_dof_handler().n_dofs(
+      this->matrix_free.get_mg_level());
+  else
+    return this->matrix_free.get_dof_handler().n_dofs();
 }
 
 template <int dim, typename number>
@@ -530,8 +634,34 @@ template <int dim, typename number>
 void
 StokesOperator<dim, number>::vmult(VectorType &dst, const VectorType &src) const
 {
+  // save values for edge constrained dofs and set them to 0 in src vector
+  for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
+    {
+      edge_constrained_values[i] = std::pair<number, number>(
+        src.local_element(edge_constrained_indices[i]),
+        dst.local_element(edge_constrained_indices[i]));
+
+      const_cast<LinearAlgebra::distributed::Vector<number> &>(src)
+        .local_element(edge_constrained_indices[i]) = 0.;
+    }
+
   this->matrix_free.cell_loop(
     &StokesOperator::do_cell_integral_range, this, dst, src, true);
+
+  // set constrained dofs as the sum of current dst value and src value
+  for (unsigned int i = 0; i < constrained_indices.size(); ++i)
+    dst.local_element(constrained_indices[i]) =
+      src.local_element(constrained_indices[i]);
+
+  // restoring edge constrained dofs in src and dst
+  for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
+    {
+      const_cast<LinearAlgebra::distributed::Vector<number> &>(src)
+        .local_element(edge_constrained_indices[i]) =
+        edge_constrained_values[i].first;
+      dst.local_element(edge_constrained_indices[i]) =
+        edge_constrained_values[i].first;
+    }
 }
 
 // Performs the transposed operator evaluation. Since we have
@@ -545,6 +675,48 @@ StokesOperator<dim, number>::Tvmult(VectorType &      dst,
   this->vmult(dst, src);
 }
 
+template <int dim, typename number>
+void
+StokesOperator<dim, number>::vmult_interface_down(VectorType &      dst,
+                                                  VectorType const &src) const
+{
+  this->matrix_free.cell_loop(
+    &StokesOperator::do_cell_integral_range, this, dst, src, true);
+
+  // set constrained dofs as the sum of current dst value and src value
+  for (unsigned int i = 0; i < constrained_indices.size(); ++i)
+    dst.local_element(constrained_indices[i]) =
+      src.local_element(constrained_indices[i]);
+}
+
+template <int dim, typename number>
+void
+StokesOperator<dim, number>::vmult_interface_up(VectorType &      dst,
+                                                VectorType const &src) const
+{
+  if (has_edge_constrained_indices == false)
+    {
+      dst = number(0.);
+      return;
+    }
+
+  dst = 0.0;
+
+  // make a copy of src vector and set everything to 0 except edge
+  // constrained dofs
+  VectorType src_cpy;
+  src_cpy.reinit(src, /*omit_zeroing_entries=*/false);
+
+  for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
+    src_cpy.local_element(edge_constrained_indices[i]) =
+      src.local_element(edge_constrained_indices[i]);
+
+  // do loop with copy of src
+  this->matrix_free.cell_loop(
+    &StokesOperator::do_cell_integral_range, this, dst, src_cpy, false);
+}
+
+
 // Computes the matrix efficiently using the optimized compute_matrix call.
 // This function is usually only used to build the system matrix for the coarse
 // grid level in the multigrid algorithm.
@@ -557,10 +729,18 @@ StokesOperator<dim, number>::get_system_matrix() const
       const auto &dof_handler = this->matrix_free.get_dof_handler();
 
       TrilinosWrappers::SparsityPattern dsp(
-        dof_handler.locally_owned_dofs(),
+        this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int ?
+          dof_handler.locally_owned_mg_dofs(this->matrix_free.get_mg_level()) :
+          dof_handler.locally_owned_dofs(),
         dof_handler.get_triangulation().get_communicator());
 
-      DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
+      if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
+        MGTools::make_sparsity_pattern(dof_handler,
+                                       dsp,
+                                       this->matrix_free.get_mg_level(),
+                                       this->constraints);
+      else
+        DoFTools::make_sparsity_pattern(dof_handler, dsp, this->constraints);
 
       dsp.compress();
       system_matrix.reinit(dsp);
@@ -571,7 +751,7 @@ StokesOperator<dim, number>::get_system_matrix() const
                                       &StokesOperator::do_cell_integral_local,
                                       this);
     }
-  return system_matrix;
+  return this->system_matrix;
 }
 
 template <int dim, typename number>
@@ -585,7 +765,7 @@ template <int dim, typename number>
 const AlignedVector<VectorizedArray<number>>
 StokesOperator<dim, number>::get_stabilization_parameter() const
 {
-  return stabilization_parameter;
+  return this->stabilization_parameter;
 }
 
 // The diagonal of the matrix is needed, e.g., for smoothers used in
@@ -602,6 +782,9 @@ StokesOperator<dim, number>::compute_inverse_diagonal(
                                     diagonal,
                                     &StokesOperator::do_cell_integral_local,
                                     this);
+
+  for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
+    diagonal.local_element(edge_constrained_indices[i]) = 0.0;
 
   for (auto &i : diagonal)
     i = (std::abs(i) > 1.0e-10) ? (1.0 / i) : 1.0;
@@ -685,6 +868,9 @@ StokesOperator<dim, number>::do_cell_integral_range(
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
+      // if (edge_constrained_cell[cell] == false)
+      //     continue;
+
       integrator.reinit(cell);
 
       integrator.read_dof_values(src);
@@ -693,6 +879,27 @@ StokesOperator<dim, number>::do_cell_integral_range(
 
       integrator.distribute_local_to_global(dst);
     }
+}
+
+template <int dim, typename number>
+IndexSet
+StokesOperator<dim, number>::get_refinement_edges(
+  const MatrixFree<dim, number> &matrix_free)
+{
+  const unsigned int level = matrix_free.get_mg_level();
+
+  std::vector<IndexSet> refinement_edge_indices;
+  refinement_edge_indices.clear();
+  const unsigned int nlevels =
+    matrix_free.get_dof_handler().get_triangulation().n_global_levels();
+  refinement_edge_indices.resize(nlevels);
+  for (unsigned int l = 0; l < nlevels; l++)
+    refinement_edge_indices[l] =
+      IndexSet(matrix_free.get_dof_handler().n_dofs(l));
+
+  MGTools::extract_inner_interface_dofs(matrix_free.get_dof_handler(),
+                                        refinement_edge_indices);
+  return refinement_edge_indices[level];
 }
 
 // Multigrid global coarsening algorithm and parameters
@@ -723,14 +930,14 @@ template <typename VectorType,
           typename LevelMatrixType,
           typename MGTransferType>
 static void
-mg_solve(SolverControl &                                        solver_control,
-         VectorType &                                           dst,
-         const VectorType &                                     src,
-         const MultigridParameters &                            mg_data,
-         const DoFHandler<dim> &                                dof,
-         const SystemMatrixType &                               fine_matrix,
-         const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
-         const MGTransferType &                                 mg_transfer)
+gcmg_solve(SolverControl &            solver_control,
+           VectorType &               dst,
+           const VectorType &         src,
+           const MultigridParameters &mg_data,
+           const DoFHandler<dim> &    dof,
+           const SystemMatrixType &   fine_matrix,
+           const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
+           const MGTransferType &                                 mg_transfer)
 {
   AssertThrow(mg_data.coarse_solver.type == "gmres_with_amg",
               ExcNotImplemented());
@@ -799,15 +1006,15 @@ mg_solve(SolverControl &                                        solver_control,
 
 template <typename VectorType, typename OperatorType, int dim>
 void
-solve_with_gmg(SolverControl &            solver_control,
-               const OperatorType &       system_matrix,
-               VectorType &               dst,
-               const VectorType &         src,
-               const MultigridParameters &mg_data,
-               const MappingQ<dim>        mapping,
-               const DoFHandler<dim> &    dof_handler,
-               const QGauss<1> &          quadrature,
-               const Settings &           parameters)
+solve_with_gcmg(SolverControl &            solver_control,
+                const OperatorType &       system_matrix,
+                VectorType &               dst,
+                const VectorType &         src,
+                const MultigridParameters &mg_data,
+                const MappingQ<dim>        mapping,
+                const DoFHandler<dim> &    dof_handler,
+                const QGauss<1> &          quadrature,
+                const Settings &           parameters)
 {
   MGLevelObject<DoFHandler<dim>>                     dof_handlers;
   MGLevelObject<std::unique_ptr<OperatorType>>       operators;
@@ -875,8 +1082,13 @@ solve_with_gmg(SolverControl &            solver_control,
 
       constraint.close();
 
-      operators[level] = std::make_unique<OperatorType>(
-        mapping, dof_handler, constraint, quadrature, parameters);
+      operators[level] =
+        std::make_unique<OperatorType>(mapping,
+                                       dof_handler,
+                                       constraint,
+                                       quadrature,
+                                       parameters,
+                                       numbers::invalid_unsigned_int);
     }
 
   for (unsigned int level = minlevel; level < maxlevel; ++level)
@@ -898,14 +1110,208 @@ solve_with_gmg(SolverControl &            solver_control,
           << " DoFs, " << coarse_grid_triangulations[level]->n_cells(level)
           << " cells" << std::endl;
 
-  mg_solve(solver_control,
-           dst,
-           src,
-           mg_data,
-           dof_handler,
-           system_matrix,
-           operators,
-           transfer);
+  gcmg_solve(solver_control,
+             dst,
+             src,
+             mg_data,
+             dof_handler,
+             system_matrix,
+             operators,
+             transfer);
+}
+
+template <typename VectorType,
+          int dim,
+          typename SystemMatrixType,
+          typename LevelMatrixType,
+          typename MGTransferType>
+static void
+lsmg_solve(
+  SolverControl &                                        solver_control,
+  VectorType &                                           dst,
+  const VectorType &                                     src,
+  const MultigridParameters &                            mg_data,
+  const DoFHandler<dim> &                                dof,
+  const SystemMatrixType &                               fine_matrix,
+  const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
+  const MGTransferType &                                 mg_transfer,
+  const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_interface_in,
+  const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_interface_out)
+{
+  AssertThrow(mg_data.coarse_solver.type == "gmres_with_amg",
+              ExcNotImplemented());
+  AssertThrow(mg_data.smoother.type == "relaxation", ExcNotImplemented());
+
+  const unsigned int min_level = mg_matrices.min_level();
+  const unsigned int max_level = mg_matrices.max_level();
+
+  using SmootherPreconditionerType = DiagonalMatrix<VectorType>;
+  using SmootherType =
+    PreconditionRelaxation<LevelMatrixType, SmootherPreconditionerType>;
+  using PreconditionerType = PreconditionMG<dim, VectorType, MGTransferType>;
+
+  mg::Matrix<VectorType> mg_matrix(mg_matrices);
+
+  MGLevelObject<typename SmootherType::AdditionalData> smoother_data(min_level,
+                                                                     max_level);
+
+  for (unsigned int level = min_level; level <= max_level; ++level)
+    {
+      smoother_data[level].preconditioner =
+        std::make_shared<SmootherPreconditionerType>();
+      mg_matrices[level]->compute_inverse_diagonal(
+        smoother_data[level].preconditioner->get_vector());
+      smoother_data[level].n_iterations = mg_data.smoother.n_iterations;
+      smoother_data[level].relaxation   = mg_data.smoother.relaxation;
+    }
+
+  MGSmootherPrecondition<LevelMatrixType, SmootherType, VectorType> mg_smoother;
+  mg_smoother.initialize(mg_matrices, smoother_data);
+
+  ReductionControl coarse_grid_solver_control(mg_data.coarse_solver.maxiter,
+                                              mg_data.coarse_solver.abstol,
+                                              mg_data.coarse_solver.reltol,
+                                              false,
+                                              false);
+  SolverGMRES<VectorType> coarse_grid_solver(coarse_grid_solver_control);
+
+  std::unique_ptr<MGCoarseGridBase<VectorType>> mg_coarse;
+
+  TrilinosWrappers::PreconditionAMG                 precondition_amg;
+  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+  amg_data.smoother_sweeps = mg_data.coarse_solver.smoother_sweeps;
+  amg_data.n_cycles        = mg_data.coarse_solver.n_cycles;
+  amg_data.smoother_type   = mg_data.coarse_solver.smoother_type.c_str();
+
+  precondition_amg.initialize(mg_matrices[min_level]->get_system_matrix(),
+                              amg_data);
+
+  mg_coarse =
+    std::make_unique<MGCoarseGridIterativeSolver<VectorType,
+                                                 SolverGMRES<VectorType>,
+                                                 LevelMatrixType,
+                                                 decltype(precondition_amg)>>(
+      coarse_grid_solver, *mg_matrices[min_level], precondition_amg);
+
+  // Additional step for local smoothing: interface matrices
+  mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_interface_matrix_in(
+    mg_interface_in);
+  mg::Matrix<LinearAlgebra::distributed::Vector<double>>
+    mg_interface_matrix_out(mg_interface_out);
+
+  Multigrid<VectorType> mg(
+    mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
+
+  if (dof.get_triangulation().has_hanging_nodes())
+    mg.set_edge_matrices(mg_interface_matrix_in, mg_interface_matrix_out);
+
+  PreconditionerType preconditioner(dof, mg, mg_transfer);
+
+  // PreconditionIdentity identity;
+  SolverGMRES<VectorType>(solver_control)
+    .solve(fine_matrix, dst, src, preconditioner);
+}
+
+template <typename VectorType, typename OperatorType, int dim>
+void
+solve_with_lsmg(SolverControl &            solver_control,
+                const OperatorType &       system_matrix,
+                VectorType &               dst,
+                const VectorType &         src,
+                const MultigridParameters &mg_data,
+                const MappingQ<dim>        mapping,
+                const DoFHandler<dim> &    dof_handler,
+                const QGauss<1> &          quadrature,
+                const Settings &           parameters)
+{
+  MGLevelObject<std::unique_ptr<OperatorType>> operators;
+  MGTransferMatrixFree<dim, double>            mg_transfer;
+  MGLevelObject<VectorType>                    mg_solution;
+  MGLevelObject<std::unique_ptr<OperatorType>> mg_interface_in;
+  MGLevelObject<std::unique_ptr<OperatorType>> mg_interface_out;
+  MGLevelObject<AffineConstraints<double>>     level_constraints;
+  MGConstrainedDoFs                            mg_constrained_dofs;
+
+  const unsigned int n_h_levels =
+    dof_handler.get_triangulation().n_global_levels();
+
+  unsigned int minlevel = 0;
+  unsigned int maxlevel = n_h_levels - 1;
+
+  operators.resize(0, n_h_levels - 1);
+  mg_interface_in.resize(0, n_h_levels - 1);
+  mg_interface_out.resize(0, n_h_levels - 1);
+  mg_solution.resize(0, n_h_levels - 1);
+  level_constraints.resize(0, n_h_levels - 1);
+
+  const std::set<types::boundary_id> dirichlet_boundary_ids = {0, 1, 2, 3};
+  mg_constrained_dofs.initialize(dof_handler);
+  mg_constrained_dofs.make_zero_boundary_constraints(dof_handler,
+                                                     dirichlet_boundary_ids);
+
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    {
+      const IndexSet relevant_dofs =
+        DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
+
+      // AffineConstraints<double> level_constraints;
+      level_constraints[level].reinit(relevant_dofs);
+      level_constraints[level].add_lines(
+        mg_constrained_dofs.get_boundary_indices(level));
+      level_constraints[level].close();
+
+      operators[level] =
+        std::make_unique<OperatorType>(mapping,
+                                       dof_handler,
+                                       level_constraints[level],
+                                       quadrature,
+                                       parameters,
+                                       level);
+
+      operators[level]->initialize_dof_vector(mg_solution[level]);
+
+      mg_interface_in[level] =
+        std::make_unique<OperatorType>(mapping,
+                                       dof_handler,
+                                       level_constraints[level],
+                                       quadrature,
+                                       parameters,
+                                       level);
+
+      mg_interface_out[level] =
+        std::make_unique<OperatorType>(mapping,
+                                       dof_handler,
+                                       level_constraints[level],
+                                       quadrature,
+                                       parameters,
+                                       level);
+    }
+
+  mg_transfer.initialize_constraints(mg_constrained_dofs);
+  mg_transfer.build(dof_handler);
+
+  mg_transfer.interpolate_to_mg(dof_handler, mg_solution, dst);
+
+
+  ConditionalOStream pcout(std::cout,
+                           (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                            0));
+
+  for (unsigned int level = minlevel; level <= maxlevel; ++level)
+    pcout << "   MG Level " << level << ": " << dof_handler.n_dofs(level)
+          << " DoFs, " << dof_handler.get_triangulation().n_cells(level)
+          << " cells" << std::endl;
+
+  lsmg_solve(solver_control,
+             dst,
+             src,
+             mg_data,
+             dof_handler,
+             system_matrix,
+             operators,
+             mg_transfer,
+             mg_interface_in,
+             mg_interface_out);
 }
 
 // Main class for a dummy vector-valued problem given by
@@ -977,12 +1383,6 @@ private:
   SystemMatrixType  system_matrix;
   MGConstrainedDoFs mg_constrained_dofs;
   using LevelMatrixType = StokesOperator<dim, double>;
-  MGLevelObject<LevelMatrixType>                            mg_matrices;
-  MGLevelObject<LevelMatrixType>                            mg_interface_in;
-  MGLevelObject<LevelMatrixType>                            mg_interface_out;
-  MGLevelObject<LinearAlgebra::distributed::Vector<double>> mg_solution;
-  MGTransferMatrixFree<dim, double>                         mg_transfer;
-  MGLevelObject<AffineConstraints<double>>                  level_constraints;
 
   TrilinosWrappers::SparseMatrix mb_system_matrix;
   TrilinosWrappers::SparseMatrix mb_system_matrix_coarse;
@@ -1056,6 +1456,9 @@ MatrixFreeStokes<dim>::setup_system()
 
   dof_handler.distribute_dofs(fe_system);
 
+  if (parameters.preconditioner == Settings::lsmg)
+    dof_handler.distribute_mg_dofs();
+
   const IndexSet locally_relevant_dofs =
     DoFTools::extract_locally_relevant_dofs(dof_handler);
 
@@ -1084,7 +1487,8 @@ MatrixFreeStokes<dim>::setup_system()
                        dof_handler,
                        constraints,
                        QGauss<1>(element_order + 1),
-                       parameters);
+                       parameters,
+                       numbers::invalid_unsigned_int);
 
   system_matrix.initialize_dof_vector(solution);
   system_matrix.initialize_dof_vector(newton_update);
@@ -1253,15 +1657,29 @@ MatrixFreeStokes<dim>::compute_update()
         case Settings::gcmg: {
           MultigridParameters mg_data;
 
-          solve_with_gmg(solver_control,
-                         system_matrix,
-                         newton_update,
-                         system_rhs,
-                         mg_data,
-                         mapping,
-                         dof_handler,
-                         QGauss<1>(element_order + 1),
-                         parameters);
+          solve_with_gcmg(solver_control,
+                          system_matrix,
+                          newton_update,
+                          system_rhs,
+                          mg_data,
+                          mapping,
+                          dof_handler,
+                          QGauss<1>(element_order + 1),
+                          parameters);
+          break;
+        }
+        case Settings::lsmg: {
+          MultigridParameters mg_data;
+
+          solve_with_lsmg(solver_control,
+                          system_matrix,
+                          newton_update,
+                          system_rhs,
+                          mg_data,
+                          mapping,
+                          dof_handler,
+                          QGauss<1>(element_order + 1),
+                          parameters);
           break;
         }
         case Settings::ilu: {
@@ -1514,6 +1932,8 @@ MatrixFreeStokes<dim>::run()
       PRECOND_header = "Preconditioner: AMG";
     else if (parameters.preconditioner == Settings::gcmg)
       PRECOND_header = "Preconditioner: GCMG";
+    else if (parameters.preconditioner == Settings::lsmg)
+      PRECOND_header = "Preconditioner: LSMG";
     else if (parameters.preconditioner == Settings::ilu)
       PRECOND_header = "Preconditioner: ILU";
     else if (parameters.preconditioner == Settings::none)
