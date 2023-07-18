@@ -301,7 +301,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto density_model = properties_manager.get_density();
           density_model->vector_value(fields, density);
           density_psi = density_model->get_psi();
-          density_ref = density_model->get_density_ref();
 
           if (properties_manager.is_non_newtonian())
             {
