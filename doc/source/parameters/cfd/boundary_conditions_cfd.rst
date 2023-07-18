@@ -1,5 +1,6 @@
-Boundary conditions - CFD
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=========================
+Boundary Conditions - CFD
+=========================
 
 This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports the following boundary conditions:
 
@@ -28,37 +29,38 @@ where `beta` is a constant and  :math:`(\mathbf{u}\cdot n)_{-}` is :math:`min (0
 
 .. code-block:: text
 
-   subsection boundary conditions
-     set number                  = 2
-     set time dependent          = false
-     subsection bc 0
-           set id                = 0
-           set type              = function
-          
-           subsection u
-               set Function expression = -y
-           end
-           subsection v
-               set Function expression = x
-           end
-           subsection w
-               set Function expression = 0
-           end
-   
-           # Center of rotation used for torque calculation
-           subsection center of rotation
-              set x = 0
-              set y = 0
-              set z = 0
-           end
-        set periodic_id         = 1
-        set periodic_direction  = 0
-        set beta                = 0
-     end
-     subsection bc 1
-           set type              = noslip
-     end
-   end
+  subsection boundary conditions
+    set number         = 2
+    set time dependent = false
+    subsection bc 0
+      set id                 = 0
+      set type               = function
+
+      subsection u
+        set Function expression = -y
+      end
+      subsection v
+        set Function expression = x
+      end
+      subsection w
+        set Function expression = 0
+      end
+
+      # Center of rotation used for torque calculation
+      subsection center of rotation
+        set x = 0
+        set y = 0
+        set z = 0
+      end
+
+      set periodic_id        = 1
+      set periodic_direction = 0
+      set beta               = 0
+    end
+    subsection bc 1
+      set type = noslip
+    end
+  end
 
 * ``number`` specifies the number of boundary conditions of the problem. Periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
 

@@ -1,5 +1,5 @@
 =====================
-Updating test results
+Updating Test Results
 =====================
 Lethe's test suite compares individual test results against reference
 results, stored in so-called golden files, which are known, to some

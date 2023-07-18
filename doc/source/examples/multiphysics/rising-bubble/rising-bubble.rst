@@ -1,5 +1,5 @@
 ==========================
-Rising bubble
+Rising Bubble
 ==========================
 
 This example simulates a `two-dimensional rising bubble`_. 
@@ -7,9 +7,10 @@ This example simulates a `two-dimensional rising bubble`_.
 .. _two-dimensional rising bubble: https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643
 
 
-----------------------------------
+--------
 Features
-----------------------------------
+--------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
@@ -17,16 +18,16 @@ Features
 - Post-processing of a fluid barycentric coordinate and velocity
 
 
----------------------------
-Files used in this example
----------------------------
+--------------------------
+Files Used in This Example
+--------------------------
 - Parameter file: ``examples/multiphysics/rising-bubble/rising_bubble.prm``
 - Python file to generate plot: ``examples/multiphysics/rising-bubble/rising_bubble.py``
 
 
------------------------------
-Description of the case
------------------------------
+-----------------------
+Description of the Case
+-----------------------
 
 A circular bubble with density of 100 and kinematic viscosity of 0.01 (all the units in this example are dimensionless) is defined at an initial location (0.5, 0.5) in a rectangular column filled with a denser fluid (with a density of 1000 and kinematic viscosity of 0.01). At :math:`t = 0` the bubble is released to rise inside the denser fluid column. The corresponding parameter file is 
 ``rising-bubble.prm``.
@@ -44,8 +45,11 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 
 --------------
-Parameter file
+Parameter File
 --------------
+
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme `(bdf1)`, for a :math:`3~\text{s}` simulation time with an initial time step of :math:`0.001~\text{s}`.
 
@@ -55,9 +59,6 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set time end         = 3
@@ -69,26 +70,26 @@ Time integration is handled by a 1st order backward differentiation scheme `(bdf
       set output path      = ./output/
     end
 
+Multiphysics
+~~~~~~~~~~~~
+
 The ``multiphysics`` subsection enables to turn on `(true)` 
 and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``phase filtration``, ``interface sharpening``, and ``surface tension force`` are enabled in the VOF subsection.
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF = true
-    end 
+    end
+
+Source Term
+~~~~~~~~~~~
 
 The ``source term`` subsection defines the gravitational acceleration:
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -96,9 +97,8 @@ The ``source term`` subsection defines the gravitational acceleration:
       end
     end
 
-""""""""""""""""""""""""""""""""
-Volume of Fluid (VOF)
-""""""""""""""""""""""""""""""""
+VOF
+~~~
 
 In the ``VOF`` subsection, three features are enabled : the ``interface sharpening``, the ``phase filtration`` and the ``surface tension force``.
 
@@ -107,9 +107,6 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # VOF
-  #---------------------------------------------------
   subsection VOF
     subsection interface sharpening
       set enable              = true
@@ -133,19 +130,16 @@ The interface sharpening method and its parameters are explained in the :doc:`..
     end
   end
 
-""""""""""""""""""""""""""""""""
-Initial condition
-""""""""""""""""""""""""""""""""
-In the ``initial condition``, the initial velocity and initial position
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
+
+In the ``initial conditions``, the initial velocity and initial position
 of the liquid phase are defined. The light phase is initially
 defined as a circle with a radius :math:`r= 0.25` at :math:`(x,y)=(0.5, 0.5)`. We enable the use of a projection step to ensure that the initial phase distribution is
 sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` example.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial condition
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -162,9 +156,8 @@ sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` e
     end
 
 
-""""""""""""""""""""""""""""""""
 Physical Properties
-""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
 A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``:
@@ -172,9 +165,6 @@ A similar procedure is done for the phase associated with a VOF indicator of 1 i
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 2
       subsection fluid 0
@@ -187,11 +177,8 @@ A similar procedure is done for the phase associated with a VOF indicator of 1 i
       end
     end
 
-
-
-""""""""""""""""""""""""""""""""
 Mesh
-""""""""""""""""""""""""""""""""
+~~~~
 
 We start off with a rectangular mesh that spans the domain defined by the corner points situated at the origin and at point
 :math:`[1,2]`. The first :math:`1,2` couple defines that number of initial grid subdivisions along the length and height of the rectangle. 
@@ -200,25 +187,22 @@ This makes our initial mesh composed of perfect squares. We proceed then to rede
 
 .. code-block:: text
         
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
       set grid arguments     = 1, 2 : 0, 0 : 1, 2 : true
       set initial refinement = 6
     end
-    
+
+Mesh Adaptation
+~~~~~~~~~~~~~~~
+
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
 defined for ``phase``. ``min refinement level`` and ``max refinement level`` are 6 and 9, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (0.99) and moderate ``fraction coarsening`` (0.01).
 To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
     subsection mesh adaptation
       set type                     = kelly
       set variable                 = phase
@@ -231,26 +215,20 @@ To capture the bubble adequately, we set ``initial refinement steps = 5`` so tha
       set initial refinement steps = 5
     end
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Post-processing: Fluid barycenter position and velocity
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Post-processing: Fluid Barycenter Position and Velocity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``vof_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Post-processing
-    #---------------------------------------------------
 
     subsection post-processing
       set verbosity                = quiet
       set calculate VOF barycenter = true
     end
 
-
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  
@@ -266,9 +244,9 @@ to run the simulation using eight CPU cores. Feel free to use more.
     :math:`\approx` 10 mins on 8 processes.
 
 
--------
-Results
--------
+-----------------------
+Results and Discussion
+-----------------------
 
 The following image shows the shape and dimensions of the bubble after 3 seconds of simulation, and compares it with results of [`2 <https://doi.org/10.1002/fld.2643>`_, `3 <https://doi.org/10.1002/fld.1934>`_ ].
 
@@ -300,6 +278,7 @@ Animation of the rising bubble example:
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ Brackbill, J.U., Kothe, D.B. and Zemach, C., 1992. A continuum method for modeling surface tension. Journal of computational physics, 100(2), pp.335-354.
 
 `[2] <https://doi.org/10.1002/fld.2643>`_ Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.

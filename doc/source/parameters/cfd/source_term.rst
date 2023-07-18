@@ -1,33 +1,32 @@
-Source term
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===========
+Source Term
+===========
 
 If the problem being simulated has a source, it can be added in this section. The default parameters are:
 
 .. code-block:: text
 
-   subsection source term
+  subsection source term
+    set enable = false
 
-     set enable                = false
+    subsection xyz
+      # Default values in 2D
+      set Function expression = 0; 0; 0
+      # in 3D: set Function expression = 0; 0; 0; 0
+    end
 
-     subsection xyz
-       # Default values in 2D
-       set Function expression = 0; 0; 0
-       # in 3D: set Function expression = 0; 0; 0; 0
-     end
+    subsection heat transfer
+      set Function expression = 0
+    end
 
-     subsection heat transfer
-       set Function expression = 0
-     end
+    subsection tracer
+      set Function expression = 0
+    end
 
-     subsection tracer
-       set Function expression = 0
-     end
-     
-     subsection cahn hilliard
-       set Function expression = 0; 0
-     end
-
-   end
+    subsection cahn hilliard
+      set Function expression = 0; 0
+    end
+  end
 
 .. tip:: 
   ``Function expression``, used in this subsection (but also in :doc:`./initial_conditions`, :doc:`./analytical_solution`, namely), give access to several tools:
@@ -59,7 +58,7 @@ If the problem being simulated has a source, it can be added in this section. Th
 
 .. _ex function:
 
-Examples of Function expression
+Examples of Function Expression
 --------------------------------
 
 CFD source term with ``Function constants``:

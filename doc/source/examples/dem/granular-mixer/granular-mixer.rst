@@ -1,9 +1,11 @@
 ==================================
-Granular mixer
+Granular Mixer
 ==================================
 
 This example simulates the packing and mixing of particles in a mixer with a pitched-blade impeller. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
@@ -12,18 +14,21 @@ Features
 - Bidispersed particles (same size and properties, but different types)
 
 
-Files used in this example
+----------------------------
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-granular-mixer/granular-mixer.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 This simulation consists of two stages: packing (0-0.5 s) and mixing (0.5-5 s) of particles. There are two types of particles in this simulation (bidispersed system), that are inserted on top of each other during the packing stage. The size and properties of the two particle types are the same, we only need to define two particle types to make the visualization easier during post-processing. At :math:`t=0.5` s, the pitched-blade impeller starts rotating with an angular velocity of 6 rad/s and mixes the particles.
 
 
-Parameter file
+--------------
+Parameter File
 --------------
 
 Mesh
@@ -40,7 +45,7 @@ The background mesh (mixer body) is created using dealii ``subdivided_cylinder``
       set initial refinement  = 3
     end
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As mentioned earlier, there are two types of particles with the same size and properties.
@@ -79,7 +84,7 @@ As mentioned earlier, there are two types of particles with the same size and pr
     end
 
 
-Solid objects
+Solid Objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this subsection, the floating meshes are defined. We can use dealii or gmsh to create the floating meshes. At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the dem_3d solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment. For each floating mesh, we need to specify a ``translational velocity``, an ``angular velocity``, and a ``center of rotation``. In this example, we only need an angular motion of the impeller. Note that the ``center of rotation`` of the impeller is at 0, 0, 0.
@@ -115,7 +120,8 @@ In this subsection, the floating meshes are defined. We can use dealii or gmsh t
     end
 
 
-Running the simulation
+----------------------
+Running the Simulation
 ----------------------
 This simulation can be launched by (in parallel mode on 8 processes):
 
@@ -127,6 +133,7 @@ This simulation can be launched by (in parallel mode on 8 processes):
 	This example takes approximately 2 hours on 8 cores.
 
 
+---------
 Results
 ---------
 
@@ -137,7 +144,8 @@ Animation of the granular mixing simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ms-gAyZcOXk" frameborder="0" allowfullscreen></iframe>
 
 
-Possibility for extension
+-----------------------------
+Possibility for Extension
 -----------------------------
 
 The same simulation can be carried out with particles of different sizes and properties to study segregation.

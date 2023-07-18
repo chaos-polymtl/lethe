@@ -1,5 +1,5 @@
 ==============================================================================
-Sedimentation of 64 particles
+Sedimentation of 64 Particles
 ==============================================================================
 
 This example aims to introduce the user on how to carry resolved CFD-DEM simulation with a larger number of particles.
@@ -7,31 +7,38 @@ This example aims to introduce the user on how to carry resolved CFD-DEM simulat
 
 .. warning:: 
     * This case is computationally expensive. It can take several days to run on a desktop computer. You can reduce the computational cost by reducing the mesh density or the number of particles.
-    
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around multiple particles
 - Displays the robustness of the resolved CFD-DEM Solver.
 
-Files used in this example
 ---------------------------
- ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/sedimentation-64-particle.prm``
- 
- ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/particles.input``
+Files Used in This Example
+---------------------------
 
-Description of the case
+- ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/sedimentation-64-particle.prm``
+- ``/examples/sharp-immersed-boundary-solver/sedimentation-64-particle/particles.input``
+
+
+-----------------------
+Description of the Case
 -----------------------
 The case consists in the release of 64 particles (:math:`\rho_p=0.0015 \frac{\text{kg}}{\text{cm}^{3}}`) with a diameter of 0.25 cm arranged in a 4 by 4 by 4 cubic array centered 21 cm above the bottom of the container. The container is a 2 by 2 by 24 cm rectangle. The viscosity of the fluid is :math:`\mu_f=0.0001 \frac{\text{kg}}{\text{s cm}}`. The density of the fluid is :math:`\rho_f=0.001 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particles accelerate due to gravity until they hit the bottom of the container, which at this point, we stop the simulation. All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
-Parameter file
+
+---------------
+Parameter File
 ---------------
 
 We explain every part of this parameter file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and have no impact on the simulation results. For more information on these parameters we suggest visiting the :doc:`../../../parameters/parameters`.
  
-Simulation and IO control
+Simulation and IO Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -52,10 +59,7 @@ Simulation and IO control
 
 * The ``time end`` is set to  4.0. This is slightly longer than the time needed for all the particles to reach the bottom of the container
 
-
-
-
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -70,7 +74,6 @@ Physical properties
 * The ``kinematic viscosity`` is set to  0.1. This value is derived from the case description by dividing :math:`\mu_f` by :math:`\rho_f`. This parameter changes the Reynolds number of the case since it is one of the variables in the evaluation of the Reynolds number but also by changing the terminal velocity of the particle.
 
 * The ``density`` is set to 0.001 according to the description of the problem.
-	
 
 FEM
 ~~~
@@ -100,9 +103,8 @@ The domain is a rectangular box: we can directly use a subdivided hyper rectangl
 
 * The ``initial refinement`` is set to 4. This will ensure to have a base mesh that is a bit finer than the particle size.
 
-
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 .. code-block:: text
 
     subsection mesh adaptation
@@ -127,10 +129,7 @@ Mesh adaptation control
 
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
-
-
-
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -164,7 +163,7 @@ Here we define the 5 ``no slip`` boundaries for all the box walls and let the 6t
 	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
 
 
-Initial condition
+Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -177,8 +176,8 @@ Initial condition
 
 The initial condition for this case is simple to define. At the start of the simulation, we assume that the particle and the fluid are at rest. From there, we define a uniform velocity field of 0 everywhere. To do that, we used the ``type = nodal`` and then specified a function expression of 0 for all the velocity components.  
 
-Non-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -202,8 +201,9 @@ Non-Linear solver control
 	* reevaluate the RHS to check the convergence.
 	
 	
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
+
 .. code-block:: text
 
     subsection linear solver
@@ -230,8 +230,9 @@ Linear solver control
 
 * The ``ilu preconditioner absolute tolerance`` is set to 1e-6. This slightly speeds up the first few matrix resolutions. 
 
-IB particles
+IB Particles
 ~~~~~~~~~~~~~~
+
 .. code-block:: text
 
     subsection particles
@@ -292,7 +293,9 @@ In this subsection, we define most of the parameters that are related to the par
 .. note:: 
     The number of particles is not defined here since the particles are defined using a file. In this case the number of particles is defined by the number of particles defined in the file.
 
-Particles file
+
+---------------
+Particles File
 ---------------
 The file from which the particles are defined have a header line that goes as followed:
 
@@ -309,7 +312,7 @@ Each line corresponds to a particle and its properties. A space separates each p
    0.0 0.125 0.125 0.125 0.25 0.25 20.25 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0015 7.6698974609375e-08 0.0 0.0 0.0 1000000.0 0.9 0.0 0.3 0.0
 
 
-
+---------------
 Results
 ---------------
 The results are shown in the animation below. We can see the complex motion of the particles and the way they interact with one another. This case demonstrates the stability of the solver for cases with a large number of particle contacts.
@@ -322,9 +325,10 @@ The results are shown in the animation below. We can see the complex motion of t
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/Js73OUr08rM" frameborder="0" allowfullscreen></iframe>
 
+
+---------------
 Reference
 ---------------
-`[1] <https://doi.org/10.1063/1.1512918>`_ Ten Cate, A., Nieuwstad, C. H., Derksen, J. J., & Van den Akker, H. E. A. (2002). Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity. Physics of Fluids, 14(11), 4012-4025.`DOI <https://doi.org/10.1063/1.1512918>`_
 
-
+`[1] <https://doi.org/10.1063/1.1512918>`_ A. ten Cate, C. H. Nieuwstad, J. J. Derksen, and H. E. A. Van den Akker, “Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity,” *Phys. Fluids*, vol. 14, no. 11, pp. 4012–4025, Oct. 2002, doi: 10.1063/1.1512918.
 

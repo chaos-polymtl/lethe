@@ -1,6 +1,6 @@
-
-Analytical solution
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================
+Analytical Solution
+===================
 
 If the problem being simulated has a known analytical solution, or an exact solution is imposed (manufactured solutions) it can be added in this section. The default parameters are:
 

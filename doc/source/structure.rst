@@ -1,11 +1,11 @@
 ##########################
-Folder structure of Lethe
+Folder Structure of Lethe
 ##########################
 
 The folder structure of Lethe is relatively complex. Once you have cloned and compiled Lethe, it is normal that you might be confused as to the meaning of the various folders in the cloned directory (which we will refer to as the lethe folder) or in the build folder. This section of the documentation aims at demystifying these elements.
 
 ================
-The lethe folder
+The Lethe Folder
 ================
 In this folder, the following structure is present:
 
@@ -22,7 +22,7 @@ In this folder, the following structure is present:
 
 In what follows, we explain the content of each folder and the logic behind this complex structure. We explain the folder not in alphabetical order but in a more "logical" order.
 
-Applications and their tests
+Applications and Their Tests
 ----------------------------
 
 Lethe is designed to contain a number of solvers for single or multiphysics problems. These various solvers take the form of multiple executables which are named applications. They are stored in the ``/applications`` folder. Each application is housed in its own separate folder. For example, the folder ``/applications/gls_navier_stokes_2d`` contains the source which instantiates the 2D version of the GLS Navier-Stokes solver, whereas the ``/applications/gls_navier_stokes_3d`` folder stores the source which instantiates the 3D version of the GLS Navier-Stokes solver.
@@ -36,8 +36,8 @@ For example, the *cylinder_gls* test is made of three files: ``cylinder_gls.outp
 You may notice that some outputs are preceded by a mpirun=2 prefix. For example, the ``mms-2d_gls.mpirun=2.output`` file. This additional prefix indicates that the test will be run with two processors. If this prefix is not present, the test will always be run with a single processor. To ensure enhanced compatibility with the CI, tests should not use over 3 processors.
 
 
-The include and the source folder
----------------------------------
+The ``include`` and the ``source`` Folders
+------------------------------------------
 
 The ``/include`` folder houses the prototypes for all the functions and the classes within Lethe whereas the ``/source`` folder houses the source code. All the files within the include folder are .h files whereas all files within the source folder are .cc, as per the deal.II standards.
 
@@ -52,13 +52,13 @@ It can readily be noticed that the include and source folder are subdivided into
 The content of Lethe is subdivided into modules that are generally independent of one another. This encapsulates furthermore the content of the software. The core module contains the core functionality of Lethe, whereas the solvers module contains the applications that are related to the finite element solution of multiphysics problems. The dependency between the module can only be unidirectional. For example, the solvers module requires the core module, but the core module could not require the solvers module. 
 
 
-The tests folder
------------------
+The ``tests`` Folder
+--------------------
 
 The ``/tests`` folder houses the unit tests for all of the modules of Lethe. The unit tests are different from the application's tests. Their scope is only to verify that a single class or functions behave in the expected manner. They are used to test individual components of the Lethe and not complete applications. Hence, these tests are grouped by modules.
 
-The prototypes folder
----------------------
+The ``prototypes`` Folder
+-------------------------
 
 The ``/prototypes`` folder houses temporary applications in Lethe. These applications are prototypes that are very close to the steps of deal.II. They are used to test novel development before they are fully integrated within Lethe. The prototypes are not expected to be stable.
 
@@ -70,18 +70,18 @@ The prototypes folder contains a template folder which contains a virgin prototy
 * Add the new folder to the list of prototypes to be taken into account by modifying the ``prototypes/CMakeLists.txt`` and adding a ``ADD_SUBDIRECTORY(my_prototype)``
 
 
-The contrib folder
--------------------
+The ``contrib`` Folder
+----------------------
 
 The ``/contrib`` folder houses various scripts that help for the maintenance of Lethe. It notably contains the ``contrib/utilities/indent-all`` script which can be used to automatically indent the entire Lethe source code to ensure that it adheres to the clang-format rules contained in the ``/contrib`` folder.
 
-The doc folder
---------------
+The ``doc`` Folder
+------------------
 
 The ``/doc`` folder contains the source files of this documentation page of Lethe. To contribute or compile the documentation on your own machine follow the instructions of the :doc:`contributing` tab.
 
-The examples folder
---------------------
+The ``examples`` Folder
+-----------------------
 
 The ``/examples`` folder includes the parameter file and the post-processing scripts of examples using different applications in Lethe. It is subdivided into additional sub-directories, namely:
 
@@ -93,14 +93,14 @@ The ``/examples`` folder includes the parameter file and the post-processing scr
 
 Detailed descriptions of most of these examples can be found on the :doc:`examples/examples` tab of this page.
 
-The logo folder
-----------------
+The ``logo`` Folder
+-------------------
 
 The ``/logo`` folder is the simplest one, it houses the logo of Lethe in various formats :)!
 
-================
-The build folder
-================
+====================
+The ``build`` Folder
+====================
 
 This folder is obtained after compiling Lethe and it contains all the relevant executables for all applications and tests available. 
 

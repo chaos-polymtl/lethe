@@ -1,29 +1,33 @@
 ================================
-Sloshing in a rectangular tank
+Sloshing in a Rectangular Tank
 ================================
 
 This example simulates the damping of a small amplitude wave for Reynolds number of (2, 20, 200 and 2000). The problem is inspired by the test case of `Carrica et al. [1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_. 
 
 
-----------------------------------
+--------
 Features
-----------------------------------
+--------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Volume of fluid (VOF)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Usage of a python script for post-processing data
 
+
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
+
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0002/sloshing-in-rectangular-tank_Re0002.prm``
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0020/sloshing-in-rectangular-tank_Re0020.prm``
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_0200/sloshing-in-rectangular-tank_Re0200.prm``
 - ``examples/multiphysics/sloshing-in-rectangular-tank/sloshing_2000/sloshing-in-rectangular-tank_Re2000.prm``
 
------------------------------
-Description of the case
------------------------------
+
+-----------------------
+Description of the Case
+-----------------------
 
 Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquified natural gas). Yet, simulating their dynamics is difficult, especially for high Reynolds number values . Indeed, in this case, the amplitude of the waves dampen very slowly. This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver. 
 
@@ -35,17 +39,18 @@ In this problem, we simulate the damping of a small amplitude wave in a rectangu
 
 Four values of the Reynolds number are investigated: 2, 20, 200 and 2000. 
 
+
 --------------
-Parameter file
+Parameter File
 --------------
+
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
 The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (``bdf2``) with a variable time step. The ``adaptive time step scaling`` is set to 1.025 to ensure that the time-step does not rise too quickly during wave oscillations.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                       = bdf2
       set time end                     = 50
@@ -58,25 +63,24 @@ The results for this problem are highly sensitive to the accuracy of the time-st
       set adaptative time step scaling = 1.025
     end
 
+Multiphysics
+~~~~~~~~~~~~
+
 The ``multiphysics`` subsection is used to enable the VOF solver.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF  = true
     end 
-    
 
-In the ``initial condition``, we define the initial height of the wave, such that the interface (:math:`\phi = 0.5` isocurve) lies at the right height.
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
+
+In the ``initial conditions``, we define the initial height of the wave, such that the interface (:math:`\phi = 0.5` isocurve) lies at the right height.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial condition
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -88,13 +92,12 @@ In the ``initial condition``, we define the initial height of the wave, such tha
       end
     end
 
+Mesh
+~~~~
+
 In the ``mesh`` subsection, we define a hyper rectangle with appropriate dimensions. The mesh is initially refined 6 times to ensure adequate definition of the interface.
 
 .. code-block:: text
-
-  #---------------------------------------------------
-  # Mesh
-  #---------------------------------------------------
 
   subsection mesh
     set type               = dealii
@@ -103,15 +106,13 @@ In the ``mesh`` subsection, we define a hyper rectangle with appropriate dimensi
     set initial refinement = 6
   end
 
+Physical Properties
+~~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` are mainly used to establish the Reynolds number of the sloshing liquid. For the air, however, the work of Carrica *et al.* `[1]  <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ does not give any physical properties. We thus fix the air to be significantly less dense than the liquid, but we keep its viscosity at a certain reasonable viscosity to ensure numerical stability.
 
 .. code-block:: text
 
-  #---------------------------------------------------
-  # Physical Properties
-  #---------------------------------------------------
-  
   subsection physical properties
     set number of fluids = 2
     subsection fluid 0
@@ -124,26 +125,23 @@ The ``physical properties`` are mainly used to establish the Reynolds number of 
     end
   end
 
+Source Term
+~~~~~~~~~~~
 
 The ``source term`` subsection is used to enable the gravitational acceleration along the :math:`y` direction.
 
 .. code-block:: text
 
-  # --------------------------------------------------
-  # Source term
-  #---------------------------------------------------
-  
   subsection source term
     set enable = true
     subsection xyz
       set Function expression = 0 ; -1 ; 0
     end
   end
-    
 
 
 -----------------------
-Running the simulation
+Running the Simulation
 -----------------------
 
 We can call the gls_navier_stokes_2d for each Reynolds number. For :math:`Re=20`, this can be done by invoking the following command:
@@ -189,9 +187,11 @@ The following table presents a comparison between the analytical results and the
 | 2000 | .. image:: images/Re2000.png         |
 +------+--------------------------------------+
 
------------
+
+----------
 References
------------
+----------
+
 `[1] <https://onlinelibrary.wiley.com/doi/abs/10.1002/fld.1279>`_ Carrica, P. M., Wilson, R. V., & Stern, F. (2007). An unsteady single‐phase level set method for viscous free surface flows. International Journal for Numerical Methods in Fluids, 53(2), 229-256.
 
 

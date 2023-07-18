@@ -1,27 +1,31 @@
 ==================================
-Rotation of box
+Rotation of Box
 ==================================
 
 This example simulates a triangulation (box) rotation. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
 - Rotating a triangulation
 
 
-Files used in this example
+----------------------------
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-grid-rotation-in-box/grid-rotation-box.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 4000 particles are inserted in a rotating box and rotate with the box. In this example, the whole triangulation is rotated.
 
 
-Parameter file
+--------------
+Parameter File
 --------------
 
 Mesh
@@ -39,7 +43,7 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 0.04 m
     end
 
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
 An insertion box is defined inside the cubic domain. 4000 particles are inserted non-uniformly in the first iteration.
@@ -62,7 +66,7 @@ An insertion box is defined inside the cubic domain. 4000 particles are inserted
     end
 
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``number`` of particles (4000) is equal to the specified ``inserted number of particles at each time step``. This means that all the particles are inserted during the first insertion iteration (if the inserted number of particles fits inside the specified insertion box).
@@ -93,7 +97,7 @@ The ``number`` of particles (4000) is equal to the specified ``inserted number o
     end
 
 
-Model parameters
+Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -111,7 +115,7 @@ Model parameters
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -123,7 +127,9 @@ Simulation control
       set output frequency = 1000
     end
 
-Running the simulation
+
+----------------------
+Running the Simulation
 ----------------------
 This simulation can be launched by:
 
@@ -132,6 +138,7 @@ This simulation can be launched by:
   dem_3d grid-rotation-box.prm
 
 
+---------
 Results
 ---------
 

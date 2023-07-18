@@ -1,12 +1,14 @@
 ==========================
-Laser heating
+Laser Heating
 ==========================
 
 This example simulates a three-dimensional solid block heated with a laser beam which follows a complex path. This mimics an additive manufacturing process.
 
+
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_3d`` 
 - Laser heat source
 - Convection-radiation heat transfer boundary condition
@@ -16,13 +18,13 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/laser-heating/laser-heating.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A laser beam heats a three-dimensional solid block. The laser beam is emitted perpendicular to the top surface of the block in the negative z direction. The following schematic describes the geometry and dimensions of block and laser beam:
@@ -35,19 +37,20 @@ A laser beam heats a three-dimensional solid block. The laser beam is emitted pe
 The laser path changes with time. The laser beam radius and penetration depth are both set to :math:`0.00005` m. Because of this small radius and penetration depth, we use adaptive mesh refinement based on the temperature. Thermal boundary conditions are ``convection-radiation`` with a convective heat transfer coefficient of 5 and an emissivity of 0.4. The corresponding parameter file is: 
 ``laser-heating.prm``.
 
+
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 2nd order backward differentiation scheme `(bdf2)` (for a better temporal accuracy), for a :math:`0.003` seconds simulation time with a constant
 time step of :math:`5.0 \times 10^{-5}` seconds.
 
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf2
       set time end         = 0.003
@@ -58,14 +61,13 @@ time step of :math:`5.0 \times 10^{-5}` seconds.
       set subdivision      = 1
     end
 
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
 
 All the boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation``.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 1
       subsection bc 0
@@ -82,6 +84,8 @@ All the boundary conditions are ``noslip``, and the heat transfer boundary condi
       end
     end
 
+Multiphysics
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on (``true``) 
 and off (``false``) the physics of interest. Here only ``heat transfer`` is enabled.
@@ -89,18 +93,18 @@ and off (``false``) the physics of interest. Here only ``heat transfer`` is enab
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer = true
     end
-    
+
+
+Laser Parameters
+~~~~~~~~~~~~~~~~
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
-    .. math:: 
-        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
+.. math::
+    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
 where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in the `laser parameters <https://lethe-cfd.github.io/lethe/parameters/cfd/laser_heat_source.html>`_.
@@ -112,9 +116,6 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Laser parameters
-    #---------------------------------------------------
     subsection laser parameters
       set enable               = true
       set concentration factor = 50
@@ -130,14 +131,14 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
       end
     end
 
+Mesh Adaptation
+~~~~~~~~~~~~~~~
+
 In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the variable ``temperature``. Mesh adaptation is explained in more detail in `mesh adaptation control <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh_adaptation_control.html>`_
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
     subsection mesh adaptation
       set type                 = kelly
       set variable             = temperature
@@ -149,8 +150,9 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
       set fraction coarsening  = 0.2
     end
 
+
 ----------------------
-Running the simulation
+Running the Simulation
 ----------------------
 
 Call the gls_navier_stokes_3d by invoking:  
@@ -166,7 +168,6 @@ to run the simulation using eight CPU cores. Feel free to use more.
     :math:`\approx` 5 minutes on 8 processes.
 
 
-
 -------
 Results
 -------
@@ -178,8 +179,9 @@ The following animation shows the temperature distribution in the simulations do
     <iframe width="560" height="315" src="https://www.youtube.com/embed/e9bZ_3DAyZk" frameborder="0" allowfullscreen></iframe>
 
 
-Possibility for extension
------------------------------
+--------------------------
+Possibility for Extension
+--------------------------
 
 This example can be extended to implement phase change (melting the solid block by laser and solidifying again after cooling).
 

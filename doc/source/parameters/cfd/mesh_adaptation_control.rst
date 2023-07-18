@@ -1,49 +1,46 @@
-Mesh Adaptation Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===============
+Mesh Adaptation
+===============
 
 This subsection controls the mesh adaptation method, with default values given below.
 
 .. code-block:: text
 
-	subsection mesh adaptation
-	  # Type of mesh adaptation. Choices are  none, uniform or kelly.
-	  set type                              = none
+  subsection mesh adaptation
+    # Type of mesh adaptation. Choices are  none, uniform or kelly.
+    set type                     = none
 
-	  # Variable(s) for kelly estimation. Choices are velocity, pressure, phase, temperature,
-	  # phase_ch or potential_ch.
-	  # For multi-variables refinement, separate the different variables with a comma
-	  set variable                          = velocity
+    # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
+    # For multi-variables refinement, separate the different variables with a comma
+    set variable                 = velocity
 
-	  # Frequency of the mesh refinement
-	  set frequency                         = 1
+    # Frequency of the mesh refinement
+    set frequency                = 1
 
-	  # Minimum refinement level
-	  set min refinement level              = 0
+    # Minimum refinement level
+    set min refinement level     = 0
 
-	  # Maximum refinement level
-	  set max refinement level              = 10
+    # Maximum refinement level
+    set max refinement level     = 10
 
-	  # Fraction of coarsened elements
-	  # For multi-variables refinement, separate the different fractions with a comma
-	  set fraction coarsening               = 0.05
+    # Fraction of coarsened elements
+    # For multi-variables refinement, separate the different fractions with a comma
+    set fraction coarsening      = 0.05
 
-	  # Fraction of refined elements
-	  # For multi-variables refinement, separate the different fractions with a comma
-	  set fraction refinement               = 0.1
+    # Fraction of refined elements
+    # For multi-variables refinement, separate the different fractions with a comma
+    set fraction refinement      = 0.1
 
-	  # How the fraction of refinement/coarsening are interpreted
-	  # Choices are number or fraction 
-	  set fraction type                     = number
+    # How the fraction of refinement/coarsening are interpreted
+    # Choices are number or fraction
+    set fraction type            = number
 
-	  # Maximum number of elements
-	  set max number elements               = 100000000
-	  
-	  # Enable the control of the mesh refinement to target a specific number of elements equal to the maximum number of elements.
-	  set enable mesh refinement controller = false
-	
-	  # Number of initial (pre-solve) refinement steps
-	  set initial refinement steps          = 0
-	end
+    # Maximum number of elements
+    set max number elements      = 100000000
+
+    # Number of initial (pre-solve) refinement steps
+    set initial refinement steps = 0
+  end
 
 
 * Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 

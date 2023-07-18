@@ -1,10 +1,12 @@
-On the need for stabilization
-###############################
+==============================
+On the Need for Stabilization
+==============================
 
 It is well known that, in the absence of stabilization, the choice of the velocity and pressure finite element spaces must be done to ensure that the `Ladyzenskaya-Babuska-Brezzi (LBB) inf-sup <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ condition is met. It is also known that the Galerkin approximation of the Navier–Stokes equations may fail in convection dominated flows, for which there are boundary layers where the velocity solution and its gradient exhibit rapid variation over short length scales. In these regions, the classical Galerkin approach may lead to numerical oscillations which may greatly pollute the solution over the entire domain. Stabilization of the elements, which is used in Lethe, can circumvent the limitations of the classical Galerkin approach and alleviate the  need to use LBB stable elements. This notably allows for the use of equal order elements (such as P1-P1).
 
 
-SUPG/PSPG monolithic formulation
+-----------------------------------
+SUPG/PSPG Monolithic Formulation
 -----------------------------------
 
 This approach consists of two new terms that are added to the classic weak formulation. The first one is known as SUPG (Streamline-Upwind/ Petro-Galerkin) formulation and it is in charge of stabilizing the formulation for convection-dominated flows. The second one is known as PSPG (Pressure-Stabilizing/ Petrov-Galerkin) and as its name indicates, it reduces pressure oscillations when using equal order elements (e.g. Q1 elements for the velocity and Q1 elements for the pressure). Thus, the new weak form of the Navier-Stokes equation is given by:
@@ -38,7 +40,9 @@ To solve the non-linear problem, Lethe uses again the Newton-Raphson method, how
   
 As it can be seen, there is an additional matrix :math:`S^*` that appears in the linear system and eliminates the zero block on the diagonal of the Jacobian matrix.
 
-Grad-Div block formulation
+
+------------------------------------
+Grad-Div Block Formulation
 ------------------------------------
 
 This approach builds on the work of `Heister et al. (2012) <https://onlinelibrary.wiley.com/doi/10.1002/fld.3654>`_. and can be seen as a natural parallel extension of the `Step-57 of deal.ii <https://www.dealii.org/current/doxygen/deal.II/step_57.html>`_. An additional term is added to the classic weak form of the Navier-Stokes equations: 
@@ -54,7 +58,8 @@ This approach builds on the work of `Heister et al. (2012) <https://onlinelibrar
 where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reduce oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In Lethe the value of :math:`\gamma` is equal to :math:`1`. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classic weak formulation. Therefore, a good preconditioning is necessary to solve the linear system at each nonlinear iteration. More on this topic is found in the linear solvers section.
 
 
-Galerkin Least-Squares formulation
+-----------------------------------
+Galerkin Least-Squares Formulation
 -----------------------------------
 
 The GLS formulation is built as a generalization of the stabilization procedure in the SUPG/PSPG formulation. It consists of both the SUPG and PSPG terms as well as two additional terms: a term based on a Least-Squares term based on the momentum equation and a term based on a Least-Squares term based on the incompressibility constraint. All terms can be seen in the following weak form:

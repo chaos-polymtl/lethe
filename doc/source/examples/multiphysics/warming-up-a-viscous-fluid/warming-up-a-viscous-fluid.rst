@@ -1,23 +1,32 @@
 ==========================
-Warming up a viscous fluid
+Warming up a Viscous Fluid
 ==========================
 
 This example introduces how to solve another physics along with the CFD solver.
 
+
+--------------
 Features
 --------------
+
 * Solver: ``gls_navier_stokes_2d``
 * Transient problem
 * Multiphysics
 * Displays the use of heat transfer physics
 * Analytical solution
 
-Files used in this example
+
 ---------------------------
+Files Used in This Example
+---------------------------
+
 ``examples/multiphysics/warming-up-viscous-fluid``
 
-Description of the case
+
 ------------------------
+Description of the Case
+------------------------
+
 A viscous fluid lays between two parallel plates: one fixed and insulated, and the other moving and heated. The velocity profile and the temperature evolution are simulated. The parameter file used is ``warming-up-viscous-fluid.prm``.
 
 The following schematic describes the simulation.
@@ -33,19 +42,18 @@ The following schematic describes the simulation.
 .. important:: 
     The whole simulation is carried out in the frame of one-way coupling: the fluid velocity influences the heat generated through viscous dissipation, but the heat transfer does not influence the fluid velocity. Moreover, fluid state changes are not considered.
 
-Parameter file
+
+---------------
+Parameter File
 ---------------
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 Time integration is defined by a 2nd order backward differentiation (``bdf2``), for a 7.0 seconds simulation (``time end``) with a 0.05 second ``time step``, as stated in the subsection ``simulation control``:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf2
       set time step        = 0.05
@@ -64,25 +72,19 @@ The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` a
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # FEM
-    #---------------------------------------------------
     subsection FEM
       set velocity order    = 1
       set pressure order    = 1
       set temperature order = 2
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 The fluid's ``physical properties`` are defined in the following subsection, according to the properties of oil.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       subsection fluid 0
         set density              = 0.9
@@ -103,9 +105,6 @@ The ``mesh`` considered is a very basic rectangle, using the ``dealii`` grid typ
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = hyper_rectangle
@@ -123,15 +122,12 @@ The ``multiphysics`` subsection enable to turn on (``true``) and off (``false``)
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer       = true
       set viscous dissipation = true
     end
 
-Analytical solution
+Analytical Solution
 ~~~~~~~~~~~~~~~~~~~
 
 The ``analytical solution`` is defined, according to the fluid and simulation properties:
@@ -143,9 +139,6 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Analytical Solution
-    #---------------------------------------------------
     subsection analytical solution
       set enable    = true
       set verbosity = verbose
@@ -158,7 +151,7 @@ with :math:`x` the axis perpendicular to the plates, :math:`\rho` the density, :
       end
     end
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` are set for:
@@ -168,9 +161,6 @@ The ``boundary conditions`` are set for:
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 2
       subsection bc 0
@@ -204,7 +194,9 @@ The ``boundary conditions`` are set for:
       end
     end
 
-Running the simulation
+
+-----------------------
+Running the Simulation
 -----------------------
 
 The simulation is launched in the same folder as the ``.prm`` file, using the ``gls_navier_stokes_2d`` solver. It takes only about 5 seconds with one cpu:
@@ -213,6 +205,8 @@ The simulation is launched in the same folder as the ``.prm`` file, using the ``
     
     ../../exe/bin/gls_navier_stokes_2d warming-up-viscous-fluid.prm
 
+
+--------------
 Results
 --------------
 
@@ -251,25 +245,23 @@ Temperature evolution over time:
     :height: 15cm
     :align: center
 
-
-Physical interpretation
+Physical Interpretation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 From :math:`t=0s` to :math:`t=2s`, the right plate (:math:`T=80^\circ`) heats up the fluid (initially at :math:`T=0^\circ`). At :math:`t=2s`, the temperature is quasi-homogeneous in the fluid, with :math:`T=80^\circ`. As the fluid continues to be forced to flow at the right wall, viscous dissipation generates more heat, so that the wall with a fixed temperature of :math:`T=80^\circ` now cools down the fluid. A steady state between viscous dissipation heating and the fixed temperature cooling is reached at about :math:`t=4.5s`.
 
+
+--------------
 Bonuses
 --------------
 
-Results for water
+Results for Water
 ~~~~~~~~~~~~~~~~~
 
 For water, ``physical properties`` are:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       subsection fluid 0
        set density              = 1
@@ -300,7 +292,7 @@ As water has a higher thermal conductivity than oil, the temperature becomes qua
     :width: 30%
 
 
-Results without viscous dissipation
+Results without Viscous Dissipation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The viscous dissipation can be disabled physically, if the two plates remain fixed (``v=0`` for ``bc 1``), or numerically with ``set viscous dissipation = false``. Both cases give the same results shown below. The fluid considered is still water.
@@ -324,8 +316,7 @@ After the fluid has been heated up by the right plate, the temperature is really
     :alt: Rescaled domain with temperature (t = 7)
     :width: 30%
 
-
-Horizontal domain
+Horizontal Domain
 ~~~~~~~~~~~~~~~~~
 
 Several adjustments have to be made in the `.prm` to turn the domain clockwise, so that it becomes horizontal, with the upper wall being the no slip and thermal insulation boundary condition, and the lower wall with the flow in the y-direction (:math:`v=2`) and heating at Tw:
@@ -377,7 +368,8 @@ Several adjustments have to be made in the `.prm` to turn the domain clockwise, 
 	* the index in ``set id = ..`` is coherent with the ``id`` of the boundary in the mesh (here, the deal.II generated mesh).
 
 
-Possibilities for extension
+----------------------------
+Possibilities for Extension
 ----------------------------
 
 * Study the **sensitivity to the time step**, namely to assess how large the ``time step`` can be before stating any difference in the heat transfer solution.

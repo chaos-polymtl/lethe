@@ -1,29 +1,28 @@
+===================
 FEM Reconstruction
--------------------
+===================
 
 In this subsection, the parameters used for ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications are defined.
 Here are the default values:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # FEM reconstruction parameters
-    #---------------------------------------------------
-    subsection fem reconstruction
-        set mesh type                           = dealii
-        set mesh filename                       = none
-        set z subdivisions                      = 1
-        set mesh refinement                     = 0
-        set l2 projection before reconstruction = false
-        set experimental counts file            = none
-        set export positions file               = none
-        set search extrapolation limit          = 0.005
-        set cost function type                  = relative
-        set dof handler file                    = none
-        set nodal counts file                   = none
-        set search type                         = local
-        set search cell proximity level         = 1
-        set verbose clock                       = false
+  subsection fem reconstruction
+    set mesh type                           = dealii
+    set mesh filename                       = none
+    set z subdivisions                      = 1
+    set mesh refinement                     = 0
+    set l2 projection before reconstruction = false
+    set experimental counts file            = none
+    set export positions file               = none
+    set search extrapolation limit          = 0.005
+    set cost function type                  = relative
+    set dof handler file                    = none
+    set nodal counts file                   = none
+    set search type                         = local
+    set search cell proximity level         = 1
+    set verbose clock                       = false
+  end
 
 For both ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` applications, we have to define the mesh:
 

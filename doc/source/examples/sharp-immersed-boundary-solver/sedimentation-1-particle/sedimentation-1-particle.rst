@@ -1,5 +1,5 @@
 ==============================================================================
-Sedimentation of one particle
+Sedimentation of One Particle
 ==============================================================================
 
 This example aims to numerically reproduce the results obtained by Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_ for the E4 experience. This experience measures the velocity of the sedimentation of a 1.5 cm particle in a container filled with a viscous fluid. The container is sufficiently small to impact the particle sedimentation.
@@ -7,21 +7,29 @@ This example aims to numerically reproduce the results obtained by Ten Cate `et 
 
 .. warning:: 
     * This case is a computationally expensive example. It can take several hours to run.
-    * This case is designed with the upcomming IB_contact_and_stability features.
-    
+    * This case is designed with the upcoming IB_contact_and_stability features.
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1-Q1)
 - Transient problem
 - Displays the capability of the resolved CFD-DEM solver for the flow around one particle
 
-Files used in this example
----------------------------
- ``/examples/sharp-immersed-boundary-solver/sedimentation-1-particle/sedimentation-1-particle.prm``
 
-Description of the case
+---------------------------
+Files Used in This Example
+---------------------------
+
+- ``/examples/sharp-immersed-boundary-solver/sedimentation-1-particle/sedimentation-1-particle.prm``
+
+
 -----------------------
+Description of the Case
+-----------------------
+
 The E4 experiment consists in the release of a particle made of Nylon (:math:`\rho_p=0.001120 \frac{\text{kg}}{\text{cm}^{3}}`)  with a diameter of 1.5cm. The center of the particle is located 12.75 cm above the bottom of a 10x16x10 cm container. The viscosity of the fluid is :math:`\mu_f=0.00058 \frac{\text{kg}}{\text{s cm}}` which is equivalent to :math:`\mu_f=0.058 \frac{\text{N s}}{\text{m}^{2}}`. The density of the fluid is :math:`\rho_f=0.000960 \frac{\text{kg}}{\text{cm}^{3}}`. The gravity constant is :math:`g= -981 \frac{\text{cm}}{\text{s}^{2}}`. The particle accelerates due to gravity until it hits the bottom of the container, at which point we stop the simulation.
 
 .. note:: 
@@ -29,12 +37,14 @@ The E4 experiment consists in the release of a particle made of Nylon (:math:`\r
     
 All the container walls have no-slip boundary conditions except at the top of the container, where we define an open boundary.
 
-Parameter file
+
+---------------
+Parameter File
 ---------------
 
 We explain every part of this prm file in detail. In each section of the parameter file, we describe relevant parameters. The omitted parameters are only user preference parameters and do not impact the simulation results. For more detail on these parameter we suggest visiting the :doc:`../../../parameters/parameters`.
  
-Simulation and IO control
+Simulation and IO Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -57,10 +67,7 @@ Simulation and IO control
 
 * The ``time end`` is set to  1.3. This is slightly longer than the experimental results of Ten Cate `et al.` `[1] <https://doi.org/10.1063/1.1512918>`_. This ensures that the entire trajectory of the particle has been simulated.
 
-
-
-
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -106,8 +113,8 @@ The domain is a rectangular box as such we can directly use a subdivided hyper r
 * The ``initial refinement`` is set to 1. This will ensure to have a base mesh that is a bit smaller than the particle.
 
 
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 .. code-block:: text
 
     subsection mesh adaptation
@@ -150,9 +157,7 @@ Mesh adaptation control
 * The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
 
-
-
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -187,7 +192,7 @@ Here we define the 5 ``no slip`` boundary for all the box walls and let the boun
 	The boundary id of dealii rectangular mesh are numbered as such:  :math:`x_{min}=0`, :math:`x_{max}=1`, :math:`y_{min}=2`, :math:`y_{max}=3`, :math:`z_{min}=4`, :math:`z_{max}=5`.
 
 
-Initial condition
+Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -201,8 +206,8 @@ Initial condition
 
 The initial condition for this case is simple to define. At the start of the simulation, we assume that the particle and the fluid are at rest. From there, we define a uniform velocity field of 0 everywhere. To do that, we used the ``type = nodal`` and then specified a function expression of 0 for all the velocity components.  
 
-Non-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -226,8 +231,8 @@ Non-Linear solver control
 	* reevaluate the RHS to check the convergence.
 	
 	
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 .. code-block:: text
 
     subsection linear solver
@@ -252,7 +257,7 @@ Linear solver control
 
 * The ``ilu preconditioner fill`` is set to 0. This means that we have a Jacobi preconditioner. This is the cheapest option. In this case, we are able to use this option without having to do too many ``gmres`` iterations. It requires less computational time to do a few more  ``gmres`` iterations than building the preconditioner and doing fewer ``gmres`` iterations.
 
-IB particles
+IB Particles
 ~~~~~~~~~~~~~~
 .. code-block:: text
 
@@ -319,8 +324,10 @@ The following parameters are defined in the particle subsection.
 * The ``density`` is set to 0.001120. This is according to the definition of the case.
 
 
+---------------
 Results
 ---------------
+
 In this section we will briefly show some results of this simulation.
 
 First, we look at a slice of the velocity profile during the acceleration phase.
@@ -335,9 +342,10 @@ We can also compare the results obtained for the velocity in time with the resul
     :alt: flow_field_acceleration
     :align: center
 
+
+---------------
 Reference
 ---------------
-`[1] <https://doi.org/10.1063/1.1512918>`_ Ten Cate, A., Nieuwstad, C. H., Derksen, J. J., & Van den Akker, H. E. A. (2002). Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity. Physics of Fluids, 14(11), 4012-4025.`DOI <https://doi.org/10.1063/1.1512918>`_
 
-
+`[1] <https://doi.org/10.1063/1.1512918>`_ A. ten Cate, C. H. Nieuwstad, J. J. Derksen, and H. E. A. Van den Akker, “Particle imaging velocimetry experiments and lattice-Boltzmann simulations on a single sphere settling under gravity,” *Phys. Fluids*, vol. 14, no. 11, pp. 4012–4025, Oct. 2002, doi: 10.1063/1.1512918.
 

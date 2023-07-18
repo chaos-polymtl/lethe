@@ -1,14 +1,15 @@
+=====
 Timer
-~~~~~~~~
+=====
 
 The timer section controls the frequency at which the timing of the simulation is output. Setting ``type=iteration`` outputs the timing of all elements of the simulation at the end of each iteration. Setting its value to ``end`` outputs the timing of all elements only at the end of the simulation. The timing can be disabled completely, which is necessary for the unit and functional tests.
 
 .. code-block:: text
 
-   subsection timer
-   # Clock monitoring methods. Choices are none, iteration or end
-      set type = none
-   end
+  subsection timer
+    # Clock monitoring methods. Choices are none, iteration or end
+    set type = none
+  end
 
 
 The timer output in Lethe is an important mechanism to monitor the relative cost of the different functions. At every time step, the timing functions will report the time spent in each function.

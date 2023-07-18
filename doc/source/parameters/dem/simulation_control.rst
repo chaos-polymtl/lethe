@@ -1,5 +1,7 @@
+==================
 Simulation Control
--------------------
+==================
+
 The Simulation Control subsection of DEM simulations is identical to the `CFD <https://lethe-cfd.github.io/lethe/parameters/cfd/simulation_control.html>`_ in Lethe.
 
 .. note::
@@ -23,21 +25,21 @@ where :math:`{d_p}`, :math:`{\rho_p}`, :math:`{G}`, :math:`{\nu}` denote particl
 
 .. code-block:: text
 
- subsection simulation control
-  # DEM time-step 
-  set time step                         = 1e-5
+    subsection simulation control
+      # DEM time-step
+      set time step        = 1e-5
 
-  # Simulation end time
-  set time end                          = 0.2
+      # Simulation end time
+      set time end         = 0.2
 
-  # File output prefix
-  set output path                       = ./
+      # File output prefix
+      set output path      = ./
 
-  # Log frequency
-  set log frequency                     = 1000
+      # Log frequency
+      set log frequency    = 1000
 
-  # Output frequency
-  set output frequency                  = 10000
- end
+      # Output frequency
+      set output frequency = 10000
+    end
 
 

@@ -1,6 +1,9 @@
-Discret Element Method (DEM)
-############################
-*under construction*
+=============================
+Discrete Element Method (DEM)
+=============================
+
+.. warning::
+  *This page is under construction*
 
 In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Golshan, Munch, Gassmöller, Kronbichler & Blais (2022) `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
 
@@ -24,8 +27,8 @@ Where:
 * :math:`\mathbf{M}_i^\text{ext}` external torques;
 
 
-
-Contact force and torque models
+--------------------------------
+Contact Force and Torque Models
 --------------------------------
 
 The normal and tangential contact forces use linear or nonlinear viscoelastic models and are calculated as followed:
@@ -157,8 +160,11 @@ The tangential overlap is calculated with the tangential force with no damping f
 
 Regarding the particle-wall contacts, applied models are the same than particle-particle contacts with a background triangulation and mapping with walls.
 
-Integration methods
+
 --------------------
+Integration Methods
+--------------------
+
 Two types of integration methods are implemented in Lethe-DEM:
 
 * Explicit Euler method;
@@ -178,9 +184,10 @@ And velocity Verlet method is calculated with half-step velocity as:
     \mathbf{v}_{i}^{n+1} &= \mathbf{v}_{i}^{n+\frac{1}{2}} + \mathbf{a}_{i}^{n+1}\frac{dt}{2}
 
 
-
+-------------
 References
 -------------
+
 `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ Golshan et al. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Computational Particle Mechanics (2022) p.1-20
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.

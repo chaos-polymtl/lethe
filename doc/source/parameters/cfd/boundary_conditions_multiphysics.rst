@@ -14,22 +14,22 @@ The default parameters for ``temperature`` and ``convection-radiation`` are show
 
 .. code-block:: text
 
-    subsection boundary conditions heat transfer
-    set number                  = 2
-        subsection bc 0
-	    set id 		= 0
-            set type	        = temperature
-            set value	        = 0
-        end
-        subsection bc 1
-	    set id 		= 1
-            set type		= convection-radiation
-            set h 		= 0
-            set Tinf 		= 0
-            set emissivity  	= 0
-        end
-        set Stefan-Boltzmann constant = 0.000000056703
+  subsection boundary conditions heat transfer
+    set number = 2
+    subsection bc 0
+      set id    = 0
+      set type  = temperature
+      set value = 0
     end
+    subsection bc 1
+      set id         = 1
+      set type       = convection-radiation
+      set h          = 0
+      set Tinf       = 0
+      set emissivity = 0
+    end
+    set Stefan-Boltzmann constant = 0.000000056703
+  end
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
@@ -66,16 +66,16 @@ For tracer boundary conditions, the defaults parameters are:
 
 .. code-block:: text
 
-    subsection boundary conditions tracer
-    set number                  = 1
-        subsection bc 0
-	        set id 		= 0
-                set type        = dirichlet
-                subsection dirichlet
-                    set Function expression = 0
-                end
-        end
+  subsection boundary conditions tracer
+    set number = 1
+    subsection bc 0
+      set id   = 0
+      set type = dirichlet
+      subsection dirichlet
+        set Function expression = 0
+      end
     end
+  end
 
 * ``number``: This is the number of boundary conditions of the problem. 
 
@@ -91,24 +91,24 @@ For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none
 
 .. code-block:: text
 
-    subsection boundary conditions VOF
-    set number                  = 3
-        subsection bc 0
-            set id 		= 0
-            set type	        = none
-        end
-        subsection bc 1
-            set id 		= 1
-            set type		= peeling/wetting
-        end
-        subsection bc 2
-            set id 		= 2
-            set type		= dirichlet
-            subsection dirichlet
-                set Function expression = 0
-            end
-        end
+  subsection boundary conditions VOF
+    set number = 3
+    subsection bc 0
+      set id   = 0
+      set type = none
     end
+    subsection bc 1
+      set id   = 1
+      set type = peeling/wetting
+    end
+    subsection bc 2
+      set id   = 2
+      set type = dirichlet
+      subsection dirichlet
+        set Function expression = 0
+      end
+    end
+  end
 
 .. warning::
     The ``number`` of boundary conditions must be specified explicitly. This is often a source of error.

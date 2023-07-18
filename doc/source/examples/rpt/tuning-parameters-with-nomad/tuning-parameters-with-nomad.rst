@@ -1,34 +1,37 @@
 =======================================================
-Tuning count calculation model parameters with NOMAD
+Tuning Count Calculation Model Parameters with NOMAD
 =======================================================
 
-
-In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbox optimization software is used to estimate the unknown variables of the `Beam et al. (1978) <https://www.sciencedirect.com/science/article/abs/pii/0029554X78900812?via%3Dihub>`_ model. The three unknowns of our studied system are:
+In this example, `NOMAD <https://www.gerad.ca/en/software/nomad/>`_, the blackbox optimization software is used to estimate the unknown variables of the Beam *et al.* (1978) `[1] <https://doi.org/10.1016/0029-554X(78)90081-2>`_ model. The three unknowns of our studied system are:
 
 - the detector's ``dead time`` (:math:`\tau`)
 - the source's ``activity`` (:math:`R`), and
 - the reactor's attenuation coefficient (``attenuation coefficient reactor`` (:math:`\mu_r`)).
 
-
+----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``rpt_3d``
 - Displays the use of NOMAD to calibrate the parameters of the Beam model
 
 
-Files used in this example
 ---------------------------
-- Parameter file for tuning parameters: ``examples/rpt/parameters-tuning/rpt-parameters.prm``
-- Parameter file for calculating photon counts: ``examples/rpt/parameters-tuning/rpt-count-calculation.prm``
-- File containing particle positions: ``examples/rpt/parameters-tuning/positions.particle``
+Files Used in This Example
+---------------------------
+
 - File containing experimental particle counts: ``examples/rpt/parameters-tuning/counts.experimental``
 - File containing detector positions: ``examples/rpt/parameters-tuning/positions.detector``
+- File containing particle positions: ``examples/rpt/parameters-tuning/positions.particle``
+- Parameter file for calculating photon counts: ``examples/rpt/parameters-tuning/rpt-count-calculation.prm``
+- Parameter file for tuning parameters: ``examples/rpt/parameters-tuning/rpt-parameters.prm``
 - Python script for NOMAD: ``examples/rpt/parameters-tuning/rpt_lethe_nomad.py``
-- Text file used when running NOMAD: ``examples/rpt/parameters-tuning/param-nomad.txt``
 - Python script for post-processing the data: ``examples/rpt/parameters-tuning/rpt_parameter_tuning_plot.py``
+- Text file used when running NOMAD: ``examples/rpt/parameters-tuning/param-nomad.txt``
 
 
-Description of the case
+-------------------------
+Description of the Case
 -------------------------
 In this example, using the NOMAD optimization software and the experimental data, we are going to tune the three unknowns (:math:`R, \tau`, and :math:`\mu_r`) of our studied system.
 
@@ -88,22 +91,21 @@ And
 
 where :math:`\mu_d` is the detector's attenuation coefficient and :math:`d(\alpha_j,\theta_j)` is the length of the path traveled by the photon inside the detector.
 
-Parameter files
+
+----------------
+Parameter Files
 ----------------
 
-*rpt-parameters.prm* file
+*rpt-parameters.prm* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-RPT parameters
+RPT Parameters
 ^^^^^^^^^^^^^^^^
 
 As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel`), in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the :doc:`../../../parameters/rpt/rpt_parameters` documentation page.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # RPT Monte Carlo technique
-    #---------------------------------------------------
     subsection rpt parameters
       set particle positions file          = positions.particle
       set verbosity                        = quiet
@@ -123,16 +125,13 @@ As seen in the previous example (:doc:`../photon-count-calculation-in-a-cylindri
     ``verbosity`` **must** be set to **quiet** since NOMAD gets the cost function value from the terminal for its MADS algorithm.
 
 
-Parameter tuning
+Parameter Tuning
 ^^^^^^^^^^^^^^^^^^
 
 In the subsection ``parameter tuning``, we enable parameters tuning, we specify a type of cost function and define a set of experimental counts to compare with the calculated counts. Parameters used for the tuning of the model parameters are described in the :doc:`../../../parameters/rpt/parameter_tuning` documentation page.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Tuning with NOMAD
-    #---------------------------------------------------
     subsection parameter tuning
       set tuning                 = true
       set cost function type     = larachi
@@ -147,9 +146,6 @@ In the subsection ``detector parameters``, we specify the file that contains the
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Detector parameters
-    #---------------------------------------------------
     subsection detector parameters
       set detector positions file         = positions.detector
       set radius                          = 0.0381
@@ -159,7 +155,7 @@ In the subsection ``detector parameters``, we specify the file that contains the
       set attenuation coefficient reactor = 10
     end
 
-*param-nomad.txt* file
+*param-nomad.txt* File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``param-nomad.txt`` file is used when running NOMAD. This file provides initial guess and constraints when defining the optimization problem. These parameters are defined using specific keywords as explained in the `NOMAD User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/GettingStarted.html#provide-parameters>`_.
@@ -187,8 +183,10 @@ The ``param-nomad.txt`` file is used when running NOMAD. This file provides init
 .. note::
     In this example, we use version 4.2.0 of NOMAD. You can get it by clicking on the **Download** button of `the software's web page <https://www.gerad.ca/en/software/nomad>`_ and filling out the required information. The steps to follow for the installation are specified in the `NOMAD 4 User Guide <https://nomad-4-user-guide.readthedocs.io/en/latest/Installation.html>`_.
 
-Running the simulation
-----------------------------------
+
+----------------------
+Running the Simulation
+----------------------
 
 Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may run NOMAD by typing :
 
@@ -198,8 +196,9 @@ Assuming that ``rpt_3d`` and ``nomad`` executables are within your path, you may
 
 NOMAD will then execute the Python script (``rpt_lethe_nomad.py``) which is specified in the ``param-nomad.txt`` file. The Python script ``rpt_nomad_lethe.py`` proceeds the values of parameters to tune given by NOMAD, modifies the parameter file for Lethe, and runs the ``rpt_3d`` application. ``rpt_3d`` of Lethe executes the Monte Carlo ray model and calculates a cost function which is caught by NOMAD through the terminal. NOMAD executes its MADS algorithm and generates a new set of parameters until a terminating criterion is reached.
 
-Results
---------
+-----------------------
+Results and Discussion
+-----------------------
 
 After running the optimization software, the best feasible solution will be displayed on the terminal.
 
@@ -252,10 +251,12 @@ To visualize the data and obtain the figures shown below, a Python script (``rpt
 
     Linear fit
 
+
+-----------
 References
 -----------
 
-[1] Beam, G.B., Wielopolski, L., Gardner,  R.P., & Verghese, K. (1978). Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources. *Nuclear Instruments and Methods*. 154(3), 501-508. https://doi.org/10.1016/0029-554X(78)90081-2
+`[1] <https://doi.org/10.1016/0029-554X(78)90081-2>`_ G. B. Beam, L. Wielopolski, R. P. Gardner, and K. Verghese, “Monte Carlo calculation of efficiencies of right-circular cylindrical NaI detectors for arbitrarily located point sources,” *Nucl. Instrum. Methods*, vol. 154, no. 3, pp. 501–508, Sep. 1978, doi: 10.1016/0029-554X(78)90081-2.
 
-[2] Larachi, F., Kennedy, G., & Chaouki, J. (1994). A γ-ray detection system for 3-D particle tracking in multiphase reactors. *Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment*. 338(2), 568-576. https://doi.org/10.1016/0168-9002(94)91343-9
+`[2] <https://doi.org/10.1016/0168-9002(94)91343-9>`_ F. Larachi, G. Kennedy, and J. Chaouki, “A γ-ray detection system for 3-D particle tracking in multiphase reactors,” *Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip.*, vol. 338, no. 2, pp. 568–576, Jan. 1994, doi: 10.1016/0168-9002(94)91343-9.
 

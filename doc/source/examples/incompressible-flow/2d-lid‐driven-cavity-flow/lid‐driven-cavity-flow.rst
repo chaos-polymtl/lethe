@@ -1,42 +1,53 @@
 ==================================
-Lid-driven cavity flow
+Lid-Driven Cavity Flow
 ==================================
 
-This is the first Lethe example. It showcases a classical fluid mechanics problem, the lid-driven cavity. This example also introduces the concept of parameter files to parametrize Lethe simulations.
+This example showcases a classical fluid mechanics problem, the lid-driven cavity. This example also introduces the concept of parameter files to parametrize Lethe simulations.
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the use of adjoint time-stepping for steady-state problems
 
 
-Files used in this example
 ----------------------------
-- Base case (:math:`Re=400`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
-- Higher-Reynolds case (:math:`Re=7500`) : ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/cavity.prm``
+Files Used in This Example
+----------------------------
+
+- Base case parameter file (:math:`Re=400`): ``/examples/incompressible-flow/2d-lid-driven-cavity/cavity.prm``
+- Experimental data file from Ghia `et al.` (1982) `[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_: ``examples/incompressible-flow/2d-lid-driven-cavity/ref-2d-ghia-u.txt``
+- Experimental data file from Erturk `et al.` (2005) `[2] <https://doi.org/10.1002/fld.953>`_: ``examples/incompressible-flow/2d-lid-driven-cavity/ref-2d-erturk-u.txt``
+- Higher-Reynolds case parameter file (:math:`Re=7500`): ``/examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/cavity.prm``
+- Python script for postprocessing the :math:`Re=400` case: ``examples/incompressible-flow/2d-lid-driven-cavity/post_process_Reynolds_400.py``
+- Python script for postprocessing the :math:`Re=7500` case: ``examples/incompressible-flow/2d-lid-driven-cavity/Reynolds_7500/post_process_Reynolds_7500.py``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
-The lid-driven cavity is a classical fluid dynamics problem . It consists in the flow in an enclosed cavity, where one of the walls (in this example, the top wall) is put in motion at a constant tangential velocity. This case is often used to benchmark the capacity of CFD software because of the simplicity of its geometry and the availability of multiple reference results over a large range of Reynolds numbers. In this example, we investigate this problem in 2D, but simulating this case in 3D would require only a few changes. The geometry and boundary conditions are illustrated in the following figure:
+The lid-driven cavity is a classical fluid dynamics problem. It consists of a flow in an enclosed cavity, where one of the walls (in this example, the top wall) is put in motion at a constant tangential velocity. This case is often used to benchmark the capacity of CFD software because of the simplicity of its geometry and the availability of multiple reference results over a large range of Reynolds numbers. In this example, we investigate this problem in 2D, but simulating this case in 3D would require only a few changes. The geometry and boundary conditions are illustrated in the following figure:
 
 .. image:: images/geo.png
     :alt: The geometry and boundary conditions
     :align: center
     :name: geometry
+    :width: 500
 
-Only the upper wall boundary moves in the x direction with a constant velocity (:math:`u = 1` m/s) while the other boundaries are static. We will discuss later in this example the meaning of the ID of the boundary conditions used in this figure.
+Only the upper wall boundary moves in the x direction with a constant velocity (:math:`u = 1 \ \text{m/s}`) while the other boundaries are static. We will discuss later in this example the meaning of the ID of the boundary conditions used in this figure.
 
 We first investigate this case at a Reynolds number of 400 for which a steady-state solution can be easily obtained. Later, we will increase this Reynolds number to 7500 and leverage some of the advanced functionalities of Lethe to reach a steady-state solution. 
 
 
-
-Parameter file
+--------------
+Parameter File
 --------------
 
-Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.ii library from which Lethe derives. For more information on this class, we refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_. 
+Lethe simulations are controlled by *parameter files* which possess the extension ``.prm``. This is the default text format of the ParameterHandler class of the deal.ii library from which Lethe derives. For more information on this class, you may refer to the `deal.II documentation <https://www.dealii.org/current/doxygen/deal.II/classParameterHandler.html>`_.
 
 Parameter files are made of subsections which describe a portion of the simulation (e.g. mesh generation, physical properties, simulation control). In parameter files, lines starting with ``#`` are comments. Parameters are set using the following syntax:
 
@@ -44,10 +55,9 @@ Parameter files are made of subsections which describe a portion of the simulati
 
     set parameter name = value
 
-The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. For a full list of the parameters within Lethe, we refer to the parameter page.
+The syntax is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. For a full list of the parameters within Lethe, we refer to the :doc:`parameter page <../../../parameters/parameters>`.
 
 To set-up the lid-driven cavity case, we first need to establish the mesh used for the simulation.
-
 
 Mesh
 ~~~~~
@@ -65,14 +75,13 @@ The ``mesh`` subsection specifies the computational grid:
 
 The ``type`` specifies the mesh format used. At the moment, Lethe supports two mesh formats: ``dealii`` and ``gmsh``. ``dealii`` meshes are in-situ generated meshes for simple geometries. The type of grid generated is specified by the ``grid type`` parameters and this grid is parametrized by it's ``grid arguments``. We refer to the documentation of the deal.ii `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ for a detailed explanation of the available grids. 
 
-Since the lid-driven cavity problem domain is a square, we use the *hyper_cube* ``grid_type``. The arguments of this grid type are the position of the bottom left corner, the position of the top right corner and the option to colorize the boundaries in order to give each of them a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. The ID given to each face was given in the graphical description of the case. If ``colorize`` option were set to false, all boundaries would have been given the ID ``0``.
+Since the lid-driven cavity problem domain is a square, we use the ``hyper_cube`` ``grid_type``. The arguments of this grid type are the position of the bottom left corner, the position of the top right corner and the option to colorize the boundaries in order to give each of them a unique ID. The IDs will be used to set the boundary conditions on specific parts of the boundary of the domain. The ID given to each face was given in the graphical description of the case. If ``colorize`` option were set to false, all boundaries would have been given the ID ``0``.
 
 It is a bit surprising that the position of the bottom left and the top right corner are specified by a single value. Since the geometry is a square, the position of the corner is specified using a single number, assuming that this identifies both the x and y value associated with that point. Other grid generators, such as the ``hyper_rectangle``, allow for more flexibility.
 
-The last parameter specifies the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. For example, the *hyper_cube* mesh is made of a single cell. Indicating an ``initial refinement=6`` implies that the initial mesh is refined 6 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of :math:`2^{(2\cdot6)}=4096` cells.
+The last parameter specifies the ``initial refinement`` of the grid. Most deal.ii grid generators contain a minimal number of cells. For example, the ``hyper_cube`` mesh is made of a single cell. Indicating an ``initial refinement=6`` implies that the initial mesh is refined 6 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of :math:`2^{(2\cdot6)}=4096` cells.
 
-
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` subsection establishes the constraints on different parts of the domain:
@@ -107,8 +116,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 
 First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The left (``0``), right (``1``) and bottom (``2``) walls are static and, consequently, a ``noslip`` boundary condition can be used. This boundary condition imposes :math:`\mathbf{u} = [0,0]^T`. For the top wall, we use the ``function`` boundary type. This type of boundary condition allows us to define the value of the velocity components using ``Function expression``. We set :math:`u=1` and :math:`v=0`. Note that the ``Function expression`` supports writing complex mathematical expressions which may depend on the spatial coordinates (:math:`x,y,z`) and on time.
 
-
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 For the base case, we wish to simulate the lid-driven cavity at a Reynolds number of 400. Since the characteristic dimension of the cavity is :math:`L=1` and the velocity of the top boundary is :math:`u=1`, the Reynolds number is :math:`Re=\frac{1}{\nu}` where :math:`\nu` is the kinematic viscosity. The kinematic viscosity is set by the ``physical properties`` subsection:
@@ -123,8 +131,7 @@ For the base case, we wish to simulate the lid-driven cavity at a Reynolds numbe
 
 By default, simulations only contain a single fluid which is labeled ``0``.
 
-
-FEM interpolation
+FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
 Lethe supports the use of arbitrary interpolation order. The default solver for this case is ``gls_navier_stokes_2d`` which uses a stabilized method and supports equal order interpolation. 
@@ -141,8 +148,8 @@ We specify the interpolation order for both pressure and velocity using the ``FE
 .. warning:: 
     An alternative would be to use the ``gd_navier_stokes_2d`` solver; for `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 
 
-Non-linear solver parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 Lethe is an implicit CFD solver. Consequently, each time-step requires the solution of a non-linear system of equations. By default, Lethe uses a Newton solver for which a ``tolerance`` must be specified:
 
@@ -155,8 +162,8 @@ Lethe is an implicit CFD solver. Consequently, each time-step requires the solut
 
 The ``verbosity`` option specifies if details about the non-linear solver steps (residual value and iteration number) will be printed out to the terminal. By setting it to ``verbose``, this information is printed out, whereas ``quiet`` would mute all outputs of the non-linear solver. We recommend to always set ``verbosity=verbose`` in order to monitor possible non-convergence of the solver.
 
-Linear solver parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 Each non-linear solver step requires the solution of a linear system of equations. Lethe has multiple options to parametrize its linear solvers, but here, we only enable its verbosity to monitor the number of iteration per time step and use the default parameters for the rest. 
 
@@ -172,10 +179,10 @@ Each non-linear solver step requires the solution of a linear system of equation
     set verbosity = verbose
   end
 
-Simulation control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
-The last subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . In this example, it is only used to specify the name of the output files:
+The last subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control``. In this example, it is only used to specify the name of the output files:
 
 .. code-block:: text
 
@@ -184,18 +191,25 @@ The last subsection, which is generally the one we put at the top of the paramet
     set output name = output_cavity
   end
 
-Running the simulation
-----------------------
+
+-----------------------
+Running the Simulations
+-----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
   gls_navier_stokes_2d cavity.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
+Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
-Base case results (Re=400)
----------------------------
+
+-----------------------
+Results and Discussion
+-----------------------
+
+Base Case (:math:`Re=400`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
@@ -214,10 +228,8 @@ We note that the agreement is perfect. This is not surprising, especially consid
 .. note:: 
     The vtu files generated by Lethe are compressed archives. Consequently, they cannot be postprocessed directly. Although they can be easily post-processed using Paraview, it is sometimes necessary to be able to work with the raw data. The python library `PyVista <https://www.pyvista.org/>`_  allows us to do this.
 
-
-
-Higher-Reynolds case results (Re=7500)
----------------------------------------
+Higher-Reynolds Case (:math:`Re=7500`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We now consider the case at a Reynolds number of 7500. At this value of the Reynolds number, the ``steady`` solver will generally not converge as the problem is too non-linear (or too stiff). A workaround for this issue is to use an adjoint time-stepping strategy. This strategy consists in transforming the steady-state problem into a transient problem and to use an increasingly large time-step to reach a steady-state solution. This method is called ``steady_bdf`` in Lethe.
 
@@ -246,10 +258,6 @@ The ``adapt`` parameter allows dynamic time-step adaptation. This feature is als
 
 where :math:`\alpha` is the ``adaptative time step scaling`` .
 
-
-Results
-~~~~~~~~~
-
 We first carry out the simulations with an initial refinement 7. Using Paraview, the steady-state velocity profile and the streamlines can be visualized:
 
 .. image:: images/result-re-7500.png
@@ -268,7 +276,7 @@ Using a similar python script, we can compare the results obtained with those fr
     :alt: re_7500_comparison_mesh_7
     :align: center
 
-Increasing the number of cells by a factor 4 (to ~65k) allows for an even slightly better agreement.
+Increasing the number of cells by a factor 4 (to :math:`\approx` 65k cells) allows for an even slightly better agreement.
 
 .. image:: images/re-7500-mesh-8/lethe-ghia-re-7500-comparison.png
     :alt: re_7500_comparison_mesh_8
@@ -279,14 +287,21 @@ Increasing the number of cells by a factor 4 (to ~65k) allows for an even slight
     :align: center
 
 
-Possibilities for extension
+----------------------------
+Possibilities for Extension
 ----------------------------
 
-- **Validate at even higher Reynolds numbers:** The Erturk 2005 data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping ``steady_bdf`` scheme. 
+- **Validate at even higher Reynolds numbers:** The Erturk `[2] <https://doi.org/10.1002/fld.953>`_ data within the example investigates this case up to a Reynolds number of 20000.  It is an interesting exercise to simulate these more complex cases using the adjoint time-stepping ``steady_bdf`` scheme.
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
 
 - **Dynamic mesh adaptation:** Lethe supports dynamic mesh adaptation. Running this case with dynamic mesh adaptation could potentially yield better results.
 
 
+-----------
+References
+-----------
 
+`[1] <https://doi.org/10.1016/0021-9991(82)90058-4>`_ U. Ghia, K. N. Ghia, and C. T. Shin, “High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method,” *J. Comput. Phys.*, vol. 48, no. 3, pp. 387–411, Dec. 1982, doi: 10.1016/0021-9991(82)90058-4.
+
+`[2] <https://doi.org/10.1002/fld.953>`_ E. Erturk, T. C. Corke, and C. Gökçöl, “Numerical solutions of 2-D steady incompressible driven cavity flow at high Reynolds numbers,” *Int. J. Numer. Methods Fluids*, vol. 48, no. 7, pp. 747–774, 2005, doi: 10.1002/fld.953.

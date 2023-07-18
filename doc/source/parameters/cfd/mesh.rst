@@ -1,5 +1,6 @@
+====
 Mesh
-------
+====
 This subsection provides information of the simulation geometry and its mesh. The simulation geometry shape and size, number of refinements and other required information can be provided here. It should be mentioned that meshes from gmsh can also be defined in this section by setting ``type = gmsh``.
 
 .. code-block:: text
@@ -14,12 +15,13 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # Grid arguments for dealii, cylinder and periodic_hills
     set grid type          = hyper_cube
     set grid arguments     = -1 : 1 : false
-  
+
     # Initial refinement of the mesh
     set initial refinement = 0
 
     # Indicates that the mesh is a simplex mesh
-    set simplex     = false
+    set simplex            = false
+  end
 
 * The following choices for the mesh type are available:
     * ``gmsh``: if this type is chosen, a ``.msh`` file generated from GMSH can be used. In this case, the grid file name must be specified in the ``file name`` variable.

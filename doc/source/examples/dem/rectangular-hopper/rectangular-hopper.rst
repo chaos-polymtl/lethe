@@ -1,11 +1,13 @@
 ==================================
-Rectangular hopper
+Rectangular Hopper
 ==================================
 
 This example simulates the filling and discharging of particles in a rectangular hopper.
 We set up this simulation based on the simulation of Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 The main example does not use periodic boundary conditions in the depth of the hopper like article, but an extended case, presented at the end, does.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
@@ -14,18 +16,21 @@ Features
 - Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
 - Periodic boundaries in DEM (see section :ref:`ref-periodic-hopper`)
 
-Files used in this example
+----------------------------
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-rectangular-hopper/hopper.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 This simulation consists of two stages: filling (0-4 s) and discharge (4-7.5 s) of particles. Anand et al. uses periodic boundaries in the z axis allowing to use a thin width for simulation.
-In the main exemple, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
+In the main example, we do not consider periodic boundaries. To minimize the impact of collision of particle with walls along the z axis, the width and the number of particle were multiplied by 6 (40740 particles instead of 6790). This corresponds to a width of 15 times the particle diameter.
 
-Parameter file
+--------------
+Parameter File
 --------------
 
 Mesh
@@ -63,7 +68,7 @@ The geometry follow the Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08
 
 
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
 An insertion box is defined inside and the top part of the hopper. The inserted number of particles per time step is chosen to be a factor of the total number of particle. In this case, 14 insertion steps are required to fill up the hopper with particles.
@@ -86,7 +91,7 @@ An insertion box is defined inside and the top part of the hopper. The inserted 
     end
 
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The total number of particles in this simulation is 40740. All particles have a diameter of 2.24 mm.
@@ -126,7 +131,7 @@ The following properties are chosen according to the Anand et al. paper :
     end
 
 
-Model parameters
+Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 Model parameters are based on the `Silo example <../silo/silo.html>`_.
@@ -150,7 +155,7 @@ Model parameters are based on the `Silo example <../silo/silo.html>`_.
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 The time end of the simulation is 7.5 where most of the particles are discharged and the DEM time step is 1e-5 s which corresponds to 2.9% of Rayleigh time step.
@@ -167,7 +172,7 @@ The time end of the simulation is 7.5 where most of the particles are discharged
     end
 
 
-Floating walls
+Floating Walls
 ~~~~~~~~~~~~~~
 
 Floating wall in this example is handled as explained in the `Silo example <../silo/silo.html>`_.
@@ -193,7 +198,8 @@ Floating wall in this example is handled as explained in the `Silo example <../s
     end
 
 
-Running the simulation
+----------------------
+Running the Simulation
 ----------------------
 This simulation can be launched by
 
@@ -201,6 +207,8 @@ This simulation can be launched by
 
   mpirun -np 8 dem_3d hopper.prm
 
+
+---------------
 Post-processing
 ---------------
 A Python post-processing code called ``hopper_post_processing.py`` is provided with this example. It is used to measure the flow rate of particles.
@@ -218,7 +226,9 @@ It is possible to run the post-processing code with the following line. The argu
 
   The ``hopper_post_processing.py`` uses the ``lethe_pyvista_tools.py`` module. For more information about the module, refer to the `Small rotating drum post-processing example <../small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html>`_
 
-Results post-processing
+
+-----------------------
+Results Post-processing
 -----------------------
 Mass flow rate results after post-processing and comparison with the results of Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ for the base case of the hooper with a 90° angle.
 
@@ -229,6 +239,7 @@ Mass flow rate results after post-processing and comparison with the results of 
 
     Mass discharge results.
 
+-------
 Results
 -------
 As seen in the following figure, the simulation was not run until all the particles are discharged in the bottom part.
@@ -244,7 +255,9 @@ The simulated mass discharging rate is 84.94 g/s.
 
 .. _ref-periodic-hopper:
 
-Case with periodic boundary conditions
+
+--------------------------------------
+Case with Periodic Boundary Conditions
 --------------------------------------
 Periodic boundary conditions feature was not implemented when this example was created. Since it is now, this example is now extended to show how to use it. The original case in Anand et al. `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ did use periodic boundaries.
 The modifications on the parameters of the previous example is the mesh thickness and the number of particles and also the addition of the boundary condition section.
@@ -271,7 +284,7 @@ The hopper in this case has the same shape with a depth reduces by a factor of 6
 
     Rectangular periodic hopper packed with particle before the discharge with a 3d view.
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The previous example did not need any parameters on a section for the boundary conditions since all walls are treated as solid boundaries by default.
@@ -291,7 +304,7 @@ The feature only works with one pair of periodic boundaries.
         end
     end
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The total number of particles of this simulation is 6790: 6 times less than the previous example.
@@ -321,7 +334,7 @@ The total number of particles of this simulation is 6790: 6 times less than the 
         set rolling friction wall        = 0.09
     end
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~
 
 Since the geometry of the mesh and the number of the particles are not the same, the insertion info have to be modified according to the new domain of the mesh with an inserted number of particles corresponding to the new number.
@@ -343,7 +356,7 @@ Since the geometry of the mesh and the number of the particles are not the same,
         set insertion random number seed                   = 20
     end
 
-Results comparison
+Results Comparison
 ~~~~~~~~~~~~~~~~~~
 Here is the comparison of the results from the original simulation with Lethe DEM, the simulation with periodic boundary conditions with Lethe and the results from Anand et al. paper.
 The simulated mass discharging rate is 85.09 g/s from the original simulation and 91.73 g/s with PBC. Also, the run time of the simulation goes from about 1 hours and 30 minutes to 10 minutes on 8 cores with an Intel i7-11700K.
@@ -356,6 +369,7 @@ The simulated mass discharging rate is 85.09 g/s from the original simulation an
     Comparison of mass discharge results from the 2 simulations and the journal article.
 
 
+---------
 Reference
 ---------
 `[1] <https://doi.org/10.1016/j.ces.2008.08.015>`_ Anand, A., Curtis, J. S., Wassgren, C. R., Hancock, B. C., & Ketterhagen, W. R. (2008). Predicting discharge dynamics from a rectangular hopper using the discrete element method (DEM). Chemical Engineering Science, 63(24), 5821-5830.

@@ -1,5 +1,5 @@
 ==========================
-Melting cavity
+Melting Cavity
 ==========================
 
 This example simulates a `two-dimensional gallium melting cavity`_. 
@@ -10,6 +10,7 @@ This example simulates a `two-dimensional gallium melting cavity`_.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Phase change (solid-liquid)
 - Buoyant force (natural convection)
@@ -18,13 +19,14 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/melting-cavity/melting-cavity.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 The melting of metals (gallium in this example) with natural convection within a cavity is a well-known benchmark. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -64,8 +66,11 @@ where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expan
 
 
 --------------
-Parameter file
+Parameter File
 --------------
+
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 2nd order backward differentiation scheme 
 `(bdf2)`, for a :math:`40000` s simulation time with an initial 
@@ -80,9 +85,6 @@ time step of :math:`0.1` second.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                       = bdf2
       set time end                     = 40000
@@ -95,28 +97,26 @@ time step of :math:`0.1` second.
       set output path                  = ./output/      
     end
 
+Multiphysics
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer  = true
       set buoyancy force = true
       set fluid dynamics = true
     end 
     
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 In the ``initial condition``, the initial velocity and initial temperature in the simulation domain are defined. The initial velocity is equal to zero as the block is in the solid phase at :math:`t = 0` s. The initial temperature is chosen slightly (0.1 :math:`^{\circ} C`) smaller than the melting point temperature.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Initial condition
-    #---------------------------------------------------
     subsection initial conditions
       set type = nodal
       subsection uvwp
@@ -127,13 +127,13 @@ In the ``initial condition``, the initial velocity and initial temperature in th
       end
     end
 
+Source Term
+~~~~~~~~~~~
+
 The ``source term`` subsection defines the gravitational acceleration. The value of the gravitational acceleration in this example is selected to satisfy the desired values of Ra and Gr numbers.
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -141,14 +141,14 @@ The ``source term`` subsection defines the gravitational acceleration. The value
       end
     end
 
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
+
 The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan-problem/stefan-problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
@@ -188,8 +188,9 @@ The solid block melts into liquid in this example, hence in the ``physical prope
       end
     end
 
+
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  
@@ -237,6 +238,7 @@ contains the simulation results. In post-processing, the position of the solid-l
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ Blais, B. and Ilinca, F., 2018. Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection. Computers & Fluids, 172, pp.564-581.
 
 `[2] <https://doi.org/10.1115/1.3246884>`_ Gau, C. and Viskanta, R., 1986. Melting and solidification of a pure metal on a vertical wall.

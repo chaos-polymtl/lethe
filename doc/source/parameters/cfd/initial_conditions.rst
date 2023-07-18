@@ -1,48 +1,50 @@
+==================
 Initial Conditions
--------------------
+==================
+
 It is often necessary to set-up complex initial conditions when simulating transient problems. Furthermore, setting a coherent initial condition can greatly help the convergence of steady-state problems. Lethe offers three different strategies to set initial conditions : Nodal (through a function), L2 projection (through a function) and viscous. The viscous strategy solves the same CFD problem but with a user-defined viscosity. This can allow the user to initialize the velocity field with a Stokes-like flow for which convergence can be obtained more easily.
 
 .. code-block:: text
 
- subsection initial conditions
-   # Type of initial conditions. Choices are L2projection, viscous or nodal
-   set type      = nodal
+  subsection initial conditions
+    # Type of initial conditions. Choices are L2projection, viscous or nodal
+    set type      = nodal
 
-   # viscosity for viscous initial conditions
-   set viscosity = 1
+    # viscosity for viscous initial conditions
+    set viscosity = 1
 
-   subsection uvwp
-     set Function expression = 0; 0; 0; 0
-   end
-
-   subsection VOF
-     set Function expression = if (x<0.5 & y<1, 1, 0)
-
-     subsection projection step
-       set enable           = false
-       set diffusion factor = 1
-     end
-
-   end
-
-   subsection temperature
-     set Function expression = 0
-   end
-   
-   subsection cahn hilliard
-     set Function expression = if (x<0.5 & y<1, 1, -1); 0
-   end
-
-   subsection ramp
-    subsection viscosity
-      set initial viscosity = 1.0
-      set iterations = 0
-      set alpha = 0.5
+    subsection uvwp
+      set Function expression = 0; 0; 0; 0
     end
-    subsection n
-      set initial n = 1.0
-      set iterations = 0
-      set alpha = 0.5
+
+    subsection VOF
+      set Function expression = if (x<0.5 & y<1, 1, 0)
+
+      subsection projection step
+        set enable           = false
+        set diffusion factor = 1
+      end
+    end
+
+    subsection temperature
+      set Function expression = 0
+    end
+
+    subsection cahn hilliard
+     set Function expression = if (x<0.5 & y<1, 1, -1); 0
+    end
+
+    subsection ramp
+      subsection viscosity
+        set initial viscosity = 1.0
+        set iterations        = 0
+        set alpha             = 0.5
+      end
+      subsection n
+        set initial n  = 1.0
+        set iterations = 0
+        set alpha      = 0.5
+      end
     end
   end
 
