@@ -2264,7 +2264,7 @@ namespace Parameters
       prm.declare_entry("youngs modulus",
                         "100000000",
                         Patterns::Double(),
-                        "The youngs modulus of particle in case of contact");
+                        "The Young's modulus of particle in case of contact");
       prm.declare_entry("poisson ratio",
                         "0.3",
                         Patterns::Double(),
@@ -2298,7 +2298,7 @@ namespace Parameters
         "number of particles",
         "1",
         Patterns::Integer(),
-        "The number of particles represented by IB. The maximal number of particles = 10 when defined individually. If particles are loaded from a file, this parameter is overridden, and there is no limit to the number of particles.");
+        "The number of particles represented by IB. The maximal number of particles is equal to 10 when defined individually. If particles are loaded from a file, this parameter is overridden, and there is no limit to the number of particles.");
 
       prm.declare_entry(
         "levels not precalculated",
@@ -2349,7 +2349,7 @@ namespace Parameters
           "initial refinement",
           "0",
           Patterns::Integer(),
-          "number of refinement around the particles before the start of the simulation ");
+          "Number of refinements around the particles before the start of the simulation ");
         prm.declare_entry(
           "refine mesh inside radius factor",
           "0.5",
@@ -2445,7 +2445,7 @@ namespace Parameters
             "wall youngs modulus",
             "100000000",
             Patterns::Double(),
-            "The wall youngs modulus if IB particles are in contact with it");
+            "The wall Young's modulus if IB particles are in contact with it");
 
           prm.declare_entry(
             "wall poisson ratio",

@@ -759,7 +759,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             {
               if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
-                  "Shape other than sphere cannot have their motion integrated through fluid-structure interaction");
+                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
               some_particles_are_coupled = true;
             }
         }
@@ -775,7 +775,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
             {
               if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
                 throw std::runtime_error(
-                  "Shape other than sphere cannot have their motion integrated through fluid-structure interaction");
+                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
               some_particles_are_coupled = true;
             }
         }
@@ -2096,7 +2096,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 }
               residual_velocity +=
                 (particles[p].impulsion) / particles[p].mass / dt;
-              // Approximate a diagonal Jacobian with a secant methods.
+              // Approximate a diagonal Jacobian with a secant method.
 
               double inverse_of_relaxation_coefficient_velocity =
                 -bdf_coefs[0] -
