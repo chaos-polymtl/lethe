@@ -1314,7 +1314,7 @@ solve_with_lsmg(SolverControl &            solver_control,
              mg_interface_out);
 }
 
-// Main class for a dummy vector-valued problem given by
+// Main class to solve the stokes vector-valued problem given by
 // -∇^2 u + ∇p = f_1 and ∇ · u = f_2 using Newton's method
 // and the matrix-free approach.
 template <int dim>
