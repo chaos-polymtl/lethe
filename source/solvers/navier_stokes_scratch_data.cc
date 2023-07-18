@@ -301,6 +301,7 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::calculate_physical_properties()
 {
+    std::cout<<"Calculating physical properties"<<std::endl;
   if (properties_manager.field_is_required(field::temperature) &&
       gather_temperature)
     {
@@ -420,6 +421,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
           if (gather_vof && !gather_cahn_hilliard)
             {
+
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
                   double filtered_phase_value = this->filtered_phase_values[q];

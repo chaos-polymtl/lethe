@@ -214,14 +214,15 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
   const unsigned int n_dofs     = scratch_data.n_dofs;
 
   // Copy data elements
-  auto &strong_residual_vec = copy_data.strong_residual;
+    auto &strong_residual_vec = copy_data.strong_residual;
   auto &local_rhs           = copy_data.local_rhs;
 
-  // Time steps and inverse time steps which is used for stabilization constant
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
+    // Time steps and inverse time steps which is used for stabilization constant
+    std::vector<double> time_steps_vector =
+            this->simulation_control->get_time_steps_vector();
+    const double dt  = time_steps_vector[0];
+    const double sdt = 1. / dt;
+
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
@@ -275,9 +276,9 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
 
-      // Calculation of the magnitude of the
-      // velocity for the stabilization parameter
-      const double u_mag = std::max(velocity.norm(), 1e-12);
+        // Calculation of the magnitude of the
+        // velocity for the stabilization parameter
+        const double u_mag = std::max(velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];

@@ -32,6 +32,7 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
+#include <deal.II/hp/fe_collection.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -923,6 +924,29 @@ public:
   enable_cahn_hilliard(const FiniteElement<dim> &fe,
                        const Quadrature<dim>    &quadrature,
                        const Mapping<dim>       &mapping);
+
+//    void
+//    enable_cahn_hilliard(const std::shared_ptr<FEValuesViews::Scalar<dim>>  & fe_view_phase,
+//                         const std::shared_ptr<FEValuesViews::Scalar<dim>>  & fe_view_potential,
+//                         const Quadrature<dim> &quadrature,
+//                         const Mapping<dim> &   mapping);
+
+//    void
+//    enable_cahn_hilliard(const FiniteElement<dim> &fe_phase,
+//                         const FiniteElement<dim> &fe_potential,
+//                         const Quadrature<dim> &quadrature,
+//                         const Mapping<dim> &   mapping);
+
+//  void
+//  enable_cahn_hilliard(const hp::FECollection<dim,dim>  & fe_collection,
+//                       const Quadrature<dim> &quadrature,
+//                       const Mapping<dim> &   mapping);
+
+//  void
+//  enable_cahn_hilliard(const FiniteElement<dim> &fe_phase,
+//                         const FiniteElement<dim> &fe_potential,
+//                         const Quadrature<dim> &quadrature,
+//                         const Mapping<dim> &   mapping);
 
 
   /** @brief Reinitialize the content of the scratch for CH

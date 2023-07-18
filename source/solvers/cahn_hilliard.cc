@@ -659,6 +659,7 @@ template <int dim>
 void
 CahnHilliard<dim>::setup_dofs()
 {
+  std::cout<<"hi"<<std::endl;
   FEValuesExtractors::Scalar phase_order(0);
   FEValuesExtractors::Scalar chemical_potential(1);
 
