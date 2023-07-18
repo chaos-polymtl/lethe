@@ -236,23 +236,34 @@ IB Particles
 .. code-block:: text
 
     subsection particles
-      set stencil order =2
-      set refine mesh inside radius factor = 0
-      set refine mesh outside radius factor = 2
-      set initial refinement =3
-      set integrate motion = true
       set assemble Navier-Stokes inside particles = false
-      set length ratio = 2
-      set contact search radius factor = 1.5
-      set particle nonlinear tolerance = 1e-3
-      set DEM coupling frequency = 1000
-      set enable lubrication force                = true
-      set lubrication range max                   = 2
-      set lubrication range min                   = 0.1
-      set load particles from file = true
-      set particles file = particles.input
-      subsection gravity
-      	set Function expression =0;0;-981
+      
+      subsection extrapolation function
+        set length ratio  = 2
+        set stencil order = 2
+      end
+      
+      subsection local mesh refinement
+        set initial refinement                = 3
+        set refine mesh inside radius factor  = 0
+        set refine mesh outside radius factor = 2
+      end
+
+      subsection DEM
+        set DEM coupling frequency            = 1000
+        set particle nonlinear tolerance      = 1e-3
+        set contact search radius factor      = 1.5
+        set enable lubrication force          = true
+        set lubrication range max             = 2
+        set lubrication range min             = 0.1
+        subsection gravity
+          set Function expression = 0;0;-981
+        end
+      end
+      
+      subsection input file
+        set load particles from file = true
+        set particles file           = particles.input
       end
     end
 

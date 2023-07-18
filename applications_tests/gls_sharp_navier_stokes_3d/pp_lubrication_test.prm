@@ -74,19 +74,27 @@ end
 
 subsection particles
   set number of particles                     = 2
-  set stencil order                           = 6
-  set refine mesh inside radius factor        = 0
-  set refine mesh outside radius factor       = 2
-  set initial refinement                      = 3
-  set integrate motion                        = true
   set assemble Navier-Stokes inside particles = false
-  set enable lubrication force                = true
-  set lubrication range max                   = 2
-  subsection gravity
-    set Function expression = 0;-981;0
+
+  subsection extrapolation function
+    set stencil order = 6
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 3
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 2
+  end
+
+  subsection DEM
+    set enable lubrication force = true
+    subsection gravity
+      set Function expression = 0;-981;0
+    end
   end
 
   subsection particle info 0
+    set integrate motion = true
     subsection position
       set Function expression = 5;12.75;5
     end
@@ -99,9 +107,14 @@ subsection particles
     set pressure location = 0.00001; 0.00001; 0.00001
     set type              = sphere
     set shape arguments   = 0.75
-    set density           = 0.0011
+
+    subsection physical properties
+      set density = 0.0011
+    end
   end
+
   subsection particle info 1
+    set integrate motion = true
     subsection position
       set Function expression = 5;11.00;5
     end
@@ -114,7 +127,10 @@ subsection particles
     set pressure location = 0.00001; 0.00001; 0.00001
     set type              = sphere
     set shape arguments   = 0.75
-    set density           = 0.0009
+
+    subsection physical properties
+      set density = 0.0009
+    end
   end
 end
 
@@ -161,4 +177,3 @@ end
 subsection linear solver
   set verbosity = quiet
 end
-

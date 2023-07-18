@@ -62,12 +62,18 @@ end
 
 subsection particles
   set number of particles                     = 1
-  set stencil order                           = 2
-  set refine mesh inside radius factor        = 0
-  set refine mesh outside radius factor       = 1.2
-  set initial refinement                      = 2
-  set integrate motion                        = false
   set assemble Navier-Stokes inside particles = false
+  set levels not precalculated                = 0
+
+  subsection extrapolation function
+    set stencil order = 2
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 2
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 1.2
+  end
 
   subsection particle info 0
     set type            = composite

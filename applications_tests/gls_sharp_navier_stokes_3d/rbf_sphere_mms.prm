@@ -114,9 +114,13 @@ end
 
 subsection particles
   set number of particles                     = 1
-  set stencil order                           = 1
-  set length ratio                            = 1
   set assemble Navier-Stokes inside particles = false
+
+  subsection extrapolation function
+    set stencil order = 1
+    set length ratio  = 1
+  end
+
   subsection particle info 0
     set type            = rbf
     set shape arguments = rbf_sphere.input

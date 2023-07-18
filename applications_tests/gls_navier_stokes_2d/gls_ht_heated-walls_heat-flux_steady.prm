@@ -3,37 +3,41 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set output name             = ht_heated-walls_steady
-  set output frequency        = 0
+  set method           = steady
+  set output name      = ht_heated-walls_steady
+  set output frequency = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-	set heat transfer = true
+  set heat transfer = true
 end
 
 #---------------------------------------------------
 # Post-Processing
 #---------------------------------------------------
+
 subsection post-processing
-      set output frequency    = 1
-      set verbosity           = verbose
-      set calculate temperature statistics = true
-      set calculate heat flux = true
+  set output frequency                 = 1
+  set verbosity                        = verbose
+  set calculate temperature statistics = true
+  set calculate heat flux              = true
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     = 1
+  set number of fluids = 1
   subsection fluid 0
     set density              = 1
-    set specific heat 	     = 1
+    set specific heat        = 1
     set thermal conductivity = 2
     set kinematic viscosity  = 1
   end
@@ -42,42 +46,45 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-  set type = dealii
-  set grid type = hyper_rectangle
-  set grid arguments = -0.5, -0.1 : 0.5, 0.1 : true
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -0.5, -0.1 : 0.5, 0.1 : true
   set initial refinement = 5
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable     = true
-  set verbosity  = verbose
+  set enable    = true
+  set verbosity = verbose
   subsection temperature
     set Function constants = Tl=5, Tr=1, L=1
     #temperature : T = kr*(Tr-Tl)/(L*(kl+kr)) * x + Tl+(Tr-Tl)*kr/(kl+kr)
     set Function expression = (Tr-Tl)/L * x + (Tr+Tl)/2
-  end  
+  end
   # heat flux : -k*(dT/dx)*Ly = -2*((1-5)/1)*0.2 = -1.6
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions heat transfer
-  set number                = 2
-    subsection bc 0  #left wall
-      set id = 0
-      set type		    = temperature
-      set value		    = 5
-    end
-    subsection bc 1  #right wall
-      set id = 1
-      set type		    = temperature
-      set value		    = 1
-    end
+  set number = 2
+  subsection bc 0 #left wall
+    set id    = 0
+    set type  = temperature
+    set value = 5
+  end
+  subsection bc 1 #right wall
+    set id    = 1
+    set type  = temperature
+    set value = 1
+  end
   # T average at the end of the simualtion = 3
   # heat in all_domain = V*rho*cp*T = 0.2*1*1*1*3 = 0.6
 end
@@ -85,13 +92,15 @@ end
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity = quiet 
+  set verbosity = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
   set verbosity = quiet
 end

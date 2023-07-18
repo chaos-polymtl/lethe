@@ -3,142 +3,155 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set bdf startup method      = multiple step bdf
-  set time step               = 0.0025 # Time step
-  set time end                = 0.0025  # End time of simulation
-  set output name             = out # Prefix for VTU outputs
-  set output frequency        = 0      # Frequency of simulation output
+  set method             = bdf1
+  set bdf startup method = multiple step bdf
+  set time step          = 0.0025 # Time step
+  set time end           = 0.0025 # End time of simulation
+  set output name        = out    # Prefix for VTU outputs
+  set output frequency   = 0      # Frequency of simulation output
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            =0.6041666666666
-    set density =0.000960
+    set kinematic viscosity = 0.6041666666666
+    set density             = 0.000960
   end
 end
-
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = iteration
+  set type = iteration
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 subsection stabilization
   set use default stabilization = false
 
-  set stabilization             = gls    # <pspg_supg|gls|grad_div>.
+  set stabilization = gls # <pspg_supg|gls|grad_div>.
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
-    set initial refinement   = 1
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
+  set initial refinement = 1
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-set number                  = 5
-    subsection bc 0
-	set id = 0
-        set type              = noslip
-    end
-    subsection bc 1
-	set id = 1
-        set type              = noslip
-    end
+  set number = 5
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
 
-    subsection bc 2
-	set id = 2
-        set type              = noslip
-    end
-    subsection bc 3
-	set id = 4
-        set type              = noslip
-    end
-    subsection bc 4
-	set id = 5
-        set type              = noslip
-    end
-
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 5
+    set type = noslip
+  end
 end
 
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
+
 subsection particles
-	set stencil order =2
-	set refine mesh inside radius factor = 0
-	set refine mesh outside radius factor = 2
-	set initial refinement = 1
-	set integrate motion = true
-	set assemble Navier-Stokes inside particles = false
-	set length ratio = 1
-	set particle nonlinear tolerance = 1e-5
-	set DEM coupling frequency = 10000
-	set alpha = 1
+  set assemble Navier-Stokes inside particles = false
+  set levels not precalculated                = 0
 
-	set load particles from file = true
-	set particles file = particles
+  subsection extrapolation function
+    set stencil order = 2
+    set length ratio  = 1
+  end
 
-	subsection gravity
-            	set Function expression =0;-981;0
-        end
+  subsection input file
+    set load particles from file = true
+    set particles file           = particles
+  end
 
+  subsection local mesh refinement
+    set initial refinement                = 1
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 2
+  end
+
+  subsection DEM
+    set particle nonlinear tolerance = 1e-5
+    set DEM coupling frequency       = 10000
+
+    subsection gravity
+      set Function expression = 0;-981;0
+    end
+  end
 end
-
-
-
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-   # Fraction of coarsened elements
-  set fraction coarsening  = 0.3
+  # Fraction of coarsened elements
+  set fraction coarsening = 0.3
 
   # Fraction of refined elements
-  set fraction refinement  = 0.05
+  set fraction refinement = 0.05
 
   # How the fraction of refinement/coarsening are interepretedChoices are
   # <number|fraction>.
-  set fraction type        = number
+  set fraction type = number
 
   # Frequency of the mesh refinement
-  set frequency            = 1
+  set frequency = 1
 
   # Maximum number of elements
-  set max number elements  = 750000
+  set max number elements = 750000
 
   # Maximum refinement level
   set max refinement level = 2
- # minimum refinement level
-  set min refinement level =0
+  # minimum refinement level
+  set min refinement level = 0
 
   # Type of mesh adaptationChoices are <none|uniform|kelly>.
-  set type                 = kelly
+  set type = kelly
 
   # Variable for kelly estimationChoices are <velocity|pressure>.
-  set variable             = velocity
+  set variable = velocity
 end
 
 # --------------------------------------------------
@@ -147,76 +160,80 @@ end
 
 subsection initial conditions
   # Type of initial conditionChoices are <L2projection|viscous|nodal>.
-    set type      = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0;0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0;0
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
-subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-6
-  set max iterations          = 1
-  set residual precision      = 5
-  set force rhs calculation   = true
-end
 
+subsection non-linear solver
+  set verbosity             = quiet
+  set tolerance             = 1e-6
+  set max iterations        = 1
+  set residual precision    = 5
+  set force rhs calculation = true
+end
 
 # --------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-  set verbosity               = verbose
+  set verbosity = verbose
 end
 
 # --------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-	set type = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Restart
 #---------------------------------------------------
+
 subsection restart
   # Enable checkpointing. Checkpointing creates a restartpoint from which the
   # simulation can be restarted from.
   set checkpoint = true
   # Prefix for the filename of checkpoints
-  set filename   = restart
+  set filename = restart
 
   # Frequency for checkpointing
-  set frequency  = 10
+  set frequency = 10
 
   # Frequency for checkpointing
-  set restart    =false
+  set restart = false
 end
 
 # --------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
   # Enable calculation of force
-  set calculate force      = false
-  set verbosity             = quiet
+  set calculate force = false
+  set verbosity       = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
-subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 1000
-  set relative residual                      = 1e-4
-  set minimum residual                       = 1e-11
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-20
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               =quiet
-  set max krylov vectors = 1000
-end
 
+subsection linear solver
+  set method                                = gmres
+  set max iters                             = 1000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-11
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-20
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
+  set max krylov vectors                    = 1000
+end

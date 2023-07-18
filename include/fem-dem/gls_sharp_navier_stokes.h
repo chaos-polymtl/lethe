@@ -162,7 +162,7 @@ private:
   virtual void
   assemble_matrix_and_rhs()
   {
-    if (this->simulation_parameters.particlesParameters->integrate_motion)
+    if (some_particles_are_coupled)
       {
         force_on_ib();
         integrate_particles();
@@ -569,6 +569,9 @@ private:
   CFDDEMSimulationParameters<dim> cfd_dem_parameters;
 
   bool all_spheres;
+
+  // Bool that check if some particle are coupled.
+  bool some_particles_are_coupled;
 
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>

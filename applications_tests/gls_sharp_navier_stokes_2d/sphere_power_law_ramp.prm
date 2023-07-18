@@ -3,60 +3,66 @@
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 0
-  set output name             = sphere-output
-  set output frequency        = 0
+  set method            = steady
+  set number mesh adapt = 0
+  set output name       = sphere-output
+  set output frequency  = 0
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 #------------------------------------------------
 # Force
 #---------------------------------------------------
-subsection forces			
-    set verbosity               = verbose
+
+subsection forces
+  set verbosity = verbose
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = ramp
-    subsection ramp
-    	subsection n
-    		set initial n = 1.0
-    		set iterations = 1
-    		set alpha = 0.5
-    	end
-    	subsection viscosity
-    		set initial viscosity = 1.0
-    		set iterations = 1
-    		set alpha = 0.5
-    	end
+  set type = ramp
+  subsection ramp
+    subsection n
+      set initial n  = 1.0
+      set iterations = 1
+      set alpha      = 0.5
     end
+    subsection viscosity
+      set initial viscosity = 1.0
+      set iterations        = 1
+      set alpha             = 0.5
+    end
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-set number of fluids = 1
+  set number of fluids = 1
   subsection fluid 0
-   	set rheological model	= power-law
+    set rheological model = power-law
 
     subsection non newtonian
-    	subsection power-law
-	    	set K 		   = 2
-	    	set n 		   = 0.8
-	    	set shear rate min = 1e-01
-	end
+      subsection power-law
+        set K              = 2
+        set n              = 0.8
+        set shear rate min = 1e-01
+      end
     end
   end
 end
@@ -64,98 +70,112 @@ end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -1 : 1 : true
-    set initial refinement   = 5
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : true
+  set initial refinement = 5
 end
 
 #-----------------------------------------
 # Boundary conditions
 #-----------------------------------------
+
 subsection boundary conditions
-set number                  = 3
-    
-    subsection bc 0
-	set id = 0
-        set type              = function
-        subsection u
-            set Function expression = 1
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 0
-        end
+  set number = 3
+
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
     end
-    subsection bc 1
-	set id = 2
-        set type              = slip
+    subsection v
+      set Function expression = 0
     end
-    subsection bc 2
-	set id = 3
-        set type              = slip
+    subsection w
+      set Function expression = 0
     end
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
 end
+
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
+
 subsection particles
-	set number of particles = 1
-	set stencil order = 6
-	set integrate motion = false
-	set assemble Navier-Stokes inside particles = false    
-	subsection particle info 0
-	subsection position
-	    set Function expression =0;0
-	end
-	subsection velocity
-	    set Function expression =0;0
-	end
-	    subsection omega
-	    set Function expression =0;0;0
-	end
-	    set pressure location = 0.00001; 0.00001
-	    set type       = sphere
-        set shape arguments = 0.5
+  set number of particles                     = 1
+  set assemble Navier-Stokes inside particles = false
+  set levels not precalculated                = 0
+
+  subsection extrapolation function
+    set stencil order = 6
+  end
+
+  subsection particle info 0
+    subsection position
+      set Function expression = 0;0
     end
+    subsection velocity
+      set Function expression = 0;0
+    end
+    subsection omega
+      set Function expression = 0;0;0
+    end
+    set pressure location = 0.00001; 0.00001
+    set type              = sphere
+    set shape arguments   = 0.5
+  end
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = kelly
-  set fraction coarsening     = 0.0
-  set fraction refinement     = 0.0
-  set fraction type	      = number
+  set type                 = kelly
+  set fraction coarsening  = 0.0
+  set fraction refinement  = 0.0
+  set fraction type        = number
   set frequency            = 1
-  set max number elements     = 8000000
-  set min refinement level    = 0
-  set max refinement level    = 5
+  set max number elements  = 8000000
+  set min refinement level = 0
+  set max refinement level = 5
 end
+
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = verbose
-  set tolerance               = 1e-4
-  set max iterations          = 10
-  set residual precision      = 5
-  set force rhs calculation   = true
+  set verbosity             = verbose
+  set tolerance             = 1e-4
+  set max iterations        = 10
+  set residual precision    = 5
+  set force rhs calculation = true
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 100
-  set relative residual       = 1e-3
-  set minimum residual        = 1e-6
-  set ilu preconditioner fill = 0
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 100
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-6
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
-  set max krylov vectors = 100
+  set max krylov vectors                    = 100
 end

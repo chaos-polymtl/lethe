@@ -2,154 +2,166 @@
 # ---------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  		= bdf1
-  set time end                		= 0.01
-  set time step               		= 0.01
-  set adapt 		      		= false
-  set output name             		= radiation
-  set output frequency        		= 0
+  set method           = bdf1
+  set time end         = 0.01
+  set time step        = 0.01
+  set adapt            = false
+  set output name      = radiation
+  set output frequency = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
-	set heat transfer  = true
+  set heat transfer = true
 end
 
 #---------------------------------------------------
 # Post-Processing
 #---------------------------------------------------
+
 subsection post-processing
-    set verbosity = verbose
-    set calculate temperature statistics = true
+  set verbosity                        = verbose
+  set calculate temperature statistics = true
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-        set Function expression = 0; 0; 0
-    end
-    subsection temperature
-    	set Function expression = 1000
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection temperature
+    set Function expression = 1000
+  end
 end
 
 #---------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-    set enable = false
-    subsection xyz
-        set Function expression = 0; 0; 0
-    end
+  set enable = false
+  subsection xyz
+    set Function expression = 0; 0; 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-  set number of fluids     = 1
-    subsection fluid 0
-    set density              = 1000
-    set kinematic viscosity  = 1
+  set number of fluids = 1
+  subsection fluid 0
+    set density                    = 1000
+    set kinematic viscosity        = 1
     set thermal conductivity model = constant
-    set thermal conductivity = 1000
-    set specific heat model = constant
-    set specific heat = 10
-    end
+    set thermal conductivity       = 1000
+    set specific heat model        = constant
+    set specific heat              = 10
+  end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-        set type = dealii
-        set grid type = subdivided_hyper_rectangle
-        set grid arguments = 1, 1: 0, 0 : 0.01, 0.01 : true
-        set initial refinement = 1
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1, 1: 0, 0 : 0.01, 0.01 : true
+  set initial refinement = 1
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions heat transfer
-  set number                  = 4
-    subsection bc 0
-    	set id = 0
-	set type	      = convection-radiation
-        set h	      	      = 0
-        set Tinf	      = 20
-        set emissivity        = 1
-    end
-    subsection bc 1
-    	set id = 1
-	set type	      = convection-radiation
-        set h	              = 0
-        set Tinf	      = 20
-        set emissivity        = 1
-    end
-    subsection bc 2
-    	set id = 2
-	set type	      = convection-radiation
-        set h	              = 0
-        set Tinf	      = 20
-        set emissivity        = 1
-    end
-    subsection bc 3
-    	set id = 3
-	set type	      = convection-radiation
-        set h	              = 0
-        set Tinf	      = 20
-        set emissivity        = 1
-    end
+  set number = 4
+  subsection bc 0
+    set id         = 0
+    set type       = convection-radiation
+    set h          = 0
+    set Tinf       = 20
+    set emissivity = 1
+  end
+  subsection bc 1
+    set id         = 1
+    set type       = convection-radiation
+    set h          = 0
+    set Tinf       = 20
+    set emissivity = 1
+  end
+  subsection bc 2
+    set id         = 2
+    set type       = convection-radiation
+    set h          = 0
+    set Tinf       = 20
+    set emissivity = 1
+  end
+  subsection bc 3
+    set id         = 3
+    set type       = convection-radiation
+    set h          = 0
+    set Tinf       = 20
+    set emissivity = 1
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
+  set enable    = true
   set verbosity = verbose
-    subsection uvwp
-            set Function expression =  0 ; 0 ; 0
-    end
-    subsection temperature
-            
-            set Function expression =  977.318
-    end
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  subsection temperature
+    set Function expression = 977.318
+  end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 100
-  set verbosity               = quiet
+  set tolerance      = 1e-8
+  set max iterations = 100
+  set verbosity      = quiet
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               		     = quiet
-  set method                                 = gmres
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-8
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-12
-  set ilu preconditioner relative tolerance  = 1.00
-  set max krylov vectors                     = 200
+  set verbosity                             = quiet
+  set method                                = gmres
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-8
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors                    = 200
 end

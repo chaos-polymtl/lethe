@@ -3,148 +3,159 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output name              = mms2d_
-  set output frequency        = 0
+  set method            = steady
+  set number mesh adapt = 2
+  set output name       = mms2d_
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -1 : 1 : false
-    set initial refinement   = 4
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
+
 subsection void fraction
-   set mode = function
-     subsection function
-     set Function expression = exp(-sin(pi*x)*sin(pi*y))/exp(1)
-     end
+  set mode = function
+  subsection function
+    set Function expression = exp(-sin(pi*x)*sin(pi*y))/exp(1)
+  end
 end
 
 #---------------------------------------------------
 # CFD-DEM
 #---------------------------------------------------
+
 subsection cfd-dem
-   set grad div = false
-   set vans model = modelB
-   set pressure force = false
-   set shear force = false
+  set grad div       = false
+  set vans model     = modelB
+  set pressure force = false
+  set shear force    = false
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 0
-        set id                = 0
-        set type              = function
-        subsection u
-            set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
-        end
-        subsection v
-            set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
-        end
-end
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
+    end
+    subsection v
+      set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
+    end
+  end
 
-    subsection bc 1
-        set id                = 1
-        set type              = function
-        subsection u
-            set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
-        end
-        subsection v
-            set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
-        end
-end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
+    end
+    subsection v
+      set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
+    end
+  end
 
-    subsection bc 2
-        set id                = 2
-        set type              = function
-        subsection u
-            set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
-        end
-        subsection v
-            set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
-        end
-end
+  subsection bc 2
+    set id   = 2
+    set type = function
+    subsection u
+      set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
+    end
+    subsection v
+      set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
+    end
+  end
 
-    subsection bc 3
-        set id                = 3
-        set type              = function
-        subsection u
-            set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
-        end
-        subsection v
-            set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
-        end
-end
+  subsection bc 3
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
+    end
+    subsection v
+      set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
+    end
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = pi*(pi*(cos(pi*(x - y)) + cos(2*pi*(x - y))/4 - cos(pi*(x + y)) + cos(2*pi*(x + y))/4 - 1/2)*exp(sin(pi*x)*sin(pi*y) + 2) + exp(sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(3)*sin(pi*y)*cos(pi*x))*exp(sin(pi*x)*sin(pi*y) - 2); pi*(pi*(cos(pi*(x - y)) + cos(2*pi*(x - y))/4 - cos(pi*(x + y)) + cos(2*pi*(x + y))/4 - 1/2)*exp(sin(pi*x)*sin(pi*y) + 2) + exp(sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(3)*sin(pi*x)*cos(pi*y))*exp(sin(pi*x)*sin(pi*y) - 2); 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = pi*(pi*(cos(pi*(x - y)) + cos(2*pi*(x - y))/4 - cos(pi*(x + y)) + cos(2*pi*(x + y))/4 - 1/2)*exp(sin(pi*x)*sin(pi*y) + 2) + exp(sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(3)*sin(pi*y)*cos(pi*x))*exp(sin(pi*x)*sin(pi*y) - 2); pi*(pi*(cos(pi*(x - y)) + cos(2*pi*(x - y))/4 - cos(pi*(x + y)) + cos(2*pi*(x + y))/4 - 1/2)*exp(sin(pi*x)*sin(pi*y) + 2) + exp(sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(3)*sin(pi*x)*cos(pi*y))*exp(sin(pi*x)*sin(pi*y) - 2); 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function expression = exp(sin(pi*x)*sin(pi*y))/exp(1) ; exp(sin(pi*x)*sin(pi*y))/exp(1); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
-    end
+  set enable = true
+  subsection uvwp
+    set Function expression = exp(sin(pi*x)*sin(pi*y))/exp(1) ; exp(sin(pi*x)*sin(pi*y))/exp(1); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
+  end
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform
-end
 
+subsection mesh adaptation
+  set type = uniform
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 10
-  set verbosity               = quiet
+  set tolerance      = 1e-8
+  set max iterations = 10
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 5000
-  set relative residual                      = 1e-4
-  set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-10
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
 end

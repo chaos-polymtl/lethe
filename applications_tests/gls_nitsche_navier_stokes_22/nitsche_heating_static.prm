@@ -3,17 +3,19 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = bdf1
-  set time end                = 5
-  set time step               = 1
-  set output name             = hydrostat_nitsche-HT
-  set output frequency        = 0
+  set method           = bdf1
+  set time end         = 5
+  set time step        = 1
+  set output name      = hydrostat_nitsche-HT
+  set output frequency = 0
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
+
 subsection multiphysics
   set heat transfer = true
 end
@@ -21,52 +23,56 @@ end
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection temperature
-            set Function expression = 0
-    end
+  set type = nodal
+  subsection temperature
+    set Function expression = 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
-    set number of fluids = 1
-    subsection fluid 1 
-        set density = 2.
-	set specific heat = 500
-	set thermal conductivity = 0.5
-    end
+  set number of fluids = 1
+  subsection fluid 1
+    set density              = 2.
+    set specific heat        = 500
+    set thermal conductivity = 0.5
+  end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-	set type = dealii
-	set grid type = hyper_rectangle
-	set grid arguments = 0, 0 : 1, 1 : true
-	set initial refinement = 5
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, 0 : 1, 1 : true
+  set initial refinement = 5
 end
 
 #---------------------------------------------------
 # Nitsche
 #---------------------------------------------------
+
 subsection nitsche
   set number of solids = 1
   subsection nitsche solid 0
     subsection mesh
-	set type = dealii
-	set grid type = hyper_rectangle
-	set grid arguments = 0, 0 : 1, 0.4 : true
-	set initial refinement = 5
+      set type               = dealii
+      set grid type          = hyper_rectangle
+      set grid arguments     = 0, 0 : 1, 0.4 : true
+      set initial refinement = 5
     end
     subsection solid velocity
       set Function expression = 0 ; 0
     end
     subsection solid temperature
-        set Function expression = 5
+      set Function expression = 5
     end
     set enable heat boundary condition = true
   end
@@ -75,55 +81,59 @@ end
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
-subsection analytical solution
-  set enable     	= true
-  set verbosity 	= verbose
-    subsection temperature
-	set Function expression = 5
-    end
-end
 
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection temperature
+    set Function expression = 5
+  end
+end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 0
-        set id = 0
-        set type              = slip
-    end
-    subsection bc 1
-	set id = 1
-        set type              = slip
-    end
-    subsection bc 2
-        set id = 2
-        set type              = slip
-    end
-    subsection bc 3
-        set id = 3
-        set type              = slip
-    end
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = slip
+  end
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = none
+  set type = none
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet 
+  set verbosity = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
+  set verbosity = quiet
 end

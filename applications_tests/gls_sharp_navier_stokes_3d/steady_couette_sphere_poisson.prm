@@ -3,189 +3,202 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 0      # If steady, nb mesh adaptation
-  set output name             = 3d_steady_sphere_couette # Prefix for VTU outputs
-  set output frequency        = 0       # Frequency of simulation output
-  set subdivision             = 1       # Mesh subdivision when outputend
+  set method            = steady
+  set number mesh adapt = 0                        # If steady, nb mesh adaptation
+  set output name       = 3d_steady_sphere_couette # Prefix for VTU outputs
+  set output frequency  = 0                        # Frequency of simulation output
+  set subdivision       = 1                        # Mesh subdivision when outputend
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 0.01
+    set kinematic viscosity = 0.01
   end
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none
+  set type = none
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 1,1,1: -1,-1,-1 : 1 , 1 ,1 : true
-    set initial refinement   = 4
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,1,1: -1,-1,-1 : 1 , 1 ,1 : true
+  set initial refinement = 4
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
-subsection boundary conditions
-set number                  = 5
-    subsection bc 0
-	set id = 0
-        set type              = function
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 0
-        end
-    end
-    subsection bc 1
-	set id = 2
-        set type              = slip
-    end
-    subsection bc 2
-	set id = 3
-        set type              = slip
-    end
-    subsection bc 3
-	set id = 4
-        set type              = slip
-    end
-    subsection bc 4
-	set id = 5
-        set type              = slip
-    end
 
+subsection boundary conditions
+  set number = 5
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 0
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 4
+    set type = slip
+  end
+  subsection bc 4
+    set id   = 5
+    set type = slip
+  end
 end
 
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
+
 subsection particles
-	set number of particles = 2
-	set stencil order = 6
-	set refine mesh inside radius factor = 0
-	set refine mesh outside radius factor = 1.3
-	set initial refinement = 0
-	set assemble Navier-Stokes inside particles=false
-    subsection particle info 0 
-        subsection position
-            set Function expression =0;0;0
-        end
-        subsection velocity
-            set Function expression =0;0;0
-        end
-        subsection omega
-            set Function expression =1;1;1
-        end
-	    set pressure location= 0.00001; 0.00001; 0.00001
-	    set type       = sphere
-        set shape arguments = 0.25
-    end
-    subsection particle info 1
-        subsection position
-            set Function expression =0;0;0
-        end
-        subsection velocity
-            set Function expression =0;0;0
-        end
-        subsection omega
-            set Function expression =0;0;0
-        end
-	    set pressure location = 0.40001; 0.00001; 0.00001
-	    set type       = sphere
-        set shape arguments = 0.65
-    end
+  set number of particles                     = 2
+  set assemble Navier-Stokes inside particles = false
 
+  subsection extrapolation function
+    set stencil order = 6
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 0
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 1.3
+  end
+
+  subsection particle info 0
+    subsection position
+      set Function expression = 0;0;0
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+    subsection omega
+      set Function expression = 1;1;1
+    end
+    set pressure location = 0.12501; 0.12501; 0.00001
+    set type              = sphere
+    set shape arguments   = 0.25
+  end
+  subsection particle info 1
+    subsection position
+      set Function expression = 0;0;0
+    end
+    subsection velocity
+      set Function expression = 0;0;0
+    end
+    subsection omega
+      set Function expression = 0;0;0
+    end
+    set pressure location = 0.40001; 0.125001; 0.125001
+    set type              = sphere
+    set shape arguments   = 0.65
+  end
 end
-
-
-
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-   # Fraction of coarsened elements
-  set fraction coarsening  = 0.05
+  # Fraction of coarsened elements
+  set fraction coarsening = 0.05
 
   # Fraction of refined elements
-  set fraction refinement  = 0.05
+  set fraction refinement = 0.05
 
   # How the fraction of refinement/coarsening are interepretedChoices are
   # <number|fraction>.
-  set fraction type        = number
+  set fraction type = number
 
   # Frequency of the mesh refinement
-  set frequency            = 1
+  set frequency = 1
 
   # Maximum number of elements
-  set max number elements  = 200000
+  set max number elements = 200000
 
   # Maximum refinement level
   set max refinement level = 7
- # minimum refinement level
+  # minimum refinement level
   set min refinement level = 3
 
   # Type of mesh adaptationChoices are <none|uniform|kelly>.
-  set type                 = kelly
+  set type = kelly
 
   # Variable for kelly estimationChoices are <velocity|pressure>.
-  set variable             = velocity
+  set variable = velocity
 end
-
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 6
-  set residual precision      = 2
-  set verbosity               = quiet
-  set force rhs calculation   = true
+  set tolerance             = 1e-8
+  set max iterations        = 6
+  set residual precision    = 2
+  set verbosity             = quiet
+  set force rhs calculation = true
 end
 
 # --------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-
-  set verbosity               = verbose
-
+  set verbosity = verbose
 end
+
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 500
-  set relative residual                      = 1e-3
-  set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-10
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = quiet
+  set method                                = gmres
+  set max iters                             = 500
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
 end

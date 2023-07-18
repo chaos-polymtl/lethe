@@ -3,122 +3,129 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 1
-  set output name             = poiseuille3d
-  set output frequency        	   = 0    # Frequency of simulation output
+  set method            = steady
+  set number mesh adapt = 1
+  set output name       = poiseuille3d
+  set output frequency  = 0 # Frequency of simulation output
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
-    set qmapping all              = true
+  set velocity order = 1
+  set pressure order = 1
+  set qmapping all   = true
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none
+  set type = none
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = cylinder
-    set grid type            = balanced
-    set grid arguments       = 1 : 1 : 1
-    set initial refinement   = 1
+  set type               = cylinder
+  set grid type          = balanced
+  set grid arguments     = 1 : 1 : 1
+  set initial refinement = 1
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 2
-    subsection bc 0
-        set type              = noslip
-        set id                = 0
-    end
-    subsection bc 1
-        set type                = periodic
-        set id                  = 1
-        set periodic_id         = 2
-        set periodic_direction  = 0
-    end
-
+  set number = 2
+  subsection bc 0
+    set type = noslip
+    set id   = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 1
+    set periodic_id        = 2
+    set periodic_direction = 0
+  end
 end
-
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = 1; 0; 0; 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = 1; 0; 0; 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
-subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function constants = H=1, G=1, mu=1, rho=1
-            set Function expression =  ((H^2)*G*rho/(4*mu)) * (1 - (y^2+z^2)/(H^2)) ; 0 ; 0; 0
-    end
-end
 
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function constants  = H=1, G=1, mu=1, rho=1
+    set Function expression = ((H^2)*G*rho/(4*mu)) * (1 - (y^2+z^2)/(H^2)) ; 0 ; 0; 0
+  end
+end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform
-  set max number elements     = 20000000
-  set max refinement level    = 3
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.1
-  set fraction coarsening     = 0.1
-end
 
+subsection mesh adaptation
+  set type                 = uniform
+  set max number elements  = 20000000
+  set max refinement level = 3
+  set min refinement level = 0
+  set frequency            = 1
+  set fraction refinement  = 0.1
+  set fraction coarsening  = 0.1
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-9
-  set max iterations          = 10
-  set residual precision      = 2
-  set verbosity               = quiet
+  set tolerance          = 1e-9
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                       = gmres
-  set relative residual                            = 1e-4
-  set minimum residual                             = 1e-10
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-10
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = quiet
+  set method                                = gmres
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-10
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
 end

@@ -1,135 +1,153 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 3
-  set output name             = output
-  set output frequency        = 0
+  set method            = steady
+  set number mesh adapt = 3
+  set output name       = output
+  set output frequency  = 0
 end
+
 #---------------------------------------------------
 # TESTING
 #---------------------------------------------------
+
 subsection test
-    set enable = true
+  set enable = true
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
+
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none                                  # <none|iteration|end>
+  set type = none # <none|iteration|end>
 end
+
 #---------------------------------------------------
 # Force
 #---------------------------------------------------
+
 subsection forces
-    set verbosity             = verbose
-    set calculate force       = true
-    set calculate torque      = false
-    set output precision      = 10
-    set calculation frequency = 1
-    set output frequency      = 1
+  set verbosity             = verbose
+  set calculate force       = true
+  set calculate torque      = false
+  set output precision      = 10
+  set calculation frequency = 1
+  set output frequency      = 1
 end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 1; 0; 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 1; 0; 0
+  end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity            = 1.0000
+    set kinematic viscosity = 1.0000
   end
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = gmsh
-    set file name            = ../cylinder_structured.msh
+  set type      = gmsh
+  set file name = ../cylinder_structured.msh
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 0
-        set type              = noslip
+  set number = 4
+  subsection bc 0
+    set type = noslip
+  end
+  subsection bc 1
+    set type = function
+    subsection u
+      set Function expression = 1
     end
-    subsection bc 1
-        set type              = function
-        subsection u
-            set Function expression = 1
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 0
-        end
+    subsection v
+      set Function expression = 0
     end
-    subsection bc 2
-        set type              = slip
+    subsection w
+      set Function expression = 0
     end
-    subsection bc 3
-        set beta = 1
-        set type = outlet
-    end
+  end
+  subsection bc 2
+    set type = slip
+  end
+  subsection bc 3
+    set beta = 1
+    set type = outlet
+  end
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = kelly
-  set variable                = velocity
-  set fraction type           = number
-  set max number elements     = 70000
-  set max refinement level    = 5
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.3
-  set fraction coarsening     = 0.1
+  set type                 = kelly
+  set variable             = velocity
+  set fraction type        = number
+  set max number elements  = 70000
+  set max refinement level = 5
+  set min refinement level = 0
+  set frequency            = 1
+  set fraction refinement  = 0.3
+  set fraction coarsening  = 0.1
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-8
-  set max iterations          = 10
+  set verbosity      = quiet
+  set tolerance      = 1e-8
+  set max iterations = 10
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-9
-  set ilu preconditioner fill =  0
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
   set ilu preconditioner absolute tolerance = 1e-5
   set ilu preconditioner relative tolerance = 1.00
 end

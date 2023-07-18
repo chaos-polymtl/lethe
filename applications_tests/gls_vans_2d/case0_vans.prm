@@ -3,108 +3,119 @@
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output name              = case0_vans
+  set method            = steady
+  set number mesh adapt = 2
+  set output name       = case0_vans
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.000
+    set kinematic viscosity = 1.000
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -1 : 1 : false
-    set initial refinement   = 4
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
+
 subsection void fraction
-   set mode = function
-     subsection function
-     set Function expression = 0.5
-     end
+  set mode = function
+  subsection function
+    set Function expression = 0.5
+  end
 end
 
 #---------------------------------------------------
 # CFD-DEM
 #---------------------------------------------------
+
 subsection cfd-dem
-   set grad div = false
-   set vans model = modelB
-   set pressure force = false
-   set shear force = false
+  set grad div       = false
+  set vans model     = modelB
+  set pressure force = false
+  set shear force    = false
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 1
-    subsection bc 0
-        set type              = noslip
-    end
+  set number = 1
+  subsection bc 0
+    set type = noslip
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = pi*(16.0*pi*sin(pi*x)^2*cos(pi*y) - 4.0*pi*cos(pi*y) + 1.0*sin(pi*x)^3*sin(pi*y)*cos(pi*x) + 1.0*cos(pi*x))*sin(pi*y); pi*(-16.0*pi*sin(pi*y)^2*cos(pi*x) + 4.0*pi*cos(pi*x) + 1.0*sin(pi*x)*sin(pi*y)^3*cos(pi*y) + 1.0*cos(pi*y))*sin(pi*x); 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = pi*(16.0*pi*sin(pi*x)^2*cos(pi*y) - 4.0*pi*cos(pi*y) + 1.0*sin(pi*x)^3*sin(pi*y)*cos(pi*x) + 1.0*cos(pi*x))*sin(pi*y); pi*(-16.0*pi*sin(pi*y)^2*cos(pi*x) + 4.0*pi*cos(pi*x) + 1.0*sin(pi*x)*sin(pi*y)^3*cos(pi*y) + 1.0*cos(pi*y))*sin(pi*x); 0
+  end
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
-    subsection uvwp
-            set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
-    end
+  set enable = true
+  subsection uvwp
+    set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
+  end
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform
-end
 
+subsection mesh adaptation
+  set type = uniform
+end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set tolerance               = 1e-8
-  set max iterations          = 10
-  set residual precision      = 2
-  set verbosity               = quiet
+  set tolerance          = 1e-8
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set method                                 = gmres
-  set max iters                              = 5000
-  set relative residual                      = 1e-4
-  set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 0
-  set ilu preconditioner absolute tolerance  = 1e-10
-  set ilu preconditioner relative tolerance  = 1.00
-  set verbosity               = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
 end

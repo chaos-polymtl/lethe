@@ -4,12 +4,12 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method                  = bdf1
-  set number mesh adapt       = 0
-  set time end                = 0.1
-  set time step               = 0.05
-  set output name             = vof_tanh_filter
-  set output frequency        = 0
+  set method            = bdf1
+  set number mesh adapt = 0
+  set time end          = 0.1
+  set time step         = 0.05
+  set output name       = vof_tanh_filter
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
@@ -26,9 +26,9 @@ end
 
 subsection VOF
   subsection phase filtration
-    set type            = tanh
-    set beta            = 8
-    set verbosity       = verbose
+    set type      = tanh
+    set beta      = 8
+    set verbosity = verbose
   end
 end
 
@@ -78,9 +78,9 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = dealii
-  set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 5, 10 : 0, 0 : 10, 10 : true
+  set type           = dealii
+  set grid type      = subdivided_hyper_rectangle
+  set grid arguments = 5, 10 : 0, 0 : 10, 10 : true
 end
 
 #---------------------------------------------------

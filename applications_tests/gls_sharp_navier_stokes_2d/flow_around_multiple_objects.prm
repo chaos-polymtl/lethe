@@ -4,150 +4,179 @@
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 1
-  set output name             = output
-  set output frequency        = 0
+  set method            = steady
+  set number mesh adapt = 1
+  set output name       = output
+  set output frequency  = 0
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
+
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
 end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1
-  end 
+    set kinematic viscosity = 1
+  end
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-    set type                 = dealii
-    set grid type            = subdivided_hyper_rectangle
-    set grid arguments       = 1,1: -4,-4 : 4,4  : true
-    set initial refinement   = 5
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,1: -4,-4 : 4,4  : true
+  set initial refinement = 5
 end
+
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-set number                  = 3
-	subsection bc 0
-		set id = 0
-        	set type              = function
-        	subsection u
-			set Function expression = 1
-		end
-		subsection v
-			set Function expression = 0
-		end
-		subsection w
-			set Function expression = 0
-		end
-	end
-	subsection bc 1
-		set id = 2
-		set type              = slip
-	end
-	subsection bc 2
-		set id = 3
-		set type              = slip
-	end
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
 end
 
 # --------------------------------------------------
 # IB particules
 #---------------------------------------------------
+
 subsection particles
-	set number of particles = 3
-	set stencil order = 2
-	set refine mesh inside radius factor = 0.7
-	set refine mesh outside radius factor = 1.5
-	set initial refinement = 2
-	set integrate motion = false
-	set assemble Navier-Stokes inside particles = false
-	subsection particle info 0
-		set type = hyper rectangle
-		set shape arguments = 1; 0.5
-		subsection position
-		    set Function expression =0.01;0.01
-		end
-	end
-	subsection particle info 1
-		set type = ellipsoid
-		set shape arguments = 0.75;0.25
-		subsection position
-		    set Function expression =0.01;2.01
-		end
-		subsection orientation
-		    set Function expression =0;0;-2
-		end
-	end
-	subsection particle info 2
-		set type = sphere
-		set shape arguments = 0.75
-		subsection position
-		    set Function expression =0.01;-2.01
-		end
-	end
+  set number of particles                     = 3
+  set assemble Navier-Stokes inside particles = false
+
+  subsection extrapolation function
+    set stencil order = 2
+  end
+
+  subsection input file
+    set load particles from file = false
+    set particles file           = particles.input
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 2
+    set refine mesh inside radius factor  = 0.7
+    set refine mesh outside radius factor = 1.5
+  end
+
+  subsection particle info 0
+    set type            = hyper rectangle
+    set shape arguments = 1; 0.5
+    subsection position
+      set Function expression = 0.01;0.01
+    end
+  end
+  subsection particle info 1
+    set type            = ellipsoid
+    set shape arguments = 0.75;0.25
+    subsection position
+      set Function expression = 0.01;2.01
+    end
+    subsection orientation
+      set Function expression = 0;0;-2
+    end
+  end
+  subsection particle info 2
+    set type            = sphere
+    set shape arguments = 0.75
+    subsection position
+      set Function expression = 0.01;-2.01
+    end
+  end
 end
+
 # --------------------------------------------------
 # Forces
 #---------------------------------------------------
+
 subsection forces
-	set verbosity               = verbose
-end        
+  set verbosity = verbose
+end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = kelly
-  set variable                = pressure
-  set fraction type           = number
-  set max number elements     = 200000
-  set max refinement level    = 10
-  set min refinement level    = 4
-  set frequency               = 1
-  set fraction refinement     = 0.3
-  set fraction coarsening     = 0.1
+  set type                 = kelly
+  set variable             = pressure
+  set fraction type        = number
+  set max number elements  = 200000
+  set max refinement level = 10
+  set min refinement level = 4
+  set frequency            = 1
+  set fraction refinement  = 0.3
+  set fraction coarsening  = 0.1
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-	set verbosity               = quiet
-	set tolerance               = 1e-4
-	set max iterations          = 10
+  set verbosity      = quiet
+  set tolerance      = 1e-4
+  set max iterations = 10
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-	set verbosity               = quiet
-	set method                  = gmres
-	set max iters               = 5000
-	set max krylov vectors      = 1000
-	set relative residual       = 1e-4
-	set minimum residual        = 1e-9
-	set ilu preconditioner fill = 0
-	set ilu preconditioner absolute tolerance = 1e-12
-	set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set max krylov vectors                    = 1000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
 end

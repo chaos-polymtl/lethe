@@ -3,38 +3,39 @@
 # --------------------------------------------------
 # RPT Monte Carlo technique
 #---------------------------------------------------
-subsection rpt parameters
-    set verbosity                        = verbose
-    set export counts                    = false
-    set monte carlo iteration            = 1000
-    set random number seed               = 0
-    set reactor height                   = 0.3
-    set reactor radius       			 = 0.1
-    set peak-to-total ratio  			 = 0.4
-    set sampling time        			 = 1
-    set gamma-rays emitted        		 = 2
-    set attenuation coefficient detector  = 21.477
-end
 
+subsection rpt parameters
+  set verbosity                        = verbose
+  set export counts                    = false
+  set monte carlo iteration            = 1000
+  set random number seed               = 0
+  set reactor height                   = 0.3
+  set reactor radius                   = 0.1
+  set peak-to-total ratio              = 0.4
+  set sampling time                    = 1
+  set gamma-rays emitted               = 2
+  set attenuation coefficient detector = 21.477
+end
 
 # --------------------------------------------------
 # Particle reconstruction
 #---------------------------------------------------
-subsection reconstruction
-	set refinement                              = 5
-	set reconstruction counts file              = counts.reconstruction
-    set export reconstruction positions file    = testing.csv
-end
 
+subsection reconstruction
+  set refinement                           = 5
+  set reconstruction counts file           = counts.reconstruction
+  set export reconstruction positions file = testing.csv
+end
 
 #---------------------------------------------------
 # Detector parameters
 #---------------------------------------------------
+
 subsection detector parameters
-	set detector positions file          = positions.detector
-    set radius       			    	 = 0.0381 
-    set length					         = 0.0762
-    set dead time       		 = 1e-5,1e-5,1e-5,1e-5,1e-5,1e-5
-    set activity  			 = 2e6,2e6,2e6,2e6,2e6,2e6
-    set attenuation coefficient reactor  = 10,10,10,10,10,10
+  set detector positions file         = positions.detector
+  set radius                          = 0.0381
+  set length                          = 0.0762
+  set dead time                       = 1e-5,1e-5,1e-5,1e-5,1e-5,1e-5
+  set activity                        = 2e6,2e6,2e6,2e6,2e6,2e6
+  set attenuation coefficient reactor = 10,10,10,10,10,10
 end

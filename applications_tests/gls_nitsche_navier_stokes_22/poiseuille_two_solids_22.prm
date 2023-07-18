@@ -1,158 +1,171 @@
 # Listing of Parameters
 # ---------------------
 
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
+
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output name             = poiseuille_22
-  set output frequency        = 0
-  set subdivision             = 1
+  set method            = steady
+  set number mesh adapt = 2
+  set output name       = poiseuille_22
+  set output frequency  = 0
+  set subdivision       = 1
 end
 
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
+
 subsection FEM
-    set velocity order        = 1
-    set pressure order        = 1
+  set velocity order = 1
+  set pressure order = 1
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
+
 subsection timer
-    set type    = none                                  # <none|iteration|end>
+  set type = none # <none|iteration|end>
 end
 
 #---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
+
 subsection initial conditions
-    set type = nodal
-    subsection uvwp
-            set Function expression = 0; 0; 0
-    end
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity            = 1.0
+    set kinematic viscosity = 1.0
   end
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
+
 subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = 0, -0.5 : 1, 1.0 : true
-		set initial refinement = 4
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = 0, -0.5 : 1, 1.0 : true
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
 # Nitsche
 #---------------------------------------------------
+
 subsection nitsche
-	set verbosity = verbose
-	set number of solids = 2
-        subsection nitsche solid 0
-		set beta = 100
-		subsection mesh
-			set type = dealii
-		        set grid type = hyper_rectangle
-		        set grid arguments = 0, -0.5 : 1, 0. : true
-        		set initial refinement = 6
-		end
-		set calculate force on solid = true
-        end
-        subsection nitsche solid 1
-		set beta = 100
-		subsection mesh
-			set type = dealii
-		        set grid type = hyper_rectangle
-		        set grid arguments = 0, 0.5 : 1, 1.0 : true
-        		set initial refinement = 6
-		end
-		set calculate force on solid = true
-        end
+  set verbosity        = verbose
+  set number of solids = 2
+  subsection nitsche solid 0
+    set beta = 100
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_rectangle
+      set grid arguments     = 0, -0.5 : 1, 0. : true
+      set initial refinement = 6
+    end
+    set calculate force on solid = true
+  end
+  subsection nitsche solid 1
+    set beta = 100
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_rectangle
+      set grid arguments     = 0, 0.5 : 1, 1.0 : true
+      set initial refinement = 6
+    end
+    set calculate force on solid = true
+  end
 end
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
+
 subsection mesh adaptation
-  set type                    = uniform
+  set type = uniform
 end
 
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
+
 subsection analytical solution
-  set enable                 = true
+  set enable    = true
   set verbosity = verbose
-    subsection uvwp
-            set Function constants = H=0.5, G=1, mu=1
-            set Function expression =  if(y >= 0. && y<=0.5,  0.5 * G / mu * (y) * (H - y) , 0)  ; 0 ; 0
-    end
+  subsection uvwp
+    set Function constants  = H=0.5, G=1, mu=1
+    set Function expression = if(y >= 0. && y<=0.5,  0.5 * G / mu * (y) * (H - y) , 0)  ; 0 ; 0
+  end
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
+
 subsection boundary conditions
-  set number                  = 2
-    subsection bc 0
-    set id = 2
-        set type              = noslip
+  set number = 2
+  subsection bc 0
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 3
+    set type = function
+    subsection u
+      set Function expression = 0
     end
-    subsection bc 1
-    set id = 3
-        set type              = function
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0
-        end
+    subsection v
+      set Function expression = 0
     end
+  end
 end
 
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
+
 subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression = if(y >= 0., 1, 0) ; 0 ; 0
-    end
+  set enable = true
+  subsection xyz
+    set Function expression = if(y >= 0., 1, 0) ; 0 ; 0
+  end
 end
 
 # --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
+
 subsection non-linear solver
-  set verbosity               = quiet
-  set tolerance               = 1e-12
-  set max iterations          = 10
+  set verbosity      = quiet
+  set tolerance      = 1e-12
+  set max iterations = 10
 end
 
 # --------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
+
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-13
-  set ilu preconditioner fill = 2
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-13
+  set ilu preconditioner fill               = 2
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end

@@ -94,8 +94,26 @@ IBParticlesDEM<dim>::update_contact_candidates()
           if (particle_one.particle_id < particle_two.particle_id)
             {
               const Point<dim> particle_two_location = particle_two.position;
+              double           distance =
+                (particle_one_location - particle_two_location).norm();
+              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                {
+                  distance =
+                    (particle_one_location - particle_two_location).norm();
+                }
+              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
+                {
+                  distance = particle_two.shape->value(particle_one_location);
+                }
+              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                {
+                  distance = particle_one.shape->value(particle_two_location);
+                }
 
-              if ((particle_one_location - particle_two_location).norm() <
+              if (distance <
                   (particle_one.radius + particle_two.radius) * radius_factor)
                 {
                   (particles_contact_candidates[particle_one.particle_id])
@@ -155,9 +173,35 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                 }
 
               // Calculation of normal overlap
-              double normal_overlap =
-                (particle_one.radius + particle_two.radius) -
-                particle_one_location.distance(particle_two_location);
+              double normal_overlap;
+              if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                  typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                {
+                  normal_overlap =
+                    (particle_one.radius + particle_two.radius) -
+                    particle_one_location.distance(particle_two_location);
+                }
+              else if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                       typeid(*particle_two.shape) != typeid(Sphere<dim>))
+                {
+                  normal_overlap =
+                    particle_one.radius -
+                    particle_two.shape->value(particle_one_location);
+                }
+              else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                       typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                {
+                  normal_overlap =
+                    particle_two.radius -
+                    particle_one.shape->value(particle_two_location);
+                }
+              else
+                {
+                  // No contact force calculation between non-spherical
+                  // particle.
+                  normal_overlap = 0;
+                  continue;
+                }
 
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
@@ -188,7 +232,58 @@ IBParticlesDEM<dim>::calculate_pp_contact_force(
                       particle_one.mass,
                       particle_two.mass);
 
-
+                  if (typeid(*particle_one.shape) == typeid(Sphere<dim>) &&
+                      typeid(*particle_two.shape) != typeid(Sphere<dim>))
+                    {
+                      // No tangential contact force between sphere and
+                      // non-spherical object at the moment.
+                      tangential_force = 0;
+                      // Re-orientate the normal force with the normal to the
+                      // non-spherical particle.
+                      normal_force[0] =
+                        -normal_force.norm() *
+                        particle_two.shape->gradient(particle_one_location)[0] /
+                        particle_two.shape->gradient(particle_one_location)
+                          .norm();
+                      normal_force[1] =
+                        -normal_force.norm() *
+                        particle_two.shape->gradient(particle_one_location)[1] /
+                        particle_two.shape->gradient(particle_one_location)
+                          .norm();
+                      if constexpr (dim == 3)
+                        normal_force[2] =
+                          -normal_force.norm() *
+                          particle_two.shape->gradient(
+                            particle_one_location)[2] /
+                          particle_two.shape->gradient(particle_one_location)
+                            .norm();
+                    }
+                  else if (typeid(*particle_one.shape) != typeid(Sphere<dim>) &&
+                           typeid(*particle_two.shape) == typeid(Sphere<dim>))
+                    {
+                      // No tangential contact force between sphere and
+                      // non-spherical object at the moment.
+                      tangential_force = 0;
+                      // Re-orientate the normal force with the normal to the
+                      // non-spherical particle.
+                      normal_force[0] =
+                        normal_force.norm() *
+                        particle_one.shape->gradient(particle_two_location)[0] /
+                        particle_one.shape->gradient(particle_two_location)
+                          .norm();
+                      normal_force[1] =
+                        normal_force.norm() *
+                        particle_one.shape->gradient(particle_two_location)[1] /
+                        particle_one.shape->gradient(particle_two_location)
+                          .norm();
+                      if constexpr (dim == 3)
+                        normal_force[2] =
+                          normal_force.norm() *
+                          particle_one.shape->gradient(
+                            particle_two_location)[2] /
+                          particle_one.shape->gradient(particle_two_location)
+                            .norm();
+                    }
 
                   contact_force[particle_one.particle_id] -=
                     (normal_force + tangential_force);
@@ -704,7 +799,7 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
   double t = 0;
   // The gravitational acceleration.
   Tensor<1, 3> g;
-  this->parameters->f_gravity->set_time(cfd_time);
+  this->parameters->f_gravity->set_time(cfd_time + dt);
   // The gravitational force on the particle.
   Tensor<1, 3> gravity;
 
@@ -804,81 +899,163 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
 
           for (unsigned int p_i = 0; p_i < dem_particles.size(); ++p_i)
             {
-              if (step == 0)
+              if (dem_particles[p_i].integrate_motion)
                 {
-                  last_velocity[p_i] = dem_particles[p_i].velocity;
-                  last_position[p_i] = dem_particles[p_i].position;
-                  last_omega[p_i]    = dem_particles[p_i].omega;
-                }
-              auto inv_inertia = invert(dem_particles[p_i].inertia);
-              if (dim == 2)
-                {
-                  gravity = g * (dem_particles[p_i].mass -
-                                 dem_particles[p_i].radius *
-                                   dem_particles[p_i].radius * PI * rho);
+                  if (step == 0)
+                    {
+                      last_velocity[p_i] = dem_particles[p_i].velocity;
+                      last_position[p_i] = dem_particles[p_i].position;
+                      last_omega[p_i]    = dem_particles[p_i].omega;
+                    }
+                  auto inv_inertia = invert(dem_particles[p_i].inertia);
+                  if (dim == 2)
+                    {
+                      gravity = g * (dem_particles[p_i].mass -
+                                     dem_particles[p_i].radius *
+                                       dem_particles[p_i].radius * PI * rho);
+                    }
+                  else
+                    {
+                      gravity = g * (dem_particles[p_i].mass -
+                                     4.0 / 3.0 * dem_particles[p_i].radius *
+                                       dem_particles[p_i].radius *
+                                       dem_particles[p_i].radius * PI * rho);
+                    }
+
+                  // We consider only the force at t+dt so the scheme is
+                  // consistent to a BDFn scheme on the fluid side. If there is
+                  // no contact.
+
+                  current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
+                  current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
+
+                  // Store each rk step of the variable we integrate in its
+                  // respective vector.
+
+                  k_velocity[p_i][step] =
+                    (current_fluid_force[p_i] + contact_force[p_i] +
+                     contact_wall_force[p_i] + gravity +
+                     lubrication_force[p_i] + lubrication_wall_force[p_i]) /
+                    dem_particles[p_i].mass;
+
+                  for (unsigned int d = 0; d < dim; ++d)
+                    {
+                      k_position[p_i][step][d] = dem_particles[p_i].velocity[d];
+                    }
+
+                  k_omega[p_i][step] =
+                    inv_inertia *
+                    (current_fluid_torque[p_i] + contact_torque[p_i] +
+                     contact_wall_torque[p_i]);
+
+                  k_impulsion[p_i][step] =
+                    current_fluid_force[p_i] + gravity +
+                    contact_wall_force[p_i] + contact_force[p_i] +
+                    lubrication_force[p_i] + lubrication_wall_force[p_i];
+
+                  k_omega_impulsion[p_i][step] = current_fluid_torque[p_i] +
+                                                 contact_torque[p_i] +
+                                                 contact_wall_torque[p_i];
+
+                  k_contact_impulsion[p_i][step] =
+                    contact_wall_force[p_i] + contact_force[p_i];
+
+                  k_omega_contact_impulsion[p_i][step] =
+                    contact_torque[p_i] + contact_wall_torque[p_i];
+
+
+                  // Integrate the relevant state Variable for the next RK step.
+                  dem_particles[p_i].velocity =
+                    last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
+
+                  for (unsigned int d = 0; d < dim; ++d)
+                    {
+                      dem_particles[p_i].position[d] =
+                        last_position[p_i][d] +
+                        k_position[p_i][step][d] * local_dt;
+                    }
+
+                  dem_particles[p_i].omega =
+                    last_omega[p_i] + k_omega[p_i][step] * local_dt;
+
+                  dem_particles[p_i].set_position(dem_particles[p_i].position);
                 }
               else
                 {
-                  gravity = g * (dem_particles[p_i].mass -
-                                 4.0 / 3.0 * dem_particles[p_i].radius *
-                                   dem_particles[p_i].radius *
-                                   dem_particles[p_i].radius * PI * rho);
+                  if (parameters->load_particles_from_file == false)
+                    {
+                      dem_particles[p_i].f_position->set_time(cfd_time + t +
+                                                              local_dt);
+                      dem_particles[p_i].f_velocity->set_time(cfd_time + t +
+                                                              local_dt);
+                      dem_particles[p_i].f_omega->set_time(cfd_time + t +
+                                                           local_dt);
+                      dem_particles[p_i].f_orientation->set_time(cfd_time + t +
+                                                                 local_dt);
+
+                      dem_particles[p_i].position[0] =
+                        dem_particles[p_i].f_position->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].position[1] =
+                        dem_particles[p_i].f_position->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].velocity[0] =
+                        dem_particles[p_i].f_velocity->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].velocity[1] =
+                        dem_particles[p_i].f_velocity->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].omega[0] =
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].omega[1] =
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].omega[2] =
+                        dem_particles[p_i].f_omega->value(
+                          dem_particles[p_i].position, 2);
+                      dem_particles[p_i].orientation[0] =
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 0);
+                      dem_particles[p_i].orientation[1] =
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 1);
+                      dem_particles[p_i].orientation[2] =
+                        dem_particles[p_i].f_orientation->value(
+                          dem_particles[p_i].position, 2);
+                      if (dim == 3)
+                        {
+                          dem_particles[p_i].position[2] =
+                            dem_particles[p_i].f_position->value(
+                              dem_particles[p_i].position, 2);
+                          dem_particles[p_i].velocity[2] =
+                            dem_particles[p_i].f_velocity->value(
+                              dem_particles[p_i].position, 2);
+                        }
+                    }
+                  else
+                    {
+                      dem_particles[p_i].position[0] +=
+                        dem_particles[p_i].velocity[0] * dt;
+                      dem_particles[p_i].position[1] +=
+                        dem_particles[p_i].velocity[1] * dt;
+                      dem_particles[p_i].orientation[0] =
+                        dem_particles[p_i].omega[0] * dt;
+                      dem_particles[p_i].orientation[1] =
+                        dem_particles[p_i].omega[1] * dt;
+                      dem_particles[p_i].orientation[2] =
+                        dem_particles[p_i].omega[2] * dt;
+
+                      if (dim == 3)
+                        {
+                          dem_particles[p_i].position[2] +=
+                            dem_particles[p_i].velocity[2] * dt;
+                        }
+                    }
+                  dem_particles[p_i].set_position(dem_particles[p_i].position);
+                  dem_particles[p_i].set_orientation(
+                    dem_particles[p_i].orientation);
                 }
-
-              // We consider only the force at t+dt so the scheme is consistent
-              // to a BDFn scheme on the fluid side. If there is no contact.
-
-              current_fluid_force[p_i]  = dem_particles[p_i].fluid_forces;
-              current_fluid_torque[p_i] = dem_particles[p_i].fluid_torque;
-
-              // Store each rk step of the variable we integrate in its
-              // respective vector.
-
-              k_velocity[p_i][step] =
-                (current_fluid_force[p_i] + contact_force[p_i] +
-                 contact_wall_force[p_i] + gravity + lubrication_force[p_i] +
-                 lubrication_wall_force[p_i]) /
-                dem_particles[p_i].mass;
-
-              for (unsigned int d = 0; d < dim; ++d)
-                {
-                  k_position[p_i][step][d] = dem_particles[p_i].velocity[d];
-                }
-
-              k_omega[p_i][step] =
-                inv_inertia * (current_fluid_torque[p_i] + contact_torque[p_i] +
-                               contact_wall_torque[p_i]);
-
-              k_impulsion[p_i][step] =
-                (current_fluid_force[p_i] + gravity + contact_wall_force[p_i] +
-                 contact_force[p_i] + lubrication_force[p_i] +
-                 lubrication_wall_force[p_i]);
-
-              k_omega_impulsion[p_i][step] =
-                (current_fluid_torque[p_i] + contact_torque[p_i] +
-                 contact_wall_torque[p_i]);
-
-              k_contact_impulsion[p_i][step] =
-                (contact_wall_force[p_i] + contact_force[p_i]);
-
-              k_omega_contact_impulsion[p_i][step] =
-                (contact_torque[p_i] + contact_wall_torque[p_i]);
-
-
-              // Integrate the relevant state Variable for the next RK step.
-              dem_particles[p_i].velocity =
-                last_velocity[p_i] + k_velocity[p_i][step] * local_dt;
-
-              for (unsigned int d = 0; d < dim; ++d)
-                {
-                  dem_particles[p_i].position[d] =
-                    last_position[p_i][d] + k_position[p_i][step][d] * local_dt;
-                }
-
-              dem_particles[p_i].omega =
-                last_omega[p_i] + k_omega[p_i][step] * local_dt;
-
-              dem_particles[p_i].set_position(dem_particles[p_i].position);
             }
         }
 

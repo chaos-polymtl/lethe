@@ -6,6 +6,7 @@
 #---------------------------------------------------
 
 
+
 subsection simulation control
   set method            = steady
   set number mesh adapt = 10
@@ -13,92 +14,92 @@ subsection simulation control
   set output frequency  = 1
   set subdivision       = 1
   set output boundaries = false
-end
-  
-#---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------
-  
-subsection physical properties
-  set number of fluids = 1
-  subsection fluid 0
-    set kinematic viscosity = 0.01 # Re_h=2/nu
   end
-end
+  
+  #---------------------------------------------------
+  # Physical Properties
+  #---------------------------------------------------
+  
+  subsection physical properties
+    set number of fluids = 1
+    subsection fluid 0
+      set kinematic viscosity = 0.01 # Re_h=2/nu
+      end
+      end
       
-#---------------------------------------------------
-# Mesh
-#---------------------------------------------------
+      #---------------------------------------------------
+      # Mesh
+      #---------------------------------------------------
       
-subsection mesh
-  set type      = gmsh
-  set file name = ../backward-facing-step.msh
-end
+      subsection mesh
+        set type      = gmsh
+        set file name = ../backward-facing-step.msh
+        end
         
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set variable            = velocity
-  set type                = kelly
-  set fraction refinement = 0.2
-end
+        # --------------------------------------------------
+        # Mesh Adaptation Control
+        #---------------------------------------------------
+        
+        subsection mesh adaptation
+          set variable            = velocity
+          set type                = kelly
+          set fraction refinement = 0.2
+          end
           
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
+          #---------------------------------------------------
+          # FEM
+          #---------------------------------------------------
           
-subsection FEM
-  set pressure order = 1
-  set velocity order = 1
-end
+          subsection FEM
+            set pressure order = 1
+            set velocity order = 1
+            end
             
-# --------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
+            # --------------------------------------------------
+            # Boundary Conditions
+            #---------------------------------------------------
             
-subsection boundary conditions
-  set number         = 2
-  set time dependent = false
-  subsection bc 0
-    set type = noslip
-  end
-  subsection bc 1
-    set type = function
-    subsection u
-      set Function expression = 1
-    end
-    subsection v
-      set Function expression = 0
-    end
-    subsection w
-      set Function expression = 0
-    end
-  end
-end
+            subsection boundary conditions
+              set number         = 2
+              set time dependent = false
+              subsection bc 0
+                set type = noslip
+                end
+                subsection bc 1
+                  set type = function
+                  subsection u
+                    set Function expression = 1
+                    end
+                    subsection v
+                      set Function expression = 0
+                      end
+                      subsection w
+                        set Function expression = 0
+                        end
+                        end
+                        end
                         
-# --------------------------------------------------
-# Non-Linear Solver Control
-#---------------------------------------------------
+                        # --------------------------------------------------
+                        # Non-Linear Solver Control
+                        #---------------------------------------------------
                         
-subsection non-linear solver
-  set verbosity      = verbose
-  set tolerance      = 1e-6
-  set max iterations = 10
-end
+                        subsection non-linear solver
+                          set verbosity      = verbose
+                          set tolerance      = 1e-6
+                          set max iterations = 10
+                          end
                           
-# --------------------------------------------------
-# Linear Solver Control
-#---------------------------------------------------
+                          # --------------------------------------------------
+                          # Linear Solver Control
+                          #---------------------------------------------------
                           
-subsection linear solver
-  set verbosity                             = verbose
-  set method                                = gmres
-  set max iters                             = 10000
-  set relative residual                     = 1e-4
-  set minimum residual                      = 1e-9
-  set ilu preconditioner fill               = 2
-  set ilu preconditioner absolute tolerance = 1e-12
-  set ilu preconditioner relative tolerance = 1.00
-end                            
+                          subsection linear solver
+                            set verbosity                             = verbose
+                            set method                                = gmres
+                            set max iters                             = 10000
+                            set relative residual                     = 1e-4
+                            set minimum residual                      = 1e-9
+                            set ilu preconditioner fill               = 2
+                            set ilu preconditioner absolute tolerance = 1e-12
+                            set ilu preconditioner relative tolerance = 1.00
+                          end 

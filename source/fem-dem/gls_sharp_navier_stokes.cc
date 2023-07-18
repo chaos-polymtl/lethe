@@ -743,6 +743,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
+  some_particles_are_coupled = false;
   // initialized the particles
   if (this->simulation_parameters.particlesParameters
         ->load_particles_from_file == false)
@@ -754,11 +755,30 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         {
           particles[i] =
             this->simulation_parameters.particlesParameters->particles[i];
+          if (particles[i].integrate_motion == true)
+            {
+              if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+                throw std::runtime_error(
+                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
+              some_particles_are_coupled = true;
+            }
         }
     }
   else
     {
       load_particles_from_file();
+      for (unsigned int i = 0;
+           i < this->simulation_parameters.particlesParameters->nb;
+           ++i)
+        {
+          if (particles[i].integrate_motion == true)
+            {
+              if (typeid(*particles[i].shape) != typeid(Sphere<dim>))
+                throw std::runtime_error(
+                  "Shapes other than sphere cannot have their motion integrated through fluid-structure interaction");
+              some_particles_are_coupled = true;
+            }
+        }
     }
 
   table_p.resize(particles.size());
@@ -1989,7 +2009,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
   const auto rheological_model =
     this->simulation_parameters.physical_properties_manager.get_rheology();
-  ib_dem.update_particles(particles, time);
+  ib_dem.update_particles(particles, time - dt);
   std::map<field, double> field_values;
   field_values[field::shear_rate]  = 1;
   field_values[field::temperature] = 1;
@@ -2002,7 +2022,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
              .is_non_newtonian() and
            this->simulation_parameters.particlesParameters
              ->enable_lubrication_force and
-           this->simulation_parameters.particlesParameters->integrate_motion),
+           some_particles_are_coupled),
          RequiresConstantViscosity(
            "GLSSharpNavierStokesSolver<dim>::integrate_particles"));
 
@@ -2018,8 +2038,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
     }
 
   particle_residual = 0;
-  if (this->simulation_parameters.particlesParameters->integrate_motion &&
-      time > 0)
+  if (some_particles_are_coupled && time > 0)
     {
       Assert(this->simulation_parameters.physical_properties_manager
                .density_is_constant(),
@@ -2039,219 +2058,293 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          // calculate the volume of fluid displaced by the particle.
-          double volume = particles[p].shape->displaced_volume(fluid_density);
-
-          // Transfers the impulsion evaluated in the sub-time-stepping scheme
-          // to the particle at the CFD time scale.
-          particles[p].impulsion = ib_dem.dem_particles[p].impulsion;
-          particles[p].omega_impulsion =
-            ib_dem.dem_particles[p].omega_impulsion;
-          particles[p].contact_impulsion =
-            ib_dem.dem_particles[p].contact_impulsion;
-          particles[p].omega_contact_impulsion =
-            ib_dem.dem_particles[p].omega_contact_impulsion;
-          // Time stepping information
-          const auto method = this->simulation_control->get_assembly_method();
-          std::vector<double> time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
-
-          // Vector for the BDF coefficients
-          Vector<double> bdf_coefs =
-            bdf_coefficients(method, time_steps_vector);
-
-          // Define the residual of the particle dynamics.
-          Tensor<1, 3> residual_velocity =
-            -(bdf_coefs[0] * particles[p].velocity);
-
-          for (unsigned int i = 1; i < number_of_previous_solutions(method) + 1;
-               ++i)
+          if (particles[p].integrate_motion)
             {
-              residual_velocity +=
-                -(bdf_coefs[i] * particles[p].previous_velocity[i - 1]);
-            }
-          residual_velocity +=
-            (particles[p].impulsion) / particles[p].mass / dt;
-          // Approximate a diagonal Jacobian with a secant methods.
+              // calculate the volume of fluid displaced by the particle.
+              double volume =
+                particles[p].shape->displaced_volume(fluid_density);
 
-          double inverse_of_relaxation_coefficient_velocity =
-            -bdf_coefs[0] -
-            0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
+              // Transfers the impulsion evaluated in the sub-time-stepping
+              // scheme to the particle at the CFD time scale.
+              particles[p].impulsion = ib_dem.dem_particles[p].impulsion;
+              particles[p].omega_impulsion =
+                ib_dem.dem_particles[p].omega_impulsion;
+              particles[p].contact_impulsion =
+                ib_dem.dem_particles[p].contact_impulsion;
+              particles[p].omega_contact_impulsion =
+                ib_dem.dem_particles[p].omega_contact_impulsion;
+              // Time stepping information
+              const auto method =
+                this->simulation_control->get_assembly_method();
+              std::vector<double> time_steps_vector =
+                this->simulation_control->get_time_steps_vector();
 
-          // Evaluate the relaxation parameter using a generalization of the
-          // secant method.
-          if ((particles[p].velocity - particles[p].velocity_iter).norm() != 0)
-            {
-              auto vector_of_velocity_variation =
-                (particles[p].velocity - particles[p].velocity_iter);
-              auto vector_of_residual_variation =
-                (bdf_coefs[0] *
-                   (-particles[p].velocity + particles[p].velocity_iter) +
-                 (particles[p].impulsion - particles[p].impulsion_iter) /
-                   particles[p].mass / dt);
-              double dot_product_of_the_variation_vectors =
-                scalar_product(vector_of_velocity_variation,
-                               vector_of_residual_variation);
-              inverse_of_relaxation_coefficient_velocity =
-                1 / (vector_of_velocity_variation.norm() /
-                       vector_of_residual_variation.norm() *
-                       dot_product_of_the_variation_vectors /
-                       (vector_of_velocity_variation.norm() *
-                        vector_of_residual_variation.norm()) +
-                     DBL_MIN);
-            }
-          // Relaxation parameter for the particle dynamics.
-          double local_alpha = 1;
-          // We keep in memory the state of the particle before the update in
-          // case something went wrong and the particle is now outside of the
-          // domain. If this is the case, the particle won't be updated.
-          IBParticle<dim> save_particle_state         = particles[p];
-          bool            save_particle_state_is_used = false;
-          // Define the correction vector.
-          Tensor<1, 3> velocity_correction_vector =
-            residual_velocity * 1 / inverse_of_relaxation_coefficient_velocity;
+              // Vector for the BDF coefficients
+              Vector<double> bdf_coefs =
+                bdf_coefficients(method, time_steps_vector);
 
-          // Update the particle state and keep in memory the last iteration
-          // information.
+              // Define the residual of the particle dynamics.
+              Tensor<1, 3> residual_velocity =
+                -(bdf_coefs[0] * particles[p].velocity);
 
-          particles[p].velocity_iter = particles[p].velocity;
-          particles[p].velocity =
-            particles[p].velocity_iter -
-            velocity_correction_vector * alpha * local_alpha;
-          particles[p].impulsion_iter      = particles[p].impulsion;
-          particles[p].previous_d_velocity = velocity_correction_vector;
-          particles[p].previous_local_alpha_velocity = local_alpha;
-
-
-          // If the particles have impacted a wall or another particle, we
-          // want to use the sub-time step position. Otherwise, we solve the
-          // new position directly with the new velocity found.
-          if (particles[p].contact_impulsion.norm() < 1e-12)
-            {
-              particles[p].position.clear();
-              for (unsigned int d = 0; d < dim; ++d)
+              for (unsigned int i = 1;
+                   i < number_of_previous_solutions(method) + 1;
+                   ++i)
                 {
-                  for (unsigned int i = 1;
-                       i < number_of_previous_solutions(method) + 1;
-                       ++i)
-                    {
-                      double position_update =
-                        -bdf_coefs[i] *
-                        particles[p].previous_positions[i - 1][d] /
-                        bdf_coefs[0];
+                  residual_velocity +=
+                    -(bdf_coefs[i] * particles[p].previous_velocity[i - 1]);
+                }
+              residual_velocity +=
+                (particles[p].impulsion) / particles[p].mass / dt;
+              // Approximate a diagonal Jacobian with a secant method.
 
+              double inverse_of_relaxation_coefficient_velocity =
+                -bdf_coefs[0] -
+                0.5 * volume * fluid_density / particles[p].mass / dt + DBL_MIN;
+
+              // Evaluate the relaxation parameter using a generalization of the
+              // secant method.
+              if ((particles[p].velocity - particles[p].velocity_iter).norm() !=
+                  0)
+                {
+                  auto vector_of_velocity_variation =
+                    (particles[p].velocity - particles[p].velocity_iter);
+                  auto vector_of_residual_variation =
+                    (bdf_coefs[0] *
+                       (-particles[p].velocity + particles[p].velocity_iter) +
+                     (particles[p].impulsion - particles[p].impulsion_iter) /
+                       particles[p].mass / dt);
+                  double dot_product_of_the_variation_vectors =
+                    scalar_product(vector_of_velocity_variation,
+                                   vector_of_residual_variation);
+                  inverse_of_relaxation_coefficient_velocity =
+                    1 / (vector_of_velocity_variation.norm() /
+                           vector_of_residual_variation.norm() *
+                           dot_product_of_the_variation_vectors /
+                           (vector_of_velocity_variation.norm() *
+                            vector_of_residual_variation.norm()) +
+                         DBL_MIN);
+                }
+              // Relaxation parameter for the particle dynamics.
+              double local_alpha = 1.;
+              // We keep in memory the state of the particle before the update
+              // in case something went wrong and the particle is now outside of
+              // the domain. If this is the case, the particle won't be updated.
+              IBParticle<dim> save_particle_state         = particles[p];
+              bool            save_particle_state_is_used = false;
+              // Define the correction vector.
+              Tensor<1, 3> velocity_correction_vector =
+                residual_velocity * 1. /
+                inverse_of_relaxation_coefficient_velocity;
+
+              // Update the particle state and keep in memory the last iteration
+              // information.
+
+              particles[p].velocity_iter = particles[p].velocity;
+              particles[p].velocity =
+                particles[p].velocity_iter -
+                velocity_correction_vector * alpha * local_alpha;
+              particles[p].impulsion_iter      = particles[p].impulsion;
+              particles[p].previous_d_velocity = velocity_correction_vector;
+              particles[p].previous_local_alpha_velocity = local_alpha;
+
+
+              // If the particles have impacted a wall or another particle, we
+              // want to use the sub-time step position. Otherwise, we solve the
+              // new position directly with the new velocity found.
+              if (particles[p].contact_impulsion.norm() < 1e-12)
+                {
+                  particles[p].position.clear();
+                  for (unsigned int d = 0; d < dim; ++d)
+                    {
+                      for (unsigned int i = 1;
+                           i < number_of_previous_solutions(method) + 1;
+                           ++i)
+                        {
+                          double position_update =
+                            -bdf_coefs[i] *
+                            particles[p].previous_positions[i - 1][d] /
+                            bdf_coefs[0];
+
+                          particles[p].set_position(particles[p].position[d] +
+                                                      position_update,
+                                                    d);
+                        }
+
+                      double position_update =
+                        particles[p].velocity[d] / bdf_coefs[0];
                       particles[p].set_position(particles[p].position[d] +
                                                   position_update,
                                                 d);
                     }
+                }
+              else
+                {
+                  Tensor<1, dim> position_update =
+                    local_alpha *
+                    (ib_dem.dem_particles[p].position - particles[p].position);
+                  particles[p].set_position(particles[p].position +
+                                            position_update);
+                }
+              // Check if the particle is in the domain. Throw an error if it's
+              // the case.
+              try
+                {
+                  const auto &cell =
+                    LetheGridTools::find_cell_around_point_with_tree(
+                      this->dof_handler, particles[p].position);
+                  (void)cell;
+                }
+              catch (...)
+                {
+                  this->pcout
+                    << "particle " << p
+                    << " is now outside the domain we do not update this particle. Position: "
+                    << particles[p].position[0] << ", "
+                    << particles[p].position[1] << ", "
+                    << particles[p].position[2] << std::endl;
+                  save_particle_state_is_used = true;
+                }
 
-                  double position_update =
-                    particles[p].velocity[d] / bdf_coefs[0];
-                  particles[p].set_position(particles[p].position[d] +
-                                              position_update,
-                                            d);
+              // For the rotation velocity : same logic as the velocity.
+              auto         inv_inertia = invert(particles[p].inertia);
+              Tensor<1, 3> residual_omega =
+                -(bdf_coefs[0] * particles[p].omega);
+              for (unsigned int i = 1;
+                   i < number_of_previous_solutions(method) + 1;
+                   ++i)
+                {
+                  residual_omega +=
+                    -(bdf_coefs[i] * particles[p].previous_omega[i - 1]);
+                }
+              residual_omega +=
+                inv_inertia * (particles[p].omega_impulsion) / dt;
+
+              double inverse_of_relaxation_coefficient_omega =
+                -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
+                                  particles[p].radius * particles[p].radius *
+                                  inv_inertia.norm() / dt;
+              // Evaluate the relaxation parameter using a generalization of the
+              // secant method.
+              if ((particles[p].omega - particles[p].omega_iter).norm() != 0)
+                {
+                  auto vector_of_omega_variation =
+                    (particles[p].omega - particles[p].omega_iter);
+                  auto vector_of_residual_variation =
+                    (bdf_coefs[0] *
+                       (-particles[p].omega + particles[p].omega_iter) +
+                     (particles[p].omega_impulsion -
+                      particles[p].omega_impulsion_iter) *
+                       inv_inertia.norm() / dt);
+                  double dot_product_of_the_variation_vectors =
+                    scalar_product(vector_of_omega_variation,
+                                   vector_of_residual_variation);
+                  inverse_of_relaxation_coefficient_omega =
+                    1 / (vector_of_omega_variation.norm() /
+                           vector_of_residual_variation.norm() *
+                           dot_product_of_the_variation_vectors /
+                           (vector_of_omega_variation.norm() *
+                            vector_of_residual_variation.norm()) +
+                         DBL_MIN);
+                }
+              // Define the correction vector.
+              Tensor<1, 3> omega_correction_vector =
+                residual_omega * 1 / inverse_of_relaxation_coefficient_omega;
+
+              double local_alpha_omega = 1;
+
+              particles[p].omega_iter = particles[p].omega;
+              particles[p].omega =
+                particles[p].omega_iter -
+                omega_correction_vector * alpha * local_alpha_omega;
+              particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
+              particles[p].previous_d_omega     = omega_correction_vector;
+              particles[p].previous_local_alpha_omega = local_alpha_omega;
+
+
+              // If something went wrong during the update, the particle state
+              // would be reversed to its original state here.
+              if (save_particle_state_is_used)
+                particles[p] = save_particle_state;
+
+              // Evaluate global residual of the particle dynamics.
+              double this_particle_residual =
+                sqrt(std::pow(residual_velocity.norm(), 2) +
+                     std::pow(residual_omega.norm(), 2)) *
+                dt;
+              // Keep in memory the residual.
+              particles[p].residual_velocity = residual_velocity.norm();
+              particles[p].residual_omega =
+                (particles[p].omega - particles[p].omega_iter).norm();
+              particles_residual_vect[p] = this_particle_residual;
+              // L_inf of all the particles' residual.
+              if (this_particle_residual > particle_residual)
+                {
+                  particle_residual          = this_particle_residual;
+                  worst_residual_particle_id = p;
                 }
             }
           else
             {
-              Tensor<1, dim> position_update =
-                local_alpha *
-                (ib_dem.dem_particles[p].position - particles[p].position);
-              particles[p].set_position(particles[p].position +
-                                        position_update);
-            }
-          // Check if the particle is in the domain. Throw an error if it's
-          // the case.
-          try
-            {
-              const auto &cell =
-                LetheGridTools::find_cell_around_point_with_tree(
-                  this->dof_handler, particles[p].position);
-              (void)cell;
-            }
-          catch (...)
-            {
-              this->pcout
-                << "particle " << p
-                << " is now outside the domain we do not update this particle. Position: "
-                << particles[p].position[0] << ", " << particles[p].position[1]
-                << ", " << particles[p].position[2] << std::endl;
-              save_particle_state_is_used = true;
-            }
+              if (this->simulation_parameters.particlesParameters
+                    ->load_particles_from_file == false)
+                {
+                  particles[p].f_position->set_time(time);
+                  particles[p].f_velocity->set_time(time);
+                  particles[p].f_omega->set_time(time);
+                  particles[p].f_orientation->set_time(time);
 
-          // For the rotation velocity : same logic as the velocity.
-          auto         inv_inertia    = invert(particles[p].inertia);
-          Tensor<1, 3> residual_omega = -(bdf_coefs[0] * particles[p].omega);
-          for (unsigned int i = 1; i < number_of_previous_solutions(method) + 1;
-               ++i)
-            {
-              residual_omega +=
-                -(bdf_coefs[i] * particles[p].previous_omega[i - 1]);
-            }
-          residual_omega += inv_inertia * (particles[p].omega_impulsion) / dt;
+                  particles[p].position[0] =
+                    particles[p].f_position->value(particles[p].position, 0);
+                  particles[p].position[1] =
+                    particles[p].f_position->value(particles[p].position, 1);
+                  particles[p].velocity[0] =
+                    particles[p].f_velocity->value(particles[p].position, 0);
+                  particles[p].velocity[1] =
+                    particles[p].f_velocity->value(particles[p].position, 1);
+                  particles[p].omega[0] =
+                    particles[p].f_omega->value(particles[p].position, 0);
+                  particles[p].omega[1] =
+                    particles[p].f_omega->value(particles[p].position, 1);
+                  particles[p].omega[2] =
+                    particles[p].f_omega->value(particles[p].position, 2);
+                  particles[p].orientation[0] =
+                    particles[p].f_orientation->value(particles[p].position, 0);
+                  particles[p].orientation[1] =
+                    particles[p].f_orientation->value(particles[p].position, 1);
+                  particles[p].orientation[2] =
+                    particles[p].f_orientation->value(particles[p].position, 2);
+                  if (dim == 3)
+                    {
+                      particles[p].position[2] =
+                        particles[p].f_position->value(particles[p].position,
+                                                       2);
+                      particles[p].velocity[2] =
+                        particles[p].f_velocity->value(particles[p].position,
+                                                       2);
+                    }
+                }
+              else
+                {
+                  particles[p].position[0] += particles[p].velocity[0] * dt;
+                  particles[p].position[1] += particles[p].velocity[1] * dt;
+                  particles[p].orientation[0] = particles[p].omega[0] * dt;
+                  particles[p].orientation[1] = particles[p].omega[1] * dt;
+                  particles[p].orientation[2] = particles[p].omega[2] * dt;
 
-          double inverse_of_relaxation_coefficient_omega =
-            -bdf_coefs[0] - 0.5 * 2. / 5 * volume * fluid_density *
-                              particles[p].radius * particles[p].radius *
-                              inv_inertia.norm() / dt;
-          // Evaluate the relaxation parameter using a generalization of the
-          // secant method.
-          if ((particles[p].omega - particles[p].omega_iter).norm() != 0)
-            {
-              auto vector_of_omega_variation =
-                (particles[p].omega - particles[p].omega_iter);
-              auto vector_of_residual_variation =
-                (bdf_coefs[0] *
-                   (-particles[p].omega + particles[p].omega_iter) +
-                 (particles[p].omega_impulsion -
-                  particles[p].omega_impulsion_iter) *
-                   inv_inertia.norm() / dt);
-              double dot_product_of_the_variation_vectors =
-                scalar_product(vector_of_omega_variation,
-                               vector_of_residual_variation);
-              inverse_of_relaxation_coefficient_omega =
-                1 / (vector_of_omega_variation.norm() /
-                       vector_of_residual_variation.norm() *
-                       dot_product_of_the_variation_vectors /
-                       (vector_of_omega_variation.norm() *
-                        vector_of_residual_variation.norm()) +
-                     DBL_MIN);
-            }
-          // Define the correction vector.
-          Tensor<1, 3> omega_correction_vector =
-            residual_omega * 1 / inverse_of_relaxation_coefficient_omega;
-
-          double local_alpha_omega = 1;
-
-          particles[p].omega_iter = particles[p].omega;
-          particles[p].omega =
-            particles[p].omega_iter -
-            omega_correction_vector * alpha * local_alpha_omega;
-          particles[p].omega_impulsion_iter = particles[p].omega_impulsion;
-          particles[p].previous_d_omega     = omega_correction_vector;
-          particles[p].previous_local_alpha_omega = local_alpha_omega;
-
-
-          // If something went wrong during the update, the particle state would
-          // be reversed to its original state here.
-          if (save_particle_state_is_used)
-            particles[p] = save_particle_state;
-
-          // Evaluate global residual of the particle dynamics.
-          double this_particle_residual =
-            sqrt(std::pow(residual_velocity.norm(), 2) +
-                 std::pow(residual_omega.norm(), 2)) *
-            dt;
-          // Keep in memory the residual.
-          particles[p].residual_velocity = residual_velocity.norm();
-          particles[p].residual_omega =
-            (particles[p].omega - particles[p].omega_iter).norm();
-          particles_residual_vect[p] = this_particle_residual;
-          // L_inf of all the particles' residual.
-          if (this_particle_residual > particle_residual)
-            {
-              particle_residual          = this_particle_residual;
-              worst_residual_particle_id = p;
+                  if (dim == 3)
+                    {
+                      particles[p].position[2] += particles[p].velocity[2] * dt;
+                    }
+                }
+              if (particles[p].position != particles[p].previous_positions[0] ||
+                  particles[p].orientation !=
+                    particles[p].previous_orientation[0])
+                {
+                  particles[p].clear_shape_cache();
+                }
+              particles[p].set_position(particles[p].position);
+              particles[p].set_orientation(particles[p].orientation);
             }
         }
 
@@ -2506,7 +2599,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 
-      if (this->simulation_parameters.particlesParameters->integrate_motion &&
+      if (some_particles_are_coupled &&
           this->simulation_parameters.particlesParameters->print_dem)
         {
           this->pcout << "particle " << p << " position "
@@ -2541,7 +2634,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "T_x",
             this->simulation_parameters.simulation_control.log_precision);
-          if (this->simulation_parameters.particlesParameters->integrate_motion)
+          if (some_particles_are_coupled)
             {
               table_p[p].add_value("omega_x", particles[p].omega[0]);
               table_p[p].set_precision(
@@ -2561,7 +2654,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "T_y",
             this->simulation_parameters.simulation_control.log_precision);
-          if (this->simulation_parameters.particlesParameters->integrate_motion)
+          if (some_particles_are_coupled)
             {
               table_p[p].add_value("omega_y", particles[p].omega[1]);
               table_p[p].set_precision(
@@ -2580,7 +2673,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_all_p.add_value("T_z", particles[p].fluid_torque[2]);
       table_all_p.set_precision(
         "T_z", this->simulation_parameters.simulation_control.log_precision);
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      if (some_particles_are_coupled)
         {
           table_p[p].add_value("omega_z", particles[p].omega[2]);
           table_p[p].set_precision(
@@ -2598,7 +2691,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
         "f_x", this->simulation_parameters.simulation_control.log_precision);
       table_all_p.set_precision(
         "f_x", this->simulation_parameters.simulation_control.log_precision);
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      if (some_particles_are_coupled)
         {
           table_p[p].add_value("v_x", particles[p].velocity[0]);
           table_p[p].add_value("p_x", particles[p].position[0]);
@@ -2625,7 +2718,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
       table_all_p.add_value("f_y", particles[p].fluid_forces[1]);
       table_all_p.set_precision(
         "f_y", this->simulation_parameters.simulation_control.log_precision);
-      if (this->simulation_parameters.particlesParameters->integrate_motion)
+      if (some_particles_are_coupled)
         {
           table_p[p].add_value("v_y", particles[p].velocity[1]);
           table_p[p].add_value("p_y", particles[p].position[1]);
@@ -2655,7 +2748,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
           table_all_p.set_precision(
             "f_z",
             this->simulation_parameters.simulation_control.log_precision);
-          if (this->simulation_parameters.particlesParameters->integrate_motion)
+          if (some_particles_are_coupled)
             {
               table_p[p].add_value("v_z", particles[p].velocity[2]);
               table_p[p].add_value("p_z", particles[p].position[2]);
@@ -4203,6 +4296,14 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
           particles[p_i].initialize_previous_solution();
+          if (restart_data["integrate_motion"][p_i] == 0.0)
+            {
+              particles[p_i].integrate_motion = false;
+            }
+          else
+            {
+              particles[p_i].integrate_motion = true;
+            }
         }
     }
   if (dim == 3)
@@ -4318,6 +4419,14 @@ GLSSharpNavierStokesSolver<dim>::load_particles_from_file()
           particles[p_i].rolling_friction_coefficient =
             restart_data["rolling_friction_coefficient"][p_i];
           particles[p_i].initialize_previous_solution();
+          if (restart_data["integrate_motion"][p_i] == 0.0)
+            {
+              particles[p_i].integrate_motion = false;
+            }
+          else
+            {
+              particles[p_i].integrate_motion = true;
+            }
         }
     }
 }
@@ -4385,8 +4494,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           this->update_boundary_conditions();
         }
 
-      if (this->simulation_parameters.particlesParameters->integrate_motion ==
-          false)
+      if (some_particles_are_coupled == false)
         integrate_particles();
 
 

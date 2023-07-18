@@ -62,12 +62,19 @@ subsection source term
 end
 
 subsection particles
-  set number of particles                           = 3
-  set stencil order                                 = 1
-  set length ratio                                  = 1
-  set refine mesh inside radius factor              = 0
-  set refine mesh outside radius factor             = 1.5
-  set initial refinement                            = 0
+  set number of particles = 3
+
+  subsection extrapolation function
+    set stencil order = 1
+    set length ratio  = 1
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 0
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 1.5
+  end
+
   subsection particle info 0
     set type            = cylinder
     set shape arguments = 0.35;1.1
