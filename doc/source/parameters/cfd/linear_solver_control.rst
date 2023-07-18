@@ -1,5 +1,6 @@
+=====================
 Linear Solver Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=====================
 
 In this subsection, the control options of linear solvers are specified. These control options may include solution method, maximum number of iterations, tolerance, residual precision and preconditioner information. The default values for these parameters are given in the text box below.
 
@@ -8,71 +9,70 @@ In this subsection, the control options of linear solvers are specified. These c
 
 .. code-block:: text
 
-	subsection linear solver
+  subsection linear solver
+    # Iterative solver for the linear system of equations
+    set method                                    = gmres
 
-	  # Iterative solver for the linear system of equations
-	  set method		= gmres
+    # State whether information from the linear solver should be printed
+    set verbosity                                 = verbose
 
-	  # State whether information from the linear solver should be printed
-	  set verbosity		= verbose
+    # Linear solver minimum residual
+    set minimum residual                          = 1e-12
 
-	  # Linear solver minimum residual
-	  set minimum residual  = 1e-12
+    # Linear solver residual
+    set relative residual                         = 1e-3
 
-	  # Linear solver residual
-	  set relative residual = 1e-3
+    # Maximum solver iterations
+    set max iters                                 = 1000
 
-	  # Maximum solver iterations
-	  set max iters         = 1000
+    # Force the linear solver to continue even if it fails
+    set force linear solver continuation          = false
 
-	  # Force the linear solver to continue even if it fails
-	  set force linear solver continuation = false
+    # Maximum number of krylov vectors for GMRES and AMG solvers
+    set max krylov vectors                        = 100
 
-	  # Maximum number of krylov vectors for GMRES and AMG solvers
-	  set max krylov vectors = 100
+    #-------------------------------------------------------------
+    # ILU preconditioner parameters for GMRES and BICGSTAB solvers
+    #-------------------------------------------------------------
+    # ILU preconditioner fill
+    set ilu preconditioner fill                   = 0
 
-	  #---------------------------------------------------
-	  # ILU preconditioner parameters for GMRES and BICGSTAB solvers
-	  #---------------------------------------------------
-	  # ILU preconditioner fill
-	  set ilu preconditioner fill = 0
+    # ILU preconditioner tolerance
+    set ilu preconditioner absolute tolerance     = 1e-12
 
-	  # ILU preconditioner tolerance
-	  set ilu preconditioner absolute tolerance = 1e-12
+    # ILU relative tolerance
+    set ilu preconditioner relative tolerance     = 1.00
 
-	  # ILU relative tolerance
-	  set ilu preconditioner relative tolerance = 1.00
+    #---------------------------------------------------------
+    # ILU smoother/coarsener parameters for AMG preconditioner
+    #---------------------------------------------------------
+    # AMG preconditioner ILU smoother/coarsener fill
+    set amg preconditioner ilu fill               = 0
 
-	  #---------------------------------------------------
-	  # ILU smoother/coarsener parameters for AMG preconditioner
-	  #---------------------------------------------------
-	  # AMG preconditioner ILU smoother/coarsener fill
-	  set amg preconditioner ilu fill = 0
+    # AMG preconditioner ILU smoother/coarsener absolute tolerance
+    set amg preconditioner ilu absolute tolerance = 1e-12
 
-	  # AMG preconditioner ILU smoother/coarsener absolute tolerance
-	  set amg preconditioner ilu absolute tolerance = 1e-12
+    # AMG preconditioner ILU smoother/coarsener relative tolerance
+    set amg preconditioner ilu relative tolerance = 1.00
 
-	  # AMG preconditioner ILU smoother/coarsener relative tolerance
-	  set amg preconditioner ilu relative tolerance = 1.00
+    #---------------------------------------------------
+    # other AMG solver parameters
+    #---------------------------------------------------
+    # AMG aggregation threshold
+    set amg aggregation threshold                 = 1e-14
 
-	  #---------------------------------------------------
-	  # other AMG solver parameters
-	  #---------------------------------------------------
-	  # AMG aggregation threshold
-	  set amg aggregation threshold = 1e-14
+    # AMG number of cycles
+    set amg n cycles                              = 1
 
-	  # AMG number of cycles
-	  set amg n cycles              = 1
+    # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
+    set amg w cycles                              = false
 
-	  # AMG w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.
-	  set amg w cycles              = false
+    # AMG smoother sweeps
+    set amg smoother sweeps                       = 2
 
-	  # AMG smoother sweeps
-	  set amg smoother sweeps       = 2
-
-	  # amg smoother overlap
-	  set amg smoother overlap      = 1
-	end
+    # amg smoother overlap
+    set amg smoother overlap                      = 1
+  end
 
 
 * The ``method`` parameter enables to choose an iterative solver for the linear system of equations. Lethe currently supports these core solution strategies:

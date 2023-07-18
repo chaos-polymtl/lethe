@@ -1,9 +1,10 @@
 ==================================
-Rotating drum
+Rotating Drum
 ==================================
 
 This example simulates a rotating drum. We setup this simulation according to the experiments of Alizadeh et al `[1] <https://doi.org/10.1002/aic.13982>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe-DEM.
 
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d``
@@ -11,18 +12,21 @@ Features
 - Load-balancing
 
 
-Files used in this example
+----------------------------
+Files Used in This Example
 ----------------------------
 ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 226080 particles are first inserted into a cylindrical domain and then start rolling on the cylinder wall because of the rotation of the cylinder. The rotation of the cylinder is applied using a ``rotational`` boundary condition. Because of the large number of particles, this simulation should be launched in parallel mode with load-balancing. The concepts and different types of ``boundary condition`` and load-balancing are explained in this example.
 
 
-Parameter file
+--------------
+Parameter File
 --------------
 
 Mesh
@@ -41,7 +45,7 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
     end
 
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
 An insertion box is defined inside the cylindrical domain. 75110 particles are inserted non-uniformly at each insertion step.
@@ -64,7 +68,7 @@ An insertion box is defined inside the cylindrical domain. 75110 particles are i
     end
 
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The particles (226080 particles) are monodispersed, their diameter and density are 0.003 m and 2500 kg/m3, respectively.
@@ -93,7 +97,7 @@ The particles (226080 particles) are monodispersed, their diameter and density a
     end
 
 
-Model parameters
+Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe-DEM: ``once``, ``frequent``, or ``dynamic``. Read `this article <https://www.mdpi.com/2227-9717/10/1/79>`_ for more information about different load-balancing methods and their performances in various types of DEM simulations.
@@ -125,7 +129,7 @@ In the rotating drum simulation, we use a ``once`` load-balancing method, since 
     end
 
 
-Boundary Condition
+DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined. There are four boundary types: ``fixed_wall``, ``outlet``, ``rotational`` (around the center), and ``translational``. For ``rotational`` motion, ``rotational speed`` and ``rotational vector`` are required, while for ``translational`` motion, the ``speed`` should be defined in each direction.
@@ -147,7 +151,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
     end
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
@@ -159,7 +163,9 @@ Simulation control
       set output frequency = 1000
     end
 
-Running the simulation
+
+----------------------
+Running the Simulation
 ----------------------
 This simulation can be launched (in parallel mode on 64 processes) by:
 
@@ -172,6 +178,7 @@ This simulation can be launched (in parallel mode on 64 processes) by:
 	This example needs a simulation time of approximately 48 hours 64 cores. This high computational cost is because of the large number of particles.
 
 
+---------
 Results
 ---------
 
@@ -182,6 +189,7 @@ Animation of the rotating drum simulation:
     <iframe width="560" height="315" src="https://www.youtube.com/embed/krM_rFIDHAA" frameborder="0" allowfullscreen></iframe>
 
 
+---------
 Reference
 ---------
 

@@ -1,29 +1,30 @@
 ==========================
-Rayleigh-Bénard convection
+Rayleigh-Bénard Convection
 ==========================
 
 This example simulates `two-dimensional Rayleigh–Benard convection`_ at Rayleigh numbers of :math:`10^4` and :math:`2.5 \times 10^4` . 
 
 .. _two-dimensional Rayleigh–Benard convection: https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/stochastic-bifurcation-analysis-of-rayleighbenard-convection/019773F174C453F84E7EB179CB1C89F1
 
-
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Buoyant force (natural convection)
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
+
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra10k.prm``
 ``examples/multiphysics/rayleigh-benard-convection/rayleigh-benard-convection-Ra25k.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 In this example, we evaluate the performance of the ``gls_navier_stokes_2d`` solver in the simulation of the stability of natural convection within a two-dimensional rectangular domain. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -59,8 +60,11 @@ In this example, we simulate the Rayleigh-Bénard convection problem at two Rayl
 
 
 --------------
-Parameter file
+Parameter File
 --------------
+
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`10000` s simulation time with an initial 
@@ -75,9 +79,6 @@ time step of :math:`0.01` second.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method                       = bdf1
       set time end                     = 10000
@@ -93,27 +94,26 @@ time step of :math:`0.01` second.
       set output path                  = ./output/
     end
 
+Multiphysics
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set buoyancy force = true
       set heat transfer  = true
       set fluid dynamics = true
     end
-    
+
+Source Term
+~~~~~~~~~~~
+
 The ``source term`` subsection defines gravitational acceleration.
 
 .. code-block:: text
     
-    #---------------------------------------------------
-    # Source term
-    #---------------------------------------------------
     subsection source term
       set enable = true
       subsection xyz
@@ -121,15 +121,14 @@ The ``source term`` subsection defines gravitational acceleration.
       end
     end
 
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` subsection defines the physical properties of the fluid. Since we simulate the Rayleigh-Bénard convection at two Rayleigh numbers (:math:`Ra=10^4` and :math:`2.5 \times 10^4`), we use different thermal conductivities to reach mentioned Rayleigh numbers. We change the thermal conductivity of the fluid in the two simulations. Note that any other physical property (that is present in the Rayleigh number equation defined above) can be used instead of thermal conductivity. Both thermal conductivity values (:math:`k=0.15625` for :math:`Ra=10^4`, and :math:`k=0.0625` for :math:`Ra=2.5 \times 10^4`) are added to the parameter handler file. However, only one of them should be uncommented for each simulation.
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
@@ -142,8 +141,9 @@ The ``physical properties`` subsection defines the physical properties of the fl
       end
     end
 
+
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the gls_navier_stokes_2d by invoking:  
@@ -176,9 +176,11 @@ The following animation shows the results of this simulation:
 
 Note that at Ra=10000, two vortices exist in the fluid, while an extra (relatively small) vortex appears near the right wall. The velocity magnitude in the vortices is larger at smaller Rayleigh number.
 
+
 -----------
 References
 -----------
+
 [1] Venturi, D., Wan, X. and Karniadakis, G.E., 2010. Stochastic bifurcation analysis of Rayleigh–Bénard convection. Journal of fluid mechanics, 650, pp.391-413.
 
 [2] `https://www.mis.mpg.de/applan/research/rayleigh.html`_

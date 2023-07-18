@@ -1,5 +1,6 @@
-Unresolved CFD-DEM coupling
-############################
+===========================
+Unresolved CFD-DEM Coupling
+===========================
 
 Unresolved CFD-DEM is a technique with high potential for designing and analyzing multiphase flows involving particles and fluid. Some examples of these systems are fluidized beds, stirred-tanks, and flocculation processes. In this approach, we apply Newton's second law of motion to each particle individually such that their movement is described at a micro-scale (as in DEM simulations). On the other hand, the fluid is represented at a meso-scale by a mesh of cells, to which we apply the Volume Average Navier-Stokes (VANS) equations.
 
@@ -104,7 +105,7 @@ where :math:`n_p` is the number of particles inside the cell :math:`\Omega` with
 
 Lethe is capable of simulating unresolved CFD-DEM cases with both Models A and B (see the :doc:`../../parameters/unresolved-cfd-dem/cfd-dem` page of this guide).
 
-Void fraction
+Void Fraction
 --------------
 Determining the void fraction is an important step in unresolved CFD-DEM, as can be noted by the VANS equations and the drag models `[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_. There exist several methods for the calculation of the void fraction in a CFD-DEM simulation. Some are approximations while others are analytical approaches. In the finite element method, the void fraction is initially calculated inside a cell but must then be projected to the mesh nodes so that one can assemble the system of equations. This is done by :math:`\mathcal{L}^2` projection `[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_:
 

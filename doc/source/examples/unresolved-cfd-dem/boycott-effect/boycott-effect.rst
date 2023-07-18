@@ -1,9 +1,10 @@
 ==================================
-Boycott effect
+Boycott Effect
 ==================================
 
 It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_  and `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ for more detailed information on the concepts and physical meaning of the parameters used in the DEM and CFD-DEM solvers.
 
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``dem_3d`` and ``cfd_dem_coupling_3d``
@@ -12,19 +13,22 @@ Features
 - Simulates a solid-liquid sedimentation
 
 
-Files used in this example
+---------------------------
+Files Used in This Example
 ---------------------------
 ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
 ``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 This example simulates the sedimentation of a group of particles in a viscous fluid. Two cases were simulated. In the first case, the channel is placed vertically. In the second case, the channel is inclined at :math:`20^{\circ}` with respect to the gravity. First, we use Lethe-DEM to insert the particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the sedimentation of particles by initially reading the checkpoint files from the DEM simulation.
 
 
-DEM parameter file
+-------------------
+DEM Parameter File
 -------------------
 
 The syntax of this parameter file is flexible. Parameters do not need to be specified in a specific order, but only within the subsection in which they belong. All parameter subsections are described in the `parameter section <../../../parameters/parameters.html>`_ of the documentation.
@@ -46,9 +50,7 @@ In this example, we are simulating a rectangular channel. We use the deal.II Gri
       set expand particle-wall contact search = false
     end
 
-
-
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The time step in this case is the same as the time end. Since we only seek to insert the particles at the top of the channel, we only require 1 insertion time step. We do not need the particles to be packed, therefore by doing this, the particles will be inserted, but will not fall under the action of gravity.
@@ -79,7 +81,7 @@ We save the files obtained from the single iteration by setting the frequency = 
     end
 
 
-Model parameters
+Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 The section on model parameters is explained in the DEM examples. We show the chosen parameters for this section:
@@ -96,7 +98,7 @@ The section on model parameters is explained in the DEM examples. We show the ch
       set integration method                     = velocity_verlet
     end
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The gravity is set to 0 as we only need to insert the particles in the specified insertion box.
@@ -126,7 +128,7 @@ The gravity is set to 0 as we only need to insert the particles in the specified
       set rolling friction wall        = 0.1
     end
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
 We insert the particles uniformly in the specified insertion box at the top of the channel.
@@ -149,7 +151,8 @@ We insert the particles uniformly in the specified insertion box at the top of t
     end
 
 
-Running the DEM simulation
+---------------------------
+Running the DEM Simulation
 ---------------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
 
@@ -171,12 +174,14 @@ The figure below shoes the particles inserted at the top of the channel at the e
 
 After the particles have been inserted it is now possible to simulate the sedimentation of particles.
 
-CFD-DEM parameter file
+
+-----------------------
+CFD-DEM Parameter File
 -----------------------
 
 The CFD simulation is to be carried out using the particles inserted within the previous step. We will discuss the different parameter file sections. Some sections are identical to that of the DEM so they will not be shown again.
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The time scheme chosen for the simulation is first order backward difference method (BDF1). The simulation control section is shown:
@@ -193,7 +198,7 @@ The simulation is run for :math:`2` s with a time step of :math:`0.005` s. The t
       set output path          = ./output/
     end
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The physical properties subsection allows us to determine the density and viscosity of the fluid. We choose a density of :math:`1115.6` and a kinematic viscosity of :math:`0.00000177` as to simulate the flow of a sugar-water solution with :math:`20` % by weight sugar at :math:`20^{\circ}` C.
@@ -209,9 +214,8 @@ The dynamic viscosity of a 20 % sugar-water solution by weight at :math:`20^{\ci
       end
     end
 
-
-Initial conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 For the initial conditions, we choose zero initial conditions for the velocity.
 
@@ -224,8 +228,7 @@ For the initial conditions, we choose zero initial conditions for the velocity.
       end
     end
 
-
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the boundary conditions, we choose a slip boundary condition on all the walls of the channel and the channel except the bottom and the top of the channel where a no-slip boundary condition is imposed. For more information about the boundary conditions, please refer to the `Boundary Conditions Section <../../../parameters/cfd/boundary_conditions_cfd.html>`_
@@ -260,7 +263,7 @@ For the boundary conditions, we choose a slip boundary condition on all the wall
       end
     end
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This section is identical to the one previously mentioned for the DEM simulation of particle insertion. The only difference is the definition of gravity. For the vertical case, we set :math:`g_y = -9.81` and :math:`g_x = g_z = 0`. For the inclined case, we determine the gravity by setting: :math:`g_x = \frac{-9.81}{cos \theta}, \; g_y = \frac{-9.81}{sin \theta}, \; g_z = 0` where :math:`\theta` is the angle of inclination with the vertical.
@@ -268,7 +271,7 @@ This section is identical to the one previously mentioned for the DEM simulation
 
 The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are descrichannel in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
-Void fraction
+Void Fraction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Since we are calculating the void fraction using the particle insertion of the DEM simulation, we set the ``mode`` to ``dem``. For this, we need to read the dem files which we already wrote using check-pointing. We, therefore, set the ``read dem`` to ``true`` and specify the prefix of the dem files to be dem.
 We choose to use the quadrature centered method (`QCM <../../../theory/unresolved_cfd-dem/unresolved_cfd-dem.html>`_) to calculate the void fraction. For this, we specify the ``mode`` to be ``qcm``. We want the radius of our volume averaging sphere to be equal to the length of the element where the void fraction is being calculated. We don't want the volume of the sphere to be equal to the volume of the element.
@@ -309,8 +312,8 @@ We determine the drag model to be used for the calculation of particle-fluid for
 
 Finally, the linear and non-linear solver controls are defined.
 
-Non-linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-linear Solver
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -324,8 +327,8 @@ Non-linear solver control
 
 We use the ``inexact_newton`` solver as to avoid the reconstruction of the system matrix at each Newton iteration. For more information about the non-linear solver, please refer to the `Non Linear Solver Section <../../../parameters/cfd/non-linear_solver_control.html>`_
 
-Linear solver control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linear Solver
+~~~~~~~~~~~~~
 
 .. code-block:: text
 
@@ -343,7 +346,9 @@ Linear solver control
 
 For more information about the non-linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
 
-Running the CFD-DEM simulation
+
+------------------------------
+Running the CFD-DEM Simulation
 ------------------------------
 
 The simulation is run using the ``cfd_dem_coupling_3d`` application as per the following command:
@@ -352,6 +357,8 @@ The simulation is run using the ``cfd_dem_coupling_3d`` application as per the f
 
     path_to_cfd_dem_application/cfd_dem_coupling_3d boycott-effect.prm
 
+
+--------
 Results
 --------
 

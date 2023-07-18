@@ -1,5 +1,6 @@
+===============
 Cahn-Hilliard
-----------------------------------
+===============
 
 In this subsection, the parameters for multiphase flow simulation using the Cahn-Hilliard equations are specified. 
 

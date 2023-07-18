@@ -42,7 +42,7 @@ subsection VOF
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -56,7 +56,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

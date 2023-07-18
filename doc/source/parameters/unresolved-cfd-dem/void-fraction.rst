@@ -1,25 +1,26 @@
-***********************************************
+=============
 Void Fraction
-***********************************************
+=============
 In this subsection, all parameters required for the calculation of the void fraction are introduced.
 
 .. code-block:: text
 
-   subsection void fraction
-      set mode = pcm
-      set read dem = true
-      set dem file name = dem
-      set l2 smoothing factor = 0
-      set l2 lower bound = 0
-      set l2 upper bound = 1
-      set bound void fraction = false
-      set particle refinement factor = 0
-   end
+  subsection void fraction
+    set mode                       = pcm
+    set read dem                   = true
+    set dem file name              = dem
+    set l2 smoothing factor        = 0
+    set l2 lower bound             = 0
+    set l2 upper bound             = 1
+    set bound void fraction        = false
+    set particle refinement factor = 0
+  end
 
 * The ``mode`` parameter allows the user to choose the method for void fraction calculation. Currently, there are two methods implemented. The first one is to calculate the void fraction from `function`. In this case, an additional subsection is required to insert the function such as:
 
 .. code-block:: text
 
+   # in the void fraction subsection
    subsection function
    set Function expression = 0.5 + 0.25*sin(pi*x)*sin(pi*y)
    end
@@ -28,10 +29,11 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
 
 .. code-block:: text
 
-      set qcm sphere diameter = 0 
-      set qcm sphere equal cell volume = false  
-      set particle refinement factor = 0 
-   end
+  # in the void fraction subsection
+  set qcm sphere diameter          = 0
+  set qcm sphere equal cell volume = false
+  set particle refinement factor   = 0
+
 
 * The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the gls_vans solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
 * The ``dem_file_name`` parameter specifies the prefix of the dem files that must be read.

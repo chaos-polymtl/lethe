@@ -1,5 +1,5 @@
 ---------------
-Heat transfer
+Heat Transfer
 ---------------
 
 .. toctree::

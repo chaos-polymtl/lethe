@@ -6,67 +6,67 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
 .. code-block:: text
 
-    subsection particles
-        set number of particles                     = 1
-        set stencil order                           = 2
-        set length ratio                            = 4
-        set assemble Navier-Stokes inside particles = false
-        set calculate force                         = true
-        set ib force output file                    = ib_force
-        set ib particles pvd file                   = ib_particles_data
-        set levels not precalculated                = 0
-        set initial refinement                      = 0
-        set refinement zone extrapolation	    = false
-        set refine mesh inside radius factor        = 0.5
-        set refine mesh outside radius factor       = 1.5
-        set integrate motion                        = false
-        set particle nonlinear tolerance            = 1e-6
-        set DEM coupling frequency                  = 1000
-        set alpha                                   = 1
-        set contact search radius factor            = 3
-        set contact search frequency		    = 1
-        set enable extra sharp interface vtu output field	= false
+  subsection particles
+    set number of particles                           = 1
+    set stencil order                                 = 2
+    set length ratio                                  = 4
+    set assemble Navier-Stokes inside particles       = false
+    set calculate force                               = true
+    set ib force output file                          = ib_force
+    set ib particles pvd file                         = ib_particles_data
+    set levels not precalculated                      = 0
+    set initial refinement                            = 0
+    set refinement zone extrapolation                 = false
+    set refine mesh inside radius factor              = 0.5
+    set refine mesh outside radius factor             = 1.5
+    set integrate motion                              = false
+    set particle nonlinear tolerance                  = 1e-6
+    set DEM coupling frequency                        = 1000
+    set alpha                                         = 1
+    set contact search radius factor                  = 3
+    set contact search frequency                      = 1
+    set enable extra sharp interface vtu output field = false
 
-        subsection gravity
-            set Function expression =0;0;0
-        end
-
-        set wall friction coefficient               		= 0
-        set wall poisson ratio                      		= 0.3
-        set wall restitution coefficient            		= 1
-        set wall rolling friction coefficient       		= 0
-        set wall youngs modulus                     		= 100000000
-        set enable lubrication force		    		= true
-        set lubrication range max		    		= 2
-        set lubrication range min		    		= 0.1
-	set load particles from file		    		= false
-	set particles file		    			= particles
-
-        subsection particle info 0
-            set density    = 1
-            subsection position
-                set Function expression =0;0;0
-            end
-            subsection velocity
-                set Function expression =0;0;0
-            end
-            subsection omega
-                set Function expression =0;0;0
-            end
-            subsection orientation
-                set Function expression =0;0;0
-            end
-            set inertia    = 1
-            set pressure location = 0; 0; 0
-            set type       = sphere
-            set shape arguments = 1; 0; 0
-            set friction coefficient         = 0
-            set poisson ratio                = 0.3
-            set restitution coefficient      = 1
-            set rolling friction coefficient = 0
-            set youngs modulus               = 100000000
-        end
+    subsection gravity
+      set Function expression = 0;0;0
     end
+
+    set wall friction coefficient         = 0
+    set wall poisson ratio                = 0.3
+    set wall restitution coefficient      = 1
+    set wall rolling friction coefficient = 0
+    set wall youngs modulus               = 100000000
+    set enable lubrication force          = true
+    set lubrication range max             = 2
+    set lubrication range min             = 0.1
+    set load particles from file          = false
+    set particles file                    = particles
+
+    subsection particle info 0
+      set density = 1
+      subsection position
+        set Function expression = 0;0;0
+      end
+      subsection velocity
+        set Function expression = 0;0;0
+      end
+      subsection omega
+        set Function expression = 0;0;0
+      end
+      subsection orientation
+        set Function expression = 0;0;0
+      end
+      set inertia                      = 1
+      set pressure location            = 0; 0; 0
+      set type                         = sphere
+      set shape arguments              = 1; 0; 0
+      set friction coefficient         = 0
+      set poisson ratio                = 0.3
+      set restitution coefficient      = 1
+      set rolling friction coefficient = 0
+      set youngs modulus               = 100000000
+    end
+  end
 
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
 
@@ -260,4 +260,4 @@ Therefore, the near-particle zone around each particle is refined ``mesh``:``ini
 
 Reference
 ---------------
-`[1] <https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ Kim, Sangtae, and Seppo J. Karrila. Microhydrodynamics: principles and selected applications. Courier Corporation, 2013.
+`[1] <https://books.google.ca/books?id=_8llnUUGo0wC&lpg=PP1&hl=pt-BR&pg=PP1#v=onepage&q&f=false>`_ S. Kim and S. J. Karrila, *Microhydrodynamics: Principles and Selected Applications*. Courier Corporation, 2005.

@@ -1,5 +1,5 @@
 -------------------------
-Incompressible flow
+Incompressible Flow
 -------------------------
 
 .. toctree::

@@ -1,3 +1,4 @@
+======
 Docker
 ======
 
@@ -6,7 +7,7 @@ Docker
     You will need to install `Docker <https://www.docker.com/get-started>`_ and have 5 GB of free disk space.
 
 #################################
-Using a deal.II  Docker container
+Using a deal.II  Docker Container
 #################################
 
 The deal.II library is a mature project containing `O(1,000,000)` lines of C++ code, itself depending on other similar libraries (e.g. Trilinos). Compiling deal.II with its exact dependencies can be a daunting task even for moderate C++ programmers - one with many knobs and dials, normally taking 4-6 hours.
@@ -179,7 +180,7 @@ You can now download, run and manage Docker containers pre-configured with deal.
 You can now clone ``lethe``, compile it, and run large-scale, efficient multi-physics simulations!
 
 ##############################################################
-No compilation required: Using the Provided Lethe Docker Image
+No Compilation Required: Using the Provided Lethe Docker Image
 ##############################################################
 
 If you don't want to build Lethe and its dependencies, you can use the provided `Docker image <https://github.com/lethe-cfd/lethe/pkgs/container/lethe>`_.

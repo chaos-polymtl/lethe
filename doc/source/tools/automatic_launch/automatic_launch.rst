@@ -1,6 +1,6 @@
-======================================================================
-How to automatically create and launch Lethe simulations
-======================================================================
+========================================================
+How to Automatically Create and Launch Lethe Simulations
+========================================================
 
 .. seealso::
 	All files used in this example are available in `lethe/contrib/utilities <https://github.com/lethe-cfd/lethe/tree/master/contrib/utilities>`_ under ``automatic_launch``.
@@ -16,7 +16,7 @@ The main Python scripts of this tutorial are:
 	The example :doc:`../../examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame` uses really similar automatic launch scripts.
 
 -------------------------------------
-Generate automatically multiple cases
+Generate Automatically Multiple Cases
 -------------------------------------
 Let us say that you are simulating a flow around a cylinder and you want to see how the inlet velocity impacts the force around the sphere.
 Lazy as we are, we want to automatically generate multiple copies of the cylinder case, but change the parameter file such that the inlet velocity is different for each case.
@@ -274,7 +274,7 @@ The automatic generator script is named ``launch_cases.py``. Here is an example 
 	Note that we activate the virtual environment in order to have the packages required, and then we launch the Python script with ``srun``.
 
 -----------------------------------
-Launch automatically multiple cases
+Launch Automatically Multiple Cases
 -----------------------------------
 Now that the folders of every case are all set up, we can launch Lethe automatically.
 

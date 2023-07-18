@@ -1,6 +1,6 @@
-#########################################
+====================================
 Installation on Apple ARM (M1 or M2)
-#########################################
+====================================
 
 .. figure:: ./images/apple.png
    :height: 100px
@@ -14,7 +14,7 @@ The installation of Lethe consists in two steps:
 The easiest way to install deal.II and its dependencies under Mac OS is through the Candi toolset. Consequently, this is the only procedure which is explained here. Even under these condition, we will see that the procedure is shaky at best.
 
 
-Installing deal.II using candi (Step #1)
+Installing deal.II Using Candi (Step #1)
 -----------------------------------------
 
 To install the dependencies (mpi, p4est, trilinos and METIS) all together using Candi, the following `procedure <https://github.com/dealii/dealii/wiki/Apple-ARM-M1-OSX>`_ on the deal.II wiki can be followed.
@@ -37,7 +37,7 @@ After installation, add an environment variable to your ``~/.zshrc`` either manu
 
   echo "export DEAL_II_DIR=/home/username/deal.ii-candi/deal.II-<version>" >> ~/.zshrc
 
-Setting the Library and Include paths
+Setting the Library and Include Paths
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The deal.II installation procedure might not set the correct path for the libraries agaisnt which it needs to link. These include parmetis, p4est and trilinos. To fix this issue, the include and library path must be manually added by appending the following lines to the ``~/.zshrc`` file.
@@ -58,7 +58,7 @@ The deal.II installation procedure might not set the correct path for the librar
   This is not a clean workaround, but so far this is the only solution we have found. We welcome any suggestions on that front!
 
 
-Fixing Trilinos includes
+Fixing Trilinos Includes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Lethe compiles using the C++ 17 standard. There is a header file in the Trilinos library which does not adhere to this standard and uses a deprecated function. When compiling with GCC, this does not pose any problem, but it does when using the built-in Clang compiler of Mac OS.
@@ -88,10 +88,10 @@ Should be replaced by:
 .. warning::
   It is still unclear to us what are the consequences of doing this, but we have found so far that it does not affect the outcome of the Lethe solvers. We are aware that this type of manual manipulation is far from being clean...
 
-numdiff
+Numdiff
 ~~~~~~~~
 
-numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. Numdiff can be installed directly from your package manager.
+numdiff is used within the automatic testing procedure of Lethe to compare files obtained through floating point arithmetic. Without numdiff, Lethe automatic tests may fail when they should not. numdiff can be installed directly from your package manager.
 
 .. code-block:: text
   :class: copy-button
@@ -101,7 +101,7 @@ numdiff is used within the automatic testing procedure of Lethe to compare files
 
 
 
-Installation of lethe (Step #2)
+Installation of Lethe (Step #2)
 -------------------------------
 
 Clone lethe from the `official repository <https://github.com/lethe-cfd/lethe>`

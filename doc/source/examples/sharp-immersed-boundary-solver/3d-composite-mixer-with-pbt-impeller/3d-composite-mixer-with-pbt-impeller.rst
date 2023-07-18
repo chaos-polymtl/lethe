@@ -1,27 +1,35 @@
 =====================================================================================
-3D Mixer with pitched-blade turbine impeller using Composite Sharp-immersed boundary
+3D Mixer with Pitched-Blade Turbine Impeller Using Composite Sharp-Immersed Boundary
 =====================================================================================
 
 The mixing of stirred-tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../../incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with a composite shape.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``gls_sharp_navier_stokes_3d``
 - Transient problem
 - Rotating complex solid  modelled with the sharp immersed boundary method
 
-Files used in this example
+
+----------------------------
+Files Used in This Example
 ----------------------------
 
 * Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/mixer.prm``
 * Composite geometry file: ``/examples/sharp-immersed-boundary-solver/3d-composite-mixer-with-pbt-impeller/impeller.composite``
 
-Description of the case
+
+-----------------------
+Description of the Case
 -----------------------
 
 In this example, we simulate a mixer using a PBT impeller through the usage of Sharp-Immersed boundaries. The shape of the impeller is defined by a composition of basic shapes.
 
-Creation of the composite shape file
+
+------------------------------------
+Creation of the Composite Shape File
 ------------------------------------
 
 The shape is created in two steps inspired from the GMSH syntax. 
@@ -66,10 +74,14 @@ Let go over each line:
 
 For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
 
-Definition of the shape and its motion
---------------------------------------
+---------------
+Parameter File
+---------------
 
-The section defining each parameter for the particles has certains requirements:
+Definition of the Shape and Its Motion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The section defining each parameter for the particles has certain requirements:
 
 1. ``length ratio`` defines the length used to apply the immersed boundaries through interpolation. It should stay as low as possible, but above ``1``.
 2. ``type`` and ``shape arguments`` are used to declare that the shape is a ``composite`` and that its data is located in ``impeller.composite``.
@@ -100,8 +112,8 @@ The section defining each parameter for the particles has certains requirements:
     end
 
 
-Boundary conditions
------------------------
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
 
 Because the interpolation of the velocity field at the surface of a moving particle is not guaranteed to be divergence-free, it is necessary to have at least one boundary condition that is weakly imposed to ensure the system of equations is well-posed. For this purpose, a ``function weak`` type of boundary is used.
 Two aspects need special consideration:
@@ -137,6 +149,8 @@ Two aspects need special consideration:
     end
   end
 
+
+--------
 Results
 --------
 

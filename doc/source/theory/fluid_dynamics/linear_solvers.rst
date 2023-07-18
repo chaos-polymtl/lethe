@@ -1,5 +1,6 @@
-Linear solvers
-##############
+==============
+Linear Solvers
+==============
 
 After discretization in space and time of the Navier-Stokes equations, we obtain a problem that needs to be solved using a Netwon non-linear solver that solves a linear system in every iteration. In the case of a stabilized approach, we need to solve a linear system that looks as follows:
 
@@ -18,7 +19,8 @@ In Lethe we support the following linear solvers:
 Only coupled methods are used at the moment: a direct method and two iterative algorithms (Krylov subspace methods). We are mainly interested in solving problems that are both large and sparse, therefore, the two iterative methods will be explained in this section, along with their preconditioners. A direct method should only be used for tests and development of new features as it is not efficient for large problems. For more information on the direct solver supported by Trilinos see the `deal.II <https://www.dealii.org/>`_ documentation: `TrilinosWrappers::SolverDirect <https://www.dealii.org/current/doxygen/deal.II/classTrilinosWrappers_1_1SolverDirect.html>`_. **This is not by any means a detailed explanation of all the linear solvers; however, it should give you a general idea and it should point you to useful references in case you are more interested in this topic.**
 
 
-General theory on Krylov methods
+--------------------------------
+General Theory on Krylov Methods
 --------------------------------
 
 Suppose that :math:`x_0` is an initial guess for the solution of :math:`x`, and define the residual :math:`r_0=b - \mathcal{A} x_0`. Then, Krylov subspace methods are methods whose :math:`k`-th iterate :math:`x_k` satisfies:
@@ -36,6 +38,7 @@ where :math:`\mathcal{K}_k(\mathcal{A},x_0)` is the :math:`k`-th Krylov subspace
 By knowing the properties of :math:`\mathcal{A}`, it is possible to determine constraints spaces :math:`\mathcal{C}_k` that lead to uniquely defined iterates :math:`x_k` for :math:`k=1,2,\dotsc`. The choice of :math:`\mathcal{C}_k` and subsequent implementation leads to a different method.
 
 
+_____________________________________________
 Generalized Minimal Residual Method (GMRES)
 _____________________________________________
 
@@ -46,6 +49,8 @@ If :math:`\mathcal{A}` is non-symmetric positive definite, an approximate soluti
 
 * In Lethe, we use the Trilinos implementation of the GMRES method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::SolverGMRES <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1SolverGMRES.html>`_. It is possible to specify the minimum residual, the solver residual, the maximum number of iterations and the maximum Krylov vectors. The latter is in fact the one that controls the number of iterations after which a restart should be done. The first two are also known in literature as absolute residual (:math:`||b - \mathcal{A}x||`) and relative residual (:math:`||b - \mathcal{A}x||/||b||`), and are used to define the linear solver tolerance. The first one monitors the maximum absolute error allowed in a solution, while the second one is relative to the solution value; the linear solver tolerance is defined as the maximum value of both to avoid numerical issues.
 
+
+__________________________________________________
 Biconjugate Gradient Stabilized Method (BiCGStab)
 __________________________________________________
 
@@ -55,7 +60,7 @@ One may choose instead  :math:`\mathcal{C}_k = \mathcal{K}_k(\mathcal{A}^T, r_0)
 
 * In Lethe we use the Trilinos implentation of the BiCGStab method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::SolverBiCGStab <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1SolverBicgstab.html>`_. One can specify the same parameters as in the GMRES solver with the exception of the maximum Krylov vectors parameters as a restart is not needed.
 
-Some remarks
+Some Remarks
 _____________
 
 * In the literature, it is stated that the reduction of error in one iteration of a bi-Lanczos-based method is approximately equal to that of two iterations in an Arnoldi-based method. Since the latter requires only one matrix-vector multiplication per iteration in comparison to the two required by the former, the costs of both methods are comparable in terms of the number of matrix-vector multiplications. 
@@ -64,6 +69,8 @@ _____________
 
 * For more information about the parameters for these solvers and some practical tips visit the `Linear Solver Control <../../parameters/cfd/linear_solver_control.html>`_ page in the `CFD parameters <../../parameters/cfd/cfd.html>`_ section.
 
+
+----------------
 Preconditioners
 ----------------
 
@@ -96,7 +103,9 @@ The advantages between the left-, right- and factorized preconditioning are high
 * GMRES: requires a symmetric preconditioner :math:`\mathcal{M}`
 * BiCGStab: can use any general preconditioner :math:`\mathcal{M}`
 
-Incomplete LU factorization (ILU)
+
+__________________________________
+Incomplete LU Factorization (ILU)
 __________________________________
 
 For detailed information on the theory, algorithms and implementation of the different ILU versions, we recommend the book `Iterative Methods for Sparse Linear Systems <https://books.google.ca/books/about/Iterative_Methods_for_Sparse_Linear_Syst.html?id=qtzmkzzqFmcC&redir_esc=y>`_ by Y. Saad. This method performs an approximate factorization of the system matrix that consists of a sparse lower-diagonal matrix :math:`L` and a sparse upper-diagonal matrix :math:`U`:
@@ -123,7 +132,9 @@ The different versions of ILU arise with the different treatment of the non-zero
 
 * In Lethe we use the Trilinos implementation of the ILU method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionILU <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionILU.html>`_. This is of type *ILU(k)* (where ILU(0) is also included). To use this preconditioner, one must specify the absolute and relative tolerance, and the fill level. If the iterative method fails, the fill level is increased by 1 and the solution is attempted again. The absolute tolerance (:math:`\alpha \geq 0`) and relative tolerance (:math:`\beta \geq 1`) change the diagonal of the matrix before factorization as follows: a diagonal entry :math:`a_{ii}` is replaced by :math:`\alpha \: \text{sign}(a_{ii}) + \beta a_{ii}`. This strategy can improve the conditioning of the matrix in some cases. Default values in Lethe are 1e-12 and 1, respectively.
 
-Algebraic multigrid (AMG)
+
+__________________________
+Algebraic Multigrid (AMG)
 __________________________
 
 The main idea of multigrid methods is to efficiently correct all components of the error of the solution on the fine level by using a hierarchy of levels composed by coarser grids. A good starting point to understand all the details of AMG is given in `A Multigrid Tutorial <https://www.researchgate.net/publication/220690328_A_Multigrid_Tutorial_2nd_Edition>`_. In the algebraic multigrid method, the levels are generated based on the algebraic structure of the system matrix :math:`\mathcal{A}`. It requires the definition of three key components:
@@ -142,6 +153,8 @@ Some remarks:
 
 * In Lethe we use the Trilinos implementation of the AMG method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::PreconditionAMG <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1PreconditionAMG.html>`_. One must specify several parameters related to the number of cycles, the type of cycle and smoother parameters.
 
+
+----------
 References
 ----------
 

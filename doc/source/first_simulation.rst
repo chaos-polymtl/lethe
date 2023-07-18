@@ -1,5 +1,5 @@
 ################################
-Launching your first simulation
+Launching Your First Simulation
 ################################
 
 The objective of this section is to highlight the steps that are necessary to launch your first simulation after you have cloned and compiled Lethe.
@@ -21,9 +21,8 @@ To launch a simulation, you must specify the solver executable and the parameter
 
 In what follows, we describe a simple procedure to launch your first simulation using Lethe.
 
-===========================
-Step 1: Copying an example
-===========================
+Step 1: Copying an Example
+---------------------------
 
 The source folder of lethe contains an examples folder. This folder contains ready to run examples. Some examples use the mesh generation capacity of Lethe and only require a parameter file, whereas others contain an additional .msh file to describe the mesh. In the present case, we copy the lid driven cavity example to a new destination of your choice using the terminal:
 
@@ -31,9 +30,8 @@ The source folder of lethe contains an examples folder. This folder contains rea
 
  cp -r $SOURCE_FOLDER/examples/incompressible_flow/2d_lid_driven_cavity destination/first_simulation
 
-==============================
-Step 2: Launching the example
-==============================
+Step 2: Launching the Example
+-----------------------------
 
 The cavity example we are launching uses the *gls_navier_stokes_2d* solver. All of the solvers of Lethe can be found in the build folder where you have compiled Lethe or within the installation folder. Inside of your build folder, six sub folders should be found:
 
@@ -49,14 +47,12 @@ Inside the ``/applications`` folder, there is one folder for each solver of Leth
 From the ``/first_simulation`` folder we have created, we can launch the simulation directly. If you have decided to copy the executable to the ``first_simulation`` folder, you can launch using the following command: ``./gls_navier_stokes_2d cavity.prm``. You can also launch the simulation using the absolute path of the executable: ``$BUILD_FOLDER/applications/gls_navier_stokes_2d/gls_navier_stokes_2d cavity.prm``.
 
 
-===================================
-Step 3: Post-processing the results
-===================================
+Step 3: Post-processing the Results
+------------------------------------
 
 Once the application has run, the simulation results can be looked at by opening the .pvd file using Paraview.
 
-============================
-Understanding the examples
-============================
+Understanding the Examples
+---------------------------
 
 Lethe comes pre-packaged with some examples which are documented on the present documentation in the :doc:`examples/examples` tab. We greatly encourage you to look at these examples to understand how Lethe can be used to solve different problems. For a more in-depth understanding of the parameter file, the reader can take a look at the :doc:`parameters/parameters` section for general and application specific parameters. Tutorial examples offer basic cases, focusing on a specific aspect, whereas Engineering Applications provide complex cases to showcase some of the features of Lethe.

@@ -1,26 +1,33 @@
 ==================================
-Taylor-Couette flow
+Taylor-Couette Flow
 ==================================
 
-This example showcases another classical fluid mechanics problem, the taylor-couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
+This example showcases another classical fluid mechanics problem, the Taylor-Couette flow. This example introduces the usage of analytical solution and monitors the convergence of the CFD solver by using progressively refined meshes.
 
+
+---------
 Features
-----------------------------------
+---------
+
 - Solvers: ``gls_navier_stokes_2d`` (with Q1-Q1 and Q2-Q1) or  ``gd_navier_stokes_2d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the use of the analytical solution to calculate the mesh convergence 
 - Displays the calculation of the torque induced by the fluid on a boundary
 
 
-Files used in this example
 ----------------------------
-``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
+Files Used in This Example
+----------------------------
+
+- Parameter file: ``examples/incompressible-flow/2d-taylor-couette/taylor-couette.prm``
+- Python script for postprocessing: ``examples/incompressible-flow/2d-taylor-couette/post_process_taylor_couette.py``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
-The Taylor-Couette flow is the name of a fluid flow in the gap between two long concentric cylinders with different rotational velocities. One or both of these cylinders may rotate along the axis, however generally it is assumed that the outer cylinder is fixed, and the inner cylinder rotates with a constant angular velocity. For the Taylor-Couette flow, an analytical solution of the Navier-Stokes equations can be found, although this solution is not stable for all ranges of operating conditions and becomes unstable at high Reynolds number.
+Taylor-Couette flow is a fluid flow in the gap between two long concentric cylinders with different rotational velocities. One or both of these cylinders may rotate along the axis, however generally it is assumed that the outer cylinder is fixed, and the inner cylinder rotates with a constant angular velocity. For the Taylor-Couette flow, an analytical solution of the Navier-Stokes equations can be found, although this solution is not stable for all ranges of operating conditions and becomes unstable at high Reynolds number.
 
 We assume that the inner cylinder rotates at a constant angular velocity :math:`\omega` in the anti-clockwise direction, while the outer cylinder is fixed. The following figure shows the geometry of this problem and the corresponding boundary conditions:
 
@@ -43,7 +50,9 @@ where :math:`u_{\theta}` is the angular velocity, :math:`R` is the radius of the
 
 where :math:`\mu` is the dynamic viscosity and :math:`L` is the height of the cylinder. Since we simulate the problem in 2D, we assume that :math:`L=1` without loss of generality.
 
-Parameter file
+
+--------------
+Parameter File
 --------------
 
 We first establish the mesh used for the simulation
@@ -62,13 +71,12 @@ The ``mesh`` subsection specifies the computational grid:
       set initial refinement = 3
     end
 
-The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . This GridGenerator generates the mesh of the interstice between two cocentric cylinder. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivision in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``.
+The ``type`` specifies the mesh format used. We use the ``hyper_shell`` mesh generated from the deal.II `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . This GridGenerator generates the mesh of the interstice between two concentric cylinder. The arguments of this grid type are the position of center of the cylinders (``0, 0``), the inner cylinder radius (`0.25`), the outer cylinder radius (`1`) and the number of subdivision in the azimuthal direction (`4`). All arguments are separated by ``:``. We set ``colorize=true`` and this sets the boundary ID of the inner cylinder to ``0`` and of the outer cylinder to ``1``.
 
 
 The last parameter specifies the ``initial refinement`` of the grid. Most deal.II grid generators contain a minimal number of cells. The *hyper_shell* mesh is made of four cells. Indicating an ``initial refinement=3`` implies that the initial mesh is refined 3 times. In 2D, each cell is divided by 4 per refinement. Consequently, the final grid is made of 256 cells.
 
-
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` subsection establishes the constraints on different parts of the domain:
@@ -94,9 +102,9 @@ The ``boundary conditions`` subsection establishes the constraints on different 
       end
     end
 
-First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The outer cylinder (``1``) is static and, consequently, a ``noslip`` boundary condition is applied. The inner cylinder is rotating at a constant angular velocity (:math:`\omega=1`). To impose this boundary condition, we use the ``type=function`` and prescribe a function for the components of the velocity (remembering that :math:`\mathbf{u}=[u,v]^T`). By prescribing :math:`\mathbf{u}=[-y,x]^T`, we prescribe the rotation of the inner cylinder at an angular velocity of 1 rad/s in the trigonometric direction.
+First, the ``number`` of boundary conditions to be applied must be specified. For each boundary condition, the ``id`` of the boundary as well as its ``type`` must be specified. The outer cylinder (``1``) is static and, consequently, a ``noslip`` boundary condition is applied. The inner cylinder is rotating at a constant angular velocity (:math:`\omega=1`). To impose this boundary condition, we use the ``type=function`` and prescribe a function for the components of the velocity (remembering that :math:`\mathbf{u}=[u,v]^T`). By prescribing :math:`\mathbf{u}=[-y,x]^T`, we prescribe the rotation of the inner cylinder at an angular velocity of :math:`1 \ \text{rad/s}` in the trigonometric direction.
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 The analytical solution for the Taylor-Couette problem is only valid at low Reynolds number. We thus set the kinematic viscosity to 1.
@@ -109,11 +117,10 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
       end
     end
 
-
-FEM interpolation
+FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{n+1} \right)` where :math:`h` is a measure of the element size and `n=1` is the interpolation order of the velocity. However, since the torque applied on the inner cylinder depends on the deviatoric stress tensor, which depends on the velocity gradient, it's error will be :math:`\mathcal{O}(n)`. Taking this into account, we use second order polynomials in this example to obtain higher accuracy on the torque. We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
+Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{n+1} \right)` where :math:`h` is a measure of the element size and :math:`n` is the interpolation order of the velocity. However, since the torque applied on the inner cylinder depends on the deviatoric stress tensor, which depends on the velocity gradient, its error will be :math:`\mathcal{O}(h^n)`. Taking this into account, we use second order polynomials in this example to obtain higher accuracy on the torque. We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
 
 .. code-block:: text
 
@@ -122,11 +129,10 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
         set pressure order = 1
     end
 
-.. warning:: 
+.. note::
     With the ``gls_navier_stokes_2d`` solver, Q2-Q2 elements could also be used. However, we have not found that these lead to better results when the flows are at a low Reynolds number.
 
-
-Analytical solution
+Analytical Solution
 ~~~~~~~~~~~~~~~~~~~~
 
 To monitor the convergence of the CFD solver, we can provide Lethe with an expression for the analytical expression of the velocity field. Using this expression and the velocity field obtained from the solver, Lethe will calculate the :math:`\mathcal{L}^2` norm of the error. The :math:`L^2` norm of the error is calculated as:
@@ -148,14 +154,12 @@ where :math:`u` is the numerical solution, :math:`u_a` is the analytical solutio
       end
     end
 
-To monitor the error in a simulation, we must set ``enable=true``. We must convert the analytical solution from cylindrical coordinates to Cartesian and this is why the resulting ``Function expression`` is slightly barbaric. Notably, this explains why we often see the occurrence of the term ``sqrt(x^2+y^2)`` which is in fact the radius :math:`r=\sqrt{x^2+y^2}`.
+To monitor the error in a simulation, we must set ``enable = true``. We must convert the analytical solution from cylindrical coordinates to Cartesian and this is why the resulting ``Function expression`` is slightly barbaric. Notably, this explains why we often see the occurrence of the term ``sqrt(x^2+y^2)`` which is in fact the radius :math:`r=\sqrt{x^2+y^2}`.
 
-
-
-Simulation control 
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt=2`` we configure to simulation to carry out to solve the fluid dynamics on the mesh and on two subsequently refined mesh. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision=2`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
+The ``simulation control`` subsection controls the flow of the simulation. Two additional parameters are introduced in this example. By setting ``number mesh adapt = 3`` we configure the simulation to solve the fluid dynamics on the mesh and on two subsequently refined meshes. This approach is very interesting, because the solution on the coarse mesh also serves as the initial guest for the solution on the finer mesh. We set ``subdivision = 2`` to allow the rendering of high-order elements in Paraview. This will be explained later in the example.
 
 .. code-block:: text
 
@@ -163,21 +167,19 @@ The ``simulation control`` subsection controls the flow of the simulation. Two a
       set method            = steady
       set output name       = couette
       set subdivision       = 2
-      set number mesh adapt = 2 # If steady, no mesh adaptation
+      set number mesh adapt = 3 # time-stepping method must be "steady"
     end
 
-
-Mesh adaptation
+Mesh Adaptation
 ~~~~~~~~~~~~~~~~~~
 
-Mesh adaptation is quite complex in Lethe. The mesh can be dynamically adapted using Kelly error estimates on the velocity, pressure or variables arising from other physics. Lethe also supports uniform mesh refinement. Since we wish to measure the convergence of the error with respect to an analytical solution, we specify a uniform mesh refinement by setting ``type=uniform``
+Mesh adaptation is quite complex in Lethe. The mesh can be dynamically adapted using Kelly error estimates on the velocity, pressure or variables arising from other physics. Lethe also supports uniform mesh refinement. Since we wish to measure the convergence of the error with respect to an analytical solution, we specify a uniform mesh refinement by setting ``type = uniform``
 
 .. code-block:: text
 
     subsection mesh adaptation
       set type = uniform
     end
-
 
 Forces
 ~~~~~~~
@@ -191,15 +193,16 @@ The ``forces`` subsection controls the postprocessing of the torque and the forc
       set calculate torque = true    # Enable torque calculation
     end
 
-By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbose=verbose`` will print out the value of the torque calculated for each mesh. 
+By setting ``calculate torque = true``, the calculation of the torque resulting from the fluid dynamics physics on every boundary of the domain is automatically calculated. Setting ``verbosity = verbose`` will print out the value of the torque calculated for each mesh.
+
+Rest of the Subsections
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``non-linear solver`` and ``linear solver`` subsections do not contain any new information in this example.
 
 
-Rest of the subsections
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The non-linear and linear solvers subsections do not contain any new information in this example.
-
-Running the simulation
+----------------------
+Running the Simulation
 ----------------------
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
 
@@ -207,10 +210,12 @@ Launching the simulation is as simple as specifying the executable name and the 
 
   gls_navier_stokes_2d taylor-couette.prm
 
-Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
+Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
-Results
----------------------------
+
+----------------------
+Results and Discussion
+----------------------
 
 Using Paraview, the steady-state velocity profile can be visualized:
 
@@ -219,10 +224,10 @@ Using Paraview, the steady-state velocity profile can be visualized:
     :align: center
     :height: 10cm
 
-As can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping=true`` in the FEM subsection). To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the interpolation order of the scheme. Hence, we used ``subdivision=2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the Nonlinear subdivision level slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`_.
+As it can be seen, each cell is curved because a Q2 isoparametric mapping was used (by setting ``qmapping = true`` in the FEM subsection). To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the interpolation order of the scheme. Hence, we used ``subdivision = 2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the *Nonlinear Subdivision Level* slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`_.
 
 .. note::
-  To showcase the curvature of the cells, we have illustrated the results on a mesh coarser that the initial mesh used in this simulation
+  To showcase the curvature of the cells, we have illustrated the results on a mesh coarser that the initial mesh used in this simulation.
 
 A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh:
 
@@ -270,16 +275,19 @@ For the boundary 1, the following torques are obtained:
    4096 0.0000000000 0.0000000000 0.8376393911 
   16384 0.0000000000 0.0000000000 0.8377288180
 
-The analytical value of the torque is : :math:`T_z=0.837758`. Two main conclusions can be drawn. First, the torque obtained from the simulation on both boundaries converges to the analytical solution (at a second-order rate). Secondly, the torque on the difference between the torque on the outer and the inner cylinder converges to zero. This is what we would expect due to Newton's third law (action-reaction). However, it is only reached once the mesh is sufficiently fine and we note a significant (approx 2%) disagreement between the two torques for the coarsest mesh.
+The analytical value of the torque is : :math:`T_z=0.837758`. Two main conclusions can be drawn. First, the torque obtained from the simulation on both boundaries converges to the analytical solution (at a second-order rate). Secondly, the torque on the difference between the torque on the outer and the inner cylinder converges to zero. This is what we would expect due to Newton's third law (action-reaction). However, it is only reached once the mesh is sufficiently fine and we note a significant (:math:`\approx 2\%`) disagreement between the two torques for the coarsest mesh.
 
-Possibilities for extension
+
+----------------------------
+Possibilities for Extension
 ----------------------------
 
 - Calculate the order of convergence for the torque :math:`T_z`.
 - It could be very interesting to investigate this flow in 3D at a higher Reynolds number to see the apparition of the Taylor-Couette instability. This, however, would be a major undertaking. 
 
 
+------------
 References
 ------------
 
-[1] Bird, R. B., Stewart, W. E., & Lightfoot, E. N. (2006). Transport phenomena (Vol. 1). John Wiley & Sons.
+[1] R. B. Bird, W. E. Stewart, and E. N. Lightfoot, *Transport Phenomena*, vol. 1. John Wiley & Sons, 2006.

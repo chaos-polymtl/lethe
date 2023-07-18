@@ -1,5 +1,5 @@
 ==========================
-Static bubble
+Static Bubble
 ==========================
 
 This example simulates a `two-dimensional static bubble`_.
@@ -16,15 +16,17 @@ Features
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
+
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 
 - Parameter file: ``examples/multiphysics/static-bubble/static_bubble.prm``
 - Python file to generate plots: ``examples/multiphysics/static-bubble/static_bubble.py``
 
+
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a two-dimensional squared domain of side length :math:`L=5.0` filled with air. The gravitational force is neglected, such as in a microgravity environment, and the ratio of density between the droplet and the air is 1, meaning that buoyancy is also neglected. Therefore, without any external force, the bubble and the air are at rest, and only the surface tension effects are involved, maintaining the droplet in its circular shape. The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
@@ -37,9 +39,8 @@ A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a t
 
 .. _Surface tension force:
 
-""""""""""""""""""""""""""""""""
-Surface tension force
-""""""""""""""""""""""""""""""""
+Surface Tension Force
+~~~~~~~~~~~~~~~~~~~~~
 
 As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface force. It is applied at the interface between two immiscible fluids and is given by:
 
@@ -83,9 +84,8 @@ with the analytical curvature of the 2D bubble : :math:`\kappa = 1/R`. This exam
 
 .. _Normal and curvature computations:
 
-"""""""""""""""""""""""""""""""""
-Normal and curvature computations
-"""""""""""""""""""""""""""""""""
+Normal and Curvature Computations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.
 
@@ -112,16 +112,16 @@ The phase fraction gradient filter :math:`\eta_n` and the curvature filter value
 where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` is the cell size.
 
 --------------
-Parameter file
+Parameter File
 --------------
+
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme (BDF1), for a :math:`6~\text{s}` simulation time with a constant time step of :math:`0.005~\text{s}`.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set time end         = 6.0
@@ -132,30 +132,26 @@ Time integration is handled by a 1st order backward differentiation scheme (BDF1
       set subdivision      = 3
     end
 
+Multiphysics
+~~~~~~~~~~~~
+
 The ``multiphysics`` subsection enables to turn on `(true)`
 and off `(false)` the physics of interest. Here ``VOF`` is chosen. The ``surface tension force`` are enabled in the VOF subsection.
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set VOF = true
     end
 
-""""""""""""""""""""""""""""""""
+
 Mesh
-""""""""""""""""""""""""""""""""
+~~~~
 
 The computational domain is defined by a square with opposite corners located at :math:`(-2.5,-2.5)` and :math:`(2.5,2.5)`. In the ``mesh`` subsection, the parameter ``grid type`` is set to ``hyper_rectangle`` since the discretization is uniform in both direction and the parameter ``grid arguments`` defines the opposite corners of the domain. The latter is discretized by an uniform mesh and the refinement level is set to 7 with the parameter ``initial refinement``.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
 
     subsection mesh
       set type               = dealii
@@ -164,18 +160,13 @@ The computational domain is defined by a square with opposite corners located at
       set initial refinement = 7
     end
 
-""""""""""""""""""""""""""""""""
-Initial conditions
-""""""""""""""""""""""""""""""""
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
-In the ``initial condition`` subsection, the initial velocity and initial position of the droplet are defined. The droplet is initially
+In the ``initial conditions`` subsection, the initial velocity and initial position of the droplet are defined. The droplet is initially
 defined as a circle with a radius :math:`R= 0.5` in the center of the defined computational domain at :math:`(x,y)=(0.0, 0.0)`. We enable the use of a projection step with diffusion in the subsection ``projection step`` to ensure that the initial phase distribution is sufficiently smooth and avoid a staircase representation of the interface. This projection step is implemented in the same way as described in section :ref:`Normal and curvature computations`. We refer to the parameter guide :doc:`../../../../parameters/cfd/initial_conditions` for more details.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Initial condition
-    #---------------------------------------------------
 
     subsection initial conditions
       set type = nodal
@@ -192,17 +183,12 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the defined co
     end
 
 
-""""""""""""""""""""""""""""""""
-Volume of Fluid (VOF)
-""""""""""""""""""""""""""""""""
+VOF
+~~~
 
 The surface tension force computation is enabled in the ``VOF`` subsection. The surface tension coefficient :math:`\sigma` is set to :math:`1.0` with the parameter ``surface tension coefficient``. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
 
     subsection VOF
       subsection surface tension force
@@ -223,17 +209,13 @@ The surface tension force computation is enabled in the ``VOF`` subsection. The 
   3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
   4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
 
-""""""""""""""""""""""""""""""""
+
 Physical Properties
-""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~
 
 The density and the kinematic viscosity of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. Finally, the kinematic viscosity is set to :math:`0.1` in both cases.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
 
     subsection physical properties
       set number of fluids = 2
@@ -247,19 +229,15 @@ The density and the kinematic viscosity of the two fluids involved in this examp
       end
     end
 
-""""""""""""""""""""""""""""""""
-Analytical solution
-""""""""""""""""""""""""""""""""
+
+Analytical Solution
+~~~~~~~~~~~~~~~~~~~
 
 As presented in the section :ref:`Surface tension force`, the analytical solution for this case is zero for the velocity and the pressure drop is given by :math:`\Delta p = \sigma \kappa` whit :math:`\kappa = 1/R`. For :math:`\sigma = 1.0` and :math:`R=0.5`, we have :math:`\Delta p = 2.0`.
 
 When providing the analytical solution in the ``analytical solution`` subsection and setting the parameter ``enable`` to ``true``, we can monitor the :math:`\mathcal{L}^2` norm of the error on the velocity and pressure fields. They are outputted in the file specified in the parameter ``filename``.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Analytical solution
-    #---------------------------------------------------
 
     subsection analytical solution
       set enable                = true
@@ -270,8 +248,9 @@ When providing the analytical solution in the ``analytical solution`` subsection
       end
     end
 
+
 ---------------------------
-Running the simulation
+Running the Simulation
 ---------------------------
 
 Call the ``gls_navier_stokes_2d`` by invoking:
@@ -286,9 +265,10 @@ to run the simulation using eight CPU cores. Feel free to use more.
     run in parallel using mpirun. This simulation takes
     :math:`\approx` 10 mins on 8 processes.
 
------------
-Results
------------
+
+-----------------------
+Results and Discussion
+-----------------------
 
 Using Paraview, we can visualize the evolution of the velocity field over the time:
 
@@ -306,9 +286,8 @@ where ``./postprocess.gnu`` is the path to the provided script and ``./output`` 
 
 .. image:: images/L2Error.png
 
-""""""""""""""""""""""""""""""""
-Mesh convergence study
-""""""""""""""""""""""""""""""""
+Mesh Convergence Study
+~~~~~~~~~~~~~~~~~~~~~~
 
 While the filters presented in section :ref:`Normal and curvature computations` allow to decrease the magnitude of the spurious currents, it can be seen from the previous results that they don't completely disappear. It is, therefore, interesting to see if they vanish with a mesh refinement by performing a space convergence study on their magnitude.
 
@@ -319,6 +298,7 @@ Four levels of refinement are studied (6 to 9) by changing the parameter ``initi
 Finally, the time evolution of the :math:`\mathcal{L}^2` norm of the error on the velocity magnitude for each refinement level can be plotted:
 
 .. image:: images/mesh-convergence-study-time.png
+
 
 -----------
 References

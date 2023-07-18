@@ -1,61 +1,61 @@
+================
 Model Parameters
--------------------
-In this subsection, contact detection, force models, time integration, load balancing and dynamic contact disabling parameters are defined. 
+================
 
+In this subsection, contact detection, force models, time integration, load balancing and dynamic contact disabling parameters are defined.
 
 .. code-block:: text
 
- subsection model parameters
+  subsection model parameters
+    subsection contact detection
+      # Contact detection method
+      # Choices are constant|dynamic
+      set contact detection method                = dynamic
 
-  subsection contact detection
-    # Contact detection method
-    # Choices are constant|dynamic
-    set contact detection method                = dynamic
+      # Particle-particle contact neighborhood size
+      set neighborhood threshold                  = 1.3
 
-    # Particle-particle contact neighborhood size
-    set neighborhood threshold                  = 1.3
+      set dynamic contact search size coefficient = 0.8
+      set frequency                               = 10
+    end
 
-    set dynamic contact search size coefficient = 0.8
-    set frequency                               = 10
+    subsection load balancing
+      # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
+      set load balance method     = none
+      set particle weight         = 10000  # Every method, except none
+      set step                    = 100000 # if method = once
+      set frequency               = 100000 # if method = frequent
+      set dynamic check frequency = 10000  # if method = dynamic
+      set threshold               = 0.5    # if method = dynamic
+    end
+
+    # Particle-particle contact force model
+    # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
+    set particle particle contact force method = hertz_mindlin_limit_overlap
+
+    # Integration method
+    # Choices are euler|velocity_verlet
+    set integration method                     = velocity_verlet
+
+    # Integration method
+    # Choices are euler|velocity_verlet
+    set integration method                     = velocity_verlet
+
+    # Rolling resistance method
+    # Choices are no_resistance|constant_resistance|viscous_resistance
+    set rolling resistance torque method       = constant_resistance
+
+    subsection dynamic disabling contacts
+      set enable dynamic disabling contacts = false
+      set granular temperature threshold    = 1e-4
+      set solid fraction threshold          = 0.4
+    end
   end
 
-  subsection load balancing
-    # Choices are none|once|frequent|dynamic|dynamic_with_disabling_contacts
-    set load balance method                     = none
-    set particle weight                         = 10000      # Every method, except none
-    set step                                    = 100000     # if method = once
-    set frequency                               = 100000     # if method = frequent
-    set dynamic check frequency                 = 10000      # if method = dynamic
-    set threshold                               = 0.5        # if method = dynamic
-  end
-  
-  # Particle-particle contact force model
-  # Choices are linear|hertz_mindlin_limit_overlap|hertz_mindlin_limit_force|hertz
-  set particle particle contact force method    = hertz_mindlin_limit_overlap
-
-  # Particle-wall contact force model
-  # Choices are linear|nonlinear
-  set particle wall contact force method        = nonlinear
-
-  # Integration method
-  # Choices are euler|velocity_verlet
-  set integration method                        = velocity_verlet
-
-  # Rolling resistance method
-  # Choices are no_resistance|constant_resistance|viscous_resistance
-  set rolling resistance torque method          = constant_resistance
-
-  subsection dynamic disabling contacts
-    set enable dynamic disabling contacts       = false
-    set granular temperature threshold          = 1e-4
-    set solid fraction threshold                = 0.4
-  end
- end
 
 --------------------
-Contact detection
+Contact Detection
 --------------------
-
 
 Particle-particle contact search is a costly operation in DEM simulations. Contact detection parameters must be optimized to ensure a fast and physically accurate DEM simulation.
 
@@ -63,29 +63,27 @@ Particle-particle contact search is a costly operation in DEM simulations. Conta
 
 Lethe defines two contact detection methods: ``dynamic`` and ``constant``
 
-=======================================
 ``contact detection method = dynamic``
-=======================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Lethe rebuilds the contact lists automatically. In this mode, Lethe stores the displacements of each particle in the simulation since the last contact detection. If the maximum displacement of a particle exceeds the smallest contact search criterion, then the iteration is a contact search iteration and the contact list is rebuilt. The smallest contact search criterion is the minimum of the smallest cell size in the triangulation or the radius of the spherical region in fine search, and it is defined as:
  
-  .. math::
-    \phi=\min({d_c^{min}-r_p^{max},\epsilon(\alpha-1)r_p^{max}})
+.. math::
+  \phi=\min({d_c^{min}-r_p^{max},\epsilon(\alpha-1)r_p^{max}})
 
 where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon}`, and :math:`{\alpha}` denote smallest contact search criterion, minimum cell size (in the triangulation), maximum particle radius (in polydisperse simulations), ``dynamic contact search size coefficient``, and ``neighborhood threshold``.
 
 * ``dynamic contact search size coefficient`` is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value.
 
 
-=======================================
 ``contact detection method = constant``
-=======================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Contact search will be carried out at constant frequency
 
 * ``frequency`` is the frequency at which the contact list is renewed. It should be a value between 5 and 50 iterations. Small values of ``frequency`` lead to long simulation times, while large values of ``frequency`` may lead to late detection of collisions. Late detection of collisions can result in very large particles velocities (popcorn jump of particles in a simulation) or particles leaving the simulation domain.
 
 -------------------------------
-Contact and integration methods
+Contact and Integration Methods
 -------------------------------
 
 All contact force models are described in the :doc:`../../theory/dem/dem` section of the theory guide.
@@ -101,7 +99,7 @@ All contact force models are described in the :doc:`../../theory/dem/dem` sectio
 
 
 -----------------------
-Load balancing
+Load Balancing
 -----------------------
 
 Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe: ``once``, ``frequent``, or ``dynamic``. 
@@ -115,23 +113,20 @@ where :math:`{W_p}` is the ``particle weight`` and :math:`{n_p}` is the number o
 
 * ``particle weight`` must be defined for every ``load balance method``.
 
-================================
 ``load balance method = once``
-================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Load balancing will be done only once.
 
 * ``step`` the iteration number at which the load balancing will be carried out.
 
-====================================
 ``load balance method = frequent``
-====================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Load balancing will be done at a given frequency
 
 * ``frequency`` frequency (in iterations) of the load balancing.
 
-====================================
 ``load balance method = dynamic``
-====================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Load balancing will be done when the computational load amongst core is too uneven. If 
 
 .. math::
@@ -143,7 +138,7 @@ load balancing will be executed. :math:`{L}` and :math:`{\beta}` denote computat
 * ``threshold`` is the maximal load unbalance tolerated by the load balancing.
 
 ---------------------------
-Dynamic disabling contacts
+Dynamic Disabling Contacts
 ---------------------------
 
 The dynamic disabling controls the disabling contact mechanism for performance enhancement. This feature dynamically searches for cells with low particle motion (granular temperature), disabling the computation of contacts for particles within these cells.

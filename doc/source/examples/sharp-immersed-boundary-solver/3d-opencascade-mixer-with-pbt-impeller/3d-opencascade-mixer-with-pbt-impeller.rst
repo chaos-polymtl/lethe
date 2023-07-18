@@ -1,37 +1,50 @@
 =======================================================================================
-3D Mixer with pitched-blade turbine impeller using OpenCascade Sharp-immersed boundary
+3D Mixer with Pitched-Blade Turbine Impeller Using OpenCascade Sharp-Immersed Boundary
 =======================================================================================
 
 The mixing of stirred-tanks is a common chemical engineering problem that can be tackled through immersed boundary simulation. This example, a variation of :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, illustrates how the transient flow in a stirred-tank can be simulated by Lethe using the Sharp-Immersed Boundary formulation with a OpenCasacade shape from a step file.
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_sharp_navier_stokes_3d``
 - Transient problem
 - Rotating complex solid, defined by a step file using the OpenCascade shape, modelled with sharp immersed boundary
 
-Files used in this example
+
+----------------------------
+Files Used in This Example
 ----------------------------
 
 * Parameter file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/mixer.prm``
 * Step file: ``/examples/sharp-immersed-boundary-solver/3d-opencascade-mixer-with-pbt-impeller/impeller.step``
 
-Description of the case
+
+-----------------------
+Description of the Case
 -----------------------
 
 In this example, we simulate a mixer using a PBT impeller through the usage of a step file with the OpenCascade shape feature of the sharp immersed boundary solver.
 
-Creation of the step file
+
+------------------------------------
+Creation of the STEP File
 ------------------------------------
 
 The step file can be defined using any CAD tool available to the user. The step file must represent a solid. It's favorable to avoid step file that represent shells, composite of solids or compound of objects.
 
 .. tip::
-	Use the union tool at your disposal to avoid issues with step files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the step file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox. 
+	Use the union tool at your disposal to avoid issues with step files that are defined by a composite of solids. Most CAD software offers the possibility to define a solid from the union of multiple solids. Similarly, if the step file is only defined by a shell, it is usually possible to define a solid from that shell. If your CAD tool does not allow these operations, the FreeCAD software allows you to do these operations using the part toolbox.
 
 
-Definition of the shape and its motion
---------------------------------------
+---------------
+Parameter File
+---------------
+
+Definition of the Shape and Its Motion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The section defining the solid is almost the same as in :doc:`../3d-composite-mixer-with-pbt-impeller/3d-composite-mixer-with-pbt-impeller`, with the difference being the shape ``type`` and ``shape arguments``.
 
@@ -49,6 +62,7 @@ The section defining the solid is almost the same as in :doc:`../3d-composite-mi
 Additionnal information on the ``particles`` parameters can be found on :doc:`../../../parameters/sharp-immersed-boundary-solver/sharp-immersed-boundary-solver`.
 
 
+--------
 Results
 --------
 

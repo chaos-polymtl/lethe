@@ -21,9 +21,9 @@ Radioactive Particle Tracking (RPT)
 
       rpt [label="Radioactive Particle \nTracking (RPT)", href="https://lethe-cfd.github.io/lethe/examples/rpt/rpt.html"];
 
-      rpt_1 [label="Photon count calculation \nin a cylindrical vessel", href="https://lethe-cfd.github.io/lethe/examples/rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html", tooltip="Photon count calculation in a cylindrical vessel"]; 
+      rpt_1 [label="Photon Count Calculation \nin a Cylindrical Vessel", href="https://lethe-cfd.github.io/lethe/examples/rpt/photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel.html", tooltip="Photon count calculation in a cylindrical vessel"];
 
-      rpt_2 [label="Tuning count calculation model \nparameters with NOMAD", href="https://lethe-cfd.github.io/lethe/examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html", tooltip="Tuning count calculation model parameters with NOMAD"]; 
+      rpt_2 [label="Tuning Count Calculation Model \nParameters with NOMAD", href="https://lethe-cfd.github.io/lethe/examples/rpt/tuning-parameters-with-nomad/tuning-parameters-with-nomad.html", tooltip="Tuning count calculation model parameters with NOMAD"];
 
       rpt -> rpt_1:w;
       rpt -> rpt_2:w;  

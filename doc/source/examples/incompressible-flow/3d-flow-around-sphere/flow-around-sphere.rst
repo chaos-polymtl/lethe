@@ -1,26 +1,32 @@
 
 ==================================
-Flow around a sphere
+Flow around a Sphere
 ==================================
 
 In this example, a fluid flows past a sphere
 
+
+----------------------------------
 Features
 ----------------------------------
+
 - Solvers: ``gls_navier_stokes_3d`` (with Q1-Q1) or  ``gd_navier_stokes_3d`` (with Q2-Q1)
 - Steady-state problem
 - Displays the importance of adaptative mesh refinement
 - Displays the effect of the Reynolds number on the convergence
 
 
-Files used in this example
 ----------------------------
-- For Re = 0.1 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
-- For Re = 150 : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
-- For Re = 150 Using adaptative mesh refinement : ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
+Files Used in This Example
+----------------------------
+
+- Parameter file for :math:`Re=0.1`: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-0.1.prm``
+- Parameter file For :math:`Re=150`: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-150.prm``
+- Parameter file for :math:`Re=150` using adaptative mesh refinement: ``/examples/incompressible-flow/3d-flow-around-sphere/sphere-adapt.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 The following schematic describes the simulation and its boundary condition indices.
@@ -35,7 +41,8 @@ Note that the sphere surface has a boundary index of ``0``, the inlet ``1`` and 
 As this examples allows for two different Reynolds numbers as well as an adaptative mesh refinement variation, the Parameter file section will specify the differences when applicable. 
 
 
-Parameter file
+--------------
+Parameter File
 --------------
 
 We first establish the parameters.
@@ -75,7 +82,7 @@ In the parameter file, the mesh is read this way:
   The ``initial refinement`` is set to 1 only for the second example (Re = 150 without mesh adaptation). This is added so that it has a number of cells of the same magnitude as the mesh adaptation example. This mesh contains a bit more than 46,000 cells.
 
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 The ``boundary conditions`` subsection establishes the constraints on different parts of the domain. They are the same for all three parameter sets.
@@ -107,7 +114,7 @@ The ``boundary conditions`` subsection establishes the constraints on different 
 There are three boundary conditions, as shown in the figure above. A ``noslip`` condition is applied on the surface of the sphere, where the velocity should be 0. The inlet velocity is set to `u=1m/s`, and the boundaries of the domain that are parallel to the flow direction have a ``slip`` boundary condition.
 
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
 This is where the parameters differ from the first and the two last examples.
@@ -142,7 +149,7 @@ Taking this into account and the fact that the sphere diameter :math:`D` is 1 m,
 By default, simulations only contain a single fluid which is labeled ``0``.
 
 
-FEM interpolation
+FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
 The default FEM parameters for this example use first order polynomials. They can be changed to Q2-Q1 elements.
@@ -161,7 +168,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
     If you choose to use the ``gd_navier_stokes_3d`` solver; only Q2-Q1 elements are supported. 
 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
 The parameters also slightly differ from one problem to another as different examples experience different flow regimes.
@@ -198,8 +205,8 @@ At Re = 150, the flow has separated, resulting in an unstable wake and recircula
 The ``steady_bdf`` method solves for a steady-state simulation using adjoint time stepping with a bdf1 scheme. An initial time step is used to complete a transient iteration, and with each iteration, the time step is increased. The simulation is considered to have reached steady-state when the L2 norm of the initial residual is lower than stop tolerance at the start of a non-linear solution step, i.e. until the time step is large enough that a pseudo-steady-state has been reached.
 
 
-Initial condition
-~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
 An initial condition is introduced for the Re = 150 problem. This way, a Re = 10 initial condition is set. Since the solution can easily be found at Re = 10, this is used as an initial attempt to find the solution at Re=150.
 
@@ -211,8 +218,8 @@ An initial condition is introduced for the Re = 150 problem. This way, a Re = 10
     end
 
 
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 
 To increase the accuracy of the drag coefficient, the mesh must be refined in areas of interest, such as on the front face of the sphere and in the developing wake. Therefore, a dynamic adaptive mesh was introduced to refine the mesh in such regions.
 
@@ -235,8 +242,10 @@ The mesh is dynamically adapted based on an estimate of the error of the solutio
 The ``min refinement level`` refers to the base mesh which has been used in the previous static simulations. The mesh can only become finer than this, not coarser. The ``max refinement level`` is set at 3, giving a maximum possible number of cells of 3 million. However, the ``max number elements`` limits the number of cells to 50,000 to keep the simulation within feasible computational expense.
 
 
-Running the simulation
 ----------------------
+Running the Simulation
+----------------------
+
 Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
@@ -258,8 +267,12 @@ or
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
 
-First case results (Re = 0.1)
------------------------------
+-----------------------
+Results and Discussion
+-----------------------
+
+First Case Results (:math:`Re=0.1`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using Paraview, the steady-state velocity profile and the pressure profile can be visualized by operating a *slice* along the xy-plane (z-normal) that cuts in the middle of the sphere (See `documentation <https://forgeanalytics.io/blog/creating-slices-in-paraview/>`_). 
 
@@ -283,8 +296,8 @@ We can appreciate the axisymmetrical behavior of the flow. The drag on the spher
 
 Given the flow parameters, the calculated drag coefficient is 250.50, using 6000 cells. At Re = 0.1, an analytical solution of the drag coefficient is known: :math:`C_D = 240` (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_). The deviation from the analytical solution is primarily due to the size of the domain (height of the domain compared to the size of the sphere). The coarseness of the mesh can also have an impact on the result. It would be relevant to carry out a mesh refinement analysis.
 
-Second case results (Re = 150)
-------------------------------
+Second Case Results (:math:`Re=150`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We now consider the case at a Reynolds number of 150. At this value of the Reynolds number, the flow has separated, resulting in an unstable wake and recirculation. 
 
@@ -303,8 +316,8 @@ The velocity and pressure are once again visualised as well as the mesh used:
 
 The drag coefficient at Re = 150 using this example simulation is 0.798, against a predicted coefficient of 0.889 (see `reference <https://kdusling.github.io/teaching/Applied-Fluids/DragCoefficient.html>`_).
 
-Third case results (Re = 150 with an adaptative mesh refinement)
-----------------------------------------------------------------
+Third Case Results (:math:`Re=150` With an Adaptative Mesh Refinement)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using mesh adaptative refinement, the final mesh contains slightly more than 101,000 cells. The resulting velocity profile is shown without and with the underlying mesh. Refinement around the sphere and wake can be observed:
 
@@ -319,7 +332,8 @@ Using mesh adaptative refinement, the final mesh contains slightly more than 101
 It is possible the acknowledge how better the mesh fits the velocity profile than in the previous example. The resulting drag coefficient of 0.880 is more accurate than determined using the static mesh, and does not take much more time to execute than the previous example. 
 
 
-Possibilities for extension
+---------------------------
+Possibilities for Extension
 ---------------------------
 
 - **High-order methods:** Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers. 
@@ -327,6 +341,3 @@ Possibilities for extension
 - **Mesh size** It would be interesting to increase the height:sphere diameter ratio and see if the drag coefficient becomes closer to the analytical one for Re = 0.1 A Mesh refinement analysis could also be carried out.
 
 - **Dynamic mesh adaptation:** To increase accuracy further, the ``max number elements`` and ``max refinement level`` parameters of the mesh adaption can be increased.
-
-
-

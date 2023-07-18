@@ -1,16 +1,20 @@
 =================
-Bouncing particle
+Bouncing Particle
 =================
 
 This example of Lethe simulates the bounces of a single particle using the linear spring-dashpot collision model in 3D. This simulation is being setup according to MFIX DEM02 verification test `[1] <https://mfix.netl.doe.gov/doc/vvuq-manual/main/html/dem/dem-02.html>`_. It is recommended to visit `DEM parameters <../../../parameters/dem/dem.html>`_ for more detailed information on the concepts and physical meanings of the parameters in Lethe.
 
+
+--------
 Features
 --------
 
 - Solvers: ``dem_3d``
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
-Files used in this example
+
+----------------------------
+Files Used in This Example
 ----------------------------
 
 - ``/examples/dem/3d-bouncing-particle/bouncing_particle_original.prm``
@@ -18,12 +22,14 @@ Files used in this example
 - ``/examples/dem/3d-bouncing-particle/bouncing_particle_post-processing.py``
 
 
-Description of the case
+-------------------------
+Description of the Case
 -------------------------
 
 This simulation consists of a single particle bouncing on a flat plane. The particle start at a rest position in the air and accelerate due to the action of gravity. Upon reaching the outer limit of the domain, the particle-wall contact stops the particles form leaving the triangulation. Depending on the values of spring constant and restitution coefficient used, the particle will lose some kinetic energy and the height of the next bounce will decrease until the particle comes to a complete stop.
 
-Parameter file
+---------------
+Parameter File
 ---------------
 
 Mesh
@@ -40,7 +46,7 @@ The ``grid type`` in this example is a ``hyper_cube``. Its dimensions are 2.0 m 
       set initial refinement = 0
     end
 
-Insertion info
+Insertion Info
 ~~~~~~~~~~~~~~~~~~
 
 Since the insertion of the particle must be done at as specific height, the ``list`` insertion method is used. The ``insertion frequency`` can be set to any value, since we're only using one particle. The particle is at a height of 0.5 m in the center of the X,Y plane.
@@ -55,7 +61,7 @@ Since the insertion of the particle must be done at as specific height, the ``li
       set list z = 0.5
     end
 
-Lagrangian physical properties
+Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Different spring constant and restitution coefficient are used in this example. The spring constant is not defined explicitly in the parameter file, and, consequently, the physical properties must be chosen to obtain a desired spring constant. The interested reader can consult `DEM parameters`_ for more information about the definition of the sprint constant.
@@ -95,7 +101,8 @@ As you can see, the ``young modulus particles`` and the ``restitution coefficien
 
 Where ``5000000`` represent the normal spring constant that is wish to be used for the simulations. This code will generate 6 files named ``bouncing_particle_XX.prm``, where ``XX`` represent the value of the restitution coefficient used in it.
 
-Running the simulation
+----------------------
+Running the Simulation
 ----------------------
 Once all 6 parameter file are created, the simulation can be launched one after the other using the following line (parallel mode is not recommend since there is only one particle):
 
@@ -105,6 +112,7 @@ Once all 6 parameter file are created, the simulation can be launched one after 
 
 All 6 simulations takes less than 2 minutes to run. A folder named according to the restitution coefficient of every simulation used will be generated (``/out_xx``).
 
+---------------
 Post-processing
 ---------------
 A Python post-processing code called ``bouncing_particle_post_processing.py`` is provided with this example. It is used to compare the height reached by the particle after each rebound with the analytical solution of a hard sphere bouncing on a flat plane. This analytical solution considers instantaneous collision between the particle and the wall, thus the maximum height of each bounce can be express by the following expression:
@@ -122,7 +130,8 @@ Once the 6 simulations have been run, use the following line in your command lin
 
 A figure will be generated which compares the analytical solution with the simulation results.
 
-Results and discussion
+----------------------
+Results and Discussion
 ----------------------
 Animation of a bouncing particle with different restitution coefficient (:math:`K_n` = 5E6 N/m):
 
@@ -152,6 +161,7 @@ Using the post-processing code, it is possible to compare the effect of the norm
 As the stiffness is increased, the agreement between the results obtained in the simulations and the analytical solution improves. This is due to the assumption of instantaneous contact, which becomes false for an elastic particle. Since the particle is less stiff, the contact time between the particle and the wall is longer, thus the damping term in the force calculation comes into effect over a longer period and more kinetic energy is lost.
 
 
+---------
 Reference
 ---------
 

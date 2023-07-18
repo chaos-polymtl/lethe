@@ -1,6 +1,5 @@
-
 ==========================================
-Small scale rotating drum post-processing
+Small Scale Rotating Drum Post-processing
 ==========================================
 
 This is an example of how to post-process results obtained in the `Small scale rotating drum example <../../dem/rotating-drum/small-scale-rotating-drum.html>`_ using `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, a Python module is based on `PyVista <https://docs.pyvista.org/>`_, built to facilitate the reading of Lethe results using `Python <https://www.python.org/>`_. 
@@ -13,6 +12,8 @@ This is an example of how to post-process results obtained in the `Small scale r
   
   For `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ to work, along with `Python 3 <https://www.python.org/downloads/>`_, the following libraries are needed: `os <https://docs.python.org/3/library/os.html>`_, `NumPy <https://numpy.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `tqdm <https://tqdm.github.io/>`_, `matplotlib <https://matplotlib.org/stable/index.html>`_, and `SciPy <https://scipy.org/>`_, and `scikit-learn <https://scikit-learn.org/stable/index.html>`_. If any of the modules are missing, use `pip <https://pypi.org/project/pip/>`_ to install it running ``pip3 install $NAME_OF_THE_MODULE`` on the terminal.
 
+
+----------------------------------
 Features
 ----------------------------------
 
@@ -20,7 +21,8 @@ Features
 - Post-processing using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
 
 
-Files used in this example
+----------------------------
+Files Used in This Example
 ----------------------------
 
 - Parameters file for particle insertion: ``/examples/dem/3d-small-scale-rotating-drum/packing-rotating-drum.prm``
@@ -29,7 +31,8 @@ Files used in this example
 - Python script using module for rotating drum post-processing: ``/examples/postprocessing/small-scale-rotating-drum-postprocessing/example_small_rotating_drum.py``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 In this example, we illustrate the mixing inside a rotating drum by coloring the particles according to their radial position right after their full packing. To do so, we post-process Lethe-DEM data using `Python <https://www.python.org/>`_, `PyVista <https://docs.pyvista.org/>`_, `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_, and `ParaView <https://www.paraview.org/>`_.
@@ -42,10 +45,11 @@ The DEM files used in this example are obtained following the `Small scale rotat
   It is not necessary to use all mentioned tools, but they are used in this example to show different ways to process the data according to user's need.
 
 
-Python code
+---------------
+Python Code
 ---------------
 
-Module importing
+Module Importing
 ~~~~~~~~~~~~~~~~~
 
 The module `lethe_pyvista_tools <https://github.com/lethe-cfd/lethe/tree/master/contrib/postprocessing>`_ was conceived to optimize the reading and post-treatment of Lethe data using Python. It is based on `PyVista <https://docs.pyvista.org/>`_, a versatile module that can be used to manipulate Lethe results.
@@ -70,7 +74,7 @@ One third and very convenient way to always import the module without copying it
 
 The ``*`` means that we want to import all members of lethe_pyvista_tools.
 
-Constructing the object
+Constructing the Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following step is to create an object to receive the data. In the present case, the object is called ``particles``.
@@ -97,7 +101,7 @@ The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time
   Since this is a post-processing module, we can only have access to data that was previously output. If one needs more time resolution than the data in hand, the simulation must be `reran with a smaller time-step <../../../parameters/dem/simulation_control>`_
 
 
-Creation of a new array
+Creation of a New Array
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 To color the particles according to their position, we use the function ``modify_array``, which takes the following arguments:
@@ -139,13 +143,14 @@ This time, we set ``restart_array = False`` to guarantee it is not going to affe
 
 
 
-Visualizing the results
+-------------------------
+Visualizing the Results
 -------------------------
 
 We have two visualization options. One would be the `PyVista visualization tools <https://docs.pyvista.org/api/plotting/index.html>`_, such as `PyVista Plotter <https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.html#pyvista.Plotter>`_. The other option is to use `ParaView <https://www.paraview.org/>`_.
 
 
-PyVista visualization
+PyVista Visualization
 ~~~~~~~~~~~~~~~~~~~~~~
 
 To visualize particle data using PyVista, first we need to create a single particle with diameter 1 and a given angular resolution:
@@ -180,7 +185,7 @@ This will open one iteractive window such as this one:
   It is possible to `create movies with PyVista <https://docs.pyvista.org/api/plotting/_autosummary/pyvista.BasePlotter.open_movie.html#open-movie>`_ looping through time-steps.
 
 
-ParaView visualization
+ParaView Visualization
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Since all modifications are saved to the new ``.pvd`` and ``.vtu`` files, the results of the post-processing can be easily opened on ParaView, using the generated files.
@@ -195,7 +200,7 @@ Since all modifications are saved to the new ``.pvd`` and ``.vtu`` files, the re
     :align: center
 
 
-Mixing index
+Mixing Index
 -------------
 
 We used two methods to calculate the mixing index of the rotating drum:
@@ -268,7 +273,7 @@ This method calculates the mixing index for each particles and stores it in an a
     :align: center
 
 
-Doucet mixing index
+Doucet Mixing Index
 ~~~~~~~~~~~~~~~~~~~~
 
 Similar to NNM, we are interested in the mixing index results using cylindrical coordinates. Calculating the Doucet mixing index is as simple as running:
@@ -281,6 +286,7 @@ Similar to NNM, we are interested in the mixing index results using cylindrical 
 Usually, Doucet mixing index decreases with mixing, but for comparison with NNM purposes we do ``increasing_index = True``. Doucet method does not need any sort of splitting of particles, so it is not necessary to split them previous to using this method.
 
 
+---------
 Results
 ---------
 
@@ -315,7 +321,9 @@ For ``set rotational speed = 2``, the following is observed:
 
 As shown, neither of the mixing indices point to a full mixing of the particles, even at higher simulation times. NNM is always above Doucet, indicating that the main mixing component must not be the radius. Higher rotating velocities can improve results.
 
-Possibilities for extension
+
+----------------------------
+Possibilities for Extension
 ----------------------------
 
 - Give a different ``condition`` to create the ``particle_color`` array
@@ -323,5 +331,3 @@ Possibilities for extension
 - Use the tools in the `PyVista official repository <https://docs.pyvista.org>`_ to create screenshots, movies, and plots with the data.
 - Change the rotation velocity and track the mixing indices.
 
-
- 

@@ -1,9 +1,11 @@
 ================================
-Non-Newtonian flow past a sphere
+Non-Newtonian Flow past a Sphere
 ================================
 
 This example showcases a laminar non-Newtonian flow around a sphere, with an *a priori* Reynolds number :math:`Re = 50`, using the `Carreau rheological model <https://en.wikipedia.org/wiki/Carreau_fluid>`_.
 
+
+----------------------------------
 Features
 ----------------------------------
 - Solvers: ``gls_sharp_navier_stokes_3d`` (with Q1-Q1) 
@@ -12,13 +14,16 @@ Features
 - Ramping initial condition
 - Non-uniform mesh adaptation 
 
-Files used in this example
+
+---------------------------
+Files Used in This Example
 ---------------------------
 
-- Parameter file: ``/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-inferface.prm``
+- Parameter file: ``/examples/sharp-immersed-boundary-solver/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
 
 
-Description of the case
+-----------------------
+Description of the Case
 -----------------------
 
 In this example, we study the flow around a static sphere using the sharp-interface method to represent the sphere. The geometry of the flow is the following, with a particle of diameter :math:`D = 1.0` located at :math:`(0,0,0)`
@@ -28,7 +33,9 @@ and the flow domain located between :math:`(-18,-15,-15)` and :math:`(42,15,15)`
     :alt: Simulation schematic
     :align: center
 
-Parameter file
+
+-----------------------
+Parameter File
 -----------------------
 
 Mesh
@@ -59,7 +66,7 @@ The dimensions of the used domain are :math:`(60 \times 30 \times 30)`, and the 
       end
     end
 
-Boundary conditions
+Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~
 We define the boundary conditions in order to have an inlet velocity of :math:`1~m/s` on the left, ``slip`` boundary conditions parallel to the flow direction, and an outlet on the right of the domain (unspecified condition at ``id = 1``).
 
@@ -101,7 +108,7 @@ We define the boundary conditions in order to have an inlet velocity of :math:`1
 .. note::
 	Since using a `deal.ii mesh <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_, the boundary ``id = 1`` is by default the second boundary in the *x* axis, hence the free boundary in this problem. This is why all boundary indices are shifted.
 
-Physical properties
+Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
 This example showcases a shear-thinning flow, for which the viscosity decreases when the local shear rate increases. The Carreau model is being used. For more information on rheological models, see :doc:`../../../parameters/cfd/physical_properties`
@@ -133,7 +140,7 @@ With ``viscosity_inf = 0`` (3-parameter Carreau model), the *a priori* Reynolds 
 
 We use an *a priori* Reynolds number, since it is not possible, *a priori*, to know the effective viscosity of the flow. For the given parameters, the *a priori* Reynolds number is :math:`50`. 
 
-Initial conditions
+Initial Conditions
 ~~~~~~~~~~~~~~~~~~~~
 
 This example uses a ramping initial condition that first ramps on the ``n`` parameter, and then on the ``viscosity_0`` parameter. This allows for a smooth transition of non-Newtonian behavior level and of regime.
@@ -192,7 +199,7 @@ In this case, we want to define a spherical boundary of radius :math:`0.5`, with
 
 The hypershell around the boundary between ``refine mesh inside radius factor`` (:math:`r = 0.425`) and ``refine mesh outside radius factor`` (:math:`r = 0.65`) will initially be refined twice (``initial refinement = 2``). 
 
-Simulation control
+Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation is solved at steady-state with 2 mesh adaptations.
@@ -207,8 +214,8 @@ The simulation is solved at steady-state with 2 mesh adaptations.
       set subdivision       = 1
     end
 
-Mesh adaptation control
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mesh Adaptation
+~~~~~~~~~~~~~~~
 
 In order to generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
 
@@ -226,6 +233,8 @@ In order to generate an additional refinement zone around the immersed boundary,
       set variable = velocity
     end
 
+
+---------------
 Results
 ---------------
 
@@ -263,8 +272,10 @@ We get the following torques and forces applied on the particle for each of the 
 .. note:: 
 	Because this analysis concerns non-Newtonian flow, there is no known solution for the drag coefficient. For a Newtonian flow at :math:`Re = 50`, the drag force would be :math:`0.6165`. Therefore, the drag force was decreased using a shear-thinning fluid.
 
-Possibilities for extension
+-----------------------------
+Possibilities for Extension
 -----------------------------	
+
 * **High-order methods** : Lethe supports higher order interpolation. This can yield much better results with an equal number of degrees of freedom than traditional second-order (Q1-Q1) methods, especially at higher Reynolds numbers.
 * **Reynolds number** : By changing the inlet velocity, it can be interesting to see the impact of the shear-thinning behavior on the effective drag force.
 * **Non-Newtonian parameters** : It can also be interesting to change the Carreau model parameters, i.e. changing the slope to appreciate the change in behavior.

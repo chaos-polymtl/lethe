@@ -1,29 +1,29 @@
-***********************************************
+=======
 CFD-DEM
-***********************************************
+=======
 This subsection includes parameters related to multiphase flow simulations using the both the gls_vans solver and the cfd-dem_coupling solver within Lethe.
 
 .. code-block:: text
 
-   subsection cfd-dem
-      set grad div = true
-      set void fraction time derivative = true
-      set interpolated void fraction = true
-      set vans model = modelA
-      set drag force = true
-      set drag model = difelice
-      set saffman lift force = false
-      set magnus lift force = false
-      set rotational viscous torque = false
-      set vortical viscous torque = false
-      set buoyancy force = true
-      set shear force = true
-      set pressure force = true
-      set coupling frequency = 100
-      set implicit stabilization = true
-      set grad-div length scale = 1
-      set particle statistics = true
-   end
+  subsection cfd-dem
+    set grad div                      = true
+    set void fraction time derivative = true
+    set interpolated void fraction    = true
+    set vans model                    = modelA
+    set drag force                    = true
+    set drag model                    = difelice
+    set saffman lift force            = false
+    set magnus lift force             = false
+    set rotational viscous torque     = false
+    set vortical viscous torque       = false
+    set buoyancy force                = true
+    set shear force                   = true
+    set pressure force                = true
+    set coupling frequency            = 100
+    set implicit stabilization        = true
+    set grad-div length scale         = 1
+    set particle statistics           = true
+  end
 
 
 * The ``grad div`` parameter allows the enabling of the grad div stabilization for the Volume Averaged Navier Stokes equations `[1] <https://doi.org/10.1016/j.softx.2020.100579>`_. This allows for a much better mass conservation of the system.
@@ -86,26 +86,26 @@ This subsection includes parameters related to multiphase flow simulations using
 .. tip::
    Experience shows that simulations are more numerically stable when the ``grad-div length scale`` is of the same length as the characteristic length of the flow. For example, for a pipe, the recommended value for the ``grad-div length scale`` would be the pipe's diameter.
 
-`[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, J. Chaouki, Lethe: An open-source parallel high- order adaptative cfd solver for incompressible flows, SoftwareX 12 100579, 2020.
+`[1] <https://doi.org/10.1016/j.softx.2020.100579>`_ B. Blais *et al.*, “Lethe: An open-source parallel high-order adaptative CFD solver for incompressible flows,” *SoftwareX*, vol. 12, p. 100579, Jul. 2020, doi: 10.1016/j.softx.2020.100579.
 
-`[2] <https://doi.org/10.1016/0301-9322(92)90012-6>`_ R. Mei, An approximate expression for the shear lift force on a spherical particle at finite Reynolds number. International Journal of Multiphase Flow, v. 18, n. 1, p. 145-147, 1992.
+`[2] <https://doi.org/10.1016/0301-9322(92)90012-6>`_ R. Mei, “An approximate expression for the shear lift force on a spherical particle at finite reynolds number,” Int. J. *Multiph. Flow*, vol. 18, no. 1, pp. 145–147, Jan. 1992, doi: 10.1016/0301-9322(92)90012-6.
 
-`[3] <https://doi.org/10.1017/S0022112065000824>`_ P. G. Saffman, The lift on a small sphere in a slow shear flow. Journal of fluid mechanics, v. 22, n. 2, p. 385-400, 1965.
+`[3] <https://doi.org/10.1017/S0022112065000824>`_ P. G. Saffman, “The lift on a small sphere in a slow shear flow,” *J. Fluid Mech.*, vol. 22, no. 2, pp. 385–400, Jun. 1965, doi: 10.1017/S0022112065000824.
 
-`[4] <https://doi.org/10.1201/b11103>`_ C.T. Crowe, J.D. Schwarzkopf, M. Sommerfeld, Y. Tsuji, . Multiphase Flows with Droplets and Particles (2nd ed.). CRC Pres, 2011.
+`[4] <https://doi.org/10.1201/b11103>`_ 	C. T. C. Tsuji John D. Schwarzkopf, Martin Sommerfeld, Yutaka, *Multiphase Flows with Droplets and Particles*, 2nd ed. Boca Raton: CRC Press, 2011. doi: 10.1201/b11103.
 
-`[5] <https://doi.org/10.1007/s003480050203>`_ B. Oesterlé, T. Dinh, Experiments on the lift of a spinning sphere in a range of intermediate Reynolds numbers. Experiments in Fluids 25, 16–22, 1998.
+`[5] <https://doi.org/10.1007/s003480050203>`_ B. Oesterlé and T. B. Dinh, “Experiments on the lift of a spinning sphere in a range of intermediate Reynolds numbers,” *Exp. Fluids*, vol. 25, no. 1, pp. 16–22, Jun. 1998, doi: 10.1007/s003480050203.
 
-`[6] <https://doi.org/10.1002/aic.690491104>`_ J. J. Derksen. Numerical simulation of solids suspension in a stirred tank. AIChE Journal, v. 49, n. 11, p. 2700-2714, 2003.
+`[6] <https://doi.org/10.1002/aic.690491104>`_ J. J. Derksen, “Numerical simulation of solids suspension in a stirred tank,” *AIChE J.*, vol. 49, no. 11, pp. 2700–2714, 2003, doi: 10.1002/aic.690491104.
 
-`[7] <https://doi.org/10.1016/0301-9322(94)90011-6>`_ R. Di Felice, The voidage function for fluid-particle interaction systems. International journal of multiphase flow 20 (1), 153–159, 1994.
+`[7] <https://doi.org/10.1016/0301-9322(94)90011-6>`_ R. Di Felice, “The voidage function for fluid-particle interaction systems,” *Int. J. Multiph. Flow*, vol. 20, no. 1, pp. 153–159, Feb. 1994, doi: 10.1016/0301-9322(94)90011-6.
 
-`[8] <https://doi.org/10.1016/j.ces.2013.05.036>`_ L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99, 44–58, 2013.
+`[8] <https://doi.org/10.1016/j.ces.2013.05.036>`_ L. W. Rong, K. J. Dong, and A. B. Yu, “Lattice-Boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity,” *Chem. Eng. Sci.*, vol. 99, pp. 44–58, Aug. 2013, doi: 10.1016/j.ces.2013.05.036.
 
-`[9] <https://doi.org/10.1080/07373937.2010.482714>`_ W. Sobieski. Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model. Drying Technology, 29, 111-125, 2011.
+`[9] <https://doi.org/10.1080/07373937.2010.482714>`_ W. Sobieski, “Drag Coefficient in Solid–Fluid System Modeling with the Eulerian Multiphase Model,” *Dry. Technol.*, vol. 29, no. 1, pp. 111–125, Dec. 2010, doi: 10.1080/07373937.2010.482714.
 
-`[10] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, J. G. Khinast, Large-scale cfd–dem simulations of fluidized granular systems. Chemical Engineering Science 98, 298–310, 2013.
+`[10] <https://doi.org/10.1016/j.ces.2013.05.014>`_  D. Jajcevic, E. Siegmann, C. Radeke, and J. G. Khinast, “Large-scale CFD–DEM simulations of fluidized granular systems,” *Chem. Eng. Sci.*, vol. 98, pp. 298–310, Jul. 2013, doi: 10.1016/j.ces.2013.05.014.
 
-`[11] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ Tim M.J. Nijssen, Hans A.M. Kuipers, Jan van der Stel, Allert T. Adema, Kay A. Buist, Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations, International Journal of Multiphase Flow, Volume 132, 2020.
+`[11] <https://doi.org/10.1016/j.ijmultiphaseflow.2020.103425>`_ T. M. J. Nijssen, H. A. M. Kuipers, J. van der Stel, A. T. Adema, and K. A. Buist, “Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations,” *Int. J. Multiph. Flow*, vol. 132, p. 103425, Nov. 2020, doi: 10.1016/j.ijmultiphaseflow.2020.103425.
 
-`[12] <https://doi.org/10.1016/j.powtec.2019.10.058>`_ F. Marchelli, Q. Hou, B.Bosio, E. Arato, & A. Yu, Comparison of different drag models in CFD-DEM simulations of spouted beds. Powder Technology, 360, 1253-1270, 2020.
+`[12] <https://doi.org/10.1016/j.powtec.2019.10.058>`_ F. Marchelli, Q. Hou, B. Bosio, E. Arato, and A. Yu, “Comparison of different drag models in CFD-DEM simulations of spouted beds,” *Powder Technol.*, vol. 360, pp. 1253–1270, Jan. 2020, doi: 10.1016/j.powtec.2019.10.058.

@@ -1,5 +1,5 @@
 ===============================
-3D Dam-break with an obstacle
+3D Dam-Break with an Obstacle
 ===============================
 
 This example simulates a dam break experiment from the Maritime Research Institute Netherlands (MARIN) `[1] <https://www.spheric-sph.org/tests/test-02>`_.
@@ -10,6 +10,7 @@ This example simulates a dam break experiment from the Maritime Research Institu
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_3d`` (Q1-Q1)
 - Two phase flow handled by the Volume-of-Fluids (VOF) approach with phase fraction filtration
 - Mesh adaptation using phase fraction
@@ -17,18 +18,20 @@ Features
 - The use of a python script for post-processing data
 
 
-Files used in this example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
-- Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
-- Python script for post-processing data: ``examples/multiphysics/3d-dam-break/3d-dam-break_postprocess.py``
+--------------------------
+Files Used in This Example
+--------------------------
+
 - Experimental data file: ``examples/multiphysics/3d-dam-break/experimental_data.txt``
+- Geometry file: ``examples/multiphysics/3d-dam-break/tank_with_obstacle.geo``
+- Parameter file: ``examples/multiphysics/3d-dam-break/3d-dam-break.prm``
+- Python script for post-processing data: ``examples/multiphysics/3d-dam-break/3d-dam-break_postprocess.py``
 
 
 .. _Description of the case:
 
 -------------------------
-Description of the case
+Description of the Case
 -------------------------
 
 For this example, the simulated fluids are water and air. Initially, the water is at rest on the right side of the tank (represented in dashed blue lines in the figures below). At :math:`t = 0 \ \text{s}`, the gate opens instantaneously and the water starts flowing under the action of gravity, :math:`\mathbf{g} = (-9.81 \  \mathbf{j}) \frac{\text{m}}{\text{s}^2}`. The tank in which this experiment happens has the following dimensions: :math:`3.22 \times 1.00 \times 1.00 \ \text{m}`. On all boundaries, ``slip`` conditions were applied. On the left side of the tank, a rectangular box-shaped obstacle is presented (colored in grey in the figures).
@@ -76,12 +79,13 @@ Along the x-axis, the water height is measured at 4 different positions. These p
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
+
 -----------------
-Parameter file
+Parameter File
 -----------------
 
-Simulation control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Simulation Control
+~~~~~~~~~~~~~~~~~~
 
 Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
 and the max CFL is :math:`0.5`.
@@ -90,10 +94,6 @@ and the max CFL is :math:`0.5`.
     This example uses an adaptive time-stepping method, where the time-steps are modified during the simulation to keep the maximum value of the CFL condition below the given threshold (0.5).
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
 
     subsection simulation control
       set method                       = bdf1
@@ -109,7 +109,7 @@ and the max CFL is :math:`0.5`.
     end
 
 Multiphysics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)`
 and off `(false)` the physics of interest. Here ``VOF`` is chosen.
@@ -117,16 +117,12 @@ Note that the fluid dynamics are solved by default.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
-
     subsection multiphysics
       set VOF = true
     end
 
-Physical properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 The ``physical properties`` subsection defines the physical properties of the fluids. In this example, we need two fluids with densities of :math:`1.204 \ \frac{\text{kg}}{\text{m}^3}` (air) and :math:`1000 \ \frac{\text{kg}}{\text{m}^3}` (water). However, the current numerical model was not able to solve with the real dynamic viscosities of the fluids. Therefore, they were altered in order to run the simulation.
 
@@ -134,10 +130,6 @@ The ``physical properties`` subsection defines the physical properties of the fl
     Altering the dynamic viscosities of the fluids will surely have an impact on the results. We will show this impact in the `<Results_>`_ section.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
 
     subsection physical properties
       set number of fluids = 2
@@ -151,16 +143,12 @@ The ``physical properties`` subsection defines the physical properties of the fl
       end
     end
 
-Initial condition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial Conditions
+~~~~~~~~~~~~~~~~~~
 
-In the ``initial condition`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of the ``initial condition``.
+In the ``initial conditions`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of ``initial conditions``.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Initial Condition
-    #---------------------------------------------------
 
     subsection initial conditions
       set type = nodal
@@ -173,16 +161,12 @@ In the ``initial condition`` subsection, we need to define the interface between
       end
     end
 
-Source term
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Source Term
+~~~~~~~~~~~
 
 In the ``source term`` subsection, we define the gravitational acceleration.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Source term
-    #---------------------------------------------------
 
     subsection source term
       set enable = true
@@ -192,15 +176,11 @@ In the ``source term`` subsection, we define the gravitational acceleration.
     end
 
 VOF
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
 
 In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # VOF
-    #---------------------------------------------------
 
     subsection VOF
       subsection phase filtration
@@ -210,15 +190,12 @@ In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fra
     end
 
 Mesh
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 In the ``mesh`` subsection, we specify the mesh used in this example. The structured mesh used in this example can be generated from the ``tank.geo`` file using `Gmsh <https://gmsh.info/#Download>`_. The initial refinement is set to :math:`3`.
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
         set type                 = gmsh
         set file name            = tank.msh
@@ -227,15 +204,11 @@ In the ``mesh`` subsection, we specify the mesh used in this example. The struct
 
 
 Mesh Adaptation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase`` and ``pressure`` as the ``refinement variables``. The maximum and minimum refinement levels are respectively set to :math:`4` and :math:`2`.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Mesh Adaptation
-    #---------------------------------------------------
 
     subsection mesh adaptation
       set type                     = kelly
@@ -251,7 +224,7 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 
 
 -----------------------
-Running the simulation
+Running the Simulation
 -----------------------
 
 We call the gls_navier_stokes_3d by invoking:

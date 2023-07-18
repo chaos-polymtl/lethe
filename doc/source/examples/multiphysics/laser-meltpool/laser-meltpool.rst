@@ -1,5 +1,5 @@
 ==========================
-Laser meltpool
+Laser Meltpool
 ==========================
 
 This example simulates a `two-dimensional melt pool with a laser`_. 
@@ -10,6 +10,7 @@ This example simulates a `two-dimensional melt pool with a laser`_.
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Laser heat source
 - Phase change (solid-liquid)
@@ -20,13 +21,13 @@ Features
 
 
 ---------------------------
-Files used in this example
+Files Used in This Example
 ---------------------------
 ``examples/multiphysics/laser-meltpool/laser-meltpool.prm``
 
 
 -----------------------------
-Description of the case
+Description of the Case
 -----------------------------
 
 A Ti-6Al-4 V powder bed (assumed as a solid block in this example) melts using a laser beam that is emitted perpendicular to the top surface of the block. The laser beam speed is 0.5 m/s. Due to the laser heat source, the solid block melts in the direction of the laser. The corresponding parameter file is 
@@ -41,7 +42,7 @@ The following schematic describes the geometry and dimensions of the simulation 
 
 
 --------------
-Parameter file
+Parameter File
 --------------
 
 Time integration is handled by a 2nd order backward differentiation scheme 
@@ -49,11 +50,11 @@ Time integration is handled by a 2nd order backward differentiation scheme
 time step of :math:`5.0 \times 10^{-6}` seconds.
 
 
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf2
       set time end         = 0.005
@@ -64,13 +65,13 @@ time step of :math:`5.0 \times 10^{-6}` seconds.
     end
 
 
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
+
 All the four boundary conditions are ``noslip``, and the heat transfer boundary conditions are ``convection-radiation`` with a convective heat transfer coefficient of 80 :math:`\text{W}\text{m}^{-2}\text{K}^{-1}`, ambient temperature is 20 :math:`^{\circ}\text{C}`, and emissivity is 0.6.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions
       set number = 4
       subsection bc 0
@@ -123,26 +124,29 @@ All the four boundary conditions are ``noslip``, and the heat transfer boundary 
     end
 
 
+Multiphysics
+~~~~~~~~~~~~
+
 The ``multiphysics`` subsection enables to turn on (``true``) 
 and off (``false``) the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are enabled.
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Multiphysics
-    #---------------------------------------------------
     subsection multiphysics
       set heat transfer  = true
       set buoyancy force = true
       set fluid dynamics = true
     end
-    
+
+
+Laser Parameters
+~~~~~~~~~~~~~~~~
 
 In the ``laser parameters`` section, the parameters of the laser model are defined. The exponential decaying model `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ is used to simulate the laser heat source. In the exponential decaying model, the laser heat flux is calculated using the following equation:
 
-    .. math:: 
-        q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{(-\eta \frac{r^2}{R^2})} \exp{(- \frac{|z|}{\mu})}
+.. math::
+    q(x,y,z) = \frac{\eta \alpha P}{\pi r^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
 
 where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r` and :math:`z` denote concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively. These parameters are explained in more detail in `laser parameters <https://lethe-cfd.github.io/lethe/parameters/cfd/laser_heat_source.html>`_.
@@ -154,9 +158,6 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Laser parameters
-    #---------------------------------------------------
     subsection laser parameters
       set enable               = true
       set concentration factor = 2
@@ -173,14 +174,14 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
     end  
 
 
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
+
 The laser heat source locally melts the material, which is initially in the solid phase according to the definition of the ``solidus temperature``. Hence, the physical properties should be defined using ``phase_change`` models. Interested readers may find more information on phase change model in the `Stefan problem example <https://lethe-cfd.github.io/lethe/examples/multiphysics/stefan-problem/stefan-problem.html>`_ . In the ``physical properties`` subsection, the physical properties of the different phases of the fluid are defined:
 
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Physical Properties
-    #---------------------------------------------------
     subsection physical properties
       set number of fluids = 1
       subsection fluid 0
@@ -228,6 +229,9 @@ The laser heat source locally melts the material, which is initially in the soli
     Using a ``phase_change`` model for the thermal conductivity, the thermal conductivity of the material varies linearly between ``thermal conductivity solid`` and ``thermal conductivity liquid`` when the temperature is in the range of the solidus and liquidus temperatures.
 
 
+Mesh
+~~~~
+
 We start the simulation with a rectangular mesh that spans the domain defined by the corner points situated at :math:`[-0.0001, 0]` and
 :math:`[0.0009, 0.0005]`. The first :math:`[4,2]` couple of the ``set grid arguments`` parameter defines the number of initial grid subdivisions along the length and height of the rectangle. 
 This allows for the initial mesh to be composed of perfect squares. We proceed then to redefine the mesh globally seven times by setting
@@ -235,9 +239,6 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
 
 .. code-block:: text
         
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -247,7 +248,7 @@ This allows for the initial mesh to be composed of perfect squares. We proceed t
     
 
 ----------------------
-Running the simulation
+Running the Simulation
 ----------------------
 
 Call the gls_navier_stokes_2d by invoking:  
@@ -261,7 +262,6 @@ to run the simulation using twelve CPU cores. Feel free to use more.
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. This simulation takes
     :math:`\approx` 3 hours on 12 processes.
-
 
 
 -------
@@ -279,6 +279,7 @@ The following animation shows the temperature distribution in the simulations do
 -----------
 References
 -----------
+
 `[1] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X., 2018. Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis. Materials & Design, 142, pp.319-328.
 
 `[2] <https://doi.org/10.1016/j.powtec.2022.117533>`_ Li, E., Zhou, Z., Wang, L., Zheng, Q., Zou, R. and Yu, A., 2022. Melt pool dynamics and pores formation in multi-track studies in laser powder bed fusion process. Powder Technology, p.117533.

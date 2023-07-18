@@ -1,5 +1,7 @@
+===================
 Physical Properties
----------------------
+===================
+
 .. note:: 
     Lethe supports single phase, two phase (using VOF) and conjugate simulations. This is managed using the fluid and solid subsections.
 
@@ -35,13 +37,13 @@ Physical Properties
     set number of solids = 0
   end
  
-* The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `two phase simulations`_ .
+* The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `Two Phase Simulations`_ .
 
-* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological models`_ .
+* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological Models`_ .
 
 * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
-* The ``density model`` specifies the model used to calculate the density. At the moment, a ``constant`` density and an ``isothermal_ideal_gas`` model are supported. For more details on the density models, see `Density models`_.
+* The ``density model`` specifies the model used to calculate the density. At the moment, a ``constant`` density and an ``isothermal_ideal_gas`` model are supported. For more details on the density models, see `Density Models`_.
 
 * The ``density`` parameter is the constant density of the fluid in units of :math:`\text{Mass} \cdot \text{Length}^{-3}`
 
@@ -49,7 +51,7 @@ Physical Properties
 
 * The ``specific heat`` parameter is the constant specific heat of the fluid in units of :math:`\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}` .
 
-* The ``thermal conductivity model`` specifies the model used to calculate the thermal conductivity. At the moment, ``constant`` and ``linear`` thermal conductivity are available. For more details on the thermal conductivity models, see `Thermal conductivity models`_.
+* The ``thermal conductivity model`` specifies the model used to calculate the thermal conductivity. At the moment, ``constant`` and ``linear`` thermal conductivity are available. For more details on the thermal conductivity models, see `Thermal Conductivity Models`_.
 
 * The ``thermal conductivity`` parameter is the thermal conductivity coefficient of the fluid with units of :math:`\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}`.
 
@@ -67,7 +69,7 @@ where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the th
 
 * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}` .
 
-* The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `conjugate heat transfer`_.
+* The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
 
 .. note:: 
@@ -75,7 +77,7 @@ where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the th
 
 .. _two phase simulations:
 
-Two phase simulations
+Two Phase Simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. note:: 
   Two phase simulations require that either ``set VOF = true`` or ``set cahn hilliard = true`` in the :doc:`multiphysics` subsection. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.
@@ -111,7 +113,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 
 .. _conjugate heat transfer:
 
-Conjugate heat transfer
+Conjugate Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physcal properties of the solid region are set in an identical fashion as those of the fluid. 
@@ -144,7 +146,7 @@ Conjugate heat transfer enables the addition of solid regions in which the fluid
 
 .. _rheological_models:
 
-Rheological models
+Rheological Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Two families of rheological models are supported in Lethe. The first one are generalized non Newtonian rheologies (for shear thinning and shear thickening flows). In these models, the viscosity depends on the shear rate. The second family of rheological models possess a viscosity that is independent of the shear rate, but that may depend on other fields such as the temperature.
@@ -167,7 +169,7 @@ The rheological model available options are:
     * ``carreau``
     * ``phase_change``
 
-Power-law model
+Power-Law Model
 ^^^^^^^^^^^^^^^
 
 The power-law model is the simplest rheological model, using only 2 parameters 
@@ -207,7 +209,7 @@ When using the power-law model, the default values are:
 
 * The ``shear rate min`` parameter yields the magnitude of the shear rate tensor for which the viscosity is calculated. Since the model uses a power operation, a null shear rate magnitude leads to an invalid viscosity. To ensure numerical stability, the shear rate cannot go below this threshold when the viscosity  calculated.
 
-Carreau model
+Carreau Model
 ^^^^^^^^^^^^^^^
 
 The Carreau model is in reality the five parameter Carreau model:
@@ -255,7 +257,7 @@ The parameters for the Carreau model are defined by the ``carreau`` subsection. 
 .. note::
     The Carreau model is only suitable for Newtonian and shear-thinning flows.
 
-Phase-change model
+Phase-Change Model
 ^^^^^^^^^^^^^^^^^^^ 
 
 The phase change model is a simple rheological model in which the viscosity depends on the temperature. This model is used to model melting and freezing of components. The kinematic viscosity :math:`\nu` is given by :
@@ -301,7 +303,7 @@ This model is parameterized using the ``phase change`` subsection
 
 .. _density_models:
 
-Density models
+Density Models
 ~~~~~~~~~~~~~~
 
 Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Constant density assumes a constant density value. Isothermal ideal gas density assumes that the fluid's density varies according the following state equation:
@@ -345,7 +347,7 @@ By default, parameters are set to the values of dry air evaluated under normal t
 
 .. _thermal_conductivity_models:
 
-Thermal conductivity models
+Thermal Conductivity Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Constant, linear and phase_change thermal conductivities are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
@@ -364,7 +366,7 @@ In the ``phase_change`` thermal conductivity model, two different values (``ther
 
 where :math:`k_l`, :math:`k_s` and  :math:`\alpha_l` denote thermal conductivities of the liquid and solid phases and the liquid fraction.
 
-Specific heat models
+Specific Heat Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Lethe supports two types of specific heat models. Setting ``specific heat=constant`` sets a constant specific heat. Lethe also supports a ``phase_change`` specific heat model. This model can simulate the melting and solidification of a material. The model follows the work of Blais & Ilinca `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_. This approach defines the specific heat :math:`C_p` as:
@@ -422,4 +424,4 @@ This model is parameterized using the following section:
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
 
-`[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ Blais, Bruno, and Florin Ilinca. "Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection." Computers & Fluids 172 (2018): 564-581.
+`[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.

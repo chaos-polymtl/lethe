@@ -1,33 +1,34 @@
-Laser heat source
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=================
+Laser Heat Source
+=================
 
 If a laser heat source is present in a simulation, it can be added in this section. The default parameters are:
 
 .. code-block:: text
 
-   subsection laser parameters
-      set enable                 = false
-      set concentration factor   = 2.0
-      set power                  = 100.0
-      set absorptivity           = 0.5
-      set penetration depth      = 0.0
-      set beam radius            = 0.0
-      set start time             = 0.0
-      set end time               = 1.0
-      set beam orientation       = z-
+  subsection laser parameters
+    set enable               = false
+    set concentration factor = 2.0
+    set power                = 100.0
+    set absorptivity         = 0.5
+    set penetration depth    = 0.0
+    set beam radius          = 0.0
+    set start time           = 0.0
+    set end time             = 1.0
+    set beam orientation     = z-
 
-      subsection path
-          set Function expression  =  0.0; 0.0
-      end
+    subsection path
+      set Function expression = 0.0; 0.0
+    end
 
-      subsection free surface radiation
-          set enable                    = false
-          set emissivity                = 0.6
-          set Tinf                      = 0.0
-          set Stefan-Boltzmann constant = 5.6703e-8
-      end
+    subsection free surface radiation
+      set enable                    = false
+      set emissivity                = 0.6
+      set Tinf                      = 0.0
+      set Stefan-Boltzmann constant = 5.6703e-8
+    end
+  end
 
-   end
 
 * The ``enable`` parameter is set to true if the problem has a laser heat source term and enables its calculation.
 
@@ -71,6 +72,6 @@ where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`
 -----------
 References
 -----------
-`[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_ Zhang, Z., Huang, Y., Kasinathan, A.R., Shahabad, S.I., Ali, U., Mahmoodkhani, Y. and Toyserkani, E., 2019. 3-Dimensional heat transfer modeling for laser powder-bed fusion additive manufacturing with volumetric heat sources based on varied thermal conductivity and absorptivity. Optics & Laser Technology, 109, pp.297-312.
+`[1] <https://doi.org/10.1016/j.optlastec.2018.08.012>`_ Z. Zhang *et al.*, “3-Dimensional heat transfer modeling for laser powder-bed fusion additive manufacturing with volumetric heat sources based on varied thermal conductivity and absorptivity,” *Opt. Laser Technol.*, vol. 109, pp. 297–312, Jan. 2019, doi: 10.1016/j.optlastec.2018.08.012.
 
-`[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ Liu, S., Zhu, H., Peng, G., Yin, J. and Zeng, X., 2018. Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis. Materials & Design, 142, pp.319-328.
+`[2] <https://doi.org/10.1016/j.matdes.2018.01.022>`_ 	S. Liu, H. Zhu, G. Peng, J. Yin, and X. Zeng, “Microstructure prediction of selective laser melting AlSi10Mg using finite element analysis,” *Mater. Des.*, vol. 142, pp. 319–328, Mar. 2018, doi: 10.1016/j.matdes.2018.01.022.

@@ -1,5 +1,6 @@
+=======
 Restart
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=======
 
 This subsection controls the checkpointing and restarting of time-dependent simulations.
 

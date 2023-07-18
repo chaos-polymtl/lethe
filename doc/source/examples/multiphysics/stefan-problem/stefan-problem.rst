@@ -1,5 +1,5 @@
 ====================================
-Stefan problem: melting of a solid
+Stefan Problem: Melting of a Solid
 ====================================
 
 This example simulates the `Stefan`_ problem following the approach taken by `Blais & Ilinca (2018)`_
@@ -7,21 +7,26 @@ This example simulates the `Stefan`_ problem following the approach taken by `Bl
 .. _Stefan: https://en.wikipedia.org/wiki/Stefan_problem
 .. _Blais & Ilinca (2018): https://doi.org/10.1016/j.compfluid.2018.03.037
 
+
 ----------------------------------
 Features
 ----------------------------------
+
 - Solver: ``gls_navier_stokes_2d`` 
 - Heat transfer pĥysics
 - Unsteady problem handled by a BDF1 time-stepping scheme
 - Phase change specific heat model
 
 
-Files used in this example
 ---------------------------
+Files Used in This Example
+---------------------------
+
 ``examples/multiphysics/stefan-problem/stefan.prm``
 
 
-Description of the case
+-------------------------
+Description of the Case
 -------------------------
 
 The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature `[1] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:
@@ -66,16 +71,16 @@ Lethe uses a specific heat phase change model to solve this type of problem. Thi
 
 
 --------------
-Parameter file
+Parameter File
 --------------
+
+Mesh
+~~~~
 
 We first define the geometry in which the simulation is carried out using the mesh subsection:
 
 .. code-block:: text
 
-    #---------------------------------------------------
-    # Mesh
-    #---------------------------------------------------
     subsection mesh
       set type               = dealii
       set grid type          = subdivided_hyper_rectangle
@@ -85,13 +90,14 @@ We first define the geometry in which the simulation is carried out using the me
 
 We use the ``dealii`` GridGenerator to generate a ``subdivided_hyper_rectangle``. This rectangle contains 100 cells in the x direction and 1 in the y direction. It is created from two points, :math:`(0,0)` and :math:`(1,0.1)`. Finally, we give a different id to each boundary of the domain, hence the colorize option is set to true.
 
+
+Boundary Conditions
+~~~~~~~~~~~~~~~~~~~
+
 The next step is establishing the boundary conditions:
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Boundary Conditions
-    #---------------------------------------------------
     subsection boundary conditions heat transfer
       set number = 1
       subsection bc 0
@@ -105,6 +111,10 @@ Note that we only set one boundary condition for the temperature, which is a con
 
 .. math::
   \nabla T \cdot \mathbf{n} = 0
+
+
+Physical Properties
+~~~~~~~~~~~~~~~~~~~
 
 Next, we define the physical properties:
 
@@ -138,13 +148,13 @@ Next, we define the physical properties:
 
 This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
 
-Finally, the only remaining section is the simulation control, which controls the flow of the simulation. We simulate until a :math:`t=5s` using a time step of :math:`\Delta t=0.02s` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
+Simulation Control
+~~~~~~~~~~~~~~~~~~
+
+Finally, the only remaining section is the ``simulation control``, which controls the flow of the simulation. We simulate until a :math:`t=5s` using a time step of :math:`\Delta t=0.02s` using a BDF1 (implicit Euler) time integration scheme and we output the solution at every iteration.
 
 .. code-block:: text
 
-    # --------------------------------------------------
-    # Simulation Control
-    #---------------------------------------------------
     subsection simulation control
       set method           = bdf1
       set output frequency = 1
@@ -153,7 +163,6 @@ Finally, the only remaining section is the simulation control, which controls th
       set time end         = 5
       set time step        = 0.02
     end
-
 
 
 -------
@@ -169,12 +178,14 @@ The following image compares the results obtained with Lethe with the analytical
 Refining the mesh, decreasing the time step and decreasing the phase change interval (by decreasing ``liquidus temperature``) would increase the accuracy of the solution since the analytical solution of the Stefan problem is defined for a pure fluid (for which the liquid and the solidus temperatures are equal).
 
 
-Possibilities for extension
+----------------------------
+Possibilities for Extension
 ----------------------------
 
 - **Consider different Stefan numbers:** The solver in Lethe is sufficiently robust to simulate a large range of Stefan numbers. You can try to simulate the problem with different Stefan number and see how the value of the Stefan number affects the solution.
 
 - **Simulate a more complex geometry:** The phase change model can be readily used in any sort of geometry using, for example, a simplex mesh. An easy extension of this problem is to consider any 2D or 3D geometry.
+
 
 ----------------------------
 References

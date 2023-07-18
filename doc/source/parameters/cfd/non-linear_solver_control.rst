@@ -1,43 +1,45 @@
-Non-linear Solver Control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=================
+Non-linear Solver
+=================
+
 The Navier-Stokes equations (and other) are non-linear equations. The parameters in ``subsection non-linear solver``, whose default values are given in the text block below, control the non-linear solver used within Lethe.
 
 .. code-block:: text
 
-	subsection non-linear solver
-	  # Non-linear solver that will be used
-	  set solver             = newton
+  subsection non-linear solver
+    # Non-linear solver that will be used
+    set solver                       = newton
 
-	  # State whether information from the non-linear solver should be printed
-	  set verbosity          = verbose
+    # State whether information from the non-linear solver should be printed
+    set verbosity                    = verbose
 
-	  # For the inexact_newton solver, sets the tolerance to re-assemble the Jacobian matrix
-	  set matrix tolerance	 = 0.1
+    # For the inexact_newton solver, sets the tolerance to re-assemble the Jacobian matrix
+    set matrix tolerance             = 0.1
 
-	  # For the inexact_newton solver, carry jacobian matrix over to the new non-linear problem
-	  set reuse matrix	 = false
+    # For the inexact_newton solver, carry jacobian matrix over to the new non-linear problem
+    set reuse matrix                 = false
 
-	  # For the kinsol_newton solver, 
-	  set kinsol_strategy 	 = line_search
+    # For the kinsol_newton solver,
+    set kinsol_strategy              = line_search
 
-	  # Newton solver tolerance
-	  set tolerance          = 1e-6
+    # Newton solver tolerance
+    set tolerance                    = 1e-6
 
-	  # Tolerance for the acceptation of the step
-	  set step tolerance     = 0.9
+    # Tolerance for the acceptation of the step
+    set step tolerance               = 0.9
 
-	  # Maximum number of Newton Iterations
-	  set max iterations     = 10
+    # Maximum number of Newton Iterations
+    set max iterations               = 10
 
-	  # Number of digits displayed when showing residuals
-	  set residual precision = 4
+    # Number of digits displayed when showing residuals
+    set residual precision           = 4
 
-	  # State if the RHS must be calulated at the beginning of every newton iteration
-	  set force rhs calculation = false
+    # State if the RHS must be calculated at the beginning of every newton iteration
+    set force rhs calculation        = false
 
-	  # Force the simulation to stop and throw an error if a non-linear solution has failed to converge
-	  set abort at convergence failure = false
-	end
+    # Force the simulation to stop and throw an error if a non-linear solution has failed to converge
+    set abort at convergence failure = false
+  end
 
 * The ``solver`` parameter enables to choose the nonlinear solver used. Currently, Lethe supports three non-linear solvers:
 	* ``newton`` solver (default parameter value), a Newton-Raphson solver which recalculates the Jacobian matrix at every iteration (see the Theory Documentation).
