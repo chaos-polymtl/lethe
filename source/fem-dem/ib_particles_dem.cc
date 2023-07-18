@@ -949,19 +949,19 @@ IBParticlesDEM<dim>::integrate_particles_motion(const double dt,
                      contact_wall_torque[p_i]);
 
                   k_impulsion[p_i][step] =
-                    (current_fluid_force[p_i] + gravity +
-                     contact_wall_force[p_i] + contact_force[p_i] +
-                     lubrication_force[p_i] + lubrication_wall_force[p_i]);
+                    current_fluid_force[p_i] + gravity +
+                    contact_wall_force[p_i] + contact_force[p_i] +
+                    lubrication_force[p_i] + lubrication_wall_force[p_i];
 
-                  k_omega_impulsion[p_i][step] =
-                    (current_fluid_torque[p_i] + contact_torque[p_i] +
-                     contact_wall_torque[p_i]);
+                  k_omega_impulsion[p_i][step] = current_fluid_torque[p_i] +
+                                                 contact_torque[p_i] +
+                                                 contact_wall_torque[p_i];
 
                   k_contact_impulsion[p_i][step] =
-                    (contact_wall_force[p_i] + contact_force[p_i]);
+                    contact_wall_force[p_i] + contact_force[p_i];
 
                   k_omega_contact_impulsion[p_i][step] =
-                    (contact_torque[p_i] + contact_wall_torque[p_i]);
+                    contact_torque[p_i] + contact_wall_torque[p_i];
 
 
                   // Integrate the relevant state Variable for the next RK step.
