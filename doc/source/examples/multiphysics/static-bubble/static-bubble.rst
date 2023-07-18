@@ -42,37 +42,7 @@ A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a t
 Surface Tension Force
 ~~~~~~~~~~~~~~~~~~~~~
 
-As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface force. It is applied at the interface between two immiscible fluids and is given by:
-
-.. math::
-
-    {\bf{f_{\sigma}}} = \sigma \kappa {\bf{n}}
-
-where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the curvature and :math:`\bf{n}` is the unit normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force :math:`\bf{F_{\sigma}}` using the continuous surface force (CSF) model [`1 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_], that is:
-
-.. math::
-
-    {\bf{F_{\sigma}}} = \bf{f_{\sigma}} \delta = \sigma \kappa {\bf{n}}\delta
-
-where :math:`\delta` is a Dirac delta measure with support on the interface. A good approximation for the term :math:`{\bf{n}}\delta` is :math:`{\bf{n}}\delta = \nabla \phi`, where :math:`\phi` is the phase fraction. Thus, the volumetric surface force is given by:
-
-.. math::
-
-    {\bf{F_{\sigma}}} =  \sigma \kappa \nabla \phi
-
-where the curvature :math:`\kappa` is computed according to:
-
-.. math::
-
-    \kappa = - \nabla \cdot \bf{n}
-
-and the unit normal vector of the free surface is obtained with:
-
-.. math::
-
-    \bf{n} = \frac{\nabla \phi}{|\nabla \phi|}
-
-When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps, as presented in section :ref:`Normal and curvature computations`.
+When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids, as presented in the :doc:`../../../theory/multiphysics/vof` theory guide.
 
 The static bubble case is a relevant case to study the spurious currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered as spurious currents [`2 <https://doi.org/10.1002/fld.2643>`_]. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
 
@@ -81,35 +51,6 @@ The static bubble case is a relevant case to study the spurious currents, since 
     \Delta p = p_{int} - p_{ext} = \sigma \kappa
 
 with the analytical curvature of the 2D bubble : :math:`\kappa = 1/R`. This example is based on the static droplet case reported in [`2 <https://doi.org/10.1002/fld.2643>`_], where :math:`\sigma = 1.0`, :math:`R = 0.5` and :math:`\kappa = 2.0`.
-
-.. _Normal and curvature computations:
-
-Normal and Curvature Computations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.
-
-.. math::
-
-    \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
-
-where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the filtered phase fraction gradient, :math:`\eta_n` is the phase fraction gradient filter value, and :math:`\phi` is the phase fraction.
-
-.. math::
-
-    \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
-
-where :math:`\kappa` is the filtered curvature, and :math:`\eta_\kappa` is the curvature filter value, and :math:`v` is a test function.
-
-The phase fraction gradient filter :math:`\eta_n` and the curvature filter value :math:`\eta_\kappa` are respectively computed according to:
-
-.. math::
-
-  \eta_n = \alpha h^2
-
-  \eta_\kappa = \beta h^2
-
-where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` is the cell size.
 
 --------------
 Parameter File

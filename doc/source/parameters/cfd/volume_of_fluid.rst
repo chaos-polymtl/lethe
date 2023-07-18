@@ -75,7 +75,7 @@ The default values of the VOF parameters are given in the text box below.
   end
 
 
-* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
+* ``subsection interface sharpening``: defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step. The reader is refered to the Interface sharpening section of :doc:`../../../theory/multiphysics/vof` theory guide for additional details on this sharpening method.
 
   * ``enable``: controls if interface sharpening is enabled.
   * ``frequency``: sets the frequency (in number of iterations) for the interface sharpening computation.
@@ -117,12 +117,7 @@ The default values of the VOF parameters are given in the text box below.
   * ``type``: defines the filter type, either ``none`` or ``tanh``
 
     * ``set type = none``: the phase fraction is not filtered
-    * ``set type = tanh``: the following filter function is applied to the phase fraction :math:`\phi` in order to get a better definition of the interface between the fluids
-
-    .. math::
-        \phi' = 0.5 \tanh[\beta(\phi-0.5)] + 0.5
-
-    where :math:`\phi'` is the filtered phase fraction value.
+    * ``set type = tanh``: the filter function described in the Interface filtration section of :doc:`../../../theory/multiphysics/vof` theory guide is applied.
   * ``beta``: value of the :math:`\beta` parameter of the ``tanh`` filter
   * ``verbosity``: enables the display of filtered phase fraction values. Choices are ``quiet`` (no output) and ``verbose`` (displays values)
 
