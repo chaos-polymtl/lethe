@@ -494,6 +494,7 @@ StokesOperator<dim, number>::reinit(
 
   this->compute_stabilization_parameter();
 
+  // Next lines required for local smoothing
   constrained_indices.clear();
   for (auto i : this->matrix_free.get_constrained_dofs())
     constrained_indices.push_back(i);
@@ -549,22 +550,6 @@ StokesOperator<dim, number>::reinit(
                     break;
                   }
             }
-
-          unsigned int count = 0;
-          for (const auto i : edge_constrained_cell)
-            if (i)
-              count++;
-
-          const unsigned int count_global =
-            Utilities::MPI::sum(count, dof_handler.get_communicator());
-
-          const unsigned int count_cells_global =
-            Utilities::MPI::sum(matrix_free.n_cell_batches(),
-                                dof_handler.get_communicator());
-
-          if (Utilities::MPI::this_mpi_process(
-                dof_handler.get_communicator()) == 0)
-            std::cout << count_global << " " << count_cells_global << std::endl;
         }
     }
 }
@@ -1135,8 +1120,12 @@ lsmg_solve(
   const SystemMatrixType &                               fine_matrix,
   const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_matrices,
   const MGTransferType &                                 mg_transfer,
-  const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_interface_in,
-  const MGLevelObject<std::unique_ptr<LevelMatrixType>> &mg_interface_out)
+  const MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
+    &ls_mg_interface_in,
+  const MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
+    &ls_mg_interface_out,
+  const MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<LevelMatrixType>>
+    &ls_mg_matrices)
 {
   AssertThrow(mg_data.coarse_solver.type == "gmres_with_amg",
               ExcNotImplemented());
@@ -1150,7 +1139,7 @@ lsmg_solve(
     PreconditionRelaxation<LevelMatrixType, SmootherPreconditionerType>;
   using PreconditionerType = PreconditionMG<dim, VectorType, MGTransferType>;
 
-  mg::Matrix<VectorType> mg_matrix(mg_matrices);
+  mg::Matrix<VectorType> mg_matrix(ls_mg_matrices);
 
   MGLevelObject<typename SmootherType::AdditionalData> smoother_data(min_level,
                                                                      max_level);
@@ -1195,9 +1184,9 @@ lsmg_solve(
 
   // Additional step for local smoothing: interface matrices
   mg::Matrix<LinearAlgebra::distributed::Vector<double>> mg_interface_matrix_in(
-    mg_interface_in);
+    ls_mg_interface_in);
   mg::Matrix<LinearAlgebra::distributed::Vector<double>>
-    mg_interface_matrix_out(mg_interface_out);
+    mg_interface_matrix_out(ls_mg_interface_out);
 
   Multigrid<VectorType> mg(
     mg_matrix, *mg_coarse, mg_transfer, mg_smoother, mg_smoother);
@@ -1227,10 +1216,14 @@ solve_with_lsmg(SolverControl &            solver_control,
   MGLevelObject<std::unique_ptr<OperatorType>> operators;
   MGTransferMatrixFree<dim, double>            mg_transfer;
   MGLevelObject<VectorType>                    mg_solution;
-  MGLevelObject<std::unique_ptr<OperatorType>> mg_interface_in;
-  MGLevelObject<std::unique_ptr<OperatorType>> mg_interface_out;
   MGLevelObject<AffineConstraints<double>>     level_constraints;
   MGConstrainedDoFs                            mg_constrained_dofs;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_operators;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_interface_in;
+  MGLevelObject<MatrixFreeOperators::MGInterfaceOperator<OperatorType>>
+    ls_mg_interface_out;
 
   const unsigned int n_h_levels =
     dof_handler.get_triangulation().n_global_levels();
@@ -1239,10 +1232,11 @@ solve_with_lsmg(SolverControl &            solver_control,
   unsigned int maxlevel = n_h_levels - 1;
 
   operators.resize(0, n_h_levels - 1);
-  mg_interface_in.resize(0, n_h_levels - 1);
-  mg_interface_out.resize(0, n_h_levels - 1);
   mg_solution.resize(0, n_h_levels - 1);
   level_constraints.resize(0, n_h_levels - 1);
+  ls_mg_interface_in.resize(0, n_h_levels - 1);
+  ls_mg_interface_out.resize(0, n_h_levels - 1);
+  ls_mg_operators.resize(0, n_h_levels - 1);
 
   const std::set<types::boundary_id> dirichlet_boundary_ids = {0, 1, 2, 3};
   mg_constrained_dofs.initialize(dof_handler);
@@ -1270,21 +1264,9 @@ solve_with_lsmg(SolverControl &            solver_control,
 
       operators[level]->initialize_dof_vector(mg_solution[level]);
 
-      mg_interface_in[level] =
-        std::make_unique<OperatorType>(mapping,
-                                       dof_handler,
-                                       level_constraints[level],
-                                       quadrature,
-                                       parameters,
-                                       level);
-
-      mg_interface_out[level] =
-        std::make_unique<OperatorType>(mapping,
-                                       dof_handler,
-                                       level_constraints[level],
-                                       quadrature,
-                                       parameters,
-                                       level);
+      ls_mg_operators[level].initialize(*operators[level]);
+      ls_mg_interface_in[level].initialize(*operators[level]);
+      ls_mg_interface_out[level].initialize(*operators[level]);
     }
 
   mg_transfer.initialize_constraints(mg_constrained_dofs);
@@ -1310,8 +1292,9 @@ solve_with_lsmg(SolverControl &            solver_control,
              system_matrix,
              operators,
              mg_transfer,
-             mg_interface_in,
-             mg_interface_out);
+             ls_mg_interface_in,
+             ls_mg_interface_out,
+             ls_mg_operators);
 }
 
 // Main class to solve the stokes vector-valued problem given by
@@ -1329,6 +1312,9 @@ public:
 private:
   void
   make_grid();
+
+  void
+  refine_grid();
 
   void
   setup_system();
@@ -1446,6 +1432,29 @@ MatrixFreeStokes<dim>::make_grid()
     }
 
   triangulation.refine_global(parameters.initial_refinement);
+}
+
+// To test locally-refined meshes
+template <int dim>
+void
+MatrixFreeStokes<dim>::refine_grid()
+{
+  unsigned int n_refinements = 2;
+
+  for (unsigned int i = 1; i < n_refinements; i++)
+    {
+      for (auto cell : triangulation.active_cell_iterators())
+        if (cell->is_locally_owned())
+          {
+            bool flag = true;
+            for (int d = 0; d < dim; d++)
+              if (cell->center()[d] > 0.0)
+                flag = false;
+            if (flag)
+              cell->set_refine_flag();
+          }
+      triangulation.execute_coarsening_and_refinement();
+    }
 }
 
 template <int dim>
@@ -1985,6 +1994,8 @@ MatrixFreeStokes<dim>::run()
       else
         {
           triangulation.refine_global(1);
+          // To test locally refined mesh for local smoothing:
+          // refine_grid();
         }
 
       Timer timer;
