@@ -130,21 +130,14 @@ MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
   define_zero_constraints();
 
   // Initialize matrix-free object
-  typename MatrixFree<dim, double>::AdditionalData additional_data;
+  unsigned int mg_level = numbers::invalid_unsigned_int;
+  system_operator.reinit(*this->mapping,
+                         this->dof_handler,
+                         this->zero_constraints,
+                         *this->cell_quadrature,
+                         this->simulation_parameters,
+                         mg_level);
 
-  additional_data.tasks_parallel_scheme =
-    MatrixFree<dim, double>::AdditionalData::none;
-  additional_data.mapping_update_flags =
-    (update_values | update_gradients | update_JxW_values |
-     update_quadrature_points);
-  auto system_mf_storage = std::make_shared<MatrixFree<dim, double>>();
-  system_mf_storage->reinit(*this->mapping,
-                            this->dof_handler,
-                            this->zero_constraints,
-                            *this->cell_quadrature,
-                            additional_data);
-
-  system_operator.initialize(system_mf_storage);
 
   // Initialize vectors using operator
   system_operator.initialize_dof_vector(this->present_solution);

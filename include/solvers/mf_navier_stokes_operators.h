@@ -16,6 +16,11 @@
 #ifndef lethe_mf_navier_stokes_operators_h
 #define lethe_mf_navier_stokes_operators_h
 
+#include <solvers/simulation_parameters.h>
+
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_sparsity_pattern.h>
+
 #include <deal.II/matrix_free/fe_evaluation.h>
 #include <deal.II/matrix_free/matrix_free.h>
 #include <deal.II/matrix_free/operators.h>
@@ -23,57 +28,146 @@
 
 using namespace dealii;
 
-template <int dim>
-class NavierStokesOperator
-  : public MatrixFreeOperators::Base<dim,
-                                     LinearAlgebra::distributed::Vector<double>>
+// Matrix-free helper function
+template <int dim, typename Number>
+VectorizedArray<Number>
+evaluate_function(const Function<dim> &                      function,
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  VectorizedArray<Number> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+      result[v] = function.value(p);
+    }
+  return result;
+}
+
+// Matrix-free helper function
+template <int dim, typename Number, int components>
+Tensor<1, components, VectorizedArray<Number>>
+evaluate_function(const Function<dim> &                      function,
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  Tensor<1, components, VectorizedArray<Number>> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+      for (unsigned int d = 0; d < components; ++d)
+        result[d][v] = function.value(p, d);
+    }
+  return result;
+}
+
+template <int dim, typename number>
+class NavierStokesOperator : public Subscriptor
 {
 public:
-  using VectorType = LinearAlgebra::distributed::Vector<double>;
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
 
-  using FECellIntegratorVelocity = FEEvaluation<dim, -1, 0, dim, double>;
+  using VectorType = LinearAlgebra::distributed::Vector<number>;
 
-  using FECellIntegratorPressure = FEEvaluation<dim, -1, 0, 1, double>;
+  using value_type = number;
+
+  using size_type = VectorizedArray<number>;
 
   NavierStokesOperator();
 
-  virtual void
-  clear() override;
+  NavierStokesOperator(const Mapping<dim> &             mapping,
+                       const DoFHandler<dim> &          dof_handler,
+                       const AffineConstraints<number> &constraints,
+                       const Quadrature<dim> &          quadrature,
+                       const SimulationParameters<dim> &nsparam,
+                       const unsigned int               mg_level);
 
   void
-  reinit_operator_parameters();
+  reinit(const Mapping<dim> &             mapping,
+         const DoFHandler<dim> &          dof_handler,
+         const AffineConstraints<number> &constraints,
+         const Quadrature<dim> &          quadrature,
+         const SimulationParameters<dim> &nsparam,
+         const unsigned int               mg_level);
 
   void
-  evaluate_newton_step(const VectorType &newton_step);
+  compute_element_size();
 
-  virtual void
-  compute_diagonal() override;
+  types::global_dof_index
+  m() const;
+
+  number
+  el(unsigned int, unsigned int) const;
+
+  void
+  clear();
+
+  void
+  initialize_dof_vector(VectorType &vec) const;
+
+  void
+  vmult(VectorType &dst, const VectorType &src) const;
+
+  void
+  Tvmult(VectorType &dst, const VectorType &src) const;
+
+  void
+  vmult_interface_down(VectorType &dst, VectorType const &src) const;
+
+  void
+  vmult_interface_up(VectorType &dst, VectorType const &src) const;
+
+  const TrilinosWrappers::SparseMatrix &
+  get_system_matrix() const;
+
+  const MatrixFree<dim, number> &
+  get_system_matrix_free() const;
+
+  const AlignedVector<VectorizedArray<number>>
+  get_element_size() const;
+
+  void
+  compute_inverse_diagonal(VectorType &diagonal) const;
+
+  void
+  evaluate_non_linear_term(const VectorType &newton_step);
 
 private:
-  virtual void
-  apply_add(VectorType &dst, const VectorType &src) const override;
-
-  virtual void
-  Tapply_add(VectorType &dst, const VectorType &src) const override;
+  void
+  do_cell_integral_local(FECellIntegrator &integrator) const;
 
   void
-  local_apply(const MatrixFree<dim, double> &              data,
-              VectorType &                                 dst,
-              const VectorType &                           src,
-              const std::pair<unsigned int, unsigned int> &cell_range) const;
-
-  void
-  local_apply_transpose(
-    const MatrixFree<dim, double> &              data,
+  do_cell_integral_range(
+    const MatrixFree<dim, number> &              matrix_free,
     VectorType &                                 dst,
     const VectorType &                           src,
-    const std::pair<unsigned int, unsigned int> &cell_range) const;
+    const std::pair<unsigned int, unsigned int> &range) const;
 
-  void
-  local_compute(FECellIntegratorVelocity &integrator_v) const;
+  static IndexSet
+  get_refinement_edges(const MatrixFree<dim, number> &matrix_free);
 
-  Table<2, VectorizedArray<double>> nonlinear_values;
+private:
+  MatrixFree<dim, number>                matrix_free;
+  AffineConstraints<number>              constraints;
+  mutable TrilinosWrappers::SparseMatrix system_matrix;
+  SimulationParameters<dim>              parameters;
+  AlignedVector<VectorizedArray<number>> element_size;
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    nonlinear_previous_values;
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    nonlinear_previous_gradient;
+  Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>
+    nonlinear_previous_hessian_diagonal;
+
+  // Variables needed for local smoothing
+  std::vector<unsigned int>                      constrained_indices;
+  mutable std::vector<std::pair<number, number>> constrained_values;
+  std::vector<unsigned int>                      edge_constrained_indices;
+  bool has_edge_constrained_indices = false;
+  mutable std::vector<std::pair<number, number>> edge_constrained_values;
+  std::vector<bool>                              edge_constrained_cell;
 };
-
 
 #endif
