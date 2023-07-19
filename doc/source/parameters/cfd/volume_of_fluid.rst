@@ -44,7 +44,6 @@ The default values of the VOF parameters are given in the text box below.
       set enable                                = false
       set verbosity                             = quiet
       set output auxiliary fields               = false
-      set surface tension coefficient           = 0.0
       set phase fraction gradient filter factor = 4
       set curvature filter factor               = 1
 
@@ -124,14 +123,13 @@ The default values of the VOF parameters are given in the text box below.
 * ``subsection surface tension force``: Surface tension is the tendency of a liquid to maintain the minimum possible surface area. This subsection defines parameters to ensure an accurate interface between the two phases, used when at least one phase is liquid. 
 
   * ``enable``: controls if ``surface tension force`` is considered.
+
+    .. attention::
+
+      When the surface tension force is enabled, a ``fluid-fluid`` material interaction and a ``surface tension model`` with its parameters must be specified in the :doc:`physical_properties` subsection.
+
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
   * ``output auxiliary fields``: enables the display of the filtered ``phase fraction gradient`` and filtered ``curvature``. Used for debugging purposes.
-  * ``surface tension coefficient``: surface tension coefficient in :math:`Nm^{-1}`, as used to define the Weber number (:math:`We`):
-
-    .. math::
-        We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma} 
-
-    where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
 
   * ``phase fraction gradient filter factor``: value of the factor :math:`\alpha` applied in the filter :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This filter is used to apply a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
 
