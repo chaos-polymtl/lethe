@@ -930,6 +930,7 @@ public:
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
   double                               density_psi;
+  double                               density_ref;
   std::vector<double>                  viscosity;
   double                               viscosity_scale;
   std::vector<double>                  thermal_expansion;

@@ -16,6 +16,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
   const std::vector<double> &density_vector   = scratch_data.density;
   const double               density_psi      = scratch_data.density_psi;
+  const double               density_ref      = scratch_data.density_ref;
 
   // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -41,8 +42,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double viscosity = viscosity_vector[q];
-      const double density   = density_vector[q];
+      const double viscosity         = viscosity_vector[q];
+      const double density           = density_vector[q];
+      const double dynamic_viscosity = density_ref * viscosity;
 
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
@@ -79,9 +81,10 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             viscosity * velocity_laplacian - force +
-                             mass_source * velocity + strong_residual_vec[q];
+      auto strong_residual =
+        density * velocity_gradient * velocity + pressure_gradient -
+        dynamic_viscosity * velocity_laplacian - density * force +
+        mass_source * velocity + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
@@ -99,8 +102,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-             grad_phi_p_j - viscosity * laplacian_phi_u_j +
+            (density * velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
+             grad_phi_p_j - dynamic_viscosity * laplacian_phi_u_j +
              mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
@@ -166,9 +169,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
                   const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
 
                   local_matrix_ij +=
-                    // $$(\mathbf{u} \cdot \nabla) \mathbf{u}$$
-                    phi_u_i * velocity_gradient_x_phi_u_j[j] +
-                    phi_u_i * grad_phi_u_j_x_velocity[j];
+                    // $$\rho (\mathbf{u} \cdot \nabla) \mathbf{u}$$
+                    phi_u_i * density * velocity_gradient_x_phi_u_j[j] +
+                    phi_u_i * density * grad_phi_u_j_x_velocity[j];
 
                   // LSIC GLS term
                   local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
@@ -179,8 +182,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
                       local_matrix_ij +=
                         // weak form of $$\nabla^{2} \mathbf{u}$$
-                        viscosity * (grad_phi_u_j[component_j] *
-                                     grad_phi_u_i[component_i]) +
+                        dynamic_viscosity * (grad_phi_u_j[component_j] *
+                                             grad_phi_u_i[component_i]) +
                         // volume source
                         phi_u_i * mass_source * phi_u_j;
                     }
@@ -213,6 +216,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   const std::vector<double> &viscosity_vector = scratch_data.viscosity;
   const std::vector<double> &density_vector   = scratch_data.density;
   const double               density_psi      = scratch_data.density_psi;
+  const double               density_ref      = scratch_data.density_ref;
 
   // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -234,8 +238,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Physical properties
-      const double viscosity = viscosity_vector[q];
-      const double density   = density_vector[q];
+      const double viscosity         = viscosity_vector[q];
+      const double density           = density_vector[q];
+      const double dynamic_viscosity = density_ref * viscosity;
 
       // Velocity
       const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
@@ -275,9 +280,10 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double tau_lsic = u_mag * h / 2;
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * velocity + pressure_gradient -
-                             viscosity * velocity_laplacian - force +
-                             mass_source * velocity + strong_residual_vec[q];
+      auto strong_residual =
+        density * velocity_gradient * velocity + pressure_gradient -
+        dynamic_viscosity * velocity_laplacian - density * force +
+        mass_source * velocity + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -298,9 +304,11 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
               -phi_p_i * density_psi * velocity * pressure_gradient -
               phi_p_i * density * velocity_divergence - phi_p_i * mass_source -
               // Momentum
-              phi_u_i * velocity_gradient * velocity + div_phi_u_i * pressure -
-              viscosity * scalar_product(velocity_gradient, grad_phi_u_i) +
-              phi_u_i * force - mass_source * velocity * phi_u_i) *
+              phi_u_i * density * velocity_gradient * velocity +
+              div_phi_u_i * pressure -
+              dynamic_viscosity *
+                scalar_product(velocity_gradient, grad_phi_u_i) +
+              phi_u_i * density * force - mass_source * velocity * phi_u_i) *
             JxW;
 
           // PSPG GLS term
@@ -330,7 +338,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
-  const double density_psi = scratch_data.density_psi;
+  const std::vector<double> &density_vector = scratch_data.density;
+  const double               density_psi    = scratch_data.density_psi;
 
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
@@ -357,6 +366,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Physical properties
+      const double density = density_vector[q];
 
       pressure[0] = scratch_data.pressure_values[q];
       velocity[0] = scratch_data.velocity_values[q];
@@ -368,10 +378,11 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
-        strong_residual[q] += bdf_coefs[p] * velocity[p];
+        strong_residual[q] += bdf_coefs[p] * density * velocity[p];
 
       for (unsigned int j = 0; j < n_dofs; ++j)
-        strong_jacobian[q][j] += bdf_coefs[0] * scratch_data.phi_u[q][j];
+        strong_jacobian[q][j] +=
+          bdf_coefs[0] * density * scratch_data.phi_u[q][j];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -384,7 +395,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
 
               local_matrix(i, j) +=
                 (phi_p_i * density_psi * phi_p_j * bdf_coefs[0] +
-                 phi_u_i * phi_u_j * bdf_coefs[0]) *
+                 phi_u_i * density * phi_u_j * bdf_coefs[0]) *
                 JxW[q];
             }
         }

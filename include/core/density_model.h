@@ -40,6 +40,12 @@ public:
   {
     return 0;
   }
+
+  virtual double
+  get_density_ref() const
+  {
+    return 0;
+  }
 };
 
 
@@ -200,6 +206,17 @@ public:
   {
     return psi;
   }
+
+  /**
+   * @brief get_density_ref Returns the value of the reference state density used in the density model
+   * @return isothermal ideal gas reference state density
+   */
+  double
+  get_density_ref() const override
+  {
+    return density_ref;
+  }
+
 
 private:
   const double density_ref;
