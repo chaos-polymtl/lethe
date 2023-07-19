@@ -318,7 +318,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_1 = properties_manager.get_rheology(1);
           if (properties_manager.get_number_of_material_interactions() >
               0) // left for debugging
-                 // purposes since prm files don't contain the material interactions yet
+                 // purposes since prm files don't contain the material
+                 // interactions yet
             {
               const auto material_interaction_id =
                 properties_manager.get_material_interaction_id("fluid-fluid",
@@ -327,6 +328,13 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               const auto surface_tension_model =
                 properties_manager.get_surface_tension(material_interaction_id);
               surface_tension_model->vector_value(fields, surface_tension);
+            }
+          else
+            {
+              for (double &surface_tension_coeff : surface_tension)
+                {
+                  surface_tension_coeff = 10;
+                }
             }
 
 
