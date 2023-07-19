@@ -13,7 +13,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -220,7 +220,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -391,7 +391,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -453,7 +453,7 @@ GLSNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -519,15 +519,12 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Surface tension coefficient
-  const double surface_tension_coef = STF_parameters.surface_tension_coef;
-
   // Densities of phases
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -539,6 +536,9 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Surface tension coefficient
+      const double surface_tension_coef = scratch_data.surface_tension[q];
+
       // Gather pfg and curvature values
       const double &        curvature_value = scratch_data.curvature_values[q];
       const Tensor<1, dim> &phase_gradient_value =
@@ -578,9 +578,6 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Surface tension coefficient
-  const double surface_tension_coef = STF_properties.surface_tension_coef;
-
   // Surface tension gradient
   const double surface_tension_gradient =
     STF_properties.surface_tension_gradient;
@@ -590,7 +587,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -602,6 +599,9 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
+      // Surface tension coefficient
+      const double surface_tension_coef = scratch_data.surface_tension[q];
+
       const double &curvature_value = scratch_data.curvature_values[q];
 
       // Gather phase fraction gradient
@@ -657,7 +657,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -890,7 +890,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Loop and quadrature informations
+  // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;

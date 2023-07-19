@@ -937,7 +937,7 @@ namespace Parameters
                          Utilities::int_to_string(id, 1));
     {
       prm.declare_entry(
-        "material interaction type",
+        "type",
         "fluid-fluid",
         Patterns::Selection("fluid-fluid|fluid-solid"),
         "Type of materials interacting. Choices <fluid-fluid|fluid-solid>");
@@ -949,12 +949,12 @@ namespace Parameters
           "first fluid id",
           "0",
           Patterns::Integer(),
-          "ID of the first fluid interacting with the second fluid");
+          "ID of the first fluid interacting with the second fluid. This value should be lower than the second fluid's id.");
         prm.declare_entry(
           "second fluid id",
           "1",
           Patterns::Integer(),
-          "ID of the second fluid interacting with the first fluid");
+          "ID of the second fluid interacting with the first fluid. This value should be greater than the first fluid's id.");
 
         // Surface tension interactions
         prm.declare_entry(
@@ -1011,10 +1011,11 @@ namespace Parameters
 
       if (material_interaction_type == MaterialInteractionsType::fluid_fluid)
         {
+          prm.enter_subsection("fluid-fluid interaction");
           std::pair<unsigned int, unsigned int> fluid_fluid_interaction;
           fluid_fluid_interaction.first  = prm.get_integer("first fluid id");
           fluid_fluid_interaction.second = prm.get_integer("second fluid id");
-          AssertThrow(fluid_fluid_interaction.first <
+          AssertThrow(fluid_fluid_interaction.first <=
                         fluid_fluid_interaction.second,
                       OrderOfFluidIDsError(fluid_fluid_interaction.first,
                                            fluid_fluid_interaction.second));
@@ -1032,9 +1033,12 @@ namespace Parameters
           else
             throw(std::runtime_error(
               "Invalid surface tension model. At the moment, the only choice is <constant>"));
+
+          prm.leave_subsection();
         }
       else // Solid-fluid interactions
         {
+          prm.enter_subsection("fluid-solid interaction");
           std::pair<unsigned int, unsigned int> fluid_solid_interaction;
           fluid_solid_interaction.first  = prm.get_integer("fluid id");
           fluid_solid_interaction.second = prm.get_integer("solid id");
@@ -1055,6 +1059,7 @@ namespace Parameters
           std::pair<std::pair<unsigned int, unsigned int>, SurfaceTensionModel>
             fluid_solid_surface_tension_interaction(fluid_solid_interaction,
                                                     surface_tension_model);
+          prm.leave_subsection();
         }
     }
     prm.leave_subsection();
