@@ -5,7 +5,7 @@ Origin of the Finite Element Formulation
 This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain the weak-form. We then briefly discuss the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them.
 
 
-Starting from the :doc:`incompressible Navier-Stokes <navier-stokes>` equations:
+Starting from :doc:`The Incompressible Navier-Stokes <navier-stokes>` equations:
 
 .. math::
     \partial_l u_l &= 0 
