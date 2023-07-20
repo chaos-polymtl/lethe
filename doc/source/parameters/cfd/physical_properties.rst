@@ -81,7 +81,7 @@ Physical Properties
 
   * The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, only a constant thermal expansion is supported.
 
-  * The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`. Thermal expansion coefficient is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation. Using the Boussinesq approximation, the following source term is added to the Navier-Stokes equation.
+  * The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`. It is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation, which leads to the definition of the following source term that is added to the Navier-Stokes equation:
 
     .. math::
 
