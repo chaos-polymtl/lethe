@@ -50,7 +50,8 @@ ParticleParticleFineSearch<dim>::particle_particle_fine_search(
             particle_one_location.distance_square(particle_two_location);
           if (square_distance > neighborhood_threshold)
             {
-              adjacent_particles_list.erase(adjacent_particles_list_iterator++);
+              adjacent_particles_list_iterator =
+                adjacent_particles_list.erase(adjacent_particles_list_iterator);
             }
           else
             {
