@@ -21,7 +21,7 @@
 
 /**
  * @brief SurfaceTensionModel. Abstract class that allows to calculate the
- * surface tension.
+ * surface tension coefficient.
  */
 class SurfaceTensionModel : public PhysicalPropertyModel
 {
@@ -30,7 +30,7 @@ public:
    * @brief Instantiates and returns a pointer to a SurfaceTensionModel object by casting it to
    * the proper child class
    *
-   * @param material_properties Parameters for a single fluid
+   * @param surface_tension_parameters Parameters for the surface tension coefficient calculation
    */
   static std::shared_ptr<SurfaceTensionModel>
   model_cast(
