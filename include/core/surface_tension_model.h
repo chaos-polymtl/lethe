@@ -38,7 +38,6 @@ public:
 };
 
 
-
 /**
  * @brief Constant surface tension.
  */
@@ -84,7 +83,6 @@ public:
    * should be calculated.
    * @return value of the partial derivative of the surface tension coefficient with respect to the field.
    */
-
   double
   jacobian(const std::map<field, double> & /*field_values*/,
            field /*id*/) override
@@ -98,7 +96,6 @@ public:
    * @param id Identifier of the field with respect to which a derivative should be calculated.
    * @param jacobian vector of the value of the derivative of the surface tension coefficient with respect to the field id.
    */
-
   void
   vector_jacobian(
     const std::map<field, std::vector<double>> & /*field_vectors*/,

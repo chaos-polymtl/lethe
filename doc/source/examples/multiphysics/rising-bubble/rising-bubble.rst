@@ -160,7 +160,7 @@ Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``. And, a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`24.5`.
+A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``. Then a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`24.5`.
 
 
 .. code-block:: text

@@ -260,7 +260,7 @@ public:
       }
     else
       throw(std::runtime_error(
-        "Invalid type of material interaction. At the moment, the only choice is <fluid-fluid|fluid-solid>"));
+        "Invalid type of material interaction. The choices are <fluid-fluid|fluid-solid>"));
   }
 
 private:

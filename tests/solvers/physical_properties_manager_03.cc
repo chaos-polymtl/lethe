@@ -38,7 +38,6 @@ test()
   physical_properties.number_of_solids                = 2;
   physical_properties.number_of_material_interactions = 5;
 
-
   physical_properties.fluids.resize(2);
   physical_properties.solids.resize(2);
   physical_properties.material_interactions.resize(5);

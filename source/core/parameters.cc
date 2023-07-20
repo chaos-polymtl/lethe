@@ -15,7 +15,7 @@ DeclException1(
   NumberOfFluidsError,
   int,
   << "Number of fluids: " << arg1
-  << " is not 1 (single phase simulation) or 2 (VOF simulation).This is currently not supported.");
+  << " is not 1 (single phase simulation) or 2 (VOF simulation). This is currently not supported.");
 
 DeclException1(NumberOfSolidsError,
                int,
@@ -940,7 +940,7 @@ namespace Parameters
         "type",
         "fluid-fluid",
         Patterns::Selection("fluid-fluid|fluid-solid"),
-        "Type of materials interacting. Choices <fluid-fluid|fluid-solid>");
+        "Type of materials interacting. Choices are <fluid-fluid|fluid-solid>");
 
       // Fluid-fluid interactions
       prm.enter_subsection("fluid-fluid interaction");

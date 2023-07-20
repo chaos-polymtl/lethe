@@ -411,7 +411,6 @@ namespace Parameters
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
 
-
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
@@ -420,7 +419,6 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
 
-    // TODO ask about scaling/dimensionality
     void
     parse_parameters(ParameterHandler &prm, const unsigned int id);
   };

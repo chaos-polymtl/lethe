@@ -95,7 +95,7 @@ Physical Properties
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
-* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between 2 fluids is implemented in `Two Phase Simulations`_.
+* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
 
   * The material interaction ``type`` can either be ``fluid-fluid`` (default) or ``fluid-solid``.
 
@@ -169,7 +169,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 Conjugate Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
+Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
 
 .. warning::
   This is an experimental feature. It has not been tested on a large range of application cases. 
