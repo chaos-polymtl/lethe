@@ -1123,7 +1123,7 @@ DEMSolver<dim>::solve()
   // Find the smallest cell size and use this as the floating mesh mapping
   // criterion
   smallest_floating_mesh_mapping_criterion =
-    0.57735026919 * GridTools::minimal_cell_diameter(triangulation);
+    0.57735026919 * GridTools::minimal_cell_diameter(triangulation); // 3^-0.5
 
   if (has_periodic_boundaries)
     {
