@@ -5,10 +5,10 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set number mesh adapt = 1
+  set method            = bdf1
   set output name       = mms2d_isothermal_compressible
   set output frequency  = 0
+  set time end          = 7
 end
 
 #---------------------------------------------------
@@ -18,8 +18,13 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set kinematic viscosity = 1.000
+    set kinematic viscosity = 1.0
     set density model       = isothermal_ideal_gas
+    subsection isothermal_ideal_gas
+      set density_ref = 1.2
+      set R           = 10
+      set T           = 10
+    end
   end
 end
 
@@ -31,7 +36,7 @@ subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : false
-  set initial refinement = 3
+  set initial refinement = 5
 end
 
 # --------------------------------------------------
@@ -52,8 +57,8 @@ end
 subsection source term
   set enable = true
   subsection xyz
-    set Function constants  = nu=1.0
-    set Function expression = pi*(2*nu*pi*(1 - 2*cos(2*pi*x))*cos(pi*y) + cos(pi*x))*sin(pi*y) + pi*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x); pi*(-2*nu*pi*(1 - 2*cos(2*pi*y))*cos(pi*x) + cos(pi*y))*sin(pi*x) + pi*sin(pi*x)^2*sin(pi*y)^3*cos(pi*y); 0
+    set Function constants  = nu=1, rho_ref=1.2, psi=0.01
+    set Function expression = pi*(2*nu*pi*rho_ref*(1 - 2*cos(2*pi*x))*cos(pi*y) + (psi*sin(pi*x)*sin(pi*y) + rho_ref)*sin(pi*x)^3*sin(pi*y)*cos(pi*x) + cos(pi*x))*sin(pi*y); pi*(-2*nu*pi*rho_ref*(1 - 2*cos(2*pi*y))*cos(pi*x) + (psi*sin(pi*x)*sin(pi*y) + rho_ref)*sin(pi*x)*sin(pi*y)^3*cos(pi*y) + cos(pi*y))*sin(pi*x); 0
   end
 end
 
@@ -73,7 +78,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type = uniform
+  set type = none
 end
 
 # --------------------------------------------------
@@ -81,7 +86,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance          = 1e-12
+  set tolerance          = 1e-8
   set max iterations     = 10
   set residual precision = 2
   set verbosity          = quiet

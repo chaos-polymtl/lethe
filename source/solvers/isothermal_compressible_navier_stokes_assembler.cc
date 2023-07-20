@@ -76,19 +76,14 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
           calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
           calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
-      // LSIC stabilization term
-      const double tau_lsic = 0.5 * u_mag * h;
-
-
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual =
-        density * velocity_gradient * velocity + pressure_gradient -
-        dynamic_viscosity * velocity_laplacian - density * force +
-        mass_source * velocity + strong_residual_vec[q];
+      auto strong_residual = density * velocity_gradient * velocity +
+                             pressure_gradient -
+                             dynamic_viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
 
       std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
       std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
-
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -115,13 +110,11 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
         {
           const unsigned int component_i = scratch_data.components[i];
 
-          const auto &phi_u_i           = scratch_data.phi_u[q][i];
-          const auto &grad_phi_u_i      = scratch_data.grad_phi_u[q][i];
-          const auto &div_phi_u_i       = scratch_data.div_phi_u[q][i];
-          const auto &phi_p_i           = scratch_data.phi_p[q][i];
-          const auto &grad_phi_p_i      = scratch_data.grad_phi_p[q][i];
-          const auto &laplacian_phi_u_i = scratch_data.laplacian_phi_u[q][i];
-
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity = grad_phi_u_i * velocity;
@@ -159,29 +152,23 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
                     phi_p_i * density * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij +=
-                    tau / density * (strong_jac * grad_phi_p_i);
+                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
                 }
 
               // momentum equation
               if (component_i < dim && component_j < dim)
                 {
-                  const auto &div_phi_u_j = scratch_data.div_phi_u[q][j];
-
                   local_matrix_ij +=
                     // $$\rho (\mathbf{u} \cdot \nabla) \mathbf{u}$$
                     phi_u_i * density * velocity_gradient_x_phi_u_j[j] +
                     phi_u_i * density * grad_phi_u_j_x_velocity[j];
-
-                  // LSIC GLS term
-                  local_matrix_ij += tau_lsic * (div_phi_u_i * div_phi_u_j);
 
                   if (component_i == component_j)
                     {
                       const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
                       local_matrix_ij +=
-                        // weak form of $$\nabla^{2} \mathbf{u}$$
+                        // weak form of $$\mu \nabla^{2} \mathbf{u}$$
                         dynamic_viscosity * (grad_phi_u_j[component_j] *
                                              grad_phi_u_i[component_i]) +
                         // volume source
@@ -195,8 +182,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
               // does not alter the number of newton iteration for
               // convergence, but greatly simplifies assembly.
               local_matrix_ij +=
-                tau * (strong_jac * (grad_phi_u_i_x_velocity -
-                                     viscosity * laplacian_phi_u_i) +
+                tau * (strong_jac * (grad_phi_u_i_x_velocity) +
                        strong_residual_x_grad_phi_u_i * phi_u_j);
 
               local_matrix_ij *= JxW;
@@ -275,25 +261,20 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
           calculate_navier_stokes_gls_tau_steady(u_mag, viscosity, h) :
           calculate_navier_stokes_gls_tau_transient(u_mag, viscosity, h, sdt);
 
-
-      // LSIC stabilization term
-      const double tau_lsic = u_mag * h / 2;
-
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual =
-        density * velocity_gradient * velocity + pressure_gradient -
-        dynamic_viscosity * velocity_laplacian - density * force +
-        mass_source * velocity + strong_residual_vec[q];
+      auto strong_residual = density * velocity_gradient * velocity +
+                             pressure_gradient -
+                             dynamic_viscosity * velocity_laplacian - force +
+                             mass_source * velocity + strong_residual_vec[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto &phi_u_i           = scratch_data.phi_u[q][i];
-          const auto &grad_phi_u_i      = scratch_data.grad_phi_u[q][i];
-          const auto &phi_p_i           = scratch_data.phi_p[q][i];
-          const auto &grad_phi_p_i      = scratch_data.grad_phi_p[q][i];
-          const auto &div_phi_u_i       = scratch_data.div_phi_u[q][i];
-          const auto &laplacian_phi_u_i = scratch_data.laplacian_phi_u[q][i];
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
           double local_rhs_i = 0;
 
@@ -308,20 +289,16 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
               div_phi_u_i * pressure -
               dynamic_viscosity *
                 scalar_product(velocity_gradient, grad_phi_u_i) +
-              phi_u_i * density * force - mass_source * velocity * phi_u_i) *
+              phi_u_i * force - mass_source * velocity * phi_u_i) *
             JxW;
 
           // PSPG GLS term
-          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
-
-          // LSIC GLS term
-          local_rhs_i += -tau_lsic * (div_phi_u_i * velocity_divergence) * JxW;
+          local_rhs_i +=
+            -tau / density * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
-          local_rhs_i += -tau *
-                         (strong_residual * (grad_phi_u_i * velocity -
-                                             viscosity * laplacian_phi_u_i)) *
-                         JxW;
+          local_rhs_i +=
+            -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
 
           local_rhs(i) += local_rhs_i;
         }

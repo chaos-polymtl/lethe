@@ -1,18 +1,15 @@
 Running on 1 MPI rank(s)...
-   Number of active cells:       512
-   Number of degrees of freedom: 2916
-   Volume of triangulation:      8
-
-*****************************
-Steady iteration:        1/2
-*****************************
-
-*****************************
-Steady iteration:        2/2
-*****************************
    Number of active cells:       4096
    Number of degrees of freedom: 19652
    Volume of triangulation:      8
-cells  error_velocity    error_pressure
-  512 1.099144e-01    - 1.778636e-01    -
- 4096 2.747275e-02 2.00 1.230051e-01 0.53
+
+*******************************************************************************
+Transient iteration: 1        Time: 1        Time step: 1        CFL: 0
+*******************************************************************************
+
+*******************************************************************************
+Transient iteration: 2        Time: 2        Time step: 1        CFL: 2.95029
+*******************************************************************************
+ time  error_velocity
+1.0000   3.228116e-02
+2.0000   2.738089e-02

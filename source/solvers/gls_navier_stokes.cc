@@ -525,9 +525,20 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               this->simulation_parameters.stabilization.stabilization ==
                 Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
             {
-              this->assemblers.push_back(
-                std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
-                  this->simulation_control));
+              if (!this->simulation_parameters.physical_properties_manager
+                     .density_is_constant())
+                {
+                  this->assemblers.push_back(
+                    std::make_shared<
+                      GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>>(
+                      this->simulation_control));
+                }
+              else
+                {
+                  this->assemblers.push_back(
+                    std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
+                      this->simulation_control));
+                }
             }
           else if (this->simulation_parameters.stabilization.stabilization ==
                    Parameters::Stabilization::NavierStokesStabilization::gls)

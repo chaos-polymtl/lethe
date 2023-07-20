@@ -22,7 +22,7 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #ifndef lethe_isothermal_compressible_navier_stokes_assembler_h
-#define lethe_isothermal_compressible_navier_stokes_assembler_h
+#  define lethe_isothermal_compressible_navier_stokes_assembler_h
 
 
 /**
