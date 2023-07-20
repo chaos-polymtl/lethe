@@ -1122,8 +1122,23 @@ DEMSolver<dim>::solve()
 
   // Find the smallest cell size and use this as the floating mesh mapping
   // criterion
+
+  double mapping_criterion_constant;
+  if constexpr (dim == 2)
+    mapping_criterion_constant = 0.70710678118; // 2^-0.5
+
+  if constexpr (dim == 3)
+    mapping_criterion_constant = 0.57735026919; // 3^-0.5
+
   smallest_floating_mesh_mapping_criterion =
+    mapping_criterion_constant *
     GridTools::minimal_cell_diameter(triangulation);
+
+  // The edge case comes when the cell are completely square/cubic. In that
+  // case, every sides of a cell are 2^-0.5 or 3^-0.5 times the cell_diameter.
+  // We want to refresh the mapping each time the solid-objet pass through a
+  // cell or there will be late contact detection. Thus, we use this value.
+
 
   if (has_periodic_boundaries)
     {
