@@ -22,11 +22,11 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #ifndef lethe_isothermal_compressible_navier_stokes_assembler_h
-#  define lethe_isothermal_compressible_navier_stokes_assembler_h
+#define lethe_isothermal_compressible_navier_stokes_assembler_h
 
 
 /**
- * @brief Class that assembles the core of the isothermal compressible Navier-Stokes equation.
+ * @brief Class that assembles the core of the isothermal compressible Navier-Stokes equations.
  * This class assembles the weak form of:
  * $$\nabla \cdot (\rho \mathbf{u}) + \rho \mathbf{u} \cdot \nabla \mathbf{u} -
  * \nabla p - \mu \nabla^2 \mathbf{u} = 0 $$ with a full GLS stabilization
