@@ -175,7 +175,8 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
           // Get background cell
           auto background_cell = floating_mesh_iterator->first;
 
-          if (background_cell->is_locally_owned())
+          if (background_cell->is_locally_owned() ||
+              background_cell->is_ghost())
             {
               // Get cut cells (floating mesh cells)
               auto cut_cells = floating_mesh_iterator->second;
@@ -382,7 +383,8 @@ ParticleWallBroadSearch<dim>::particle_floating_mesh_contact_search(
           // Get background cell
           auto background_cell = floating_mesh_iterator->first;
 
-          if (background_cell->is_locally_owned())
+          if (background_cell->is_locally_owned() ||
+              background_cell->is_ghost())
             {
               // Get cut cells (floating mesh cells)
               auto cut_cells = floating_mesh_iterator->second;
