@@ -1,15 +1,15 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2021 - 2022 by the deal.II authors
+ * Copyright (C) 2019 - 2023 by the Lethe authors
  *
- * This file is part of the deal.II library.
+ * This file is part of the Lethe library
  *
- * The deal.II library is free software; you can use it, redistribute
+ * The Lethe library is free software; you can use it, redistribute
  * it, and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE.md at
- * the top level directory of deal.II.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------*/
 
@@ -853,9 +853,6 @@ StokesOperator<dim, number>::do_cell_integral_range(
 
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
-      // if (edge_constrained_cell[cell] == false)
-      //     continue;
-
       integrator.reinit(cell);
 
       integrator.read_dof_values(src);
@@ -1872,8 +1869,6 @@ MatrixFreeStokes<dim>::output_results(const unsigned int cycle) const
   if (triangulation.n_global_active_cells() > 1e6)
     return;
 
-  solution.update_ghost_values();
-
   std::vector<std::string> solution_names(dim, "u");
   solution_names.push_back("p");
 
@@ -1892,10 +1887,8 @@ MatrixFreeStokes<dim>::output_results(const unsigned int cycle) const
                            dealii_data_component_interpretation);
 
   Vector<float> subdomain(triangulation.n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    {
-      subdomain(i) = triangulation.locally_owned_subdomain();
-    }
+  subdomain = triangulation.locally_owned_subdomain();
+
   data_out.add_data_vector(subdomain, "subdomain");
 
   data_out.build_patches();
@@ -1910,8 +1903,6 @@ MatrixFreeStokes<dim>::output_results(const unsigned int cycle) const
                                       cycle,
                                       MPI_COMM_WORLD,
                                       3);
-
-  solution.zero_out_ghost_values();
 }
 
 template <int dim>
