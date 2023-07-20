@@ -47,7 +47,7 @@ where :math:`C_{num}` and :math:`C_{exp}` are the numerical and experimental cou
 
 
 This example shows how using the tuned parameters of each detector we generate the dictionary for the corresponding geometry
-(shown in the illustration below) and then we reconstruct the positions of radioactive particles based on the received photon counts by the detectors.
+(shown in the illustration below) and then we reconstruct the positions of radioactive particle based on the received photon counts by the detectors.
 
 
 .. image::  images/syst-from-above.png
@@ -60,10 +60,6 @@ This example shows how using the tuned parameters of each detector we generate t
 
 Parameter file
 ----------------
-
-*rpt-fem-reconstruction.prm* file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 RPT parameters
 ^^^^^^^^^^^^^^^^
 
