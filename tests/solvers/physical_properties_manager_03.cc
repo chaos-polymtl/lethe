@@ -17,7 +17,8 @@
 
 /**
  * @brief This code tests the PhysicalPropertiesManager class and its capacity to instantiate the various models for physical properties
- * for the case when there are 2 fluids and 2 solids. This test exceeds the actual capacity of the solver (2 fluids, 1 solid).
+ * for the case when there are 2 fluids and 2 solids. This test exceeds the
+ * actual capacity of the solver (2 fluids, 1 solid).
  */
 
 // Lethe
