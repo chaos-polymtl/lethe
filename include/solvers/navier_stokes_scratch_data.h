@@ -283,11 +283,11 @@ public:
     this->pressure_scaling_factor = pressure_scaling_factor;
 
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-            {
-              this->fe_values[pressure].get_function_values(
-                previous_solutions[p], previous_pressure_values[p]);
-            }
-            
+      {
+        this->fe_values[pressure].get_function_values(
+          previous_solutions[p], previous_pressure_values[p]);
+      }
+
     // Only gather the pressure when a pressure history is necessary
     // (compressible Navier-Stokes)
     if (!this->properties_manager.density_is_constant())
