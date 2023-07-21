@@ -77,8 +77,7 @@ private:
   find_inplane_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
     Point<3>                                         plane_point,
-    Tensor<1, 3>                                     plane_normal_vector,
-    double                                           plane_threshold_distance);
+    Tensor<1, 3>                                     plane_normal_vector);
 
   /**
    * @brief Store the location of the centers of all the cells that are in the plane
@@ -91,7 +90,7 @@ private:
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
   unsigned int                                 particle_counter;
-  unsigned int                                 remained_particles_of_each_type;
+  int                                          remained_particles_of_each_type;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
   std::unordered_map<unsigned int, double>     number_particles_to_insert;

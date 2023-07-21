@@ -175,7 +175,6 @@ namespace Parameters
       // Insertion plane definition
       Tensor<1, 3> insertion_plane_normal_vector;
       Point<3>     insertion_plane_point;
-      double       insertion_plane_threshold_distance;
 
       static void
       declare_parameters(ParameterHandler &prm);
