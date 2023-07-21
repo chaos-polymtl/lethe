@@ -17,13 +17,13 @@
 #ifndef lethe_surface_tension_model_h
 #define lethe_surface_tension_model_h
 
-#include <core/physical_property_model.h>
+#include <core/interface_property_model.h>
 
 /**
  * @brief SurfaceTensionModel. Abstract class that allows to calculate the
  * surface tension coefficient.
  */
-class SurfaceTensionModel : public PhysicalPropertyModel
+class SurfaceTensionModel : public InterfacePropertyModel
 {
 public:
   /**

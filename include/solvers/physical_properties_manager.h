@@ -48,6 +48,12 @@ DeclException1(
        "Modifications to Lethe are required to take this into account.");
 
 
+enum material_interactions_type
+{
+  fluid_fluid,
+  fluid_solid
+};
+
 
 /** @class The PhysicalPropertiesManager class manages the physical properties
  * model which are required to calculate the various physical properties
@@ -87,8 +93,6 @@ public:
 
   void
   initialize(Parameters::PhysicalProperties physical_properties);
-
-
 
   inline unsigned int
   get_number_of_fluids() const
@@ -238,11 +242,12 @@ public:
   }
 
   unsigned int
-  get_material_interaction_id(const std::string  material_interaction_type,
-                              const unsigned int material_0_id,
-                              const unsigned int material_1_id) const
+  get_material_interaction_id(
+    const material_interactions_type material_interaction_type,
+    const unsigned int               material_0_id,
+    const unsigned int               material_1_id) const
   {
-    if (material_interaction_type == "fluid-fluid")
+    if (material_interaction_type == material_interactions_type::fluid_fluid)
       {
         std::pair<unsigned int, unsigned int> fluid_fluid_material_interaction(
           material_0_id, material_1_id);
@@ -250,7 +255,8 @@ public:
           .find(fluid_fluid_material_interaction)
           ->second;
       }
-    else if (material_interaction_type == "fluid-solid")
+    else if (material_interaction_type ==
+             material_interactions_type::fluid_solid)
       {
         std::pair<unsigned int, unsigned int> fluid_solid_material_interaction(
           material_0_id, material_1_id);
@@ -266,6 +272,9 @@ public:
 private:
   void
   establish_fields_required_by_model(PhysicalPropertyModel &model);
+
+  void
+  establish_fields_required_by_model(InterfacePropertyModel &model);
 
   /** @brief Calculates the global id of the physical property. By default. Lethe stores all
    *  the properties of the fluids, then the properties of the solid. Fluids
@@ -286,7 +295,6 @@ private:
         return number_of_fluids + material_id - 1;
       }
   }
-
 
 public:
   bool is_initialized;

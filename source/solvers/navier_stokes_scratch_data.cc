@@ -321,9 +321,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           if (properties_manager.get_number_of_material_interactions() > 0)
             {
               const auto material_interaction_id =
-                properties_manager.get_material_interaction_id("fluid-fluid",
-                                                               0,
-                                                               1);
+                properties_manager.get_material_interaction_id(
+                  material_interactions_type::fluid_fluid, 0, 1);
               // Gather surface tension
               const auto surface_tension_model =
                 properties_manager.get_surface_tension(material_interaction_id);

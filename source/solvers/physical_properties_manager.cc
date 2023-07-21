@@ -29,6 +29,18 @@ PhysicalPropertiesManager::establish_fields_required_by_model(
 }
 
 void
+PhysicalPropertiesManager::establish_fields_required_by_model(
+  InterfacePropertyModel &model)
+{
+  // Loop through the map. The use of or (||) is there to ensure
+  // that if a field is already required, it won't be erased.
+  for (auto &f : required_fields)
+    {
+      f.second = f.second || model.depends_on(f.first);
+    }
+}
+
+void
 PhysicalPropertiesManager::initialize(
   Parameters::PhysicalProperties physical_properties)
 {

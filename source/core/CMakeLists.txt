@@ -73,7 +73,7 @@ add_library(lethe-core
   ../../include/core/thermal_expansion_model.h
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
-  ../../include/core/utilities.h)
+  ../../include/core/utilities.h ../../include/core/interface_property_model.h)
 
 deal_ii_setup_target(lethe-core)
 target_include_directories(lethe-core PUBLIC ../../include)
