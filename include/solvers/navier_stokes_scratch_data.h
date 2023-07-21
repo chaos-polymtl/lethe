@@ -51,10 +51,10 @@ using namespace dealii;
  * for a Navier-Stokes equation. Consequently, this class calculates
  * the velocity (values, gradients, laplacians) and the shape function
  * (values, gradients, laplacians) at all the gauss points for all degrees
- * of freedom and stores it into arrays. Additionnaly, the use can request
+ * of freedom and stores it into arrays. Additionally, the use can request
  * that this class gathers additional fields for physics which are coupled
  * to the Navier-Stokes equation, such as the VOF. This class
- * serves as a seperation between the evaluation at the gauss point of the
+ * serves as a separation between the evaluation at the gauss point of the
  * variables of interest and their use in the assembly, which is carried out
  * by the assembler functions. For more information on this design, the reader
  * can consult deal.II step-9
@@ -284,8 +284,8 @@ public:
 
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values[pressure].get_function_values(
-          previous_solutions[p], previous_pressure_values[p]);
+        this->fe_values[velocities].get_function_values(
+          previous_solutions[p], previous_velocity_values[p]);
       }
 
     // Only gather the pressure when a pressure history is necessary
