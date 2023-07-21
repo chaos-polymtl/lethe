@@ -1,0 +1,34 @@
+# Listing of Parameters
+# ---------------------
+# The problem dimension <2|3>
+set dim                = 2
+
+# Order of FE element for u and p <1|2|3>
+set element order     = 2
+
+# Geometry <hypercube|hyperrectangle>
+set geometry           = hypercube
+
+# Global refinement 1st cycle
+set initial refinement = 1
+
+# Number of cycles <1 up to 9-dim >
+set number of cycles   = 1
+
+# Output vtu files <true|false>
+set output             = false
+
+# Name for vtu files
+set output name        = solution
+
+# Path for vtu output files
+set output path        = ./
+
+# GMRES Preconditioner <AMG|LSMG|GCMG|ILU>
+set preconditioner     = GCMG
+
+# Repetitions in one direction for the hyperrectangle
+set repetitions        = 1
+
+# Source term <zero|mms>
+set source term        = mms

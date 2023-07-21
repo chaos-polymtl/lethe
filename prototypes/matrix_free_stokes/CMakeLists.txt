@@ -1,0 +1,2 @@
+add_executable(matrix_free_stokes matrix_free_stokes.cc)
+deal_ii_setup_target(matrix_free_stokes)
