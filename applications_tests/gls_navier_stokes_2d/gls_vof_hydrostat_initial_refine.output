@@ -45,7 +45,7 @@ Running on 1 MPI rank(s)...
    Number of VOF degrees of freedom: 2316
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0       
+Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity : 1.09509e-07
 L2 error phase : 0.000174446
@@ -58,22 +58,22 @@ Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 7.71695e-0
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 2316
 L2 error velocity : 1.09509e-07
-L2 error phase : 0.000174455
+L2 error phase : 0.000174454
 
-*********************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 7.7169e-06
-*********************************************************************************
-   Number of active cells:       1360
-   Number of degrees of freedom: 4923
+**********************************************************************************
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 7.71699e-06
+**********************************************************************************
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
    Volume of triangulation:      1
-   Number of VOF degrees of freedom: 1641
-L2 error velocity : 1.92093e-07
-L2 error phase : 0.000174462
- time  error_velocity error_pressure 
-0.0200   1.095089e-07         0.0028 
-0.0400   1.095086e-07         0.0028 
-0.0600   1.920926e-07         0.0028 
- time  error_phase  
-0.0200 1.744461e-04 
-0.0400 1.744552e-04 
-0.0600 1.744619e-04 
+   Number of VOF degrees of freedom: 2316
+L2 error velocity : 1.09507e-07
+L2 error phase : 0.000174461
+ time  error_velocity error_pressure
+0.0200   1.095089e-07         0.0028
+0.0400   1.095093e-07         0.0028
+0.0600   1.095071e-07         0.0028
+ time  error_phase
+0.0200 1.744461e-04
+0.0400 1.744536e-04
+0.0600 1.744612e-04
