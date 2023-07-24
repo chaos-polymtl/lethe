@@ -95,8 +95,11 @@ public:
           simulation_parameters.fem_parameters.phase_ch_order);
         const FE_Q<dim> potential_fe(
           simulation_parameters.fem_parameters.potential_ch_order);
-        fe =
-          std::make_shared<FESystem<dim>>(FE_Q<dim>(simulation_parameters.fem_parameters.phase_ch_order), 1, FE_Q<dim>(simulation_parameters.fem_parameters.potential_ch_order), 1);
+        fe = std::make_shared<FESystem<dim>>(
+          FE_Q<dim>(simulation_parameters.fem_parameters.phase_ch_order),
+          1,
+          FE_Q<dim>(simulation_parameters.fem_parameters.potential_ch_order),
+          1);
         mapping = std::make_shared<MappingQ<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
                    simulation_parameters.fem_parameters.potential_ch_order),

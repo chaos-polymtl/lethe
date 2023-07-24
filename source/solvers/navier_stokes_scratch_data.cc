@@ -126,6 +126,7 @@ NavierStokesScratchData<dim>::enable_vof(
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
 }
 
+
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_vof(
@@ -160,265 +161,40 @@ NavierStokesScratchData<dim>::enable_vof(
   this->filter = filter;
 }
 
-//template <int dim>
-//void
-//NavierStokesScratchData<dim>::enable_cahn_hilliard(
-//        const FESystem<dim>  &fe,
-//  const Quadrature<dim> & quadrature,
-//  const Mapping<dim> &   mapping)
-//{
-//  std::cout<<"CH is enabled"<<std::endl;
-//  gather_ch    = true;
-//    fe_values_ch = std::make_shared<FEValues<dim>>(
-//            mapping, fe, quadrature, update_values | update_gradients);
-////  fe_values_ch = std::make_shared<FEValues<dim>>(
-////    mapping, fe, quadrature, update_values | update_gradients);
-////    fe_values_ch = new FEValues<dim>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-//
-//
-//  // Allocate CahnHilliard values
-//  phase_order_ch_values        = std::vector<double>(this->n_q_points);
-//  chemical_potential_ch_values = std::vector<double>(this->n_q_points);
-//
-//  // Allocate CahnHilliard gradients
-//  phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-//  chemical_potential_ch_gradients =
-//    std::vector<Tensor<1, dim>>(this->n_q_points);
-//
-//    fields.insert(
-//            std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
-//
-//  // Allocate physical properties
-//  density_0            = std::vector<double>(n_q_points);
-//  density_1            = std::vector<double>(n_q_points);
-//  viscosity_0          = std::vector<double>(n_q_points);
-//  viscosity_1          = std::vector<double>(n_q_points);
-//  thermal_expansion_0  = std::vector<double>(n_q_points);
-//  thermal_expansion_1  = std::vector<double>(n_q_points);
-//  surface_tension      = std::vector<double>(n_q_points);
-//  mobility_constant_ch = std::vector<double>(n_q_points);
-//}
 
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_cahn_hilliard(
-        const FiniteElement<dim>  &fe,
-        const Quadrature<dim> & quadrature,
-        const Mapping<dim> &   mapping)
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
 {
-    std::cout<<"CH is enabled"<<std::endl;
-    gather_ch    = true;
-//    fe_values_ch = std::make_shared<FEValues<dim>>(
-//            mapping, fe, quadrature, update_values | update_gradients);
+  gather_ch    = true;
   fe_values_ch = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
-//    fe_values_ch = new FEValues<dim>(
-//            mapping, fe, quadrature, update_values | update_gradients);
-    std::cout<< fe_values_ch->get_fe().get_name() << std::endl;
 
-    // Allocate CahnHilliard values
-    phase_order_ch_values        = std::vector<double>(this->n_q_points);
-    chemical_potential_ch_values = std::vector<double>(this->n_q_points);
+  // Allocate CahnHilliard values
+  phase_order_ch_values        = std::vector<double>(this->n_q_points);
+  chemical_potential_ch_values = std::vector<double>(this->n_q_points);
 
-    // Allocate CahnHilliard gradients
-    phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-    chemical_potential_ch_gradients =
-            std::vector<Tensor<1, dim>>(this->n_q_points);
+  // Allocate CahnHilliard gradients
+  phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
+  chemical_potential_ch_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
 
-    fields.insert(
-            std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
 
-    // Allocate physical properties
-    density_0            = std::vector<double>(n_q_points);
-    density_1            = std::vector<double>(n_q_points);
-    viscosity_0          = std::vector<double>(n_q_points);
-    viscosity_1          = std::vector<double>(n_q_points);
-    thermal_expansion_0  = std::vector<double>(n_q_points);
-    thermal_expansion_1  = std::vector<double>(n_q_points);
-    surface_tension      = std::vector<double>(n_q_points);
-    mobility_constant_ch = std::vector<double>(n_q_points);
+  // Allocate physical properties
+  density_0            = std::vector<double>(n_q_points);
+  density_1            = std::vector<double>(n_q_points);
+  viscosity_0          = std::vector<double>(n_q_points);
+  viscosity_1          = std::vector<double>(n_q_points);
+  thermal_expansion_0  = std::vector<double>(n_q_points);
+  thermal_expansion_1  = std::vector<double>(n_q_points);
+  surface_tension      = std::vector<double>(n_q_points);
+  mobility_constant_ch = std::vector<double>(n_q_points);
 }
-
-//template <int dim>
-//void
-//NavierStokesScratchData<dim>::enable_cahn_hilliard(
-//        const std::shared_ptr<FEValuesViews::Scalar<dim>> & fe_view_phase,
-//        const std::shared_ptr<FEValuesViews::Scalar<dim>> & fe_view_potential,
-//        const Quadrature<dim> & quadrature,
-//        const Mapping<dim> &   mapping)
-//{
-//    std::cout<<"CH is enabled"<<std::endl;
-//    gather_ch    = true;
-////    fe_values_ch = std::make_shared<FEValues<dim>>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-////    fe_values_ch = std::make_shared<FEValues<dim>>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-////    fe_values_ch = new FEValues<dim>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-//
-//    fe_values_view_phase_ch = fe_view_phase;
-//    fe_values_view_potential_ch = fe_view_potential;
-//
-//
-//    // Allocate CahnHilliard values
-//    phase_order_ch_values        = std::vector<double>(this->n_q_points);
-//    chemical_potential_ch_values = std::vector<double>(this->n_q_points);
-//
-//    // Allocate CahnHilliard gradients
-//    phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-//    chemical_potential_ch_gradients =
-//            std::vector<Tensor<1, dim>>(this->n_q_points);
-//
-//    fields.insert(
-//            std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
-//
-//    // Allocate physical properties
-//    density_0            = std::vector<double>(n_q_points);
-//    density_1            = std::vector<double>(n_q_points);
-//    viscosity_0          = std::vector<double>(n_q_points);
-//    viscosity_1          = std::vector<double>(n_q_points);
-//    thermal_expansion_0  = std::vector<double>(n_q_points);
-//    thermal_expansion_1  = std::vector<double>(n_q_points);
-//    surface_tension      = std::vector<double>(n_q_points);
-//    mobility_constant_ch = std::vector<double>(n_q_points);
-//}
-
-//template <int dim>
-//void
-//NavierStokesScratchData<dim>::enable_cahn_hilliard(
-//        const std::shared_ptr<FEValues<dim>>  fe_values,
-//        const Quadrature<dim> & quadrature,
-//        const Mapping<dim> &   mapping)
-//{
-//    std::cout<<"CH is enabled"<<std::endl;
-//    gather_ch    = true;
-//    fe_values_ch = std::make_shared<FEValues<dim>>(
-//            mapping, fe_values->get_fe(), quadrature, update_values | update_gradients);
-////  fe_values_ch = std::make_shared<FEValues<dim>>(
-////    mapping, fe, quadrature, update_values | update_gradients);
-////    fe_values_ch = new FEValues<dim>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-//
-//
-//    // Allocate CahnHilliard values
-//    phase_order_ch_values        = std::vector<double>(this->n_q_points);
-//    chemical_potential_ch_values = std::vector<double>(this->n_q_points);
-//
-//    // Allocate CahnHilliard gradients
-//    phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-//    chemical_potential_ch_gradients =
-//            std::vector<Tensor<1, dim>>(this->n_q_points);
-//
-//    fields.insert(
-//            std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
-//
-//    // Allocate physical properties
-//    density_0            = std::vector<double>(n_q_points);
-//    density_1            = std::vector<double>(n_q_points);
-//    viscosity_0          = std::vector<double>(n_q_points);
-//    viscosity_1          = std::vector<double>(n_q_points);
-//    thermal_expansion_0  = std::vector<double>(n_q_points);
-//    thermal_expansion_1  = std::vector<double>(n_q_points);
-//    surface_tension      = std::vector<double>(n_q_points);
-//    mobility_constant_ch = std::vector<double>(n_q_points);
-//}
-
-//template <int dim>
-//void
-//NavierStokesScratchData<dim>::enable_cahn_hilliard(
-//        const FiniteElement<dim>  &fe_phase,
-//        const FiniteElement<dim>  &fe_potential,
-//        const Quadrature<dim> & quadrature,
-//        const Mapping<dim> &   mapping)
-//{
-//    std::cout<<"CH is enabled"<<std::endl;
-//    gather_ch    = true;
-////  fe_values_ch = std::make_shared<FEValues<dim>>(
-////    mapping, fe, quadrature, update_values | update_gradients);
-////    fe_values_ch = new FEValues<dim>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-//    fe_phase_values_ch = std::make_shared<FEValues<dim>>(
-//    mapping, fe_phase, quadrature, update_values | update_gradients);
-//
-//    fe_potential_values_ch = std::make_shared<FEValues<dim>>(
-//            mapping, fe_potential, quadrature, update_values | update_gradients);
-//
-//    // Allocate CahnHilliard values
-//    phase_order_ch_values        = std::vector<double>(this->n_q_points);
-//    chemical_potential_ch_values = std::vector<double>(this->n_q_points);
-//
-//    // Allocate CahnHilliard gradients
-//    phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-//    chemical_potential_ch_gradients =
-//            std::vector<Tensor<1, dim>>(this->n_q_points);
-//
-//    fields.insert(
-//            std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
-//
-//    // Allocate physical properties
-//    density_0            = std::vector<double>(n_q_points);
-//    density_1            = std::vector<double>(n_q_points);
-//    viscosity_0          = std::vector<double>(n_q_points);
-//    viscosity_1          = std::vector<double>(n_q_points);
-//    thermal_expansion_0  = std::vector<double>(n_q_points);
-//    thermal_expansion_1  = std::vector<double>(n_q_points);
-//    surface_tension      = std::vector<double>(n_q_points);
-//    mobility_constant_ch = std::vector<double>(n_q_points);
-//}
-
-//template <int dim>
-//void
-//NavierStokesScratchData<dim>::enable_cahn_hilliard(
-//        const hp::FECollection<dim,dim>  & fe_collection,
-//        const Quadrature<dim> & quadrature,
-//        const Mapping<dim> &   mapping)
-//{
-//    std::cout<<"CH is enabled"<<std::endl;
-//    gather_ch    = true;
-////  fe_values_ch = std::make_shared<FEValues<dim>>(
-////    mapping, fe, quadrature, update_values | update_gradients);
-////    fe_values_ch = new FEValues<dim>(
-////            mapping, fe, quadrature, update_values | update_gradients);
-////    fe_phase_values_ch = std::make_shared<FEValues<dim>>(
-////    mapping, fe_phase, quadrature, update_values | update_gradients);
-////
-////    fe_potential_values_ch = std::make_shared<FEValues<dim>>(
-////            mapping, fe_potential, quadrature, update_values | update_gradients);
-//
-//    std::vector<bool> vector_mask_phase({true,false});
-//    std::vector<bool> vector_mask_potential({false,true});
-//    ComponentMask component_mask_phase(vector_mask_phase);
-//    ComponentMask component_mask_potential(vector_mask_potential);
-//
-//    fe_phase_values_ch = std::make_shared<FEValues<dim>>(
-//            mapping, fe_collection[0].get_sub_fe(vector_mask_phase), quadrature, update_values | update_gradients);
-//
-//    fe_potential_values_ch = std::make_shared<FEValues<dim>>(
-//            mapping, fe_collection[0].get_sub_fe(vector_mask_potential), quadrature, update_values | update_gradients);
-//
-//    // Allocate CahnHilliard values
-//    phase_order_ch_values        = std::vector<double>(this->n_q_points);
-//    chemical_potential_ch_values = std::vector<double>(this->n_q_points);
-//
-//    // Allocate CahnHilliard gradients
-//    phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-//    chemical_potential_ch_gradients =
-//            std::vector<Tensor<1, dim>>(this->n_q_points);
-//
-//    fields.insert(
-//            std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
-//
-//    // Allocate physical properties
-//    density_0            = std::vector<double>(n_q_points);
-//    density_1            = std::vector<double>(n_q_points);
-//    viscosity_0          = std::vector<double>(n_q_points);
-//    viscosity_1          = std::vector<double>(n_q_points);
-//    thermal_expansion_0  = std::vector<double>(n_q_points);
-//    thermal_expansion_1  = std::vector<double>(n_q_points);
-//    surface_tension      = std::vector<double>(n_q_points);
-//    mobility_constant_ch = std::vector<double>(n_q_points);
-//}
 
 
 template <int dim>
@@ -519,7 +295,6 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::calculate_physical_properties()
 {
-    std::cout<<"Calculating physical properties"<<std::endl;
   if (properties_manager.field_is_required(field::temperature) &&
       gather_temperature)
     {
@@ -619,23 +394,32 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
           if (gather_ch)
             {
+              //                std::cout<<"Physical properties for
+              //                CH"<<std::endl;
               const auto material_interaction_id =
                 properties_manager.get_material_interaction_id("fluid-fluid",
                                                                0,
                                                                1);
-              const auto surface_tension_model =
-                properties_manager.get_surface_tension(material_interaction_id);
-              const auto mobility_ch_model =
-                properties_manager.get_mobility_ch(material_interaction_id);
+              //                std::cout<<"mobility is being
+              //                gathered"<<std::endl; const auto
+              //                mobility_ch_model =
+              //                        properties_manager.get_mobility_ch(material_interaction_id);
+              //                std::cout<<"Surface tension is being
+              //                gathered"<<std::endl;
+              //              const auto surface_tension_model =
+              //                properties_manager.get_surface_tension(material_interaction_id);
 
-              surface_tension_model->vector_value(fields, surface_tension);
-              mobility_ch_model->vector_value(fields, mobility_constant_ch);
+
+              //              surface_tension_model->vector_value(fields,
+              //              surface_tension);
+              //              mobility_ch_model->vector_value(fields,
+              //              mobility_constant_ch);
 
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  std::cout<<"density_0[q]"<<density_0[q]<<std::endl;
-                    std::cout<<"density_1[q]"<<density_1[q]<<std::endl;
+                  //                  std::cout<<"density_0[q]"<<density_0[q]<<std::endl;
+                  //                    std::cout<<"density_1[q]"<<density_1[q]<<std::endl;
 
                   this->density_diff =
                     0.5 * std::abs(density_0[q] - density_1[q]);

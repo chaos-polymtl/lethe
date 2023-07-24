@@ -29,6 +29,7 @@
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
+#include <solvers/navier_stokes_vof_assemblers.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -475,21 +476,20 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
     }
 
-    if (this->simulation_parameters.multiphysics.cahn_hilliard)
-      {
-          // Time-stepping schemes
-          if (is_bdf(this->simulation_control->get_assembly_method()))
-          {
-              this->assemblers.push_back(
-                      std::make_shared<GLSNavierStokesCahnHilliardAssemblerBDF<dim>>(
-                              this->simulation_control));
-          }
+  if (this->simulation_parameters.multiphysics.cahn_hilliard)
+    {
+      //       Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesCahnHilliardAssemblerBDF<dim>>(
+              this->simulation_control));
+        }
 
-        this->assemblers.push_back(std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(this->simulation_control,this->simulation_parameters));
-//        this->assemblers.push_back(
-//                std::make_shared<PSPGSUPGNavierStokesAssemblerCore<dim>>(
-//                        this->simulation_control));
-      }
+      this->assemblers.push_back(
+        std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
+          this->simulation_control, this->simulation_parameters));
+    }
 
   else
     {
@@ -644,22 +644,9 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
     {
       const DoFHandler<dim> *dof_handler_ch =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
-     //   FESystem<dim> fe_test = dof_handler_ch->get_fe();
-      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(0),
+      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
-//      const FEValuesExtractors::Scalar phase_order(0);
-//      const FEValuesExtractors::Scalar chemical_potential(1);
-
-//      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(0),
-//                                        dof_handler_ch->get_fe(1),
-//                                        *this->cell_quadrature,
-//                                        *this->mapping);
-
-//      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe_collection(),
-//                                        *this->cell_quadrature,
-//                                        *this->mapping);
-
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -680,16 +667,6 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
     scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
-
-//    WorkStream::run(
-//            this->dof_handler.begin_active(),
-//            this->dof_handler.end(),
-//            *this,
-//            &GLSNavierStokesSolver::assemble_local_system_rhs,
-//            &GLSNavierStokesSolver::copy_local_rhs_to_global_rhs,
-//            scratch_data,
-//            StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-//                                                 this->cell_quadrature->size()));
 
   system_matrix.compress(VectorOperation::add);
 }
@@ -873,23 +850,13 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
     }
 
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
-  {
-      std::cout<<"Initializing scratch data" << std::endl;
+    {
       const DoFHandler<dim> *dof_handler_ch =
-              this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
-      //FESystem<dim> fe_test = dof_handler_ch->get_fe();
-            scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(0),
+        this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
+      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
-//      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(0),
-//                                        dof_handler_ch->get_fe(1),
-//                                        *this->cell_quadrature,
-//                                        *this->mapping);
-
-//      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe_collection(),
-//                                        *this->cell_quadrature,
-//                                        *this->mapping);
-  }
+    }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
     {
