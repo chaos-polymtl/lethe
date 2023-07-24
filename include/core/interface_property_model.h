@@ -140,7 +140,7 @@ public:
     std::vector<double> f_x(n_pts);
     vector_value(field_vectors, f_x);
 
-    // Make a copy of the field vector for the field we wil perturbate
+    // Make a copy of the field vector for the field we will perturbate
     std::map<field, std::vector<double>> perturbed_field_vectors =
       field_vectors;
     std::vector<double> &x = perturbed_field_vectors.at(id);
