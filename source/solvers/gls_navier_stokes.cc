@@ -30,6 +30,7 @@
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
+#include <solvers/navier_stokes_vof_assemblers.h>
 
 #include <deal.II/base/work_stream.h>
 

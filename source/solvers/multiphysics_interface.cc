@@ -141,7 +141,6 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       active_physics.push_back(PhysicsID::cahn_hilliard);
       physics[PhysicsID::cahn_hilliard] = std::make_shared<CahnHilliard<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
-        std::cout<<"Cahn-Hilliard was added to the active physics of the multiphysics interface"<<std::endl;
     }
 }
 
