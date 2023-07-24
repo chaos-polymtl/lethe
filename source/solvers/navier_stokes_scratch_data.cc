@@ -117,6 +117,7 @@ NavierStokesScratchData<dim>::enable_vof(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
+  surface_tension     = std::vector<double>(n_q_points);
 
   // Create filter
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
@@ -151,6 +152,7 @@ NavierStokesScratchData<dim>::enable_vof(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
+  surface_tension     = std::vector<double>(n_q_points);
 
   // Create filter
   this->filter = filter;
@@ -314,6 +316,19 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_0 = properties_manager.get_rheology(0);
           const auto density_model_1  = properties_manager.get_density(1);
           const auto rheology_model_1 = properties_manager.get_rheology(1);
+
+          // Gather properties from material interactions if necessary
+          if (properties_manager.get_number_of_material_interactions() > 0)
+            {
+              const auto material_interaction_id =
+                properties_manager.get_material_interaction_id(
+                  material_interactions_type::fluid_fluid, 0, 1);
+              // Gather surface tension
+              const auto surface_tension_model =
+                properties_manager.get_surface_tension(material_interaction_id);
+              surface_tension_model->vector_value(fields, surface_tension);
+            }
+
 
           density_model_0->vector_value(fields, density_0);
           rheology_model_0->vector_value(fields, viscosity_0);

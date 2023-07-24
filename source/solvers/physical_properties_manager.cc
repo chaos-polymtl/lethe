@@ -29,6 +29,18 @@ PhysicalPropertiesManager::establish_fields_required_by_model(
 }
 
 void
+PhysicalPropertiesManager::establish_fields_required_by_model(
+  InterfacePropertyModel &model)
+{
+  // Loop through the map. The use of or (||) is there to ensure
+  // that if a field is already required, it won't be erased.
+  for (auto &f : required_fields)
+    {
+      f.second = f.second || model.depends_on(f.first);
+    }
+}
+
+void
 PhysicalPropertiesManager::initialize(
   Parameters::PhysicalProperties physical_properties)
 {
@@ -36,6 +48,12 @@ PhysicalPropertiesManager::initialize(
 
   number_of_fluids = physical_properties.number_of_fluids;
   number_of_solids = physical_properties.number_of_solids;
+  number_of_material_interactions =
+    physical_properties.number_of_material_interactions;
+  fluid_fluid_interactions_with_material_interaction_ids =
+    physical_properties.fluid_fluid_interactions_with_material_interaction_ids;
+  fluid_solid_interactions_with_material_interaction_ids =
+    physical_properties.fluid_solid_interactions_with_material_interaction_ids;
 
   viscosity_scale = physical_properties.fluids[0].viscosity;
   density_scale   = physical_properties.fluids[0].density;
@@ -122,5 +140,15 @@ PhysicalPropertiesManager::initialize(
       thermal_expansion.push_back(
         ThermalExpansionModel::model_cast(physical_properties.solids[s]));
       establish_fields_required_by_model(*thermal_expansion[s]);
+    }
+
+  // For each pair of interacting materials (fluid-fluid or fluid-solid), append
+  // physical properties
+  for (unsigned int i = 0; i < number_of_material_interactions; ++i)
+    {
+      surface_tension.push_back(SurfaceTensionModel::model_cast(
+        physical_properties.material_interactions[i]
+          .surface_tension_parameters));
+      establish_fields_required_by_model(*surface_tension[i]);
     }
 }

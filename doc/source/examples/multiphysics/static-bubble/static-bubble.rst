@@ -127,14 +127,13 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the defined co
 VOF
 ~~~
 
-The surface tension force computation is enabled in the ``VOF`` subsection. The surface tension coefficient :math:`\sigma` is set to :math:`1.0` with the parameter ``surface tension coefficient``. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+The surface tension force computation is enabled in the ``VOF`` subsection. The value of the filter factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient filter factor`` and ``curvature filter factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
 
 .. code-block:: text
 
     subsection VOF
       subsection surface tension force
         set enable                                = true
-        set surface tension coefficient           = 1
         set phase fraction gradient filter factor = 4
         set curvature filter factor               = 1
         set output auxiliary fields               = true
@@ -154,7 +153,7 @@ The surface tension force computation is enabled in the ``VOF`` subsection. The 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The density and the kinematic viscosity of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. Finally, the kinematic viscosity is set to :math:`0.1` in both cases.
+The ``density`` and the ``kinematic viscosity`` of the two fluids involved in this example are set in the subsection ``physical properties``. To neglect buoyancy, the density of both fluids is set to :math:`10.0`. And, the kinematic viscosity is set to :math:`0.1` in both cases. Finally, a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`1.0`.
 
 .. code-block:: text
 
@@ -167,6 +166,16 @@ The density and the kinematic viscosity of the two fluids involved in this examp
       subsection fluid 0
         set density             = 10
         set kinematic viscosity = 0.1
+      end
+      set number of material interactions = 1
+      subsection material interaction 0
+        set type = fluid-fluid
+        subsection fluid-fluid interaction
+          set first fluid id              = 0
+          set second fluid id             = 1
+          set surface tension model       = constant
+          set surface tension coefficient = 1
+        end
       end
     end
 

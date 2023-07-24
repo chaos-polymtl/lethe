@@ -35,8 +35,9 @@ test()
   // Create a physical property manager
 
   Parameters::PhysicalProperties physical_properties;
-  physical_properties.number_of_fluids = 1;
-  physical_properties.number_of_solids = 1;
+  physical_properties.number_of_fluids                = 1;
+  physical_properties.number_of_solids                = 1;
+  physical_properties.number_of_material_interactions = 1;
 
 
   // Generate fluid properties
@@ -57,6 +58,11 @@ test()
   physical_properties.solids[0].thermal_conductivity_model =
     Parameters::Material::ThermalConductivityModel::constant;
 
+  // Generate fluid-solid interaction properties
+  physical_properties.material_interactions.resize(1);
+  physical_properties.material_interactions[0].surface_tension_model =
+    Parameters::MaterialInteractions::SurfaceTensionModel::constant;
+
   // Fix fluid properties
   physical_properties.fluids[0].density              = 1;
   physical_properties.fluids[0].thermal_conductivity = 3;
@@ -66,6 +72,10 @@ test()
   physical_properties.solids[0].density              = 10;
   physical_properties.solids[0].thermal_conductivity = 30;
   physical_properties.solids[0].specific_heat        = 20;
+
+  // Fix fluid-solid interaction properties
+  physical_properties.material_interactions[0]
+    .surface_tension_parameters.surface_tension_coefficient = 70;
 
   PhysicalPropertiesManager physical_properties_manager;
   physical_properties_manager.initialize(physical_properties);
@@ -95,6 +105,13 @@ test()
           << std::endl;
   deallog << "Thermal conductivity : "
           << physical_properties_manager.get_thermal_conductivity(0, 1)->value(
+               dummy_fields)
+          << std::endl;
+
+  deallog << "Testing PhysicalPropertiesManager - Material interaction 0 "
+          << std::endl;
+  deallog << "Surface tension      : "
+          << physical_properties_manager.get_surface_tension(0)->value(
                dummy_fields)
           << std::endl;
 }

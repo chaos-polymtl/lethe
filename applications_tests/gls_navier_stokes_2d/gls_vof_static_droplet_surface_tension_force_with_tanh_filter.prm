@@ -25,7 +25,6 @@ end
 subsection VOF
   subsection surface tension force
     set enable                                   = true
-    set surface tension coefficient              = 0.023
     set phase fraction gradient diffusion factor = 4
     set curvature diffusion factor               = 1
     set output auxiliary fields                  = true
@@ -92,6 +91,17 @@ subsection physical properties
   subsection fluid 1
     set density             = 1000
     set kinematic viscosity = 0.01
+  end
+
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id              = 0
+      set second fluid id             = 1
+      set surface tension model       = constant
+      set surface tension coefficient = 0.023
+    end
   end
 end
 

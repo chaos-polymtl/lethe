@@ -22,6 +22,7 @@
 #include <core/density_model.h>
 #include <core/rheological_model.h>
 #include <core/specific_heat_model.h>
+#include <core/surface_tension_model.h>
 #include <core/thermal_conductivity_model.h>
 #include <core/thermal_expansion_model.h>
 #include <core/tracer_diffusivity_model.h>
@@ -46,6 +47,12 @@ DeclException1(
     << " that you are trying to use does not support the use of a non-constant viscosity model. "
        "Modifications to Lethe are required to take this into account.");
 
+
+enum material_interactions_type
+{
+  fluid_fluid,
+  fluid_solid
+};
 
 
 /** @class The PhysicalPropertiesManager class manages the physical properties
@@ -87,8 +94,6 @@ public:
   void
   initialize(Parameters::PhysicalProperties physical_properties);
 
-
-
   inline unsigned int
   get_number_of_fluids() const
   {
@@ -99,6 +104,12 @@ public:
   get_number_of_solids() const
   {
     return number_of_solids;
+  }
+
+  inline unsigned int
+  get_number_of_material_interactions() const
+  {
+    return number_of_material_interactions;
   }
 
   // Getters for the physical property models
@@ -144,6 +155,12 @@ public:
     return tracer_diffusivity[calculate_global_id(fluid_id, material_id)];
   }
 
+  std::shared_ptr<SurfaceTensionModel>
+  get_surface_tension(const unsigned int material_interaction_id = 0) const
+  {
+    return surface_tension[material_interaction_id];
+  }
+
   // Vector Getters for the physical property models
   std::vector<std::shared_ptr<DensityModel>>
   get_density_vector() const
@@ -179,6 +196,12 @@ public:
   get_tracer_diffusivity_vector() const
   {
     return tracer_diffusivity;
+  }
+
+  std::vector<std::shared_ptr<SurfaceTensionModel>>
+  get_surface_tension_vector() const
+  {
+    return surface_tension;
   }
 
   double
@@ -218,9 +241,40 @@ public:
     return constant_density;
   }
 
+  unsigned int
+  get_material_interaction_id(
+    const material_interactions_type material_interaction_type,
+    const unsigned int               material_0_id,
+    const unsigned int               material_1_id) const
+  {
+    if (material_interaction_type == material_interactions_type::fluid_fluid)
+      {
+        std::pair<unsigned int, unsigned int> fluid_fluid_material_interaction(
+          material_0_id, material_1_id);
+        return fluid_fluid_interactions_with_material_interaction_ids
+          .find(fluid_fluid_material_interaction)
+          ->second;
+      }
+    else if (material_interaction_type ==
+             material_interactions_type::fluid_solid)
+      {
+        std::pair<unsigned int, unsigned int> fluid_solid_material_interaction(
+          material_0_id, material_1_id);
+        return fluid_solid_interactions_with_material_interaction_ids
+          .find(fluid_solid_material_interaction)
+          ->second;
+      }
+    else
+      throw(std::runtime_error(
+        "Invalid type of material interaction. The choices are <fluid-fluid|fluid-solid>"));
+  }
+
 private:
   void
   establish_fields_required_by_model(PhysicalPropertyModel &model);
+
+  void
+  establish_fields_required_by_model(InterfacePropertyModel &model);
 
   /** @brief Calculates the global id of the physical property. By default. Lethe stores all
    *  the properties of the fluids, then the properties of the solid. Fluids
@@ -242,7 +296,6 @@ private:
       }
   }
 
-
 public:
   bool is_initialized;
 
@@ -253,6 +306,7 @@ private:
   std::vector<std::shared_ptr<RheologicalModel>>         rheology;
   std::vector<std::shared_ptr<ThermalExpansionModel>>    thermal_expansion;
   std::vector<std::shared_ptr<TracerDiffusivityModel>>   tracer_diffusivity;
+  std::vector<std::shared_ptr<SurfaceTensionModel>>      surface_tension;
 
   std::map<field, bool> required_fields;
 
@@ -266,6 +320,13 @@ private:
 
   unsigned int number_of_fluids;
   unsigned int number_of_solids;
+  unsigned int number_of_material_interactions;
+
+  // For material interactions
+  std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+    fluid_fluid_interactions_with_material_interaction_ids;
+  std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+    fluid_solid_interactions_with_material_interaction_ids;
 };
 
 #endif

@@ -34,8 +34,9 @@ test()
   // Create a physical property manager
 
   Parameters::PhysicalProperties physical_properties;
-  physical_properties.number_of_fluids = 1;
-  physical_properties.number_of_solids = 0;
+  physical_properties.number_of_fluids                = 1;
+  physical_properties.number_of_solids                = 0;
+  physical_properties.number_of_material_interactions = 0;
   physical_properties.fluids.resize(1);
   physical_properties.fluids[0].density_model =
     Parameters::Material::DensityModel::constant;

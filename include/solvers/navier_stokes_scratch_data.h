@@ -936,7 +936,7 @@ public:
   std::vector<double> viscosity_1;
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
-
+  std::vector<double> surface_tension;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
