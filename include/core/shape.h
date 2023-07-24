@@ -1812,7 +1812,7 @@ private:
   // reducing the memory footprint: increasing levels_not_precalculated
   // increases evaluation time.
   int    levels_not_precalculated;
-  double maximal_support_radius;
+  double minimal_support_radius;
 
 public:
   std::vector<size_t>           nodes_id;

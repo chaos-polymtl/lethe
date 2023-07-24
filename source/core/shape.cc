@@ -1403,8 +1403,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , position_precalculated(position)
   , orientation_precalculated(orientation)
   , levels_not_precalculated(0)
-  , maximal_support_radius(
-      *std::max_element(std::begin(support_radii), std::end(support_radii)))
+  , minimal_support_radius(
+      *std::min_element(std::begin(support_radii), std::end(support_radii)))
   , nodes_id(weights.size())
   , weights(weights)
   , nodes_positions(nodes)
@@ -1443,8 +1443,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   position_precalculated    = Point<dim>(this->position);
   orientation_precalculated = Tensor<1, 3>(this->orientation);
   levels_not_precalculated  = 0;
-  maximal_support_radius =
-    *std::max_element(std::begin(support_radii), std::end(support_radii));
+  minimal_support_radius =
+    *std::min_element(std::begin(support_radii), std::end(support_radii));
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -1740,7 +1740,15 @@ RBFShape<dim>::update_precalculations(
         {
           // We first check if we are in the hierarchy levels where we simply
           // assume that children have the same likely nodes as their parents.
-          if (level + 1 + levels_not_precalculated > maximal_level)
+          const bool no_need_to_precalculate_level =
+            (level + 1 + levels_not_precalculated > maximal_level);
+          // We also check if the cell diameter is lower than the minimal
+          // support radius. In that case, the likely nodes should stay more or
+          // less the same.
+          const bool cell_smaller_than_rbf_radius =
+            (cell->diameter() < minimal_support_radius);
+          if ((no_need_to_precalculate_level || cell_smaller_than_rbf_radius) &&
+              level != 0)
             {
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
               continue;
@@ -1758,7 +1766,8 @@ RBFShape<dim>::update_precalculations(
             determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
 
-      // We remove unnecessary cells
+      // We remove unnecessary cells: inactive_ones and ones from previous
+      // levels
       for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
         {
           auto cell = it->first;
@@ -1768,12 +1777,11 @@ RBFShape<dim>::update_precalculations(
           // the cell's entry needs to be kept in memory because it will be used
           // as is for its children cells (by shared pointer).
           const unsigned int cell_level = cell->level();
-          bool               cell_still_needed =
-            cell->is_active() ||
-            (cell_level + 1 + levels_not_precalculated > level);
+          bool cell_still_needed = cell->is_active() || (cell_level == level);
           if (!cell_still_needed || cell->is_artificial_on_level())
             {
               likely_nodes_map.erase(it++);
+              it--;
             }
           else
             ++it;
