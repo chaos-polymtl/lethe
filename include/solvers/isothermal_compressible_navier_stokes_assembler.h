@@ -68,7 +68,6 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
-
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the isothermal compressible Navier Stokes equations. For

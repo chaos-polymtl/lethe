@@ -217,7 +217,6 @@ public:
     return density_ref;
   }
 
-
 private:
   const double density_ref;
   const double psi;
