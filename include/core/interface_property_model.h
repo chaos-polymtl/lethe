@@ -75,7 +75,7 @@ public:
                std::vector<double> &                       property_vector) = 0;
 
   /**
-   * @brief jacobian Calcualtes the jacobian (the partial derivative) of the interface
+   * @brief jacobian Calculates the jacobian (the partial derivative) of the interface
    * property with respect to a field
    * @param field_values Value of the various fields on which the property may depend.
    * @param id Indicator of the field with respect to which the jacobian
