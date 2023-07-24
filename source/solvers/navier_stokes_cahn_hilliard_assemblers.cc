@@ -35,7 +35,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  std::vector<double> &phase_values = scratch_data.phase_order_ch_values;
+  //std::vector<double> &phase_values = scratch_data.phase_order_ch_values;
 
   // Equations are formulated in incompressible form (density must be constant)
   Assert(scratch_data.properties_manager.density_is_constant(),
@@ -125,8 +125,8 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
                                  dynamic_viscosity_eq * velocity_laplacian -
                                  dynamic_viscosity_eq * grad_div_velocity -
                                  density_eq * force +
-//                                 relative_diffusive_flux * velocity_gradient -
-//                                 curvature_ch * potential_value * phase_order_gradient +
+                                 relative_diffusive_flux * velocity_gradient -
+                                 curvature_ch * potential_value * phase_order_gradient +
                                  strong_residual_vec[q]  ;
 
           std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
@@ -207,13 +207,15 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
                     // Relative diffusive flux term
                     relative_diffusive_flux * grad_phi_u_j * phi_u_i;
 
-                  // Jacobian is currently incomplete
-                  if (SUPG)
-                    {
-                      local_matrix_ij +=
+                  // PSPG GLS Term
+                  local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
+
+                  // SUPG stabilization
+                  local_matrix_ij +=
                         tau * (strong_jac * grad_phi_u_i_x_velocity +
                                strong_residual_x_grad_phi_u_i * phi_u_j);
-                    }
+
+
                   local_matrix_ij *= JxW;
                   local_matrix(i, j) += local_matrix_ij;
                 }
@@ -337,16 +339,15 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
             u_mag, viscosity_eq, h, sdt, 1.);
 
       // Calculate the strong residual for GLS stabilization
+
       auto strong_residual = density_eq * velocity_gradient * velocity +
                              pressure_gradient -
                              dynamic_viscosity_eq * velocity_laplacian -
                              dynamic_viscosity_eq * grad_div_velocity -
                              density_eq * force +
-                             //relative_diffusive_flux * velocity_gradient -
-                             //curvature_ch * potential_value * phase_order_gradient +
-                             strong_residual_vec[q]
-                             //
-                             ;
+                             relative_diffusive_flux * velocity_gradient -
+                             curvature_ch * potential_value * phase_order_gradient +
+                             strong_residual_vec[q];
 
       //        std::cout<<" velocity : "<< velocity<<std::endl;
       //        std::cout<<" velocity gradient : "<<
@@ -391,12 +392,14 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
              +
              curvature_ch * potential_value * phase_order_gradient * phi_u_i) *
             JxW;
+
+          // PSPG GLS term
+            local_rhs(i) +=
+                    -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
+
           // SUPG GLS term
-          if (SUPG)
-            {
               local_rhs(i) +=
                 -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
-            }
         }
     }
 }
