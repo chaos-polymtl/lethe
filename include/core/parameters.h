@@ -449,7 +449,7 @@ namespace Parameters
     // Fluid-fluid or fluid-solid interactions
     std::vector<MaterialInteractions> material_interactions;
     unsigned int                      number_of_material_interactions;
-    static const unsigned int         max_material_interactions = 5;
+    static const unsigned int         max_material_interactions = 3;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interactions_with_material_interaction_ids;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int>
