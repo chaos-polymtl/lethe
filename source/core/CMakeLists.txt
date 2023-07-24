@@ -42,6 +42,7 @@ add_library(lethe-core
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver.h
+  ../../include/core/interface_property_model.h
   ../../include/core/kinsol_newton_non_linear_solver.h
   ../../include/core/lethe_grid_tools.h
   ../../include/core/manifolds.h
@@ -73,7 +74,7 @@ add_library(lethe-core
   ../../include/core/thermal_expansion_model.h
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
-  ../../include/core/utilities.h ../../include/core/interface_property_model.h)
+  ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)
 target_include_directories(lethe-core PUBLIC ../../include)
