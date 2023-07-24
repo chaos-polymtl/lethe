@@ -21,6 +21,7 @@ Features
 --------------------------
 Files Used in This Example
 --------------------------
+
 - Parameter file: ``examples/multiphysics/rising-bubble/rising_bubble.prm``
 - Python file to generate plot: ``examples/multiphysics/rising-bubble/rising_bubble.py``
 
@@ -123,7 +124,6 @@ The interface sharpening method and its parameters are explained in the :doc:`..
 
     subsection surface tension force
       set enable                                = true
-      set surface tension coefficient           = 24.5
       set phase fraction gradient filter factor = 4
       set curvature filter factor               = 1
       set output auxiliary fields               = true
@@ -160,7 +160,7 @@ Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
 In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``:
+A similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``. Then a ``fluid-fluid`` type of material interaction is added to specify the ``surface tension model``. In this case, it is set to ``constant`` with the ``surface tension coefficient`` :math:`\sigma` set to :math:`24.5`.
 
 
 .. code-block:: text
@@ -174,6 +174,16 @@ A similar procedure is done for the phase associated with a VOF indicator of 1 i
       subsection fluid 1
         set density             = 100
         set kinematic viscosity = 0.01
+      end
+      set number of material interactions = 1
+      subsection material interaction 0
+        set type = fluid-fluid
+        subsection fluid-fluid interaction
+          set first fluid id              = 0
+          set second fluid id             = 1
+          set surface tension model       = constant
+          set surface tension coefficient = 24.5
+        end
       end
     end
 

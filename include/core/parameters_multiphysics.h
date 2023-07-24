@@ -167,9 +167,6 @@ namespace Parameters
   struct VOF_SurfaceTensionForce
   {
     bool enable;
-    // Surface tension coefficient.
-    // This will be moved to the property manager in another PR.
-    double surface_tension_coef;
 
     double phase_fraction_gradient_diffusion_factor;
     double curvature_diffusion_factor;

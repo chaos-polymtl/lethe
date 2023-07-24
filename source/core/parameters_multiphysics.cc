@@ -438,11 +438,6 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Enable surface tension force calculation <true|false>");
 
-    prm.declare_entry("surface tension coefficient",
-                      "0.0",
-                      Patterns::Double(),
-                      "Surface tension coefficient");
-
     prm.declare_entry("output auxiliary fields",
                       "false",
                       Patterns::Bool(),
@@ -490,8 +485,6 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("surface tension force");
   {
     enable = prm.get_bool("enable");
-    // Surface tension coefficient
-    surface_tension_coef = prm.get_double("surface tension coefficient");
     phase_fraction_gradient_diffusion_factor =
       prm.get_double("phase fraction gradient diffusion factor");
     curvature_diffusion_factor = prm.get_double("curvature diffusion factor");

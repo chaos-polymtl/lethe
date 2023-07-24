@@ -105,8 +105,9 @@ RestartNavierStokes<dim>::run()
   physical_properties.number_of_fluids = 1;
   physical_properties.fluids[0].rheological_model =
     Parameters::Material::RheologicalModel::newtonian;
-  physical_properties.fluids[0].viscosity = 1;
-  physical_properties.number_of_solids    = 0;
+  physical_properties.fluids[0].viscosity             = 1;
+  physical_properties.number_of_solids                = 0;
+  physical_properties.number_of_material_interactions = 0;
 
 
   this->simulation_parameters.physical_properties_manager.initialize(

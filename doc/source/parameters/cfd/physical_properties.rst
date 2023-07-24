@@ -34,43 +34,96 @@ Physical Properties
       set tracer diffusivity model   = constant
       set tracer diffusivity         = 0
     end
+
     set number of solids = 0
+
+    set number of material interactions = 1
+    subsection material interaction 0
+      set type = fluid-fluid
+      subsection fluid-fluid interaction
+        set first fluid id              = 0
+        set second fluid id             = 1
+
+        # Surface tension
+        set surface tension model       = constant
+        set surface tension coefficient = 0
+      end
+
+      # if fluid-solid interaction
+      subsection fluid-solid interaction
+        set fluid id                    = 0
+        set solid id                    = 0
+
+        # Surface tension
+        set surface tension model       = constant
+        set surface tension coefficient = 0
+      end
+    end
   end
  
 * The ``number of fluids`` parameter controls the number of fluids in the simulation. This parameter is set to ``1`` except in `Two Phase Simulations`_ .
 
-* The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological Models`_ .
+  * The ``rheological model`` parameter sets the choice of rheological model. The choices are between ``newtonian``, ``power-law``, ``carreau`` and ``phase_change``. For more details on the rheological models, see  `Rheological Models`_ .
 
-* The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonain fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
+  * The ``kinematic viscosity`` parameter is the kinematic viscosity of the newtonian fluid in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`. In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`. This viscosity is only used when ``rheological model = newtonian``.
 
-* The ``density model`` specifies the model used to calculate the density. At the moment, a ``constant`` density and an ``isothermal_ideal_gas`` model are supported. For more details on the density models, see `Density Models`_.
+  * The ``density model`` specifies the model used to calculate the density. At the moment, a ``constant`` density and an ``isothermal_ideal_gas`` model are supported. For more details on the density models, see `Density Models`_.
 
-* The ``density`` parameter is the constant density of the fluid in units of :math:`\text{Mass} \cdot \text{Length}^{-3}`
+  * The ``density`` parameter is the constant density of the fluid in units of :math:`\text{Mass} \cdot \text{Length}^{-3}`
 
-* The ``specific heat model`` specifies the model used to calculate the specific heat. At the moment, only a constant specific heat is supported.
+  * The ``specific heat model`` specifies the model used to calculate the specific heat. At the moment, only a constant specific heat is supported.
 
-* The ``specific heat`` parameter is the constant specific heat of the fluid in units of :math:`\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}` .
+  * The ``specific heat`` parameter is the constant specific heat of the fluid in units of :math:`\text{Energy} \cdot \text{Temperature}^{-1} \cdot \text{Mass}^{-1}` .
 
-* The ``thermal conductivity model`` specifies the model used to calculate the thermal conductivity. At the moment, ``constant`` and ``linear`` thermal conductivity are available. For more details on the thermal conductivity models, see `Thermal Conductivity Models`_.
+  * The ``thermal conductivity model`` specifies the model used to calculate the thermal conductivity. At the moment, ``constant`` and ``linear`` thermal conductivity are available. For more details on the thermal conductivity models, see `Thermal Conductivity Models`_.
 
-* The ``thermal conductivity`` parameter is the thermal conductivity coefficient of the fluid with units of :math:`\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}`.
+  * The ``thermal conductivity`` parameter is the thermal conductivity coefficient of the fluid with units of :math:`\text{Power} \cdot \text{Temperature}^{-1} \cdot \text{Length}^{-1}`.
 
-* The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, only a constant thermal expansion is supported.
+  * The ``thermal expansion model`` specifies the model used to calculate the thermal expansion coefficient. At the moment, only a constant thermal expansion is supported.
 
-* The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`. Thermal expansion coefficient is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation. Using the Boussinesq approximation, the following source term is added to the Navier-Stokes equation.
+  * The ``thermal expansion`` parameter is the thermal expansion coefficient of the fluid with dimension of :math:`\text{Temperature}^{-1}`. It is used to define the buoyancy-driven flow (natural convection) using the Boussinesq approximation, which leads to the definition of the following source term that is added to the Navier-Stokes equation:
 
-.. math::
+    .. math::
 
-  {\bf{F_{B}}} = -\beta {\bf{g}} (T-T_0) 
+      {\bf{F_{B}}} = -\beta {\bf{g}} (T-T_0)
 
-where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_0` is the base temperature.
+    where :math:`F_B` denotes the buoyant force source term, :math:`\beta` is the thermal expansion coefficient, :math:`T` is temperature, and :math:`T_0` is the base temperature.
 
-* The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, only a constant tracer diffusivity is supported.
+  * The ``tracer diffusivity model`` specifies the model used to calculate the tracer diffusivity. At the moment, only a constant tracer diffusivity is supported.
 
-* The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI this is :math:`\text{m}^{2} \cdot \text{s}^{-1}` .
+  * The ``tracer diffusivity`` parameter is the diffusivity coefficient of the tracer in units of :math:`\text{Length}^{2} \cdot \text{Time}^{-1}` . In SI, this is :math:`\text{m}^{2} \cdot \text{s}^{-1}`.
 
 * The ``number of solids`` parameter controls the number of solid regions. Solid regions are currently only implemented for `Conjugate Heat Transfer`_.
 
+* The ``number of material interactions`` parameter controls the number of physical properties that are due to the interaction between two materials. At the moment, only the surface tension between two fluids is implemented in `Two Phase Simulations`_.
+
+  * The material interaction ``type`` can either be ``fluid-fluid`` (default) or ``fluid-solid``.
+
+  * In the ``fluid-fluid`` subsection we define the pair of fluids and their physical properties.
+
+    * The ``first fluid id`` is the id of the first fluid.
+
+    * The ``second fluid id`` is the id of the second fluid.
+
+      .. attention::
+          The ``second fluid id`` should be greater than the ``first fluid id``.
+
+    * The ``surface tension model`` specifies the model used to calculate the surface tension coefficient of the fluid-fluid pair. At the moment, only the ``constant`` model is supported.
+
+    * The ``surface tension coefficient`` parameter is the constant surface tension coefficient of the two interacting fluids in units of :math:`\text{Mass} \cdot \text{Time}^{-2}`. In SI, this is :math:`\text{N} \cdot \text{m}^{-1}`. The surface tension coefficient is used to define the Weber number (:math:`We`):
+
+      .. math::
+          We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}
+
+      where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
+
+  * In the ``fluid-solid`` subsection we define the fluid-solid pair and their physical properties.
+
+    * The ``fluid id`` is the id of the fluid.
+
+    * The ``solid id`` is the id of the solid.
+
+    * The ``surface tension model``  and ``surface tension coefficient`` are the same as described in the ``fluid-fluid`` subsection above.
 
 .. note:: 
   The default values for all physical properties models in Lethe is ``constant``. Consequently, it is not necessary (and not recommended) to specify the physical property model unless this model is not constant. This generates parameter files that are easier to read.
@@ -116,7 +169,7 @@ For two phases, the properties are defined for each fluid. Default values are:
 Conjugate Heat Transfer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be put to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physcal properties of the solid region are set in an identical fashion as those of the fluid. 
+Conjugate heat transfer enables the addition of solid regions in which the fluid dynamics is not solved for. To enable the presence of a solid region, ``number of solids`` must be set to 1. By default, the region with the ``material_id=0`` will be the fluid region whereas the region with ``material_id=1`` will be the solid region. The physical properties of the solid region are set in an identical fashion as those of the fluid.
 
 .. warning::
   This is an experimental feature. It has not been tested on a large range of application cases. 

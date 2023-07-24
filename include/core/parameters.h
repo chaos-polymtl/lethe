@@ -297,6 +297,19 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, const Dimensionality dimensions);
   };
 
+  /**
+   * @brief SurfaceTensionParameters - Defines parameters for surface tension models
+   */
+  struct SurfaceTensionParameters
+  {
+    // Surface tension coefficient (sigma) in N/m
+    double surface_tension_coefficient;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
   /**
    * @brief Material - Class that defines the physical property of a material.
@@ -376,7 +389,39 @@ namespace Parameters
     double k_A1;
   };
 
+  /**
+   * @brief MaterialInteractions - Class that defines physical properties due to interactions between two different materials (either fluid-fluid or fluid-solid).
+   */
+  class MaterialInteractions
+  {
+  public:
+    MaterialInteractions()
+    {}
 
+    enum class MaterialInteractionsType
+    {
+      fluid_fluid,
+      fluid_solid
+    } material_interaction_type;
+
+    // Surface tension models
+    enum class SurfaceTensionModel
+    {
+      constant
+    } surface_tension_model;
+    SurfaceTensionParameters surface_tension_parameters;
+
+    std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_fluid_interaction_with_material_interaction_id;
+    std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_solid_interaction_with_material_interaction_id;
+
+    void
+    declare_parameters(ParameterHandler &prm, unsigned int id);
+
+    void
+    parse_parameters(ParameterHandler &prm, const unsigned int id);
+  };
 
   /**
    * @brief PhysicalProperties - Define the possible physical properties.
@@ -400,6 +445,15 @@ namespace Parameters
     std::vector<Material>     solids;
     unsigned int              number_of_solids;
     static const unsigned int max_solids = 1;
+
+    // Fluid-fluid or fluid-solid interactions
+    std::vector<MaterialInteractions> material_interactions;
+    unsigned int                      number_of_material_interactions;
+    static const unsigned int         max_material_interactions = 3;
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_fluid_interactions_with_material_interaction_ids;
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int>
+      fluid_solid_interactions_with_material_interaction_ids;
 
     void
     declare_parameters(ParameterHandler &prm);

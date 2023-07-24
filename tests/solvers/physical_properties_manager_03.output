@@ -15,3 +15,13 @@ DEAL::Testing PhysicalPropertiesManager - Solid 1
 DEAL::Density              : 110.000
 DEAL::Specific heat        : 120.000
 DEAL::Thermal conductivity : 130.000
+DEAL::Testing PhysicalPropertiesManager - Material interaction 0
+DEAL::Surface tension      : 10.0000
+DEAL::Testing PhysicalPropertiesManager - Material interaction 1
+DEAL::Surface tension      : 20.0000
+DEAL::Testing PhysicalPropertiesManager - Material interaction 2
+DEAL::Surface tension      : 30.0000
+DEAL::Testing PhysicalPropertiesManager - Material interaction 3
+DEAL::Surface tension      : 40.0000
+DEAL::Testing PhysicalPropertiesManager - Material interaction 4
+DEAL::Surface tension      : 50.0000

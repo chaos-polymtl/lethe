@@ -11,15 +11,28 @@ DeclException2(
   << " The liquidus temperature specific is below or equal to the solidus temperature."
   << " The phase change specific heat model requires that T_liquidus>T_solidus.");
 
-DeclException1(NumberOfFluidsError,
-               int,
-               << "Number of fluids: " << arg1
-               << " is not 1 (single phase simulation) or 2 (VOF simulation)");
+DeclException1(
+  NumberOfFluidsError,
+  int,
+  << "Number of fluids: " << arg1
+  << " is not 1 (single phase simulation) or 2 (VOF simulation). This is currently not supported.");
 
 DeclException1(NumberOfSolidsError,
                int,
                << "Number of solids: " << arg1
                << " is larger than 1. This is currently not supported.");
+
+DeclException1(NumberOfMaterialInteractionsError,
+               int,
+               << "Number of material interactions: " << arg1
+               << " is larger than 3. This is currently not supported.");
+
+DeclException2(
+  OrderOfFluidIDsError,
+  int,
+  int,
+  << "The first fluid's id is " << arg1 << " and the id of the second fluid is "
+  << arg2 << ". The first fluid's id should be lower than the second fluid's.");
 
 DeclException1(
   TwoDimensionalLaserError,
@@ -408,6 +421,22 @@ namespace Parameters
   }
 
   void
+  SurfaceTensionParameters::declare_parameters(dealii::ParameterHandler &prm)
+  {
+    prm.declare_entry(
+      "surface tension coefficient",
+      "0",
+      Patterns::Double(),
+      "Surface tension coefficient for the corresponding pair of fluids or fluid-solid pair");
+  }
+
+  void
+  SurfaceTensionParameters::parse_parameters(ParameterHandler &prm)
+  {
+    surface_tension_coefficient = prm.get_double("surface tension coefficient");
+  }
+
+  void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("stabilization");
@@ -577,6 +606,8 @@ namespace Parameters
     number_of_fluids = 1;
     solids.resize(max_solids);
     number_of_solids = 0;
+    material_interactions.resize(max_material_interactions);
+    number_of_material_interactions = 0;
 
     prm.enter_subsection("physical properties");
     {
@@ -602,6 +633,21 @@ namespace Parameters
           solids[i_solid].declare_parameters(prm, "solid", i_solid);
         }
     }
+
+    // Definition of interactions between materials
+    prm.declare_entry(
+      "number of material interactions",
+      "0",
+      Patterns::Integer(),
+      "Number of material interactions (either fluid-fluid or fluid-solid)");
+
+    for (unsigned int i_material_interaction = 0;
+         i_material_interaction < max_material_interactions;
+         ++i_material_interaction)
+      {
+        material_interactions[i_material_interaction].declare_parameters(
+          prm, i_material_interaction);
+      }
 
     prm.leave_subsection();
   }
@@ -629,7 +675,31 @@ namespace Parameters
           solids[i_solid].parse_parameters(prm, "solid", i_solid, dimensions);
         }
       AssertThrow(number_of_solids <= max_solids,
-                  NumberOfSolidsError(number_of_fluids));
+                  NumberOfSolidsError(number_of_solids));
+
+      // Definition of interactions between materials
+      number_of_material_interactions =
+        prm.get_integer("number of material interactions");
+      AssertThrow(number_of_material_interactions <= max_material_interactions,
+                  NumberOfMaterialInteractionsError(
+                    number_of_material_interactions));
+      for (unsigned int i_material_interaction = 0;
+           i_material_interaction < number_of_material_interactions;
+           ++i_material_interaction)
+        {
+          material_interactions[i_material_interaction].parse_parameters(
+            prm, i_material_interaction);
+          if (material_interactions[i_material_interaction]
+                .material_interaction_type ==
+              MaterialInteractions::MaterialInteractionsType::fluid_fluid)
+            fluid_fluid_interactions_with_material_interaction_ids.insert(
+              material_interactions[i_material_interaction]
+                .fluid_fluid_interaction_with_material_interaction_id);
+          else // fluid-solid interaction
+            fluid_solid_interactions_with_material_interaction_ids.insert(
+              material_interactions[i_material_interaction]
+                .fluid_solid_interaction_with_material_interaction_id);
+        }
     }
     prm.leave_subsection();
   }
@@ -855,6 +925,142 @@ namespace Parameters
       // Phase change properties
       //--------------------------------
       phase_change_parameters.parse_parameters(prm, dimensions);
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  MaterialInteractions::declare_parameters(ParameterHandler &prm,
+                                           unsigned int      id)
+  {
+    prm.enter_subsection("material interaction " +
+                         Utilities::int_to_string(id, 1));
+    {
+      prm.declare_entry(
+        "type",
+        "fluid-fluid",
+        Patterns::Selection("fluid-fluid|fluid-solid"),
+        "Type of materials interacting. Choices are <fluid-fluid|fluid-solid>");
+
+      // Fluid-fluid interactions
+      prm.enter_subsection("fluid-fluid interaction");
+      {
+        prm.declare_entry(
+          "first fluid id",
+          "0",
+          Patterns::Integer(),
+          "ID of the first fluid interacting with the second fluid. This value should be lower than the second fluid's id.");
+        prm.declare_entry(
+          "second fluid id",
+          "1",
+          Patterns::Integer(),
+          "ID of the second fluid interacting with the first fluid. This value should be greater than the first fluid's id.");
+
+        // Surface tension interactions
+        prm.declare_entry(
+          "surface tension model",
+          "constant",
+          Patterns::Selection("constant"),
+          "Model used for the calculation of the surface tension coefficient"
+          "At the moment, the only choice is <constant>");
+        surface_tension_parameters.declare_parameters(prm);
+      }
+      prm.leave_subsection();
+
+      // Fluid-solid interactions
+      prm.enter_subsection("fluid-solid interaction");
+      {
+        prm.declare_entry("fluid id",
+                          "0",
+                          Patterns::Integer(),
+                          "ID of the fluid interacting with the solid");
+        prm.declare_entry("solid id",
+                          "0",
+                          Patterns::Integer(),
+                          "ID of the solid interacting with the fluid");
+
+        // Surface tension interactions
+        prm.declare_entry(
+          "surface tension model",
+          "constant",
+          Patterns::Selection("constant"),
+          "Model used for the calculation of the surface tension coefficient"
+          "At the moment, the only choice is <constant>");
+        surface_tension_parameters.declare_parameters(prm);
+      }
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  MaterialInteractions::parse_parameters(ParameterHandler &prm, unsigned int id)
+  {
+    prm.enter_subsection("material interaction " +
+                         Utilities::int_to_string(id, 1));
+    {
+      std::string op;
+      op = prm.get("type");
+      if (op == "fluid-fluid")
+        material_interaction_type = MaterialInteractionsType::fluid_fluid;
+      else if (op == "fluid-solid")
+        material_interaction_type = MaterialInteractionsType::fluid_solid;
+      else
+        throw(std::runtime_error(
+          "Invalid material interaction type. Choices are <fluid-fluid|fluid-solid>"));
+
+      if (material_interaction_type == MaterialInteractionsType::fluid_fluid)
+        {
+          prm.enter_subsection("fluid-fluid interaction");
+          std::pair<unsigned int, unsigned int> fluid_fluid_interaction;
+          fluid_fluid_interaction.first  = prm.get_integer("first fluid id");
+          fluid_fluid_interaction.second = prm.get_integer("second fluid id");
+          AssertThrow(fluid_fluid_interaction.first <=
+                        fluid_fluid_interaction.second,
+                      OrderOfFluidIDsError(fluid_fluid_interaction.first,
+                                           fluid_fluid_interaction.second));
+          fluid_fluid_interaction_with_material_interaction_id.first =
+            fluid_fluid_interaction;
+          fluid_fluid_interaction_with_material_interaction_id.second = id;
+
+          // Surface tension
+          op = prm.get("surface tension model");
+          if (op == "constant")
+            {
+              surface_tension_model = SurfaceTensionModel::constant;
+              surface_tension_parameters.parse_parameters(prm);
+            }
+          else
+            throw(std::runtime_error(
+              "Invalid surface tension model. At the moment, the only choice is <constant>"));
+
+          prm.leave_subsection();
+        }
+      else // Solid-fluid interactions
+        {
+          prm.enter_subsection("fluid-solid interaction");
+          std::pair<unsigned int, unsigned int> fluid_solid_interaction;
+          fluid_solid_interaction.first  = prm.get_integer("fluid id");
+          fluid_solid_interaction.second = prm.get_integer("solid id");
+          fluid_solid_interaction_with_material_interaction_id.first =
+            fluid_solid_interaction;
+          fluid_solid_interaction_with_material_interaction_id.second = id;
+
+          // Surface tension
+          op = prm.get("surface tension model");
+          if (op == "constant")
+            {
+              surface_tension_model = SurfaceTensionModel::constant;
+              surface_tension_parameters.parse_parameters(prm);
+            }
+          else
+            throw(std::runtime_error(
+              "Invalid surface tension model. At the moment, the only choice is <constant>"));
+          std::pair<std::pair<unsigned int, unsigned int>, SurfaceTensionModel>
+            fluid_solid_surface_tension_interaction(fluid_solid_interaction,
+                                                    surface_tension_model);
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }

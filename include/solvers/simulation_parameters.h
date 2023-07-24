@@ -180,6 +180,52 @@ public:
           "Inconsistency in .prm!\n in subsection VOF, with sharpening type = adaptative\n "
           "use: monitoring = true");
       }
+    if (multiphysics.vof_parameters.surface_tension_force.enable &&
+        physical_properties.number_of_material_interactions == 0)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n in subsection VOF, with surface tension force enabled,\n but no material interactions specified in\n subsection physical properties\n"
+          "use:\n"
+          "  set number of material interactions = 1\n"
+          "  subsection material interaction 0\n"
+          "    set type = fluid-fluid\n"
+          "    subsection fluid-fluid interaction\n"
+          "      set first fluid id              = 0\n"
+          "      set second fluid id             = 1\n"
+          "      set surface tension model       = constant\n"
+          "      set surface tension coefficient = $value_of_coefficient\n"
+          "    end\n"
+          "  end");
+      }
+    if (multiphysics.vof_parameters.surface_tension_force.enable)
+      {
+        bool error = true;
+        for (unsigned int i = 0;
+             i < physical_properties.number_of_material_interactions;
+             ++i)
+          {
+            if (physical_properties.material_interactions[i]
+                  .material_interaction_type ==
+                Parameters::MaterialInteractions::MaterialInteractionsType::
+                  fluid_fluid)
+              error = false;
+          }
+        if (error)
+          {
+            throw std::logic_error(
+              "Inconsistency in .prm!\n in subsection VOF, with surface tension force enabled,\n but no fluid-fluid material interactions specified in\n subsection physical properties\n"
+              "use:\n"
+              "  subsection material interaction $material_interaction_id\n"
+              "    set type = fluid-fluid\n"
+              "    subsection fluid-fluid interaction\n"
+              "      set first fluid id              = 0\n"
+              "      set second fluid id             = 1\n"
+              "      set surface tension model       = constant\n"
+              "      set surface tension coefficient = $value_of_coefficient\n"
+              "    end\n"
+              "  end");
+          }
+      }
   }
 
 private:
