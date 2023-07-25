@@ -1794,12 +1794,12 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator cell);
 
 private:
-  size_t                               number_of_nodes;
-  std::shared_ptr<HyperRectangle<dim>> bounding_box;
-  std::vector<size_t>                  iterable_nodes;
+  size_t                                            number_of_nodes;
+  std::shared_ptr<HyperRectangle<dim>>              bounding_box;
+  std::vector<std::shared_ptr<std::vector<size_t>>> iterable_nodes;
 
   std::map<const typename DoFHandler<dim>::cell_iterator,
-           std::shared_ptr<std::vector<size_t>>>
+           std::shared_ptr<std::vector<std::shared_ptr<std::vector<size_t>>>>>
                    likely_nodes_map;
   size_t           max_number_of_nodes;
   DoFHandler<dim> *dof_handler;
@@ -1815,12 +1815,12 @@ private:
   double minimal_support_radius;
 
 public:
-  std::vector<size_t>           nodes_id;
-  std::vector<double>           weights;
-  std::vector<Point<dim>>       nodes_positions;
-  std::vector<Point<dim>>       rotated_nodes_positions;
-  std::vector<double>           support_radii;
-  std::vector<RBFBasisFunction> basis_functions;
+  std::vector<std::shared_ptr<std::vector<size_t>>> nodes_id;
+  std::vector<double>                               weights;
+  std::vector<Point<dim>>                           nodes_positions;
+  std::vector<Point<dim>>                           rotated_nodes_positions;
+  std::vector<double>                               support_radii;
+  std::vector<RBFBasisFunction>                     basis_functions;
 };
 
 
