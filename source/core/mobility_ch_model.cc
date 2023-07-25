@@ -18,23 +18,19 @@
 
 std::shared_ptr<MobilityCahnHilliardModel>
 MobilityCahnHilliardModel::model_cast(
-  const Parameters::MaterialInteractions &material_interaction_properties)
+  const Parameters::MaterialInteractions &material_interaction_parameters)
 {
-  if (material_interaction_properties.mobility_ch_model ==
+  if (material_interaction_parameters.mobility_ch_model ==
       Parameters::MaterialInteractions::MobilityCahnHilliardModel::quartic)
     {
-      std::cout << "mobility ch_constant = "
-                << material_interaction_properties.mobility_ch_parameters
-                     .mobility_ch_constant
-                << std::endl;
       return std::make_shared<MobilityCahnHilliardModelQuartic>(
-        material_interaction_properties.mobility_ch_parameters
+        material_interaction_parameters.mobility_ch_parameters
           .mobility_ch_constant);
     }
   else
     {
       return std::make_shared<MobilityCahnHilliardModelConstant>(
-        material_interaction_properties.mobility_ch_parameters
+        material_interaction_parameters.mobility_ch_parameters
           .mobility_ch_constant);
     }
 }

@@ -211,6 +211,13 @@ public:
     return surface_tension;
   }
 
+  std::vector<std::shared_ptr<MobilityCahnHilliardModel>>
+  get_mobility_ch_vector() const
+  {
+    return mobility_ch;
+  }
+
+
   double
   get_viscosity_scale() const
   {

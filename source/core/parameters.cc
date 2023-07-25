@@ -1001,7 +1001,7 @@ namespace Parameters
           "cahn hilliard mobility model",
           "constant",
           Patterns::Selection("constant|quartic"),
-          "Model used for the calculation of the mobility in Cahn-Hilliard equations"
+          "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
           "Choices are <constant|quartic>");
         mobility_ch_parameters.declare_parameters(prm);
       }
@@ -1073,6 +1073,22 @@ namespace Parameters
           else
             throw(std::runtime_error(
               "Invalid surface tension model. At the moment, the only choice is <constant>"));
+
+          // Cahn-Hilliard mobility
+          op = prm.get("cahn hilliard mobility model");
+          if (op == "constant")
+            {
+              mobility_ch_model = MobilityCahnHilliardModel::constant;
+              mobility_ch_parameters.parse_parameters(prm);
+            }
+          else if (op == "quartic")
+            {
+              mobility_ch_model = MobilityCahnHilliardModel::quartic;
+              mobility_ch_parameters.parse_parameters(prm);
+            }
+          else
+            throw(std::runtime_error(
+              "Invalid mobility model. The choices are <constant|quartic>"));
 
           prm.leave_subsection();
         }

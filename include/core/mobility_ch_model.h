@@ -17,24 +17,25 @@
 #ifndef lethe_mobility_ch_model_h
 #define lethe_mobility_ch_model_h
 
+#include <core/interface_property_model.h>
 #include <core/physical_property_model.h>
 
 /**
  * @brief MobilityCahnHilliardModel. Abstract class that allows to calculate the
  * mobility for the Cahn-Hilliard-Navier-Stokes equations.
  */
-class MobilityCahnHilliardModel : public PhysicalPropertyModel
+class MobilityCahnHilliardModel : public InterfacePropertyModel
 {
 public:
   /**
    * @brief Instantiates and returns a pointer to a MobilityCahnHilliardModel object by casting it to
    * the proper child class
    *
-   * @param material_properties Parameters for a single fluid
+   * @param material_properties Parameters for the mobility calculation
    */
   static std::shared_ptr<MobilityCahnHilliardModel>
   model_cast(
-    const Parameters::MaterialInteractions &material_interaction_properties);
+    const Parameters::MaterialInteractions &material_interaction_parameters);
 };
 
 /**
@@ -164,10 +165,11 @@ public:
    */
 
   double
-  jacobian(const std::map<field, double> & /*field_values*/,
-           field /*id*/) override
+  jacobian(const std::map<field, double> &fields_value, field /*id*/) override
   {
-    return 0;
+    const double &phase_order_ch = fields_value.at(field::phase_order_ch);
+    return 4 * phase_order_ch * mobility_ch *
+           (1 - phase_order_ch * phase_order_ch);
   }
 
   /**
@@ -178,12 +180,15 @@ public:
    */
 
   void
-  vector_jacobian(
-    const std::map<field, std::vector<double>> & /*field_vectors*/,
-    const field /*id*/,
-    std::vector<double> &jacobian_vector) override
+  vector_jacobian(const std::map<field, std::vector<double>> &field_vectors,
+                  const field /*id*/,
+                  std::vector<double> &jacobian_vector) override
   {
-    std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+    const std::vector<double> &phase_order_ch =
+      field_vectors.at(field::phase_order_ch);
+    for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
+      jacobian_vector[i] = mobility_ch * 4 * phase_order_ch[i] *
+                           (1 - phase_order_ch[i] * phase_order_ch[i]);
   }
 
 private:

@@ -186,14 +186,14 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
     std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
 
   // Allocate physical properties
-  density_0            = std::vector<double>(n_q_points);
-  density_1            = std::vector<double>(n_q_points);
-  viscosity_0          = std::vector<double>(n_q_points);
-  viscosity_1          = std::vector<double>(n_q_points);
-  thermal_expansion_0  = std::vector<double>(n_q_points);
-  thermal_expansion_1  = std::vector<double>(n_q_points);
-  surface_tension      = std::vector<double>(n_q_points);
-  mobility_constant_ch = std::vector<double>(n_q_points);
+  density_0           = std::vector<double>(n_q_points);
+  density_1           = std::vector<double>(n_q_points);
+  viscosity_0         = std::vector<double>(n_q_points);
+  viscosity_1         = std::vector<double>(n_q_points);
+  thermal_expansion_0 = std::vector<double>(n_q_points);
+  thermal_expansion_1 = std::vector<double>(n_q_points);
+  surface_tension     = std::vector<double>(n_q_points);
+  mobility_ch         = std::vector<double>(n_q_points);
 }
 
 
@@ -371,6 +371,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               const auto surface_tension_model =
                 properties_manager.get_surface_tension(material_interaction_id);
               surface_tension_model->vector_value(fields, surface_tension);
+
+              const auto mobility_ch_model =
+                properties_manager.get_mobility_ch(material_interaction_id);
+              mobility_ch_model->vector_value(fields, mobility_ch);
             }
 
 
@@ -394,33 +398,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
           if (gather_ch)
             {
-              //                std::cout<<"Physical properties for
-              //                CH"<<std::endl;
-              const auto material_interaction_id =
-                properties_manager.get_material_interaction_id("fluid-fluid",
-                                                               0,
-                                                               1);
-              //                std::cout<<"mobility is being
-              //                gathered"<<std::endl; const auto
-              //                mobility_ch_model =
-              //                        properties_manager.get_mobility_ch(material_interaction_id);
-              //                std::cout<<"Surface tension is being
-              //                gathered"<<std::endl;
-              //              const auto surface_tension_model =
-              //                properties_manager.get_surface_tension(material_interaction_id);
-
-
-              //              surface_tension_model->vector_value(fields,
-              //              surface_tension);
-              //              mobility_ch_model->vector_value(fields,
-              //              mobility_constant_ch);
-
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  //                  std::cout<<"density_0[q]"<<density_0[q]<<std::endl;
-                  //                    std::cout<<"density_1[q]"<<density_1[q]<<std::endl;
-
                   this->density_diff =
                     0.5 * std::abs(density_0[q] - density_1[q]);
 
@@ -440,25 +420,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                 this->thermal_expansion_0[q],
                                                 this->thermal_expansion_1[q]);
                 }
-
-
-              //              for (unsigned p = 0; p <
-              //              previous_phase_values.size(); ++p)
-              //                {
-              //                  // Blend the physical properties using the
-              //                  CahnHilliard field for (unsigned int q = 0; q
-              //                  < this->n_q_points; ++q)
-              //                    {
-              //                      // Calculate previous density (right now
-              //                      assumes constant
-              //                      // density model per phase)
-              //                      previous_density[p][q] =
-              //                      calculate_point_property_ch(
-              //                        this->previous_phase_ch_values[p][q],
-              //                        this->density_0[q],
-              //                        this->density_1[q]);
-              //                    }
-              //                }
               break;
             }
 

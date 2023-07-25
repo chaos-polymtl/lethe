@@ -1017,7 +1017,7 @@ public:
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;
-  std::vector<double> mobility_constant_ch;
+  std::vector<double> mobility_ch;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -1134,7 +1134,6 @@ public:
    */
   double                      epsilon;
   double                      well_height;
-  double                      mobility_constant;
   double                      density_diff;
   double                      curvature_ch;
   bool                        gather_ch;
