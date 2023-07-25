@@ -223,7 +223,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
     const double dt  = time_steps_vector[0];
     const double sdt = 1. / dt;
 
-
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
            "GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs"));
