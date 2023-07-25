@@ -1411,13 +1411,21 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , support_radii(support_radii)
   , basis_functions(basis_functions)
 {
-  nodes_id[0]       = std::make_shared<std::vector<size_t>>(number_of_nodes);
-  iterable_nodes[0] = std::make_shared<std::vector<size_t>>(number_of_nodes);
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id_1 =
+    std::make_shared<std::vector<size_t>>(number_of_nodes);
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id_2 =
+    std::make_shared<std::vector<size_t>>(number_of_nodes);
   for (size_t i = 0; i < number_of_nodes; i++)
     {
-      (*(nodes_id[0]))[i]       = i;
-      (*(iterable_nodes[0]))[i] = i;
+      (*temp_nodes_id_1)[i] = i;
+      (*temp_nodes_id_2)[i] = i;
     }
+  nodes_id[0]       = {Point<dim>{},
+                 std::numeric_limits<double>::max(),
+                 temp_nodes_id_1};
+  iterable_nodes[0] = {Point<dim>{},
+                       std::numeric_limits<double>::max(),
+                       temp_nodes_id_2};
   rotate_nodes();
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
@@ -1443,13 +1451,22 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   nodes_positions.resize(number_of_nodes);
   nodes_id.resize(1);
   iterable_nodes.resize(1);
-  nodes_id[0]       = std::make_shared<std::vector<size_t>>(number_of_nodes);
-  iterable_nodes[0] = std::make_shared<std::vector<size_t>>(number_of_nodes);
+
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id_1 =
+    std::make_shared<std::vector<size_t>>(number_of_nodes);
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id_2 =
+    std::make_shared<std::vector<size_t>>(number_of_nodes);
   for (size_t i = 0; i < number_of_nodes; i++)
     {
-      (*(nodes_id[0]))[i]       = i;
-      (*(iterable_nodes[0]))[i] = i;
+      (*temp_nodes_id_1)[i] = i;
+      (*temp_nodes_id_2)[i] = i;
     }
+  nodes_id[0]               = {Point<dim>{},
+                 std::numeric_limits<double>::max(),
+                 temp_nodes_id_1};
+  iterable_nodes[0]         = {Point<dim>{},
+                       std::numeric_limits<double>::max(),
+                       temp_nodes_id_2};
   max_number_of_nodes       = 1;
   position_precalculated    = Point<dim>(this->position);
   orientation_precalculated = Tensor<1, 3>(this->orientation);
@@ -1545,9 +1562,13 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value = std::max(bounding_box_distance, 0.0);
   double normalized_distance, basis;
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
+  std::shared_ptr<std::vector<size_t>> temp_iterable_nodes_in_portion =
+    std::make_shared<std::vector<size_t>>();
   for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
-      for (const size_t &node_id : *(iterable_nodes[portion_id]))
+      std::tie(std::ignore, std::ignore, temp_iterable_nodes_in_portion) =
+        (iterable_nodes[portion_id]);
+      for (const size_t &node_id : *temp_iterable_nodes_in_portion)
         {
           normalized_distance =
             (evaluation_point - rotated_nodes_positions[node_id]).norm() /
@@ -1589,9 +1610,13 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         "of at least one RBF node. It this isn't the case, an error has been "
         "introduced in the code. ");
     }
+  std::shared_ptr<std::vector<size_t>> temp_iterable_nodes_in_portion =
+    std::make_shared<std::vector<size_t>>();
   for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
-      for (const size_t &node_id : *(iterable_nodes[portion_id]))
+      std::tie(std::ignore, std::ignore, temp_iterable_nodes_in_portion) =
+        (iterable_nodes[portion_id]);
+      for (const size_t &node_id : *temp_iterable_nodes_in_portion)
         {
           // Calculation of the dr/dx
           relative_position =
@@ -1688,9 +1713,13 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   if (likely_nodes_map.find(cell) != likely_nodes_map.end())
     return;
 
-  bool                                              parent_found = false;
-  std::vector<std::shared_ptr<std::vector<size_t>>> temporary_iterable_nodes;
-  temporary_iterable_nodes.push_back(std::make_shared<std::vector<size_t>>());
+  bool parent_found = false;
+  std::vector<
+    std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
+    temporary_iterable_nodes{};
+  std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
+    temporary_tuple{Point<dim>{}, 0, std::make_shared<std::vector<size_t>>()};
+  temporary_iterable_nodes.push_back(temporary_tuple);
   if (cell->level() > 0)
     try
       {
@@ -1709,26 +1738,28 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   double     distance, max_distance;
   double     cell_diameter = cell->diameter();
   Point<dim> centered_support_point;
+  Point<dim> temp_cell_barycenter{};
+  double     temp_cell_diameter;
 
-  likely_nodes_map[cell] =
-    std::make_shared<std::vector<std::shared_ptr<std::vector<size_t>>>>();
+  likely_nodes_map[cell]          = std::make_shared<std::vector<
+    std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
   const size_t number_of_portions = iterable_nodes.size();
   for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
     {
-      for (const size_t &node_id : *(iterable_nodes[portion_id]))
+      std::tie(temp_cell_barycenter, temp_cell_diameter, std::ignore) =
+        (iterable_nodes[portion_id]);
+      // We only check for one support point, but we use a high security
+      // factor. This allows not to loop over all support points.
+      distance = (support_point - temp_cell_barycenter).norm();
+      // We check if the distance is lower than 1 cell diagonal, since we
+      // only check the distance with 1 support point, added to the support
+      // radius
+      max_distance =
+        cell_diameter + temp_cell_diameter + minimal_support_radius;
+      if (distance < max_distance)
         {
-          // We only check for one support point, but we use a high security
-          // factor. This allows not to loop over all support points.
-          distance = (support_point - rotated_nodes_positions[node_id]).norm();
-          // We check if the distance is lower than 1 cell diagonal, since we
-          // only check the distance with 1 support point, added to the support
-          // radius
-          max_distance = cell_diameter + support_radii[node_id];
-          if (distance < max_distance)
-            {
-              likely_nodes_map[cell]->push_back(iterable_nodes[portion_id]);
-              break;
-            }
+          likely_nodes_map[cell]->push_back(iterable_nodes[portion_id]);
+          break;
         }
     }
   max_number_of_nodes =
@@ -1766,9 +1797,15 @@ RBFShape<dim>::update_precalculations(
             std::end(*temporary_node_numbers),
             0);
   std::map<const typename DoFHandler<dim>::cell_iterator,
-           std::shared_ptr<std::vector<size_t>>>
+           std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     temporary_nodes_portions_map;
   temporary_nodes_portions_map.clear();
+
+  std::cout << "Step 1." << std::endl;
+  Point<dim>                           temp_cell_barycenter{};
+  double                               temp_cell_diameter;
+  std::shared_ptr<std::vector<size_t>> temp_cell_vector =
+    std::make_shared<std::vector<size_t>>();
   for (unsigned int level = 0; level < maximal_level; level++)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
@@ -1786,12 +1823,15 @@ RBFShape<dim>::update_precalculations(
                     temporary_nodes_portions_map.find(cell_parent);
                   if (parent_iterator != temporary_nodes_portions_map.end())
                     {
-                      size_t parents_size =
-                        temporary_nodes_portions_map[cell->parent()]->size();
+                      std::tie(temp_cell_barycenter,
+                               temp_cell_diameter,
+                               temp_cell_vector) =
+                        (temporary_nodes_portions_map[cell->parent()]);
+
+                      size_t parents_size = temp_cell_vector->size();
                       temporary_node_numbers->resize(parents_size);
                       for (size_t i = 0; i < parents_size; i++)
-                        (*temporary_node_numbers)[i] =
-                          (*temporary_nodes_portions_map[cell->parent()])[i];
+                        (*temporary_node_numbers)[i] = (*temp_cell_vector)[i];
                     }
                 }
               catch (TriaAccessorExceptions::ExcCellHasNoParent())
@@ -1809,7 +1849,10 @@ RBFShape<dim>::update_precalculations(
                 }
             }
           if (current_cell_nodes->size() > 0)
-            temporary_nodes_portions_map[cell] = current_cell_nodes;
+            temporary_nodes_portions_map[cell] =
+              std::make_tuple(cell->barycenter(),
+                              cell->diameter(),
+                              current_cell_nodes);
 
           // We currently ignore RBF nodes that are in no cells
         }
@@ -1832,30 +1875,39 @@ RBFShape<dim>::update_precalculations(
         }
     }
 
+  std::cout << "Step 2." << std::endl;
   // We give all the subsets to the 0 level, as an initial partitioning
   const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
   double      distance, max_distance;
   std::shared_ptr<std::vector<size_t>> temp_nodes =
     std::make_shared<std::vector<size_t>>();
   typename DoFHandler<dim>::cell_iterator temp_cell;
+  std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>
+    temp_cell_tuple{Point<dim>(), 0, std::make_shared<std::vector<size_t>>()};
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_artificial_on_level())
         continue;
 
-      likely_nodes_map[cell] =
-        std::make_shared<std::vector<std::shared_ptr<std::vector<size_t>>>>();
+      likely_nodes_map[cell] = std::make_shared<std::vector<
+        std::
+          tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
       for (auto it = temporary_nodes_portions_map.cbegin();
            it != temporary_nodes_portions_map.cend();
            it++)
         {
-          temp_cell  = it->first;
-          temp_nodes = it->second;
+          temp_cell = it->first;
+          std::tie(temp_cell_barycenter, temp_cell_diameter, temp_nodes) =
+            (it->second);
+
           if (temp_cell->is_active())
             {
               if (cell->point_inside(temp_cell->barycenter()))
                 {
-                  likely_nodes_map[cell]->push_back(temp_nodes);
+                  temp_cell_tuple = std::make_tuple(temp_cell_barycenter,
+                                                    temp_cell_diameter,
+                                                    temp_nodes);
+                  likely_nodes_map[cell]->push_back(temp_cell_tuple);
                   continue;
                 }
               else
@@ -1866,7 +1918,10 @@ RBFShape<dim>::update_precalculations(
                         .norm();
                     if (distance < support_radii[node_id])
                       {
-                        likely_nodes_map[cell]->push_back(temp_nodes);
+                        temp_cell_tuple = std::make_tuple(temp_cell_barycenter,
+                                                          temp_cell_diameter,
+                                                          temp_nodes);
+                        likely_nodes_map[cell]->push_back(temp_cell_tuple);
                         break;
                       }
                   }
@@ -1874,6 +1929,7 @@ RBFShape<dim>::update_precalculations(
         }
     }
 
+  std::cout << "Step 3." << std::endl;
   // We then treat all other levels
   for (unsigned int level = 1; level < maximal_level; level++)
     {
@@ -1928,6 +1984,8 @@ RBFShape<dim>::update_precalculations(
             ++it;
         }
     }
+
+  std::cout << "Step 4." << std::endl;
   position_precalculated    = Point<dim>(this->position);
   orientation_precalculated = Tensor<1, 3>(this->orientation);
 }
