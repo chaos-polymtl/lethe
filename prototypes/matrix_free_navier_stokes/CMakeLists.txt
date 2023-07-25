@@ -1,0 +1,2 @@
+add_executable(matrix_free_navier_stokes matrix_free_navier_stokes.cc)
+deal_ii_setup_target(matrix_free_navier_stokes)
