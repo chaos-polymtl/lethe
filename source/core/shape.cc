@@ -1814,10 +1814,8 @@ RBFShape<dim>::update_precalculations(
           // We currently ignore RBF nodes that are in no cells
         }
 
-      // We need to remove all cells
-      // without children
-      // from this level, because we know we have initiated the children with
-      // shared pointers
+      // We need to remove all cells that are not needed anymore
+      // from the map
       for (auto it = temporary_nodes_portions_map.cbegin();
            it != temporary_nodes_portions_map.cend();)
         {
@@ -1836,16 +1834,23 @@ RBFShape<dim>::update_precalculations(
 
   // We give all the subsets to the 0 level, as an initial partitioning
   const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
+  double      distance, max_distance;
+  std::shared_ptr<std::vector<size_t>> temp_nodes =
+    std::make_shared<std::vector<size_t>>();
+  typename DoFHandler<dim>::cell_iterator temp_cell;
   for (const auto &cell : cell_iterator)
     {
+      if (cell->is_artificial_on_level())
+        continue;
+
       likely_nodes_map[cell] =
         std::make_shared<std::vector<std::shared_ptr<std::vector<size_t>>>>();
       for (auto it = temporary_nodes_portions_map.cbegin();
            it != temporary_nodes_portions_map.cend();
            it++)
         {
-          auto                                 temp_cell  = it->first;
-          std::shared_ptr<std::vector<size_t>> temp_nodes = it->second;
+          temp_cell  = it->first;
+          temp_nodes = it->second;
           if (temp_cell->is_active())
             {
               if (cell->point_inside(temp_cell->barycenter()))
@@ -1875,6 +1880,29 @@ RBFShape<dim>::update_precalculations(
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
+          // We first check if we are in the hierarchy levels where we simply
+          // assume that children have the same likely nodes as their parents.
+          const bool no_need_to_precalculate_level =
+            (level + 1 + levels_not_precalculated > maximal_level);
+          // We also check if the cell diameter is lower than the minimal
+          // support radius. In that case, the likely nodes should stay more or
+          // less the same.
+          const bool cell_smaller_than_rbf_radius =
+            (cell->diameter() < minimal_support_radius);
+          if (no_need_to_precalculate_level || cell_smaller_than_rbf_radius)
+            {
+              likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
+              continue;
+            }
+          // If the precalculations have reached the finest level, then the cell
+          // precalculation only has to be done for cells that are locally
+          // owned.
+          if (level == maximal_level)
+            if (!cell->is_locally_owned())
+              continue;
+          // In the same way, the cell precalculation only has to be done on
+          // cells that aren't artificial (in other words, locally owned or
+          // ghost cells)
           if (!cell->is_artificial_on_level())
             determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
