@@ -55,6 +55,11 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
 
+      // Vector of ones
+      Tensor<1, dim> ones;
+      for (unsigned int d = 0; d < dim; ++d)
+        ones[d] = 1.;
+
       // Forcing term
       const Tensor<1, dim> &force       = scratch_data.force[q];
       double                mass_source = scratch_data.mass_source[q];
@@ -145,8 +150,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
 
                   local_matrix_ij +=
                     // $$\psi \mathbf{u} \nabla p$$
-                    phi_p_i * density_psi * phi_u_j * pressure_gradient +
-                    phi_p_i * density_psi * velocity * grad_phi_p_j +
+                    phi_p_i * density_psi * grad_phi_p_j * ones +
+                    phi_p_i * density_psi * div_phi_u_j +
 
                     // $$\rho \nabla \cdot \mathbf{u}$$
                     phi_p_i * density * div_phi_u_j;
