@@ -13,7 +13,7 @@
  *
  ---------------------------------------------------------------------*/
 
-#include "solvers/mf_gls_navier_stokes.h"
+#include "solvers/mf_navier_stokes.h"
 
 int
 main(int argc, char *argv[])

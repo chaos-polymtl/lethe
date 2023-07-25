@@ -33,14 +33,14 @@ using namespace dealii;
  */
 
 template <int dim>
-class MFGLSNavierStokesSolver
+class MFNavierStokesSolver
   : public NavierStokesBase<dim,
                             LinearAlgebra::distributed::Vector<double>,
                             IndexSet>
 {
 public:
-  MFGLSNavierStokesSolver(SimulationParameters<dim> &nsparam);
-  ~MFGLSNavierStokesSolver();
+  MFNavierStokesSolver(SimulationParameters<dim> &nsparam);
+  ~MFNavierStokesSolver();
 
   /**
    * @brief solve Solves the Navier-Stokes problem

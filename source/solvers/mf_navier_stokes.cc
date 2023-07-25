@@ -13,8 +13,6 @@
  *
  * ---------------------------------------------------------------------*/
 
-#include "solvers/mf_gls_navier_stokes.h"
-
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
@@ -22,7 +20,7 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/mf_gls_navier_stokes.h>
+#include <solvers/mf_navier_stokes.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -35,9 +33,9 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-// Constructor for class MFGLSNavierStokesSolver
+// Constructor for class MFNavierStokesSolver
 template <int dim>
-MFGLSNavierStokesSolver<dim>::MFGLSNavierStokesSolver(
+MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
   : NavierStokesBase<dim, LinearAlgebra::distributed::Vector<double>, IndexSet>(
       p_nsparam)
@@ -46,14 +44,14 @@ MFGLSNavierStokesSolver<dim>::MFGLSNavierStokesSolver(
 }
 
 template <int dim>
-MFGLSNavierStokesSolver<dim>::~MFGLSNavierStokesSolver()
+MFNavierStokesSolver<dim>::~MFNavierStokesSolver()
 {
   this->dof_handler.clear();
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::solve()
+MFNavierStokesSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,
@@ -108,7 +106,7 @@ MFGLSNavierStokesSolver<dim>::solve()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
+MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
   // Clear matrix free operator
   system_operator.clear();
@@ -182,7 +180,7 @@ MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::update_boundary_conditions()
+MFNavierStokesSolver<dim>::update_boundary_conditions()
 {
   double time = this->simulation_control->get_current_time();
   for (unsigned int i_bc = 0;
@@ -210,7 +208,7 @@ MFGLSNavierStokesSolver<dim>::update_boundary_conditions()
  **/
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::set_initial_condition_fd(
+MFNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType /* initial_condition_type */,
   bool restart)
 {
@@ -225,35 +223,35 @@ MFGLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::assemble_system_matrix()
+MFNavierStokesSolver<dim>::assemble_system_matrix()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::assemble_system_rhs()
+MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
+MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::setup_preconditioner()
+MFNavierStokesSolver<dim>::setup_preconditioner()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::define_non_zero_constraints()
+MFNavierStokesSolver<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
@@ -341,7 +339,7 @@ MFGLSNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::define_zero_constraints()
+MFNavierStokesSolver<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -420,30 +418,29 @@ MFGLSNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::setup_operator()
+MFNavierStokesSolver<dim>::setup_operator()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::solve_linear_system(
-  const bool /* initial_step */,
-  const bool /* renewed_matrix */)
+MFNavierStokesSolver<dim>::solve_linear_system(const bool /* initial_step */,
+                                               const bool /* renewed_matrix */)
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::assemble_L2_projection()
+MFNavierStokesSolver<dim>::assemble_L2_projection()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::solve_system_GMRES(
+MFNavierStokesSolver<dim>::solve_system_GMRES(
   const bool /* initial_step */,
   const double /* absolute_residual */,
   const double /* relative_residual */)
@@ -453,7 +450,7 @@ MFGLSNavierStokesSolver<dim>::solve_system_GMRES(
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::setup_GMG()
+MFNavierStokesSolver<dim>::setup_GMG()
 {
   // TODO
 }
@@ -461,5 +458,5 @@ MFGLSNavierStokesSolver<dim>::setup_GMG()
 // Pre-compile the 2D and 3D MF Navier-Stokes solver to ensure that the library
 // is valid before we actually compile the solver This greatly helps with
 // debugging
-template class MFGLSNavierStokesSolver<2>;
-template class MFGLSNavierStokesSolver<3>;
+template class MFNavierStokesSolver<2>;
+template class MFNavierStokesSolver<3>;
