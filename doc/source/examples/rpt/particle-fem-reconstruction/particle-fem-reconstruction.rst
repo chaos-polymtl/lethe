@@ -145,7 +145,7 @@ Results
 --------
 With the figure shown below we assess the validity of the reconstruction algorithm with a reconstruction of a set of experimental points. It shows the real positions of the particle and the reconstructed positions.
 
-.. image::  images/results_2.png
+.. image::  images/position_reconstruction_result.png
     :alt: The geometryew 
     :align: center
     :name: results from the fem reconstruction
