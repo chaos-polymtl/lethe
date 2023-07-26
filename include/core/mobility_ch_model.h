@@ -105,8 +105,6 @@ public:
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
   }
 
-
-
 private:
   const double mobility_ch;
 };

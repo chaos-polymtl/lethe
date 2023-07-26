@@ -434,7 +434,6 @@ namespace Parameters
     } mobility_ch_model;
     MobilityCahnHilliardParameters mobility_ch_parameters;
 
-
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>

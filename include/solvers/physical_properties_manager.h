@@ -217,7 +217,6 @@ public:
     return mobility_ch;
   }
 
-
   double
   get_viscosity_scale() const
   {

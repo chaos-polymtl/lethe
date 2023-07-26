@@ -71,12 +71,11 @@ public:
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        const FE_SimplexP<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.phase_ch_order);
-        const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_ch_order);
-        fe =
-          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+        fe = std::make_shared<FESystem<dim>>(
+          FE_Q<dim>(simulation_parameters.fem_parameters.phase_ch_order),
+          1,
+          FE_Q<dim>(simulation_parameters.fem_parameters.potential_ch_order),
+          1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
           std::max(simulation_parameters.fem_parameters.phase_ch_order,
@@ -91,10 +90,6 @@ public:
     else
       {
         // Usual case, for quad/hex meshes
-        const FE_Q<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.phase_ch_order);
-        const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_ch_order);
         fe = std::make_shared<FESystem<dim>>(
           FE_Q<dim>(simulation_parameters.fem_parameters.phase_ch_order),
           1,

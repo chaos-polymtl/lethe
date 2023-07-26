@@ -33,8 +33,6 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
-#include <deal.II/hp/fe_collection.h>
-
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -1135,7 +1133,6 @@ public:
   double                      epsilon;
   double                      well_height;
   double                      density_diff;
-  double                      curvature_ch;
   bool                        gather_ch;
   unsigned int                n_dofs_ch;
   std::vector<double>         phase_order_ch_values;

@@ -114,6 +114,4 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
-
-
 #endif
