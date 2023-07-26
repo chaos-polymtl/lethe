@@ -519,10 +519,10 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Densities of phases
-  Assert(scratch_data.properties_manager.density_is_constant(),
-         RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+  //  // Densities of phases
+  //  Assert(scratch_data.properties_manager.density_is_constant(),
+  //         RequiresConstantDensity(
+  //           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
@@ -582,10 +582,10 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   const double surface_tension_gradient =
     STF_properties.surface_tension_gradient;
 
-  // Densities of phases
-  Assert(scratch_data.properties_manager.density_is_constant(),
-         RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+  //  // Densities of phases
+  //  Assert(scratch_data.properties_manager.density_is_constant(),
+  //         RequiresConstantDensity(
+  //           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
 
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
