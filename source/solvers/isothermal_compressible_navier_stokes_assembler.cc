@@ -345,13 +345,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerBDF<dim>::assemble_matrix(
       // Physical properties
       const double density = density_vector[q];
 
-      pressure[0] = scratch_data.pressure_values[q];
       velocity[0] = scratch_data.velocity_values[q];
       for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
-        {
-          pressure[p + 1] = scratch_data.previous_pressure_values[p][q];
-          velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
-        }
+        velocity[p + 1] = scratch_data.previous_velocity_values[p][q];
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
