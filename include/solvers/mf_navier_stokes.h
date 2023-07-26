@@ -171,7 +171,7 @@ private:
    */
 protected:
   // Matrix-free operator
-  NavierStokesOperator<dim, double> system_operator;
+  NavierStokesSUPGPSPGOperator<dim, double> system_operator;
 };
 
 #endif

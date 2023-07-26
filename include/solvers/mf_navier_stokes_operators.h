@@ -28,43 +28,8 @@
 
 using namespace dealii;
 
-// Matrix-free helper function
-template <int dim, typename Number>
-VectorizedArray<Number>
-evaluate_function(const Function<dim> &                      function,
-                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
-{
-  VectorizedArray<Number> result;
-  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
-    {
-      Point<dim> p;
-      for (unsigned int d = 0; d < dim; ++d)
-        p[d] = p_vectorized[d][v];
-      result[v] = function.value(p);
-    }
-  return result;
-}
-
-// Matrix-free helper function
-template <int dim, typename Number, int components>
-Tensor<1, components, VectorizedArray<Number>>
-evaluate_function(const Function<dim> &                      function,
-                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
-{
-  Tensor<1, components, VectorizedArray<Number>> result;
-  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
-    {
-      Point<dim> p;
-      for (unsigned int d = 0; d < dim; ++d)
-        p[d] = p_vectorized[d][v];
-      for (unsigned int d = 0; d < components; ++d)
-        result[d][v] = function.value(p, d);
-    }
-  return result;
-}
-
 template <int dim, typename number>
-class NavierStokesOperator : public Subscriptor
+class NavierStokesOperatorBase : public Subscriptor
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
@@ -75,14 +40,14 @@ public:
 
   using size_type = VectorizedArray<number>;
 
-  NavierStokesOperator();
+  NavierStokesOperatorBase();
 
-  NavierStokesOperator(const Mapping<dim> &             mapping,
-                       const DoFHandler<dim> &          dof_handler,
-                       const AffineConstraints<number> &constraints,
-                       const Quadrature<dim> &          quadrature,
-                       const SimulationParameters<dim> &nsparam,
-                       const unsigned int               mg_level);
+  NavierStokesOperatorBase(const Mapping<dim> &             mapping,
+                           const DoFHandler<dim> &          dof_handler,
+                           const AffineConstraints<number> &constraints,
+                           const Quadrature<dim> &          quadrature,
+                           const SimulationParameters<dim> &nsparam,
+                           const unsigned int               mg_level);
 
   void
   reinit(const Mapping<dim> &             mapping,
@@ -134,8 +99,8 @@ public:
   void
   evaluate_non_linear_term(const VectorType &newton_step);
 
-private:
-  void
+protected:
+  virtual void
   do_cell_integral_local(FECellIntegrator &integrator) const;
 
   void
@@ -148,7 +113,6 @@ private:
   static IndexSet
   get_refinement_edges(const MatrixFree<dim, number> &matrix_free);
 
-private:
   MatrixFree<dim, number>                matrix_free;
   AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
@@ -168,6 +132,20 @@ private:
   bool has_edge_constrained_indices = false;
   mutable std::vector<std::pair<number, number>> edge_constrained_values;
   std::vector<bool>                              edge_constrained_cell;
+};
+
+
+template <int dim, typename number>
+class NavierStokesSUPGPSPGOperator
+  : public NavierStokesOperatorBase<dim, number>
+{
+public:
+  using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  NavierStokesSUPGPSPGOperator();
+
+private:
+  void
+  do_cell_integral_local(FECellIntegrator &integrator) const override;
 };
 
 #endif

@@ -15,12 +15,47 @@
 
 #include "solvers/mf_navier_stokes_operators.h"
 
+// Matrix-free helper function
+template <int dim, typename Number>
+VectorizedArray<Number>
+evaluate_function(const Function<dim> &                      function,
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  VectorizedArray<Number> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+      result[v] = function.value(p);
+    }
+  return result;
+}
+
+// Matrix-free helper function
+template <int dim, typename Number, int components>
+Tensor<1, components, VectorizedArray<Number>>
+evaluate_function(const Function<dim> &                      function,
+                  const Point<dim, VectorizedArray<Number>> &p_vectorized)
+{
+  Tensor<1, components, VectorizedArray<Number>> result;
+  for (unsigned int v = 0; v < VectorizedArray<Number>::size(); ++v)
+    {
+      Point<dim> p;
+      for (unsigned int d = 0; d < dim; ++d)
+        p[d] = p_vectorized[d][v];
+      for (unsigned int d = 0; d < components; ++d)
+        result[d][v] = function.value(p, d);
+    }
+  return result;
+}
+
 template <int dim, typename number>
-NavierStokesOperator<dim, number>::NavierStokesOperator()
+NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase()
 {}
 
 template <int dim, typename number>
-NavierStokesOperator<dim, number>::NavierStokesOperator(
+NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const Mapping<dim> &             mapping,
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
@@ -34,7 +69,7 @@ NavierStokesOperator<dim, number>::NavierStokesOperator(
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::reinit(
+NavierStokesOperatorBase<dim, number>::reinit(
   const Mapping<dim> &             mapping,
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
@@ -135,7 +170,7 @@ NavierStokesOperator<dim, number>::reinit(
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::compute_element_size()
+NavierStokesOperatorBase<dim, number>::compute_element_size()
 {
   FECellIntegrator phi(matrix_free);
 
@@ -161,7 +196,7 @@ NavierStokesOperator<dim, number>::compute_element_size()
 
 template <int dim, typename number>
 types::global_dof_index
-NavierStokesOperator<dim, number>::m() const
+NavierStokesOperatorBase<dim, number>::m() const
 {
   if (this->matrix_free.get_mg_level() != numbers::invalid_unsigned_int)
     return this->matrix_free.get_dof_handler().n_dofs(
@@ -172,7 +207,7 @@ NavierStokesOperator<dim, number>::m() const
 
 template <int dim, typename number>
 number
-NavierStokesOperator<dim, number>::el(unsigned int, unsigned int) const
+NavierStokesOperatorBase<dim, number>::el(unsigned int, unsigned int) const
 {
   Assert(false, ExcNotImplemented());
   return 0;
@@ -180,13 +215,14 @@ NavierStokesOperator<dim, number>::el(unsigned int, unsigned int) const
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::clear()
+NavierStokesOperatorBase<dim, number>::clear()
 {}
 
 // The matrix free object initialized the vector accordingly
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
+NavierStokesOperatorBase<dim, number>::initialize_dof_vector(
+  VectorType &vec) const
 {
   matrix_free.initialize_dof_vector(vec);
 }
@@ -195,8 +231,8 @@ NavierStokesOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
 // and evluating the integrals in the matrix-free way
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
-                                         const VectorType &src) const
+NavierStokesOperatorBase<dim, number>::vmult(VectorType &      dst,
+                                             const VectorType &src) const
 {
   // save values for edge constrained dofs and set them to 0 in src vector
   for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
@@ -210,7 +246,7 @@ NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
     }
 
   this->matrix_free.cell_loop(
-    &NavierStokesOperator::do_cell_integral_range, this, dst, src, true);
+    &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
 
   // set constrained dofs as the sum of current dst value and src value
   for (unsigned int i = 0; i < constrained_indices.size(); ++i)
@@ -233,20 +269,20 @@ NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
 // TODO: implement this correctly (let's start with something symetric)
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::Tvmult(VectorType &      dst,
-                                          const VectorType &src) const
+NavierStokesOperatorBase<dim, number>::Tvmult(VectorType &      dst,
+                                              const VectorType &src) const
 {
   this->vmult(dst, src);
 }
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::vmult_interface_down(
+NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   VectorType &      dst,
   VectorType const &src) const
 {
   this->matrix_free.cell_loop(
-    &NavierStokesOperator::do_cell_integral_range, this, dst, src, true);
+    &NavierStokesOperatorBase::do_cell_integral_range, this, dst, src, true);
 
   // set constrained dofs as the sum of current dst value and src value
   for (unsigned int i = 0; i < constrained_indices.size(); ++i)
@@ -256,7 +292,7 @@ NavierStokesOperator<dim, number>::vmult_interface_down(
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::vmult_interface_up(
+NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   VectorType &      dst,
   VectorType const &src) const
 {
@@ -278,8 +314,11 @@ NavierStokesOperator<dim, number>::vmult_interface_up(
       src.local_element(edge_constrained_indices[i]);
 
   // do loop with copy of src
-  this->matrix_free.cell_loop(
-    &NavierStokesOperator::do_cell_integral_range, this, dst, src_cpy, false);
+  this->matrix_free.cell_loop(&NavierStokesOperatorBase::do_cell_integral_range,
+                              this,
+                              dst,
+                              src_cpy,
+                              false);
 }
 
 
@@ -288,7 +327,7 @@ NavierStokesOperator<dim, number>::vmult_interface_up(
 // grid level in the multigrid algorithm.
 template <int dim, typename number>
 const TrilinosWrappers::SparseMatrix &
-NavierStokesOperator<dim, number>::get_system_matrix() const
+NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 {
   if (system_matrix.m() == 0 && system_matrix.n() == 0)
     {
@@ -315,7 +354,7 @@ NavierStokesOperator<dim, number>::get_system_matrix() const
         matrix_free,
         constraints,
         system_matrix,
-        &NavierStokesOperator::do_cell_integral_local,
+        &NavierStokesOperatorBase::do_cell_integral_local,
         this);
     }
   return this->system_matrix;
@@ -323,21 +362,21 @@ NavierStokesOperator<dim, number>::get_system_matrix() const
 
 template <int dim, typename number>
 const MatrixFree<dim, number> &
-NavierStokesOperator<dim, number>::get_system_matrix_free() const
+NavierStokesOperatorBase<dim, number>::get_system_matrix_free() const
 {
   return this->matrix_free;
 }
 
 template <int dim, typename number>
 const AlignedVector<VectorizedArray<number>>
-NavierStokesOperator<dim, number>::get_element_size() const
+NavierStokesOperatorBase<dim, number>::get_element_size() const
 {
   return this->element_size;
 }
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::evaluate_non_linear_term(
+NavierStokesOperatorBase<dim, number>::evaluate_non_linear_term(
   const VectorType &newton_step)
 {
   const unsigned int n_cells = matrix_free.n_cell_batches();
@@ -370,12 +409,15 @@ NavierStokesOperator<dim, number>::evaluate_non_linear_term(
 // call.
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::compute_inverse_diagonal(
+NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
   VectorType &diagonal) const
 {
   this->matrix_free.initialize_dof_vector(diagonal);
   MatrixFreeTools::compute_diagonal(
-    matrix_free, diagonal, &NavierStokesOperator::do_cell_integral_local, this);
+    matrix_free,
+    diagonal,
+    &NavierStokesOperatorBase::do_cell_integral_local,
+    this);
 
   for (unsigned int i = 0; i < edge_constrained_indices.size(); ++i)
     diagonal.local_element(edge_constrained_indices[i]) = 0.0;
@@ -386,26 +428,19 @@ NavierStokesOperator<dim, number>::compute_inverse_diagonal(
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::do_cell_integral_local(
+NavierStokesOperatorBase<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
-  using FECellIntegratorType =
-    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
+  (void)integrator;
 
-  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
-                      EvaluationFlags::hessians);
-
-  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
-    {
-      // TODO
-    }
-
-  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+  AssertThrow(false,
+              dealii::ExcMessage(
+                "OperatorBase::do_face_integral() has not been implemented!"));
 }
 
 template <int dim, typename number>
 void
-NavierStokesOperator<dim, number>::do_cell_integral_range(
+NavierStokesOperatorBase<dim, number>::do_cell_integral_range(
   const MatrixFree<dim, number> &              matrix_free,
   VectorType &                                 dst,
   const VectorType &                           src,
@@ -427,7 +462,7 @@ NavierStokesOperator<dim, number>::do_cell_integral_range(
 
 template <int dim, typename number>
 IndexSet
-NavierStokesOperator<dim, number>::get_refinement_edges(
+NavierStokesOperatorBase<dim, number>::get_refinement_edges(
   const MatrixFree<dim, number> &matrix_free)
 {
   const unsigned int level = matrix_free.get_mg_level();
@@ -446,5 +481,31 @@ NavierStokesOperator<dim, number>::get_refinement_edges(
   return refinement_edge_indices[level];
 }
 
-template class NavierStokesOperator<2, double>;
-template class NavierStokesOperator<3, double>;
+template class NavierStokesOperatorBase<2, double>;
+template class NavierStokesOperatorBase<3, double>;
+
+template <int dim, typename number>
+NavierStokesSUPGPSPGOperator<dim, number>::NavierStokesSUPGPSPGOperator()
+{}
+
+template <int dim, typename number>
+void
+NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
+  FECellIntegrator &integrator) const
+{
+  using FECellIntegratorType =
+    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
+
+  integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                      EvaluationFlags::hessians);
+
+  for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+    {
+      // TODO
+    }
+
+  integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+}
+
+template class NavierStokesSUPGPSPGOperator<2, double>;
+template class NavierStokesSUPGPSPGOperator<3, double>;

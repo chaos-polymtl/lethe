@@ -41,6 +41,8 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
       p_nsparam)
 {
   // TODO
+  this->fe = std::make_shared<FESystem<dim>>(
+    FE_Q<dim>(p_nsparam.fem_parameters.velocity_order), dim + 1);
 }
 
 template <int dim>
