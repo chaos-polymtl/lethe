@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2023 by the Lethe authors
+ * Copyright (C) 2019 - by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -24,14 +24,12 @@
 using namespace dealii;
 
 /**
- * @brief A solver class for the Navier-Stokes equation using GLS stabilization and the matrix free approach
+ * @brief A solver class for the Navier-Stokes equation that uses the matrix
+ * free approach.
  *
  * @tparam dim An integer that denotes the dimension of the space in which
- * the flow is solved
- *
- * @ingroup solvers
+ * the flow is solved.
  */
-
 template <int dim>
 class MFNavierStokesSolver
   : public NavierStokesBase<dim,
@@ -39,43 +37,52 @@ class MFNavierStokesSolver
                             IndexSet>
 {
 public:
+  /**
+   * @brief Construct a new MFNavierStokesSolver object.
+   *
+   * @param nsparam Relevant parameters for the solver.
+   */
   MFNavierStokesSolver(SimulationParameters<dim> &nsparam);
+
+  /**
+   * @brief Destroy the MFNavierStokesSolver object.
+   *
+   */
   ~MFNavierStokesSolver();
 
   /**
-   * @brief solve Solves the Navier-Stokes problem
+   * @brief Solves the Navier-Stokes problem.
    *
-   * This functions solves the problem defined by the Navier-Stokes paramter
-   * by iterating through time or through the mesh refinements.
+   * This functions solves the problem defined by the Navier-Stokes parameter
+   * file by iterating through time or through the mesh refinements.
    */
   virtual void
   solve();
 
 protected:
   /**
-   * @brief setup_dofs_fd Setup the degree of freedom, system matrix and solution vectors
-   * Navier-Stokes problem
+   * @brief Setup the DoFs, system operator and solution vectors.
    */
   virtual void
   setup_dofs_fd() override;
 
   /**
-   * @brief update non zero constraint if the boundary is time dependent
+   * @brief Update non zero constraints if the boundary is time dependent.
    */
   void
   update_boundary_conditions();
 
   /**
-   * @brief Sets the initial condition for the solver
+   * @brief Set the initial conditions for the solver.
    *
    * If the simulation is restarted from a checkpoint, the initial solution
    * setting is bypassed and the checkpoint is instead read.
    *
-   * @param initial_condition_type The type of initial condition to be set
+   * @param initial_condition_type The type of initial condition to be set.
    *
    * @param restart A boolean that indicates if the simulation is being restarted.
-   * if set to true, the initial conditions are never set, but are instead
-   * overriden by the read_checkpoint functionnality.
+   * If set to true, the initial conditions are never set, but are instead
+   * overriden by the read_checkpoint functionality.
    *
    **/
   virtual void
@@ -83,60 +90,60 @@ protected:
     Parameters::InitialConditionType initial_condition_type,
     bool                             restart = false) override;
 
-protected:
   /**
-   *  @brief Assembles the matrix associated with the solver
+   * @brief Assemble the matrix associated with the solver. This function is only
+   * required for compilation and it is not used for matrix free solvers.
    */
   virtual void
   assemble_system_matrix() override;
 
   /**
-   * @brief Assemble the rhs associated with the solver
+   * @brief Assemble the system rhs associated with the solver.
    */
   virtual void
   assemble_system_rhs() override;
 
   /**
-   * @brief  Updates the average velocity field solution in the multiphyscics interface
+   * @brief  Update the average velocity field solution in the multiphyscics interface.
    */
   virtual void
   update_multiphysics_time_average_solution() override;
 
   /**
-   * @brief  Set-up the appropriate preconditioner
+   * @brief  Set up the appropriate preconditioner.
    */
   void
   setup_preconditioner();
 
   /**
-   * @brief  defined the non zero constraints used to solved the problem.
+   * @brief Define the non-zero constraints used to solve the problem.
    */
   void
   define_non_zero_constraints();
 
   /**
-   * @brief defined the zero_constraints used to solved the problem.
+   * @brief Define the zero constraints used to solve the problem.
    */
   void
   define_zero_constraints();
 
   /**
-   * @brief sets up the operator
+   * @brief Set up the operator.
    */
   virtual void
   setup_operator();
 
   /**
-   * @brief Call for the assembly of the linear system of equation
+   * @brief Call for the assembly of the linear system of equations.
    *
    * @param initial_step Indicates if this is the first solution of the linear system.
    * If this is the case, the non_zero version of the constraints are used for
-   * the Dirichlet boundary conditions
+   * the Dirichlet boundary conditions.
    *
    * @param renewed_matrix Indicates if the matrix has been reassembled, and thus
    * the preconditioner needs to be reassmbled.
    *
-   * //TODO the renewed_matrix parameters needs to be deprecated
+   * TODO: the renewed_matrix parameter needs to be deprecated.
    *
    */
   void
@@ -147,28 +154,19 @@ private:
   /**
    * @brief Assembles an L2_projection matrix for the velocity and the pressure.
    * This L2 projection matrix can be used to set the initial condition for
-   * the Navier-Stokes problem
+   * the Navier-Stokes problem.
    */
   void
   assemble_L2_projection();
 
   /**
-   * @brief GMRES solver with GMG preconditioning
+   * @brief GMRES solver with preconditioning.
    */
   void
   solve_system_GMRES(const bool   initial_step,
                      const double absolute_residual,
                      const double relative_residual);
 
-  /**
-   * @brief  Set-up GMG preconditioner
-   */
-  void
-  setup_GMG();
-
-  /**
-   * Members
-   */
 protected:
   // Matrix-free operator
   NavierStokesSUPGPSPGOperator<dim, double> system_operator;

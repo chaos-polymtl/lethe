@@ -33,7 +33,6 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
-// Constructor for class MFNavierStokesSolver
 template <int dim>
 MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
@@ -205,9 +204,6 @@ MFNavierStokesSolver<dim>::update_boundary_conditions()
   this->present_solution = this->local_evaluation_point;
 }
 
-/**
- * Set the initial condition using a L2 or a viscous solver
- **/
 template <int dim>
 void
 MFNavierStokesSolver<dim>::set_initial_condition_fd(
@@ -450,15 +446,5 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(
   // TODO
 }
 
-template <int dim>
-void
-MFNavierStokesSolver<dim>::setup_GMG()
-{
-  // TODO
-}
-
-// Pre-compile the 2D and 3D MF Navier-Stokes solver to ensure that the library
-// is valid before we actually compile the solver This greatly helps with
-// debugging
 template class MFNavierStokesSolver<2>;
 template class MFNavierStokesSolver<3>;
