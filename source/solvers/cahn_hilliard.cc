@@ -49,7 +49,10 @@ CahnHilliard<dim>::setup_assemblers()
 
 
   // Core assembler
-  // For the time being, only a two-fluid system is considered for the Cahn-Hilliard equations,hence we'll always take the first element of the material_interaction vector, since it should contain all the parameters necessary for solving the equations
+  // For the time being, only a two-fluid system is considered for the
+  // Cahn-Hilliard equations,hence we'll always take the first element of the
+  // material_interaction vector, since it should contain all the parameters
+  // necessary for solving the equations
 
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
@@ -125,8 +128,6 @@ CahnHilliard<dim>::assemble_local_system_matrix(
       scratch_data.reinit_velocity(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
-
-  //  scratch_data.calculate_physical_properties();
 
   copy_data.reset();
 
@@ -222,8 +223,6 @@ CahnHilliard<dim>::assemble_local_system_rhs(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
-
-  //  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)

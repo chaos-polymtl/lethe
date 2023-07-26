@@ -333,13 +333,6 @@ public:
                                                        velocity_values);
   }
 
-  /** @brief Calculates the physical properties. This function calculates the physical properties
-   * that may be required by the Cahn-Hilliard equations. Namely W the potential
-   * well height, the mobility function M, the mobility factor D and the
-   * interface thickness epsilon.
-   */
-  void
-  calculate_physical_properties();
 
   // Physical properties
   PhysicalPropertiesManager            properties_manager;

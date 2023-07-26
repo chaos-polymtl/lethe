@@ -76,39 +76,5 @@ CahnHilliardScratchData<dim>::allocate()
     std::vector<Tensor<2, dim>>(this->n_q_points);
 }
 
-///*
-// * DO NOT USE TWO FLUIDS WITH CAHN-HILLIARD FOR THE MOMENT, IT'LL ONLY PRODUCE
-// A
-// * SEGFAULT SINCE IT'LL TRY TO RETRIEVE UN-INITIALIZED VARIABLES SINCE VOF IS
-// * DEACTIVATED
-// */
-// template <int dim>
-// void
-// CahnHilliardScratchData<dim>::calculate_physical_properties()
-//{
-//  switch (properties_manager.get_number_of_fluids())
-//    {
-//        case 1: {
-//          // Cannot proceed a two-phase flow simulations if only one fluid is
-//          // defined. This error must have been thrown a long time ago by the
-//          // code, it is repeated here for clarity.
-//          throw std::runtime_error(
-//            "Cannot run Cahn-Hilliard simulations with only 1 fluid, review
-//            the            Physical Properties section of the .prm");
-//          return;
-//        }
-//        case 2: {
-//          const auto density_models = properties_manager.get_density_vector();
-//
-//          density_models[0]->vector_value(fields, density_0);
-//          density_models[1]->vector_value(fields, density_1);
-//
-//          break;
-//        }
-//      default:
-//        throw std::runtime_error("Unsupported number of fluids (>2)");
-//    }
-//}
-
 template class CahnHilliardScratchData<2>;
 template class CahnHilliardScratchData<3>;
