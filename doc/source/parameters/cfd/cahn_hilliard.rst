@@ -40,6 +40,10 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
       set method = automatic
       set value  = 1
     end
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 10a086ce (update documentation + code cleanup)
   end
   
 * ``well height``: defines the :math:`W` parameter in the equations above. Its value should be increased if the solution is excessively diffused.
@@ -47,4 +51,8 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
 * ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell. The choices are ``automatic`` (default) or ``manual``.
 
 .. attention::
+<<<<<<< HEAD
      The ``mobility model`` and ``mobility constant`` must be set in the :doc:`physical_properties` section.
+=======
+     The mobility model and mobility constant must be set in the :doc:`physical_properties` section
+>>>>>>> 10a086ce (update documentation + code cleanup)
