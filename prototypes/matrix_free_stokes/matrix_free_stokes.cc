@@ -397,6 +397,9 @@ public:
   void
   initialize_dof_vector(VectorType &vec) const;
 
+  const std::shared_ptr<const Utilities::MPI::Partitioner> &
+  get_vector_partitioner() const;
+
   void
   vmult(VectorType &dst, const VectorType &src) const;
 
@@ -611,6 +614,13 @@ void
 StokesOperator<dim, number>::initialize_dof_vector(VectorType &vec) const
 {
   matrix_free.initialize_dof_vector(vec);
+}
+
+template <int dim, typename number>
+const std::shared_ptr<const Utilities::MPI::Partitioner> &
+StokesOperator<dim, number>::get_vector_partitioner() const
+{
+  return matrix_free.get_vector_partitioner();
 }
 
 // Performs an operator evaluation by looping over all cells
@@ -1089,7 +1099,8 @@ solve_with_gcmg(SolverControl &            solver_control,
 
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     pcout << "   MG Level " << level << ": " << dof_handlers[level].n_dofs()
-          << " DoFs, " << coarse_grid_triangulations[level]->n_cells(level)
+          << " DoFs, "
+          << coarse_grid_triangulations[level]->n_global_active_cells()
           << " cells" << std::endl;
 
   gcmg_solve(solver_control,
@@ -1240,6 +1251,9 @@ solve_with_lsmg(SolverControl &            solver_control,
   mg_constrained_dofs.make_zero_boundary_constraints(dof_handler,
                                                      dirichlet_boundary_ids);
 
+  std::vector<std::shared_ptr<const Utilities::MPI::Partitioner>> partitioners(
+    dof_handler.get_triangulation().n_global_levels());
+
   for (unsigned int level = minlevel; level <= maxlevel; ++level)
     {
       const IndexSet relevant_dofs =
@@ -1264,11 +1278,12 @@ solve_with_lsmg(SolverControl &            solver_control,
       ls_mg_operators[level].initialize(*operators[level]);
       ls_mg_interface_in[level].initialize(*operators[level]);
       ls_mg_interface_out[level].initialize(*operators[level]);
+
+      partitioners[level] = operators[level]->get_vector_partitioner();
     }
 
   mg_transfer.initialize_constraints(mg_constrained_dofs);
-  mg_transfer.build(dof_handler);
-
+  mg_transfer.build(dof_handler, partitioners);
   mg_transfer.interpolate_to_mg(dof_handler, mg_solution, dst);
 
 
