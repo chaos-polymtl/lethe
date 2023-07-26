@@ -33,8 +33,6 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
-#include <deal.II/hp/fe_collection.h>
-
 #include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
