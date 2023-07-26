@@ -67,7 +67,8 @@ public:
   Parameters::Multiphysics                      multiphysics;
   Parameters::Stabilization                     stabilization;
 
-  PhysicalPropertiesManager physical_properties_manager;
+  PhysicalPropertiesManager      physical_properties_manager;
+  Parameters::PhysicalProperties physical_properties;
 
   void
   declare(ParameterHandler &prm)
@@ -376,7 +377,6 @@ public:
   }
 
 private:
-  Parameters::PhysicalProperties physical_properties;
   // names for the physics supported by Lethe
   std::vector<std::string> physics_names = {"fluid dynamics",
                                             "heat transfer",
