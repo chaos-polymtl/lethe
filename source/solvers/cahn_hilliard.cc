@@ -49,10 +49,12 @@ CahnHilliard<dim>::setup_assemblers()
 
 
   // Core assembler
+  // For the time being, only a two-fluid system is considered for the Cahn-Hilliard equations,hence we'll always take the first element of the material_interaction vector, since it should contain all the parameters necessary for solving the equations
+
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.multiphysics.ch_parameters,
-    this->material_interaction_parameters));
+    this->simulation_parameters.physical_properties.material_interactions[0]));
 }
 
 template <int dim>

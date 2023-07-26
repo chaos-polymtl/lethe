@@ -67,7 +67,8 @@ public:
   Parameters::Multiphysics                      multiphysics;
   Parameters::Stabilization                     stabilization;
 
-  PhysicalPropertiesManager physical_properties_manager;
+  PhysicalPropertiesManager      physical_properties_manager;
+  Parameters::PhysicalProperties physical_properties;
 
   void
   declare(ParameterHandler &prm)
@@ -229,7 +230,7 @@ public:
   }
 
 private:
-  Parameters::PhysicalProperties physical_properties;
+  // Parameters::PhysicalProperties physical_properties;
 };
 
 #endif
