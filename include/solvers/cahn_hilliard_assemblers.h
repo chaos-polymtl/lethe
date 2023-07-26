@@ -91,9 +91,11 @@ class CahnHilliardAssemblerCore : public CahnHilliardAssemblerBase<dim>
 public:
   CahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           ch_parameters)
+    Parameters::CahnHilliard           ch_parameters,
+    Parameters::MaterialInteractions   material_interaction_parameters)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , ch_parameters(ch_parameters)
+    , material_interaction_parameters(material_interaction_parameters)
   {}
 
   /**
@@ -115,7 +117,8 @@ public:
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
 
-  Parameters::CahnHilliard ch_parameters;
+  Parameters::CahnHilliard         ch_parameters;
+  Parameters::MaterialInteractions material_interaction_parameters;
 };
 
 
@@ -134,11 +137,9 @@ class CahnHilliardAssemblerAngleOfContact
 public:
   CahnHilliardAssemblerAngleOfContact(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           ch_parameters,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
       &p_boundary_conditions_ch)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
-    , ch_parameters(ch_parameters)
     , boundary_conditions_ch(p_boundary_conditions_ch)
   {}
 
@@ -162,7 +163,7 @@ public:
                StabilizedMethodsCopyData &   copy_data) override;
 
 
-  Parameters::CahnHilliard ch_parameters;
+  Parameters::MaterialInteractions material_interaction_parameters;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     &boundary_conditions_ch;
 };

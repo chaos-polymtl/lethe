@@ -45,14 +45,14 @@ CahnHilliard<dim>::setup_assemblers()
   this->assemblers.push_back(
     std::make_shared<CahnHilliardAssemblerAngleOfContact<dim>>(
       this->simulation_control,
-      this->simulation_parameters.multiphysics.ch_parameters,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
 
   // Core assembler
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
-    this->simulation_parameters.multiphysics.ch_parameters));
+    this->simulation_parameters.multiphysics.ch_parameters,
+    this->material_interaction_parameters));
 }
 
 template <int dim>
@@ -124,7 +124,7 @@ CahnHilliard<dim>::assemble_local_system_matrix(
         velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
-  scratch_data.calculate_physical_properties();
+  //  scratch_data.calculate_physical_properties();
 
   copy_data.reset();
 
@@ -221,7 +221,7 @@ CahnHilliard<dim>::assemble_local_system_rhs(
     }
 
 
-  scratch_data.calculate_physical_properties();
+  //  scratch_data.calculate_physical_properties();
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)

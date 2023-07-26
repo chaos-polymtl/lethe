@@ -18,7 +18,6 @@
 #define lethe_mobility_ch_model_h
 
 #include <core/interface_property_model.h>
-#include <core/physical_property_model.h>
 
 /**
  * @brief MobilityCahnHilliardModel. Abstract class that allows to calculate the

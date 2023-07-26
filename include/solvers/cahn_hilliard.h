@@ -55,11 +55,13 @@ template <int dim>
 class CahnHilliard : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  CahnHilliard<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-                    const SimulationParameters<dim> &p_simulation_parameters,
-                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                       p_triangulation,
-                    std::shared_ptr<SimulationControl> p_simulation_control)
+  CahnHilliard<dim>(
+    MultiphysicsInterface<dim> *     multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                            p_triangulation,
+    std::shared_ptr<SimulationControl>      p_simulation_control,
+    const Parameters::MaterialInteractions &p_material_interaction_parameters)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -67,6 +69,7 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
+    , material_interaction_parameters(p_material_interaction_parameters)
   {
     if (simulation_parameters.mesh.simplex)
       {
@@ -365,8 +368,9 @@ private:
   write_phase_statistics();
 
 
-  MultiphysicsInterface<dim> *     multiphysics;
-  const SimulationParameters<dim> &simulation_parameters;
+  MultiphysicsInterface<dim> *            multiphysics;
+  const SimulationParameters<dim> &       simulation_parameters;
+  const Parameters::MaterialInteractions &material_interaction_parameters;
 
 
   // Core elements for the Cahn-Hilliard equations variables (Phi and eta)

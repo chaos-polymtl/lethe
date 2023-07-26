@@ -63,12 +63,6 @@ namespace Parameters
     manual
   };
 
-  enum class MobilityModel
-  {
-    constant,
-    quartic
-  };
-
 
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
@@ -248,39 +242,11 @@ namespace Parameters
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
 
-    // Mobility model (constant|quartic) in the Cahn-Hilliard
-    // equations
-    Parameters::MobilityModel mobility_model;
-
-    // Mobility constant in the Cahn-Hilliard equations
-    double mobility_constant;
-
     void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-  /**
-   * @brief SurfaceTensionForce - Defines the parameters for
-   * the calculation of surface tension force in the Cahn-Hilliard solver.
-   */
-  struct CahnHilliard_SurfaceTensionForce
-  {
-    bool enable;
-
-    bool output_vof_auxiliary_fields;
-
-    // Type of verbosity for the surface tension force calculation
-    Parameters::Verbosity verbosity;
-
-    void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
-
 
   /**
    * @brief Multiphysics - the parameters for multiphysics simulations

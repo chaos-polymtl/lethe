@@ -47,6 +47,10 @@ Physical Properties
         # Surface tension
         set surface tension model       = constant
         set surface tension coefficient = 0
+        
+        # Mobility Cahn-Hilliard
+        set cahn hilliard mobility model    = constant
+        set cahn hilliard mobility constant = 1
       end
 
       # if fluid-solid interaction
@@ -116,6 +120,10 @@ Physical Properties
           We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
+      
+    * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the fluid-fluid pair. Two models exist: a constant mobility and a quartic mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
+      
+    * The ``cahn hilliard mobility coefficient`` parameter is the constant mobility coefficient used in the Cahn-Hilliard equations of the two interacting fluids. Its units are :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`.
 
   * In the ``fluid-solid`` subsection we define the fluid-solid pair and their physical properties.
 
