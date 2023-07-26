@@ -1399,7 +1399,7 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , number_of_nodes(weights.size())
   , iterable_nodes(1)
   , likely_nodes_map()
-  , max_number_of_nodes(1)
+  , max_number_of_inside_nodes(1)
   , position_precalculated(position)
   , orientation_precalculated(orientation)
   , levels_not_precalculated(0)
@@ -1461,16 +1461,16 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
       (*temp_nodes_id_1)[i] = i;
       (*temp_nodes_id_2)[i] = i;
     }
-  nodes_id[0]               = {Point<dim>{},
+  nodes_id[0]                = {Point<dim>{},
                  std::numeric_limits<double>::max(),
                  temp_nodes_id_1};
-  iterable_nodes[0]         = {Point<dim>{},
+  iterable_nodes[0]          = {Point<dim>{},
                        std::numeric_limits<double>::max(),
                        temp_nodes_id_2};
-  max_number_of_nodes       = 1;
-  position_precalculated    = Point<dim>(this->position);
-  orientation_precalculated = Tensor<1, 3>(this->orientation);
-  levels_not_precalculated  = 0;
+  max_number_of_inside_nodes = 1;
+  position_precalculated     = Point<dim>(this->position);
+  orientation_precalculated  = Tensor<1, 3>(this->orientation);
+  levels_not_precalculated   = 0;
   minimal_support_radius =
     *std::min_element(std::begin(support_radii), std::end(support_radii));
 
@@ -1562,9 +1562,9 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
   double value = std::max(bounding_box_distance, 0.0);
   double normalized_distance, basis;
   // Algorithm inspired by Optimad Bitpit. https://github.com/optimad/bitpit
-    for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
+  for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
-        for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
+      for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
         {
           normalized_distance =
             (evaluation_point - rotated_nodes_positions[node_id]).norm() /
@@ -1606,9 +1606,9 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
         "of at least one RBF node. It this isn't the case, an error has been "
         "introduced in the code. ");
     }
-    for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
+  for (size_t portion_id = 0; portion_id < iterable_nodes.size(); portion_id++)
     {
-        for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
+      for (const size_t &node_id : *(std::get<2>(iterable_nodes[portion_id])))
         {
           // Calculation of the dr/dx
           relative_position =
@@ -1709,7 +1709,9 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     temporary_iterable_nodes{1};
-    temporary_iterable_nodes[0]={Point<dim>{},0,std::make_shared<std::vector<size_t>>()};
+  temporary_iterable_nodes[0] = {Point<dim>{},
+                                 0,
+                                 std::make_shared<std::vector<size_t>>()};
   if (cell->level() > 0)
     try
       {
@@ -1734,7 +1736,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
   likely_nodes_map[cell]          = std::make_shared<std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>();
   const size_t number_of_portions = iterable_nodes.size();
-   for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
+  for (size_t portion_id = 0; portion_id < number_of_portions; portion_id++)
     {
       std::tie(temp_cell_barycenter, temp_cell_diameter, std::ignore) =
         (iterable_nodes[portion_id]);
@@ -1745,14 +1747,12 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // only check the distance with 1 support point, added to the support
       // radius
       max_distance =
-              cell_diameter + 0.5*temp_cell_diameter + minimal_support_radius;
+        cell_diameter + 0.5 * temp_cell_diameter + minimal_support_radius;
       if (distance < max_distance)
         {
           likely_nodes_map[cell]->push_back(iterable_nodes[portion_id]);
         }
     }
-  max_number_of_nodes =
-    std::max(max_number_of_nodes, likely_nodes_map[cell]->size());
 
   if (parent_found)
     {
@@ -1790,43 +1790,49 @@ RBFShape<dim>::update_precalculations(
     temporary_nodes_portions_map;
   temporary_nodes_portions_map.clear();
 
- for (unsigned int level = 0; level < maximal_level; level++)
+  size_t max_level_to_portion = (levels_not_precalculated == 0) ?
+                                  maximal_level :
+                                  maximal_level + 1 - levels_not_precalculated;
+
+  for (unsigned int level = 0; level < max_level_to_portion; level++)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           if (cell->is_artificial_on_level())
             continue;
-
-          if (level > 0)
-            {
-              try
-                {
-                  const auto cell_parent = cell->parent();
-                  const auto parent_iterator =
-                    temporary_nodes_portions_map.find(cell_parent);
-                  if (parent_iterator != temporary_nodes_portions_map.end())
-                    {
-                      size_t parents_size = std::get<2>(temporary_nodes_portions_map[cell->parent()])->size();
-                      temporary_node_numbers->resize(parents_size);
-                      for (size_t i = 0; i < parents_size; i++)
-                        (*temporary_node_numbers)[i] = (*std::get<2>(temporary_nodes_portions_map[cell->parent()]))[i];
-                    }
-                }
-              catch (TriaAccessorExceptions::ExcCellHasNoParent())
-                {}
-            }
+          if (cell->level() > 0)
+            try
+              {
+                const auto cell_parent = cell->parent();
+                const auto parent_iterator =
+                  temporary_nodes_portions_map.find(cell_parent);
+                if (parent_iterator != temporary_nodes_portions_map.end())
+                  {
+                    temporary_node_numbers =
+                      std::get<2>(parent_iterator->second);
+                  }
+                else
+                  // If the parent doesn't contain any node, the child will not
+                  // either
+                  continue;
+              }
+            catch (TriaAccessorExceptions::ExcCellHasNoParent())
+              {}
 
           std::shared_ptr<std::vector<size_t>> current_cell_nodes =
             std::make_shared<std::vector<size_t>>();
+          current_cell_nodes->reserve(max_number_of_inside_nodes);
           for (unsigned int i = 0; i < temporary_node_numbers->size(); i++)
             {
               if (cell->point_inside(
                     rotated_nodes_positions[(*temporary_node_numbers)[i]]))
-                {
-                  current_cell_nodes->push_back((*temporary_node_numbers)[i]);
-                }
+                current_cell_nodes->push_back(temporary_node_numbers->at(i));
             }
+          max_number_of_inside_nodes =
+            std::max(max_number_of_inside_nodes, current_cell_nodes->size());
+          current_cell_nodes->shrink_to_fit();
+
           if (current_cell_nodes->size() > 0)
             temporary_nodes_portions_map[cell] =
               std::make_tuple(cell->barycenter(),
@@ -1846,15 +1852,14 @@ RBFShape<dim>::update_precalculations(
           bool cell_still_needed = cell->is_active() || cell_level == level;
           if (!cell_still_needed)
             {
-              temporary_nodes_portions_map.erase(it++);
-              it--;
+              temporary_nodes_portions_map.erase(it++->first);
             }
           else
             it++;
         }
     }
 
- // We give all the subsets to the 0 level, as an initial partitioning
+  // We give all the subsets to the 0 level, as an initial partitioning
   const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
   double      distance;
   std::shared_ptr<std::vector<size_t>> temp_nodes =
@@ -1874,8 +1879,9 @@ RBFShape<dim>::update_precalculations(
            it != temporary_nodes_portions_map.cend();
            it++)
         {
-           temp_cell = it->first;
-          if (temp_cell->is_active())
+          temp_cell = it->first;
+          if (temp_cell->is_active() ||
+              temp_cell->level() + 1 == max_level_to_portion)
             {
               if (cell->point_inside(temp_cell->barycenter()))
                 {
@@ -1883,7 +1889,6 @@ RBFShape<dim>::update_precalculations(
                                                     temp_cell->diameter(),
                                                     std::get<2>(it->second));
                   likely_nodes_map[cell]->push_back(temp_cell_tuple);
-                    continue;
                 }
               else
                 for (const size_t &node_id : *temp_nodes)
@@ -1893,9 +1898,10 @@ RBFShape<dim>::update_precalculations(
                         .norm();
                     if (distance < support_radii[node_id])
                       {
-                        temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
-                                                          temp_cell->diameter(),
-                                                          std::get<2>(it->second));
+                        temp_cell_tuple =
+                          std::make_tuple(temp_cell->barycenter(),
+                                          temp_cell->diameter(),
+                                          std::get<2>(it->second));
                         likely_nodes_map[cell]->push_back(temp_cell_tuple);
                         break;
                       }
@@ -1907,34 +1913,34 @@ RBFShape<dim>::update_precalculations(
   // We then treat all other levels
   for (unsigned int level = 1; level < maximal_level; level++)
     {
-      const auto &cell_iterator_on_level = dof_handler.cell_iterators_on_level(level);
+      const auto &cell_iterator_on_level =
+        dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator_on_level)
         {
-          // We first check if we are in the hierarchy levels where we simply
-          // assume that children have the same likely nodes as their parents.
+          if (cell->is_artificial_on_level())
+            continue;
+
+          // We first check if we are in the hierarchy levels where we
+          // simply assume that children have the same likely nodes as their
+          // parents.
           const bool no_need_to_precalculate_level =
-            (level + 1 + levels_not_precalculated > maximal_level);
+            (level + levels_not_precalculated >= maximal_level);
           // We also check if the cell diameter is lower than the minimal
-          // support radius. In that case, the likely nodes should stay more or
-          // less the same.
+          // support radius. In that case, the likely nodes should stay more
+          // or less the same.
           const bool cell_smaller_than_rbf_radius =
             (cell->diameter() < minimal_support_radius);
           if (no_need_to_precalculate_level || cell_smaller_than_rbf_radius)
             {
+              likely_nodes_map[cell] = std::make_shared<std::vector<
+                std::tuple<Point<dim>,
+                           double,
+                           std::shared_ptr<std::vector<size_t>>>>>();
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
               continue;
             }
-          // If the precalculations have reached the finest level, then the cell
-          // precalculation only has to be done for cells that are locally
-          // owned.
-          if (level == maximal_level)
-            if (!cell->is_locally_owned())
-              continue;
-          // In the same way, the cell precalculation only has to be done on
-          // cells that aren't artificial (in other words, locally owned or
-          // ghost cells)
-          if (!cell->is_artificial_on_level())
-            determine_likely_nodes_for_one_cell(cell, cell->barycenter());
+
+          determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
     }
 
@@ -2216,8 +2222,8 @@ CylindricalHelix<dim>::value(const Point<dim> &evaluation_point,
   // the helix the other bellow. We keep the closest one.
   t_initial_guess = std::floor(x / pitch) * 2 * numbers::PI + phase;
 
-  // Solve the non-linear equation to find the point on the helix with the first
-  // guess
+  // Solve the non-linear equation to find the point on the helix with the
+  // first guess
   double level_set_tube = 0;
   t                     = t_initial_guess;
   double residual = -(radius * cos(t) - centered_point[0]) * sin(t) * radius +

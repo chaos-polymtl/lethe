@@ -1805,7 +1805,7 @@ private:
     std::shared_ptr<std::vector<
       std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>>>
                    likely_nodes_map;
-  size_t           max_number_of_nodes;
+  size_t           max_number_of_inside_nodes;
   DoFHandler<dim> *dof_handler;
   Point<dim>       position_precalculated;
   Tensor<1, 3>     orientation_precalculated;
