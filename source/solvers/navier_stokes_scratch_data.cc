@@ -47,7 +47,6 @@ NavierStokesScratchData<dim>::allocate()
     max_number_of_intermediary_stages(),
     std::vector<Tensor<1, dim>>(n_q_points));
 
-
   // Pressure
   this->pressure_values         = std::vector<double>(n_q_points);
   this->pressure_gradients      = std::vector<Tensor<1, dim>>(n_q_points);
@@ -91,6 +90,7 @@ NavierStokesScratchData<dim>::allocate()
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
 }
+
 
 template <int dim>
 void
@@ -225,6 +225,7 @@ NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
     std::vector<Tensor<1, dim>>(this->n_q_points);
 }
 
+
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_curvature(
@@ -281,6 +282,7 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
     std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
   Re_particle = std::vector<double>(n_global_max_particles_per_cell);
 }
+
 
 template <int dim>
 void
@@ -388,16 +390,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           density_model_1->vector_value(fields, density_1);
           rheology_model_1->vector_value(fields, viscosity_1);
 
-          // Gather density_ref and density_psi for isothermal compressible NS
-          // equations
-          if (!properties_manager.density_is_constant())
-            {
-              density_ref_0 = density_model_0->get_density_ref();
-              density_psi_0 = density_model_0->get_psi();
-              density_ref_1 = density_model_1->get_density_ref();
-              density_psi_1 = density_model_1->get_psi();
-            }
-
           if (gather_temperature)
             {
               const auto thermal_expansion_model_0 =
@@ -428,15 +420,23 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     calculate_point_property(filtered_phase_value,
                                              this->thermal_expansion_0[q],
                                              this->thermal_expansion_1[q]);
+                }
 
-                  // To be able to calculate of the equivalent dynamic viscosity
-                  // (See with Bruno if a dynamic viscosity model should be
-                  // implemented to avoid unnecessary calculations and avoid
-                  // retrieving density_ref values or simply replace kinematic
-                  // viscosity by the dynamic viscosity in the calculation
-                  // above)
-                  if (!properties_manager.density_is_constant())
+              // Gather density_ref and density_psi for isothermal compressible
+              // NS equations
+              if (!properties_manager.density_is_constant())
+                {
+                  density_ref_0 = density_model_0->get_density_ref();
+                  density_psi_0 = density_model_0->get_psi();
+                  density_ref_1 = density_model_1->get_density_ref();
+                  density_psi_1 = density_model_1->get_psi();
+
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
                     {
+                      double filtered_phase_value =
+                        this->filtered_phase_values[q];
+                      // To be able to calculate of the equivalent dynamic
+                      // viscosity
                       density_ref_eq[q] =
                         calculate_point_property(filtered_phase_value,
                                                  this->density_ref_0,
