@@ -169,8 +169,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto &grad_shear_rate_j =
-                grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto &shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
@@ -179,7 +178,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
               double local_matrix_ij =
                 dynamic_viscosity_eq *
-                  scalar_product(grad_shear_rate_j, grad_phi_u_i) +
+                  scalar_product(shear_rate_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j;
