@@ -28,32 +28,6 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  std::vector<double> &phase_values = scratch_data.phase_values;
-
-  // Phase cutoff to limit continuity application on non-conservative fluid
-  const double phase_cutoff = 1e-6;
-
-  // Determine whether continuity condition is solved in this cell.
-  // Removing the conservation condition on the lowest density fluid
-  // can improve the wetting mechanism in the framework of incompressible
-  // fluids. See documentation for more details.
-  auto max_phase_cell =
-    std::max_element(std::begin(phase_values), std::end(phase_values));
-  bool solve_continuity(true);
-
-  if (vof_parameters.conservation.conservative_fluid ==
-      Parameters::FluidIndicator::fluid0)
-    {
-      if (*max_phase_cell > 1. - phase_cutoff)
-        solve_continuity = false;
-    }
-  else if (vof_parameters.conservation.conservative_fluid ==
-           Parameters::FluidIndicator::fluid1)
-    {
-      if (*max_phase_cell < phase_cutoff)
-        solve_continuity = false;
-    }
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -166,49 +140,35 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto &grad_shear_rate_j =
-                grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto &shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
+              const auto &grad_phi_p_j =
+                scratch_data.grad_phi_p[q][j] * pressure_scaling_factor;
 
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
                 dynamic_viscosity_eq *
-                  scalar_product(grad_shear_rate_j, grad_phi_u_i) +
+                  scalar_product(shear_rate_j, grad_phi_u_i) +
                 phi_u_i * density_eq * velocity_gradient_x_phi_u_j[j] +
                 phi_u_i * density_eq * grad_phi_u_j_x_velocity[j] -
                 div_phi_u_i * phi_p_j;
 
-              if (solve_continuity)
-                {
-                  const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+              local_matrix_ij +=
+                phi_p_i * compressibility_multiplier * phi_u_j *
+                  pressure_gradient +
+                phi_p_i * compressibility_multiplier * velocity * grad_phi_p_j +
+                phi_p_i * density_0 * div_phi_u_j;
 
-                  // Continuity
-                  local_matrix_ij += phi_p_i * compressibility_multiplier *
-                                       phi_u_j * pressure_gradient +
-                                     phi_p_i * compressibility_multiplier *
-                                       velocity * grad_phi_p_j +
-                                     phi_p_i * density_0 * div_phi_u_j;
+              // PSPG GLS term
+              local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
 
-                  // PSPG GLS term
-                  local_matrix_ij +=
-                    tau / density_eq * (strong_jac * grad_phi_p_i);
-                }
-              else
-                {
-                  // assemble Jacobian corresponding to p = 0
-                  local_matrix_ij += phi_p_i * phi_p_j;
-                }
-
-              // Jacobian is currently incomplete
-              if (SUPG)
-                {
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
-                }
+              // SUPG GLS term
+              local_matrix_ij +=
+                tau * (strong_jac * grad_phi_u_i_x_velocity +
+                       strong_residual_x_grad_phi_u_i * phi_u_j);
               local_matrix_ij *= JxW;
               local_matrix(i, j) += local_matrix_ij;
             }
@@ -238,32 +198,6 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-  std::vector<double> &phase_values = scratch_data.phase_values;
-
-  // Phase cutoff to limit continuity application on non-conservative fluid
-  const double phase_cutoff = 1e-6;
-
-  // Determine whether continuity condition is solved in this cell.
-  // Removing the conservation condition on the lowest density fluid
-  // can improve the wetting mechanism in the framework of incompressible
-  // fluids. See documentation for more details.
-  auto max_phase_cell =
-    std::max_element(std::begin(phase_values), std::end(phase_values));
-  bool solve_continuity(true);
-
-  if (vof_parameters.conservation.conservative_fluid ==
-      Parameters::FluidIndicator::fluid0)
-    {
-      if (*max_phase_cell > 1. - phase_cutoff)
-        solve_continuity = false;
-    }
-  else if (vof_parameters.conservation.conservative_fluid ==
-           Parameters::FluidIndicator::fluid1)
-    {
-      if (*max_phase_cell < phase_cutoff)
-        solve_continuity = false;
-    }
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -274,7 +208,6 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-
 
       const Tensor<3, dim> &velocity_hessian =
         scratch_data.velocity_hessians[q];
@@ -290,7 +223,6 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
               grad_div_velocity[d] += velocity_hessian[k][d][k];
             }
         }
-
 
       // Calculate shear rate
       const Tensor<2, dim> shear_rate =
@@ -349,39 +281,25 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
           const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
           const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
-
           // Navier-Stokes Residual
-          // Momentum
           local_rhs(i) +=
-            (-dynamic_viscosity_eq * scalar_product(shear_rate, grad_phi_u_i) -
+            // Continuity
+            (-phi_p_i * compressibility_multiplier * velocity *
+               pressure_gradient -
+             phi_p_i * density_0 * velocity_divergence
+             // Momentum
+             - dynamic_viscosity_eq * scalar_product(shear_rate, grad_phi_u_i) -
              density_eq * velocity_gradient * velocity * phi_u_i +
              pressure * div_phi_u_i + density_eq * force * phi_u_i) *
             JxW;
 
-          if (solve_continuity)
-            {
-              // Continuity
-              local_rhs(i) += -(phi_p_i * compressibility_multiplier *
-                                  velocity * pressure_gradient +
-                                phi_p_i * density_0 * velocity_divergence) *
-                              JxW;
-
-              // PSPG GLS term
-              local_rhs(i) +=
-                -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
-            }
-          else
-            {
-              // assemble RHS for p = 0
-              local_rhs(i) += -phi_p_i * pressure * JxW;
-            }
+          // PSPG GLS term
+          local_rhs(i) +=
+            -tau / density_eq * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
-          if (SUPG)
-            {
-              local_rhs(i) +=
-                -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
-            }
+          local_rhs(i) +=
+            -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
         }
     }
 }
@@ -438,7 +356,6 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>::assemble_matrix(
           strong_jacobian[q][j] +=
             density * bdf_coefs[0] * scratch_data.phi_u[q][j];
         }
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
@@ -504,7 +421,6 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>::assemble_rhs(
         {
           strong_residual[q] += (density * bdf_coefs[p] * velocity[p]);
         }
-
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
