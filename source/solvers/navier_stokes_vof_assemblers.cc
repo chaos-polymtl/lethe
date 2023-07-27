@@ -263,7 +263,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -518,11 +518,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  //  // Densities of phases
-  //  Assert(scratch_data.properties_manager.density_is_constant(),
-  //         RequiresConstantDensity(
-  //           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
-
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -581,10 +576,10 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   const double surface_tension_gradient =
     STF_properties.surface_tension_gradient;
 
-  //  // Densities of phases
-  //  Assert(scratch_data.properties_manager.density_is_constant(),
-  //         RequiresConstantDensity(
-  //           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+  // Densities of phases
+  Assert(scratch_data.properties_manager.density_is_constant(),
+         RequiresConstantDensity(
+           "GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs"));
 
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
@@ -704,9 +699,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
         solve_continuity = false;
     }
 
-  Assert(scratch_data.properties_manager.density_is_constant(),
-         RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -938,7 +934,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
