@@ -53,6 +53,10 @@ NavierStokesScratchData<dim>::allocate()
   this->pressure_gradients      = std::vector<Tensor<1, dim>>(n_q_points);
   this->pressure_scaling_factor = 1;
 
+  // Pressure for BDF schemes (compressible Navier-Stokes)
+  this->previous_pressure_values =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(n_q_points));
   // Initialize arrays related to shape functions
   // Velocity shape functions
   this->phi_u = std::vector<std::vector<Tensor<1, dim>>>(
@@ -287,12 +291,17 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
   switch (properties_manager.get_number_of_fluids())
     {
         case 1: {
-          // In this case, only viscosity is the required property
+          // In the case of an incompressible flow, viscosity is the only
+          // required property
           const auto rheology_model = properties_manager.get_rheology();
           rheology_model->vector_value(fields, viscosity);
-          viscosity_scale          = rheology_model->get_viscosity_scale();
+          viscosity_scale = rheology_model->get_viscosity_scale();
+
+          // For a weakly compressible flow, density variations will play a role
           const auto density_model = properties_manager.get_density();
           density_model->vector_value(fields, density);
+          density_psi = density_model->get_psi();
+          density_ref = density_model->get_density_ref();
 
           if (properties_manager.is_non_newtonian())
             {
@@ -311,7 +320,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           break;
         }
         case 2: {
-          // In this case,  we need both density and viscosity
+          // We need both density and viscosity
           const auto density_model_0  = properties_manager.get_density(0);
           const auto rheology_model_0 = properties_manager.get_rheology(0);
           const auto density_model_1  = properties_manager.get_density(1);

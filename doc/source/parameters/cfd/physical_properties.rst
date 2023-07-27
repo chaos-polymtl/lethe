@@ -396,7 +396,7 @@ By default, parameters are set to the values of dry air evaluated under normal t
   When defining the initial pressure condition in the ``initial conditions`` subsection (see :doc:`initial_conditions`), make sure to set it to :math:`0`, as it represents the reference state for the calculated pressure. In solving the Navier-Stokes equations, the pressure is defined to within a constant. Therefore, it is more appropriate to interpret it as a differential pressure.
 
   .. attention::
-    Currently, the ``isothermal_ideal_gas`` density model can only be used in conjunction with the incompressible Navier-Stokes equations. However, it is meant to be used with the isothermal formulation of compressible Navier-Stokes equations to account for weakly compressible flows. In a future update, these equations will be implemented.
+    Currently, in two phase flow simulations, the ``isothermal_ideal_gas`` density model can only be used in conjunction with the incompressible Navier-Stokes equations. However, it is meant to be used with the isothermal formulation of compressible Navier-Stokes equations to account for weakly compressible flows. In a future update, this change will be implemented.
 
 .. _thermal_conductivity_models:
 

@@ -13,13 +13,13 @@ This approach consists of two new terms that are added to the classic weak formu
 
 .. math::
 
-  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_K  = 0
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k =0
+  & + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_l \partial_l v_k \right) \mathrm{d}\Omega_K =0
 
-This formulation is consistent as the added terms involve the residual and if we substitute the exact solution, the stabilization terms vanish. In the literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1991) <https://linkinghub.elsevier.com/retrieve/pii/S0065215608701534>`_ for both stabilization parameters. In the case of a transient problem:
+This formulation is consistent as the added terms involve the residual and if we substitute the exact solution, the stabilization terms vanish. In the literature, one can find different definitions of the stabilization parameters :math:`\tau_{SUPG}` and :math:`\tau_{PSPG}`. Lethe uses the definition by `Tezduyar (1992) <https://doi.org/10.1016/0045-7825(92)90141-6>`_ for both stabilization parameters. In the case of a transient problem:
 
 .. math::
 
@@ -53,7 +53,7 @@ This approach builds on the work of `Heister et al. (2012) <https://onlinelibrar
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega  - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  
   \\
-  &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_k} \partial_l u_l \partial_k v_k = 0
+  &+ \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega  + \sum_K \gamma \int_{\Omega_K} \partial_l u_l \partial_k v_k \mathrm{d}\Omega_K = 0
 
 where :math:`\gamma` is an additional parameter that can be related to the augmented lagrangian formulation. The additional stabilization term improves the numerical accuracy of the solution and helps reduce oscillations for convection-dominated flows. In general, the optimal value for :math:`\gamma` depends on the solution on each element and it is therefore, problem dependent. In Lethe the value of :math:`\gamma` is equal to :math:`1`. In this case, the linear system to be solved in each non-linear iteration has the same structure as the one obtained with the classic weak formulation. Therefore, a good preconditioning is necessary to solve the linear system at each nonlinear iteration. More on this topic is found in the linear solvers section.
 
@@ -66,15 +66,15 @@ The GLS formulation is built as a generalization of the stabilization procedure 
 
 .. math::
 
-  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_k  = 0 
+  &\int_{\Omega}  q  \partial_l u_l \mathrm{d}\Omega + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{PSPG} \partial_l q \right) \mathrm{d}\Omega_K  = 0
   \\
   &\int_{\Omega}  v_k \left(\partial_t u_k+ u_l \partial_l u_k - f_k \right) \mathrm{d}\Omega - \int_{\Omega} \left( \partial_k \right) v_k p \mathrm{d}\Omega  + \nu \int_{\Omega} \left( \partial_l v_k \right) \left( \partial_l u_k  \right) \mathrm{d}\Omega   
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_k \partial_l v_k \right) \mathrm{d}\Omega_k 
+  & + \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{SUPG} u_l \partial_l v_k \right) \mathrm{d}\Omega_K
   \\
-  & + \sum_{k} \int_{\Omega_k} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l v_k \right) \mathrm{d}\Omega_k  
+  & - \sum_{K} \int_{\Omega_K} \left( \partial_t u_k + u_l \partial_l u_k + \partial_k p - \nu \partial_l \partial_l u_k - f_k \right) \cdot \left(\tau_{GLS} \nu \partial_l \partial_l v_k \right) \mathrm{d}\Omega_K
   \\
-  & + \sum_{k} \int_{\Omega_k} \tau_{LSIC} (\partial_l v_l) (\partial_l u_l) \mathrm{d}\Omega_k = 0
+  & + \sum_{K} \int_{\Omega_K} \tau_{LSIC} (\partial_l v_l) (\partial_l u_l) \mathrm{d}\Omega_K = 0
 
 This is the version of the GLS stabilization if the finite element method is only used for the spatial discretization and no time-space finite element formulation is used as is the case in Lethe. The stabilization parameters are taken to be the same for the SUPG, PSPG and GLS terms, and given by the same :math:`\tau` expressions presented in the SUPG/PSPG section. In the case of the LSIC term, the stabilization parameter is defined as:
 
