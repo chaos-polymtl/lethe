@@ -31,7 +31,7 @@
  * This class assembles the weak form of:
  * $$ \nabla \cdot \mathbf{u} + \rho \mathbf{u} \cdot \nabla
  * \mathbf{u} + \nabla p - \mu \nabla\cdot (\nabla \mathbf{u} +
- * (\nabla \mathbf{u})^T)=0 $$ with an SUPG and PSPG stabilization
+ * (\nabla \mathbf{u})^T) = 0 $$ with an SUPG and PSPG stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

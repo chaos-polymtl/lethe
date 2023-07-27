@@ -130,7 +130,8 @@ VOFAssemblerCore<dim>::assemble_matrix(VOFScratchData<dim> &      scratch_data,
               const auto grad_phi_phase_j = scratch_data.grad_phi[q][j];
 
               // Weak form for advection-diffusion:
-              // u * grad(phase) - diffusivity * laplacian(phase) = 0
+              // u * grad(phase) + phase * grad(u) - diffusivity *
+              // laplacian(phase) = 0
               local_matrix(i, j) +=
                 (phi_phase_i * velocity * grad_phi_phase_j +
                  phi_phase_i * phi_phase_j * velocity_divergence +
@@ -260,7 +261,8 @@ VOFAssemblerCore<dim>::assemble_rhs(VOFScratchData<dim> &      scratch_data,
           const auto grad_phi_phase_i = scratch_data.grad_phi[q][i];
 
 
-          // rhs for: u * grad(phase) - diffusivity * laplacian(phase) = 0
+          // rhs for: u * grad(phase) + phase * grad(u) - diffusivity *
+          // laplacian(phase) = 0
           local_rhs(i) -= (phi_phase_i * velocity * phase_gradient +
                            phi_phase_i * phase * velocity_divergence +
                            diffusivity * grad_phi_phase_i * phase_gradient) *

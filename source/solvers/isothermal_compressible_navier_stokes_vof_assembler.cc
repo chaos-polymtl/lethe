@@ -150,17 +150,17 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &strong_jac = strong_jacobian_vec[q][j];
 
               double local_matrix_ij =
+                // Continuity
+                phi_p_i * compressibility_multiplier * phi_u_j *
+                  pressure_gradient +
+                phi_p_i * compressibility_multiplier * velocity * grad_phi_p_j +
+                phi_p_i * density_0 * div_phi_u_j +
+                // Momentum
                 dynamic_viscosity_eq *
                   scalar_product(shear_rate_j, grad_phi_u_i) +
                 phi_u_i * density_eq * velocity_gradient_x_phi_u_j[j] +
                 phi_u_i * density_eq * grad_phi_u_j_x_velocity[j] -
                 div_phi_u_i * phi_p_j;
-
-              local_matrix_ij +=
-                phi_p_i * compressibility_multiplier * phi_u_j *
-                  pressure_gradient +
-                phi_p_i * compressibility_multiplier * velocity * grad_phi_p_j +
-                phi_p_i * density_0 * div_phi_u_j;
 
               // PSPG GLS term
               local_matrix_ij += tau / density_eq * (strong_jac * grad_phi_p_i);
