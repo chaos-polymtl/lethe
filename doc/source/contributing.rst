@@ -139,7 +139,7 @@ Throughout the documentation, you may notice that the different pages follow a c
 
     .. seealso::
 
-      More information on the IEEE referencing style can by found in the `IEEE Reference Guide <https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf>`_.
+      More information on the IEEE referencing style can be found in the `IEEE Reference Guide <https://ieeeauthorcenter.ieee.org/wp-content/uploads/IEEE-Reference-Guide.pdf>`_.
 
       Here is an example of how references should appear in:
 

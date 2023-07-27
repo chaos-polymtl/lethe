@@ -1,0 +1,100 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set output name       = mms2d_isothermal_compressible
+  set output frequency  = 0
+  set time end          = 7
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0
+    set density model       = isothermal_ideal_gas
+    subsection isothermal_ideal_gas
+      set density_ref = 1.2
+      set R           = 10
+      set T           = 10
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -1 : 1 : false
+  set initial refinement = 5
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set type = noslip
+  end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  set enable = true
+  subsection xyz
+    set Function constants  = nu=1, rho_ref=1.2, psi=0.01
+    set Function expression = pi*(2*nu*pi*rho_ref*(1 - 2*cos(2*pi*x))*cos(pi*y) + (psi*sin(pi*x)*sin(pi*y) + rho_ref)*sin(pi*x)^3*sin(pi*y)*cos(pi*x) + cos(pi*x))*sin(pi*y); pi*(-2*nu*pi*rho_ref*(1 - 2*cos(2*pi*y))*cos(pi*x) + (psi*sin(pi*x)*sin(pi*y) + rho_ref)*sin(pi*x)*sin(pi*y)^3*cos(pi*y) + cos(pi*y))*sin(pi*x); 0
+  end
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = sin(pi*x)*sin(pi*x)*cos(pi*y)*sin(pi*y); -cos(pi*x)*sin(pi*x)*sin(pi*y)*sin(pi*y); sin(pi*x)*sin(pi*y)
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set tolerance          = 1e-8
+  set max iterations     = 10
+  set residual precision = 2
+  set verbosity          = quiet
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-3
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
+end

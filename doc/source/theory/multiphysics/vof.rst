@@ -1,5 +1,6 @@
-The Volume of Fluid (VOF) method
-#############################################
+================================
+The Volume of Fluid (VOF) Method
+================================
 
 Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
@@ -43,7 +44,7 @@ To complete the strong formulation of the problem, let's impose a no flux bounda
 
 where :math:`n_i` represent the outward pointing unit normal vector of :math:`\partial \Omega`, i.e., :math:`\vec{n}`.
 
-Finite element formulation
+Finite Element Formulation
 ---------------------------
 
 To obtain the finite element formulation, we first need the weak formulation. Therefore, let :math:`v` be an arbitrary scalar function on :math:`\Omega`. To obtain the weak form, we multiply the strong problem by :math:`v` and integrate over :math:`\Omega`:
@@ -102,7 +103,7 @@ The term :math:`v_\mathrm{DCDD}` ensures that diffusivity is added only where th
 
 The DCDD scheme leads to a non-linear finite element formulation. Thus, the latter is resolved with the Newton-Raphson method.
 
-Interface diffusion and sharpening
+Interface Diffusion and Sharpening
 -----------------------------------
 
 The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` happens on a larger distance.
@@ -110,7 +111,7 @@ The VOF method tends to diffuse the interface, i.e., over time, the interface be
 Thus, we use sharpening methods to keep the change in :math:`\phi` sharp at the interface. Two methods are currently available: interface sharpening and interface filtration.
 
 """"""""""""""""""""""""""""""""
-Interface sharpening
+Interface Sharpening
 """"""""""""""""""""""""""""""""
 
 The current interface sharpening method consists of two steps:
@@ -141,7 +142,7 @@ a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` correspon
 .. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
 
 """"""""""""""""""""""""""""""""
-Interface filtration
+Interface Filtration
 """"""""""""""""""""""""""""""""
 
 In the interface filtration method, the following filter function is applied to the phase fraction :math:`\phi` in order to get a better definition of the interface between the fluids:
@@ -151,7 +152,7 @@ In the interface filtration method, the following filter function is applied to 
 
 where :math:`\phi'` is the filtered phase fraction value, and :math:`\beta` is a model parameter that enables sharper definition when increased. Recommended value is :math:`\beta=20`.
 
-Surface tension
+Surface Tension
 ---------------
 
 When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape [`3 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_].
@@ -193,7 +194,7 @@ When including the surface tension force in the resolution of the Navier-Stokes 
 .. _Normal and curvature computations:
 
 """""""""""""""""""""""""""""""""
-Normal and curvature computations
+Normal and Curvature Computations
 """""""""""""""""""""""""""""""""
 
 The following equations are used to compute the filtered phase fraction gradient and filtered curvature. They correspond to the projection steps previously mentioned.

@@ -51,10 +51,10 @@ using namespace dealii;
  * for a Navier-Stokes equation. Consequently, this class calculates
  * the velocity (values, gradients, laplacians) and the shape function
  * (values, gradients, laplacians) at all the gauss points for all degrees
- * of freedom and stores it into arrays. Additionnaly, the use can request
+ * of freedom and stores it into arrays. Additionally, the use can request
  * that this class gathers additional fields for physics which are coupled
  * to the Navier-Stokes equation, such as the VOF. This class
- * serves as a seperation between the evaluation at the gauss point of the
+ * serves as a separation between the evaluation at the gauss point of the
  * variables of interest and their use in the assembly, which is carried out
  * by the assembler functions. For more information on this design, the reader
  * can consult deal.II step-9
@@ -275,21 +275,6 @@ public:
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
       }
 
-    // Gather previous velocities
-    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
-      {
-        this->fe_values[velocities].get_function_values(
-          previous_solutions[p], previous_velocity_values[p]);
-      }
-
-    // Gather velocity stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values[velocities].get_function_values(
-          solution_stages[s], stages_velocity_values[s]);
-      }
-
-
     // Gather pressure (values, gradient)
     fe_values[pressure].get_function_values(current_solution,
                                             this->pressure_values);
@@ -297,6 +282,27 @@ public:
                                                this->pressure_gradients);
     this->pressure_scaling_factor = pressure_scaling_factor;
 
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values[velocities].get_function_values(
+          previous_solutions[p], previous_velocity_values[p]);
+      }
+
+    // Only gather the pressure when a pressure history is necessary
+    // (compressible Navier-Stokes)
+    if (!this->properties_manager.density_is_constant())
+      for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+        {
+          this->fe_values[pressure].get_function_values(
+            previous_solutions[p], previous_pressure_values[p]);
+        }
+
+    // Gather velocity stages
+    for (unsigned int s = 0; s < solution_stages.size(); ++s)
+      {
+        this->fe_values[velocities].get_function_values(
+          solution_stages[s], stages_velocity_values[s]);
+      }
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
@@ -919,6 +925,8 @@ public:
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
+  double                               density_psi;
+  double                               density_ref;
   std::vector<double>                  viscosity;
   double                               viscosity_scale;
   std::vector<double>                  thermal_expansion;
@@ -967,6 +975,7 @@ public:
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
+  std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> stages_velocity_values;
 

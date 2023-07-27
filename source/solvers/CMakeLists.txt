@@ -13,6 +13,7 @@ add_library(lethe-solvers
   heat_transfer_assemblers.cc
   heat_transfer_scratch_data.cc
   initial_conditions.cc
+  isothermal_compressible_navier_stokes_assembler.cc
   mf_gls_navier_stokes.cc
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
@@ -47,6 +48,7 @@ add_library(lethe-solvers
   ../../include/solvers/heat_transfer_assemblers.h
   ../../include/solvers/heat_transfer_scratch_data.h
   ../../include/solvers/initial_conditions.h
+  ../../include/solvers/isothermal_compressible_navier_stokes_assembler.h
   ../../include/solvers/mf_gls_navier_stokes.h
   ../../include/solvers/multiphysics_interface.h
   ../../include/solvers/navier_stokes_assemblers.h

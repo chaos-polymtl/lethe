@@ -5,12 +5,12 @@ Origin of the Finite Element Formulation
 This section describes the FEM formulation used within Lethe. Starting from the strong form of the equations, we obtain the weak-form. We then briefly discuss the challenges associated with solving the Navier-Stokes equations before we introduce the two approaches that are available in Lethe to solve them.
 
 
-Starting from the incompressible Navier-Stokes equations:
+Starting from :doc:`The Incompressible Navier-Stokes <navier-stokes>` equations:
 
 .. math::
     \partial_l u_l &= 0 
 
-    \partial_t u_k + u_l \partial_l u_k &= -\frac{1}{\rho} \partial_k p + \nu \partial_l \partial_l u_k + f_k
+    \partial_t u_k + u_l \partial_l u_k &= -\frac{1}{\rho} \partial_k p^* + \nu \partial_l \partial_l u_k + f_k
 
 We consider a domain :math:`\Omega` of contour :math:`\Gamma`. Without loss of generality, we assume Dirichlet boundary conditions or zero stress  conditions 
 on :math:`\Gamma`. We multiply by two test functions :math:`q` and :math:`\mathbf{v}=v_k` for pressure and velocity respectively and integrate over the domain :math:`\Omega`. The resulting set of equation is:
