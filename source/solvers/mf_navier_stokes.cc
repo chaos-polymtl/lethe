@@ -27,6 +27,7 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/vector.h>
@@ -36,8 +37,7 @@
 template <int dim>
 MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
-  : NavierStokesBase<dim, LinearAlgebra::distributed::Vector<double>, IndexSet>(
-      p_nsparam)
+  : NavierStokesBase<dim, VectorType, IndexSet>(p_nsparam)
 {
   // TODO
   this->fe = std::make_shared<FESystem<dim>>(
@@ -92,9 +92,7 @@ MFNavierStokesSolver<dim>::solve()
         }
       else
         {
-          NavierStokesBase<dim,
-                           LinearAlgebra::distributed::Vector<double>,
-                           IndexSet>::refine_mesh();
+          NavierStokesBase<dim, VectorType, IndexSet>::refine_mesh();
           this->iterate();
         }
 
@@ -119,8 +117,6 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
   this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
-
-  FEValuesExtractors::Vector velocities(0);
 
   // Non Zero constraints
   define_non_zero_constraints();
@@ -230,7 +226,9 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
-  // TODO
+  system_operator.evaluate_residual(this->system_rhs, this->present_solution);
+
+  this->system_rhs *= -1.0;
 }
 
 template <int dim>
@@ -416,17 +414,20 @@ MFNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::setup_operator()
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFNavierStokesSolver<dim>::solve_linear_system(const bool /* initial_step */,
+MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                const bool /* renewed_matrix */)
 {
-  // TODO
+  const double absolute_residual =
+    this->simulation_parameters.linear_solver.minimum_residual;
+  const double relative_residual =
+    this->simulation_parameters.linear_solver.relative_residual;
+
+  if (this->simulation_parameters.linear_solver.solver ==
+      Parameters::LinearSolver::SolverType::gmres)
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+  else
+    throw(std::runtime_error("This solver is not allowed"));
+  this->rescale_pressure_dofs_in_newton_update();
 }
 
 template <int dim>
@@ -438,12 +439,82 @@ MFNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-MFNavierStokesSolver<dim>::solve_system_GMRES(
-  const bool /* initial_step */,
-  const double /* absolute_residual */,
-  const double /* relative_residual */)
+MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
+                                              const double absolute_residual,
+                                              const double relative_residual)
 {
-  // TODO
+  const unsigned int max_iter = 3;
+  unsigned int       iter     = 0;
+  bool               success  = false;
+
+
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+  bool extra_verbose = false;
+  if (this->simulation_parameters.linear_solver.verbosity ==
+      Parameters::Verbosity::extra_verbose)
+    extra_verbose = true;
+
+  SolverGMRES<VectorType>::AdditionalData solver_parameters(
+    extra_verbose,
+    this->simulation_parameters.linear_solver.max_krylov_vectors);
+
+  system_operator.evaluate_non_linear_term(this->present_solution);
+
+  while (success == false and iter < max_iter)
+    {
+      try
+        {
+          SolverGMRES<VectorType> solver(solver_control, solver_parameters);
+
+          {
+            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+
+            PreconditionIdentity preconditioner;
+            solver.solve(system_operator,
+                         this->newton_update,
+                         this->system_rhs,
+                         preconditioner);
+
+            if (this->simulation_parameters.linear_solver.verbosity !=
+                Parameters::Verbosity::quiet)
+              {
+                this->pcout
+                  << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+              }
+          }
+          constraints_used.distribute(this->newton_update);
+          success = true;
+        }
+      catch (std::exception &e)
+        {
+          this->pcout << " GMRES solver failed!" << std::endl;
+
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .force_linear_solver_continuation)
+            throw e;
+        }
+      iter += 1;
+    }
 }
 
 template class MFNavierStokesSolver<2>;

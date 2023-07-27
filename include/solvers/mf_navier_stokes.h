@@ -36,6 +36,8 @@ class MFNavierStokesSolver
                             LinearAlgebra::distributed::Vector<double>,
                             IndexSet>
 {
+  using VectorType = LinearAlgebra::distributed::Vector<double>;
+
 public:
   /**
    * @brief Construct a new MFNavierStokesSolver object.
@@ -126,12 +128,6 @@ protected:
    */
   void
   define_zero_constraints();
-
-  /**
-   * @brief Set up the operator.
-   */
-  virtual void
-  setup_operator();
 
   /**
    * @brief Call for the assembly of the linear system of equations.
