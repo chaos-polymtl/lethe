@@ -886,10 +886,11 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                       bool is_inside_crown;
                       if (minimal_crown_refinement_enabled)
                         {
+                          double factor   = (dim == 3 ? 0.5 : 0.75);
                           is_inside_crown = particles[p].is_inside_crown(
                             support_points[local_dof_indices[j]],
-                            0.75 * smallest_cut_cell,
-                            -0.75 * smallest_cut_cell,
+                            factor * smallest_cut_cell,
+                            -factor * smallest_cut_cell,
                             true, // indicates that we use the absolute
                                   // distance definition
                             cell);
