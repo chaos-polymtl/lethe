@@ -123,9 +123,9 @@ Physical Properties
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
       
-    * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the fluid-fluid pair. Two models exist: a constant mobility and a quartic mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
+    * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the fluid-fluid pair. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
       
-    * The ``cahn hilliard mobility coefficient`` parameter is the constant mobility coefficient used in the Cahn-Hilliard equations of the two interacting fluids. Its units are :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`.
+    * The ``cahn hilliard mobility coefficient`` parameter is the constant mobility coefficient of the two interacting fluids used in the Cahn-Hilliard equations. Its units are :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`.
 
     * The ``reference state temperature`` parameter is the temperature of the reference state at which the ``surface tension coefficient`` is evaluated. This parameter is used in the calculation of the surface tension using the ``linear`` surface tension model (see `Surface Tension Models`_).
 
@@ -494,6 +494,16 @@ This model is parameterized using the following section:
 * The ``specific heat liquid`` is :math:`C_{p,l}`
 
 * The ``specific heat solid`` is :math:`C_{p,s}`
+
+Cahn-Hilliard mobility model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lethe supports two types of mobility models for the Cahn-Hilliard equations. Setting ``cahn hilliard mobility model = constant`` sets a constant mobility. Setting a ``cahn hilliard mobility model = quartic`` sets a quartic model for mobility:
+
+.. math::
+  M(\phi) = D(1-\phi^2)^2
+
+with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin et al. `[2] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ . Hence, it should used preferably when solving the coupled Cahn-Hilliard and Navier-Stokes equations.
 
 
 Interface Physical Property Models

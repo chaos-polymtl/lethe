@@ -62,7 +62,11 @@ test()
   physical_properties.material_interactions.resize(1);
   physical_properties.material_interactions[0].surface_tension_model =
     Parameters::MaterialInteractions::SurfaceTensionModel::constant;
+<<<<<<< HEAD
   physical_properties.material_interactions[0].mobility_cahn_hilliard_model =
+=======
+  physical_properties.material_interactions[0].mobility_ch_model =
+>>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
     Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant;
 
   // Fix fluid properties
@@ -79,7 +83,11 @@ test()
   physical_properties.material_interactions[0]
     .surface_tension_parameters.surface_tension_coefficient = 70;
   physical_properties.material_interactions[0]
+<<<<<<< HEAD
     .mobility_cahn_hilliard_parameters.mobility_cahn_hilliard_constant = 10;
+=======
+    .mobility_ch_parameters.mobility_ch_constant = 10;
+>>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
 
   PhysicalPropertiesManager physical_properties_manager;
   physical_properties_manager.initialize(physical_properties);
@@ -119,8 +127,12 @@ test()
                dummy_fields)
           << std::endl;
   deallog << "Mobility     : "
+<<<<<<< HEAD
           << physical_properties_manager.get_mobility_cahn_hilliard(0)->value(
                dummy_fields)
+=======
+          << physical_properties_manager.get_mobility_ch(0)->value(dummy_fields)
+>>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
           << std::endl;
 }
 

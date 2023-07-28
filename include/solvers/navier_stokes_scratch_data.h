@@ -157,7 +157,6 @@ public:
     gather_hessian = properties_manager.is_non_newtonian();
 
 
-
     if (sd.gather_vof)
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
