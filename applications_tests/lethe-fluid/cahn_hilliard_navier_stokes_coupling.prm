@@ -36,6 +36,18 @@ subsection FEM
 end
 
 #---------------------------------------------------
+# Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity = verbose
+  # Cahn-Hilliard statistics
+  set calculate phase statistics = true
+  set phase statistics name      = phase_statistics
+
+end
+
+#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
