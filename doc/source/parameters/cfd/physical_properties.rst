@@ -503,7 +503,7 @@ Lethe supports two types of mobility models for the Cahn-Hilliard equations. Set
 .. math::
   M(\phi) = D(1-\phi^2)^2
 
-with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin et al. `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ . Hence, it should used preferably when solving the coupled Cahn-Hilliard and Navier-Stokes equations.
+with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin *et al.* `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ . Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations.
 
 References
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

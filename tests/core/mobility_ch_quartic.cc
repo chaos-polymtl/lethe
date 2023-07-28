@@ -17,44 +17,26 @@ test()
   MobilityCahnHilliardModelQuartic mobility_model(10);
 
   deallog << "Testing quartic mobility" << std::endl;
-
-<<<<<<< HEAD
   std::map<field, double> field_values;
   field_values[field::phase_order_cahn_hilliard] = 0.5;
   deallog << "Test 1, mobility = " << mobility_model.value(field_values)
           << std::endl;
   field_values[field::phase_order_cahn_hilliard] = -0.3;
-=======
   // field values can remain empty since the surface tension density does
   // not depend on any fields
-  std::map<field, double> field_values;
-  field_values[field::phase_order_ch] = 0.5;
-  deallog << "Test 1, mobility = " << mobility_model.value(field_values)
-          << std::endl;
-  field_values[field::phase_order_ch] = -0.3;
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
   deallog << "Test 2, mobility = " << mobility_model.value(field_values)
           << std::endl;
 
   deallog << "Test 3, Analytical jacobian "
-<<<<<<< HEAD
           << mobility_model.jacobian(field_values,
                                      field::phase_order_cahn_hilliard)
-=======
-          << mobility_model.jacobian(field_values, field::phase_order_ch)
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
           << std::endl;
 
 
   std::vector<double>                  phase_vector({-0.9, -0.7, 0, 0.4, 0.8});
   std::map<field, std::vector<double>> field_vectors;
-<<<<<<< HEAD
   field_vectors[field::phase_order_cahn_hilliard] = phase_vector;
   unsigned int        n_pts                       = phase_vector.size();
-=======
-  field_vectors[field::phase_order_ch] = phase_vector;
-  unsigned int        n_pts            = phase_vector.size();
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
   std::vector<double> mobilities(n_pts);
   std::vector<double> jacobians(n_pts);
 
@@ -62,11 +44,7 @@ test()
   mobility_model.vector_value(field_vectors, mobilities);
 
   mobility_model.vector_jacobian(field_vectors,
-<<<<<<< HEAD
                                  field::phase_order_cahn_hilliard,
-=======
-                                 field::phase_order_ch,
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
                                  jacobians);
 
   deallog << " Vector values " << std::endl;

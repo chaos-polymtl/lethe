@@ -510,6 +510,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                 }
               break;
             }
+          break;
         }
       default:
         throw std::runtime_error("Unsupported number of fluids (>2)");
