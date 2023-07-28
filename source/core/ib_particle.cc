@@ -197,13 +197,24 @@ IBParticle<dim>::is_inside_crown(
   const Point<dim> &                                    evaluation_point,
   const double                                          outer_radius,
   const double                                          inside_radius,
+  const bool                                            absolute_distance,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
   const double radius = shape->effective_radius;
 
   double distance = shape->value_with_cell_guess(evaluation_point, cell_guess);
-  bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
-  bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+  bool   is_inside_outer_ring;
+  bool   is_outside_inner_ring;
+  if (absolute_distance)
+    {
+      is_inside_outer_ring  = distance <= outer_radius;
+      is_outside_inner_ring = distance >= inside_radius;
+    }
+  else
+    {
+      is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
+      is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+    }
 
   return is_inside_outer_ring && is_outside_inner_ring;
 }
@@ -212,13 +223,24 @@ template <int dim>
 bool
 IBParticle<dim>::is_inside_crown(const Point<dim> &evaluation_point,
                                  const double      outer_radius,
-                                 const double      inside_radius)
+                                 const double      inside_radius,
+                                 const bool        absolute_distance)
 {
   const double radius = shape->effective_radius;
 
-  double distance              = shape->value(evaluation_point);
-  bool   is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
-  bool   is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+  double distance = shape->value(evaluation_point);
+  bool   is_inside_outer_ring;
+  bool   is_outside_inner_ring;
+  if (absolute_distance)
+    {
+      is_inside_outer_ring  = distance <= outer_radius;
+      is_outside_inner_ring = distance >= inside_radius;
+    }
+  else
+    {
+      is_inside_outer_ring  = distance <= radius * (outer_radius - 1);
+      is_outside_inner_ring = distance >= radius * (inside_radius - 1);
+    }
 
   return is_inside_outer_ring && is_outside_inner_ring;
 }

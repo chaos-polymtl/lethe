@@ -812,6 +812,25 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
     this->simulation_parameters.particlesParameters
       ->time_extrapolation_of_refinement_zone;
 
+  double smallest_cut_cell = std::numeric_limits<double>::max();
+  bool   minimal_crown_refinement_enabled =
+    abs(this->simulation_parameters.particlesParameters->outside_radius - 1) <
+      1e-16 &&
+    abs(this->simulation_parameters.particlesParameters->inside_radius - 1) <
+      1e-16;
+  if (minimal_crown_refinement_enabled)
+    {
+      const auto &cell_iterator_smallest_cell =
+        this->dof_handler.active_cell_iterators();
+      for (const auto &cell : cell_iterator_smallest_cell)
+        {
+          if (cell->is_locally_owned())
+            smallest_cut_cell = std::min(smallest_cut_cell, cell->diameter());
+        }
+      smallest_cut_cell =
+        Utilities::MPI::min(smallest_cut_cell, this->mpi_communicator);
+    }
+
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
   for (const auto &cell : cell_iterator)
     {
@@ -864,16 +883,31 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                       // be bigger than the inside radius of the refinement zone
                       // and smaller than the outside radius of the refinement
                       // zone.
-                      if (particles[p].is_inside_crown(
+                      bool is_inside_crown;
+                      if (minimal_crown_refinement_enabled)
+                        {
+                          is_inside_crown = particles[p].is_inside_crown(
+                            support_points[local_dof_indices[j]],
+                            0.5 * smallest_cut_cell,
+                            -0.5 * smallest_cut_cell,
+                            true, // indicates that we use the absolute
+                                  // distance definition
+                            cell);
+                        }
+                      else
+                        {
+                          is_inside_crown = particles[p].is_inside_crown(
                             support_points[local_dof_indices[j]],
                             this->simulation_parameters.particlesParameters
                               ->outside_radius,
                             this->simulation_parameters.particlesParameters
                               ->inside_radius,
-                            cell))
-                        {
-                          ++count_small;
+                            false, // indicates that we use the
+                                   // radius relative distance definition
+                            cell);
                         }
+                      if (is_inside_crown)
+                        ++count_small;
                     }
                 }
 
