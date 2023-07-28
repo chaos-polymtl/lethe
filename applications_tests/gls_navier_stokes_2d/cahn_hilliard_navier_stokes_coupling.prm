@@ -151,6 +151,7 @@ end
 subsection non-linear solver
   set tolerance      = 1e-8
   set max iterations = 20
+  set verbosity      = quiet
 end
 
 # --------------------------------------------------
@@ -158,6 +159,7 @@ end
 #---------------------------------------------------
 
 subsection linear solver
+  set verbosity                             = quiet
   set method                                = gmres
   set max iters                             = 2000
   set relative residual                     = 1e-3
@@ -167,4 +169,3 @@ subsection linear solver
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 2000
 end
-

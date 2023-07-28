@@ -227,6 +227,12 @@ public:
           }
       }
 
+    if (multiphysics.cahn_hilliard && multiphysics.VOF)
+      {
+        throw std::runtime_error(
+          "Cannot solve a multiphase problem using VOF and Cahn-Hilliard at the same time");
+      }
+
     if (multiphysics.cahn_hilliard &&
         physical_properties.number_of_material_interactions == 0)
       {

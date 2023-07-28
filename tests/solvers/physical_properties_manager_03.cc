@@ -128,7 +128,7 @@ test()
               << physical_properties_manager.get_surface_tension(i)->value(
                    dummy_fields)
               << std::endl;
-      deallog << "Surface tension      : "
+      deallog << "Mobility      : "
               << physical_properties_manager.get_mobility_ch(i)->value(
                    dummy_fields)
               << std::endl;
