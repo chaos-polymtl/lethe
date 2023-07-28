@@ -213,6 +213,15 @@ public:
   void
   evaluate_non_linear_term(const VectorType &newton_step);
 
+  /**
+   * @brief Evaluate right hand side using the matrix-free operator
+   *
+   * @param dst Destination vector holding the result
+   * @param src Input vector for which the residual is evaluated
+   */
+  void
+  evaluate_residual(VectorType &dst, const VectorType &src);
+
 protected:
   /**
    * @brief Interface to function that performs a cell integral in a cell batch
@@ -229,8 +238,8 @@ protected:
    * @brief Loop over all cell batches withing certain range and perform a cell integral with access to global vectors, i.e., gathering and scattering values.
    *
    * @param matrix_free Object that contains all data.
-   * @param dst Input vector with all values in all cells.
-   * @param src Global vector where the final result is added.
+   * @param dst Global vector where the final result is added.
+   * @param src Input vector with all values in all cells.
    * @param range Range of the cell batch.
    */
   void
@@ -240,6 +249,26 @@ protected:
     const VectorType &                           src,
     const std::pair<unsigned int, unsigned int> &range) const;
 
+
+  /**
+   * @brief Interface to function in charge of computing the residual using a cell
+   * integral in a cell batch with gathering and scattering values. Should be
+   * overriden by derived classes.
+   *
+   * @param matrix_free Object that contains all data.
+   * @param dst Global vector where the final result is added.
+   * @param src Input vector with all values in all cells.
+   * @param range Range of the cell batch.
+   */
+  virtual void
+  local_evaluate_residual(
+    const MatrixFree<dim, number> &              matrix_free,
+    VectorType &                                 dst,
+    const VectorType &                           src,
+    const std::pair<unsigned int, unsigned int> &range) const;
+
+
+private:
   /**
    * @brief Get the refinement edges. Only needed if the local smoothing
    * multigrid approach is used.
@@ -250,6 +279,7 @@ protected:
   static IndexSet
   get_refinement_edges(const MatrixFree<dim, number> &matrix_free);
 
+protected:
   MatrixFree<dim, number>                matrix_free;
   AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
@@ -287,6 +317,8 @@ class NavierStokesSUPGPSPGOperator
 {
 public:
   using FECellIntegrator = FEEvaluation<dim, -1, 0, dim + 1, number>;
+  using VectorType       = LinearAlgebra::distributed::Vector<number>;
+
   NavierStokesSUPGPSPGOperator();
 
 private:
@@ -300,6 +332,23 @@ private:
    */
   void
   do_cell_integral_local(FECellIntegrator &integrator) const override;
+
+  /**
+   * @brief Perform cell integral on a cell batch with gathering and scattering
+   * the values, and according to the residual of the Navier-Stokes equations
+   * with SUPG/PSPG stabilization.
+   *
+   * @param matrix_free Object that contains all data.
+   * @param dst Global vector where the final result is added.
+   * @param src Input vector with all values in all cells.
+   * @param range Range of the cell batch.
+   */
+  void
+  local_evaluate_residual(
+    const MatrixFree<dim, number> &              matrix_free,
+    VectorType &                                 dst,
+    const VectorType &                           src,
+    const std::pair<unsigned int, unsigned int> &range) const override;
 };
 
 #endif

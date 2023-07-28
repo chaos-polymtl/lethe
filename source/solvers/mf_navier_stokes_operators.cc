@@ -235,7 +235,6 @@ void
 NavierStokesOperatorBase<dim, number>::clear()
 {}
 
-// The matrix free object initialized the vector accordingly
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::initialize_dof_vector(
@@ -244,8 +243,6 @@ NavierStokesOperatorBase<dim, number>::initialize_dof_vector(
   matrix_free.initialize_dof_vector(vec);
 }
 
-// Performs an operator evaluation by looping over all cells
-// and evluating the integrals in the matrix-free way
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::vmult(VectorType &      dst,
@@ -281,9 +278,6 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType &      dst,
     }
 }
 
-// Performs the transposed operator evaluation. Since we have
-// non-symmetric matrices this is different from the vmult call.
-// TODO: implement this correctly (let's start with something symetric)
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::Tvmult(VectorType &      dst,
@@ -339,9 +333,6 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
 }
 
 
-// Computes the matrix efficiently using the optimized compute_matrix call.
-// This function is usually only used to build the system matrix for the coarse
-// grid level in the multigrid algorithm.
 template <int dim, typename number>
 const TrilinosWrappers::SparseMatrix &
 NavierStokesOperatorBase<dim, number>::get_system_matrix() const
@@ -420,10 +411,15 @@ NavierStokesOperatorBase<dim, number>::evaluate_non_linear_term(
     }
 }
 
-// The diagonal of the matrix is needed, e.g., for smoothers used in
-// multigrid. Therefore, it is computed by a sequence of operator
-// evaluations to unit basis vectors using the optimized compute_diagonal
-// call.
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType &      dst,
+                                                         const VectorType &src)
+{
+  this->matrix_free.cell_loop(
+    &NavierStokesOperatorBase::local_evaluate_residual, this, dst, src, true);
+}
+
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
@@ -450,9 +446,29 @@ NavierStokesOperatorBase<dim, number>::do_cell_integral_local(
 {
   (void)integrator;
 
-  AssertThrow(false,
-              dealii::ExcMessage(
-                "OperatorBase::do_face_integral() has not been implemented!"));
+  AssertThrow(
+    false,
+    dealii::ExcMessage(
+      "NavierStokesOperatorBase::do_cell_integral_local() has not been implemented!"));
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::local_evaluate_residual(
+  const MatrixFree<dim, number> &              matrix_free,
+  VectorType &                                 dst,
+  const VectorType &                           src,
+  const std::pair<unsigned int, unsigned int> &range) const
+{
+  (void)matrix_free;
+  (void)dst;
+  (void)src;
+  (void)range;
+
+  AssertThrow(
+    false,
+    dealii::ExcMessage(
+      "NavierStokesOperatorBase::local_evaluate_residual() has not been implemented!"));
 }
 
 template <int dim, typename number>
@@ -510,18 +526,231 @@ void
 NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
-  using FECellIntegratorType =
-    FEEvaluation<dim, -1, 0, dim + 1, double, VectorizedArray<double>>;
+  const double viscosity =
+    this->parameters.physical_properties_manager.get_viscosity_scale();
 
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                       EvaluationFlags::hessians);
 
+  const unsigned int cell = integrator.get_current_cell_index();
+
+  auto h = integrator.read_cell_data(this->get_element_size());
+
   for (unsigned int q = 0; q < integrator.n_q_points; ++q)
     {
-      // TODO
+      // Evaluate source term function
+      Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+      Point<dim, VectorizedArray<double>>         point_batch =
+        integrator.quadrature_point(q);
+      source_value = evaluate_function<dim, double, dim + 1>(
+        this->parameters.source_term->navier_stokes_source, point_batch);
+
+      // Gather the original value/gradient
+      typename FECellIntegrator::value_type    value = integrator.get_value(q);
+      typename FECellIntegrator::gradient_type gradient =
+        integrator.get_gradient(q);
+      typename FECellIntegrator::gradient_type hessian_diagonal =
+        integrator.get_hessian_diagonal(q);
+
+      // Result value/gradient we will use
+      typename FECellIntegrator::value_type    value_result;
+      typename FECellIntegrator::gradient_type gradient_result;
+
+      // Assemble -nabla u + nabla p = 0 for the first 3 components
+      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
+      // ; Assemble q div(u) = 0 for the last component
+
+      auto previous_values   = this->nonlinear_previous_values(cell, q);
+      auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
+      auto previous_hessian_diagonal =
+        this->nonlinear_previous_hessian_diagonal(cell, q);
+
+      // Calculate tau
+      VectorizedArray<number> u_mag = VectorizedArray<number>(0.0);
+      VectorizedArray<number> tau   = VectorizedArray<number>(0.0);
+      for (unsigned int k = 0; k < dim; ++k)
+        {
+          u_mag += previous_values[k];
+        }
+
+      for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
+        {
+          tau[v] = 1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
+                                  9 * Utilities::fixed_power<2>(4 * viscosity /
+                                                                (h[v] * h[v])));
+        }
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          gradient_result[i] = viscosity * gradient[i];
+          gradient_result[i][i] += -value[dim];
+
+          value_result[dim] += gradient[i][i];
+
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              value_result[i] += gradient[i][k] * previous_values[k];
+              value_result[i] += previous_gradient[i][k] * value[k];
+            }
+        }
+
+      // PSPG
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              gradient_result[dim][i] +=
+                -tau * viscosity * hessian_diagonal[i][k];
+              gradient_result[dim][i] +=
+                tau * gradient[i][k] * previous_values[k];
+              gradient_result[dim][i] +=
+                tau * previous_gradient[i][k] * value[k];
+            }
+        }
+      gradient_result[dim] += tau * gradient[dim];
+
+      // SUPG
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              gradient_result[i][k] += -tau * value[k] * source_value[i];
+
+              gradient_result[i][k] +=
+                -tau * viscosity * value[k] * previous_hessian_diagonal[i][k];
+              gradient_result[i][k] +=
+                -tau * viscosity * previous_values[k] * hessian_diagonal[i][k];
+
+              gradient_result[i][k] +=
+                tau * value[k] * previous_gradient[dim][i];
+              gradient_result[i][k] +=
+                tau * previous_values[k] * gradient[dim][i];
+
+              gradient_result[i][k] +=
+                tau * previous_values[k] * previous_gradient[i][k] * value[k];
+              gradient_result[i][k] +=
+                tau * value[k] * previous_gradient[i][k] * previous_values[k];
+              gradient_result[i][k] +=
+                tau * previous_values[k] * gradient[i][k] * previous_values[k];
+            }
+        }
+
+      integrator.submit_gradient(gradient_result, q);
+      integrator.submit_value(value_result, q);
     }
 
   integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
+}
+
+
+template <int dim, typename number>
+void
+NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
+  const MatrixFree<dim, number> &              matrix_free,
+  VectorType &                                 dst,
+  const VectorType &                           src,
+  const std::pair<unsigned int, unsigned int> &range) const
+{
+  FECellIntegrator integrator(matrix_free);
+
+  double viscosity =
+    this->parameters.physical_properties_manager.get_viscosity_scale();
+
+  for (unsigned int cell = range.first; cell < range.second; ++cell)
+    {
+      integrator.reinit(cell);
+      integrator.read_dof_values_plain(src);
+      integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
+                          EvaluationFlags::hessians);
+
+      auto h = integrator.read_cell_data(this->get_element_size());
+
+      for (unsigned int q = 0; q < integrator.n_q_points; ++q)
+        {
+          // Evaluate source term function
+          Tensor<1, dim + 1, VectorizedArray<double>> source_value;
+          Point<dim, VectorizedArray<double>>         point_batch =
+            integrator.quadrature_point(q);
+          source_value = evaluate_function<dim, double, dim + 1>(
+            this->parameters.source_term->navier_stokes_source, point_batch);
+
+          // Gather the original value/gradient
+          typename FECellIntegrator::value_type value = integrator.get_value(q);
+          typename FECellIntegrator::gradient_type gradient =
+            integrator.get_gradient(q);
+          typename FECellIntegrator::gradient_type hessian_diagonal =
+            integrator.get_hessian_diagonal(q);
+
+          // Calculate tau
+          VectorizedArray<double> tau   = VectorizedArray<double>(0.0);
+          VectorizedArray<double> u_mag = VectorizedArray<double>(0.0);
+          for (unsigned int k = 0; k < dim; ++k)
+            {
+              u_mag += value[k];
+            }
+
+          for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
+            {
+              tau[v] = 1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
+                                      9 * Utilities::fixed_power<2>(
+                                            4 * viscosity / (h[v] * h[v])));
+            }
+          // Result value/gradient we will use
+          typename FECellIntegrator::value_type    value_result;
+          typename FECellIntegrator::gradient_type gradient_result;
+
+          // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
+          // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v
+          // = 0 ; Assemble q div(u) = 0 for the last component
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              gradient_result[i] = viscosity * gradient[i];
+              gradient_result[i][i] += -value[dim];
+              value_result[i] = -source_value[i];
+
+              value_result[dim] += gradient[i][i];
+
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  value_result[i] += gradient[i][k] * value[k];
+                }
+            }
+
+          // PSPG
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              gradient_result[dim][i] += -tau * source_value[i];
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  gradient_result[dim][i] +=
+                    -tau * viscosity * hessian_diagonal[i][k];
+                  gradient_result[dim][i] += tau * gradient[i][k] * value[k];
+                }
+            }
+          gradient_result[dim] += tau * gradient[dim];
+
+          // SUPG
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  gradient_result[i][k] += -tau * value[k] * source_value[i];
+                  gradient_result[i][k] +=
+                    -tau * viscosity * value[k] * hessian_diagonal[i][k];
+                  gradient_result[i][k] +=
+                    tau * value[k] * gradient[i][k] * value[k];
+                  gradient_result[i][k] += tau * value[k] * gradient[dim][i];
+                }
+            }
+
+          integrator.submit_gradient(gradient_result, q);
+          integrator.submit_value(value_result, q);
+        }
+
+      integrator.integrate_scatter(EvaluationFlags::values |
+                                     EvaluationFlags::gradients,
+                                   dst);
+    }
 }
 
 template class NavierStokesSUPGPSPGOperator<2, double>;
