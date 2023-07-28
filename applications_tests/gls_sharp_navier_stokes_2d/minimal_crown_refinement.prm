@@ -1,9 +1,8 @@
 subsection simulation control
-  set method            = steady
-  set number mesh adapt = 0
-  set output frequency  = 0
-  set log precision     = 4
-  set subdivision       = 1
+  set method           = steady
+  set output frequency = 0
+  set log precision    = 4
+  set subdivision      = 1
 end
 
 subsection FEM
@@ -106,4 +105,3 @@ subsection linear solver
   set method    = gmres
   set verbosity = quiet
 end
-

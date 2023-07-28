@@ -886,6 +886,10 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                       bool is_inside_crown;
                       if (minimal_crown_refinement_enabled)
                         {
+                          // The factor depends on dim, since cell->diameter()
+                          // returns a higher value in 3D than in 2D. For
+                          // example, for a unit square vs. unit cube we get
+                          // sqrt(2) and sqrt(3).
                           double factor   = (dim == 3 ? 0.5 : 0.75);
                           is_inside_crown = particles[p].is_inside_crown(
                             support_points[local_dof_indices[j]],
