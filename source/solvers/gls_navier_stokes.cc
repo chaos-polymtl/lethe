@@ -431,7 +431,6 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
 
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      std::cout << "I'm activated for some reason" << std::endl;
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))
         {
