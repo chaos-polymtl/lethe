@@ -18,8 +18,6 @@ test()
 
   deallog << "Testing quartic mobility" << std::endl;
 
-  // field values can remain empty since the surface tension density does
-  // not depend on any fields
   std::map<field, double> field_values;
   field_values[field::phase_order_ch] = 0.5;
   deallog << "Test 1, mobility = " << mobility_model.value(field_values)

@@ -470,6 +470,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               throw std::runtime_error(
                 "Cannot solve a multiphase problem using VOF and Cahn-Hilliard at the same time");
             }
+          break;
         }
       default:
         throw std::runtime_error("Unsupported number of fluids (>2)");

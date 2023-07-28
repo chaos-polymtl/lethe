@@ -54,11 +54,6 @@ CahnHilliard<dim>::setup_assemblers()
   // material_interaction vector, since it should contain all the parameters
   // necessary for solving the equations
 
-  //  this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
-  //    this->simulation_control,
-  //    this->simulation_parameters.multiphysics.ch_parameters,
-  //    this->simulation_parameters.physical_properties.material_interactions[0]));
-
   const auto mobility_model =
     this->simulation_parameters.physical_properties_manager.get_mobility_ch();
 
