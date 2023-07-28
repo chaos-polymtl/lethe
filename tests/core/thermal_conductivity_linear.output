@@ -1,5 +1,5 @@
 
-DEAL::Beggining
+DEAL::Beginning
 DEAL::Testing linear temperature dependent thermal conductivity - k
 DEAL:: T = 1    , k = 15.0000
 DEAL:: T = 2    , k = 25.0000

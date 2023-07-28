@@ -27,10 +27,11 @@
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation with
- * free surface using VOF modeling.
+ * free surface using CH modeling.
  * This class assembles the weak form of:
- * $$\rho \mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \mu \nabla^2
- * \mathbf{u} =0 $$ with an SUPG and PSPG stabilziation
+ * $$ \nabla \cdot \mathbf{u} + \rho \mathbf{u} \cdot \nabla
+ * \mathbf{u} + \nabla p - \mu \nabla\cdot (\nabla \mathbf{u} +
+ * (\nabla \mathbf{u})^T)=0 $$ with an SUPG and PSPG stabilization
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -74,7 +75,7 @@ public:
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier-Stokes equation with
- * free surface using VOF modeling. For example, if a BDF1 scheme is
+ * free surface using CH modeling. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t}
  *
@@ -82,7 +83,6 @@ public:
  *
  * @ingroup assemblers
  */
-
 template <int dim>
 class GLSNavierStokesCahnHilliardAssemblerBDF
   : public NavierStokesAssemblerBase<dim>

@@ -12,11 +12,9 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties
-  const double well_height = this->ch_parameters.well_height;
-  const double mobility_constant =
-    this->material_interaction_parameters.mobility_ch_parameters
-      .mobility_ch_constant;
-  const double epsilon = scratch_data.epsilon;
+  const double well_height       = this->ch_parameters.well_height;
+  const double mobility_constant = this->mobility_constant;
+  const double epsilon           = scratch_data.epsilon;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -26,8 +24,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   auto &local_matrix = copy_data.local_matrix;
 
   // Constant mobility model
-  if (this->material_interaction_parameters.mobility_ch_model ==
-      Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant)
+  if (this->mobility_model == MobilityModel::constant)
     {
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
@@ -148,11 +145,9 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties
-  const double well_height = this->ch_parameters.well_height;
-  const double mobility_constant =
-    this->material_interaction_parameters.mobility_ch_parameters
-      .mobility_ch_constant;
-  const double epsilon = scratch_data.epsilon;
+  const double well_height       = this->ch_parameters.well_height;
+  const double mobility_constant = this->mobility_constant;
+  const double epsilon           = scratch_data.epsilon;
 
   // Loop and quadrature informations
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -162,8 +157,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   auto &local_rhs = copy_data.local_rhs;
 
   // Constant mobility model
-  if (this->material_interaction_parameters.mobility_ch_model ==
-      Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant)
+  if (this->mobility_model == MobilityModel::constant)
     {
       for (unsigned int q = 0; q < n_q_points; ++q)
         {

@@ -62,6 +62,8 @@ test()
   physical_properties.material_interactions.resize(1);
   physical_properties.material_interactions[0].surface_tension_model =
     Parameters::MaterialInteractions::SurfaceTensionModel::constant;
+  physical_properties.material_interactions[0].mobility_ch_model =
+    Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant;
 
   // Fix fluid properties
   physical_properties.fluids[0].density              = 1;
@@ -76,6 +78,8 @@ test()
   // Fix fluid-solid interaction properties
   physical_properties.material_interactions[0]
     .surface_tension_parameters.surface_tension_coefficient = 70;
+  physical_properties.material_interactions[0]
+    .mobility_ch_parameters.mobility_ch_constant = 10;
 
   PhysicalPropertiesManager physical_properties_manager;
   physical_properties_manager.initialize(physical_properties);
@@ -113,6 +117,9 @@ test()
   deallog << "Surface tension      : "
           << physical_properties_manager.get_surface_tension(0)->value(
                dummy_fields)
+          << std::endl;
+  deallog << "Mobility     : "
+          << physical_properties_manager.get_mobility_ch(0)->value(dummy_fields)
           << std::endl;
 }
 

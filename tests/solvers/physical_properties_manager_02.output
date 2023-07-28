@@ -9,3 +9,4 @@ DEAL::Specific heat        : 20.0000
 DEAL::Thermal conductivity : 30.0000
 DEAL::Testing PhysicalPropertiesManager - Material interaction 0
 DEAL::Surface tension      : 70.0000
+DEAL::Mobility             : 10.0000

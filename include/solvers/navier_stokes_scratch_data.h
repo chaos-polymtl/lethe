@@ -157,7 +157,6 @@ public:
     gather_hessian = properties_manager.is_non_newtonian();
 
 
-
     if (sd.gather_vof)
       enable_vof(sd.fe_values_vof->get_fe(),
                  sd.fe_values_vof->get_quadrature(),
@@ -931,7 +930,6 @@ public:
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    */
-
   void
   enable_cahn_hilliard(const FiniteElement<dim> &fe,
                        const Quadrature<dim> &   quadrature,
@@ -949,7 +947,6 @@ public:
    * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [phi]
    *
    */
-
   template <typename VectorType>
   void
   reinit_cahn_hilliard(
@@ -986,7 +983,6 @@ public:
   /** @brief Calculates the physical properties. This function calculates the physical properties
    * that may be required by the fluid dynamics problem. Namely the kinematic
    * viscosity and, when required, the density.
-   *
    */
   void
   calculate_physical_properties();

@@ -63,7 +63,6 @@ namespace Parameters
     manual
   };
 
-
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
    * Has to be declared before member creation in VOF structure.

@@ -19,6 +19,12 @@
 
 #include <core/interface_property_model.h>
 
+enum MobilityModel
+{
+  constant,
+  quartic
+};
+
 /**
  * @brief MobilityCahnHilliardModel. Abstract class that allows to calculate the
  * mobility for the Cahn-Hilliard-Navier-Stokes equations.
@@ -30,15 +36,30 @@ public:
    * @brief Instantiates and returns a pointer to a MobilityCahnHilliardModel object by casting it to
    * the proper child class
    *
-   * @param material_properties Parameters for the mobility calculation
+   * @param material_interaction_parameters Parameters for the mobility calculation
    */
   static std::shared_ptr<MobilityCahnHilliardModel>
   model_cast(
     const Parameters::MaterialInteractions &material_interaction_parameters);
+
+  /**
+   * @brief Pure virtual method to get the model used for the mobility, must be overriden
+   * @return returns a MobilityModel object
+   */
+  virtual MobilityModel
+  get_model() = 0;
+
+
+  /**
+   * @brief Pure virtual method to access the mobility constant
+   * @return value of the mobility constant
+   */
+  virtual double
+  get_mobility_constant() = 0;
 };
 
 /**
- * @brief Constant mobility_ch.
+ * @brief Constant mobility_ch_constant.
  */
 class MobilityCahnHilliardModelConstant : public MobilityCahnHilliardModel
 {
@@ -46,9 +67,29 @@ public:
   /**
    * @brief Default constructor
    */
-  MobilityCahnHilliardModelConstant(const double p_mobility_ch)
-    : mobility_ch(p_mobility_ch)
+  MobilityCahnHilliardModelConstant(const double p_mobility_ch_constant)
+    : mobility_ch_constant(p_mobility_ch_constant)
   {}
+
+  /**
+   * @brief Method to get the model used for the mobility
+   * @return returns a MobilityModel object
+   */
+  MobilityModel
+  get_model() override
+  {
+    return model;
+  }
+
+  /**
+   * @brief Method to access the mobility constant, though it returns the same value as the value function, it is implemented here for generality.
+   * @return value of the mobility constant
+   */
+  double
+  get_mobility_constant() override
+  {
+    return mobility_ch_constant;
+  }
 
   /**
    * @brief value Calculates the mobility_ch
@@ -58,7 +99,7 @@ public:
   double
   value(const std::map<field, double> & /*fields_value*/) override
   {
-    return mobility_ch;
+    return mobility_ch_constant;
   }
 
   /**
@@ -70,7 +111,9 @@ public:
   vector_value(const std::map<field, std::vector<double>> & /*field_vectors*/,
                std::vector<double> &property_vector) override
   {
-    std::fill(property_vector.begin(), property_vector.end(), mobility_ch);
+    std::fill(property_vector.begin(),
+              property_vector.end(),
+              mobility_ch_constant);
   }
 
   /**
@@ -105,7 +148,8 @@ public:
   }
 
 private:
-  const double mobility_ch;
+  const double        mobility_ch_constant;
+  const MobilityModel model = constant;
 };
 
 /**
@@ -117,10 +161,31 @@ public:
   /**
    * @brief Default constructor
    */
-  MobilityCahnHilliardModelQuartic(const double p_mobility_ch)
-    : mobility_ch(p_mobility_ch)
+  MobilityCahnHilliardModelQuartic(const double p_mobility_ch_constant)
+    : mobility_ch_constant(p_mobility_ch_constant)
+    , model(MobilityModel::quartic)
   {
     this->model_depends_on[field::phase_order_ch] = true;
+  }
+
+  /**
+   * @brief Method to get the model used for the mobility
+   * @return returns a MobilityModel object
+   */
+  MobilityModel
+  get_model() override
+  {
+    return model;
+  }
+
+  /**
+   * @brief Method to access the mobility constant, though it returns the same value as the value function, it is implemented here for generality
+   * @return value of the mobility constant
+   */
+  double
+  get_mobility_constant() override
+  {
+    return mobility_ch_constant;
   }
 
   /**
@@ -132,14 +197,14 @@ public:
   value(const std::map<field, double> &fields_value) override
   {
     const double &phase_order_ch = fields_value.at(field::phase_order_ch);
-    return mobility_ch * (1 - phase_order_ch * phase_order_ch) *
+    return mobility_ch_constant * (1 - phase_order_ch * phase_order_ch) *
            (1 - phase_order_ch * phase_order_ch);
   }
 
   /**
-   * @brief vector_value Calculates the vector of mobility_ch.
-   * @param field_vectors Vectors of the fields on which the mobility_ch may depend.
-   * @param property_vector Vectors of the mobility_ch values
+   * @brief vector_value Calculates the vector of mobility_ch_constant.
+   * @param field_vectors Vectors of the fields on which the mobility_ch_constant may depend.
+   * @param property_vector Vectors of the mobility_ch_constant values
    */
   void
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
@@ -148,7 +213,7 @@ public:
     const std::vector<double> &phase_order_ch =
       field_vectors.at(field::phase_order_ch);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
-      property_vector[i] = mobility_ch *
+      property_vector[i] = mobility_ch_constant *
                            (1 - phase_order_ch[i] * phase_order_ch[i]) *
                            (1 - phase_order_ch[i] * phase_order_ch[i]);
   }
@@ -165,7 +230,7 @@ public:
   jacobian(const std::map<field, double> &fields_value, field /*id*/) override
   {
     const double &phase_order_ch = fields_value.at(field::phase_order_ch);
-    return 4 * phase_order_ch * mobility_ch *
+    return -4 * phase_order_ch * mobility_ch_constant *
            (1 - phase_order_ch * phase_order_ch);
   }
 
@@ -184,12 +249,13 @@ public:
     const std::vector<double> &phase_order_ch =
       field_vectors.at(field::phase_order_ch);
     for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
-      jacobian_vector[i] = mobility_ch * 4 * phase_order_ch[i] *
+      jacobian_vector[i] = -mobility_ch_constant * 4 * phase_order_ch[i] *
                            (1 - phase_order_ch[i] * phase_order_ch[i]);
   }
 
 private:
-  const double mobility_ch;
+  const double        mobility_ch_constant;
+  const MobilityModel model = quartic;
 };
 
 #endif

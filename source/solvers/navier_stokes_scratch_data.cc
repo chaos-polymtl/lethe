@@ -121,6 +121,7 @@ NavierStokesScratchData<dim>::enable_vof(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
+  surface_tension     = std::vector<double>(n_q_points);
 
   // Create filter
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
@@ -156,6 +157,7 @@ NavierStokesScratchData<dim>::enable_vof(
   viscosity_1         = std::vector<double>(n_q_points);
   thermal_expansion_0 = std::vector<double>(n_q_points);
   thermal_expansion_1 = std::vector<double>(n_q_points);
+  surface_tension     = std::vector<double>(n_q_points);
 
   // Create filter
   this->filter = filter;
@@ -371,12 +373,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               const auto surface_tension_model =
                 properties_manager.get_surface_tension(material_interaction_id);
               surface_tension_model->vector_value(fields, surface_tension);
-
-              const auto mobility_ch_model =
-                properties_manager.get_mobility_ch(material_interaction_id);
-              mobility_ch_model->vector_value(fields, mobility_ch);
             }
-
 
           density_model_0->vector_value(fields, density_0);
           rheology_model_0->vector_value(fields, viscosity_0);
@@ -396,7 +393,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                       thermal_expansion_1);
             }
 
-          if (gather_ch)
+          if (gather_ch && !gather_vof)
             {
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
@@ -419,11 +416,18 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     calculate_point_property_ch(phase_order_ch_value,
                                                 this->thermal_expansion_0[q],
                                                 this->thermal_expansion_1[q]);
+
+                  const auto material_interaction_id =
+                    properties_manager.get_material_interaction_id(
+                      material_interactions_type::fluid_fluid, 0, 1);
+                  const auto mobility_ch_model =
+                    properties_manager.get_mobility_ch(material_interaction_id);
+                  mobility_ch_model->vector_value(fields, mobility_ch);
                 }
               break;
             }
 
-          else // VOF by default with two fluids
+          if (gather_vof && !gather_ch) // VOF by default with two fluids
             {
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
@@ -459,6 +463,12 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     }
                 }
               break;
+            }
+
+          if (gather_ch && gather_vof)
+            {
+              throw std::runtime_error(
+                "Cannot solve a multiphase problem using VOF and Cahn-Hilliard at the same time");
             }
         }
       default:

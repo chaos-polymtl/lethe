@@ -12,7 +12,7 @@
 void
 test()
 {
-  deallog << "Beggining" << std::endl;
+  deallog << "Beginning" << std::endl;
 
   ThermalConductivityLinear thermal_conductivity_model(5, 10);
 
@@ -75,8 +75,6 @@ test()
       deallog << jacobians[i] << " ";
     }
   deallog << std::endl;
-
-
 
   deallog << "OK" << std::endl;
 }

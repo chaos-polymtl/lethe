@@ -50,14 +50,23 @@ CahnHilliard<dim>::setup_assemblers()
 
   // Core assembler
   // For the time being, only a two-fluid system is considered for the
-  // Cahn-Hilliard equations,hence we'll always take the first element of the
+  // Cahn-Hilliard equations, hence we'll always take the first element of the
   // material_interaction vector, since it should contain all the parameters
   // necessary for solving the equations
+
+  //  this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
+  //    this->simulation_control,
+  //    this->simulation_parameters.multiphysics.ch_parameters,
+  //    this->simulation_parameters.physical_properties.material_interactions[0]));
+
+  const auto mobility_model =
+    this->simulation_parameters.physical_properties_manager.get_mobility_ch();
 
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
     this->simulation_parameters.multiphysics.ch_parameters,
-    this->simulation_parameters.physical_properties.material_interactions[0]));
+    mobility_model->get_model(),
+    mobility_model->get_mobility_constant()));
 }
 
 template <int dim>

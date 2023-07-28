@@ -27,7 +27,6 @@
 
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
 
@@ -430,6 +429,22 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         std::make_shared<BuoyancyAssembly<dim>>(this->simulation_control));
     }
 
+  if (this->simulation_parameters.multiphysics.cahn_hilliard)
+    {
+      std::cout << "I'm activated for some reason" << std::endl;
+      // Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesCahnHilliardAssemblerBDF<dim>>(
+              this->simulation_control));
+        }
+
+      this->assemblers.push_back(
+        std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
+          this->simulation_control, this->simulation_parameters));
+    }
+
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
@@ -474,21 +489,6 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
-    }
-
-  if (this->simulation_parameters.multiphysics.cahn_hilliard)
-    {
-      //       Time-stepping schemes
-      if (is_bdf(this->simulation_control->get_assembly_method()))
-        {
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesCahnHilliardAssemblerBDF<dim>>(
-              this->simulation_control));
-        }
-
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
-          this->simulation_control, this->simulation_parameters));
     }
 
   else

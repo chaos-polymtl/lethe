@@ -70,7 +70,6 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> phase_order_gradient =
         scratch_data.phase_order_ch_gradients[q];
 
-      // double mobility_constant = 1.0;
       double               mobility = scratch_data.mobility_ch[q];
       const Tensor<1, dim> relative_diffusive_flux =
         -density_diff * mobility *
@@ -162,8 +161,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto &grad_shear_rate_j =
-                grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto &shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
@@ -173,7 +171,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
               double local_matrix_ij =
                 // Momentum terms
                 dynamic_viscosity_eq *
-                  scalar_product(grad_shear_rate_j, grad_phi_u_i) +
+                  scalar_product(shear_rate_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j +
@@ -227,7 +225,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -252,7 +250,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       scratch_data.velocity_gradients[q];
       const Tensor<3, dim> &velocity_hessian =
         scratch_data.velocity_hessians[q];
-      // From hessian, calculate grad (div (u)) term needed for VOF problems
+      // From hessian, calculate grad (div (u)) term needed for CH problems
       Tensor<1, dim> grad_div_velocity;
       for (int d = 0; d < dim; ++d)
         {

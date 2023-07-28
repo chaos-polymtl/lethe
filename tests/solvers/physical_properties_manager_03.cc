@@ -16,7 +16,8 @@
 */
 
 /**
- * @brief This code tests the PhysicalPropertiesManager class and its capacity to instantiate the various models for physical properties
+ * @brief This code tests the PhysicalPropertiesManager class and its
+ * capacity to instantiate the various models for physical properties
  * for the case when there are 2 fluids and 2 solids. This test exceeds the
  * actual capacity of the solver (2 fluids, 1 solid).
  */
@@ -78,6 +79,10 @@ test()
         Parameters::MaterialInteractions::SurfaceTensionModel::constant;
       physical_properties.material_interactions[i]
         .surface_tension_parameters.surface_tension_coefficient = 10 * (i + 1);
+      physical_properties.material_interactions[i].mobility_ch_model =
+        Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant;
+      physical_properties.material_interactions[i]
+        .mobility_ch_parameters.mobility_ch_constant = 5 * (i + 1);
     }
 
   PhysicalPropertiesManager physical_properties_manager;
@@ -121,6 +126,10 @@ test()
               << i << std::endl;
       deallog << "Surface tension      : "
               << physical_properties_manager.get_surface_tension(i)->value(
+                   dummy_fields)
+              << std::endl;
+      deallog << "Surface tension      : "
+              << physical_properties_manager.get_mobility_ch(i)->value(
                    dummy_fields)
               << std::endl;
     }

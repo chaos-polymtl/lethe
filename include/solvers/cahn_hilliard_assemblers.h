@@ -92,10 +92,12 @@ public:
   CahnHilliardAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::CahnHilliard           ch_parameters,
-    Parameters::MaterialInteractions   material_interaction_parameters)
+    MobilityModel                      mobility_model,
+    double                             mobility_constant)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
     , ch_parameters(ch_parameters)
-    , material_interaction_parameters(material_interaction_parameters)
+    , mobility_model(mobility_model)
+    , mobility_constant(mobility_constant)
   {}
 
   /**
@@ -117,8 +119,9 @@ public:
   assemble_rhs(CahnHilliardScratchData<dim> &scratch_data,
                StabilizedMethodsCopyData &   copy_data) override;
 
-  Parameters::CahnHilliard         ch_parameters;
-  Parameters::MaterialInteractions material_interaction_parameters;
+  Parameters::CahnHilliard ch_parameters;
+  MobilityModel            mobility_model;
+  double                   mobility_constant;
 };
 
 
