@@ -79,19 +79,12 @@ test()
         Parameters::MaterialInteractions::SurfaceTensionModel::constant;
       physical_properties.material_interactions[i]
         .surface_tension_parameters.surface_tension_coefficient = 10 * (i + 1);
-<<<<<<< HEAD
       physical_properties.material_interactions[i]
         .mobility_cahn_hilliard_model =
         Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant;
       physical_properties.material_interactions[i]
         .mobility_cahn_hilliard_parameters.mobility_cahn_hilliard_constant =
         5 * (i + 1);
-=======
-      physical_properties.material_interactions[i].mobility_ch_model =
-        Parameters::MaterialInteractions::MobilityCahnHilliardModel::constant;
-      physical_properties.material_interactions[i]
-        .mobility_ch_parameters.mobility_ch_constant = 5 * (i + 1);
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
     }
 
   PhysicalPropertiesManager physical_properties_manager;
@@ -137,15 +130,9 @@ test()
               << physical_properties_manager.get_surface_tension(i)->value(
                    dummy_fields)
               << std::endl;
-<<<<<<< HEAD
       deallog << "Mobility      : "
               << physical_properties_manager.get_mobility_cahn_hilliard(i)
                    ->value(dummy_fields)
-=======
-      deallog << "Surface tension      : "
-              << physical_properties_manager.get_mobility_ch(i)->value(
-                   dummy_fields)
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent)
               << std::endl;
     }
 }
