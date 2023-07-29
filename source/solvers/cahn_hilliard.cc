@@ -46,6 +46,13 @@ CahnHilliard<dim>::setup_assemblers()
       this->simulation_control,
       this->simulation_parameters.boundary_conditions_cahn_hilliard));
 
+  // Free angle of contact boundary condition
+  this->assemblers.push_back(
+    std::make_shared<CahnHilliardAssemblerFreeAngle<dim>>(
+      this->simulation_control,
+      this->simulation_parameters.multiphysics.ch_parameters,
+      this->simulation_parameters.boundary_conditions_cahn_hilliard));
+
 
   // Core assembler
   // For the time being, only a two-fluid system is considered for the

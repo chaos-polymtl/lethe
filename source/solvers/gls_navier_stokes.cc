@@ -503,7 +503,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
         }
     }
 
-  else
+  if (!this->simulation_parameters.multiphysics.VOF && !this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
       if (is_bdf(this->simulation_control->get_assembly_method()))

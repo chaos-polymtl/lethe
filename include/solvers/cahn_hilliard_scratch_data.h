@@ -102,7 +102,8 @@ public:
                                    fe_cahn_hilliard,
                                    face_quadrature,
                                    update_values | update_quadrature_points |
-                                     update_JxW_values | update_gradients)
+                                     update_JxW_values | update_gradients |
+    update_normal_vectors)
   {
     allocate();
   }
@@ -278,6 +279,9 @@ public:
         this->face_phase_grad_values = std::vector<std::vector<Tensor<1, dim>>>(
           n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
 
+        this->face_normal = std::vector<std::vector<Tensor<1, dim>>>(
+          n_faces, std::vector<Tensor<1, dim>>(n_faces_q_points));
+
         for (const auto face : cell->face_indices())
           {
             this->is_boundary_face[face] = cell->face(face)->at_boundary();
@@ -293,6 +297,8 @@ public:
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
                   {
                     face_JxW[face][q] = fe_face_values_cahn_hilliard.JxW(q);
+                      this->face_normal[face][q] =
+                              this->fe_face_values_cahn_hilliard.normal_vector(q);
                     for (const unsigned int k :
                          fe_face_values_cahn_hilliard.dof_indices())
                       {
@@ -403,6 +409,8 @@ public:
   std::vector<std::vector<std::vector<Tensor<1, dim>>>> grad_phi_face_phase;
   // First vector is face number, second quadrature point
   std::vector<std::vector<Tensor<1, dim>>> face_phase_grad_values;
+  // The normal vector is necessary for the free angle boundary condition
+  std::vector<std::vector<Tensor<1, dim>>> face_normal;
 };
 
 #endif
