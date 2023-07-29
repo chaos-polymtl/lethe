@@ -18,7 +18,6 @@ PlaneInsertion<dim>::PlaneInsertion(
 {
   // Initializing current inserting particle type
   current_inserting_particle_type = 0;
-  this->inserted_this_step        = 0;
   particle_counter                = 0;
 
   // Initializing the cell that are close to the plan
@@ -46,11 +45,11 @@ PlaneInsertion<dim>::find_inplane_cells(
           bool cell_in_plane = false;
           // Initializing the values
 
-          // Vector that goes from the plane reference point to the vertice 0.
+          // Vector that goes from the plane reference point to the vertex 0.
           Tensor<1, 3> connecting_vector_ref =
             point_nd_to_3d(cell->vertex(0)) - plane_point;
 
-          // Normal distance between vertex 0 and the plan
+          // Normal distance between vertex 0 and the plane.
           double vertex_wall_distance_ref =
             std::abs(connecting_vector_ref * plane_normal_vector);
 
@@ -58,7 +57,7 @@ PlaneInsertion<dim>::find_inplane_cells(
           for (unsigned int vertex_id = 1; vertex_id < cell->n_vertices();
                ++vertex_id)
             {
-              // Vector that goes from the plane reference point to the vertice
+              // Vector that goes from the plane reference point to the vertex
               // n-th
               Tensor<1, 3> connecting_vector =
                 point_nd_to_3d(cell->vertex(vertex_id)) - plane_point;
@@ -67,10 +66,10 @@ PlaneInsertion<dim>::find_inplane_cells(
               double vertex_wall_distance =
                 std::abs(connecting_vector * plane_normal_vector);
 
-              // If the multiplication of the two distances is negatif, then at
-              // least one of vertex is on both sides of the plane. If the
-              // multiplication is equal to zero, then one vertex is on the
-              // plane.
+              // If the multiplication of the two distances is negative, then at
+              // least one of vertex of the cell is on both sides of the plane.
+              // If the multiplication is equal to zero, then one vertex is on
+              // the plane.
               if (vertex_wall_distance_ref * vertex_wall_distance <= 0)
                 {
                   cell_in_plane = true;
@@ -105,7 +104,7 @@ PlaneInsertion<dim>::insert(
   const DEMSolverParameters<dim> &                 dem_parameters)
 {
   if (remained_particles_of_each_type == 0 &&
-      current_inserting_particle_type !=
+      this->current_inserting_particle_type !=
         dem_parameters.lagrangian_physical_properties.particle_type_number - 1)
     {
       remained_particles_of_each_type =
@@ -119,110 +118,167 @@ PlaneInsertion<dim>::insert(
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
 
       auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
-      auto n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
 
-      // Obtain global bounding boxes
-      const auto my_bounding_box =
-        GridTools::compute_mesh_predicate_bounding_box(
-          triangulation, IteratorFilters::LocallyOwnedCell());
-      const auto global_bounding_boxes =
-        Utilities::MPI::all_gather(communicator, my_bounding_box);
-
-      // List of cells to insert at this time step
-      std::vector<Point<dim>> insertion_points_on_proc_this_step;
+      // List of the empty cells at this time step
+      std::set<typename Triangulation<dim>::active_cell_iterator>
+        empty_cells_on_proc;
 
       // Loop over the cell inplane
       for (const auto &cell : plane_cells_for_insertion)
         {
-          // if the cell is empty and is locally own
+          // if the cell is empty ...
           if (particle_handler.n_particles_in_cell(cell) == 0)
             {
-              // Position of the center of the cell (To remove
-              Point<dim> particle_location =
-                cells_centers.at(cell->active_cell_index());
-
-              // Generate the random point of insertion
-              particle_location(0) +=
-                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
-                dem_parameters.insertion_info.random_number_range;
-
-              particle_location(1) +=
-                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
-                dem_parameters.insertion_info.random_number_range;
-
-              if constexpr (dim == 3)
-                {
-                  particle_location(2) +=
-                    static_cast<double>(rand()) /
-                    static_cast<double>(RAND_MAX) *
-                    dem_parameters.insertion_info.random_number_range;
-                }
-              // Point to insert at this time step
-              insertion_points_on_proc_this_step.push_back(particle_location);
+              // ... we add the cell in std::set
+              empty_cells_on_proc.insert(cell);
+              ;
             }
         }
-      // Gather to core 0 the number of particle every core can insert
 
+      // Every processor knows how many particle (or empty cells) there is at
+      // this time step. This is basically the only information share between
+      // processor.
       auto number_of_particles_to_insert_per_core =
-        Utilities::MPI::all_gather(communicator,
-                                   insertion_points_on_proc_this_step.size());
+        Utilities::MPI::all_gather(communicator, empty_cells_on_proc.size());
 
+      // Every processor does the following calculation. This could be done by a
+      // "gather and scatter", but it's probably less efficient. First, we loop
+      // over the vector that we have created using the all_gather. Every
+      // integer in that vector gives the number of empty_cell of a certain
+      // processor.
       for (unsigned int i = 0;
            i < number_of_particles_to_insert_per_core.size();
            ++i)
         {
+          // We subtract those integer.
           remained_particles_of_each_type -=
             number_of_particles_to_insert_per_core[i];
-          // If the remaining number of particle become negative, this means
-          // that we want to insert to many particle at this time step. So...
 
+          // If the remained_particles_of_each_type become negative, this means
+          // that we are trying to insert to many particle in the simulation.
+          // Thus, we need to decrease the number of empty_cell at this time
+          // step. So...
           if (remained_particles_of_each_type <= 0)
             {
-              // ... we decrease the number of particle at the current core in
-              // the sum and...
-
-
+              // ... we decrease the number of particle at the current
+              // processor, since it's the one who got the variable to become
+              // negative. Then...
               number_of_particles_to_insert_per_core[i] +=
                 remained_particles_of_each_type;
 
-
+              // ... we put remained_particles_of_each_type back to zero.
               remained_particles_of_each_type = 0;
 
+              // Loop over the remaining processor and put those at zero.
               for (unsigned int j = i + 1;
                    j < number_of_particles_to_insert_per_core.size();
                    ++j)
                 {
-                  // we put the remaining cores to zero
                   number_of_particles_to_insert_per_core[j] = 0;
                 }
               break;
             }
         }
 
-      std::vector<Point<dim>> new_insertion_points_on_proc(
-        insertion_points_on_proc_this_step.begin(),
-        insertion_points_on_proc_this_step.begin() +
-          number_of_particles_to_insert_per_core[this_mpi_process]);
+      // Now, every processor knows how many particle it needs to insert. They
+      // also know how many particle the other processor have to insert. This
+      // way, it's possible for a processor to find the correct range of
+      // particle id to use with the particle_counter variable.
 
+      // This is the starting id of the processor.
+      unsigned int id_on_proc =
+        std::accumulate(number_of_particles_to_insert_per_core.begin(),
+                        number_of_particles_to_insert_per_core.begin() +
+                          this_mpi_process,
+                        particle_counter);
 
+      // We yet didn't say which empty cells won't be use anymore.
+      // empty_cells_on_proc needs to be shorter for some processor.
+      while (empty_cells_on_proc.size() <
+             number_of_particles_to_insert_per_core[this_mpi_process])
+        {
+          auto it = empty_cells_on_proc.end();
+          empty_cells_on_proc.erase(it);
+        }
 
-      this->assign_particle_properties(dem_parameters,
-                                       new_insertion_points_on_proc.size(),
-                                       current_inserting_particle_type,
-                                       this->particle_properties);
+      // There's probably a better ways to define the properties of a particle,
+      // but for now it works...
+      double type     = this->current_inserting_particle_type;
+      double diameter = dem_parameters.lagrangian_physical_properties
+                          .particle_average_diameter.at(type);
+      double density =
+        dem_parameters.lagrangian_physical_properties.density_particle.at(type);
+      double vel_x        = dem_parameters.insertion_info.vel_x;
+      double vel_y        = dem_parameters.insertion_info.vel_y;
+      double vel_z        = dem_parameters.insertion_info.vel_z;
+      double omega_x      = dem_parameters.insertion_info.omega_x;
+      double omega_y      = dem_parameters.insertion_info.omega_y;
+      double omega_z      = dem_parameters.insertion_info.omega_z;
+      double fem_force_x  = 0.;
+      double fem_force_y  = 0.;
+      double fem_force_z  = 0.;
+      double fem_torque_x = 0.;
+      double fem_torque_y = 0.;
+      double fem_torque_z = 0.;
+      double mass         = density * 4. / 3. * M_PI *
+                    Utilities::fixed_power<3, double>(diameter * 0.5);
+      double volumetric_contribution = 0.;
 
-      particle_handler.insert_global_particles(new_insertion_points_on_proc,
-                                               global_bounding_boxes,
-                                               this->particle_properties);
+      std::vector<double> properties_of_one_particle{type,
+                                                     diameter,
+                                                     vel_x,
+                                                     vel_y,
+                                                     vel_z,
+                                                     omega_x,
+                                                     omega_y,
+                                                     omega_z,
+                                                     fem_force_x,
+                                                     fem_force_y,
+                                                     fem_force_z,
+                                                     fem_torque_x,
+                                                     fem_torque_y,
+                                                     fem_torque_z,
+                                                     mass,
+                                                     volumetric_contribution};
 
-      //      particle_handler.insert_particle(particle_location,
-      //                                       ref_point,
-      //                                       particle_counter++,
-      //                                       cell,
-      //                                       properties_of_one_particle);
+      // Loop over the empty cells we kept.
+      for (const auto &cell : empty_cells_on_proc)
+        {
+          // Position of the center of the cell
+          Point<dim> insertion_location =
+            cells_centers.at(cell->active_cell_index());
+
+          // Generate the random point of insertion
+          insertion_location(0) +=
+            static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+            dem_parameters.insertion_info.random_number_range;
+
+          insertion_location(1) +=
+            static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+            dem_parameters.insertion_info.random_number_range;
+
+          if constexpr (dim == 3)
+            {
+              insertion_location(2) +=
+                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+                dem_parameters.insertion_info.random_number_range;
+            }
+
+          // Insertion
+          Point<dim> ref_point;
+          particle_handler.insert_particle(insertion_location,
+                                           ref_point,
+                                           id_on_proc++,
+                                           cell,
+                                           properties_of_one_particle);
+        }
+      // We need to synchronize the particle_counter on all the processor for
+      // the new insertion time step.
+      particle_counter +=
+        std::accumulate(number_of_particles_to_insert_per_core.begin(),
+                        number_of_particles_to_insert_per_core.end(),
+                        0);
     }
 }
-
-;
 template class PlaneInsertion<2>;
 template class PlaneInsertion<3>;
