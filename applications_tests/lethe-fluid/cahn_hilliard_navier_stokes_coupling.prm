@@ -20,8 +20,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set fluid dynamics = true
-  set cahn hilliard  = true
+  set cahn hilliard = true
 end
 
 #---------------------------------------------------
@@ -76,13 +75,8 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
-  set number = 2
+  set number = 1
   subsection bc 0
-    set id          = 0
-    set type        = angle_of_contact
-    set angle value = 135
-  end
-  subsection bc 1
     set id          = 2
     set type        = angle_of_contact
     set angle value = 135
