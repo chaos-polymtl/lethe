@@ -886,10 +886,11 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                       bool is_inside_crown;
                       if (minimal_crown_refinement_enabled)
                         {
-                          // The factor depends on dim, since cell->diameter()
-                          // returns the longest diagonal. The diagonal is
-                          // higher in 3D than in 2D. The chosen factor is equal
-                          // to the length of the smallest cell.
+                          // The factor should be equal to the length of the
+                          // current smallest cell. Since cell->diameter()
+                          // returns the longest diagonal, we divide the
+                          // diameter by the diagonal of a unit hypercube to
+                          // obtain the correct length.
                           double factor   = 1 / sqrt(dim);
                           is_inside_crown = particles[p].is_inside_crown(
                             support_points[local_dof_indices[j]],
