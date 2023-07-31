@@ -4,7 +4,9 @@
 
 using namespace DEM;
 
-// The constructor of plane insertion class.
+// The constructor of plane insertion class. In the constructor, we find which
+// cells are going to be use for the insertion and we also find the centers of
+// those cells.
 template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
   const DEMSolverParameters<dim> &                 dem_parameters,
@@ -16,13 +18,13 @@ PlaneInsertion<dim>::PlaneInsertion(
   current_inserting_particle_type = 0;
   particle_counter                = 0;
 
-  // Initializing the cell that are close to the plan
+  // Finding which cells are inplane
   find_inplane_cells(
     triangulation,
     dem_parameters.insertion_info.insertion_plane_point,
     dem_parameters.insertion_info.insertion_plane_normal_vector);
 
-  // Initializing the cell centers
+  // // Finding the center of those cells
   find_centers_of_inplane_cells();
 }
 
