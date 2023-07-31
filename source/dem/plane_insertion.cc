@@ -47,7 +47,7 @@ PlaneInsertion<dim>::find_inplane_cells(
 
           // Normal distance between vertex 0 and the plane.
           double vertex_wall_distance_ref =
-            std::abs(connecting_vector_ref * plane_normal_vector);
+            connecting_vector_ref * plane_normal_vector;
 
           // Loop over all the vertices of the cell
           for (unsigned int vertex_id = 1; vertex_id < cell->n_vertices();
@@ -60,7 +60,7 @@ PlaneInsertion<dim>::find_inplane_cells(
 
               // Normal distance between vertex n-th and the plan
               double vertex_wall_distance =
-                std::abs(connecting_vector * plane_normal_vector);
+                connecting_vector * plane_normal_vector;
 
               // If the multiplication of the two distances is negative, then at
               // least one of vertex of the cell is on both sides of the plane.
@@ -127,7 +127,6 @@ PlaneInsertion<dim>::insert(
             {
               // ... we add the cell in std::set
               empty_cells_on_proc.insert(cell);
-              ;
             }
         }
 
