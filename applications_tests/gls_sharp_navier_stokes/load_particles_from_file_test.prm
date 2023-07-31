@@ -96,7 +96,6 @@ end
 
 subsection particles
   set assemble Navier-Stokes inside particles = false
-  set levels not precalculated                = 0
 
   subsection extrapolation function
     set stencil order = 2
