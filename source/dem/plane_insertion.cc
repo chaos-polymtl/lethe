@@ -4,11 +4,7 @@
 
 using namespace DEM;
 
-// The constructor of non-uniform insertion class. In the constructor, we
-// investigate if the insertion box is adequately large to handle the desired
-// number of inserted particles. The number of insertion points in each
-// direction (number_of_particles_x_direction, number_of_particles_y_direction
-// and number_of_particles_z_direction) are also obtained
+// The constructor of plane insertion class.
 template <int dim>
 PlaneInsertion<dim>::PlaneInsertion(
   const DEMSolverParameters<dim> &                 dem_parameters,
@@ -273,7 +269,7 @@ PlaneInsertion<dim>::insert(
                                            properties_of_one_particle);
         }
       // We need to synchronize the particle_counter on all the processor for
-      // the new insertion time step.
+      // the next insertion time step.
       particle_counter +=
         std::accumulate(number_of_particles_to_insert_per_core.begin(),
                         number_of_particles_to_insert_per_core.end(),
