@@ -2459,6 +2459,11 @@ namespace Parameters
       "false",
       Patterns::Bool(),
       "Bool to define if the particle trajectory is integrated meaning its velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+    prm.declare_entry(
+      "mesh based precalculations",
+      "true",
+      Patterns::Bool(),
+      "Bool to define if precalculations should be performed between refinements. Precalculations can introduce shape deformation when the type is RBF and some nodes are located outside the background mesh.");
 
     prm.enter_subsection("position");
     particles[index].f_position =
@@ -2578,14 +2583,6 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "The number of particles represented by IB. The maximal number of particles is equal to 10 when defined individually. If particles are loaded from a file, this parameter is overridden, and there is no limit to the number of particles.");
-
-      prm.declare_entry(
-        "levels not precalculated",
-        "0",
-        Patterns::Integer(),
-        "Number of levels that are ignored in precalculations. Setting this "
-        "parameter higher allows for a lower memory footprint at the cost of"
-        " higher computing time.");
 
       prm.declare_entry(
         "assemble Navier-Stokes inside particles",
@@ -2860,7 +2857,6 @@ namespace Parameters
 
       nb = prm.get_integer("number of particles");
 
-      levels_not_precalculated = prm.get_integer("levels not precalculated");
       assemble_navier_stokes_inside =
         prm.get_bool("assemble Navier-Stokes inside particles");
 
@@ -2872,6 +2868,8 @@ namespace Parameters
           prm.enter_subsection(section);
 
           particles[i].integrate_motion = prm.get_bool("integrate motion");
+          particles[i].mesh_based_precalculations =
+            prm.get_bool("mesh based precalculations");
 
           prm.enter_subsection("position");
           particles[i].f_position->parse_parameters(prm);

@@ -1288,16 +1288,20 @@ CompositeShape<dim>::static_copy() const
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &  updated_dof_handler,
-  const unsigned int levels_not_precalculated)
+  DoFHandler<dim> &updated_dof_handler,
+  const bool       mesh_based_precalculations)
 {
+  if (!mesh_based_precalculations)
+    return;
   for (auto const &[component_id, component] : constituents)
     if (typeid(*component) == typeid(RBFShape<dim>))
       std::static_pointer_cast<RBFShape<dim>>(component)
-        ->update_precalculations(updated_dof_handler, levels_not_precalculated);
+        ->update_precalculations(updated_dof_handler,
+                                 mesh_based_precalculations);
     else if (typeid(*component) == typeid(CompositeShape<dim>))
       std::static_pointer_cast<CompositeShape<dim>>(component)
-        ->update_precalculations(updated_dof_handler, levels_not_precalculated);
+        ->update_precalculations(updated_dof_handler,
+                                 mesh_based_precalculations);
 }
 
 template <int dim>
@@ -1402,7 +1406,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &          support_radii,
   , max_number_of_inside_nodes(1)
   , position_precalculated(position)
   , orientation_precalculated(orientation)
-  , levels_not_precalculated(0)
   , minimal_support_radius(
       *std::min_element(std::begin(support_radii), std::end(support_radii)))
   , nodes_id(1)
@@ -1470,7 +1473,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   max_number_of_inside_nodes = 1;
   position_precalculated     = Point<dim>(this->position);
   orientation_precalculated  = Tensor<1, 3>(this->orientation);
-  levels_not_precalculated   = 0;
   minimal_support_radius =
     *std::min_element(std::begin(support_radii), std::end(support_radii));
 
@@ -1765,10 +1767,12 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(
-  DoFHandler<dim> &  dof_handler,
-  const unsigned int levels_not_precalculated)
+RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
+                                      const bool mesh_based_precalculations)
 {
+  if (!mesh_based_precalculations)
+    return;
+
   likely_nodes_map.clear();
   rotate_nodes();
   // We first reset the mapping, since the grid partitioning may change between
@@ -1776,7 +1780,6 @@ RBFShape<dim>::update_precalculations(
   // reset does not have a significant impact of global computational cost.
   likely_nodes_map.clear();
   this->dof_handler                = &dof_handler;
-  this->levels_not_precalculated   = levels_not_precalculated;
   const unsigned int maximal_level = dof_handler.get_triangulation().n_levels();
 
   // We start by dividing the list of RBF nodes into manageable portions
@@ -1789,12 +1792,7 @@ RBFShape<dim>::update_precalculations(
            std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     temporary_nodes_portions_map;
   temporary_nodes_portions_map.clear();
-
-  size_t max_level_to_portion = (levels_not_precalculated == 0) ?
-                                  maximal_level :
-                                  maximal_level + 1 - levels_not_precalculated;
-
-  for (unsigned int level = 0; level < max_level_to_portion; level++)
+  for (unsigned int level = 0; level < maximal_level; level++)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
@@ -1840,6 +1838,7 @@ RBFShape<dim>::update_precalculations(
                               current_cell_nodes);
 
           // We currently ignore RBF nodes that are in no cells
+          // A fix for this will be implemented shortly
         }
 
       // We need to remove all cells that are not needed anymore
@@ -1881,7 +1880,8 @@ RBFShape<dim>::update_precalculations(
         {
           temp_cell = it->first;
           if (temp_cell->is_active() ||
-              temp_cell->level() + 1 == max_level_to_portion)
+              static_cast<unsigned int>(temp_cell->level() + 1) ==
+                maximal_level)
             {
               if (cell->point_inside(temp_cell->barycenter()))
                 {
@@ -1920,17 +1920,12 @@ RBFShape<dim>::update_precalculations(
           if (cell->is_artificial_on_level())
             continue;
 
-          // We first check if we are in the hierarchy levels where we
-          // simply assume that children have the same likely nodes as their
-          // parents.
-          const bool no_need_to_precalculate_level =
-            (level + levels_not_precalculated >= maximal_level);
           // We also check if the cell diameter is lower than the minimal
           // support radius. In that case, the likely nodes should stay more
           // or less the same.
           const bool cell_smaller_than_rbf_radius =
             (cell->diameter() < minimal_support_radius);
-          if (no_need_to_precalculate_level || cell_smaller_than_rbf_radius)
+          if (cell_smaller_than_rbf_radius)
             {
               likely_nodes_map[cell] = std::make_shared<std::vector<
                 std::tuple<Point<dim>,

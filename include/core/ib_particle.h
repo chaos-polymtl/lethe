@@ -336,6 +336,11 @@ public:
   // Bool that indicates if the motion of this particle must be integrated. If
   // it is false, the position and velocity are defined by the function.
   bool integrate_motion;
+  // Bool that indicates if mesh based precalculations should be performed.
+  // For RBF shapes with nodes outside the background mesh, slight deformations
+  // can happen near the boundary when mesh based precalculations is used (due
+  // to the RBF nodes partitioning algorithm).
+  bool mesh_based_precalculations;
   // Current residual of the particle velocity.
   double residual_velocity;
   // Current residual of the particle angular velocity.
