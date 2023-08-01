@@ -132,6 +132,7 @@ public:
    *  @param evaluation_point The point at which the evaluation is performed
    *  @param outer_radius The factor to be multiplied by the effective radius to check if the evaluation point is inside the outer limits
    *  @param inside_radius The factor to be multiplied by the effective radius to check if the evaluation point is outside the inner limits
+   *  @param absolute_distance Whether the distance is defined as absolute or relative to radius
    *  @param cell_guess A guess of the cell containing the evaluation point, which
    *  is useful to reduce computation time
    */
@@ -140,6 +141,7 @@ public:
     const Point<dim> &                                    evaluation_point,
     const double                                          outer_radius,
     const double                                          inside_radius,
+    const bool                                            absolute_distance,
     const typename DoFHandler<dim>::active_cell_iterator &cell_guess);
 
   /**
@@ -148,7 +150,8 @@ public:
   bool
   is_inside_crown(const Point<dim> &evaluation_point,
                   const double      outer_radius,
-                  const double      inside_radius);
+                  const double      inside_radius,
+                  const bool        absolute_distance);
 
   /**
    * @brief
