@@ -762,7 +762,7 @@ NavierStokesOperator<dim, number>::vmult(VectorType &      dst,
 
 // Performs the transposed operator evaluation. Since we have
 // non-symmetric matrices this is different from the vmult call.
-// TODO: implement this correctly (let's start with something symmetric)
+// Note: required for compilation but not used at the moment.
 template <int dim, typename number>
 void
 NavierStokesOperator<dim, number>::Tvmult(VectorType &      dst,
@@ -1548,10 +1548,10 @@ solve_with_lsmg(SolverControl &            solver_control,
 // Main class to solve the steady Navier-Stokes quations given by
 // using Newton's method and the matrix-free approach.
 template <int dim>
-class MatrixFreeStokes
+class MatrixFreeNavierStokes
 {
 public:
-  MatrixFreeStokes(const Settings &parameters);
+  MatrixFreeNavierStokes(const Settings &parameters);
 
   void
   run();
@@ -1630,7 +1630,7 @@ private:
 };
 
 template <int dim>
-MatrixFreeStokes<dim>::MatrixFreeStokes(const Settings &parameters)
+MatrixFreeNavierStokes<dim>::MatrixFreeNavierStokes(const Settings &parameters)
   : triangulation(
       MPI_COMM_WORLD,
       Triangulation<dim>::limit_level_difference_at_vertices,
@@ -1649,7 +1649,7 @@ MatrixFreeStokes<dim>::MatrixFreeStokes(const Settings &parameters)
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::make_grid()
+MatrixFreeNavierStokes<dim>::make_grid()
 {
   TimerOutput::Scope t(computing_timer, "make grid");
 
@@ -1684,7 +1684,7 @@ MatrixFreeStokes<dim>::make_grid()
 // To test locally-refined meshes
 template <int dim>
 void
-MatrixFreeStokes<dim>::refine_grid()
+MatrixFreeNavierStokes<dim>::refine_grid()
 {
   unsigned int n_refinements = 2;
 
@@ -1706,7 +1706,7 @@ MatrixFreeStokes<dim>::refine_grid()
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::setup_system()
+MatrixFreeNavierStokes<dim>::setup_system()
 {
   TimerOutput::Scope t(computing_timer, "setup system");
 
@@ -1762,17 +1762,17 @@ MatrixFreeStokes<dim>::setup_system()
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::evaluate_residual(
+MatrixFreeNavierStokes<dim>::evaluate_residual(
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src) const
 {
   system_matrix.get_system_matrix_free().cell_loop(
-    &MatrixFreeStokes::local_evaluate_residual, this, dst, src, true);
+    &MatrixFreeNavierStokes::local_evaluate_residual, this, dst, src, true);
 }
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::local_evaluate_residual(
+MatrixFreeNavierStokes<dim>::local_evaluate_residual(
   const MatrixFree<dim, double> &                   data,
   LinearAlgebra::distributed::Vector<double> &      dst,
   const LinearAlgebra::distributed::Vector<double> &src,
@@ -1891,7 +1891,7 @@ MatrixFreeStokes<dim>::local_evaluate_residual(
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::assemble_rhs()
+MatrixFreeNavierStokes<dim>::assemble_rhs()
 {
   TimerOutput::Scope t(computing_timer, "assemble right hand side");
 
@@ -1902,7 +1902,7 @@ MatrixFreeStokes<dim>::assemble_rhs()
 
 template <int dim>
 double
-MatrixFreeStokes<dim>::compute_residual(const double alpha)
+MatrixFreeNavierStokes<dim>::compute_residual(const double alpha)
 {
   TimerOutput::Scope t(computing_timer, "compute residual");
 
@@ -1925,7 +1925,7 @@ MatrixFreeStokes<dim>::compute_residual(const double alpha)
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::compute_update()
+MatrixFreeNavierStokes<dim>::compute_update()
 {
   TimerOutput::Scope t(computing_timer, "compute update");
 
@@ -2024,7 +2024,7 @@ MatrixFreeStokes<dim>::compute_update()
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::solve()
+MatrixFreeNavierStokes<dim>::solve()
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -2070,7 +2070,7 @@ MatrixFreeStokes<dim>::solve()
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::compute_solution_norm() const
+MatrixFreeNavierStokes<dim>::compute_solution_norm() const
 {
   solution.update_ghost_values();
 
@@ -2120,7 +2120,7 @@ MatrixFreeStokes<dim>::compute_solution_norm() const
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::compute_l2_error() const
+MatrixFreeNavierStokes<dim>::compute_l2_error() const
 {
   solution.update_ghost_values();
 
@@ -2169,7 +2169,7 @@ MatrixFreeStokes<dim>::compute_l2_error() const
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::output_results(const unsigned int cycle) const
+MatrixFreeNavierStokes<dim>::output_results(const unsigned int cycle) const
 {
   if (triangulation.n_global_active_cells() > 1e6)
     return;
@@ -2212,7 +2212,7 @@ MatrixFreeStokes<dim>::output_results(const unsigned int cycle) const
 
 template <int dim>
 void
-MatrixFreeStokes<dim>::run()
+MatrixFreeNavierStokes<dim>::run()
 {
   {
     const unsigned int n_ranks =
@@ -2371,14 +2371,14 @@ main(int argc, char *argv[])
       switch (parameters.dimension)
         {
             case 2: {
-              MatrixFreeStokes<2> vector_valued_problem(parameters);
+              MatrixFreeNavierStokes<2> vector_valued_problem(parameters);
               vector_valued_problem.run();
 
               break;
             }
 
             case 3: {
-              MatrixFreeStokes<3> vector_valued_problem(parameters);
+              MatrixFreeNavierStokes<3> vector_valued_problem(parameters);
               vector_valued_problem.run();
               break;
             }
