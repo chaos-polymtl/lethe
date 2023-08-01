@@ -457,7 +457,7 @@ GLSNavierStokesSolver<dim>::setup_assemblers()
               GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      else
+      else if (is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(

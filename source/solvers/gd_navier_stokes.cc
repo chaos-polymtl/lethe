@@ -25,6 +25,7 @@
 #include <core/utilities.h>
 
 #include <solvers/gd_navier_stokes.h>
+#include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
 
@@ -74,17 +75,36 @@ GDNavierStokesSolver<dim>::setup_assemblers()
   if (this->simulation_parameters.multiphysics.VOF)
     {
       // Time-stepping schemes
-      if (is_bdf(this->simulation_control->get_assembly_method()))
+      if (is_bdf(this->simulation_control->get_assembly_method()) &&
+          !this->simulation_parameters.physical_properties_manager
+             .density_is_constant())
+        {
+          this->assemblers.push_back(
+            std::make_shared<
+              GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
+              this->simulation_control));
+        }
+      else if (is_bdf(this->simulation_control->get_assembly_method()))
         {
           this->assemblers.push_back(
             std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
               this->simulation_control));
         }
-
-      // Core assembler
-      this->assemblers.push_back(
-        std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
-          this->simulation_control, this->simulation_parameters));
+      if (!this->simulation_parameters.physical_properties_manager
+             .density_is_constant())
+        {
+          this->assemblers.push_back(
+            std::make_shared<
+              GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
+      else
+        {
+          // Core assembler
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+              this->simulation_control, this->simulation_parameters));
+        }
     }
   else
     {
