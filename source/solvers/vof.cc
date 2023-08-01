@@ -908,19 +908,21 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               if (dim == 3)
                 dependent_column_names.push_back("vz_vof");
 
-              std::vector<Tensor<1, dim>> position_and_velocity_vector;
-              position_and_velocity_vector.push_back(
-                position_and_velocity.first);
-              position_and_velocity_vector.push_back(
-                position_and_velocity.second);
+              std::vector<Tensor<1, dim>> position_vector{
+                position_and_velocity.first};
+              std::vector<Tensor<1, dim>> velocity_vector{
+                position_and_velocity.second};
 
-              std::vector<double> time(
-                this->simulation_control->get_current_time());
+              std::vector<std::vector<Tensor<1, dim>>>
+                position_and_velocity_vectors{position_vector, velocity_vector};
+
+              std::vector<double> time = {
+                this->simulation_control->get_current_time()};
 
               TableHandler table = make_table_scalars_tensors(
                 time,
                 independent_column_names,
-                position_and_velocity_vector,
+                position_and_velocity_vectors,
                 dependent_column_names,
                 this->simulation_parameters.simulation_control.log_precision);
 
