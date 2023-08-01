@@ -135,6 +135,9 @@ This subsection contains the parameters related to the sharp immersed boundary s
 	    The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each cycle of refinement reduces the length of the elements by a factor two.
 
     .. note::
+        Using values ``refine mesh outside radius factor = 1`` and ``refine mesh inside radius factor = 1`` activates a minimal refinement mode. This enables the solver to select automatically the smallest region near the particle that guarantees stability of the solution.
+
+    .. note::
 	    This near-particle zone will be systematically refined at each refinement step until reaching the ``max refinement level`` parameter (:doc:`../cfd/mesh_adaptation_control`).
 
     * The ``refinement zone extrapolation`` parameter controls how the refinement zone is evaluated. By default, the refinement zone is around the particle's last position (If this parameter is false). If this parameter is set to true, the refinement zone position is extrapolated from the particle's current velocity. It will then apply all the initial refinement steps at the particle's new position. This is used when the particle moves significantly between two time steps.

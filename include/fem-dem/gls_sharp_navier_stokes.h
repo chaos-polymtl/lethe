@@ -587,7 +587,6 @@ private:
            std::tuple<bool, unsigned int, unsigned int>>
     cut_cells_map;
 
-
   /*
    * This map uses the cell as the key, and stores the following information:
    * if the cell is overconstrained (bool), what particle overconstrains this

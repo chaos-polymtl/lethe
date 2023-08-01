@@ -1,0 +1,107 @@
+subsection simulation control
+  set method           = steady
+  set output frequency = 0
+  set log precision    = 4
+  set subdivision      = 1
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 1,1: -1.5,-1.5 : 1.5,1.5  : true
+  set initial refinement = 3
+end
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 4
+    set type = slip
+  end
+  subsection bc 4
+    set id   = 5
+    set type = slip
+  end
+  subsection bc 5
+    set id   = 1
+    set type = outlet
+  end
+end
+
+subsection particles
+  set number of particles = 1
+
+  subsection extrapolation function
+    set length ratio  = 1
+    set stencil order = 2
+  end
+
+  subsection output
+    set calculate force                               = true
+    set enable extra sharp interface vtu output field = false
+    set print DEM                                     = false
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 5
+    set refine mesh inside radius factor  = 1
+    set refine mesh outside radius factor = 1
+  end
+
+  subsection particle info 0
+    set type              = sphere
+    set shape arguments   = 0.5
+    set integrate motion  = false
+    set pressure location = 0; 0
+
+    subsection position
+      set Function expression = 0.05; 0
+    end
+  end
+end
+
+subsection forces
+  set verbosity = verbose
+end
+
+subsection mesh adaptation
+  set type                 = kelly
+  set variable             = velocity
+  set max refinement level = 5
+  set min refinement level = 1
+end
+
+subsection non-linear solver
+  set verbosity = quiet
+end
+
+subsection linear solver
+  set method    = gmres
+  set verbosity = quiet
+end
