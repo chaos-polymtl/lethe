@@ -1,0 +1,17 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       4096
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      1
+   Number of VOF degrees of freedom: 4225
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0
+*******************************************************************************
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 1.59074
+*******************************************************************************
+ time  surface_fluid_1 mass_per_length_fluid_1 sharpening_threshold
+0.0000      3.4222e-01              3.4222e+02               0.5000
+0.1000      3.4222e-01              3.4222e+02               0.5000
+0.2000      3.4222e-01              3.4222e+02               0.5000
