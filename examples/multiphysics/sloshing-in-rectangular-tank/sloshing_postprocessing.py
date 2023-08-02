@@ -19,7 +19,7 @@ from lethe_pyvista_tools import *
 #############################################################################
 
 #############################################################################
-# Run script : python3 path_to_sloshing_post_processing.py path_to_case prm_file_name
+# Run script : python3 path_to_sloshing_postprocessing.py path_to_case prm_file_name
 
 #Take case path as argument
 simulation_path = sys.argv[1]
