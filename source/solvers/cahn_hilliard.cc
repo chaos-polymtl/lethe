@@ -55,11 +55,12 @@ CahnHilliard<dim>::setup_assemblers()
   // necessary for solving the equations
 
   const auto mobility_model =
-    this->simulation_parameters.physical_properties_manager.get_mobility_ch();
+    this->simulation_parameters.physical_properties_manager
+      .get_mobility_cahn_hilliard();
 
   this->assemblers.push_back(std::make_shared<CahnHilliardAssemblerCore<dim>>(
     this->simulation_control,
-    this->simulation_parameters.multiphysics.ch_parameters,
+    this->simulation_parameters.multiphysics.cahn_hilliard_parameters,
     mobility_model->get_model(),
     mobility_model->get_mobility_constant()));
 }
@@ -108,12 +109,13 @@ CahnHilliard<dim>::assemble_local_system_matrix(
   auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
   source_term.set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      &source_term,
-                      this->simulation_parameters.multiphysics.ch_parameters);
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    &source_term,
+    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -202,12 +204,13 @@ CahnHilliard<dim>::assemble_local_system_rhs(
   auto &source_term = simulation_parameters.source_term->cahn_hilliard_source;
   source_term.set_time(simulation_control->get_current_time());
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages,
-                      &source_term,
-                      this->simulation_parameters.multiphysics.ch_parameters);
+  scratch_data.reinit(
+    cell,
+    this->evaluation_point,
+    this->previous_solutions,
+    this->solution_stages,
+    &source_term,
+    this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -364,7 +367,7 @@ CahnHilliard<dim>::calculate_phase_statistics()
   std::vector<double> local_phase_order_values(n_q_points);
 
   double integral        = 0;
-  double max_phase_value = -10.0;
+  double max_phase_value = std::numeric_limits<double>::min();
   double min_phase_value = std::numeric_limits<double>::max();
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -565,7 +568,7 @@ CahnHilliard<dim>::compute_kelly(
   const FEValuesExtractors::Scalar phase_order(0);
   const FEValuesExtractors::Scalar chemical_potential(1);
 
-  if (ivar.first == Parameters::MeshAdaptation::Variable::phase_ch)
+  if (ivar.first == Parameters::MeshAdaptation::Variable::phase_cahn_hilliard)
     {
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
@@ -576,8 +579,8 @@ CahnHilliard<dim>::compute_kelly(
         estimated_error_per_cell,
         this->fe->component_mask(phase_order));
     }
-  else if (ivar.first ==
-           Parameters::MeshAdaptation::Variable::chemical_potential_ch)
+  else if (ivar.first == Parameters::MeshAdaptation::Variable::
+                           chemical_potential_cahn_hilliard)
     {
       KellyErrorEstimator<dim>::estimate(
         *this->mapping,
@@ -694,8 +697,8 @@ CahnHilliard<dim>::setup_dofs()
         // To impose the boundary condition only on the phase order, a component
         // mask is used at the end of the interpolate_boundary_values function
         if (this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .type[i_bc] ==
-            BoundaryConditions::BoundaryType::ch_dirichlet_phase_order)
+              .type[i_bc] == BoundaryConditions::BoundaryType::
+                               cahn_hilliard_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
@@ -724,8 +727,8 @@ CahnHilliard<dim>::setup_dofs()
          ++i_bc)
       {
         if (this->simulation_parameters.boundary_conditions_cahn_hilliard
-              .type[i_bc] ==
-            BoundaryConditions::BoundaryType::ch_dirichlet_phase_order)
+              .type[i_bc] == BoundaryConditions::BoundaryType::
+                               cahn_hilliard_dirichlet_phase_order)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,

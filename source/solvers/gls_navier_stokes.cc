@@ -641,9 +641,9 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_ch =
+      const DoFHandler<dim> *dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
-      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(),
+      scratch_data.enable_cahn_hilliard(dof_handler_cahn_hilliard->get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
@@ -740,19 +740,19 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_ch =
+      const DoFHandler<dim> *dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_ch);
+        dof_handler_cahn_hilliard);
 
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
         std::vector<TrilinosWrappers::MPI::Vector>(),
-        this->simulation_parameters.multiphysics.ch_parameters);
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -850,9 +850,9 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
 
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_ch =
+      const DoFHandler<dim> *dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
-      scratch_data.enable_cahn_hilliard(dof_handler_ch->get_fe(),
+      scratch_data.enable_cahn_hilliard(dof_handler_cahn_hilliard->get_fe(),
                                         *this->cell_quadrature,
                                         *this->mapping);
     }
@@ -950,19 +950,19 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
     }
   else if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
-      const DoFHandler<dim> *dof_handler_ch =
+      const DoFHandler<dim> *dof_handler_cahn_hilliard =
         this->multiphysics->get_dof_handler(PhysicsID::cahn_hilliard);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        dof_handler_ch);
+        dof_handler_cahn_hilliard);
 
       scratch_data.reinit_cahn_hilliard(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::cahn_hilliard),
         std::vector<TrilinosWrappers::MPI::Vector>(),
-        this->simulation_parameters.multiphysics.ch_parameters);
+        this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)

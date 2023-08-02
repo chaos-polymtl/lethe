@@ -14,8 +14,8 @@
  * ---------------------------------------------------------------------
  */
 
-#ifndef lethe_mobility_ch_model_h
-#define lethe_mobility_ch_model_h
+#ifndef lethe_mobility_cahn_hilliard_model_h
+#define lethe_mobility_cahn_hilliard_model_h
 
 #include <core/interface_property_model.h>
 
@@ -59,7 +59,7 @@ public:
 };
 
 /**
- * @brief Constant mobility_ch_constant.
+ * @brief Constant mobility_cahn_hilliard_constant.
  */
 class MobilityCahnHilliardModelConstant : public MobilityCahnHilliardModel
 {
@@ -67,8 +67,9 @@ public:
   /**
    * @brief Default constructor
    */
-  MobilityCahnHilliardModelConstant(const double p_mobility_ch_constant)
-    : mobility_ch_constant(p_mobility_ch_constant)
+  MobilityCahnHilliardModelConstant(
+    const double p_mobility_cahn_hilliard_constant)
+    : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
   {}
 
   /**
@@ -88,7 +89,7 @@ public:
   double
   get_mobility_constant() override
   {
-    return mobility_ch_constant;
+    return mobility_cahn_hilliard_constant;
   }
 
   /**
@@ -99,7 +100,7 @@ public:
   double
   value(const std::map<field, double> & /*fields_value*/) override
   {
-    return mobility_ch_constant;
+    return mobility_cahn_hilliard_constant;
   }
 
   /**
@@ -113,7 +114,7 @@ public:
   {
     std::fill(property_vector.begin(),
               property_vector.end(),
-              mobility_ch_constant);
+              mobility_cahn_hilliard_constant);
   }
 
   /**
@@ -148,7 +149,7 @@ public:
   }
 
 private:
-  const double        mobility_ch_constant;
+  const double        mobility_cahn_hilliard_constant;
   const MobilityModel model = constant;
 };
 
@@ -161,11 +162,12 @@ public:
   /**
    * @brief Default constructor
    */
-  MobilityCahnHilliardModelQuartic(const double p_mobility_ch_constant)
-    : mobility_ch_constant(p_mobility_ch_constant)
+  MobilityCahnHilliardModelQuartic(
+    const double p_mobility_cahn_hilliard_constant)
+    : mobility_cahn_hilliard_constant(p_mobility_cahn_hilliard_constant)
     , model(MobilityModel::quartic)
   {
-    this->model_depends_on[field::phase_order_ch] = true;
+    this->model_depends_on[field::phase_order_cahn_hilliard] = true;
   }
 
   /**
@@ -185,7 +187,7 @@ public:
   double
   get_mobility_constant() override
   {
-    return mobility_ch_constant;
+    return mobility_cahn_hilliard_constant;
   }
 
   /**
@@ -196,9 +198,11 @@ public:
   double
   value(const std::map<field, double> &fields_value) override
   {
-    const double &phase_order_ch = fields_value.at(field::phase_order_ch);
-    return mobility_ch_constant * (1 - phase_order_ch * phase_order_ch) *
-           (1 - phase_order_ch * phase_order_ch);
+    const double &phase_order_cahn_hilliard =
+      fields_value.at(field::phase_order_cahn_hilliard);
+    return mobility_cahn_hilliard_constant *
+           (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard) *
+           (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
   }
 
   /**
@@ -210,12 +214,13 @@ public:
   vector_value(const std::map<field, std::vector<double>> &field_vectors,
                std::vector<double> &property_vector) override
   {
-    const std::vector<double> &phase_order_ch =
-      field_vectors.at(field::phase_order_ch);
+    const std::vector<double> &phase_order_cahn_hilliard =
+      field_vectors.at(field::phase_order_cahn_hilliard);
     for (unsigned int i = 0; i < property_vector.size(); ++i)
-      property_vector[i] = mobility_ch_constant *
-                           (1 - phase_order_ch[i] * phase_order_ch[i]) *
-                           (1 - phase_order_ch[i] * phase_order_ch[i]);
+      property_vector[i] =
+        mobility_cahn_hilliard_constant *
+        (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]) *
+        (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
   }
 
   /**
@@ -229,9 +234,10 @@ public:
   double
   jacobian(const std::map<field, double> &fields_value, field /*id*/) override
   {
-    const double &phase_order_ch = fields_value.at(field::phase_order_ch);
-    return -4 * phase_order_ch * mobility_ch_constant *
-           (1 - phase_order_ch * phase_order_ch);
+    const double &phase_order_cahn_hilliard =
+      fields_value.at(field::phase_order_cahn_hilliard);
+    return -4 * phase_order_cahn_hilliard * mobility_cahn_hilliard_constant *
+           (1 - phase_order_cahn_hilliard * phase_order_cahn_hilliard);
   }
 
   /**
@@ -246,15 +252,16 @@ public:
                   const field /*id*/,
                   std::vector<double> &jacobian_vector) override
   {
-    const std::vector<double> &phase_order_ch =
-      field_vectors.at(field::phase_order_ch);
+    const std::vector<double> &phase_order_cahn_hilliard =
+      field_vectors.at(field::phase_order_cahn_hilliard);
     for (unsigned int i = 0; i < jacobian_vector.size(); ++i)
-      jacobian_vector[i] = -mobility_ch_constant * 4 * phase_order_ch[i] *
-                           (1 - phase_order_ch[i] * phase_order_ch[i]);
+      jacobian_vector[i] =
+        -mobility_cahn_hilliard_constant * 4 * phase_order_cahn_hilliard[i] *
+        (1 - phase_order_cahn_hilliard[i] * phase_order_cahn_hilliard[i]);
   }
 
 private:
-  const double        mobility_ch_constant;
+  const double        mobility_cahn_hilliard_constant;
   const MobilityModel model = quartic;
 };
 

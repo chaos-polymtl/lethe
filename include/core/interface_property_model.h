@@ -41,11 +41,11 @@ public:
    */
   InterfacePropertyModel()
   {
-    model_depends_on[shear_rate]           = false;
-    model_depends_on[temperature]          = false;
-    model_depends_on[previous_temperature] = false;
-    model_depends_on[pressure]             = false;
-    model_depends_on[phase_order_ch]       = false;
+    model_depends_on[shear_rate]                = false;
+    model_depends_on[temperature]               = false;
+    model_depends_on[previous_temperature]      = false;
+    model_depends_on[pressure]                  = false;
+    model_depends_on[phase_order_cahn_hilliard] = false;
   }
 
   /**

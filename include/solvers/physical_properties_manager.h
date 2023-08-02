@@ -163,7 +163,8 @@ public:
   }
 
   std::shared_ptr<MobilityCahnHilliardModel>
-  get_mobility_ch(const unsigned int material_interaction_id = 0) const
+  get_mobility_cahn_hilliard(
+    const unsigned int material_interaction_id = 0) const
   {
     return mobility_ch[material_interaction_id];
   }

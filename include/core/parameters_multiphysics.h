@@ -266,7 +266,7 @@ namespace Parameters
     bool buoyancy_force;
 
     Parameters::VOF          vof_parameters;
-    Parameters::CahnHilliard ch_parameters;
+    Parameters::CahnHilliard cahn_hilliard_parameters;
 
     void
     declare_parameters(ParameterHandler &prm);

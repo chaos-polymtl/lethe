@@ -317,7 +317,7 @@ namespace Parameters
   struct MobilityCahnHilliardParameters
   {
     // Mobility constant (M) in m^2/s
-    double mobility_ch_constant;
+    double mobility_cahn_hilliard_constant;
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -431,8 +431,8 @@ namespace Parameters
     {
       constant,
       quartic
-    } mobility_ch_model;
-    MobilityCahnHilliardParameters mobility_ch_parameters;
+    } mobility_cahn_hilliard_model;
+    MobilityCahnHilliardParameters mobility_cahn_hilliard_parameters;
 
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;
@@ -803,8 +803,8 @@ namespace Parameters
     unsigned int VOF_order;
 
     // Interpolation order Cahn-Hilliard
-    unsigned int phase_ch_order;
-    unsigned int potential_ch_order;
+    unsigned int phase_cahn_hilliard_order;
+    unsigned int potential_cahn_hilliard_order;
 
     // Apply high order mapping everywhere
     bool qmapping_all;
@@ -1054,8 +1054,8 @@ namespace Parameters
       pressure,
       phase,
       temperature,
-      phase_ch,
-      chemical_potential_ch
+      phase_cahn_hilliard,
+      chemical_potential_cahn_hilliard
     } variable;
 
     // Map containing the refinement variables

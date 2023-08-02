@@ -92,7 +92,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
   prm.leave_subsection();
 
   vof_parameters.declare_parameters(prm);
-  ch_parameters.declare_parameters(prm);
+  cahn_hilliard_parameters.declare_parameters(prm);
 }
 
 void
@@ -114,7 +114,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
-  ch_parameters.parse_parameters(prm);
+  cahn_hilliard_parameters.parse_parameters(prm);
 }
 
 void

@@ -171,31 +171,34 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   const Quadrature<dim> &   quadrature,
   const Mapping<dim> &      mapping)
 {
-  gather_ch    = true;
-  fe_values_ch = std::make_shared<FEValues<dim>>(
+  gather_cahn_hilliard    = true;
+  fe_values_cahn_hilliard = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
   // Allocate CahnHilliard values
-  phase_order_ch_values        = std::vector<double>(this->n_q_points);
-  chemical_potential_ch_values = std::vector<double>(this->n_q_points);
+  phase_order_cahn_hilliard_values = std::vector<double>(this->n_q_points);
+  chemical_potential_cahn_hilliard_values =
+    std::vector<double>(this->n_q_points);
 
   // Allocate CahnHilliard gradients
-  phase_order_ch_gradients = std::vector<Tensor<1, dim>>(this->n_q_points);
-  chemical_potential_ch_gradients =
+  phase_order_cahn_hilliard_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+  chemical_potential_cahn_hilliard_gradients =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 
   fields.insert(
-    std::pair<field, std::vector<double>>(field::phase_order_ch, n_q_points));
+    std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
+                                          n_q_points));
 
   // Allocate physical properties
-  density_0           = std::vector<double>(n_q_points);
-  density_1           = std::vector<double>(n_q_points);
-  viscosity_0         = std::vector<double>(n_q_points);
-  viscosity_1         = std::vector<double>(n_q_points);
-  thermal_expansion_0 = std::vector<double>(n_q_points);
-  thermal_expansion_1 = std::vector<double>(n_q_points);
-  surface_tension     = std::vector<double>(n_q_points);
-  mobility_ch         = std::vector<double>(n_q_points);
+  density_0              = std::vector<double>(n_q_points);
+  density_1              = std::vector<double>(n_q_points);
+  viscosity_0            = std::vector<double>(n_q_points);
+  viscosity_1            = std::vector<double>(n_q_points);
+  thermal_expansion_0    = std::vector<double>(n_q_points);
+  thermal_expansion_1    = std::vector<double>(n_q_points);
+  surface_tension        = std::vector<double>(n_q_points);
+  mobility_cahn_hilliard = std::vector<double>(n_q_points);
 }
 
 
@@ -393,7 +396,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                       thermal_expansion_1);
             }
 
-          if (gather_vof && !gather_ch)
+          if (gather_vof && !gather_cahn_hilliard)
             {
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
@@ -431,7 +434,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               break;
             }
 
-          else if (gather_ch && !gather_vof)
+          else if (gather_cahn_hilliard && !gather_vof)
             {
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
@@ -439,28 +442,32 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                   this->density_diff =
                     0.5 * std::abs(density_0[q] - density_1[q]);
 
-                  double phase_order_ch_value = this->phase_order_ch_values[q];
+                  double phase_order_cahn_hilliard_value =
+                    this->phase_order_cahn_hilliard_values[q];
 
-                  density[q] = calculate_point_property_ch(phase_order_ch_value,
-                                                           this->density_0[q],
-                                                           this->density_1[q]);
+                  density[q] = calculate_point_property_cahn_hilliard(
+                    phase_order_cahn_hilliard_value,
+                    this->density_0[q],
+                    this->density_1[q]);
 
-                  viscosity[q] =
-                    calculate_point_property_ch(phase_order_ch_value,
-                                                this->viscosity_0[q],
-                                                this->viscosity_1[q]);
+                  viscosity[q] = calculate_point_property_cahn_hilliard(
+                    phase_order_cahn_hilliard_value,
+                    this->viscosity_0[q],
+                    this->viscosity_1[q]);
 
-                  thermal_expansion[q] =
-                    calculate_point_property_ch(phase_order_ch_value,
-                                                this->thermal_expansion_0[q],
-                                                this->thermal_expansion_1[q]);
+                  thermal_expansion[q] = calculate_point_property_cahn_hilliard(
+                    phase_order_cahn_hilliard_value,
+                    this->thermal_expansion_0[q],
+                    this->thermal_expansion_1[q]);
 
                   const auto material_interaction_id =
                     properties_manager.get_material_interaction_id(
                       material_interactions_type::fluid_fluid, 0, 1);
-                  const auto mobility_ch_model =
-                    properties_manager.get_mobility_ch(material_interaction_id);
-                  mobility_ch_model->vector_value(fields, mobility_ch);
+                  const auto mobility_cahn_hilliard_model =
+                    properties_manager.get_mobility_cahn_hilliard(
+                      material_interaction_id);
+                  mobility_cahn_hilliard_model->vector_value(
+                    fields, mobility_cahn_hilliard);
                 }
               break;
             }

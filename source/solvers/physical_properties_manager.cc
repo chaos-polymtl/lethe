@@ -61,11 +61,11 @@ PhysicalPropertiesManager::initialize(
   non_newtonian_flow = false;
   constant_density   = true;
 
-  required_fields[field::temperature]          = false;
-  required_fields[field::previous_temperature] = false;
-  required_fields[field::shear_rate]           = false;
-  required_fields[field::pressure]             = false;
-  required_fields[field::phase_order_ch]       = false;
+  required_fields[field::temperature]               = false;
+  required_fields[field::previous_temperature]      = false;
+  required_fields[field::shear_rate]                = false;
+  required_fields[field::pressure]                  = false;
+  required_fields[field::phase_order_cahn_hilliard] = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)

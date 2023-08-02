@@ -22,12 +22,12 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #ifndef lethe_navier_stokes_cahn_hilliard_assemblers_h
-#define lethe_navier_stokes_cahn_hilliard_assemblers_h
+#  define lethe_navier_stokes_cahn_hilliard_assemblers_h
 
 
 /**
  * @brief Class that assembles the core of the Navier-Stokes equation with
- * free surface using CH modeling.
+ * free surface using Cahn-Hilliard modeling.
  * This class assembles the weak form of:
  * $$ \nabla \cdot \mathbf{u} + \rho \mathbf{u} \cdot \nabla
  * \mathbf{u} + \nabla p - \mu \nabla\cdot (\nabla \mathbf{u} +
@@ -46,7 +46,7 @@ public:
     std::shared_ptr<SimulationControl> simulation_control,
     const SimulationParameters<dim> &  nsparam)
     : simulation_control(simulation_control)
-    , ch_parameters(nsparam.multiphysics.ch_parameters)
+    , cahn_hilliard_parameters(nsparam.multiphysics.cahn_hilliard_parameters)
   {}
 
   /**
@@ -69,13 +69,13 @@ public:
 
   const bool                         SUPG = true;
   std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::CahnHilliard     ch_parameters;
+  const Parameters::CahnHilliard     cahn_hilliard_parameters;
 };
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier-Stokes equation with
- * free surface using CH modeling. For example, if a BDF1 scheme is
+ * free surface using Cahn-Hilliard modeling. For example, if a BDF1 scheme is
  * chosen, the following is assembled
  * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t}
  *

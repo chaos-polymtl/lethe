@@ -7,8 +7,8 @@ void
 CahnHilliardScratchData<dim>::allocate()
 {
   // Initialize size of arrays
-  this->n_q_points = fe_values_ch.get_quadrature().size();
-  this->n_dofs     = fe_values_ch.get_fe().n_dofs_per_cell();
+  this->n_q_points = fe_values_cahn_hilliard.get_quadrature().size();
+  this->n_dofs     = fe_values_cahn_hilliard.get_fe().n_dofs_per_cell();
 
   // Initialize arrays related to quadrature
   this->JxW = std::vector<double>(n_q_points);

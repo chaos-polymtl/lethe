@@ -112,7 +112,7 @@ public:
     gather_void_fraction                     = false;
     gather_particles_information             = false;
     gather_temperature                       = false;
-    gather_ch                                = false;
+    gather_cahn_hilliard                     = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -153,7 +153,7 @@ public:
     gather_void_fraction                     = false;
     gather_particles_information             = false;
     gather_temperature                       = false;
-    gather_ch                                = false;
+    gather_cahn_hilliard                     = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
 
@@ -183,10 +183,10 @@ public:
       enable_heat_transfer(sd.fe_values_temperature->get_fe(),
                            sd.fe_values_temperature->get_quadrature(),
                            sd.fe_values_temperature->get_mapping());
-    if (sd.gather_ch)
-      enable_cahn_hilliard(sd.fe_values_ch->get_fe(),
-                           sd.fe_values_ch->get_quadrature(),
-                           sd.fe_values_ch->get_mapping());
+    if (sd.gather_cahn_hilliard)
+      enable_cahn_hilliard(sd.fe_values_cahn_hilliard->get_fe(),
+                           sd.fe_values_cahn_hilliard->get_quadrature(),
+                           sd.fe_values_cahn_hilliard->get_mapping());
 
     gather_hessian = sd.gather_hessian;
   }
@@ -953,30 +953,32 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType &                                    current_solution,
     const std::vector<VectorType> & /*solution_stages*/,
-    Parameters::CahnHilliard ch_parameters)
+    Parameters::CahnHilliard cahn_hilliard_parameters)
   {
-    this->fe_values_ch->reinit(cell);
+    this->fe_values_cahn_hilliard->reinit(cell);
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
 
     // Gather phase fraction (values, gradient)
-    this->fe_values_ch->operator[](phase_order)
-      .get_function_values(current_solution, this->phase_order_ch_values);
-    this->fe_values_ch->operator[](chemical_potential)
+    this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_solution,
-                           this->chemical_potential_ch_values);
-    this->fe_values_ch->operator[](phase_order)
-      .get_function_gradients(current_solution, this->phase_order_ch_gradients);
-    this->fe_values_ch->operator[](chemical_potential)
+                           this->phase_order_cahn_hilliard_values);
+    this->fe_values_cahn_hilliard->operator[](chemical_potential)
+      .get_function_values(current_solution,
+                           this->chemical_potential_cahn_hilliard_values);
+    this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_gradients(current_solution,
-                              this->chemical_potential_ch_gradients);
+                              this->phase_order_cahn_hilliard_gradients);
+    this->fe_values_cahn_hilliard->operator[](chemical_potential)
+      .get_function_gradients(current_solution,
+                              this->chemical_potential_cahn_hilliard_gradients);
 
     // Initialize parameters
-    this->epsilon     = (ch_parameters.epsilon_set_method ==
+    this->epsilon     = (cahn_hilliard_parameters.epsilon_set_method ==
                      Parameters::EpsilonSetStrategy::manual) ?
-                          ch_parameters.epsilon :
+                          cahn_hilliard_parameters.epsilon :
                           2 * this->cell_size;
-    this->well_height = ch_parameters.well_height;
+    this->well_height = cahn_hilliard_parameters.well_height;
   }
 
 
@@ -1011,7 +1013,7 @@ public:
   std::vector<double> thermal_expansion_0;
   std::vector<double> thermal_expansion_1;
   std::vector<double> surface_tension;
-  std::vector<double> mobility_ch;
+  std::vector<double> mobility_cahn_hilliard;
 
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
@@ -1129,14 +1131,14 @@ public:
   double                      epsilon;
   double                      well_height;
   double                      density_diff;
-  bool                        gather_ch;
-  unsigned int                n_dofs_ch;
-  std::vector<double>         phase_order_ch_values;
-  std::vector<Tensor<1, dim>> phase_order_ch_gradients;
-  std::vector<double>         chemical_potential_ch_values;
-  std::vector<Tensor<1, dim>> chemical_potential_ch_gradients;
+  bool                        gather_cahn_hilliard;
+  unsigned int                n_dofs_cahn_hilliard;
+  std::vector<double>         phase_order_cahn_hilliard_values;
+  std::vector<Tensor<1, dim>> phase_order_cahn_hilliard_gradients;
+  std::vector<double>         chemical_potential_cahn_hilliard_values;
+  std::vector<Tensor<1, dim>> chemical_potential_cahn_hilliard_gradients;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>> fe_values_ch;
+  std::shared_ptr<FEValues<dim>> fe_values_cahn_hilliard;
   FEValuesExtractors::Scalar     phase_order;
   FEValuesExtractors::Scalar     chemical_potential;
 

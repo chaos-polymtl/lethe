@@ -12,7 +12,7 @@ CahnHilliardAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties
-  const double well_height       = this->ch_parameters.well_height;
+  const double well_height       = this->cahn_hilliard_parameters.well_height;
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
 
@@ -145,7 +145,7 @@ CahnHilliardAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsCopyData &   copy_data)
 {
   // Gather physical properties
-  const double well_height       = this->ch_parameters.well_height;
+  const double well_height       = this->cahn_hilliard_parameters.well_height;
   const double mobility_constant = this->mobility_constant;
   const double epsilon           = scratch_data.epsilon;
 
@@ -271,17 +271,19 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_matrix(
 
   auto &local_matrix = copy_data.local_matrix;
 
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
+  for (unsigned int i_bc = 0;
+       i_bc < this->boundary_conditions_cahn_hilliard.size;
+       ++i_bc)
     {
-      if (this->boundary_conditions_ch.type[i_bc] ==
-          BoundaryConditions::BoundaryType::ch_angle_of_contact)
+      if (this->boundary_conditions_cahn_hilliard.type[i_bc] ==
+          BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
         {
           const double angle_of_contact =
-            this->boundary_conditions_ch.angle_of_contact[i_bc];
+            this->boundary_conditions_cahn_hilliard.angle_of_contact[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; f++)
             {
               if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ch.id[i_bc])
+                  this->boundary_conditions_cahn_hilliard.id[i_bc])
                 {
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
@@ -330,17 +332,19 @@ CahnHilliardAssemblerAngleOfContact<dim>::assemble_rhs(
 
   auto &local_rhs = copy_data.local_rhs;
 
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
+  for (unsigned int i_bc = 0;
+       i_bc < this->boundary_conditions_cahn_hilliard.size;
+       ++i_bc)
     {
-      if (this->boundary_conditions_ch.type[i_bc] ==
-          BoundaryConditions::BoundaryType::ch_angle_of_contact)
+      if (this->boundary_conditions_cahn_hilliard.type[i_bc] ==
+          BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact)
         {
           const double angle_of_contact =
-            this->boundary_conditions_ch.angle_of_contact[i_bc];
+            this->boundary_conditions_cahn_hilliard.angle_of_contact[i_bc];
           for (unsigned int f = 0; f < scratch_data.n_faces; f++)
             {
               if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ch.id[i_bc])
+                  this->boundary_conditions_cahn_hilliard.id[i_bc])
                 {
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
