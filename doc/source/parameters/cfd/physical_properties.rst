@@ -484,7 +484,7 @@ This model is parameterized using the following section:
 
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
-Cahn-Hilliard mobility model
+Cahn-Hilliard Mobility Model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Lethe supports two types of mobility models for the Cahn-Hilliard equations. Setting ``cahn hilliard mobility model = constant`` sets a constant mobility. Setting a ``cahn hilliard mobility model = quartic`` sets a quartic model for mobility:
