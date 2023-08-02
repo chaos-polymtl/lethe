@@ -372,7 +372,7 @@ Lethe supports both ``constant`` and ``isothermal_ideal_gas`` density models. Co
 .. math::
   \rho = \rho_{ref} + \psi p = \rho_{ref} + \frac{1}{R T} \ p
 
-where :math:`\rho_{ref}` is the density of the fluid at the reference state, :math:`\psi = \frac{1}{R T}` is the compressibility factor derived from the ideal gas law with :math:`R= \frac{R_u}{M}` the specific gas constant (universal gas constant (:math:`R_u`) divided by the molar mass of the gas (:math:`M`)) and :math:`T` the temperature of the gas, finally, :math:`p` is the differential pressure between the reference state and the current state. This model is used for weakly compressible flows, when temperature fluctuations influence on density can be neglected.
+where :math:`\rho_{ref}` is the density of the fluid at the reference state, :math:`\psi = \frac{1}{R T}` is the compressibility factor derived from the ideal gas law with :math:`R= \frac{R_u}{M}` the specific gas constant (universal gas constant (:math:`R_u`) divided by the molar mass of the gas (:math:`M`)) and :math:`T` the temperature of the gas, finally, :math:`p` is the differential pressure between the reference state and the current state. This model is used for weakly compressible flows when temperature fluctuations' influence on density can be neglected.
 
 This model is parametrized using the ``isothermal_ideal_gas`` subsection:
 
