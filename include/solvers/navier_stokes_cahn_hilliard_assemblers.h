@@ -22,7 +22,7 @@
 #include <solvers/navier_stokes_scratch_data.h>
 
 #ifndef lethe_navier_stokes_cahn_hilliard_assemblers_h
-#define lethe_navier_stokes_cahn_hilliard_assemblers_h
+#  define lethe_navier_stokes_cahn_hilliard_assemblers_h
 
 
 /**

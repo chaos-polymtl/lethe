@@ -27,13 +27,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-<<<<<<< HEAD:applications_tests/gls_navier_stokes/mms2d_cahn_hilliard.prm
   set phase cahn hilliard order     = 1
   set potential cahn hilliard order = 1
-=======
-  set phase ch order     = 1
-  set potential ch order = 1
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent):applications_tests/gls_navier_stokes_2d/mms2d_cahn_hilliard.prm
 end
 
 #---------------------------------------------------
@@ -84,7 +79,6 @@ end
 #---------------------------------------------------
 # Physical properties
 #---------------------------------------------------
-<<<<<<< HEAD:applications_tests/gls_navier_stokes/mms2d_cahn_hilliard.prm
 
 subsection physical properties
   set number of fluids = 2
@@ -95,17 +89,6 @@ subsection physical properties
     subsection fluid-fluid interaction
       set first fluid id  = 0
       set second fluid id = 1
-=======
-subsection physical properties
-set number of fluids = 2
-
-set number of material interactions = 1
-  subsection material interaction 0
-    set type = fluid-fluid
-    subsection fluid-fluid interaction
-      set first fluid id              = 0
-      set second fluid id             = 1
->>>>>>> 64b44901 (Applied comments + unit tests physical properties + indent):applications_tests/gls_navier_stokes_2d/mms2d_cahn_hilliard.prm
 
       # Mobility Cahn-Hilliard
       set cahn hilliard mobility model    = constant
