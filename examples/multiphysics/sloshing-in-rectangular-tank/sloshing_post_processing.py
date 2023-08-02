@@ -25,11 +25,12 @@ from lethe_pyvista_tools import *
 simulation_path = sys.argv[1]
 prm_file_name = sys.argv[2]
 
-# Name the save path
-save_path = simulation_path
+# Name of the pvd file
+Re = int(prm_file_name[31:-4])
+pvd_file_name = prm_file_name[:-8] + f"{Re}.pvd"
 
 # Create the fluids object
-fluids = lethe_pyvista_tools(simulation_path, prm_file_name, 'sloshing-in-rectangular-tank_Re2.pvd')
+fluids = lethe_pyvista_tools(simulation_path, prm_file_name, pvd_file_name)
 
 # Set phase_limit to search for height values
 phase_limit = 0.5
@@ -71,17 +72,16 @@ relative_amplitude = [h/amplitude_0 for h in H]
 # Validation data
 nu = fluids.prm_dict["kinematic viscosity"]
 g = 1
-Re = np.sqrt(g)/nu
 if Re >= 2000 :
     k = np.pi
     tf = time_list[len(time_list)-1]
     analytical_time = np.linspace(0,tf,1000)
     analytical_solution = [1-(1/(1+4*nu*nu*k*k*k/g)*(1-np.exp(-2*nu*k*k*t)*(np.cos(np.sqrt(k*g)*t)+2*nu*k*k*np.sin(np.sqrt(k*g)*t)/np.sqrt(k*g)))) for t in analytical_time] # this solution is only valid for high Re [1]
 else :
-    validation_file_name = f"{simulation_path}/analytical_solution_Re{Re:.0f}.csv"
+    validation_file_name = f"{simulation_path}/analytical_solution_Re{Re}.csv"
     analytical_values = pd.read_csv(validation_file_name)
     analytical_time = np.array(analytical_values['x'])
-    analytical_solution = np.array(-analytical_values[f"Re{Re:.0f}"])
+    analytical_solution = np.array(-analytical_values[f"Re{Re}"])
 
 # Figures
 plt.rcParams['font.size'] = '16'
@@ -93,8 +93,8 @@ figure_name = output_path[9:-1]
 # Plot heights
 fig0 = plt.figure(figsize=(9.5, 6))
 ax0 = fig0.add_subplot(111)
-plt.plot(time_list, relative_amplitude, "sk", mfc="none", linewidth=2, label=f'Re={Re:.0f} - Lethe')
-plt.plot(analytical_time, analytical_solution, "--r", linewidth=2, label=f'Re={Re:.0f} - Analytical')
+plt.plot(time_list, relative_amplitude, "sk", mfc="none", linewidth=2, label=f'Re={Re} — Lethe')
+plt.plot(analytical_time, analytical_solution, "--r", linewidth=2, label=f'Re={Re} — Analytical')
 plt.xlabel('Time')
 plt.ylabel('Relative amplitude')
 plt.legend(loc="best")
@@ -102,6 +102,6 @@ plt.tight_layout()
 plt.savefig(f'{simulation_path}/figure_' + figure_name + '.png')
 plt.show()
 
-# REFERENCES
-# [1] Wu, G. X., Eatock Taylor, R., & Greaves, D. M. (2001). The effect of viscosity on the transient
-# free-surface waves in a two-dimensional tank. Journal of Engineering Mathematics, 40, 77-90.
+# REFERENCE
+# G. X. Wu, R. Eatock Taylor, and D. M. Greaves, “The effect of viscosity on the transient free-surface waves
+# in a two-dimensional tank,” J. Eng. Math., vol. 40, no. 1, pp. 77–90, May 2001, doi: 10.1023/A:1017558826258.
