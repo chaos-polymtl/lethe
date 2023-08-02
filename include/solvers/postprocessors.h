@@ -415,7 +415,7 @@ private:
  *
  * @param p_density_model Density model of the material\
  *
- * @param material_id Unsigned int corresponding to the material (fluid or solid)
+ * @param material_id ID corresponding to the material (fluid or solid)
  */
 template <int dim>
 class DensityPostprocessor : public DataPostprocessorScalar<dim>
