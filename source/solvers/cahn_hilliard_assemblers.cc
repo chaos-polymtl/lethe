@@ -387,15 +387,15 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
 
   auto &local_matrix = copy_data.local_matrix;
 
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_cahn_hilliard.size; ++i_bc)
     {
-      if (this->boundary_conditions_ch.type[i_bc] ==
-          BoundaryConditions::BoundaryType::ch_free_angle)
+      if (this->boundary_conditions_cahn_hilliard.type[i_bc] ==
+          BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
         {
           for (unsigned int f = 0; f < scratch_data.n_faces; f++)
             {
               if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ch.id[i_bc])
+                  this->boundary_conditions_cahn_hilliard.id[i_bc])
                 {
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)
@@ -439,15 +439,15 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
 
   auto &local_rhs = copy_data.local_rhs;
 
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_ch.size; ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_cahn_hilliard.size; ++i_bc)
     {
-      if (this->boundary_conditions_ch.type[i_bc] ==
-          BoundaryConditions::BoundaryType::ch_free_angle)
+      if (this->boundary_conditions_cahn_hilliard.type[i_bc] ==
+          BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
         {
           for (unsigned int f = 0; f < scratch_data.n_faces; f++)
             {
               if (scratch_data.boundary_face_id[f] ==
-                  this->boundary_conditions_ch.id[i_bc])
+                  this->boundary_conditions_cahn_hilliard.id[i_bc])
                 {
                   for (unsigned int q = 0; q < scratch_data.n_faces_q_points;
                        ++q)

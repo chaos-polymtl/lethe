@@ -184,12 +184,12 @@ class CahnHilliardAssemblerFreeAngle : public CahnHilliardAssemblerBase<dim>
 public:
   CahnHilliardAssemblerFreeAngle(
     std::shared_ptr<SimulationControl> simulation_control,
-    Parameters::CahnHilliard           ch_parameters,
+    Parameters::CahnHilliard           cahn_hilliard_parameters,
     const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-      &p_boundary_conditions_ch)
+      &p_boundary_conditions_cahn_hilliard)
     : CahnHilliardAssemblerBase<dim>(simulation_control)
-    , ch_parameters(ch_parameters)
-    , boundary_conditions_ch(p_boundary_conditions_ch)
+    , cahn_hilliard_parameters(cahn_hilliard_parameters)
+    , boundary_conditions_cahn_hilliard(p_boundary_conditions_cahn_hilliard)
   {}
 
   /**
@@ -212,9 +212,9 @@ public:
                StabilizedMethodsCopyData &   copy_data) override;
 
 
-  Parameters::CahnHilliard ch_parameters;
+  Parameters::CahnHilliard cahn_hilliard_parameters;
   const BoundaryConditions::CahnHilliardBoundaryConditions<dim>
-    &boundary_conditions_ch;
+    &boundary_conditions_cahn_hilliard;
 };
 
 /**

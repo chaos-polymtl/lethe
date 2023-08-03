@@ -60,7 +60,7 @@ namespace BoundaryConditions
     cahn_hilliard_noflux,
     cahn_hilliard_dirichlet_phase_order,
     cahn_hilliard_angle_of_contact,
-    ch_free_angle,
+      cahn_hilliard_free_angle,
   };
 
   /**
@@ -802,9 +802,9 @@ namespace BoundaryConditions
     prm.declare_entry(
       "type",
       "noflux",
-      Patterns::Selection("noflux|dirichlet|angle_of_contact|free_angle"),
+      Patterns::Selection("noflux|dirichlet|angle_of_contact|cahn_hilliard_free_angle"),
       "Type of boundary condition for the Cahn-Hilliard equations"
-      "Choices are <noflux|dirichlet|angle_of_contact|free_angle>.");
+      "Choices are <noflux|dirichlet|angle_of_contact|cahn_hilliard_free_angle>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -896,7 +896,7 @@ namespace BoundaryConditions
       }
     if (op == "free_angle")
       {
-        this->type[i_bc] = BoundaryType::ch_free_angle;
+        this->type[i_bc] = BoundaryType::cahn_hilliard_free_angle;
       }
 
     this->id[i_bc] = prm.get_integer("id");
