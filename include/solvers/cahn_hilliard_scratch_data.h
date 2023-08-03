@@ -103,7 +103,7 @@ public:
                                    face_quadrature,
                                    update_values | update_quadrature_points |
                                      update_JxW_values | update_gradients |
-    update_normal_vectors)
+                                     update_normal_vectors)
   {
     allocate();
   }
@@ -138,7 +138,7 @@ public:
         sd.fe_face_values_cahn_hilliard.get_fe(),
         sd.fe_face_values_cahn_hilliard.get_quadrature(),
         update_values | update_quadrature_points | update_JxW_values |
-          update_gradients)
+          update_gradients | update_normal_vectors)
   {
     allocate();
   }
@@ -297,8 +297,8 @@ public:
                 for (unsigned int q = 0; q < n_faces_q_points; ++q)
                   {
                     face_JxW[face][q] = fe_face_values_cahn_hilliard.JxW(q);
-                      this->face_normal[face][q] =
-                              this->fe_face_values_cahn_hilliard.normal_vector(q);
+                    this->face_normal[face][q] =
+                      this->fe_face_values_cahn_hilliard.normal_vector(q);
                     for (const unsigned int k :
                          fe_face_values_cahn_hilliard.dof_indices())
                       {

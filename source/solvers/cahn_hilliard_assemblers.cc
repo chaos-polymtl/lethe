@@ -387,7 +387,9 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_matrix(
 
   auto &local_matrix = copy_data.local_matrix;
 
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_cahn_hilliard.size; ++i_bc)
+  for (unsigned int i_bc = 0;
+       i_bc < this->boundary_conditions_cahn_hilliard.size;
+       ++i_bc)
     {
       if (this->boundary_conditions_cahn_hilliard.type[i_bc] ==
           BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
@@ -439,7 +441,9 @@ CahnHilliardAssemblerFreeAngle<dim>::assemble_rhs(
 
   auto &local_rhs = copy_data.local_rhs;
 
-  for (unsigned int i_bc = 0; i_bc < this->boundary_conditions_cahn_hilliard.size; ++i_bc)
+  for (unsigned int i_bc = 0;
+       i_bc < this->boundary_conditions_cahn_hilliard.size;
+       ++i_bc)
     {
       if (this->boundary_conditions_cahn_hilliard.type[i_bc] ==
           BoundaryConditions::BoundaryType::cahn_hilliard_free_angle)
