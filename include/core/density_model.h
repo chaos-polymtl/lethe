@@ -48,10 +48,7 @@ public:
    * @return Reference state density
    */
   virtual double
-  get_density_ref() const
-  {
-    return 0;
-  }
+  get_density_ref() const = 0;
 };
 
 
@@ -122,7 +119,7 @@ public:
 
   /**
    * @brief get_psi Returns the value of the compressibility factor used in the density model
-   * @return isothermal ideal gas compressibility factor
+   * @return compressibility factor which in this case is null
    */
   double
   get_psi() const override

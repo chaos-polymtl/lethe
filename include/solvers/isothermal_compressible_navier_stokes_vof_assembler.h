@@ -67,8 +67,6 @@ public:
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const bool SUPG = true;
-
   std::shared_ptr<SimulationControl> simulation_control;
   const Parameters::VOF              vof_parameters;
 };
