@@ -389,6 +389,19 @@ private:
   void
   write_phase_statistics();
 
+    /**
+    * @brief Calculates the barycenter of the fluid and its velocity
+    *
+    * @param solution VOF solution
+    *
+    * @param solution Fluid dynamics solution
+    *
+    */
+    template <typename VectorType>
+    std::pair<Tensor<1, dim>, Tensor<1, dim>>
+    calculate_barycenter(const TrilinosWrappers::MPI::Vector &solution,
+                         const VectorType &current_solution_fd);
+
 
   MultiphysicsInterface<dim> *multiphysics;
 
@@ -439,6 +452,9 @@ private:
 
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<CahnHilliardAssemblerBase<dim>>> assemblers;
+
+    // Barycenter analysis
+    TableHandler table_barycenter;
 
   // Phase statistics table
   TableHandler statistics_table;

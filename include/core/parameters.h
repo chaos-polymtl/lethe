@@ -760,6 +760,9 @@ namespace Parameters
     // Enable barycenter calculation for fluid 1 in VOF simulations
     bool calculate_vof_barycenter;
 
+    // Enable barycenter calculation for fluid 1 in Cahn-Hilliard simulations
+    bool calculate_cahn_hilliard_barycenter;
+
     // Prefix for the barycenter output
     std::string barycenter_output_name;
 

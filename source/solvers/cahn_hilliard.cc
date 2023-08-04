@@ -893,6 +893,87 @@ CahnHilliard<dim>::solve_linear_system(const bool initial_step,
   newton_update = completely_distributed_solution;
 }
 
+template <int dim>
+template <typename VectorType>
+std::pair<Tensor<1, dim>, Tensor<1, dim>>
+CahnHilliard<dim>::calculate_barycenter(
+        const TrilinosWrappers::MPI::Vector &solution,
+        const VectorType &                   solution_fd)
+{
+    const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
+
+    FEValues<dim> fe_values_cahn_hilliard(*this->mapping,
+                                *this->fe,
+                                *this->cell_quadrature,
+                                update_values | update_quadrature_points |
+                                update_JxW_values);
+
+    const DoFHandler<dim> *dof_handler_fd =
+            multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+    FEValues<dim> fe_values_fd(*this->mapping,
+                               dof_handler_fd->get_fe(),
+                               *this->cell_quadrature,
+                               update_values);
+
+    const unsigned int          n_q_points = this->cell_quadrature->size();
+    std::vector<double>         phase_cahn_hilliard_values(n_q_points);
+    std::vector<Tensor<1, dim>> velocity_values(n_q_points);
+    std::vector<Point<dim>>     quadrature_locations(n_q_points);
+
+    const FEValuesExtractors::Vector velocity(0);
+    const FEValuesExtractors::Scalar phase_order(0);
+
+    Tensor<1, dim> barycenter_location;
+    Tensor<1, dim> barycenter_velocity;
+    double         volume = 0;
+
+
+    std::map<field, std::vector<double>> fields;
+
+    for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+        if (cell->is_locally_owned())
+        {
+            fe_values_cahn_hilliard.reinit(cell);
+            quadrature_locations = fe_values_cahn_hilliard[phase_order].get_quadrature_points();
+            fe_values_cahn_hilliard[phase_order].get_function_values(solution, phase_cahn_hilliard_values);
+
+            // Get fluid dynamics active cell iterator
+            typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                    &(*(this->triangulation)),
+                    cell->level(),
+                    cell->index(),
+                    dof_handler_fd);
+
+            fe_values_fd.reinit(cell_fd);
+            fe_values_fd[velocity].get_function_values(solution_fd,
+                                                       velocity_values);
+
+            for (unsigned int q = 0; q < n_q_points; q++)
+            {
+                const double JxW = fe_values_cahn_hilliard.JxW(q);
+
+
+                volume += (phase_cahn_hilliard_values[q])*JxW;
+                barycenter_location +=
+                        (phase_cahn_hilliard_values)*quadrature_locations[q] * JxW;
+                barycenter_velocity +=
+                        (phase_cahn_hilliard_values)*velocity_values[q] * JxW;
+            }
+        }
+    }
+
+    volume = Utilities::MPI::sum(volume, mpi_communicator);
+    barycenter_location =
+            Utilities::MPI::sum(barycenter_location, mpi_communicator) / volume;
+    barycenter_velocity =
+            Utilities::MPI::sum(barycenter_velocity, mpi_communicator) / volume;
+
+    return std::pair<Tensor<1, dim>, Tensor<1, dim>>(barycenter_location,
+                                                     barycenter_velocity);
+}
+
 
 
 template class CahnHilliard<2>;
