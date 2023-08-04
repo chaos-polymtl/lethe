@@ -312,7 +312,7 @@ namespace Parameters
   };
 
   /**
-   * @brief SurfaceTensionParameters - Defines parameters for surface tension models
+   * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility models used in the Cahn-Hilliard equations.
    */
   struct MobilityCahnHilliardParameters
   {
