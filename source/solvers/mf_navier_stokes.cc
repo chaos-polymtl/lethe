@@ -471,8 +471,6 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
-  VectorType completely_distributed_solution(this->locally_owned_dofs,
-                                             this->mpi_communicator);
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,
@@ -500,9 +498,11 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             this->system_operator.evaluate_non_linear_term(
               this->present_solution);
 
+            this->newton_update = 0.0;
+
             PreconditionIdentity preconditioner;
             solver.solve(system_operator,
-                         completely_distributed_solution,
+                         this->newton_update,
                          system_rhs,
                          preconditioner);
 
@@ -514,9 +514,8 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                   << " steps " << std::endl;
               }
           }
-          constraints_used.distribute(completely_distributed_solution);
-          auto &newton_update = this->newton_update;
-          newton_update       = completely_distributed_solution;
+
+          constraints_used.distribute(this->newton_update);
           success             = true;
         }
       catch (std::exception &e)
