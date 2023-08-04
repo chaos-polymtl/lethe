@@ -435,7 +435,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     {
                       double filtered_phase_value =
                         this->filtered_phase_values[q];
-                      // To be able to calculate of the equivalent dynamic
+                      // To be able to calculate the equivalent dynamic
                       // viscosity
                       density_ref_eq[q] =
                         calculate_point_property(filtered_phase_value,

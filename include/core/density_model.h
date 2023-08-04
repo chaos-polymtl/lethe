@@ -41,10 +41,7 @@ public:
    * @return Compressibility factor
    */
   virtual double
-  get_psi() const
-  {
-    return 0;
-  }
+  get_psi() const = 0;
 
   /**
    * @brief get_density_ref Returns the value of the reference state density used in the density model.
@@ -121,6 +118,16 @@ public:
     std::vector<double> &jacobian_vector) override
   {
     std::fill(jacobian_vector.begin(), jacobian_vector.end(), 0);
+  }
+
+  /**
+   * @brief get_psi Returns the value of the compressibility factor used in the density model
+   * @return isothermal ideal gas compressibility factor
+   */
+  double
+  get_psi() const override
+  {
+    return 0;
   }
 
   /**
