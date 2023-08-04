@@ -1798,7 +1798,7 @@ MatrixFreeNavierStokes<dim>::evaluate_residual(
 }
 
 /**
- * @brief This functions computesa the residual of the weak form of the Navier-Stokes
+ * @brief This function computes the residual of the weak form of the Navier-Stokes
  * equations with SUPG PSPG discretization performing a cell integral in a cell batch.
  * The equations are given as follows:
  * (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,∇u) - (v,f) (Weak form)
