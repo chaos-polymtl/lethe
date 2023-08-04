@@ -233,7 +233,9 @@ NavierStokesOperatorBase<dim, number>::el(unsigned int, unsigned int) const
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::clear()
-{}
+{
+  matrix_free.clear();
+}
 
 template <int dim, typename number>
 void
@@ -517,6 +519,16 @@ NavierStokesOperatorBase<dim, number>::get_refinement_edges(
 template class NavierStokesOperatorBase<2, double>;
 template class NavierStokesOperatorBase<3, double>;
 
+/**
+ * @brief This function performs a cell integral, i.e., the jacobian of the discretization
+ * of the Navier-Stokes equations with SUPG PSPG stabilization in a cell batch.
+ * The equations are given as follows:
+ * (q,∇δu) + (v,(u·∇)δu) + (v,(δu·∇)u) - (∇·v,δp) + ν(∇v,∇δu) (Weak form
+ * jacobian)
+ * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τ·∇q (PSPG Jacobian)
+ * + ((u·∇)δu + (δu·∇)u + ∇δp - ν∆δu)τu·∇v (SUPG Part 1)
+ * + ((u·∇)u + ∇p - ν∆u - f )τδu·∇v (SUPG Part 2)
+ */
 template <int dim, typename number>
 NavierStokesSUPGPSPGOperator<dim, number>::NavierStokesSUPGPSPGOperator()
 {}
@@ -580,33 +592,42 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
                                                                 (h[v] * h[v])));
         }
 
+      // Weak form jacobian:
       for (unsigned int i = 0; i < dim; ++i)
         {
+          // ν(∇v,∇δu)
           gradient_result[i] = viscosity * gradient[i];
+          // -(∇·v,δp)
           gradient_result[i][i] += -value[dim];
-
+          // +(q,∇δu)
           value_result[dim] += gradient[i][i];
 
           for (unsigned int k = 0; k < dim; ++k)
             {
+              // +(v,(u·∇)δu)
               value_result[i] += gradient[i][k] * previous_values[k];
+              // +(v,(δu·∇)u)
               value_result[i] += previous_gradient[i][k] * value[k];
             }
         }
 
-      // PSPG
+      // PSPG jacobian:
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
             {
+              // (-ν∆δu)τ·∇q
               gradient_result[dim][i] +=
                 -tau * viscosity * hessian_diagonal[i][k];
+              // +((u·∇)δu)τ·∇q
               gradient_result[dim][i] +=
                 tau * gradient[i][k] * previous_values[k];
+              // +((δu·∇)u)τ·∇q
               gradient_result[dim][i] +=
                 tau * previous_gradient[i][k] * value[k];
             }
         }
+      // (∇δp)τ·∇q
       gradient_result[dim] += tau * gradient[dim];
 
       // SUPG
@@ -614,24 +635,32 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
         {
           for (unsigned int k = 0; k < dim; ++k)
             {
-              gradient_result[i][k] += -tau * value[k] * source_value[i];
-
+              // Part 1
+              // +((u·∇)δu)τu·∇v
               gradient_result[i][k] +=
-                -tau * viscosity * value[k] * previous_hessian_diagonal[i][k];
+                tau * previous_values[k] * gradient[i][k] * previous_values[k];
+              // +((δu·∇)u)τu·∇v
+              gradient_result[i][k] +=
+                tau * previous_values[k] * previous_gradient[i][k] * value[k];
+              // +(∇δp)τu·∇v
+              gradient_result[i][k] +=
+                tau * previous_values[k] * gradient[dim][i];
+              // (-ν∆δu)τu·∇v
               gradient_result[i][k] +=
                 -tau * viscosity * previous_values[k] * hessian_diagonal[i][k];
 
-              gradient_result[i][k] +=
-                tau * value[k] * previous_gradient[dim][i];
-              gradient_result[i][k] +=
-                tau * previous_values[k] * gradient[dim][i];
-
-              gradient_result[i][k] +=
-                tau * previous_values[k] * previous_gradient[i][k] * value[k];
+              // Part 2
+              // +((u·∇)u)τδu·∇v
               gradient_result[i][k] +=
                 tau * value[k] * previous_gradient[i][k] * previous_values[k];
+              // +(∇p)τδu·∇v
               gradient_result[i][k] +=
-                tau * previous_values[k] * gradient[i][k] * previous_values[k];
+                tau * value[k] * previous_gradient[dim][i];
+              // (-ν∆u)τδu·∇v
+              gradient_result[i][k] +=
+                -tau * viscosity * value[k] * previous_hessian_diagonal[i][k];
+              // (-f)τδu·∇v
+              gradient_result[i][k] += -tau * value[k] * source_value[i];
             }
         }
 
@@ -642,7 +671,14 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
   integrator.integrate(EvaluationFlags::values | EvaluationFlags::gradients);
 }
 
-
+/**
+ * @brief This function computes the residual of the weak form of the Navier-Stokes
+ * equations with SUPG PSPG discretization performing a cell integral in a cell
+ * batch. The equations are given as follows: (q, ∇·u) + (v,(u·∇)u) - (∇·v,p) +
+ * ν(∇v,∇u) - (v,f) (Weak form)
+ * + ((u·∇)u + ∇p - ν∆u - f)τ∇·q (PSPG term)
+ * + ((u·∇)u + ∇p - ν∆u - f)τu·∇v (SUPG term)
+ */
 template <int dim, typename number>
 void
 NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
@@ -699,46 +735,56 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::value_type    value_result;
           typename FECellIntegrator::gradient_type gradient_result;
 
-          // Assemble -nabla^2 u + nabla p = 0 for the first 3 components
-          // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v
-          // = 0 ; Assemble q div(u) = 0 for the last component
+          // Weak form
           for (unsigned int i = 0; i < dim; ++i)
             {
+              // ν(∇v,∇u)
               gradient_result[i] = viscosity * gradient[i];
+              // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
+              // -(v,f)
               value_result[i] = -source_value[i];
-
+              // +(q,∇·u)
               value_result[dim] += gradient[i][i];
 
               for (unsigned int k = 0; k < dim; ++k)
                 {
+                  // +(v,(u·∇)u)
                   value_result[i] += gradient[i][k] * value[k];
                 }
             }
 
-          // PSPG
+          // PSPG term
           for (unsigned int i = 0; i < dim; ++i)
             {
+              // (-f)τ∇·q
               gradient_result[dim][i] += -tau * source_value[i];
               for (unsigned int k = 0; k < dim; ++k)
                 {
+                  //(-ν∆u)τ∇·q
                   gradient_result[dim][i] +=
                     -tau * viscosity * hessian_diagonal[i][k];
+                  //+((u·∇)u)τ∇·q
                   gradient_result[dim][i] += tau * gradient[i][k] * value[k];
                 }
             }
+          // +(∇p)τ∇·q
           gradient_result[dim] += tau * gradient[dim];
 
-          // SUPG
+          // SUPG term
           for (unsigned int i = 0; i < dim; ++i)
             {
               for (unsigned int k = 0; k < dim; ++k)
                 {
+                  // (-f)τu·∇v
                   gradient_result[i][k] += -tau * value[k] * source_value[i];
+                  // (-ν∆u)τu·∇v
                   gradient_result[i][k] +=
                     -tau * viscosity * value[k] * hessian_diagonal[i][k];
+                  // + ((u·∇)u)τu·∇v
                   gradient_result[i][k] +=
                     tau * value[k] * gradient[i][k] * value[k];
+                  // + (∇p)τu·∇v
                   gradient_result[i][k] += tau * value[k] * gradient[dim][i];
                 }
             }
