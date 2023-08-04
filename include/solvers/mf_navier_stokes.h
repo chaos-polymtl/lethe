@@ -166,6 +166,7 @@ private:
 protected:
   // Matrix-free operator
   NavierStokesSUPGPSPGOperator<dim, double> system_operator;
+  // NavierStokesOperatorBase<dim, double> system_operator;
 };
 
 #endif

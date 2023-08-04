@@ -36,12 +36,20 @@
 
 template <int dim>
 MFNavierStokesSolver<dim>::MFNavierStokesSolver(
-  SimulationParameters<dim> &p_nsparam)
-  : NavierStokesBase<dim, VectorType, IndexSet>(p_nsparam)
+  SimulationParameters<dim> &nsparam)
+  : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
 {
   // TODO
   this->fe = std::make_shared<FESystem<dim>>(
-    FE_Q<dim>(p_nsparam.fem_parameters.velocity_order), dim + 1);
+    FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
+
+  // if ((nsparam.stabilization.use_default_stabilization == true) ||
+  //     nsparam.stabilization.stabilization ==
+  //       Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+  //   system_operator = new NavierStokesSUPGPSPGOperator<dim, double>();
+  // else
+  //   throw std::runtime_error(
+  //     "Only SUPG/PSPG stabilization is supported at the moment.");
 }
 
 template <int dim>
@@ -108,7 +116,7 @@ void
 MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
   // Clear matrix free operator
-  system_operator.clear();
+  this->system_operator.clear();
 
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
@@ -126,25 +134,25 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
 
   // Initialize matrix-free object
   unsigned int mg_level = numbers::invalid_unsigned_int;
-  system_operator.reinit(*this->mapping,
-                         this->dof_handler,
-                         this->zero_constraints,
-                         *this->cell_quadrature,
-                         this->simulation_parameters,
-                         mg_level);
+  this->system_operator.reinit(*this->mapping,
+                               this->dof_handler,
+                               this->zero_constraints,
+                               *this->cell_quadrature,
+                               this->simulation_parameters,
+                               mg_level);
 
 
   // Initialize vectors using operator
-  system_operator.initialize_dof_vector(this->present_solution);
-  system_operator.initialize_dof_vector(this->evaluation_point);
-  system_operator.initialize_dof_vector(this->newton_update);
-  system_operator.initialize_dof_vector(this->system_rhs);
-  system_operator.initialize_dof_vector(this->local_evaluation_point);
+  this->system_operator.initialize_dof_vector(this->present_solution);
+  this->system_operator.initialize_dof_vector(this->evaluation_point);
+  this->system_operator.initialize_dof_vector(this->newton_update);
+  this->system_operator.initialize_dof_vector(this->system_rhs);
+  this->system_operator.initialize_dof_vector(this->local_evaluation_point);
 
   // Initialize vectors of previous solutions
   for (auto &solution : this->previous_solutions)
     {
-      system_operator.initialize_dof_vector(solution);
+      this->system_operator.initialize_dof_vector(solution);
     }
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -226,7 +234,8 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
-  system_operator.evaluate_residual(this->system_rhs, this->present_solution);
+  this->system_operator.evaluate_residual(this->system_rhs,
+                                          this->evaluation_point);
 
   this->system_rhs *= -1.0;
 }
@@ -462,6 +471,8 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+  VectorType completely_distributed_solution(this->locally_owned_dofs,
+                                             this->mpi_communicator);
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,
@@ -477,8 +488,6 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     extra_verbose,
     this->simulation_parameters.linear_solver.max_krylov_vectors);
 
-  system_operator.evaluate_non_linear_term(this->present_solution);
-
   while (success == false and iter < max_iter)
     {
       try
@@ -488,10 +497,13 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
+            this->system_operator.evaluate_non_linear_term(
+              this->present_solution);
+
             PreconditionIdentity preconditioner;
             solver.solve(system_operator,
-                         this->newton_update,
-                         this->system_rhs,
+                         completely_distributed_solution,
+                         system_rhs,
                          preconditioner);
 
             if (this->simulation_parameters.linear_solver.verbosity !=
@@ -502,8 +514,10 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                   << " steps " << std::endl;
               }
           }
-          constraints_used.distribute(this->newton_update);
-          success = true;
+          constraints_used.distribute(completely_distributed_solution);
+          auto &newton_update = this->newton_update;
+          newton_update       = completely_distributed_solution;
+          success             = true;
         }
       catch (std::exception &e)
         {
