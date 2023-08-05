@@ -127,6 +127,7 @@ NavierStokesScratchData<dim>::enable_vof(
   filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
 }
 
+
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_vof(
@@ -161,6 +162,45 @@ NavierStokesScratchData<dim>::enable_vof(
   // Create filter
   this->filter = filter;
 }
+
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_cahn_hilliard(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
+{
+  gather_cahn_hilliard    = true;
+  fe_values_cahn_hilliard = std::make_shared<FEValues<dim>>(
+    mapping, fe, quadrature, update_values | update_gradients);
+
+  // Allocate CahnHilliard values
+  phase_order_cahn_hilliard_values = std::vector<double>(this->n_q_points);
+  chemical_potential_cahn_hilliard_values =
+    std::vector<double>(this->n_q_points);
+
+  // Allocate CahnHilliard gradients
+  phase_order_cahn_hilliard_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+  chemical_potential_cahn_hilliard_gradients =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::phase_order_cahn_hilliard,
+                                          n_q_points));
+
+  // Allocate physical properties
+  density_0              = std::vector<double>(n_q_points);
+  density_1              = std::vector<double>(n_q_points);
+  viscosity_0            = std::vector<double>(n_q_points);
+  viscosity_1            = std::vector<double>(n_q_points);
+  thermal_expansion_0    = std::vector<double>(n_q_points);
+  thermal_expansion_1    = std::vector<double>(n_q_points);
+  surface_tension        = std::vector<double>(n_q_points);
+  mobility_cahn_hilliard = std::vector<double>(n_q_points);
+}
+
 
 template <int dim>
 void
@@ -338,7 +378,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
               surface_tension_model->vector_value(fields, surface_tension);
             }
 
-
           density_model_0->vector_value(fields, density_0);
           rheology_model_0->vector_value(fields, viscosity_0);
 
@@ -357,38 +396,80 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                       thermal_expansion_1);
             }
 
-          // Blend the physical properties using the VOF field
-          for (unsigned int q = 0; q < this->n_q_points; ++q)
-            {
-              double filtered_phase_value = this->filtered_phase_values[q];
-
-              density[q] = calculate_point_property(filtered_phase_value,
-                                                    this->density_0[q],
-                                                    this->density_1[q]);
-
-              viscosity[q] = calculate_point_property(filtered_phase_value,
-                                                      this->viscosity_0[q],
-                                                      this->viscosity_1[q]);
-
-              thermal_expansion[q] =
-                calculate_point_property(filtered_phase_value,
-                                         this->thermal_expansion_0[q],
-                                         this->thermal_expansion_1[q]);
-            }
-
-
-          for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+          if (gather_vof && !gather_cahn_hilliard)
             {
               // Blend the physical properties using the VOF field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
-                  // Calculate previous density (right now assumes constant
-                  // density model per phase)
-                  previous_density[p][q] = calculate_point_property(
-                    filter->filter_phase(this->previous_phase_values[p][q]),
+                  double filtered_phase_value = this->filtered_phase_values[q];
+
+                  density[q] = calculate_point_property(filtered_phase_value,
+                                                        this->density_0[q],
+                                                        this->density_1[q]);
+
+                  viscosity[q] = calculate_point_property(filtered_phase_value,
+                                                          this->viscosity_0[q],
+                                                          this->viscosity_1[q]);
+
+                  thermal_expansion[q] =
+                    calculate_point_property(filtered_phase_value,
+                                             this->thermal_expansion_0[q],
+                                             this->thermal_expansion_1[q]);
+                }
+
+
+              for (unsigned p = 0; p < previous_phase_values.size(); ++p)
+                {
+                  // Blend the physical properties using the VOF field
+                  for (unsigned int q = 0; q < this->n_q_points; ++q)
+                    {
+                      // Calculate previous density (right now assumes constant
+                      // density model per phase)
+                      previous_density[p][q] = calculate_point_property(
+                        filter->filter_phase(this->previous_phase_values[p][q]),
+                        this->density_0[q],
+                        this->density_1[q]);
+                    }
+                }
+              break;
+            }
+
+          else if (gather_cahn_hilliard && !gather_vof)
+            {
+              // Blend the physical properties using the CahnHilliard field
+              for (unsigned int q = 0; q < this->n_q_points; ++q)
+                {
+                  this->density_diff =
+                    0.5 * std::abs(density_0[q] - density_1[q]);
+
+                  double phase_order_cahn_hilliard_value =
+                    this->phase_order_cahn_hilliard_values[q];
+
+                  density[q] = calculate_point_property_cahn_hilliard(
+                    phase_order_cahn_hilliard_value,
                     this->density_0[q],
                     this->density_1[q]);
+
+                  viscosity[q] = calculate_point_property_cahn_hilliard(
+                    phase_order_cahn_hilliard_value,
+                    this->viscosity_0[q],
+                    this->viscosity_1[q]);
+
+                  thermal_expansion[q] = calculate_point_property_cahn_hilliard(
+                    phase_order_cahn_hilliard_value,
+                    this->thermal_expansion_0[q],
+                    this->thermal_expansion_1[q]);
+
+                  const auto material_interaction_id =
+                    properties_manager.get_material_interaction_id(
+                      material_interactions_type::fluid_fluid, 0, 1);
+                  const auto mobility_cahn_hilliard_model =
+                    properties_manager.get_mobility_cahn_hilliard(
+                      material_interaction_id);
+                  mobility_cahn_hilliard_model->vector_value(
+                    fields, mobility_cahn_hilliard);
                 }
+              break;
             }
           break;
         }

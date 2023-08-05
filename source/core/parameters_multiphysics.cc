@@ -92,7 +92,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
   prm.leave_subsection();
 
   vof_parameters.declare_parameters(prm);
-  ch_parameters.declare_parameters(prm);
+  cahn_hilliard_parameters.declare_parameters(prm);
 }
 
 void
@@ -114,7 +114,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
-  ch_parameters.parse_parameters(prm);
+  cahn_hilliard_parameters.parse_parameters(prm);
 }
 
 void
@@ -597,21 +597,6 @@ Parameters::CahnHilliard::declare_parameters(ParameterHandler &prm)
         "Parameter linked to the interface thickness. Should always be bigger than the characteristic size of the smallest element");
     }
     prm.leave_subsection();
-
-    prm.enter_subsection("mobility");
-    {
-      prm.declare_entry("model",
-                        "constant",
-                        Patterns::Selection("constant|quadratic|quartic"),
-                        "Mobility model for the Cahn-Hilliard equations"
-                        "Choices are <constant|quadratic|quartic>.");
-
-      prm.declare_entry("mobility constant",
-                        "1",
-                        Patterns::Double(),
-                        "Mobility constant for the Cahn-Hilliard equations");
-    }
-    prm.leave_subsection();
   }
   prm.leave_subsection();
 }
@@ -639,21 +624,6 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler &prm)
                                  "Options are 'automatic' or 'manual'."));
 
       epsilon = prm.get_double("value");
-    }
-    prm.leave_subsection();
-
-    prm.enter_subsection("mobility");
-    {
-      const std::string op = prm.get("model");
-      if (op == "constant")
-        mobility_model = Parameters::MobilityModel::constant;
-      else if (op == "quartic")
-        mobility_model = Parameters::MobilityModel::quartic;
-      else
-        throw(std::runtime_error("Invalid mobility model "
-                                 "Options are 'constant' or 'quartic'."));
-
-      mobility_constant = prm.get_double("mobility constant");
     }
     prm.leave_subsection();
   }

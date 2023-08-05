@@ -61,10 +61,11 @@ PhysicalPropertiesManager::initialize(
   non_newtonian_flow = false;
   constant_density   = true;
 
-  required_fields[field::temperature]          = false;
-  required_fields[field::previous_temperature] = false;
-  required_fields[field::shear_rate]           = false;
-  required_fields[field::pressure]             = false;
+  required_fields[field::temperature]               = false;
+  required_fields[field::previous_temperature]      = false;
+  required_fields[field::shear_rate]                = false;
+  required_fields[field::pressure]                  = false;
+  required_fields[field::phase_order_cahn_hilliard] = false;
 
   // For each fluid, declare the physical properties
   for (unsigned int f = 0; f < number_of_fluids; ++f)
@@ -150,5 +151,8 @@ PhysicalPropertiesManager::initialize(
         physical_properties.material_interactions[i]
           .surface_tension_parameters));
       establish_fields_required_by_model(*surface_tension[i]);
+      mobility_ch.push_back(MobilityCahnHilliardModel::model_cast(
+        physical_properties.material_interactions[i]));
+      establish_fields_required_by_model(*mobility_ch[i]);
     }
 }

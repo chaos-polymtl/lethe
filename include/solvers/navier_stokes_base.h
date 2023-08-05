@@ -201,7 +201,6 @@ protected:
    * Key physics component for fluid dynamics
    **/
 
-
   /**
    * @brief finish_time_step
    * Finishes the time step of the fluid dynamics
@@ -217,7 +216,6 @@ protected:
    */
   virtual void
   percolate_time_vectors_fd();
-
 
   /**
    * @brief finish_simulation
@@ -282,15 +280,12 @@ protected:
   virtual void
   dynamic_flow_control();
 
-
   /**
    * @brief iterate
    * Do a regular CFD iteration
    */
   virtual void
   iterate();
-
-
 
   /**
    * @brief Allow the initial refinement of all cells of the principal mesh that are partially

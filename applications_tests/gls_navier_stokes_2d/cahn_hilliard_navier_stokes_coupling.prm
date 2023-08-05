@@ -4,9 +4,11 @@
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set number mesh adapt = 3
-  set output frequency  = 0
+  set method           = bdf2
+  set output name      = cahn_hilliard_navier_stokes
+  set output frequency = 0
+  set time end         = 0.05
+  set time step        = 0.01
 end
 
 #---------------------------------------------------
@@ -14,7 +16,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set fluid dynamics = false
+  set fluid dynamics = true
   set cahn hilliard  = true
 end
 
@@ -25,19 +27,8 @@ end
 subsection FEM
   set phase cahn hilliard order     = 1
   set potential cahn hilliard order = 1
-end
-
-#---------------------------------------------------
-# Analytical solution
-#---------------------------------------------------
-
-subsection analytical solution
-  set enable    = true
-  set verbosity = verbose
-
-  subsection cahn hilliard
-    set Function expression = sin(pi*x)*sin(pi*y); 1/0.0 #This is to make the test more robust on every configuration. Only the phase (first component) is being tested, the potential is not tested, the numerical solution converges to zero extremely fast.
-  end
+  set velocity order     = 1
+  set pressure order     = 1
 end
 
 #---------------------------------------------------
@@ -47,16 +38,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
-  set grid arguments     = -1 : 1 : true
-  set initial refinement = 4
-end
-
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = uniform
+  set grid arguments     = 0 : 1 : true
+  set initial refinement = 5
 end
 
 #---------------------------------------------------
@@ -64,44 +47,11 @@ end
 #---------------------------------------------------
 
 subsection cahn hilliard
-  set well height = 1.25
+  set well height = 0.5
 
   subsection epsilon
-    set method = manual
+    set method = automatic
     set value  = 1
-  end
-end
-
-#---------------------------------------------------
-# Physical properties
-#---------------------------------------------------
-subsection physical properties
-set number of fluids = 2
-
-set number of material interactions = 1
-  subsection material interaction 0
-    set type = fluid-fluid
-    subsection fluid-fluid interaction
-      set first fluid id              = 0
-      set second fluid id             = 1
-
-      # Mobility Cahn-Hilliard
-      set cahn hilliard mobility model    = constant
-      set cahn hilliard mobility constant = 1
-    end
-  end
-end
-
-#---------------------------------------------------
-# Source term
-#---------------------------------------------------
-
-subsection source term
-  set enable = true
-
-  subsection cahn hilliard
-    set Function constants  = W=1.25, eps=1
-    set Function expression = 0;-4*W*(sin(pi*x)^3*sin(pi*y)^3 - sin(pi*x)*sin(pi*y)) - eps*eps*2*pi*pi*sin(pi*x)*sin(pi*y)
   end
 end
 
@@ -110,34 +60,40 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
+  set number = 2
+  subsection bc 0
+    set id          = 0
+    set type        = angle_of_contact
+    set angle value = 135
+  end
+  subsection bc 1
+    set id          = 2
+    set type        = angle_of_contact
+    set angle value = 135
+  end
+end
+
+#---------------------------------------------------
+# Boundary conditions
+#---------------------------------------------------
+
+subsection boundary conditions
   set number = 4
   subsection bc 0
     set id   = 0
-    set type = dirichlet
-    subsection phi
-      set Function expression = 0
-    end
+    set type = slip
   end
   subsection bc 1
     set id   = 1
-    set type = dirichlet
-    subsection phi
-      set Function expression = 0
-    end
+    set type = slip
   end
   subsection bc 2
     set id   = 2
-    set type = dirichlet
-    subsection phi
-      set Function expression = 0
-    end
+    set type = slip
   end
   subsection bc 3
     set id   = 3
-    set type = dirichlet
-    subsection phi
-      set Function expression = 0
-    end
+    set type = slip
   end
 end
 
@@ -149,7 +105,31 @@ subsection initial conditions
   set type = nodal
 
   subsection cahn hilliard
-    set Function expression = sin(pi*x)*sin(pi*y); 0
+    set Function expression = -tanh((0.25 - ((x-0.5)^2 + y^2)^(1/2))/(sqrt(2)*0.02)) ; 0
+  end
+end
+
+#---------------------------------------------------
+# Physical properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids                = 2
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id  = 0
+      set second fluid id = 1
+
+      # Surface tension
+      set surface tension model       = constant
+      set surface tension coefficient = 1
+
+      # Mobility Cahn-Hilliard
+      set cahn hilliard mobility model    = quartic
+      set cahn hilliard mobility constant = 1
+    end
   end
 end
 
@@ -158,7 +138,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  set tolerance      = 1e-9
+  set tolerance      = 1e-8
   set max iterations = 20
   set verbosity      = quiet
 end
@@ -172,8 +152,8 @@ subsection linear solver
   set method                                = gmres
   set max iters                             = 2000
   set relative residual                     = 1e-3
-  set minimum residual                      = 1e-12
-  set ilu preconditioner fill               = 1
+  set minimum residual                      = 1e-10
+  set ilu preconditioner fill               = 3
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
   set max krylov vectors                    = 2000

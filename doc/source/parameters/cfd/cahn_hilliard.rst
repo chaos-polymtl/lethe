@@ -16,11 +16,12 @@ The equations solved are as follows:
         
          \eta - 4W(\phi^3 - \phi) + \epsilon^2 \Delta \phi = 0
 
-where
-- :math:`\mathbf{a}` corresponds to the velocity field; this vector field is used when the problem is driven by convection.
-- :math:`M(\phi)` is the mobility function; two cases are considered: a constant mobility model, i.e, :math:`M = D` with :math:`D` the mobility constant, or a quartic mobility model with :math:`M(\phi) = D(1-\phi^2)^2`.
-- :math:`W` is the potential well height.
-- :math:`\epsilon` is a parameter linked to the thickness of the interface.
+where:
+
+* :math:`\mathbf{a}` corresponds to the velocity field; this vector field is used when the problem is driven by convection.
+* :math:`M(\phi)` is the mobility function; two cases are considered: a constant mobility model, i.e, :math:`M = D` with :math:`D` the mobility constant, or a quartic mobility model with :math:`M(\phi) = D(1-\phi^2)^2`.
+* :math:`W` is the potential well height.
+* :math:`\epsilon` is a parameter linked to the thickness of the interface.
 
 .. note::
 
@@ -39,17 +40,11 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
       set method = automatic
       set value  = 1
     end
-
-    subsection mobility
-      set model             = constant
-      set mobility constant = 1
-    end
   end
   
 * ``well height``: defines the :math:`W` parameter in the equations above. Its value should be increased if the solution is excessively diffused.
 
 * ``epsilon``: defines the :math:`\epsilon` parameter. It can either be user-defined or determined automatically for each cell. For the latter, epsilon is equal to two times the characteristic length of the cell. The choices are ``automatic`` (default) or ``manual``.
 
-* ``model``: defines the model chosen for mobility. The choices are either ``constant`` (default) or ``quartic``.
-
-* ``mobility constant``: defines the mobility constant :math:`D` for all mobility models.
+.. attention::
+     The ``mobility model`` and ``mobility constant`` must be set in the :doc:`physical_properties` section.

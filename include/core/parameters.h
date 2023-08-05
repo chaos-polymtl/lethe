@@ -312,6 +312,21 @@ namespace Parameters
   };
 
   /**
+   * @brief MobilityCahnHilliardParameters - Defines parameters for the mobility models used in the Cahn-Hilliard equations.
+   */
+  struct MobilityCahnHilliardParameters
+  {
+    // Mobility constant (M) in m^2/s
+    double mobility_cahn_hilliard_constant;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+
+  /**
    * @brief Material - Class that defines the physical property of a material.
    * Generally a material will be a fluid, but for conjugated heat transfer,
    * this may also be a solid.
@@ -410,6 +425,14 @@ namespace Parameters
       constant
     } surface_tension_model;
     SurfaceTensionParameters surface_tension_parameters;
+
+    // Mobility CH models
+    enum class MobilityCahnHilliardModel
+    {
+      constant,
+      quartic
+    } mobility_cahn_hilliard_model;
+    MobilityCahnHilliardParameters mobility_cahn_hilliard_parameters;
 
     std::pair<std::pair<unsigned int, unsigned int>, unsigned int>
       fluid_fluid_interaction_with_material_interaction_id;
@@ -780,8 +803,8 @@ namespace Parameters
     unsigned int VOF_order;
 
     // Interpolation order Cahn-Hilliard
-    unsigned int phase_ch_order;
-    unsigned int potential_ch_order;
+    unsigned int phase_cahn_hilliard_order;
+    unsigned int potential_cahn_hilliard_order;
 
     // Apply high order mapping everywhere
     bool qmapping_all;
@@ -1031,8 +1054,8 @@ namespace Parameters
       pressure,
       phase,
       temperature,
-      phase_ch,
-      chemical_potential_ch
+      phase_cahn_hilliard,
+      chemical_potential_cahn_hilliard
     } variable;
 
     // Map containing the refinement variables

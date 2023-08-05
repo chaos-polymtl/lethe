@@ -11,6 +11,7 @@ add_library(lethe-core
   lethe_grid_tools.cc
   manifolds.cc
   mesh_controller.cc
+  mobility_ch_model.cc
   parameters.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
@@ -47,6 +48,7 @@ add_library(lethe-core
   ../../include/core/lethe_grid_tools.h
   ../../include/core/manifolds.h
   ../../include/core/mesh_controller.h
+  ../../include/core/mobility_ch_model.h
   ../../include/core/multiphysics.h
   ../../include/core/newton_non_linear_solver.h
   ../../include/core/non_linear_solver.h

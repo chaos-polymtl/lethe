@@ -63,13 +63,6 @@ namespace Parameters
     manual
   };
 
-  enum class MobilityModel
-  {
-    constant,
-    quartic
-  };
-
-
   /**
    * @brief Defines the subparameters for free surface peeling/wetting mechanism.
    * Has to be declared before member creation in VOF structure.
@@ -248,20 +241,11 @@ namespace Parameters
     // Epsilon value in the Cahn-Hilliard equations
     double epsilon;
 
-    // Mobility model (constant|quartic) in the Cahn-Hilliard
-    // equations
-    Parameters::MobilityModel mobility_model;
-
-    // Mobility constant in the Cahn-Hilliard equations
-    double mobility_constant;
-
     void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-
 
   /**
    * @brief Multiphysics - the parameters for multiphysics simulations
@@ -282,7 +266,7 @@ namespace Parameters
     bool buoyancy_force;
 
     Parameters::VOF          vof_parameters;
-    Parameters::CahnHilliard ch_parameters;
+    Parameters::CahnHilliard cahn_hilliard_parameters;
 
     void
     declare_parameters(ParameterHandler &prm);

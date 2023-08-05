@@ -58,9 +58,9 @@ namespace BoundaryConditions
     pw,
     vof_dirichlet,
     // for cahn hilliard
-    ch_noflux,
-    ch_dirichlet_phase_order,
-    ch_angle_of_contact,
+    cahn_hilliard_noflux,
+    cahn_hilliard_dirichlet_phase_order,
+    cahn_hilliard_angle_of_contact,
   };
 
   /**
@@ -886,18 +886,18 @@ namespace BoundaryConditions
     const std::string op = prm.get("type");
     if (op == "noflux")
       {
-        this->type[i_bc] = BoundaryType::ch_noflux;
+        this->type[i_bc] = BoundaryType::cahn_hilliard_noflux;
       }
     if (op == "dirichlet")
       {
-        this->type[i_bc] = BoundaryType::ch_dirichlet_phase_order;
+        this->type[i_bc] = BoundaryType::cahn_hilliard_dirichlet_phase_order;
         prm.enter_subsection("phi");
         bcFunctions[i_bc].phi.parse_parameters(prm);
         prm.leave_subsection();
       }
     if (op == "angle_of_contact")
       {
-        this->type[i_bc]             = BoundaryType::ch_angle_of_contact;
+        this->type[i_bc] = BoundaryType::cahn_hilliard_angle_of_contact;
         this->angle_of_contact[i_bc] = prm.get_double("angle value");
       }
 
