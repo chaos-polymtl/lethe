@@ -437,6 +437,24 @@ namespace Parameters
   }
 
   void
+  MobilityCahnHilliardParameters::declare_parameters(
+    dealii::ParameterHandler &prm)
+  {
+    prm.declare_entry(
+      "cahn hilliard mobility constant",
+      "1",
+      Patterns::Double(),
+      "Cahn-Hilliard mobility constant for the corresponding pair of fluids");
+  }
+
+  void
+  MobilityCahnHilliardParameters::parse_parameters(ParameterHandler &prm)
+  {
+    mobility_cahn_hilliard_constant =
+      prm.get_double("cahn hilliard mobility constant");
+  }
+
+  void
   Stabilization::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("stabilization");
@@ -964,6 +982,15 @@ namespace Parameters
           "Model used for the calculation of the surface tension coefficient"
           "At the moment, the only choice is <constant>");
         surface_tension_parameters.declare_parameters(prm);
+
+        // Cahn-Hilliard mobility
+        prm.declare_entry(
+          "cahn hilliard mobility model",
+          "constant",
+          Patterns::Selection("constant|quartic"),
+          "Model used for the calculation of the mobility in the Cahn-Hilliard equations"
+          "Choices are <constant|quartic>");
+        mobility_cahn_hilliard_parameters.declare_parameters(prm);
       }
       prm.leave_subsection();
 
@@ -1034,6 +1061,23 @@ namespace Parameters
             throw(std::runtime_error(
               "Invalid surface tension model. At the moment, the only choice is <constant>"));
 
+          // Cahn-Hilliard mobility
+          op = prm.get("cahn hilliard mobility model");
+          if (op == "constant")
+            {
+              mobility_cahn_hilliard_model =
+                MobilityCahnHilliardModel::constant;
+              mobility_cahn_hilliard_parameters.parse_parameters(prm);
+            }
+          else if (op == "quartic")
+            {
+              mobility_cahn_hilliard_model = MobilityCahnHilliardModel::quartic;
+              mobility_cahn_hilliard_parameters.parse_parameters(prm);
+            }
+          else
+            throw(std::runtime_error(
+              "Invalid mobility model. The choices are <constant|quartic>"));
+
           prm.leave_subsection();
         }
       else // Solid-fluid interactions
@@ -1095,12 +1139,12 @@ namespace Parameters
                         Patterns::Integer(),
                         "interpolation order tracer");
       prm.declare_entry(
-        "phase ch order",
+        "phase cahn hilliard order",
         "1",
         Patterns::Integer(),
         "interpolation order phase parameter in the Cahn-Hilliard equations");
       prm.declare_entry(
-        "potential ch order",
+        "potential cahn hilliard order",
         "1",
         Patterns::Integer(),
         "interpolation order chemical potential in the Cahn-Hilliard equations");
@@ -1117,15 +1161,16 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocity_order      = prm.get_integer("velocity order");
-      pressure_order      = prm.get_integer("pressure order");
-      void_fraction_order = prm.get_integer("void fraction order");
-      temperature_order   = prm.get_integer("temperature order");
-      tracer_order        = prm.get_integer("tracer order");
-      VOF_order           = prm.get_integer("VOF order");
-      phase_ch_order      = prm.get_integer("phase ch order");
-      potential_ch_order  = prm.get_integer("potential ch order");
-      qmapping_all        = prm.get_bool("qmapping all");
+      velocity_order            = prm.get_integer("velocity order");
+      pressure_order            = prm.get_integer("pressure order");
+      void_fraction_order       = prm.get_integer("void fraction order");
+      temperature_order         = prm.get_integer("temperature order");
+      tracer_order              = prm.get_integer("tracer order");
+      VOF_order                 = prm.get_integer("VOF order");
+      phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
+      potential_cahn_hilliard_order =
+        prm.get_integer("potential cahn hilliard order");
+      qmapping_all = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
   }
@@ -2108,9 +2153,9 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_ch|chemical_potential_ch")),
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard")),
         "Variable(s) for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_ch|chemical_potential_ch>."
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -2194,13 +2239,13 @@ namespace Parameters
             vars = Variable::phase;
           else if (var_vec[i] == "temperature")
             vars = Variable::temperature;
-          else if (var_vec[i] == "phase_ch")
-            vars = Variable::phase_ch;
-          else if (var_vec[i] == "chemical_potential_ch")
-            vars = Variable::chemical_potential_ch;
+          else if (var_vec[i] == "phase_cahn_hilliard")
+            vars = Variable::phase_cahn_hilliard;
+          else if (var_vec[i] == "chemical_potential_cahn_hilliard")
+            vars = Variable::chemical_potential_cahn_hilliard;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_ch or chemical_potential_ch");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard or chemical_potential_cahn_hilliard");
 
           var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
           var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);

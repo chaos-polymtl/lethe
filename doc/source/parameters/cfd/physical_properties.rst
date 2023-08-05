@@ -37,7 +37,7 @@ Physical Properties
 
     set number of solids = 0
 
-    set number of material interactions = 1
+    set number of material interactions = 1 #by default it is set to 0
     subsection material interaction 0
       set type = fluid-fluid
       subsection fluid-fluid interaction
@@ -47,6 +47,10 @@ Physical Properties
         # Surface tension
         set surface tension model       = constant
         set surface tension coefficient = 0
+        
+        # Mobility Cahn-Hilliard
+        set cahn hilliard mobility model    = constant
+        set cahn hilliard mobility constant = 1
       end
 
       # if fluid-solid interaction
@@ -116,6 +120,10 @@ Physical Properties
           We = Re \cdot \frac{\mu_\text{ref} \; u_\text{ref}}{\sigma}
 
       where :math:`Re` is the Reynolds number, :math:`\mu_\text{ref}` and :math:`u_\text{ref}` are some reference viscosity and velocity characterizing the flow problem, and :math:`\sigma` is the surface tension coefficient.
+      
+    * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the fluid-fluid pair. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
+      
+    * The ``cahn hilliard mobility coefficient`` parameter is the constant mobility coefficient of the two interacting fluids used in the Cahn-Hilliard equations. Its units are :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`.
 
   * In the ``fluid-solid`` subsection we define the fluid-solid pair and their physical properties.
 
@@ -396,7 +404,7 @@ By default, parameters are set to the values of dry air evaluated under normal t
   When defining the initial pressure condition in the ``initial conditions`` subsection (see :doc:`initial_conditions`), make sure to set it to :math:`0`, as it represents the reference state for the calculated pressure. In solving the Navier-Stokes equations, the pressure is defined to within a constant. Therefore, it is more appropriate to interpret it as a differential pressure.
 
   .. attention::
-    Currently, in two phase flow simulations, the ``isothermal_ideal_gas`` density model can only be used in conjunction with the incompressible Navier-Stokes equations. However, it is meant to be used with the isothermal formulation of compressible Navier-Stokes equations to account for weakly compressible flows. In a future update, this change will be implemented.
+    Currently, the ``isothermal_ideal_gas`` density model can only be used in conjunction with the incompressible Navier-Stokes equations. However, it is meant to be used with the isothermal formulation of compressible Navier-Stokes equations to account for weakly compressible flows. In a future update, these equations will be implemented.
 
 .. _thermal_conductivity_models:
 
@@ -476,5 +484,21 @@ This model is parameterized using the following section:
 
 * The ``specific heat solid`` is :math:`C_{p,s}`
 
+Cahn-Hilliard Mobility Model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lethe supports two types of mobility models for the Cahn-Hilliard equations. Setting ``cahn hilliard mobility model = constant`` sets a constant mobility. Setting a ``cahn hilliard mobility model = quartic`` sets a quartic model for mobility:
+
+.. math::
+  M(\phi) = D(1-\phi^2)^2
+
+with :math:`D` the value set for ``cahn hilliard mobility constant``. A quartic mobility is required to recover a correct velocity according to Bretin *et al.* `[2] <https://doi.org/10.48550/arXiv.2105.09627>`_ Therefore, it is preferable to use it when solving the coupled Cahn-Hilliard and Navier-Stokes equations.
+
+References
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.
+
+`[2] <https://doi.org/10.48550/arXiv.2105.09627>`_  E. Bretin, R. Denis, S. Masnou, A. Sengers, and G. Terii, ‘A multiphase Cahn-Hilliard system with mobilities and the numerical simulation of dewetting’. arXiv, Apr. 18, 2023, doi: 10.1016/arXiv.2105.09627.
+
+

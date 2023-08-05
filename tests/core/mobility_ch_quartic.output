@@ -1,0 +1,11 @@
+
+DEAL::Beginning
+DEAL::Testing quartic mobility
+DEAL::Test 1, mobility = 5.625
+DEAL::Test 2, mobility = 8.281
+DEAL::Test 3, Analytical jacobian = 10.92
+DEAL:: Vector values
+DEAL::0.3610 2.6010 10 7.0560 1.296
+DEAL:: Analytical jacobians
+DEAL::6.84 14.2800 0.0000 -13.4400 -11.5200
+DEAL::OK

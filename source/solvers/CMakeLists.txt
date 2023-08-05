@@ -18,6 +18,7 @@ add_library(lethe-solvers
   multiphysics_interface.cc
   navier_stokes_assemblers.cc
   navier_stokes_base.cc
+  navier_stokes_cahn_hilliard_assemblers.cc
   navier_stokes_scratch_data.cc
   navier_stokes_vof_assemblers.cc
   physical_properties_manager.cc
@@ -53,6 +54,7 @@ add_library(lethe-solvers
   ../../include/solvers/multiphysics_interface.h
   ../../include/solvers/navier_stokes_assemblers.h
   ../../include/solvers/navier_stokes_base.h
+  ../../include/solvers/navier_stokes_cahn_hilliard_assemblers.h
   ../../include/solvers/navier_stokes_scratch_data.h
   ../../include/solvers/navier_stokes_vof_assemblers.h
   ../../include/solvers/physical_properties_manager.h

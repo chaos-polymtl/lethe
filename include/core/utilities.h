@@ -214,15 +214,15 @@ sgn(T val)
  * @param property1 Property value for the fluid with index 1 (fluid for phase = 1)
  */
 inline double
-calculate_point_property_ch(const double phase_ch,
-                            const double property0,
-                            const double property1)
+calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
+                                       const double property0,
+                                       const double property1)
 {
-  double phase = phase_ch;
+  double phase = phase_cahn_hilliard;
 
-  if (std::abs(phase_ch) > 1)
+  if (std::abs(phase_cahn_hilliard) > 1)
     {
-      phase = sgn(phase_ch);
+      phase = sgn(phase_cahn_hilliard);
     }
 
   double property_avg  = (property0 + property1) * 0.5;

@@ -21,7 +21,8 @@
  * with Phi the phase field parameter (or phase order), eta the chemical
  * potential, and M the mobility function and epsilon the interface thickness.
  * The phase field parameter must not be confused with the order (respectively
- * phase_ch_order and potential_ch_order) of the finite elements related to the
+ * phase_cahn_hilliard_order and potential_cahn_hilliard_order) of the finite
+ elements related to the
  * phase field parameter and the chemical potential.
  */
 
@@ -71,43 +72,54 @@ public:
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        const FE_SimplexP<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.phase_ch_order);
-        const FE_SimplexP<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_ch_order);
-        fe =
-          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+        fe = std::make_shared<FESystem<dim>>(
+          FE_SimplexP<dim>(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order),
+          1,
+          FE_SimplexP<dim>(
+            simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
+          1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order) +
+          std::max(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters
+              .potential_cahn_hilliard_order) +
           1);
         face_quadrature = std::make_shared<QGaussSimplex<dim - 1>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order) +
+          std::max(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters
+              .potential_cahn_hilliard_order) +
           1);
         ;
       }
     else
       {
         // Usual case, for quad/hex meshes
-        const FE_Q<dim> phase_order_fe(
-          simulation_parameters.fem_parameters.phase_ch_order);
-        const FE_Q<dim> potential_fe(
-          simulation_parameters.fem_parameters.potential_ch_order);
-        fe =
-          std::make_shared<FESystem<dim>>(phase_order_fe, 1, potential_fe, 1);
+        fe = std::make_shared<FESystem<dim>>(
+          FE_Q<dim>(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order),
+          1,
+          FE_Q<dim>(
+            simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
+          1);
         mapping = std::make_shared<MappingQ<dim>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order),
+          std::max(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
           simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature = std::make_shared<QGauss<dim>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order) +
+          std::max(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters
+              .potential_cahn_hilliard_order) +
           1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(
-          std::max(simulation_parameters.fem_parameters.phase_ch_order,
-                   simulation_parameters.fem_parameters.potential_ch_order) +
+          std::max(
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters
+              .potential_cahn_hilliard_order) +
           1);
       }
 

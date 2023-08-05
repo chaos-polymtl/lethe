@@ -1,5 +1,5 @@
 /**
- * @brief The TestClass tests the non-linear solvers using a simple systme of two
+ * @brief The TestClass tests the non-linear solvers using a simple system of two
  * equations, only one of which is non-linear
  */
 
