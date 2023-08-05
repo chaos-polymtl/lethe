@@ -993,8 +993,8 @@ public:
   PhysicalPropertiesManager            properties_manager;
   std::map<field, std::vector<double>> fields;
   std::vector<double>                  density;
-  double                               density_psi;
   double                               density_ref;
+  double                               density_psi;
   std::vector<double>                  viscosity;
   double                               viscosity_scale;
   std::vector<double>                  thermal_expansion;
@@ -1008,6 +1008,12 @@ public:
   // For VOF and CH simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;
   std::vector<double> density_1;
+  double              density_ref_0;
+  double              density_ref_1;
+  std::vector<double> density_ref_eq;
+  double              density_psi_0;
+  double              density_psi_1;
+  std::vector<double> compressibility_multiplier;
   std::vector<double> viscosity_0;
   std::vector<double> viscosity_1;
   std::vector<double> thermal_expansion_0;

@@ -411,14 +411,21 @@ private:
 
 /**
  * @class Calculates the density on post-processing points this is used when the
- * density isn<t considered constant
+ * density isn't considered constant
+ *
+ * @param p_density_model Density model of the material\
+ *
+ * @param material_id ID corresponding to the material (fluid or solid)
  */
 template <int dim>
 class DensityPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
-  DensityPostprocessor(std::shared_ptr<DensityModel> p_density_model)
-    : DataPostprocessorScalar<dim>("density", update_values)
+  DensityPostprocessor(std::shared_ptr<DensityModel> p_density_model,
+                       const unsigned int            material_id = 0)
+    : DataPostprocessorScalar<dim>("density_" +
+                                     Utilities::to_string(material_id, 2),
+                                   update_values)
     , density_model(p_density_model)
   {}
   virtual void

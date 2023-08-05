@@ -62,7 +62,7 @@ public:
    * @brief Constructor. The constructor creates the fe_values that will be used
    * to fill the member variables of the scratch. It also allocated the
    * necessary memory for all member variables. However, it does not do any
-   * evalution, since this needs to be done at the cell level.
+   * evaluation, since this needs to be done at the cell level.
    *
    * @param properties_manager The physical properties Manager (see physical_properties_manager.h)
    *
@@ -222,6 +222,12 @@ public:
     fe_values_fd[velocities_fd].get_function_gradients(
       current_solution, velocity_gradient_values);
 
+    for (unsigned int q = 0; q < this->n_q_points; ++q)
+      {
+        this->velocity_divergences[q] =
+          trace(this->velocity_gradient_values[q]);
+      }
+
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         fe_values_fd[velocities_fd].get_function_values(
@@ -273,10 +279,11 @@ public:
   FEValues<dim> fe_values_fd;
 
   FEValuesExtractors::Vector velocities_fd;
-  // This FEValues must mandatorily be instantiated for the velocity
+  // This FEValues must be instantiated for the velocity
   std::vector<Tensor<1, dim>>              velocity_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
   std::vector<Tensor<2, dim>>              velocity_gradient_values;
+  std::vector<double>                      velocity_divergences;
 };
 
 #endif

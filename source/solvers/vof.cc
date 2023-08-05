@@ -509,9 +509,11 @@ VolumeOfFluid<3>::calculate_barycenter<TrilinosWrappers::MPI::BlockVector>(
 
 
 template <int dim>
+template <typename VectorType>
 void
 VolumeOfFluid<dim>::calculate_volume_and_mass(
   const TrilinosWrappers::MPI::Vector &solution,
+  const VectorType &                   current_solution_fd,
   const Parameters::FluidIndicator     monitored_fluid)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_communicator();
@@ -521,10 +523,22 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
                               *this->cell_quadrature,
                               update_values | update_JxW_values);
 
+  QGauss<dim>            quadrature_formula(this->cell_quadrature->size());
+  const DoFHandler<dim> *dof_handler_fd =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  FEValues<dim> fe_values_fd(*this->mapping,
+                             dof_handler_fd->get_fe(),
+                             quadrature_formula,
+                             update_values);
+
+  const FEValuesExtractors::Scalar pressure(dim);
+
   const unsigned int  n_q_points = this->cell_quadrature->size();
   std::vector<double> phase_values(n_q_points);
   std::vector<double> density_0(n_q_points);
   std::vector<double> density_1(n_q_points);
+  std::vector<double> pressure_values(n_q_points);
 
   this->volume_monitored = 0.;
   this->mass_monitored   = 0.;
@@ -534,14 +548,31 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
     this->simulation_parameters.physical_properties_manager
       .get_density_vector();
   std::map<field, std::vector<double>> fields;
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::pressure, n_q_points));
 
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  for (const auto &cell_vof : this->dof_handler.active_cell_iterators())
     {
-      if (cell->is_locally_owned())
+      if (cell_vof->is_locally_owned())
         {
-          fe_values_vof.reinit(cell);
+          fe_values_vof.reinit(cell_vof);
           fe_values_vof.get_function_values(solution, phase_values);
 
+          if (this->simulation_parameters.physical_properties_manager
+                .field_is_required(field::pressure))
+            {
+              // Get fluid dynamics active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                &(*(this->triangulation)),
+                cell_vof->level(),
+                cell_vof->index(),
+                dof_handler_fd);
+
+              fe_values_fd.reinit(cell_fd);
+              fe_values_fd[pressure].get_function_values(current_solution_fd,
+                                                         pressure_values);
+              set_field_vector(field::pressure, pressure_values, fields);
+            }
           // Calculate physical properties for the cell
           density_models[0]->vector_value(fields, density_0);
           density_models[1]->vector_value(fields, density_1);
@@ -759,6 +790,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
     {
       // Calculate volume and mass (this->mass_monitored)
       calculate_volume_and_mass(this->present_solution,
+                                *multiphysics->get_solution(
+                                  PhysicsID::fluid_dynamics),
                                 simulation_parameters.multiphysics
                                   .vof_parameters.conservation.monitored_fluid);
 
@@ -908,19 +941,21 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               if (dim == 3)
                 dependent_column_names.push_back("vz_vof");
 
-              std::vector<Tensor<1, dim>> position_and_velocity_vector;
-              position_and_velocity_vector.push_back(
-                position_and_velocity.first);
-              position_and_velocity_vector.push_back(
-                position_and_velocity.second);
+              std::vector<Tensor<1, dim>> position_vector{
+                position_and_velocity.first};
+              std::vector<Tensor<1, dim>> velocity_vector{
+                position_and_velocity.second};
 
-              std::vector<double> time(
-                this->simulation_control->get_current_time());
+              std::vector<std::vector<Tensor<1, dim>>>
+                position_and_velocity_vectors{position_vector, velocity_vector};
+
+              std::vector<double> time = {
+                this->simulation_control->get_current_time()};
 
               TableHandler table = make_table_scalars_tensors(
                 time,
                 independent_column_names,
-                position_and_velocity_vector,
+                position_and_velocity_vectors,
                 dependent_column_names,
                 this->simulation_parameters.simulation_control.log_precision);
 
@@ -1178,7 +1213,10 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
   sharpen_interface(evaluation_point, sharpening_threshold, false);
 
   // Calculate mass of the monitored phase
-  calculate_volume_and_mass(evaluation_point, monitored_fluid);
+  calculate_volume_and_mass(evaluation_point,
+                            *multiphysics->get_solution(
+                              PhysicsID::fluid_dynamics),
+                            monitored_fluid);
 
   // Calculate relative mass deviation
   double mass_deviation = (this->mass_monitored - this->mass_first_iteration) /

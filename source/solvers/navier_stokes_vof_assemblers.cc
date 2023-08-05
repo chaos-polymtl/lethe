@@ -169,8 +169,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
               const auto &phi_u_j      = scratch_data.phi_u[q][j];
               const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
               const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
-              const auto &grad_shear_rate_j =
-                grad_phi_u_j + transpose(grad_phi_u_j);
+              const auto &shear_rate_j = grad_phi_u_j + transpose(grad_phi_u_j);
 
               const auto &phi_p_j =
                 scratch_data.phi_p[q][j] * pressure_scaling_factor;
@@ -179,7 +178,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
 
               double local_matrix_ij =
                 dynamic_viscosity_eq *
-                  scalar_product(grad_shear_rate_j, grad_phi_u_i) +
+                  scalar_product(shear_rate_j, grad_phi_u_i) +
                 density_eq * velocity_gradient_x_phi_u_j[j] * phi_u_i +
                 density_eq * grad_phi_u_j_x_velocity[j] * phi_u_i -
                 div_phi_u_i * phi_p_j;
@@ -264,7 +263,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -519,11 +518,6 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   NavierStokesScratchData<dim> &        scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  // Densities of phases
-  Assert(scratch_data.properties_manager.density_is_constant(),
-         RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
-
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -585,7 +579,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
   // Densities of phases
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs"));
 
   // Loop and quadrature information
   const auto &       JxW        = scratch_data.JxW;
@@ -705,9 +699,10 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
         solve_continuity = false;
     }
 
-  Assert(scratch_data.properties_manager.density_is_constant(),
-         RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+  Assert(
+    scratch_data.properties_manager.density_is_constant(),
+    RequiresConstantDensity(
+      "GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -939,7 +934,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix"));
+           "GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)

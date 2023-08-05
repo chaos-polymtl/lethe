@@ -176,11 +176,15 @@ public:
    *
    * @param solution VOF solution (phase fraction)
    *
+   * @param current_solution_fd current solution for the fluid dynamics
+   *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1) corresponding to
    * the phase of interest.
    */
+  template <typename VectorType>
   void
   calculate_volume_and_mass(const TrilinosWrappers::MPI::Vector &solution,
+                            const VectorType &current_solution_fd,
                             const Parameters::FluidIndicator monitored_fluid);
 
   /**

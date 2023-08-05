@@ -1961,7 +1961,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
 
   // Create the post-processors to have derived information about the velocity
-  // They are generated outside of the if condition for smoothing to ensure
+  // They are generated outside the if condition for smoothing to ensure
   // that the objects still exist when the write output of DataOut is called
   // Regular discontinuous postprocessors
   QCriterionPostprocessor<dim> qcriterion;
@@ -1969,12 +1969,22 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   VorticityPostprocessor<dim>  vorticity;
   data_out.add_data_vector(solution, vorticity);
 
-  DensityPostprocessor<dim> density_postprocessed(
-    this->simulation_parameters.physical_properties_manager.get_density());
-  if (!this->simulation_parameters.physical_properties_manager
-         .density_is_constant()) // Only output when density is not constant
+  std::vector<std::shared_ptr<DensityModel>> density_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_density_vector();
+  std::vector<DensityPostprocessor<dim>> density_postprocessors;
+  for (unsigned int f_id = 0; f_id < density_models.size(); ++f_id)
     {
-      data_out.add_data_vector(solution, density_postprocessed);
+      // Only output when density is not constant
+      if (density_models[f_id]->get_psi() != 0)
+        {
+          density_postprocessors.push_back(
+            DensityPostprocessor<dim>(density_models[f_id], f_id));
+        }
+    }
+  for (const auto &density_postprocessor : density_postprocessors)
+    {
+      data_out.add_data_vector(solution, density_postprocessor);
     }
 
   // Trilinos vector for the smoothed output fields
