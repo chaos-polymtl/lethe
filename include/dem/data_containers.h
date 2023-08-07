@@ -149,17 +149,18 @@ namespace DEM
     // boundary id, cell id)>>
     typedef ankerl::unordered_dense::map<
       types::particle_index,
-      std::unordered_map<global_face_id,
-                         std::tuple<Particles::ParticleIterator<dim>,
-                                    Tensor<1, dim>,
-                                    Point<dim>,
-                                    global_face_id>>>
+      ankerl::unordered_dense::map<global_face_id,
+                                   std::tuple<Particles::ParticleIterator<dim>,
+                                              Tensor<1, dim>,
+                                              Point<dim>,
+                                              global_face_id>>>
       particle_wall_candidates;
 
     // <particle id, <global_face_id, particle-wall info>>
     typedef ankerl::unordered_dense::map<
       types::particle_index,
-      std::unordered_map<global_face_id, particle_wall_contact_info<dim>>>
+      ankerl::unordered_dense::map<global_face_id,
+                                   particle_wall_contact_info<dim>>>
       particle_wall_in_contact;
 
     // <particle id, <particle id, particle-particle info>>
