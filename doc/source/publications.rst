@@ -9,7 +9,7 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 
 * `M. Fazli, M. Rudman, S. Kuang and A. Chryss, "Application of Immersed Boundary Methods to Non-Newtonian Yield-Pseudoplastic Flows", Applied Mathematical Modelling, 2023 <https://doi.org/10.1016/j.apm.2023.07.034>`_.
 
-* `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", Journal of Computational Physics, 2023 <https://doi.org/10.1016/j.jcp.2023.112189>`_
+* `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais, "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", Journal of Computational Physics, 2023 <https://doi.org/10.1016/j.jcp.2023.112189>`_.
 
 * `V. O. Ferreira, T. El Geitani, D. Silva Junior, B. Blais, and G. C. Lopes, "In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds", Powder Technology, 2023 <https://doi.org/10.1016/j.powtec.2023.118652>`_.
 
