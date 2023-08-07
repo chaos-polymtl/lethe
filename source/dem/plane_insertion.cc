@@ -153,8 +153,8 @@ PlaneInsertion<dim>::insert(
 
           // If the remained_particles_of_each_type become negative, this means
           // that we are trying to insert to many particle in the simulation.
-          // Thus, we need to decrease the number of empty_cell at this time
-          // step. So...
+          // Thus, we need to decrease the number of empty_cell we want to insert
+          // in at this time step. So...
           if (remained_particles_of_each_type <= 0)
             {
               // ... we decrease the number of particle at the current

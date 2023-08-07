@@ -57,7 +57,7 @@ test()
   // Defining simulation general parameters
   dem_parameters.insertion_info.insertion_plane_normal_vector =
     Tensor<1, 3>({0., 1., 0.});
-  dem_parameters.insertion_info.insertion_plane_point = Point<3>({0., 2., 0});
+  dem_parameters.insertion_info.insertion_plane_point = Point<3>({0., 1.75, 0});
   dem_parameters.insertion_info.distance_threshold    = 0.25;
   dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
   dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =

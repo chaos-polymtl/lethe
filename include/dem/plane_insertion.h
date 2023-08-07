@@ -28,7 +28,7 @@
 #  define plane_insertion_h
 
 /**
- * Insertion of particles using cell located in a plane
+ * Insertion of particles using cells cut by a mathematical plane
  *
  * @note
  *
@@ -40,12 +40,12 @@ class PlaneInsertion : public Insertion<dim>
 {
 public:
   /**
-   * The constructor investigates if the insertion box is large enough to handle
-   * to insert the desired number of particles with the specified insertion
-   * parameters. If the insertion box is not adequately large, the number of
-   * inserted particles at each insertion step is updated. It also finds the
-   * insertion points in each direction (number_of_particles_x_direction,
-   * number_of_particles_y_direction and number_of_particles_z_direction).
+   * The plane insertion class insert particles using a mathematical plane
+   * define by a point an a normal vector. This method of insertion can be
+   * useful when dealing with a domain close to be fully filled with particle.
+   * In this situation, other insertion method have a high risk to create a big
+   * overlap between particles on insertion. The plane insertion method mitigate
+   * this risk by insertion at the center of empty cells.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param triangulation Triangulation object used in the simulation.
@@ -56,13 +56,11 @@ public:
 
   /**
    * Carries out the insertion of particles.
-   *
    * @param particle_handler The particle handler of particles which are being
-   * inserted
+   * inserted.
    * @param triangulation Triangulation to access the cells in which the
-   * particles are inserted
-   * @param dem_parameters DEM parameters declared in the .prm file
-   *
+   * particles are inserted.
+   * @param dem_parameters DEM parameters declared in the .prm file.
    */
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
@@ -71,7 +69,13 @@ public:
 
 private:
   /**
-   * @brief Store the cells that sufficiently close to the plane.
+   * @brief Store the cells that are cut by the place.
+   *
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
+   * @param plane_point Point which define the mathematical plane
+   * @param plane_normal_vector Vector which define the normal direction of
+   * the plane.
    */
   void
   find_inplane_cells(
@@ -86,7 +90,6 @@ private:
   find_centers_of_inplane_cells();
 
 
-  //
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
   unsigned int                                 particle_counter;
