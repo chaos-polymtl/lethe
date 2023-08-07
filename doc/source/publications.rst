@@ -7,7 +7,7 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 2023
 ----
 
-* `M. Fazil, M. Rudman, S. Kuang and A. Chryss "Application of Immersed Boundary Methods to Non-Newtonian Yield-Pseudoplastic Flows", Applied Mathematical Modelling, 2023 <https://doi.org/10.1016/j.apm.2023.07.034>`_
+* `M. Fazli, M. Rudman, S. Kuang and A. Chryss, "Application of Immersed Boundary Methods to Non-Newtonian Yield-Pseudoplastic Flows", Applied Mathematical Modelling, 2023 <https://doi.org/10.1016/j.apm.2023.07.034>`_.
 
 * `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", Journal of Computational Physics, 2023 <https://doi.org/10.1016/j.jcp.2023.112189>`_
 
