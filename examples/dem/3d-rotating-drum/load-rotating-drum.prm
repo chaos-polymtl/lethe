@@ -6,10 +6,10 @@
 
 subsection simulation control
   set time step        = 1e-5
-  set time end         = 12
+  set time end         = 2
   set log frequency    = 1000
   set output frequency = 1000
-  set output boundaries = false
+    set output boundaries = true
   set output path      = ./output/
 end
 
@@ -25,8 +25,9 @@ subsection model parameters
   end
   subsection load balancing
     set load balance method = frequent
-    set frequency           = 20000
+    set frequency           = 10000
     set step                = 150000
+    set particle weight     = 2000
   end
   set particle particle contact force method = hertz_mindlin_limit_overlap
   set particle wall contact force method     = nonlinear
@@ -60,9 +61,9 @@ end
 
 
 subsection restart
-  set checkpoint = false
+  set checkpoint = true
   set frequency  = 10000
-  set restart    = true
+  set restart    = false
   set filename   = dem
 end
 
@@ -72,8 +73,8 @@ end
 
 subsection insertion info
   set insertion method                               = non_uniform
-  set inserted number of particles at each time step = 0
-  set insertion frequency                            = 19000
+  set inserted number of particles at each time step = 38000
+  set insertion frequency                            = 25000
   set insertion box minimum x                        = -0.175
   set insertion box minimum y                        = -0.07
   set insertion box minimum z                        = 0
@@ -109,7 +110,7 @@ end
 subsection DEM boundary conditions
   set number of boundary conditions = 1
   subsection boundary condition 0
-    set boundary id         = 0
+    set boundary id         = 1
     set type                = rotational
     set rotational speed    = 11.6
     set rotational vector x = 1
