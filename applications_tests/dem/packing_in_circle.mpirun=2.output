@@ -1,0 +1,22 @@
+
+*********************
+Running on 2 rank(s)
+*********************
+DEM time-step is 1.63418% of Rayleigh time step
+Reading triangulation
+
+Finished reading triangulation
+Warning: expansion of particle-wall contact list is enabled. 
+This feature should only be activated in geometries with concave boundaries. (For example, for particles flow inside a cylinder or sphere). In geometries with convex boundaries, this feature MUST NOT be activated.
+*********************************************************************
+8 particles of type 0 were inserted, 0 particles of type 0 remaining
+*********************************************************************
+id, type, dp, x, y, z 
+0 0 0.00500 -0.0424 -0.0853
+1 0 0.00500 -0.0366 -0.0891
+2 0 0.00500 -0.0312 -0.0911
+3 0 0.00500 -0.0236 -0.0942
+4 0 0.00500 -0.0165 -0.0958
+5 0 0.00500 -0.0093 -0.0960
+6 0 0.00500 -0.0022 -0.0961
+7 0 0.00500 0.0060 -0.0958

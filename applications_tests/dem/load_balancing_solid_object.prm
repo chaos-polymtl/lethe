@@ -1,0 +1,129 @@
+set dimension=3 
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 0.2
+  set log frequency    = 1000
+  set output frequency = 0
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.8
+    set neighborhood threshold                  = 1.3
+  end
+  subsection load balancing
+    set load balance method = frequent
+    set frequency           = 1000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set rolling resistance torque method       = viscous_resistance
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = 0
+  set gy                       = -9.81
+  set gz                       = 0.0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.003
+    set number                            = 1000
+    set density particles                 = 2000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.2
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.2
+  end
+  set young modulus wall           = 1e6
+  set poisson ratio wall           = 0.2
+  set restitution coefficient wall = 0.9
+  set friction coefficient wall    = 0.2
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 40000
+  set insertion frequency                            = 10000
+  set insertion box minimum x                        = 0.005
+  set insertion box minimum y                        = 0.005
+  set insertion box minimum z                        = 0.005
+  set insertion box maximum x                        = 0.095
+  set insertion box maximum y                        = 0.195
+  set insertion box maximum z                        = 0.095
+  set insertion distance threshold                   = 1.1
+  set insertion random number range                  = 0.05
+  set insertion random number seed                   = 19
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,2,1 : 0,0,0 : 0.5,0.2,0.1 : false
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Lagrangian Post-processing
+#---------------------------------------------------
+
+subsection post-processing
+  # Enable output of grid, granular temperature, and particles' average velocity
+  set Lagrangian post-processing = true
+end
+
+#---------------------------------------------------
+# Solid Objects
+#---------------------------------------------------
+
+subsection solid objects
+  set number of solids = 1
+  subsection solid object 0
+    subsection mesh
+      set type               = gmsh
+      set file name          = ../square.msh
+      set simplex            = true
+      set initial refinement = 0
+    end
+
+    subsection translational velocity
+      set Function expression = 0 ; if(t>0.5,if(t<0.7,1,0),0) ; 0
+    end
+    subsection angular velocity
+      set Function expression = 0 ; 0  ; 0
+    end
+
+    subsection center of rotation
+      # X COR
+      set x = 0.1
+      # Y COR
+      set y = 0
+      # Z COR
+      set z = 0.05
+    end
+  end
+end
