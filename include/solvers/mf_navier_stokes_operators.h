@@ -60,14 +60,16 @@ public:
    * @param dof_handler Describes the layout of DoFs and the type of FE.
    * @param constraints Object with constraints according to DoFs.
    * @param quadrature Required for local operations on cells.
-   * @param nsparam Relevant parameters for the operator.
+   * @param forcing_function Function specified in parameter file as source term.
+   * @param viscosity Kinematic viscosity.
    * @param mg_level Level of the operator in case of MG methods.
    */
   NavierStokesOperatorBase(const Mapping<dim> &             mapping,
                            const DoFHandler<dim> &          dof_handler,
                            const AffineConstraints<number> &constraints,
                            const Quadrature<dim> &          quadrature,
-                           const SimulationParameters<dim> &nsparam,
+                           const Function<dim> *            forcing_function,
+                           const double                     viscosity,
                            const unsigned int               mg_level);
   /**
    * @brief Initialize the main matrix free object that contains all data and is
@@ -78,7 +80,8 @@ public:
    * @param dof_handler Describes the layout of DoFs and the type of FE.
    * @param constraints Object with constraints according to DoFs.
    * @param quadrature Required for local operations on cells.
-   * @param nsparam Relevant parameters for the operator.
+   * @param forcing_function Function specified in parameter file as source term.
+   * @param viscosity Kinematic viscosity.
    * @param mg_level Level of the operator in case of MG methods.
    */
   void
@@ -86,7 +89,8 @@ public:
          const DoFHandler<dim> &          dof_handler,
          const AffineConstraints<number> &constraints,
          const Quadrature<dim> &          quadrature,
-         const SimulationParameters<dim> &nsparam,
+         const Function<dim> *            forcing_function,
+         const double                     viscosity,
          const unsigned int               mg_level);
 
   /**
@@ -283,9 +287,10 @@ protected:
   MatrixFree<dim, number>                matrix_free;
   AffineConstraints<number>              constraints;
   mutable TrilinosWrappers::SparseMatrix system_matrix;
-  SimulationParameters<dim>              parameters;
   AlignedVector<VectorizedArray<number>> element_size;
   unsigned int                           fe_degree;
+  const Function<dim> *                  forcing_function;
+  double                                 viscosity;
 
   // Variables needed from the last newton step vector
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>

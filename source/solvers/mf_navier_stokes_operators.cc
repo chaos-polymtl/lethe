@@ -77,11 +77,17 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
   const Quadrature<dim> &          quadrature,
-  const SimulationParameters<dim> &nsparam,
+  const Function<dim> *            forcing_function,
+  const double                     viscosity,
   const unsigned int               mg_level)
 {
-  this->reinit(
-    mapping, dof_handler, constraints, quadrature, nsparam, mg_level);
+  this->reinit(mapping,
+               dof_handler,
+               constraints,
+               quadrature,
+               forcing_function,
+               viscosity,
+               mg_level);
 }
 
 template <int dim, typename number>
@@ -91,7 +97,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const DoFHandler<dim> &          dof_handler,
   const AffineConstraints<number> &constraints,
   const Quadrature<dim> &          quadrature,
-  const SimulationParameters<dim> &nsparam,
+  const Function<dim> *            forcing_function,
+  const double                     viscosity,
   const unsigned int               mg_level)
 {
   this->system_matrix.clear();
@@ -106,9 +113,11 @@ NavierStokesOperatorBase<dim, number>::reinit(
   matrix_free.reinit(
     mapping, dof_handler, constraints, quadrature, additional_data);
 
-  this->parameters = nsparam;
-
   this->fe_degree = dof_handler.get_fe().degree;
+
+  this->forcing_function = forcing_function;
+
+  this->viscosity = viscosity;
 
   this->compute_element_size();
 
@@ -541,9 +550,6 @@ void
 NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
   FECellIntegrator &integrator) const
 {
-  const double viscosity =
-    this->parameters.physical_properties_manager.get_viscosity_scale();
-
   integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients |
                       EvaluationFlags::hessians);
 
@@ -557,8 +563,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       Tensor<1, dim + 1, VectorizedArray<double>> source_value;
       Point<dim, VectorizedArray<double>>         point_batch =
         integrator.quadrature_point(q);
-      source_value = evaluate_function<dim, double, dim + 1>(
-        this->parameters.source_term->navier_stokes_source, point_batch);
+      source_value =
+        evaluate_function<dim, double, dim + 1>(*(this->forcing_function),
+                                                point_batch);
 
       // Gather the original value/gradient
       typename FECellIntegrator::value_type    value = integrator.get_value(q);
@@ -588,15 +595,15 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
         {
           tau[v] = 1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
-                                  9 * Utilities::fixed_power<2>(4 * viscosity /
-                                                                (h[v] * h[v])));
+                                  9 * Utilities::fixed_power<2>(
+                                        4 * this->viscosity / (h[v] * h[v])));
         }
 
       // Weak form jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           // ν(∇v,∇δu)
-          gradient_result[i] = viscosity * gradient[i];
+          gradient_result[i] = this->viscosity * gradient[i];
           // -(∇·v,δp)
           gradient_result[i][i] += -value[dim];
           // +(q,∇δu)
@@ -618,7 +625,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
             {
               // (-ν∆δu)τ·∇q
               gradient_result[dim][i] +=
-                -tau * viscosity * hessian_diagonal[i][k];
+                -tau * this->viscosity * hessian_diagonal[i][k];
               // +((u·∇)δu)τ·∇q
               gradient_result[dim][i] +=
                 tau * gradient[i][k] * previous_values[k];
@@ -646,8 +653,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               gradient_result[i][k] +=
                 tau * previous_values[k] * gradient[dim][i];
               // (-ν∆δu)τu·∇v
-              gradient_result[i][k] +=
-                -tau * viscosity * previous_values[k] * hessian_diagonal[i][k];
+              gradient_result[i][k] += -tau * this->viscosity *
+                                       previous_values[k] *
+                                       hessian_diagonal[i][k];
 
               // Part 2
               // +((u·∇)u)τδu·∇v
@@ -657,8 +665,8 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
               gradient_result[i][k] +=
                 tau * value[k] * previous_gradient[dim][i];
               // (-ν∆u)τδu·∇v
-              gradient_result[i][k] +=
-                -tau * viscosity * value[k] * previous_hessian_diagonal[i][k];
+              gradient_result[i][k] += -tau * this->viscosity * value[k] *
+                                       previous_hessian_diagonal[i][k];
               // (-f)τδu·∇v
               gradient_result[i][k] += -tau * value[k] * source_value[i];
             }
@@ -689,9 +697,6 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 {
   FECellIntegrator integrator(matrix_free);
 
-  double viscosity =
-    this->parameters.physical_properties_manager.get_viscosity_scale();
-
   for (unsigned int cell = range.first; cell < range.second; ++cell)
     {
       integrator.reinit(cell);
@@ -707,8 +712,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           Tensor<1, dim + 1, VectorizedArray<double>> source_value;
           Point<dim, VectorizedArray<double>>         point_batch =
             integrator.quadrature_point(q);
-          source_value = evaluate_function<dim, double, dim + 1>(
-            this->parameters.source_term->navier_stokes_source, point_batch);
+          source_value =
+            evaluate_function<dim, double, dim + 1>(*(this->forcing_function),
+                                                    point_batch);
 
           // Gather the original value/gradient
           typename FECellIntegrator::value_type value = integrator.get_value(q);
@@ -727,9 +733,10 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
 
           for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
             {
-              tau[v] = 1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
-                                      9 * Utilities::fixed_power<2>(
-                                            4 * viscosity / (h[v] * h[v])));
+              tau[v] =
+                1. / std::sqrt(4. * u_mag[v] / h[v] / h[v] +
+                               9 * Utilities::fixed_power<2>(
+                                     4 * this->viscosity / (h[v] * h[v])));
             }
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;
@@ -739,7 +746,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           for (unsigned int i = 0; i < dim; ++i)
             {
               // ν(∇v,∇u)
-              gradient_result[i] = viscosity * gradient[i];
+              gradient_result[i] = this->viscosity * gradient[i];
               // -(∇·v,p)
               gradient_result[i][i] += -value[dim];
               // -(v,f)
@@ -763,7 +770,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                 {
                   //(-ν∆u)τ∇·q
                   gradient_result[dim][i] +=
-                    -tau * viscosity * hessian_diagonal[i][k];
+                    -tau * this->viscosity * hessian_diagonal[i][k];
                   //+((u·∇)u)τ∇·q
                   gradient_result[dim][i] += tau * gradient[i][k] * value[k];
                 }
@@ -780,7 +787,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
                   gradient_result[i][k] += -tau * value[k] * source_value[i];
                   // (-ν∆u)τu·∇v
                   gradient_result[i][k] +=
-                    -tau * viscosity * value[k] * hessian_diagonal[i][k];
+                    -tau * this->viscosity * value[k] * hessian_diagonal[i][k];
                   // + ((u·∇)u)τu·∇v
                   gradient_result[i][k] +=
                     tau * value[k] * gradient[i][k] * value[k];

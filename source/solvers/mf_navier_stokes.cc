@@ -39,7 +39,12 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   SimulationParameters<dim> &nsparam)
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
 {
-  // TODO
+  AssertThrow(
+    nsparam.fem_parameters.velocity_order ==
+      nsparam.fem_parameters.pressure_order,
+    dealii::ExcMessage(
+      "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
+
   this->fe = std::make_shared<FESystem<dim>>(
     FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
 
@@ -134,12 +139,15 @@ MFNavierStokesSolver<dim>::setup_dofs_fd()
 
   // Initialize matrix-free object
   unsigned int mg_level = numbers::invalid_unsigned_int;
-  this->system_operator->reinit(*this->mapping,
-                                this->dof_handler,
-                                this->zero_constraints,
-                                *this->cell_quadrature,
-                                this->simulation_parameters,
-                                mg_level);
+  this->system_operator->reinit(
+    *this->mapping,
+    this->dof_handler,
+    this->zero_constraints,
+    *this->cell_quadrature,
+    this->forcing_function,
+    this->simulation_parameters.physical_properties_manager
+      .get_viscosity_scale(),
+    mg_level);
 
 
   // Initialize vectors using operator
