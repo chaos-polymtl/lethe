@@ -72,7 +72,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
   const std::unordered_map<
     std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                             &boundary_cells_with_points,
+    &                         boundary_cells_with_points,
   const DisableContacts<dim> &disable_contacts_object)
 {
   std::unordered_map<types::particle_index,
@@ -204,7 +204,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
     std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
-               Point<dim>>>  &boundary_cells_with_lines,
+               Point<dim>>> & boundary_cells_with_lines,
   const DisableContacts<dim> &disable_contacts_object)
 {
   std::unordered_map<

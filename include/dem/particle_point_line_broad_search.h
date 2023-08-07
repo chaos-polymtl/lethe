@@ -74,7 +74,7 @@ public:
     const std::unordered_map<
       std::string,
       std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                               &boundary_cells_with_points,
+      &                         boundary_cells_with_points,
     const DisableContacts<dim> &disable_contacts_object);
 
   /**
@@ -107,7 +107,7 @@ public:
       std::string,
       std::tuple<typename Triangulation<dim>::active_cell_iterator,
                  Point<dim>,
-                 Point<dim>>>  &boundary_cells_with_lines,
+                 Point<dim>>> & boundary_cells_with_lines,
     const DisableContacts<dim> &disable_contacts_object);
 };
 
