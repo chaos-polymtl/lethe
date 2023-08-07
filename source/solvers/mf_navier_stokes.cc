@@ -211,8 +211,8 @@ MFNavierStokesSolver<dim>::update_boundary_conditions()
 template <int dim>
 void
 MFNavierStokesSolver<dim>::set_initial_condition_fd(
-  Parameters::InitialConditionType /* initial_condition_type */,
-  bool restart)
+  Parameters::InitialConditionType initial_condition_type,
+  bool                             restart)
 {
   if (restart)
     {
@@ -220,6 +220,16 @@ MFNavierStokesSolver<dim>::set_initial_condition_fd(
       this->pcout << "---> Simulation Restart " << std::endl;
       this->pcout << "************************" << std::endl;
       this->read_checkpoint();
+    }
+  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
+    {
+      this->set_nodal_values();
+      this->finish_time_step();
+    }
+  else
+    {
+      throw std::runtime_error(
+        "Type of initial condition is not supported by MF Navier-Stokes");
     }
 }
 
@@ -477,14 +487,11 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     linear_solver_tolerance,
     true,
     true);
-  bool extra_verbose = false;
-  if (this->simulation_parameters.linear_solver.verbosity ==
-      Parameters::Verbosity::extra_verbose)
-    extra_verbose = true;
 
-  SolverGMRES<VectorType>::AdditionalData solver_parameters(
-    extra_verbose,
-    this->simulation_parameters.linear_solver.max_krylov_vectors);
+  SolverGMRES<VectorType>::AdditionalData solver_parameters;
+
+  solver_parameters.max_n_tmp_vectors =
+    this->simulation_parameters.linear_solver.max_krylov_vectors;
 
   while (success == false and iter < max_iter)
     {
@@ -500,17 +507,7 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
             this->newton_update = 0.0;
 
-            TrilinosWrappers::PreconditionAMG                 preconditioner;
-            TrilinosWrappers::PreconditionAMG::AdditionalData data;
-
-            data.higher_order_elements = true;
-            data.elliptic              = false;
-            data.smoother_type         = "Jacobi";
-
-            preconditioner.initialize(
-              this->system_operator->get_system_matrix(), data);
-
-            // PreconditionIdentity preconditioner;
+            PreconditionIdentity preconditioner;
             solver.solve(*(system_operator),
                          this->newton_update,
                          system_rhs,
