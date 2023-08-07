@@ -18,7 +18,6 @@ Files Used in This Example
 - Parameter file to load particles: ``/examples/dem/3d-rotating-drum/load-rotating-drum.prm``
 - Parameter file for the simulation: ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
-
 -----------------------
 Description of the Case
 -----------------------
@@ -165,16 +164,11 @@ This simulation can be launched in two steps. First the particles need to be loa
 
 .. code-block:: text
 
-  mpirun -np 8 dem load-rotating-drum.prm
+  mpirun -np 64 dem_3d rotating-drum.prm
 
-Then the rotation of the drum is started in a second simulation:
-
-.. code-block:: text
-
-  mpirun -np 8 dem load-rotating-drum.prm
 
 .. warning::
-	Loading the particles in this example requires approximately 50 minutes on 8 cores. Simulating the motion of the particles requires an additional 8 hours. This high computational cost is because of the large number of particles and the long duration of the simulation.
+	This example needs a simulation time of approximately 48 hours 64 cores. This high computational cost is because of the large number of particles.
 
 
 ---------
