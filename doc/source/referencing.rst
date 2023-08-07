@@ -33,7 +33,7 @@ Sharp-Edge Immersed Boundary Method
 Nitsche Immersed Boundary Method
 ------------------------------------
 
-* `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", October 2022 <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4264140>`_
+* `J. Joachim, C.-A. Daunais, V. Bibeau, L. Heltai and B. Blais, "A Parallel and Adaptative Nitsche Immersed Boundary Method to Simulate Viscous Mixing", Journal of Computational Physics, 2023 <https://doi.org/10.1016/j.jcp.2023.112189>`_.
 
 
 Non-Newtonian Fluids
