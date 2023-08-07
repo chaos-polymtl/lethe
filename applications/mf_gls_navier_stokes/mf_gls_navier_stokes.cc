@@ -40,7 +40,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          MFGLSNavierStokesSolver<2> problem(NSparam);
+          MFNavierStokesSolver<2> problem(NSparam);
           problem.solve();
         }
 
@@ -53,7 +53,7 @@ main(int argc, char *argv[])
           prm.parse_input(argv[1]);
           NSparam.parse(prm);
 
-          MFGLSNavierStokesSolver<3> problem(NSparam);
+          MFNavierStokesSolver<3> problem(NSparam);
           problem.solve();
         }
       else

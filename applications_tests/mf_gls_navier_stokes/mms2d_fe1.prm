@@ -23,6 +23,10 @@ subsection stabilization
   set stabilization             = pspg_supg
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
@@ -107,9 +111,9 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set method                                = gmres
-  set max iters                             = 5000
-  set relative residual                     = 1e-4
-  set minimum residual                      = 1e-9
-  set verbosity                             = quiet
+  set method            = gmres
+  set max iters         = 5000
+  set relative residual = 1e-4
+  set minimum residual  = 1e-9
+  set verbosity         = quiet
 end
