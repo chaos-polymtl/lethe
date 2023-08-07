@@ -2,9 +2,7 @@
 Dam-Break
 ==========================
 
-This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
-
-.. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
+This example simulates the dam break experiments of Martin *et al.* `[1] <https://doi.org/10.1098/rsta.1952.0006>`_
 
 
 ----------------------------------
@@ -21,7 +19,8 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/dam-break/``
+- Parameter file: ``examples/multiphysics/dam-break/``
+- Python script for postprocessing: ``examples/multiphysics/dam-break/dam-break-2d.py``
 
 
 ---------------------------
@@ -35,10 +34,10 @@ the liquid is released into the total simulation domain.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/VOF-dam-break-configuration.png
+.. image:: images/VOF-dam-break-initial-configuration.png
     :alt: Schematic
     :align: center
-    :width: 400
+    :width: 600
 
 .. note:: 
     All the four boundary conditions are ``slip``, and an external 
@@ -250,7 +249,7 @@ Run ``python3 ./dam-break-2d.py ./output`` to execute this
 post-processing code, where ``./output`` is the directory that 
 contains the simulation results. In post-processing, the maximum 
 dimensionless lateral position of the liquid phase is tracked 
-through time and compared with the experiments of Martin and Moyce
+through time and compared with the experiments of Martin *et al.*
 (1952) `[1] <https://doi.org/10.1098/rsta.1952.0006>`_. The following figure shows the result of
 the post-processing, with a good agreement between the simulation and the experiment:
 
@@ -273,4 +272,4 @@ and refines the meshes on the interface.
 References
 ----------------------------
 
-`[1] <https://doi.org/10.1098/rsta.1952.0006>`_ Martin, J. C., Moyce, W. J., Martin, J. C., Moyce, W. J., Penney, W. G., Price, A. T., & Thornhill, C. K. (1952). Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane. Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, 244(882), 312-324.
+`[1] <https://doi.org/10.1098/rsta.1952.0006>`_ J. C. Martin *et al.*, “Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane,” Philos. *Trans. R. Soc. Lond. Ser. Math. Phys. Sci.*, vol. 244, no. 882, pp. 312–324, Mar. 1952, doi: 10.1098/rsta.1952.0006.
