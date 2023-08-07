@@ -151,22 +151,34 @@ PlaneInsertion<dim>::insert(
           remained_particles_of_each_type -=
             number_of_particles_to_insert_per_core[i];
 
-          // If the remained_particles_of_each_type become negative, this means
-          // that we are trying to insert to many particle in the simulation.
-          // Thus, we need to decrease the number of empty_cell we want to insert
-          // in at this time step. So...
+          // If the remained_particles_of_each_type variable become negative,
+          // this means that we are trying to insert to many particle in the
+          // simulation. Thus, we need to decrease the number of empty_cell we
+          // want to insert in at this time step.
           if (remained_particles_of_each_type <= 0)
             {
-              // ... we decrease the number of particle at the current
-              // processor, since it's the one who got the variable to become
-              // negative. Then...
+              // At this point, we know the current processor have to many
+              // available cell to insert in (or just the right amount). The
+              // excess number of available cell on this processor is equal to
+              // the positive value of the remained_particles_of_each_type
+              // variable since that variable became negative on this processor.
+
+              // Thus, we decrease the number of particle to insert on the
+              // current processor. To do so, we add the negative variable to
+              // the number of available cells which guarantiees that the number
+              // of inserted particles in the simulation will reach its maximum
+              // on this processor.
+
               number_of_particles_to_insert_per_core[i] +=
                 remained_particles_of_each_type;
 
-              // ... we put remained_particles_of_each_type back to zero.
+              // We put the remained_particles_of_each_type variable  back to
+              // zero since we have just lower the number of cell available cell
+              // on this processor by the exceeding amount.
               remained_particles_of_each_type = 0;
 
-              // Loop over the remaining processor and put those at zero.
+              // Loop over the remaining processor and put their number of
+              // available cell to zero.
               for (unsigned int j = i + 1;
                    j < number_of_particles_to_insert_per_core.size();
                    ++j)
@@ -177,8 +189,8 @@ PlaneInsertion<dim>::insert(
             }
         }
 
-      // Now, every processor knows how many particle it needs to insert. They
-      // also know how many particle the other processor have to insert. This
+      // Now, every processors know how many particles it need to insert. They
+      // also know how many particles the other processors have to insert. This
       // way, it's possible for a processor to find the correct range of
       // particle id to use with the particle_counter variable.
 
@@ -269,8 +281,8 @@ PlaneInsertion<dim>::insert(
                                            cell,
                                            properties_of_one_particle);
         }
-      // We need to synchronize the particle_counter on all the processor for
-      // the next insertion time step.
+      // Finally, we update the particle_counter variable on all the processor
+      // for the next insertion time step.
       particle_counter +=
         std::accumulate(number_of_particles_to_insert_per_core.begin(),
                         number_of_particles_to_insert_per_core.end(),
