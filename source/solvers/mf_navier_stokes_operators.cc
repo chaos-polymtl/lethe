@@ -108,6 +108,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->parameters = nsparam;
 
+  this->fe_degree = dof_handler.get_fe().degree;
+
   this->compute_element_size();
 
   constrained_indices.clear();
@@ -204,9 +206,10 @@ NavierStokesOperatorBase<dim, number>::compute_element_size()
           double h_k = matrix_free.get_cell_iterator(cell, lane)->measure();
 
           if (dim == 2)
-            element_size[cell][lane] = std::sqrt(4. * h_k / M_PI);
+            element_size[cell][lane] = std::sqrt(4. * h_k / M_PI) / fe_degree;
           else if (dim == 3)
-            element_size[cell][lane] = std::pow(6 * h_k / M_PI, 1. / 3.);
+            element_size[cell][lane] =
+              std::pow(6 * h_k / M_PI, 1. / 3.) / fe_degree;
         }
     }
 }
@@ -568,10 +571,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       typename FECellIntegrator::value_type    value_result;
       typename FECellIntegrator::gradient_type gradient_result;
 
-      // Assemble -nabla u + nabla p = 0 for the first 3 components
-      // The corresponding weak form is nabla v * nabla u  - p nabla \cdot v = 0
-      // ; Assemble q div(u) = 0 for the last component
-
+      // Gather previous values of the velocity and the pressure
       auto previous_values   = this->nonlinear_previous_values(cell, q);
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
       auto previous_hessian_diagonal =
@@ -592,7 +592,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
                                                                 (h[v] * h[v])));
         }
 
-      // Weak form jacobian:
+      // Weak form jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           // ν(∇v,∇δu)
@@ -611,7 +611,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
             }
         }
 
-      // PSPG jacobian:
+      // PSPG jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)
@@ -630,7 +630,7 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       // (∇δp)τ·∇q
       gradient_result[dim] += tau * gradient[dim];
 
-      // SUPG
+      // SUPG jacobian
       for (unsigned int i = 0; i < dim; ++i)
         {
           for (unsigned int k = 0; k < dim; ++k)

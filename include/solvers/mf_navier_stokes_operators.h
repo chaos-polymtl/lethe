@@ -285,6 +285,7 @@ protected:
   mutable TrilinosWrappers::SparseMatrix system_matrix;
   SimulationParameters<dim>              parameters;
   AlignedVector<VectorizedArray<number>> element_size;
+  unsigned int                           fe_degree;
 
   // Variables needed from the last newton step vector
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
