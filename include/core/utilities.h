@@ -29,6 +29,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#include <regex>
+
+
 using namespace dealii;
 
 /**
@@ -62,7 +65,7 @@ public:
 inline void
 add_statistics_to_table_handler(const std::string variable,
                                 const statistics  stats,
-                                TableHandler &    table)
+                                TableHandler     &table)
 {
   table.add_value("Variable", variable);
   table.add_value("Min", stats.min);
@@ -89,20 +92,20 @@ add_statistics_to_table_handler(const std::string variable,
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T> &             independent_values,
-  const std::string &                independent_column_name,
+  const std::vector<T>              &independent_values,
+  const std::string                 &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string> &   dependent_column_name,
+  const std::vector<std::string>    &dependent_column_name,
   const unsigned int                 display_precision);
 
 
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T> &                          independent_values,
-  const std::string &                             independent_column_name,
+  const std::vector<T>                           &independent_values,
+  const std::string                              &independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vector,
-  const std::vector<std::string> &                dependent_column_name,
+  const std::vector<std::string>                 &dependent_column_name,
   const unsigned int                              display_precision);
 
 /**
@@ -126,9 +129,9 @@ template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string> &   independent_column_name,
+  const std::vector<std::string>    &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string> &   dependent_column_name,
+  const std::vector<std::string>    &dependent_column_name,
   const unsigned int                 display_precision);
 
 
@@ -151,9 +154,9 @@ template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string> &   independent_column_name,
-  const std::vector<double> &        dependent_values,
-  const std::string &                dependent_column_name,
+  const std::vector<std::string>    &independent_column_name,
+  const std::vector<double>         &dependent_values,
+  const std::string                 &dependent_column_name,
   const unsigned int                 display_precision);
 
 
@@ -243,7 +246,7 @@ calculate_point_property_cahn_hilliard(const double phase_cahn_hilliard,
  *   @param delimiter The delimiter used to read the table.
  */
 void
-fill_table_from_file(TableHandler &    table,
+fill_table_from_file(TableHandler     &table,
                      const std::string file_name,
                      const std::string delimiter = " ");
 
@@ -323,6 +326,33 @@ deserialize_table(TableHandler &table, const std::string filename)
   ia >> table;
 }
 
+/**
+ * @brief  get the value of a particular parameter from the contents of the input
+ * file. Return an empty string if not found. This function is used to read an
+ * individual parameter for an input file. This function is adapted from ASPECT
+ * and is mainly used in parsing the dim of the problem before creating the
+ * whole parameter parser
+ *
+ * @param parameters The value of the parameter
+ * @param parameter_name The name of the parameter
+ */
+
+std::string
+get_last_value_of_parameter(const std::string &parameters,
+                            const std::string &parameter_name);
+
+/**
+ * @brief Extract the dimension in which to run Lethe from the
+ * the contents of the parameter file. This is something that
+ * we need to do before processing the parameter file since we
+ * need to know whether to use the dim=2 or dim=3 instantiation
+ * of the main classes.
+ *
+ * @param table The table to be deserialized
+ * @param filename The file name (including the extension) to be used
+ */
+unsigned int
+get_dimension(const std::string &parameters);
 
 
 #endif

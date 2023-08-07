@@ -8,10 +8,10 @@
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T> &             independent_vector,
-  const std::string &                independent_column_name,
+  const std::vector<T>              &independent_vector,
+  const std::string                 &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string> &   dependent_column_name,
+  const std::vector<std::string>    &dependent_column_name,
   const unsigned int                 display_precision)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
@@ -37,10 +37,10 @@ make_table_scalars_tensors(
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
-  const std::vector<T> &                          independent_vector,
-  const std::string &                             independent_column_name,
+  const std::vector<T>                           &independent_vector,
+  const std::string                              &independent_column_name,
   const std::vector<std::vector<Tensor<1, dim>>> &dependent_vectors,
-  const std::vector<std::string> &                dependent_column_name,
+  const std::vector<std::string>                 &dependent_column_name,
   const unsigned int                              display_precision)
 {
   AssertDimension(dependent_column_name.size(), 3 * dim);
@@ -77,9 +77,9 @@ template <int dim>
 TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string> &   independent_column_name,
+  const std::vector<std::string>    &independent_column_name,
   const std::vector<Tensor<1, dim>> &dependent_vector,
-  const std::vector<std::string> &   dependent_column_name,
+  const std::vector<std::string>    &dependent_column_name,
   const unsigned int                 display_precision)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
@@ -110,9 +110,9 @@ template <int dim>
 TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, dim>> &independent_vector,
-  const std::vector<std::string> &   independent_column_name,
-  const std::vector<double> &        dependent_vector,
-  const std::string &                dependent_column_name,
+  const std::vector<std::string>    &independent_column_name,
+  const std::vector<double>         &dependent_vector,
+  const std::string                 &dependent_column_name,
   const unsigned int                 display_precision)
 {
   AssertDimension(independent_vector.size(), dependent_vector.size());
@@ -136,7 +136,7 @@ make_table_tensors_scalars(
 }
 
 void
-fill_table_from_file(TableHandler &    table,
+fill_table_from_file(TableHandler     &table,
                      const std::string file_name,
                      const std::string delimiter)
 {
@@ -255,128 +255,230 @@ create_output_folder(const std::string &dirname)
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &      independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<double>       &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &      independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<double>       &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &                   independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<double>                    &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<double> &                   independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<double>                    &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
   const std::vector<unsigned int> &independent_values,
-  const std::string &              independent_column_name,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
   const std::vector<unsigned int> &independent_values,
-  const std::string &              independent_column_name,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<unsigned int> &             independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<unsigned int>              &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<unsigned int> &             independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<unsigned int>              &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &         independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<int>          &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &         independent_values,
-  const std::string &              independent_column_name,
+  const std::vector<int>          &independent_values,
+  const std::string               &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &                      independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<int>                       &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 2>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_scalars_tensors(
-  const std::vector<int> &                      independent_values,
-  const std::string &                           independent_column_name,
+  const std::vector<int>                       &independent_values,
+  const std::string                            &independent_column_name,
   const std::vector<std::vector<Tensor<1, 3>>> &dependent_vector,
-  const std::vector<std::string> &              dependent_column_name,
+  const std::vector<std::string>               &dependent_column_name,
   const unsigned int                            display_precision);
 
 template TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, 2>> &independent_values,
-  const std::vector<std::string> & independent_column_name,
+  const std::vector<std::string>  &independent_column_name,
   const std::vector<Tensor<1, 2>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_tensors_tensors(
   const std::vector<Tensor<1, 3>> &independent_values,
-  const std::vector<std::string> & independent_column_name,
+  const std::vector<std::string>  &independent_column_name,
   const std::vector<Tensor<1, 3>> &dependent_vector,
-  const std::vector<std::string> & dependent_column_name,
+  const std::vector<std::string>  &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, 2>> &independent_vector,
-  const std::vector<std::string> & independent_column_name,
-  const std::vector<double> &      dependent_values,
-  const std::string &              dependent_column_name,
+  const std::vector<std::string>  &independent_column_name,
+  const std::vector<double>       &dependent_values,
+  const std::string               &dependent_column_name,
   const unsigned int               display_precision);
 
 template TableHandler
 make_table_tensors_scalars(
   const std::vector<Tensor<1, 3>> &independent_vector,
-  const std::vector<std::string> & independent_column_name,
-  const std::vector<double> &      dependent_values,
-  const std::string &              dependent_column_name,
+  const std::vector<std::string>  &independent_column_name,
+  const std::vector<double>       &dependent_values,
+  const std::string               &dependent_column_name,
   const unsigned int               display_precision);
+
+
+std::string
+get_last_value_of_parameter(const std::string &parameters,
+                            const std::string &parameter_name)
+{
+  std::string return_value;
+
+  std::istringstream x_file(parameters);
+  while (x_file)
+    {
+      // Get one line and then match a regex to it that matches the parameter
+      // we are looking for. Before we do that, strip spaces from the front
+      // and back of the line:
+      std::string line;
+      std::getline(x_file, line);
+
+      while ((line.size() > 0) && (line[0] == ' ' || line[0] == '\t'))
+        line.erase(0, 1);
+      while ((line.size() > 0) &&
+             (line[line.size() - 1] == ' ' || line[line.size() - 1] == '\t'))
+        line.erase(line.size() - 1, std::string::npos);
+
+      std::match_results<std::string::const_iterator> matches;
+      const std::string                               regex =
+        "set[ \t]+" + parameter_name + "[ \t]*=[ \t]*(.*)";
+      if (std::regex_match(line, matches, std::regex(regex)))
+        {
+          // Since the line as a whole matched, the 'matches' variable needs to
+          // contain two entries: [0] denotes the whole string, and [1] the
+          // one that was matched by the '(.*)' expression.
+          Assert(matches.size() == 2, dealii::ExcInternalError());
+          return_value = std::string(matches[1].first, matches[1].second);
+        }
+    }
+
+  return return_value;
+}
+
+unsigned int
+get_dimension(const std::string &parameters)
+{
+  const std::string dimension =
+    get_last_value_of_parameter(parameters, "dimension");
+  if (dimension.size() > 0)
+    {
+      // Extracted from ASPECT
+      // A common problem is that people have .prm files that were generated
+      // on Windows, but then run this on Linux where the line endings are
+      // different. This is pernicious because it means that the conversion
+      // of a string such as "2\r" to an integer fails, but if we print
+      // this string, it comes out completely garbled because it contains
+      // a carriage-return without a newline -- so the error message looks
+      // like this:
+      //
+      //    >.  While reading the dimension from the input file, ASPECT found a
+      //    string that can not be converted to an integer: <2
+      //
+      // Note how the end of the error message overwrites the beginning
+      // of the line.
+      //
+      // To avoid this kind of error, specifically test up front that the
+      // text in question does not contain '\r' characters. If we are on
+      // linux, then this kind of character would means that the line endings
+      // are wrong. On the other hand, if we are on windows, then the
+      // getline command we have used in finding 'dimension' would have
+      // filtered it out. So its presence points to a problem.
+
+      AssertThrow(
+        dimension.find('\r') == std::string::npos,
+        dealii::ExcMessage(
+          "It appears that your input file uses Windows-style "
+          "line endings ('\\r\\n') but you are running on a system where "
+          "the C++ run time environment expects input files to have "
+          "Unix-style line endings ('\\n'). You need to convert your "
+          "input file to use the correct line endings before running "
+          "ASPECT with it."));
+      try
+        {
+          return dealii::Utilities::string_to_int(dimension);
+        }
+      catch (...)
+        {
+          AssertThrow(false,
+                      dealii::ExcMessage(
+                        "While reading the dimension from the input file, "
+                        "Lethe found a string that can not be converted to "
+                        "an integer: <" +
+                        dimension + ">."));
+          return 0; // we should never get here.
+        }
+    }
+  else
+    {
+      AssertThrow(
+        false,
+        dealii::ExcMessage(
+          "While reading the dimension from the input file, "
+          "Lethe found a value that is neither 2 or 3. Since August 2023, "
+          "Lethe requires that the user explicitely specify the dimension of the problem within the parameter file. This can be achieved by adding dimension = 2 or dimension = 3 within the parameter file"));
+    }
+}

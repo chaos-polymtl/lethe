@@ -1,4 +1,5 @@
 add_subdirectory(cfd_dem_coupling_3d)
+add_subdirectory(dem)
 add_subdirectory(dem_2d)
 add_subdirectory(dem_3d)
 add_subdirectory(gd_navier_stokes_2d)

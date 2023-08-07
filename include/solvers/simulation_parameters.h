@@ -60,7 +60,7 @@ public:
                                       boundary_conditions_cahn_hilliard;
   Parameters::InitialConditions<dim> *initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *analytical_solution;
-  SourceTerms::SourceTerm<dim> *                source_term;
+  SourceTerms::SourceTerm<dim>                 *source_term;
   Parameters::VelocitySource                    velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
   Parameters::DynamicFlowControl                flow_control;
@@ -72,6 +72,11 @@ public:
   void
   declare(ParameterHandler &prm)
   {
+    prm.declare_entry("dimension",
+                      "0",
+                      Patterns::Integer(),
+                      "Dimension of the problem");
+
     dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);

@@ -1,6 +1,7 @@
 foreach(_target IN ITEMS
     cfd_dem_coupling_2d
     cfd_dem_coupling_3d
+    dem
     dem_2d
     dem_3d
     dem_parameter_template
