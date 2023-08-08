@@ -25,7 +25,7 @@ In what follows, we explain the content of each folder and the logic behind this
 Applications and Their Tests
 ----------------------------
 
-Lethe is designed to contain a number of solvers for single or multiphysics problems. These various solvers take the form of multiple executables which are named applications. They are stored in the ``/applications`` folder. Each application is housed in its own separate folder. For example, the folder ``/applications/gls_navier_stokes`` contains the source which instantiates the 2D version of the GLS Navier-Stokes solver, whereas the ``/applications/gls_navier_stokes`` folder stores the source which instantiates the 3D version of the GLS Navier-Stokes solver.
+Lethe is designed to contain a number of solvers for single or multiphysics problems. These various solvers take the form of multiple executables which are named applications. They are stored in the ``/applications`` folder. Each application is housed in its own separate folder. For example, the folder ``/applications/gls_navier_stokes`` contains the source which instantiates the GLS Navier-Stokes solver.
 
 In Lethe, solvers are minimal applications with only a main file. They contain little source code (generally < 100 lines). Their only goal is to instantiate the solver classes with the appropriate dimension of the problem. Since all of Lethe solvers are templated for the dimension of the problem (int dim), the same source code is re-used in both 2D and 3D. Applications are made to be comprehensive. They are fully controlled from text files (.prm and eventually .json).
 
