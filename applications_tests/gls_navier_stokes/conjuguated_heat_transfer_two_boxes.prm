@@ -1,0 +1,126 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 2
+
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 0
+  set output frequency  = 1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of solids = 1
+  subsection fluid 0
+    set kinematic viscosity  = 1.000
+    set thermal conductivity = 1
+  end
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set heat transfer = true
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type      = gmsh
+  set file name = ../box.msh
+  set simplex   = true
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set verbosity = verbose
+  #set calculate temperature range = true
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = if (y<0.1,y*(0.1-y),0); 0 ; if(y<0.1,(2-2*x),0)
+  end
+  set verbosity = verbose
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set type = function
+    set id   = 0
+    subsection u
+      set Function expression = y * (0.1-y)
+    end
+    subsection v
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set type = noslip
+    set id   = 2
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 2
+  subsection bc 0
+    set id    = 0
+    set type  = temperature
+    set value = 1
+  end
+
+  subsection bc 1
+    set id    = 3
+    set type  = temperature
+    set value = 0
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set tolerance      = 1e-9
+  set max iterations = 3
+  set verbosity      = quiet
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set method                                = gmres
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-10
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-10
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
+end

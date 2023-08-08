@@ -7,7 +7,7 @@ This example simulates a rotating drum. We setup this simulation according to th
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Rotational boundary
 - Load-balancing
 
@@ -15,7 +15,8 @@ Features
 ----------------------------
 Files Used in This Example
 ----------------------------
-``/examples/dem/3d-rotating-drum/rotating-drum.prm``
+- Parameter file to load particles: ``/examples/dem/3d-rotating-drum/load-rotating-drum.prm``
+- Parameter file for the simulation: ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
 
 -----------------------
@@ -48,24 +49,24 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
 
-An insertion box is defined inside the cylindrical domain. 75110 particles are inserted non-uniformly at each insertion step.
+An insertion box is defined inside the cylindrical domain. 38000 particles are inserted non-uniformly at each insertion step.
 
 .. code-block:: text
 
-    subsection insertion info
-      set insertion method                               = non_uniform
-      set inserted number of particles at each time step = 37555
-      set insertion frequency                            = 150000
-      set insertion box minimum x                        = -0.175
-      set insertion box minimum y                        = -0.07
-      set insertion box minimum z                        = 0
-      set insertion box maximum x                        = 0.175
-      set insertion box maximum y                        = 0.07
-      set insertion box maximum z                        = 0.09
-      set insertion distance threshold                   = 1.575
-      set insertion random number range                  = 0.05
-      set insertion random number seed                   = 19
-    end
+  subsection insertion info
+    set insertion method                               = non_uniform
+    set inserted number of particles at each time step = 38000
+    set insertion frequency                            = 25000
+    set insertion box minimum x                        = -0.175
+    set insertion box minimum y                        = -0.07
+    set insertion box minimum z                        = 0
+    set insertion box maximum x                        = 0.175
+    set insertion box maximum y                        = 0.07
+    set insertion box maximum z                        = 0.09
+    set insertion distance threshold                   = 1.575
+    set insertion random number range                  = 0.025
+    set insertion random number seed                   = 19
+  end
 
 
 Lagrangian Physical Properties
@@ -102,14 +103,8 @@ Model Parameters
 
 Load-balancing updates the distribution of the subdomains between the processes in parallel simulation to achieve better computational performance (less simulation time). Three load-balancing methods are available in Lethe-DEM: ``once``, ``frequent``, or ``dynamic``. Read `this article <https://www.mdpi.com/2227-9717/10/1/79>`_ for more information about different load-balancing methods and their performances in various types of DEM simulations.
 
-Selecting ``repartition method = once``, requires defining the step at which the code calls load balancing (``load balance step``). ``Frequent`` ``repartition method`` requires defining ``load balance frequency``, and in ``dynamic`` ``repartition method``, we should define ``load balance threshold`` and ``dynamic load balance check frequency``. In ``dynamic`` load balancing, the code checks the distribution of particles among the processors, every ``dynamic load balance check frequency`` steps, and if
 
-.. math::
-    L_{max}-L_{min}>{\beta}\bar{L}
-
-it calls load-balancing. :math:`{L}` and :math:`{\beta}` denote computational load on a process and ``load balance threshold``, respectively.
-
-In the rotating drum simulation, we use a ``once`` load-balancing method, since particles occupy a constant region inside the rotating drum after reaching steady-state operation.
+In the rotating drum simulation, we use a ``frequent`` load-balancing method and repartition the particles every :math:`20 000` iterations.
 
 .. code-block:: text
 
@@ -120,8 +115,9 @@ In the rotating drum simulation, we use a ``once`` load-balancing method, since 
         set neighborhood threshold                  = 1.3
       end
       subsection load balancing
-        set load balance method                     = once
-        set step                                    = 150000
+        set load balance method = frequent
+        set frequency           = 20000
+        set step                = 150000
       end
       set particle particle contact force method    = hertz_mindlin_limit_overlap
       set particle wall contact force method        = nonlinear
@@ -132,16 +128,14 @@ In the rotating drum simulation, we use a ``once`` load-balancing method, since 
 DEM Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined. There are four boundary types: ``fixed_wall``, ``outlet``, ``rotational`` (around the center), and ``translational``. For ``rotational`` motion, ``rotational speed`` and ``rotational vector`` are required, while for ``translational`` motion, the ``speed`` should be defined in each direction.
-
-``fixed_wall`` is a static wall, and particles collide with these static walls upon reaching them. The only way to move these walls is to move the entire triangulation. If the ``outlet`` condition is chosen for a boundary, particles can leave the simulation domain via this outlet. Using ``rotational`` or ``translational`` boundary conditions exerts imaginary rotational and translational velocities to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the ``cylinder`` side wall, defined with deal.ii grid generator is 4. We set the ``rotational speed`` equal to 11.6 rad/s, and the cylinder should rotate around its axis (`x` direction).
+In this subsection, the boundary conditions of the DEM simulation are defined. First of all, the ``number of boundary conditions`` is specified. Then for each boundary condition, its information is defined.  Using ``rotational`` boundary condition exerts imaginary rotational velocity to that boundary. In other words, the boundary does not move, but the particles that have collisions with these walls feel a rotational or translational velocity from the wall. This feature is used in the rotating drum example. The boundary id of the ``cylinder`` side wall, defined with deal.ii grid generator is 4. We set the ``rotational speed`` equal to 11.6 rad/s, and the cylinder should rotate around its axis (`x` direction).
 
 .. code-block:: text
 
     subsection DEM boundary conditions
       set number of boundary conditions = 1
       subsection boundary condition 0
-        set boundary id         = 4
+        set boundary id         = 0
         set type                = rotational
         set rotational speed    = 11.6
         set rotational vector x = 1
@@ -157,8 +151,8 @@ Simulation Control
 .. code-block:: text
 
     subsection simulation control
-      set time step        = 1e-6
-      set time end         = 15
+      set time step        = 1e-5
+      set time end         = 12
       set log frequency    = 1000
       set output frequency = 1000
     end
@@ -167,15 +161,20 @@ Simulation Control
 ----------------------
 Running the Simulation
 ----------------------
-This simulation can be launched (in parallel mode on 64 processes) by:
+This simulation can be launched in two steps. First the particles need to be loaded (here we use 8 cores):
 
 .. code-block:: text
 
-  mpirun -np 64 dem_3d rotating-drum.prm
+  mpirun -np 8 dem load-rotating-drum.prm
 
+Then the rotation of the drum is started in a second simulation:
+
+.. code-block:: text
+
+  mpirun -np 8 dem load-rotating-drum.prm
 
 .. warning::
-	This example needs a simulation time of approximately 48 hours 64 cores. This high computational cost is because of the large number of particles.
+	Loading the particles in this example requires approximately 50 minutes on 8 cores. Simulating the motion of the particles requires an additional 8 hours. This high computational cost is because of the large number of particles and the long duration of the simulation.
 
 
 ---------

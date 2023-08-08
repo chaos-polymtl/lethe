@@ -8,7 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d`` and ``gls_vans_3d``
+- Solvers: ``dem`` and ``gls_vans``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 
@@ -24,7 +24,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example simulates air flow through a packing of particles. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``gls_vans_3d`` solver within Lethe to simulate air flow through the packed bed.
+This example simulates air flow through a packing of particles. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``gls_vans`` solver within Lethe to simulate air flow through the packed bed.
 
 
 -------------------
@@ -178,17 +178,17 @@ We need to pack the particles in the middle of the cylinder. Therefore, we creat
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
 
-  dem_3d packing-in-circle.prm
+  dem packing-in-circle.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d packing-in-circle.prm
+  mpirun -np 8 dem packing-in-circle.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
@@ -360,11 +360,11 @@ Linear Solver
 Running the VANS Simulation
 ------------------------------
  
-The simulation is run using the ``gls_vans_3d`` application as per the following command:
+The simulation is run using the ``gls_vans`` application as per the following command:
 
 .. code-block:: text
 
-    path_to_vans_application/gls_vans_3d parameter_file.prm 
+    path_to_vans_application/gls_vans parameter_file.prm 
 
 
 -------------

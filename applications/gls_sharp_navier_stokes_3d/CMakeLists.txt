@@ -1,3 +1,0 @@
-add_executable(gls_sharp_navier_stokes_3d gls_sharp_navier_stokes_3d.cc)
-deal_ii_setup_target(gls_sharp_navier_stokes_3d)
-target_link_libraries(gls_sharp_navier_stokes_3d lethe-fem-dem)

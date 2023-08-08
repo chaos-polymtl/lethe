@@ -6,7 +6,7 @@ Flow past a Backward-Facing Step
 Features
 --------
 
-- Solver: ``gls_navier_stokes_2d`` (with Q1-Q1)
+- Solver: ``gls_navier_stokes`` (with Q1-Q1)
 - Steady and pseudo steady state solution
 - Comparison with benchmark solutions
 - Mesh refinement and error analysis
@@ -245,13 +245,13 @@ The simulation can be executed using the following command (assuming that the so
 
 .. code-block:: text
 
-	gls_navier_stokes_2d 2D-backward-facing-step-steady.prm
+	gls_navier_stokes 2D-backward-facing-step-steady.prm
 	
 However, mpi can be used to lower calculation time by using several CPUs (especially useful for pseudo-steady simulations) :
 
 .. code-block:: text
 
-	mpirun -np j gls_navier_stokes_2d 2D-backward-facing-step-steady.prm
+	mpirun -np j gls_navier_stokes 2D-backward-facing-step-steady.prm
 	
 where ``j`` is the number of CPUs used for the computations.
 

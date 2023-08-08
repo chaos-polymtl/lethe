@@ -7,7 +7,7 @@ This is a mini-example that only adds Lagrangian post-processing features to the
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Rotational boundary
 - Load-balancing
 - Lagrangian post-processing

@@ -1,0 +1,149 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 2
+
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.2
+  set time step        = 0.1
+  set output name      = NSVOF_2_isothermal_compressible_fluids
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection mass conservation
+    set monitoring      = true
+    set monitored fluid = fluid 1
+    set verbosity       = extra verbose
+  end
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function expression = if (x<0.5 & y<0.7, 1, 0)
+  end
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  set enable = true
+  subsection xyz
+    set Function expression = 0;-1.0; 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density model       = isothermal_ideal_gas
+    set kinematic viscosity = 0.001516
+  end
+  subsection fluid 1
+    set density model = isothermal_ideal_gas
+    subsection isothermal_ideal_gas
+      set density_ref = 50
+    end
+    set kinematic viscosity = 0.000001
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2, 2 : 1, 1 : 0 , 0 : true
+  set initial refinement = 5
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = slip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = slip
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set tolerance      = 1e-4
+  set max iterations = 20
+  set verbosity      = quiet
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 1000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-5
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors                    = 200
+end

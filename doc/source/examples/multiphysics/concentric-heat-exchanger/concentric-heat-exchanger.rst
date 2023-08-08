@@ -8,7 +8,7 @@ This example simulates a heat exchanger which is made of two concentric pipes in
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes_3d`` 
+- Solver: ``gls_navier_stokes`` 
 - Heat transfer physics
 - Conjugated heat transfer
 
@@ -207,9 +207,9 @@ Finally, we are interested in steady-state results and we thus specify a steady-
 Running the Simulation
 -----------------------
 
-Call the gls_navier_stokes_3d by invoking:
+Call the gls_navier_stokes by invoking:
 
-``mpirun -np 8 gls_navier_stokes_3d concentric-heat-exchanger.prm``
+``mpirun -np 8 gls_navier_stokes concentric-heat-exchanger.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

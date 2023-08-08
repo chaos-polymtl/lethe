@@ -1,0 +1,128 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set output name      = poiseuille_restart-output
+  set time step        = 0.1
+  set output frequency = 0
+  set time end         = 2.0
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set restart  = true
+  set filename = poiseuille_restart
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = cylinder
+  set grid arguments     = 1 : 1
+  set initial refinement = 3
+end
+
+#---------------------------------------------------
+# Flow control
+#---------------------------------------------------
+
+subsection flow control
+  set enable            = true
+  set inlet boundary id = 1
+  set average velocity  = 3.20364
+  set flow direction    = 0
+  set verbosity         = verbose
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate average velocities = true
+  set initial time                 = 1.5
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set type = noslip
+    set id   = 0
+  end
+  subsection bc 1
+    set type               = periodic
+    set id                 = 1
+    set periodic_id        = 2
+    set periodic_direction = 0
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set tolerance      = 1e-5
+  set max iterations = 10
+  set verbosity      = quiet
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-9
+  set max krylov vectors                    = 200
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = quiet
+end

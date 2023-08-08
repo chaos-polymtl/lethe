@@ -1,0 +1,109 @@
+set dimension = 3
+
+subsection simulation control
+  set method           = steady
+  set output frequency = 0
+  set log precision    = 4
+end
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 1
+    set density             = 1
+  end
+end
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 5,5,5: -2,-2,-2 : 2 , 2 ,2 : true
+  set initial refinement = 1
+end
+
+subsection boundary conditions
+  set number = 6
+  subsection bc 0
+    set id   = 0
+    set type = function
+    subsection u
+      set Function expression = 1
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 1
+    set type = outlet
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+  subsection bc 4
+    set id   = 4
+    set type = noslip
+  end
+  subsection bc 5
+    set id   = 5
+    set type = noslip
+  end
+end
+
+subsection particles
+  set number of particles                     = 1
+  set assemble Navier-Stokes inside particles = false
+  set levels not precalculated                = 0
+
+  subsection extrapolation function
+    set stencil order = 2
+  end
+
+  subsection local mesh refinement
+    set initial refinement                = 2
+    set refine mesh inside radius factor  = 0
+    set refine mesh outside radius factor = 1.2
+  end
+
+  subsection particle info 0
+    set type            = composite
+    set shape arguments = spooky_composite_shape
+  end
+end
+
+subsection mesh adaptation
+  set type = kelly
+end
+
+subsection initial conditions
+  set type      = nodal
+  set viscosity = 0.05
+end
+
+subsection non-linear solver
+  set verbosity = quiet
+end
+
+subsection forces
+  set verbosity = verbose
+end
+
+subsection timer
+  set type = none
+end
+
+subsection linear solver
+  set verbosity = quiet
+end
