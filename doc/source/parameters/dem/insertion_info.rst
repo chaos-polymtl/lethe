@@ -11,7 +11,7 @@ In this subsection, insertion methods which are ``uniform``, ``non_unifom``, ``p
 .. code-block:: text
 
   subsection insertion info
-    # Choices are uniform|non_uniformplane|list
+    # Choices are uniform|non_uniform|plane|list
     set insertion method                               = non_uniform
 
     # Every method
@@ -61,12 +61,13 @@ The ``insertion method`` parameter chooses the type of insertion. Acceptable cho
 * The ``insertion frequency`` parameter defines the frequency of insertion. For example, if the ``insertion frequency`` is set equal to 10000, the iterations 1, 10001, 20001, ... will be defined as insertion steps.  The ``insertion frequency`` should be selected adequately depending on the insertion method. For ``uniform`` and ``non_uniform`` it should be large, so that the inserted particles at the previous insertion step have enough time to leave the insertion box for the next time step, otherwise large overlap may occur which leads to a large velocity of particles. For the ``plane`` method, it should be small so that particles are being inserted as soon as a cell is empty.
 
 * The ``random number range`` and ``insertion random number seed`` parameters determine the random added values to the positions of particles during a ``non_uniform`` and ``plane`` insertion. ``random number range`` defines the maximum value for the random displacement. ``insertion random number seed`` is the seed for the random number generator.
+
 .. note::
     The ``random number range`` and ``insertion random number seed`` are only being use by ``non_uniform`` and ``plane`` insertion methods.
 
---------------------
+------------------------
 Uniform and Non-uniform
---------------------
+------------------------
 
 Uniform and Non-uniform insertion methods are really similar in their functioning. Both methods use an insertion box where particles will be insert. In ``uniform`` insertion, the insertion locations of the particles inside the insertion box are tidy. In ``non_uniform`` insertion however, the insertion locations of particles are randomly selected.
 
@@ -118,6 +119,7 @@ List
 The List insertion method insert particles at precis coordinates. This method is preferred for small number of particles.
 
 * The ``list x``, ``list y`` and ``list z`` define the coordinates of every particles in the x, y and z directions, respectively. For example, if you want to insert particles at two locations, ``(0.,0.,0.) and (1.,2.,3.)`` , the list parameters should look like this :
+
 .. code-block:: text
 
     set list x = 0., 1.
