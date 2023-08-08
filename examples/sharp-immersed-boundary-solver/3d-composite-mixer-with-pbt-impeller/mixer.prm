@@ -1,3 +1,7 @@
+set dimension = 3
+
+
+
 subsection simulation control
   set method            = bdf2
   set output name       = mixer
