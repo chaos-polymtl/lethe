@@ -53,8 +53,8 @@ file(COPY periodic_particles_qcm_files/dem.triangulation_variable.data DESTINATI
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set_tests_properties(cfd_dem_coupling_3d/particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
-  set_tests_properties(cfd_dem_coupling_3d/restart_particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
-  set_tests_properties(cfd_dem_coupling_3d/dynamic_contact_search.debug PROPERTIES TIMEOUT 1200)
-  set_tests_properties(cfd_dem_coupling_3d/liquid_fluidized_bed.debug PROPERTIES TIMEOUT 2400)
+  set_tests_properties(cfd_dem_coupling/particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(cfd_dem_coupling/restart_particle_sedimentation.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(cfd_dem_coupling/dynamic_contact_search.debug PROPERTIES TIMEOUT 1200)
+  set_tests_properties(cfd_dem_coupling/liquid_fluidized_bed.debug PROPERTIES TIMEOUT 2400)
 endif()
