@@ -2,8 +2,7 @@ foreach(_target IN ITEMS
     cfd_dem_coupling
     dem
     dem_parameter_template
-    gd_navier_stokes_2d
-    gd_navier_stokes_3d
+    gd_navier_stokes
     gls_navier_stokes_2d
     gls_navier_stokes_3d
     gls_nitsche_navier_stokes_22
