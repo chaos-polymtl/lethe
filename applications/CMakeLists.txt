@@ -3,8 +3,7 @@ foreach(_target IN ITEMS
     dem
     dem_parameter_template
     gd_navier_stokes
-    gls_navier_stokes_2d
-    gls_navier_stokes_3d
+    gls_navier_stokes
     gls_nitsche_navier_stokes_22
     gls_nitsche_navier_stokes_23
     gls_nitsche_navier_stokes_33

@@ -1,0 +1,168 @@
+# Listing of Parameters
+# ---------------------
+set dimension = 2
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.25
+  set time step        = 0.05
+  set output name      = vof_dirichlet_boundary_condition
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Initial Condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+
+  subsection VOF
+    set Function expression = if (y>0.0, 1, 0)
+
+    subsection projection step
+      set enable           = true
+      set diffusion factor = 1
+    end
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0
+    set density             = 100
+    set kinematic viscosity = 0.001
+  end
+  subsection fluid 1
+    set density             = 300
+    set kinematic viscosity = 0.001
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2, 2 : 1, 1 : 0 , 0 : true
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection mass conservation
+    set monitoring      = true
+    set monitored fluid = fluid 1
+    set tolerance       = 1e-6
+    set verbosity       = extra verbose
+  end
+
+  subsection phase filtration
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 20
+  end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = slip
+  end
+  subsection bc 2
+    set id   = 3
+    set type = function
+    subsection v
+      set Function expression = -1
+    end
+  end
+end
+
+subsection boundary conditions VOF
+  set number = 1
+  subsection bc 0 #inlet
+    set id   = 3
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = if (x>0.5, 1, 0)
+    end
+  end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  set enable = true
+  subsection xyz
+    set Function expression = 0 ; 0 ; 0
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set verbosity      = quiet
+  set tolerance      = 1e-6
+  set max iterations = 20
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max krylov vectors                    = 500
+  set max iters                             = 1000
+  set relative residual                     = 1e-5
+  set minimum residual                      = 1e-7
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+end
