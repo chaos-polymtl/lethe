@@ -20,6 +20,8 @@ file(COPY spooky_composite_shape DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/spooky
 file(COPY rbf_sphere.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbf_sphere_mms.${_build_type}")
 file(COPY rbf_sphere_adaptive.input DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/rbf_sphere_mms_adaptive.${_build_type}")
 
+deal_ii_pickup_tests()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(gls_sharp_navier_stokes/steady_couette_sphere.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(gls_sharp_navier_stokes/check_point.debug PROPERTIES TIMEOUT 2000)
@@ -28,4 +30,3 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(gls_sharp_navier_stokes/coupled_moving_stokes.mpirun=2.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(gls_sharp_navier_stokes/pw_contact_test.debug PROPERTIES TIMEOUT 2000)
 endif()
-deal_ii_pickup_tests()
