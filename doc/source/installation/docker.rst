@@ -193,7 +193,7 @@ For example, to launch the 2D Lid-Driven Cavity Flow simulation, run the followi
   docker run --rm \
     -v $(pwd):/home/dealii \
     ghcr.io/lethe-cfd/lethe:master \
-    gls_navier_stokes_2d examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm
+    gls_navier_stokes examples/incompressible_flow/2d_lid_driven_cavity/cavity.prm
 
 Usage
 -----
@@ -215,13 +215,13 @@ Usage
 
     ▸ cfd_dem_coupling_2d
     ▸ cfd_dem_coupling_3d
-    ▸ dem_2d
-    ▸ dem_3d
+    ▸ dem
+    ▸ dem
     ▸ dem_parameter_template
-    ▸ gd_navier_stokes_2d
-    ▸ gd_navier_stokes_3d
-    ▸ gls_navier_stokes_2d
-    ▸ gls_navier_stokes_3d
+    ▸ gd_navier_stokes
+    ▸ gd_navier_stokes
+    ▸ gls_navier_stokes
+    ▸ gls_navier_stokes
     ▸ gls_nitsche_navier_stokes_22
     ▸ gls_nitsche_navier_stokes_23
     ▸ gls_nitsche_navier_stokes_33

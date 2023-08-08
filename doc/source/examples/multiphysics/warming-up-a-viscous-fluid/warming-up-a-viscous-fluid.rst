@@ -9,7 +9,7 @@ This example introduces how to solve another physics along with the CFD solver.
 Features
 --------------
 
-* Solver: ``gls_navier_stokes_2d``
+* Solver: ``gls_navier_stokes``
 * Transient problem
 * Multiphysics
 * Displays the use of heat transfer physics
@@ -199,11 +199,11 @@ The ``boundary conditions`` are set for:
 Running the Simulation
 -----------------------
 
-The simulation is launched in the same folder as the ``.prm`` file, using the ``gls_navier_stokes_2d`` solver. It takes only about 5 seconds with one cpu:
+The simulation is launched in the same folder as the ``.prm`` file, using the ``gls_navier_stokes`` solver. It takes only about 5 seconds with one cpu:
 
 .. code-block:: sh
     
-    ../../exe/bin/gls_navier_stokes_2d warming-up-viscous-fluid.prm
+    ../../exe/bin/gls_navier_stokes warming-up-viscous-fluid.prm
 
 
 --------------

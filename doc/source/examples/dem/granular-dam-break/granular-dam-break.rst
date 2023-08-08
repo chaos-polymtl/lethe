@@ -8,7 +8,7 @@ This example simulates the dam-break flow of a dry granular material using the d
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Three-dimensional problem
 - Moving floating mesh
 - Load-balancing
@@ -179,7 +179,7 @@ The simulation is launched using a single input file for the insertion of the pa
 
 .. code-block:: text
 
-   mpirun -np 8 dem_3d granular-dam-break.prm
+   mpirun -np 8 dem granular-dam-break.prm
 
 
 .. note::

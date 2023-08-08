@@ -8,7 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d`` and ``cfd_dem_coupling_3d``
+- Solvers: ``dem`` and ``cfd_dem_coupling_3d``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 - Simulates a solid-gas spouted bed
@@ -189,17 +189,17 @@ We need to pack the particles in the bottom of the rectangular bed while prevent
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
 
-  dem_3d dem-packing-in-spouted-bed.prm
+  dem dem-packing-in-spouted-bed.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d dem-packing-in-spouted-bed.prm
+  mpirun -np 8 dem dem-packing-in-spouted-bed.prm
 
 .. note::
     Running the packing should take approximatively 10-15 minutes on 8 cores.

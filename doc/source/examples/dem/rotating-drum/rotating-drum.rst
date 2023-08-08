@@ -7,7 +7,7 @@ This example simulates a rotating drum. We setup this simulation according to th
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Rotational boundary
 - Load-balancing
 
@@ -165,13 +165,13 @@ This simulation can be launched in two steps. First the particles need to be loa
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d load-rotating-drum.prm
+  mpirun -np 8 dem load-rotating-drum.prm
 
 Then the rotation of the drum is started in a second simulation:
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d load-rotating-drum.prm
+  mpirun -np 8 dem load-rotating-drum.prm
 
 .. warning::
 	Loading the particles in this example requires approximatively 50 minutes on 8 cores. Simulating the motion of the particles requires an addition 8 hours. This high computational cost is because of the large number of particles and the long duration of the simulation.

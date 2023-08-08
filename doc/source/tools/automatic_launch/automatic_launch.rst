@@ -293,10 +293,10 @@ Here is the script:
 
 	PATH = os.getcwd()
 	PRM_FILE = 'cylinder.prm'
-	LETHE_EXEC = 'gls_navier_stokes_2d'
+	LETHE_EXEC = 'gls_navier_stokes'
 
 .. warning::
-	Here, we suppose that the executable ``gls_navier_stokes_2d`` is available directly in the ``PATH`` where all cases' folders are present.
+	Here, we suppose that the executable ``gls_navier_stokes`` is available directly in the ``PATH`` where all cases' folders are present.
 	If your Lethe executable is elsewhere, just change the path to the right destination.
 
 2. Enter each case's folder and execute Lethe.

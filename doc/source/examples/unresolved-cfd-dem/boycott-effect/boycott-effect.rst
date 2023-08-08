@@ -7,7 +7,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d`` and ``cfd_dem_coupling_3d``
+- Solvers: ``dem`` and ``cfd_dem_coupling_3d``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 - Simulates a solid-liquid sedimentation
@@ -154,17 +154,17 @@ We insert the particles uniformly in the specified insertion box at the top of t
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
 
-  dem_3d particle-generator.prm
+  dem particle-generator.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d particle-generator.prm
+  mpirun -np 8 dem particle-generator.prm
 
 The figure below shoes the particles inserted at the top of the channel at the end of the DEM simulation.
 

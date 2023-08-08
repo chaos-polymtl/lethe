@@ -8,7 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d`` and ``gls_vans_3d``
+- Solvers: ``dem`` and ``gls_vans_3d``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 
@@ -178,17 +178,17 @@ We need to pack the particles in the middle of the cylinder. Therefore, we creat
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
 
-  dem_3d packing-in-circle.prm
+  dem packing-in-circle.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d packing-in-circle.prm
+  mpirun -np 8 dem packing-in-circle.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 

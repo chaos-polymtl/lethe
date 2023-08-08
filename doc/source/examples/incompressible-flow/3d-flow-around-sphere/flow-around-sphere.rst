@@ -10,7 +10,7 @@ In this example, a fluid flows past a sphere
 Features
 ----------------------------------
 
-- Solvers: ``gls_navier_stokes_3d`` (with Q1-Q1) or  ``gd_navier_stokes_3d`` (with Q2-Q1)
+- Solvers: ``gls_navier_stokes`` (with Q1-Q1) or  ``gd_navier_stokes`` (with Q2-Q1)
 - Steady-state problem
 - Displays the importance of adaptative mesh refinement
 - Displays the effect of the Reynolds number on the convergence
@@ -165,7 +165,7 @@ We specify the interpolation order for both pressure and velocity using the ``FE
 
 .. warning:: 
 
-    If you choose to use the ``gd_navier_stokes_3d`` solver; only Q2-Q1 elements are supported. 
+    If you choose to use the ``gd_navier_stokes`` solver; only Q2-Q1 elements are supported. 
 
 
 Simulation Control
@@ -246,23 +246,23 @@ The ``min refinement level`` refers to the base mesh which has been used in the 
 Running the Simulation
 ----------------------
 
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-  gls_navier_stokes_3d sphere-0.1.prm
+  gls_navier_stokes sphere-0.1.prm
 
 or 
 
 .. code-block:: text
 
-  gls_navier_stokes_3d sphere-150.prm
+  gls_navier_stokes sphere-150.prm
 
 or
 
 .. code-block:: text
 
-  gls_navier_stokes_3d sphere-adapt.prm
+  gls_navier_stokes sphere-adapt.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 

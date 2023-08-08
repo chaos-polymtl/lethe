@@ -9,7 +9,7 @@ This example is a well-established benchmark for Computational Fluid Dynamics so
 Features
 ---------
 
-- Solver: ``gls_navier_stokes_3d`` (with Q1-Q1) 
+- Solver: ``gls_navier_stokes`` (with Q1-Q1) 
 - Transient problem
 
 
@@ -215,11 +215,11 @@ In this case, we use the ``inexact_newton`` method that reuses the Jacobian matr
 Running the Simulation
 ----------------------
 
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_3d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-  gls_navier_stokes_3d periodic-hills.prm
+  gls_navier_stokes periodic-hills.prm
 
 Lethe will generate a number of files. The most important ones have the extension ``.vtu`` that can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 
