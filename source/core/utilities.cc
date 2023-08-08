@@ -383,12 +383,12 @@ make_table_tensors_scalars(
 
 
 std::string
-get_last_value_of_parameter(const std::string &parameters,
+get_last_value_of_parameter(const std::string &file_name,
                             const std::string &parameter_name)
 {
   std::string return_value;
 
-  std::istringstream x_file(parameters);
+  std::ifstream x_file(file_name);
   while (x_file)
     {
       // Get one line and then match a regex to it that matches the parameter
@@ -420,10 +420,11 @@ get_last_value_of_parameter(const std::string &parameters,
 }
 
 unsigned int
-get_dimension(const std::string &parameters)
+get_dimension(const std::string &file_name)
 {
   const std::string dimension =
-    get_last_value_of_parameter(parameters, "dimension");
+    get_last_value_of_parameter(file_name, "dimension");
+
   if (dimension.size() > 0)
     {
       // Extracted from ASPECT

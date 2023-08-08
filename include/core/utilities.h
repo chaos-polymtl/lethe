@@ -333,12 +333,12 @@ deserialize_table(TableHandler &table, const std::string filename)
  * and is mainly used in parsing the dim of the problem before creating the
  * whole parameter parser
  *
- * @param parameters The value of the parameter
+ * @param file_name The file name from which to read a value
  * @param parameter_name The name of the parameter
  */
 
 std::string
-get_last_value_of_parameter(const std::string &parameters,
+get_last_value_of_parameter(const std::string &file_name,
                             const std::string &parameter_name);
 
 /**
@@ -348,11 +348,10 @@ get_last_value_of_parameter(const std::string &parameters,
  * need to know whether to use the dim=2 or dim=3 instantiation
  * of the main classes.
  *
- * @param table The table to be deserialized
- * @param filename The file name (including the extension) to be used
+ * @param file_name The file name from which dimension is read
  */
 unsigned int
-get_dimension(const std::string &parameters);
+get_dimension(const std::string &file_name);
 
 
 #endif
