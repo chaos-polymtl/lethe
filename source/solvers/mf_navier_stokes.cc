@@ -510,6 +510,8 @@ MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
+            this->present_solution.update_ghost_values();
+
             this->system_operator->evaluate_non_linear_term(
               this->present_solution);
 
