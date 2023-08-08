@@ -1,3 +1,0 @@
-add_executable(cfd_dem_coupling_3d cfd_dem_coupling_3d.cc)
-deal_ii_setup_target(cfd_dem_coupling_3d)
-target_link_libraries(cfd_dem_coupling_3d lethe-fem-dem)

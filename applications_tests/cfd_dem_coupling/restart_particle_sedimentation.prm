@@ -1,5 +1,6 @@
 # Listing of Parameters
 # ---------------------
+set dimension = 3
 #---------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
@@ -32,7 +33,7 @@ end
 subsection restart
   set checkpoint = false
   set frequency  = 10
-  set restart    = false
+  set restart    = true
   set filename   = case
 end
 

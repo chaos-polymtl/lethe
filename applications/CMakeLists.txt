@@ -1,6 +1,5 @@
 foreach(_target IN ITEMS
-    cfd_dem_coupling_2d
-    cfd_dem_coupling_3d
+    cfd_dem_coupling
     dem
     dem_parameter_template
     gd_navier_stokes_2d

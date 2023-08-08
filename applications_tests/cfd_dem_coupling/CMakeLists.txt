@@ -1,4 +1,4 @@
-set(TEST_TARGET cfd_dem_coupling_3d)
+set(TEST_TARGET cfd_dem_coupling)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
 

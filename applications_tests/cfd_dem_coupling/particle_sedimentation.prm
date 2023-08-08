@@ -1,6 +1,7 @@
 # Listing of Parameters
 # ---------------------
-# --------------------------------------------------
+set dimension = 3
+#---------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
 
@@ -10,22 +11,10 @@ subsection simulation control
   set output name          = result_
   set output frequency     = 0
   set startup time scaling = 0.6
-  set time end             = 0.0005
-  set time step            = 0.0001
+  set time end             = 0.5
+  set time step            = 0.005
   set subdivision          = 1
   set log precision        = 10
-  #  set output boundaries    = true
-end
-
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-
-subsection restart
-  set checkpoint = false
-  set frequency  = 100
-  set restart    = false
-  set filename   = case
 end
 
 #---------------------------------------------------
@@ -38,13 +27,24 @@ subsection FEM
 end
 
 #---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = false
+  set frequency  = 10
+  set restart    = false
+  set filename   = case
+end
+
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
   subsection fluid 0
-    set kinematic viscosity = 0.0000008379
-    set density             = 996.7775
+    set kinematic viscosity = 0.00000100501
+    set density             = 997
   end
 end
 
@@ -53,11 +53,10 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                                = dealii
-  set grid type                           = subdivided_hyper_rectangle
-  set grid arguments                      = 15,20,15:-0.05,-0.05,-0.05:0.05,0.05,0.05:true
-  set initial refinement                  = 0
-  set expand particle-wall contact search = false
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 5:0.05:0.1
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
@@ -68,10 +67,10 @@ subsection void fraction
   set mode                = pcm
   set read dem            = true
   set dem file name       = dem
-  set l2 smoothing factor = 0.00000125
+  set l2 smoothing factor = 0.00001
+  set bound void fraction = false
   set l2 lower bound      = 0
   set l2 upper bound      = 1
-  set bound void fraction = false
 end
 
 #---------------------------------------------------
@@ -79,14 +78,15 @@ end
 #---------------------------------------------------
 
 subsection cfd-dem
-  set grad div                      = false
-  set void fraction time derivative = false
+  set grad div                      = true
+  set void fraction time derivative = true
   set drag force                    = true
   set buoyancy force                = true
-  set shear force                   = true
-  set pressure force                = true
+  set shear force                   = false
+  set pressure force                = false
   set drag model                    = difelice
-  set coupling frequency            = 10
+  set coupling frequency            = 100
+  set implicit stabilization        = false
   set vans model                    = modelB
   set particle statistics           = false
 end
@@ -96,39 +96,18 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  #    set type = nodal
-  #    set viscosity = 0.005
+  set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0; 0
   end
 end
 
 #---------------------------------------------------
-# Post-processing
-#---------------------------------------------------
-
-subsection post-processing
-  # Enable calculation of pressure drop
-  set calculate pressure drop = false
-
-  # Boundary id of the inlet for the pressure drop calculation
-  set inlet boundary id = 2
-
-  # Boundary id of the outlet for the pressure drop calculation
-  set outlet boundary id = 3
-
-  set output frequency = 1
-
-  set verbosity = verbose
-end
-
-# --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
-  set time dependent = true
-  set number         = 5
+  set number = 3
   subsection bc 0
     set id   = 0
     set type = slip
@@ -138,29 +117,12 @@ subsection boundary conditions
     set type = slip
   end
   subsection bc 2
-    set id   = 4
-    set type = slip
-  end
-  subsection bc 3
-    set id   = 5
-    set type = slip
-  end
-  subsection bc 4
     set id   = 2
-    set type = function
-    subsection u
-      set Function expression = 0
-    end
-    subsection v
-      set Function expression = 0.1
-    end
-    subsection w
-      set Function expression = 0
-    end
+    set type = slip
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Source term
 #---------------------------------------------------
 
@@ -171,7 +133,7 @@ subsection source term
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 
@@ -187,87 +149,68 @@ subsection timer
   set type = none
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = -9.81
+  set gy                       = 0
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.002
+    set number                            = 1
+    set density particles                 = 2500
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.2
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.2
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.3
+end
+
+#---------------------------------------------------
 # Model parameters
 #---------------------------------------------------
 
 subsection model parameters
   subsection contact detection
-    set contact detection method                = dynamic
-    set dynamic contact search size coefficient = 0.9
-    set neighborhood threshold                  = 1.8
+    set contact detection method = constant
+    set frequency                = 10
+    set neighborhood threshold   = 1.8
   end
-  subsection load balancing
-    set load balance method     = dynamic
-    set threshold               = 0.5
-    set dynamic check frequency = 10000
-  end
-  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle particle contact force method = hertz_mindlin_limit_force
   set particle wall contact force method     = nonlinear
   set integration method                     = velocity_verlet
   set rolling resistance torque method       = no_resistance
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Testing
 #---------------------------------------------------
 
-subsection lagrangian physical properties
-  set gx                       = 0
-  set gy                       = -9.81
-  set gz                       = 0
-  set number of particle types = 1
-  subsection particle type 0
-    set size distribution type            = uniform
-    set diameter                          = 0.003
-    set number                            = 10000
-    set density particles                 = 2505
-    set young modulus particles           = 1000000
-    set poisson ratio particles           = 0.3
-    set restitution coefficient particles = 0.97
-    set friction coefficient particles    = 0.1
-    set rolling friction particles        = 0.2
-  end
-  set young modulus wall           = 1000000
-  set poisson ratio wall           = 0.3
-  set restitution coefficient wall = 0.33
-  set friction coefficient wall    = 0.3
-  set rolling friction wall        = 0.3
+subsection test
+  set enable = true
 end
 
 #---------------------------------------------------
-# Floating walls
-#---------------------------------------------------
-
-subsection floating walls
-  set number of floating walls = 1
-  subsection wall 0
-    subsection point on wall
-      set x = 0
-      set y = -0.04
-      set z = 0
-    end
-    subsection normal vector
-      set nx = 0
-      set ny = 1
-      set nz = 0
-    end
-    set start time = 0
-    set end time   = 50
-  end
-end
-
-# --------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   set tolerance      = 1e-9
-  set max iterations = 10
+  set max iterations = 5
   set verbosity      = quiet
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 
@@ -275,9 +218,9 @@ subsection linear solver
   set method                                = gmres
   set max iters                             = 5000
   set relative residual                     = 1e-3
-  set minimum residual                      = 1e-12
+  set minimum residual                      = 1e-10
   set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-14
-  set ilu preconditioner relative tolerance = 1
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
   set verbosity                             = quiet
 end
