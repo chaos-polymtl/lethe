@@ -5,9 +5,6 @@ foreach(_target IN ITEMS
     gd_navier_stokes
     gls_navier_stokes
     nitsche_navier_stokes
-    gls_nitsche_navier_stokes_22
-    gls_nitsche_navier_stokes_23
-    gls_nitsche_navier_stokes_33
     gls_sharp_navier_stokes
     gls_vans
     mf_gls_navier_stokes
