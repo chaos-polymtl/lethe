@@ -213,21 +213,13 @@ Usage
     Available programs:
     ===================
 
-    ▸ cfd_dem_coupling_2d
     ▸ cfd_dem_coupling
-    ▸ dem
     ▸ dem
     ▸ dem_parameter_template
     ▸ gd_navier_stokes
-    ▸ gd_navier_stokes
-    ▸ gls_navier_stokes
     ▸ gls_navier_stokes
     ▸ nitsche_navier_stokes
-    ▸ gls_nitsche_navier_stokes_23
-    ▸ nitsche_navier_stokes
     ▸ gls_sharp_navier_stokes
-    ▸ gls_sharp_navier_stokes
-    ▸ gls_vans
     ▸ gls_vans
     ▸ initial_conditions
     ▸ navier_stokes_parameter_template
