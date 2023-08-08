@@ -1,6 +1,9 @@
-set(TEST_TARGET gls_nitsche_navier_stokes_22)
+set(TEST_TARGET nitsche_navier_stokes)
+
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} _build_type)
+
+file(COPY sphere.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 file(COPY two-bar-mixer-restart/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
 file(COPY two-bar-mixer-restart/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/two-bar-mixer-restart.${_build_type}")
@@ -24,3 +27,4 @@ deal_ii_pickup_tests()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(gls_nitsche_navier_stokes_22/noslip_22.debug PROPERTIES TIMEOUT 1200)
 endif()
+

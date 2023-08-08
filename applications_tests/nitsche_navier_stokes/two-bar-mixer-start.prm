@@ -1,5 +1,6 @@
 # Listing of Parameters
 # ---------------------
+set dimension = 2
 
 # --------------------------------------------------
 # Simulation Control
@@ -8,7 +9,7 @@
 subsection simulation control
   set method            = bdf1
   set time step         = 0.05
-  set time end          = 1.0
+  set time end          = 0.5
   set number mesh adapt = 0
   set output name       = two-bar-mixer
   set output frequency  = 0
@@ -22,7 +23,7 @@ end
 subsection FEM
   set velocity order    = 1
   set pressure order    = 1
-  set temperature order = 1
+  set temperature order = 2
 end
 
 #--------------------------------------------------
@@ -107,7 +108,7 @@ subsection nitsche
     end
     set enable particles motion = true
     subsection solid velocity
-      set Function expression = cos(pi*t)*-pi*y; cos(pi*t)*pi*x
+      set Function expression = -pi*y ; pi*x
     end
   end
   subsection nitsche solid 1
@@ -120,7 +121,7 @@ subsection nitsche
     end
     set enable particles motion = true
     subsection solid velocity
-      set Function expression = cos(pi*t)*-pi*y; cos(pi*t)*pi*x
+      set Function expression = -pi*y ; pi*x
     end
   end
 end
