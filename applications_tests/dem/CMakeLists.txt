@@ -22,6 +22,8 @@ file(COPY periodic_gmsh_files/pipe.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/
 file(COPY load_balancing_solid_object_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/load_balancing_solid_object.${_build_type}")
 file(COPY moving_float_files/square.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/moving_float.${_build_type}")
 
+deal_ii_pickup_tests()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(dem/packing_in_box.mpirun=1.debug PROPERTIES TIMEOUT 3000)
   set_tests_properties(dem/packing_in_box.mpirun=2.debug PROPERTIES TIMEOUT 3000)
@@ -34,4 +36,3 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 
-deal_ii_pickup_tests()
