@@ -1,7 +1,6 @@
 add_subdirectory(cfd_dem_coupling)
 add_subdirectory(dem)
-add_subdirectory(gd_navier_stokes_2d)
-add_subdirectory(gd_navier_stokes_3d)
+add_subdirectory(gd_navier_stokes)
 add_subdirectory(gls_navier_stokes_2d)
 add_subdirectory(gls_navier_stokes_3d)
 add_subdirectory(gls_nitsche_navier_stokes_22)
