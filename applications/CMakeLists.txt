@@ -11,8 +11,7 @@ foreach(_target IN ITEMS
     gls_nitsche_navier_stokes_33
     gls_sharp_navier_stokes_2d
     gls_sharp_navier_stokes_3d
-    gls_vans_2d
-    gls_vans_3d
+    gls_vans
     mf_gls_navier_stokes_2d
     mf_gls_navier_stokes_3d
     initial_conditions
