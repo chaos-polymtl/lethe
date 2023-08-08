@@ -97,7 +97,7 @@ In this subsection, the control options of linear solvers are specified. These c
 		The use of ``direct`` solver should be avoided for 3D problems.
 
 .. warning::
-    Currently, the ``gls_sharp_navier_stokes_2d`` and ``gls_sharp_navier_stokes_2d`` solvers make it almost impossible to reach convergence with the ``amg`` linear solver. It is recommended to use ``gmres`` instead, even for fine meshes.
+    Currently, the ``gls_sharp_navier_stokes`` and ``gls_sharp_navier_stokes`` solvers make it almost impossible to reach convergence with the ``amg`` linear solver. It is recommended to use ``gmres`` instead, even for fine meshes.
 
 
 * The ``verbosity`` option enables the display of the residual at each non-linear iteration, to monitor the progress of the linear iterations.

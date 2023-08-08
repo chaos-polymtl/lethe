@@ -225,8 +225,8 @@ Usage
     ▸ nitsche_navier_stokes
     ▸ gls_nitsche_navier_stokes_23
     ▸ nitsche_navier_stokes
-    ▸ gls_sharp_navier_stokes_2d
-    ▸ gls_sharp_navier_stokes_3d
+    ▸ gls_sharp_navier_stokes
+    ▸ gls_sharp_navier_stokes
     ▸ gls_vans
     ▸ gls_vans
     ▸ initial_conditions

@@ -7,7 +7,7 @@ Flow around a Cylinder Using the Sharp Interface Method
 Features
 ----------------------------------
 
-- Solvers: ``gls_sharp_navier_stokes_2d`` (with Q1-Q1) 
+- Solvers: ``gls_sharp_navier_stokes`` (with Q1-Q1) 
 - Steady-state problem
 - Explains how to set sharp interface immersed boundary to represent a particle
 - Displays the use of non-uniform mesh adaptation 

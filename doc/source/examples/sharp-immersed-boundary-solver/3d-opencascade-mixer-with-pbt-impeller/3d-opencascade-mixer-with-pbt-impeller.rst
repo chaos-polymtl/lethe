@@ -9,7 +9,7 @@ The mixing of stirred-tanks is a common chemical engineering problem that can be
 Features
 ----------------------------------
 
-- Solvers: ``gls_sharp_navier_stokes_3d``
+- Solvers: ``gls_sharp_navier_stokes``
 - Transient problem
 - Rotating complex solid, defined by a step file using the OpenCascade shape, modelled with sharp immersed boundary
 
