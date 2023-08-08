@@ -8,7 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem`` and ``gls_vans_3d``
+- Solvers: ``dem`` and ``gls_vans``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 
@@ -24,7 +24,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example simulates air flow through a packing of particles. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``gls_vans_3d`` solver within Lethe to simulate air flow through the packed bed.
+This example simulates air flow through a packing of particles. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``gls_vans`` solver within Lethe to simulate air flow through the packed bed.
 
 
 -------------------
@@ -360,11 +360,11 @@ Linear Solver
 Running the VANS Simulation
 ------------------------------
  
-The simulation is run using the ``gls_vans_3d`` application as per the following command:
+The simulation is run using the ``gls_vans`` application as per the following command:
 
 .. code-block:: text
 
-    path_to_vans_application/gls_vans_3d parameter_file.prm 
+    path_to_vans_application/gls_vans parameter_file.prm 
 
 
 -------------

@@ -10,8 +10,8 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 .. warning::
 	Specific solvers must be used for the Nitsche solid to be accounted for:
 
-	* ``gls_nitsche_navier_stokes_22``: 2D flow simulations, with a 2D solid,
-	* ``gls_nitsche_navier_stokes_33``: 3D flow simulations, with a 3D solid,
+	* ``nitsche_navier_stokes``: 2D flow simulations, with a 2D solid,
+	* ``nitsche_navier_stokes``: 3D flow simulations, with a 3D solid,
 	* ``gls_nitsche_navier_stokes_23``: 3D flow simulations, with a 2D solid.
 
 .. code-block:: text
