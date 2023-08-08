@@ -1,17 +1,19 @@
 # Listing of Parameters
 # ---------------------
+
 set dimension = 3
+
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
 
 subsection simulation control
-  set time step        = 1e-5
-  set time end         = 2
-  set log frequency    = 1000
-  set output frequency = 1000
-    set output boundaries = true
-  set output path      = ./output/
+  set time step         = 1e-5
+  set time end          = 2
+  set log frequency     = 1000
+  set output frequency  = 1000
+  set output boundaries = true
+  set output path       = ./output/
 end
 
 # --------------------------------------------------
@@ -60,7 +62,6 @@ subsection lagrangian physical properties
   set friction coefficient wall    = 0.35
 end
 
-
 subsection restart
   set checkpoint = true
   set frequency  = 10000
@@ -98,7 +99,6 @@ subsection mesh
   set initial refinement                  = 4
   set expand particle-wall contact search = true
 end
-
 
 subsection timer
   set type = iteration

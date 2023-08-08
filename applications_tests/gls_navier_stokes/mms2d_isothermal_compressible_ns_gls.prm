@@ -1,15 +1,17 @@
 # Listing of Parameters
 # ---------------------
+
 set dimension = 2
+
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set output name       = mms2d_isothermal_compressible
-  set output frequency  = 0
-  set time end          = 7
+  set method           = bdf1
+  set output name      = mms2d_isothermal_compressible
+  set output frequency = 0
+  set time end         = 7
 end
 
 #---------------------------------------------------

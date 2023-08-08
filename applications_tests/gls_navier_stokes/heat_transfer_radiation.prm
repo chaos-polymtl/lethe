@@ -1,6 +1,8 @@
 # Listing of Parameters
 # ---------------------
+
 set dimension = 2
+
 # Simulation and IO Control
 #---------------------------------------------------
 

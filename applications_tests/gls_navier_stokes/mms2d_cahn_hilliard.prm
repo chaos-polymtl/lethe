@@ -1,6 +1,8 @@
 # Listing of Parameters
 # ---------------------
+
 set dimension = 2
+
 # Simulation and IO Control
 #---------------------------------------------------
 
@@ -76,15 +78,16 @@ end
 #---------------------------------------------------
 # Physical properties
 #---------------------------------------------------
-subsection physical properties
-set number of fluids = 2
 
-set number of material interactions = 1
+subsection physical properties
+  set number of fluids = 2
+
+  set number of material interactions = 1
   subsection material interaction 0
     set type = fluid-fluid
     subsection fluid-fluid interaction
-      set first fluid id              = 0
-      set second fluid id             = 1
+      set first fluid id  = 0
+      set second fluid id = 1
 
       # Mobility Cahn-Hilliard
       set cahn hilliard mobility model    = constant

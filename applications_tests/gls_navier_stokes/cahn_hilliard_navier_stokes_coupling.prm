@@ -1,6 +1,8 @@
 # Listing of Parameters
 # ---------------------
+
 set dimension = 2
+
 # Simulation and IO Control
 #---------------------------------------------------
 
@@ -28,8 +30,8 @@ end
 subsection FEM
   set phase cahn hilliard order     = 1
   set potential cahn hilliard order = 1
-  set velocity order     = 1
-  set pressure order     = 1
+  set velocity order                = 1
+  set pressure order                = 1
 end
 
 #---------------------------------------------------
