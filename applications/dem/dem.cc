@@ -1,42 +1,58 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- ---------------------------------------------------------------------*/
+#include "dem/dem.h"
 
-#include "solvers/mf_gls_navier_stokes.h"
+#include "core/dem_properties.h"
+
+using namespace dealii;
 
 int
 main(int argc, char *argv[])
 {
   try
     {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+
+
       if (argc != 2)
         {
           std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
           std::exit(1);
         }
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
 
-      ParameterHandler        prm;
-      SimulationParameters<2> NSparam;
-      NSparam.declare(prm);
-      // Parsing of the file
-      prm.parse_input(argv[1]);
-      NSparam.parse(prm);
+      const unsigned int dim = get_dimension(argv[1]);
 
-      MFGLSNavierStokesSolver<2> problem_2d(NSparam);
-      problem_2d.solve();
+      if (dim == 2)
+        {
+          ParameterHandler       prm;
+          DEMSolverParameters<2> dem_parameters;
+          dem_parameters.declare(prm);
+
+          // Parsing of the file
+          prm.parse_input(argv[1]);
+          dem_parameters.parse(prm);
+
+          DEMSolver<2> problem(dem_parameters);
+          problem.solve();
+        }
+
+      else if (dim == 3)
+        {
+          ParameterHandler       prm;
+          DEMSolverParameters<3> dem_parameters;
+          dem_parameters.declare(prm);
+
+          // Parsing of the file
+          prm.parse_input(argv[1]);
+          dem_parameters.parse(prm);
+
+          DEMSolver<3> problem(dem_parameters);
+          problem.solve();
+        }
+
+      else
+        {
+          return 1;
+        }
     }
   catch (std::exception &exc)
     {

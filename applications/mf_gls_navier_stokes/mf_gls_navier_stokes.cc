@@ -20,23 +20,46 @@ main(int argc, char *argv[])
 {
   try
     {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+
       if (argc != 2)
         {
           std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
           std::exit(1);
         }
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
 
-      ParameterHandler        prm;
-      SimulationParameters<3> NSparam;
-      NSparam.declare(prm);
-      // Parsing of the file
-      prm.parse_input(argv[1]);
-      NSparam.parse(prm);
+      const unsigned int dim = get_dimension(argv[1]);
 
-      MFGLSNavierStokesSolver<3> problem_3d(NSparam);
-      problem_3d.solve();
+      if (dim == 2)
+        {
+          ParameterHandler        prm;
+          SimulationParameters<2> NSparam;
+          NSparam.declare(prm);
+          // Parsing of the file
+          prm.parse_input(argv[1]);
+          NSparam.parse(prm);
+
+          MFGLSNavierStokesSolver<2> problem(NSparam);
+          problem.solve();
+        }
+
+      else if (dim == 3)
+        {
+          ParameterHandler        prm;
+          SimulationParameters<3> NSparam;
+          NSparam.declare(prm);
+          // Parsing of the file
+          prm.parse_input(argv[1]);
+          NSparam.parse(prm);
+
+          MFGLSNavierStokesSolver<3> problem(NSparam);
+          problem.solve();
+        }
+      else
+        {
+          return 1;
+        }
     }
   catch (std::exception &exc)
     {

@@ -70,6 +70,10 @@ main(int argc, char *argv[])
           GLSNavierStokesSolver<3> problem(NSparam);
           problem.solve();
         }
+      else
+        {
+          return 1;
+        }
     }
   catch (std::exception &exc)
     {
