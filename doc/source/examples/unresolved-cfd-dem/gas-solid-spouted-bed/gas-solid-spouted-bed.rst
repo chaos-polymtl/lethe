@@ -8,7 +8,7 @@ It is strongly recommended to visit `DEM parameters <../../../parameters/dem/dem
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d`` and ``cfd_dem_coupling_3d``
+- Solvers: ``dem`` and ``cfd_dem_coupling``
 - Three-dimensional problem
 - Displays the selection of models and physical properties
 - Simulates a solid-gas spouted bed
@@ -25,7 +25,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example simulates the spouting of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling_3d`` solver within Lethe to simulate the spouting of the particles by initially reading the checkpoint files from the DEM simulation.
+This example simulates the spouting of spherical particles in air. First, we use Lethe-DEM to fill the bed with particles. We enable check-pointing in order to write the DEM checkpoint files which will be used as the starting point of the CFD-DEM simulation. Then, we use the ``cfd_dem_coupling`` solver within Lethe to simulate the spouting of the particles by initially reading the checkpoint files from the DEM simulation.
 
 
 -------------------
@@ -72,7 +72,7 @@ Another subsection, which is generally the one we put at the top of the paramete
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-The ``cfd_dem_coupling_3d`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
+The ``cfd_dem_coupling`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
 .. code-block:: text
 
@@ -189,17 +189,17 @@ We need to pack the particles in the bottom of the rectangular bed while prevent
 ---------------------------
 Running the DEM Simulation
 ---------------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_3d`` executable is within your path, the simulation can be launched on a single processor by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched on a single processor by typing:
 
 .. code-block:: text
 
-  dem_3d dem-packing-in-spouted-bed.prm
+  dem dem-packing-in-spouted-bed.prm
 
 or in parallel (where 8 represents the number of processors)
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d dem-packing-in-spouted-bed.prm
+  mpirun -np 8 dem dem-packing-in-spouted-bed.prm
 
 .. note::
     Running the packing should take approximatively 10-15 minutes on 8 cores.
@@ -395,11 +395,11 @@ For more information about the non-linear solver, please refer to the `Linear So
 Running the CFD-DEM Simulation
 ------------------------------
 
-The simulation is run using the ``cfd_dem_coupling_3d`` application as per the following command:
+The simulation is run using the ``cfd_dem_coupling`` application as per the following command:
 
 .. code-block:: text
 
-    path_to_cfd_dem_application/cfd_dem_coupling_3d spouted-bed.prm
+    path_to_cfd_dem_application/cfd_dem_coupling spouted-bed.prm
 
 --------
 Results

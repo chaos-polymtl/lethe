@@ -8,7 +8,7 @@ This example simulates the filling and discharge of particles in a wedge-shaped 
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Floating walls
 - Gmsh grids
 - Checkpointing (restart)
@@ -182,7 +182,7 @@ This simulation can be launched in parallel (e.g. using 8 processes) by running:
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d silo-Golshan.prm
+  mpirun -np 8 dem silo-Golshan.prm
 
 .. warning::
 	This example takes approximately 14 hours on 8 cores. This high computational time is due to the long simulation time (30 s of real-time).

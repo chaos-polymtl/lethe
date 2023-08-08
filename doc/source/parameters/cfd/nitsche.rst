@@ -8,11 +8,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 	For further understanding about the numerical method used and advanced parameters, the interested reader is referred to this article (to be published).
 
 .. warning::
-	Specific solvers must be used for the Nitsche solid to be accounted for:
-
-	* ``gls_nitsche_navier_stokes_22``: 2D flow simulations, with a 2D solid,
-	* ``gls_nitsche_navier_stokes_33``: 3D flow simulations, with a 3D solid,
-	* ``gls_nitsche_navier_stokes_23``: 3D flow simulations, with a 2D solid.
+	The ``nitsche_navier_stokes`` solver must be used for the Nitsche solid to be accounted for.
 
 .. code-block:: text
 
@@ -167,9 +163,6 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 
   * ``enable heat boundary condition = true``, and
   * ``heat transfert = true`` in :doc:`multiphysics` subsection.
-
-..  warning ::
-	The heat transfert with nitsche boundary conditions is not compatible with the ``gls_nitsche_navier_stokes_23`` solver for now.
 
 * ``calculate force on solid``: controls if force calculation on the immersed geometry is enabled. If set to ``true``, forces will written in the output file named ``solid force name``, with the solid index automatically added at the end.
 

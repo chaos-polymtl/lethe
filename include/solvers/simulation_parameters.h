@@ -72,6 +72,11 @@ public:
   void
   declare(ParameterHandler &prm)
   {
+    prm.declare_entry("dimension",
+                      "0",
+                      Patterns::Integer(),
+                      "Dimension of the problem");
+
     dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
     physical_properties.declare_parameters(prm);

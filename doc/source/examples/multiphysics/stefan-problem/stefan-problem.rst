@@ -12,7 +12,7 @@ This example simulates the `Stefan`_ problem following the approach taken by `Bl
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes_2d`` 
+- Solver: ``gls_navier_stokes`` 
 - Heat transfer pĥysics
 - Unsteady problem handled by a BDF1 time-stepping scheme
 - Phase change specific heat model

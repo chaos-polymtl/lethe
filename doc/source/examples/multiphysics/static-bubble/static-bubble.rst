@@ -11,7 +11,7 @@ This example simulates a `two-dimensional static bubble`_.
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes_2d``
+- Solver: ``gls_navier_stokes``
 - Two phase flow handled by the Volume of fluids (VOF) approach with surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
@@ -203,9 +203,9 @@ When providing the analytical solution in the ``analytical solution`` subsection
 Running the Simulation
 ---------------------------
 
-Call the ``gls_navier_stokes_2d`` by invoking:
+Call the ``gls_navier_stokes`` by invoking:
 
-``mpirun -np 8 gls_navier_stokes_2d static-bubble.prm``
+``mpirun -np 8 gls_navier_stokes static-bubble.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

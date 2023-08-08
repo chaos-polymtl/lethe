@@ -29,6 +29,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#include <regex>
+
+
 using namespace dealii;
 
 /**
@@ -323,6 +326,32 @@ deserialize_table(TableHandler &table, const std::string filename)
   ia >> table;
 }
 
+/**
+ * @brief  get the value of a particular parameter from the contents of the input
+ * file. Return an empty string if not found. This function is used to read an
+ * individual parameter for an input file. This function is adapted from ASPECT
+ * and is mainly used in parsing the dim of the problem before creating the
+ * whole parameter parser
+ *
+ * @param file_name The file name from which to read a value
+ * @param parameter_name The name of the parameter
+ */
+
+std::string
+get_last_value_of_parameter(const std::string &file_name,
+                            const std::string &parameter_name);
+
+/**
+ * @brief Extract the dimension in which to run Lethe from the
+ * the contents of the parameter file. This is something that
+ * we need to do before processing the parameter file since we
+ * need to know whether to use the dim=2 or dim=3 instantiation
+ * of the main classes.
+ *
+ * @param file_name The file name from which dimension is read
+ */
+unsigned int
+get_dimension(const std::string &file_name);
 
 
 #endif
