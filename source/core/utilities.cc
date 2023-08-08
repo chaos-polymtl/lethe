@@ -480,6 +480,6 @@ get_dimension(const std::string &file_name)
         dealii::ExcMessage(
           "While reading the dimension from the input file, "
           "Lethe found a value that is neither 2 or 3. Since August 2023, "
-          "Lethe requires that the user explicitely specify the dimension of the problem within the parameter file. This can be achieved by adding set dimension = 2 or set dimension = 3 within the parameter file"));
+          "Lethe requires that the user explicitly specify the dimension of the problem within the parameter file. This can be achieved by adding set dimension = 2 or set dimension = 3 within the parameter file"));
     }
 }
