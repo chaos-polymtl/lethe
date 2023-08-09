@@ -15,4 +15,4 @@ Steady iteration:        2/2
    Volume of triangulation:      8
 cells  error_velocity     error_pressure   
    64 4.185618e-01    - 4.553725e-02     - 
-  512 1.099013e-01 1.93 1.771718e-01 -1.96 
+  512 1.098964e-01 1.93 1.771832e-01 -1.96 

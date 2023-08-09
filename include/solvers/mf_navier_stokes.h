@@ -13,8 +13,8 @@
  *
  * ---------------------------------------------------------------------*/
 
-#ifndef lethe_mf_gls_navier_stokes_h
-#define lethe_mf_gls_navier_stokes_h
+#ifndef lethe_mf_navier_stokes_h
+#define lethe_mf_navier_stokes_h
 
 #include <core/exceptions.h>
 
