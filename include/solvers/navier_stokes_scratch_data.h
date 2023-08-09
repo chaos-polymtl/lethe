@@ -85,9 +85,9 @@ public:
    *
    */
   NavierStokesScratchData(PhysicalPropertiesManager &properties_manager,
-                          const FESystem<dim> &      fe,
-                          const Quadrature<dim> &    quadrature,
-                          const Mapping<dim> &       mapping,
+                          const FESystem<dim>       &fe,
+                          const Quadrature<dim>     &quadrature,
+                          const Mapping<dim>        &mapping,
                           const Quadrature<dim - 1> &face_quadrature)
     : properties_manager(properties_manager)
     , fe_values(mapping,
@@ -202,8 +202,8 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content of the solutions, previous solutions and
-   * solutions stages, fills all of the class member of the scratch
+   * Using the FeValues and the content of the solutions and previous solutions,
+   * fills all of the class member of the scratch
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
@@ -212,7 +212,6 @@ public:
    *
    * @param previous_solutions The solutions at the previous time steps
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
    *
    * @param forcing_function The function describing the momentum/mass source term
    *
@@ -224,10 +223,9 @@ public:
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
-         const VectorType &                                    current_solution,
+         const VectorType                                     &current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const std::vector<VectorType> &solution_stages,
-         Function<dim> *                forcing_function,
+         Function<dim>                 *forcing_function,
          Tensor<1, dim>                 beta_force,
          const double                   pressure_scaling_factor)
   {
@@ -304,13 +302,6 @@ public:
           this->fe_values[pressure].get_function_values(
             previous_solutions[p], previous_pressure_values[p]);
         }
-
-    // Gather velocity stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values[velocities].get_function_values(
-          solution_stages[s], stages_velocity_values[s]);
-      }
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
@@ -484,9 +475,9 @@ public:
    */
 
   void
-  enable_vof(const FiniteElement<dim> &         fe,
-             const Quadrature<dim> &            quadrature,
-             const Mapping<dim> &               mapping,
+  enable_vof(const FiniteElement<dim>          &fe,
+             const Quadrature<dim>             &quadrature,
+             const Mapping<dim>                &mapping,
              const Parameters::VOF_PhaseFilter &phase_filter_parameters);
 
   /**
@@ -502,21 +493,21 @@ public:
    */
 
   void
-  enable_vof(const FiniteElement<dim> &                      fe,
-             const Quadrature<dim> &                         quadrature,
-             const Mapping<dim> &                            mapping,
+  enable_vof(const FiniteElement<dim>                       &fe,
+             const Quadrature<dim>                          &quadrature,
+             const Mapping<dim>                             &mapping,
              const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
 
   void
   enable_projected_phase_fraction_gradient(
     const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
-    const Quadrature<dim> &   quadrature,
-    const Mapping<dim> &      mapping);
+    const Quadrature<dim>    &quadrature,
+    const Mapping<dim>       &mapping);
 
   void
   enable_curvature(const FiniteElement<dim> &fe_curvature,
-                   const Quadrature<dim> &   quadrature,
-                   const Mapping<dim> &      mapping);
+                   const Quadrature<dim>    &quadrature,
+                   const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the vof
    *
@@ -530,17 +521,15 @@ public:
    *
    * @param previous_solutions The solutions at the previous time steps for [alpha]
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [alpha]
    *
    */
 
   template <typename VectorType>
   void
   reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             const VectorType &             current_solution,
-             const VectorType &             current_filtered_solution,
-             const std::vector<VectorType> &previous_solutions,
-             const std::vector<VectorType> & /*solution_stages*/)
+             const VectorType              &current_solution,
+             const VectorType              &current_filtered_solution,
+             const std::vector<VectorType> &previous_solutions)
   {
     this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
@@ -563,7 +552,7 @@ public:
   void
   reinit_projected_phase_fraction_gradient(
     const typename DoFHandler<dim>::active_cell_iterator
-      &               projected_phase_fraction_gradient_cell,
+                     &projected_phase_fraction_gradient_cell,
     const VectorType &current_projected_phase_fraction_gradient_solution)
   {
     this->fe_values_projected_phase_fraction_gradient->reinit(
@@ -601,8 +590,8 @@ public:
 
   void
   enable_void_fraction(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
   /** @brief Reinitialize the content of the scratch for the void fraction
    *
@@ -614,17 +603,14 @@ public:
    *
    * @param previous_solutions The solutions at the previous time steps for [epsilon]
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [epsilon]
-   *
    */
 
   template <typename VectorType>
   void
   reinit_void_fraction(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> & /*solution_stages*/)
+    const VectorType                                     &current_solution,
+    const std::vector<VectorType>                        &previous_solutions)
   {
     this->fe_values_void_fraction->reinit(cell);
 
@@ -667,8 +653,6 @@ public:
    *
    * @param previous_solutions The solutions at the previous time steps for [epsilon]
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [epsilon]
-   *
    */
 
   template <typename VectorType>
@@ -679,8 +663,8 @@ public:
     const VectorType                       previous_solution,
     const VectorType                       void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
-    DoFHandler<dim> &                      dof_handler,
-    DoFHandler<dim> &                      void_fraction_dof_handler)
+    DoFHandler<dim>                       &dof_handler,
+    DoFHandler<dim>                       &void_fraction_dof_handler)
   {
     const FiniteElement<dim> &fe = this->fe_values.get_fe();
     const FiniteElement<dim> &fe_void_fraction =
@@ -888,8 +872,8 @@ public:
 
   void
   enable_heat_transfer(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
 
   /** @brief Reinitialize the content of the scratch for the heat transfer
@@ -908,7 +892,7 @@ public:
   void
   reinit_heat_transfer(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution)
+    const VectorType                                     &current_solution)
   {
     this->fe_values_temperature->reinit(cell);
 
@@ -932,8 +916,8 @@ public:
    */
   void
   enable_cahn_hilliard(const FiniteElement<dim> &fe,
-                       const Quadrature<dim> &   quadrature,
-                       const Mapping<dim> &      mapping);
+                       const Quadrature<dim>    &quadrature,
+                       const Mapping<dim>       &mapping);
 
 
   /** @brief Reinitialize the content of the scratch for CH
@@ -944,15 +928,12 @@ public:
    *
    * @param current_solution The present value of the solution for [phi]
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [phi]
-   *
    */
   template <typename VectorType>
   void
   reinit_cahn_hilliard(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const VectorType &                                    current_solution,
-    const std::vector<VectorType> & /*solution_stages*/,
+    const VectorType                                     &current_solution,
     Parameters::CahnHilliard cahn_hilliard_parameters)
   {
     this->fe_values_cahn_hilliard->reinit(cell);
@@ -1052,7 +1033,6 @@ public:
   std::vector<Tensor<1, dim>>              pressure_gradients;
   std::vector<std::vector<double>>         previous_pressure_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_velocity_values;
-  std::vector<std::vector<Tensor<1, dim>>> stages_velocity_values;
 
   // Shape functions
   std::vector<std::vector<double>>         div_phi_u;

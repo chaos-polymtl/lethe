@@ -78,14 +78,7 @@ namespace Parameters
       steady_bdf,
       bdf1,
       bdf2,
-      bdf3,
-      sdirk22,
-      sdirk22_1,
-      sdirk22_2,
-      sdirk33,
-      sdirk33_1,
-      sdirk33_2,
-      sdirk33_3
+      bdf3
     } method;
 
     // Method used for time progression (steady, unsteady)
@@ -135,7 +128,6 @@ namespace Parameters
     enum class BDFStartupMethods
     {
       initial_solution,
-      sdirk_step,
       multiple_step_bdf,
     } bdf_startup_method;
 
@@ -342,7 +334,7 @@ namespace Parameters
                        std::string       material_prefix,
                        unsigned int      id);
     void
-    parse_parameters(ParameterHandler &   prm,
+    parse_parameters(ParameterHandler    &prm,
                      std::string          material_prefix,
                      const unsigned int   id,
                      const Dimensionality dimensions);
@@ -481,7 +473,7 @@ namespace Parameters
     void
     declare_parameters(ParameterHandler &prm);
     void
-    parse_parameters(ParameterHandler &   prm,
+    parse_parameters(ParameterHandler    &prm,
                      const Dimensionality dimensions = Dimensionality());
   };
 

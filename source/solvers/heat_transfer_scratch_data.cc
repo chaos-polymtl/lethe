@@ -48,11 +48,6 @@ HeatTransferScratchData<dim>::allocate()
       maximum_number_of_previous_solutions(),
       std::vector<Tensor<1, dim>>(n_q_points));
 
-  // Velocity for SDIRK schemes
-  this->stages_temperature_values =
-    std::vector<std::vector<double>>(max_number_of_intermediary_stages(),
-                                     std::vector<double>(n_q_points));
-
   // Initialize arrays related to shape functions
   // Velocity shape functions
   this->phi_T =
@@ -81,9 +76,9 @@ HeatTransferScratchData<dim>::allocate()
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &         fe,
-  const Quadrature<dim> &            quadrature,
-  const Mapping<dim> &               mapping,
+  const FiniteElement<dim>          &fe,
+  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                &mapping,
   const Parameters::VOF_PhaseFilter &phase_filter_parameters)
 {
   gather_vof    = true;
@@ -115,9 +110,9 @@ HeatTransferScratchData<dim>::enable_vof(
 template <int dim>
 void
 HeatTransferScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &                      fe,
-  const Quadrature<dim> &                         quadrature,
-  const Mapping<dim> &                            mapping,
+  const FiniteElement<dim>                       &fe,
+  const Quadrature<dim>                          &quadrature,
+  const Mapping<dim>                             &mapping,
   const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
 {
   gather_vof    = true;

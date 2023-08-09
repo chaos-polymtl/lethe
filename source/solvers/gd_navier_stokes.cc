@@ -115,12 +115,6 @@ GDNavierStokesSolver<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      else if (is_sdirk(this->simulation_control->get_assembly_method()))
-        {
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
-              this->simulation_control));
-        }
 
       // Velocity sources term
       if (this->simulation_parameters.velocity_sources.type ==
@@ -231,8 +225,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -242,7 +236,6 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -260,8 +253,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_matrix(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -360,8 +352,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
   if (!cell->is_locally_owned())
@@ -371,7 +363,6 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -390,8 +381,7 @@ GDNavierStokesSolver<dim>::assemble_local_system_rhs(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -693,14 +683,6 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
 
   // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
-    {
-      solution.reinit(this->locally_owned_dofs,
-                      this->locally_relevant_dofs,
-                      this->mpi_communicator);
-    }
-
-  // If SDIRK type of methods are used, initialize solution stages
-  for (auto &solution : this->solution_stages)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,

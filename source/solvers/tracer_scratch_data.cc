@@ -35,12 +35,6 @@ TracerScratchData<dim>::allocate()
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(n_q_points));
 
-  // Velocity for SDIRK schemes
-  this->stages_tracer_values =
-    std::vector<std::vector<double>>(max_number_of_intermediary_stages(),
-                                     std::vector<double>(n_q_points));
-
-
   // Initialize arrays related to shape functions
   // Velocity shape functions
   this->phi =

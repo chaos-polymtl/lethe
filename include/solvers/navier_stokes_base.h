@@ -443,9 +443,6 @@ protected:
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
 
-  // Intermediary solution stages for SDIRK methods
-  std::vector<VectorType> solution_stages;
-
   // Finite element order used
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;

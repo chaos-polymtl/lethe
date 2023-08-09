@@ -171,10 +171,6 @@ namespace Parameters
         method = TimeSteppingMethod::bdf2;
       else if (sv == "bdf3")
         method = TimeSteppingMethod::bdf3;
-      else if (sv == "sdirk2")
-        method = TimeSteppingMethod::sdirk22;
-      else if (sv == "sdirk3")
-        method = TimeSteppingMethod::sdirk33;
       else
         {
           std::runtime_error("Invalid time stepping scheme");
@@ -182,8 +178,6 @@ namespace Parameters
       const std::string bdf_startup_string = prm.get("bdf startup method");
       if (bdf_startup_string == "multiple step bdf")
         bdf_startup_method = BDFStartupMethods::multiple_step_bdf;
-      else if (bdf_startup_string == "sdirk step")
-        bdf_startup_method = BDFStartupMethods::sdirk_step;
       else if (bdf_startup_string == "initial solution")
         bdf_startup_method = BDFStartupMethods::initial_solution;
       else
@@ -283,7 +277,7 @@ namespace Parameters
   }
 
   void
-  PowerLawParameters::parse_parameters(ParameterHandler &   prm,
+  PowerLawParameters::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("power-law");
@@ -323,7 +317,7 @@ namespace Parameters
   }
 
   void
-  CarreauParameters::parse_parameters(ParameterHandler &   prm,
+  CarreauParameters::parse_parameters(ParameterHandler    &prm,
                                       const Dimensionality dimensions)
   {
     prm.enter_subsection("carreau");
@@ -359,7 +353,7 @@ namespace Parameters
   }
 
   void
-  NonNewtonian::parse_parameters(ParameterHandler &   prm,
+  NonNewtonian::parse_parameters(ParameterHandler    &prm,
                                  const Dimensionality dimensions)
   {
     prm.enter_subsection("non newtonian");
@@ -399,7 +393,7 @@ namespace Parameters
 
   void
   IsothermalIdealGasDensityParameters::parse_parameters(
-    ParameterHandler &   prm,
+    ParameterHandler    &prm,
     const Dimensionality dimensions)
   {
     prm.enter_subsection("isothermal_ideal_gas");
@@ -505,7 +499,7 @@ namespace Parameters
   }
 
   void
-  PhaseChange::parse_parameters(ParameterHandler &   prm,
+  PhaseChange::parse_parameters(ParameterHandler    &prm,
                                 const Dimensionality dimensions)
   {
     prm.enter_subsection("phase change");
@@ -671,7 +665,7 @@ namespace Parameters
   }
 
   void
-  PhysicalProperties::parse_parameters(ParameterHandler &   prm,
+  PhysicalProperties::parse_parameters(ParameterHandler    &prm,
                                        const Dimensionality dimensions)
   {
     prm.enter_subsection("physical properties");
@@ -825,7 +819,7 @@ namespace Parameters
   }
 
   void
-  Material::parse_parameters(ParameterHandler &               prm,
+  Material::parse_parameters(ParameterHandler                &prm,
                              std::string                      material_prefix,
                              const unsigned int               id,
                              const Parameters::Dimensionality dimensions)

@@ -42,11 +42,6 @@ NavierStokesScratchData<dim>::allocate()
     maximum_number_of_previous_solutions(),
     std::vector<Tensor<1, dim>>(n_q_points));
 
-  // Velocity for SDIRK schemes
-  this->stages_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
-    max_number_of_intermediary_stages(),
-    std::vector<Tensor<1, dim>>(n_q_points));
-
   // Pressure
   this->pressure_values         = std::vector<double>(n_q_points);
   this->pressure_gradients      = std::vector<Tensor<1, dim>>(n_q_points);
@@ -95,9 +90,9 @@ NavierStokesScratchData<dim>::allocate()
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &         fe,
-  const Quadrature<dim> &            quadrature,
-  const Mapping<dim> &               mapping,
+  const FiniteElement<dim>          &fe,
+  const Quadrature<dim>             &quadrature,
+  const Mapping<dim>                &mapping,
   const Parameters::VOF_PhaseFilter &phase_filter_parameters)
 {
   gather_vof    = true;
@@ -133,9 +128,9 @@ NavierStokesScratchData<dim>::enable_vof(
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_vof(
-  const FiniteElement<dim> &                      fe,
-  const Quadrature<dim> &                         quadrature,
-  const Mapping<dim> &                            mapping,
+  const FiniteElement<dim>                       &fe,
+  const Quadrature<dim>                          &quadrature,
+  const Mapping<dim>                             &mapping,
   const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
 {
   gather_vof    = true;
@@ -172,8 +167,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_cahn_hilliard(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_cahn_hilliard    = true;
   fe_values_cahn_hilliard = std::make_shared<FEValues<dim>>(
@@ -210,8 +205,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
   const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_projected_phase_fraction_gradient = true;
   fe_values_projected_phase_fraction_gradient =
@@ -230,8 +225,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_curvature(
   const FiniteElement<dim> &fe_curvature,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_curvature    = true;
   fe_values_curvature = std::make_shared<FEValues<dim>>(
@@ -246,8 +241,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_void_fraction(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_void_fraction    = true;
   fe_values_void_fraction = std::make_shared<FEValues<dim>>(
@@ -288,8 +283,8 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::enable_heat_transfer(
   const FiniteElement<dim> &fe,
-  const Quadrature<dim> &   quadrature,
-  const Mapping<dim> &      mapping)
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
 {
   gather_temperature    = true;
   fe_values_temperature = std::make_shared<FEValues<dim>>(

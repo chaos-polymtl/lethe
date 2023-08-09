@@ -165,22 +165,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   // of the BDF schemes
   previous_solutions.resize(maximum_number_of_previous_solutions());
 
-  // Pre-allocate memory for intermediary stages if there are any
-  if (this->simulation_parameters.simulation_control.bdf_startup_method ==
-        Parameters::SimulationControl::BDFStartupMethods::sdirk_step &&
-      this->simulation_parameters.simulation_control.method ==
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    solution_stages.resize(1);
-  else if (this->simulation_parameters.simulation_control.bdf_startup_method ==
-             Parameters::SimulationControl::BDFStartupMethods::sdirk_step &&
-           this->simulation_parameters.simulation_control.method ==
-             Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    solution_stages.resize(2);
-  else
-    solution_stages.resize(number_of_intermediary_stages(
-      simulation_parameters.simulation_control.method));
-
-
   // Change the behavior of the timer for situations when you don't want
   // outputs
   if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
@@ -567,10 +551,30 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->present_solution;
 
-  // If the fluid dynamics is not to be solved, but rather specified. Update
-  // condition and move on.
-  if (!simulation_parameters.multiphysics.fluid_dynamics)
+  if (simulation_parameters.multiphysics.fluid_dynamics)
     {
+      // Solve and percolate the auxiliary physics that should be treated BEFORE
+      // the fluid dynamics
+      multiphysics->solve(false,
+                          simulation_parameters.simulation_control.method);
+      multiphysics->percolate_time_vectors(false);
+
+      PhysicsSolver<VectorType>::solve_non_linear_system(false);
+
+      // Solve and percolate the auxiliary physics that should be treated AFTER
+      // the fluid dynamics
+      multiphysics->solve(true,
+                          simulation_parameters.simulation_control.method);
+      // Dear future Bruno, percolating auxiliary physics before fluid dynamics
+      // is necessary because of the checkpointing mechanism. You spent an
+      // evening debugging this, trust me.
+      multiphysics->percolate_time_vectors(true);
+    }
+  else
+    {
+      // Fluid dynamics is not to be solved, but rather specified. Update
+      // condition and move on.
+
       // Solve and percolate the auxiliary physics that should be treated
       // BEFORE the fluid dynamics
       multiphysics->solve(false,
@@ -597,60 +601,6 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
       // AFTER the fluid dynamics
       multiphysics->solve(true,
                           simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(true);
-    }
-  else if (simulation_control->get_assembly_method() ==
-             Parameters::SimulationControl::TimeSteppingMethod::sdirk22 &&
-           simulation_parameters.multiphysics.fluid_dynamics)
-    {
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-      this->solution_stages[0] = present_solution;
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-    }
-  else if (simulation_control->get_assembly_method() ==
-             Parameters::SimulationControl::TimeSteppingMethod::sdirk33 &&
-           simulation_parameters.multiphysics.fluid_dynamics)
-    {
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      this->solution_stages[0] = present_solution;
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      this->solution_stages[1] = present_solution;
-
-      this->simulation_control->set_assembly_method(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3);
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-    }
-  else
-    {
-      // sdirk schemes are not implemented for multiphysics simulations
-
-      // Solve and percolate the auxiliary physics that should be treated BEFORE
-      // the fluid dynamics
-      multiphysics->solve(false,
-                          simulation_parameters.simulation_control.method);
-      multiphysics->percolate_time_vectors(false);
-
-      PhysicsSolver<VectorType>::solve_non_linear_system(false);
-
-      // Solve and percolate the auxiliary physics that should be treated AFTER
-      // the fluid dynamics
-      multiphysics->solve(true,
-                          simulation_parameters.simulation_control.method);
-      // Dear future Bruno, percolating auxiliary physics before fluid dynamics
-      // is necessary because of the checkpointing mechanism. You spent an
-      // evening debugging this, trust me.
       multiphysics->percolate_time_vectors(true);
     }
 }
@@ -904,7 +854,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &                           present_solution = this->present_solution;
+  auto                            &present_solution = this->present_solution;
 
   // Global flags
   // Their dimension is consistent with the dimension returned by
@@ -2016,7 +1966,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
             1, DataComponentInterpretation::component_is_scalar);
 
         std::vector<std::string> qcriterion_name = {"qcriterion"};
-        const DoFHandler<dim> &  dof_handler_qcriterion =
+        const DoFHandler<dim>   &dof_handler_qcriterion =
           qcriterion_smoothing.get_dof_handler();
         data_out.add_data_vector(dof_handler_qcriterion,
                                  qcriterion_field,
@@ -2035,7 +1985,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
             1, DataComponentInterpretation::component_is_scalar);
 
         std::vector<std::string> continuity_name = {"velocity_divergence"};
-        const DoFHandler<dim> &  dof_handler_qcriterion =
+        const DoFHandler<dim>   &dof_handler_qcriterion =
           continuity_smoothing.get_dof_handler();
         data_out.add_data_vector(dof_handler_qcriterion,
                                  continuity_field,

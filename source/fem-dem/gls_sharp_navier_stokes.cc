@@ -123,14 +123,14 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
                                  this->mpi_communicator);
     }
 
-  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const auto        &cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
 
-  auto &             v_x_fe                  = this->fe->get_sub_fe(0, 1);
+  auto              &v_x_fe                  = this->fe->get_sub_fe(0, 1);
   const unsigned int dofs_per_cell_local_v_x = v_x_fe.dofs_per_cell;
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
@@ -295,8 +295,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
             }
 
           cut_cells_map[cell]    = {cell_is_cut,
-                                 particle_id_which_cuts_this_cell,
-                                 number_of_particles_cutting_this_cell};
+                                    particle_id_which_cuts_this_cell,
+                                    number_of_particles_cutting_this_cell};
           cells_inside_map[cell] = {cell_is_inside,
                                     particle_id_in_which_this_cell_is_embedded};
         }
@@ -430,7 +430,7 @@ template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p_absolute_distance(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  std::map<types::global_dof_index, Point<dim>> &       support_points,
+  std::map<types::global_dof_index, Point<dim>>        &support_points,
   unsigned int                                          p)
 {
   // This function aims at defining if a cell is cut when the level set used to
@@ -1622,7 +1622,7 @@ GLSSharpNavierStokesSolver<dim>::output_field_hook(DataOut<dim> &data_out)
         ->enable_extra_sharp_interface_vtu_output_field)
     {
       // Define cell iterator
-      const auto & cell_iterator = this->dof_handler.active_cell_iterators();
+      const auto  &cell_iterator = this->dof_handler.active_cell_iterators();
       unsigned int i             = 0;
 
       for (const auto &cell : cell_iterator)
@@ -3706,12 +3706,6 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      else if (is_sdirk(this->simulation_control->get_assembly_method()))
-        {
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
-              this->simulation_control));
-        }
 
       // Velocity sources term
       if (this->simulation_parameters.velocity_sources.type ==
@@ -3750,8 +3744,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3775,7 +3769,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -3794,8 +3787,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -3845,8 +3837,8 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  NavierStokesScratchData<dim> &                        scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  NavierStokesScratchData<dim>                         &scratch_data,
+  StabilizedMethodsTensorCopyData<dim>                 &copy_data)
 {
   copy_data.cell_is_local = cell->is_locally_owned();
 
@@ -3871,7 +3863,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -3890,8 +3881,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
