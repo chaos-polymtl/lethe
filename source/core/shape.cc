@@ -1473,8 +1473,6 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
   max_number_of_inside_nodes = 1;
   position_precalculated     = Point<dim>(this->position);
   orientation_precalculated  = Tensor<1, 3>(this->orientation);
-  minimal_support_radius =
-    *std::min_element(std::begin(support_radii), std::end(support_radii));
 
   for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
     {
@@ -1486,6 +1484,8 @@ RBFShape<dim>::RBFShape(const std::vector<double> &shape_arguments,
       nodes_positions[n_i][1] = shape_arguments[4 * number_of_nodes + n_i];
       nodes_positions[n_i][2] = shape_arguments[5 * number_of_nodes + n_i];
     }
+  minimal_support_radius =
+    *std::min_element(std::begin(support_radii), std::end(support_radii));
   rotate_nodes();
   initialize_bounding_box();
   this->effective_radius = bounding_box->half_lengths.norm();
@@ -1749,7 +1749,7 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
       // only check the distance with 1 support point, added to the support
       // radius
       max_distance =
-        cell_diameter + 0.5 * temp_cell_diameter + minimal_support_radius;
+        0.5 * cell_diameter + 0.5 * temp_cell_diameter + minimal_support_radius;
       if (distance < max_distance)
         {
           likely_nodes_map[cell]->push_back(iterable_nodes[portion_id]);
