@@ -71,7 +71,7 @@ for i in range(0, len(list_vtu)):
     x_list.append(x_max)
 
 
-#Experimental data from Martin & Moyce 1952
+#Experimental data from Martin & Moyce 1952 [1]
 x_exp = [0, 0.41, 0.84, 1.19, 1.43, 1.63, 1.82, 1.97, 2.2, 2.32, 2.5, 2.64, 2.82, 2.96]
 y_exp = [1, 1.11, 1.23, 1.44, 1.67, 1.89, 2.11, 2.33, 2.56, 2.78, 3, 3.22, 3.44, 3.67]
 
@@ -93,3 +93,5 @@ ax0.set_ylim([1, 4])
 ax0.legend(loc="upper left")
 fig0.savefig(f'./xmax-t.png')
 plt.show()
+
+# [1] J. C. Martin et al., “Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane,” Philos. Trans. R. Soc. Lond. Ser. Math. Phys. Sci., vol. 244, no. 882, pp. 312–324, Mar. 1952, doi: 10.1098/rsta.1952.0006.
