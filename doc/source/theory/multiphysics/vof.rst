@@ -4,7 +4,7 @@ The Volume of Fluid (VOF) Method
 
 Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method [`1 <https://doi.org/10.1016/0021-9991(81)90145-5>`_], we define the scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method `[1] <https://doi.org/10.1016/0021-9991(81)90145-5>`_, we define the scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -84,7 +84,7 @@ Find :math:`\phi^h \in \Phi^h \times [0,T]` such that
 Stabilization
 --------------
 
-The numerical resolution of the advection equation requires stabilization because of its purely advective character, which makes the equation hyperbolic. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across :math:`\Gamma`. Since SUPG only adds diffusion along the streamlines, crosswind oscillations may occur if no appropriate shock capturing scheme is used. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used [`2 <https://doi.org/10.1002/fld.505>`_]:
+The numerical resolution of the advection equation requires stabilization because of its purely advective character, which makes the equation hyperbolic. Furthermore, a second stabilization term is added to improve the capturing of the interface due to sharp gradient across :math:`\Gamma`. Since SUPG only adds diffusion along the streamlines, crosswind oscillations may occur if no appropriate shock capturing scheme is used. To that end, a Discontinuity-Capturing Directional Dissipation (DCDD) shock capturing scheme is used `[2] <https://doi.org/10.1002/fld.505>`_:
 
 .. math::
 
@@ -137,9 +137,8 @@ The phase fraction limiter above will update the phase fraction if it failed to 
     \end{cases}
 
 where :math:`c` denotes the sharpening threshold, which defines
-a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This interface sharpening method was proposed by `Aliabadi and Tezduyar (2000)`_.
+a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This interface sharpening method was proposed by Aliabadi and Tezduyar (2000) `[3] <https://doi.org/10.1016/S0045-7825(00)00200-0>`_.
 
-.. _Aliabadi and Tezduyar (2000):  https://www.sciencedirect.com/science/article/pii/S0045782500002000
 
 """"""""""""""""""""""""""""""""
 Interface Filtration
@@ -155,7 +154,7 @@ where :math:`\phi'` is the filtered phase fraction value, and :math:`\beta` is a
 Surface Tension
 ---------------
 
-When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape [`3 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_].
+When two immiscible fluids are in contact, surface tension tends to deform their interface (also called the free surface) into a shape that ensures a minimal energy state. An example would be the force that drives a droplet into its spherical shape `[4] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_.
 
 Resolution of the interface motion via the advection equation allows to compute the surface tension term and add its effect to the Navier-Stokes momentum equations.
 
@@ -165,7 +164,7 @@ As its name suggests, the surface tension :math:`\bf{f_{\sigma}}` is a surface f
 
     {\bf{f_{\sigma}}} = \sigma \kappa {\bf{n}}
 
-where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the curvature and :math:`\bf{n}` is the unit normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force :math:`\bf{F_{\sigma}}` using the continuous surface force (CSF) model [`3 <https://doi.org/10.1016/0021-9991(92)90240-Y>`_], that is:
+where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the curvature and :math:`\bf{n}` is the unit normal vector of the free surface. Here, :math:`{\bf{f_{\sigma}}}` is a force per unit of area. To account for its effect in the Navier-Stokes equations, the surface force is transformed in a volumetric surface force :math:`\bf{F_{\sigma}}` using the continuous surface force (CSF) model `[4] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_, that is:
 
 .. math::
 
@@ -189,7 +188,7 @@ and the unit normal vector of the free surface, pointing from fluid 0 to 1, is o
 
     \bf{n} = \frac{\nabla \phi}{|\nabla \phi|}
 
-When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps [`4 <https://doi.org/10.1002/fld.2643>`_], as presented in section :ref:`Normal and curvature computations`.
+When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps `[5] <https://doi.org/10.1002/fld.2643>`_, as presented in section :ref:`Normal and curvature computations`.
 
 .. _Normal and curvature computations:
 
@@ -225,10 +224,12 @@ where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` i
 References
 -----------
 
-`[1] <https://doi.org/10.1016/0021-9991(81)90145-5>`_ Hirt, C.W., Nichols, B.D., 1981. Volume of fluid (VOF) method for the dynamics of free boundaries. Journal of computational physics, 39(1), pp.201-225.
+`[1] <https://doi.org/10.1016/0021-9991(81)90145-5>`_ C. W. Hirt and B. D. Nichols, “Volume of fluid (VOF) method for the dynamics of free boundaries,” *J. Comput. Phys.*, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: 10.1016/0021-9991(81)90145-5.
 
-`[2] <https://doi.org/10.1002/fld.505>`_ Tezduyar, T.E., 2003. omputation of moving boundaries and interfaces and stabilization parameters. Journal of numerical methods in fluids physics, 43, pp.555-575.
+`[2] <https://doi.org/10.1002/fld.505>`_ T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” *Int. J. Numer. Methods Fluids*, vol. 43, no. 5, pp. 555–575, 2003, doi: 10.1002/fld.505.
 
-`[3] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_ Brackbill, J.U., Kothe, D.B. and Zemach, C., 1992. A continuum method for modeling surface tension. Journal of computational physics, 100(2), pp.335-354.
+`[3] <https://doi.org/10.1016/S0045-7825(00)00200-0>`_ S. Aliabadi and T. E. Tezduyar, “Stabilized-finite-element/interface-capturing technique for parallel computation of unsteady flows with interfaces,” *Comput. Methods Appl. Mech. Eng.*, vol. 190, no. 3, pp. 243–261, Oct. 2000, doi: 10.1016/S0045-7825(00)00200-0.
 
-`[4] <https://doi.org/10.1002/fld.2643>`_ Zahedi, S., Kronbichler, M. and Kreiss, G., 2012. Spurious currents in finite element based level set methods for two‐phase flow. International Journal for Numerical Methods in Fluids, 69(9), pp.1433-1456.
+`[4] <https://doi.org/10.1016/0021-9991(92)90240-Y>`_	J. U. Brackbill, D. B. Kothe, and C. Zemach, “A continuum method for modeling surface tension,” *J. Comput. Phys.*, vol. 100, no. 2, pp. 335–354, Jun. 1992, doi: 10.1016/0021-9991(92)90240-Y.
+
+`[5] <https://doi.org/10.1002/fld.2643>`_ S. Zahedi, M. Kronbichler, and G. Kreiss, “Spurious currents in finite element based level set methods for two-phase flow,” *Int. J. Numer. Methods Fluids*, vol. 69, no. 9, pp. 1433–1456, 2012, doi: 10.1002/fld.2643.

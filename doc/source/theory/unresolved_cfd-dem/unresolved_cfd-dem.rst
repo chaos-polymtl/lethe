@@ -12,7 +12,7 @@ The micro-meso scale approach allows for particle-fluid simulations involving la
     :name: geometry
     :scale: 40
 
-In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard, Patience & Blais (2019) `[1] <https://doi.org/10.1002/cjce.23686>`_, and Zhou et al. (2010) `[2] <https://doi.org/10.1017/S002211201000306X>`_.
+In this guide, we summarize the theory behind Unresolved CFD-DEM. For further details, we refer the reader to the articles by Bérard *et al.* `[1] <https://doi.org/10.1002/cjce.23686>`_, and Zhou *et al.* `[2] <https://doi.org/10.1017/S002211201000306X>`_.
 
 Particles
 ----------
@@ -186,16 +186,16 @@ where :math:`V^N_{sphere}` is the normalized volume of the volume averaging sphe
     
 Reference
 -----------
-`[1] <https://doi.org/10.1002/cjce.23686>`_ Bérard, Patience, and Blais. Experimental methods in chemical engineering: Unresolved CFD‐DEM. The Canadian Journal of Chemical Engineering, v. 98, n. 2, p. 424-440, 2020.
+`[1] <https://doi.org/10.1002/cjce.23686>`_ A. Bérard, G. S. Patience, and B. Blais, “Experimental methods in chemical engineering: Unresolved CFD-DEM,” *Can. J. Chem. Eng.*, vol. 98, no. 2, pp. 424–440, 2020, doi: 10.1002/cjce.23686.
 
-`[2] <https://doi.org/10.1017/S002211201000306X>`_ Zhou, Kuang, Chu, and Yu, Discrete particle simulation of particle–fluid flow: model formulations and their applicability, Journal of Fluid Mechanics, vol. 661, pp. 482–510, 2010.
+`[2] <https://doi.org/10.1017/S002211201000306X>`_ Z. Y. Zhou, S. B. Kuang, K. W. Chu, and A. B. Yu, “Discrete particle simulation of particle–fluid flow: model formulations and their applicability,” *J. Fluid Mech.*, vol. 661, pp. 482–510, Oct. 2010, doi: 10.1017/S002211201000306X.
 
-`[3] <https://doi.org/10.1002/aic.690400418>`_ Kim, Sangtae, and Karrila. Microhydrodynamics: principles and selected applications. Courier Corporation, 2013.
+`[3] <https://doi.org/10.1002/aic.690400418>`_ L. C. Nitsche, “Microhydrodynamics: Principles and selected applications. By Sangtae Kim and Seppo J. Karrila, Butterworth-Heinemann, Boston, 1991” *AIChE J.*, vol. 40, no. 4, pp. 739–743, 1994, doi: 10.1002/aic.690400418.
 
-`[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_ L. Rong, K. Dong, A. Yu, Lattice-boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity, Chemical engineering science 99 (2013) 44–58.
+`[4] <http://dx.doi.org/10.1016/j.ces.2013.05.036>`_ L. W. Rong, K. J. Dong, and A. B. Yu, “Lattice-Boltzmann simulation of fluid flow through packed beds of uniform spheres: Effect of porosity,” *Chem. Eng. Sci.*, vol. 99, pp. 44–58, Aug. 2013, doi: 10.1016/j.ces.2013.05.036.
 
-`[5] <https://doi.org/10.1002/aic.14421>`_ Z. Peng et al. Influence of void fraction calculation on fidelity of CFD‐DEM simulation of gas‐solid bubbling fluidized beds. AIChE Journal, v. 60, n. 6, p. 2000-2018, 2014.
+`[5] <https://doi.org/10.1002/aic.14421>`_ Z. Peng, E. Doroodchi, C. Luo, and B. Moghtaderi, “Influence of void fraction calculation on fidelity of CFD-DEM simulation of gas-solid bubbling fluidized beds,” *AIChE J.*, vol. 60, no. 6, pp. 2000–2018, 2014, doi: 10.1002/aic.14421.
 
-`[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_ M. G. Larson, F. Bengzon. The finite element method: theory, implementation, and applications. Springer Science & Business Media, 2013.
+`[6] <https://link.springer.com/book/10.1007/978-3-642-33287-6>`_ M. G. Larson and F. Bengzon, *The Finite Element Method: Theory, Implementation, and Applications*. Springer Science & Business Media, 2013.
 
-`[7] <https://doi.org/10.1021/acs.iecr.3c00172>`_ El Geitani, T., & Blais, B. Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations. Industrial & Engineering Chemistry Research, 2023, vol. 62, no 12, p. 5394-5407.
+`[7] <https://doi.org/10.1021/acs.iecr.3c00172>`_ T. El Geitani and B. Blais, “Quadrature-Centered Averaging Scheme for Accurate and Continuous Void Fraction Calculation in Computational Fluid Dynamics–Discrete Element Method Simulations,” *Ind. Eng. Chem. Res.*, vol. 62, no. 12, pp. 5394–5407, Mar. 2023, doi: 10.1021/acs.iecr.3c00172.

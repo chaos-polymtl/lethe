@@ -158,8 +158,8 @@ Some remarks:
 References
 ----------
 
-`[1] <https://doi.org/10.1017/S0962492904000212>`_ M. Benzi, G. H. Golubt, and J. Liesen, “Numerical solution of saddle point problems,” Acta Numerica, vol. 14, pp. 1–137, 2005.
+`[1] <https://doi.org/10.1017/S0962492904000212>`_ M. Benzi, G. H. Golub, and J. Liesen, “Numerical solution of saddle point problems,” *Acta Numer.*, vol. 14, pp. 1–137, May 2005, doi: 10.1017/S0962492904000212.
 
-`[2] <https://doi.org/10.1002/nla.2215>`_ A. Ghai, C. Lu, and X. Jiao, “A comparison of preconditioned Krylov subspace methods for large-scale nonsymmetric linear systems,” Numerical Linear Algebra with Applications, vol. 26, no. 1, 2019.
+`[2] <https://doi.org/10.1002/nla.2215>`_ A. Ghai, C. Lu, and X. Jiao, “A comparison of preconditioned Krylov subspace methods for large-scale nonsymmetric linear systems,” *Numer. Linear Algebra Appl.*, vol. 26, no. 1, p. e2215, 2019, doi: 10.1002/nla.2215.
 
-`[3] <https://books.google.ca/books/about/Iterative_Methods_for_Sparse_Linear_Syst.html?id=qtzmkzzqFmcC&redir_esc=y>`_ Y. Saad, Iterative Methods for Sparse Linear Systems: Second Edition. Other Titles in Applied Mathematics, Society for Industrial and Applied Mathematics, 2003.
+`[3] <https://books.google.ca/books/about/Iterative_Methods_for_Sparse_Linear_Syst.html?id=qtzmkzzqFmcC&redir_esc=y>`_ Y. Saad, *Iterative Methods for Sparse Linear Systems*, 2nd ed. SIAM, 2003.
