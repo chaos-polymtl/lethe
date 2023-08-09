@@ -92,6 +92,8 @@ Here, the constructor ``lethe_pyvista_tools`` receives two arguments: ``case_pat
 .. tip::
   Together with the object ``particles``, ``lethe_pyvista_tools`` creates a dictionary with all parameters in the ``.prm`` file. To access the parameter, we can use ``particles.prm_dict['$NAME_OF_THE_PARAMETER']``. In the present case for example, the diameter of the particles can be easily printed using ``print(particles.prm_dict['diameter'])``. This can be useful for post-processing routines with multiple simulations.
 
+  Note that a list of values is returned when there is more than one parameter with the same name in the ``.prm`` file. The list is sorted according to parameters' occurancy.
+
 This command will also read all information necessary to read the data from the pvd file. To ensure that no original data will not be lost during the post-processing, on calling the contructor, copies of the ``.pvd`` and all ``.vtu`` files are created with a given ``prefix``. This parameter can be added to ``lethe_pyvista_tools`` and is ``mod_`` by default. If you wish to work with the original ``.vtu`` and ``.pvd`` files, just use ``prefix = ""``.
 
 The ``read_lethe_to_pyvista`` reading function assigns the datasets of each time-step to the object ``particles``. Each time-step corresponds to a `PyVista dataset <https://docs.pyvista.org/user-guide/vtk_to_pyvista.html#>`_, and can be accessed using ``particles.df[$TIME-step_NUMBER]``.
