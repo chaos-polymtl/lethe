@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 
 #include <solvers/cahn_hilliard_scratch_data.h>
 template <int dim>

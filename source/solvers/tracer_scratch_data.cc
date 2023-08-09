@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 
 #include <solvers/tracer_scratch_data.h>
 

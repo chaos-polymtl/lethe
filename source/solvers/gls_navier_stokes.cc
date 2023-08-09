@@ -21,7 +21,6 @@
 #include <core/grids.h>
 #include <core/manifolds.h>
 #include <core/multiphysics.h>
-#include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 

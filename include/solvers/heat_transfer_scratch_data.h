@@ -164,8 +164,8 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content of the solutions, previous solutions and
-   * solutions stages, fills all of the class member of the scratch
+   * Using the FeValues and the content of the solutions, previous solutions ,
+   * fills all of the class member of the scratch
    *
    * @tparam VectorType The Vector type used for the solvers
    *
@@ -176,8 +176,6 @@ public:
    *
    * @param previous_solutions The solutions at the previous time steps
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
-   *
    * @param source_function The function describing the Heat Transfer source term
    */
 
@@ -186,7 +184,6 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
          const std::vector<TrilinosWrappers::MPI::Vector> &previous_solutions,
-         const std::vector<VectorType> &                   solution_stages,
          Function<dim> *                                   source_function)
   {
     material_id = cell->material_id();
@@ -218,13 +215,6 @@ public:
 
         this->fe_values_T.get_function_gradients(
           previous_solutions[p], previous_temperature_gradients[p]);
-      }
-
-    // Gather temperature stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values_T.get_function_values(solution_stages[s],
-                                              stages_temperature_values[s]);
       }
 
     for (unsigned int q = 0; q < n_q_points; ++q)
@@ -375,9 +365,6 @@ public:
    *
    * @param current_solution The present solution for the phase value
    *
-   * @param solution_stages The solution at the intermediary stages
-   * (for SDIRK methods) for the phase value
-   *
    * NB: the previous_solutions are not used in heat_transfer_assemblers,
    * contrary to navier_stokes_assemblers
    */
@@ -385,8 +372,7 @@ public:
   template <typename VectorType>
   void
   reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             const VectorType &current_filtered_solution,
-             const std::vector<VectorType> & /*solution_stages*/)
+             const VectorType &current_filtered_solution)
   {
     this->fe_values_vof->reinit(cell);
     // Gather phase fraction (values, gradient)
@@ -452,8 +438,6 @@ public:
   std::vector<double>                      present_face_temperature_values;
   std::vector<std::vector<double>>         previous_temperature_values;
   std::vector<std::vector<Tensor<1, dim>>> previous_temperature_gradients;
-  std::vector<std::vector<double>>         stages_temperature_values;
-
 
   // Shape functions and gradients
   std::vector<std::vector<double>>         phi_T;

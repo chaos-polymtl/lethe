@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 #include <core/utilities.h>
 
 #include <solvers/heat_transfer_scratch_data.h>

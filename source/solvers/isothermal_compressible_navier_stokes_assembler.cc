@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 #include <core/simulation_control.h>
 
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>

@@ -127,8 +127,8 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content of the solutions, previous solutions and
-   * solutions stages, fills all of the class member of the scratch
+   * Using the FeValues and the content of the solutions and previous solutions,
+   * fills all of the class member of the scratch
    *
    * @tparam VectorType The Vector type used for the solvers
    *
@@ -139,16 +139,13 @@ public:
    *
    * @param previous_solutions The solutions at the previous time steps
    *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
-   *
    */
 
   template <typename VectorType>
   void
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
-         const std::vector<VectorType> &previous_solutions,
-         const std::vector<VectorType> &solution_stages)
+         const std::vector<VectorType> &previous_solutions)
   {
     fe_values_vof.reinit(cell);
     this->quadrature_points = fe_values_vof.get_quadrature_points();
@@ -174,14 +171,6 @@ public:
         fe_values_vof.get_function_values(previous_solutions[p],
                                           this->previous_phase_values[p]);
       }
-
-    // Gather fs stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        fe_values_vof.get_function_values(solution_stages[s],
-                                          this->stages_phase_values[s]);
-      }
-
 
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
@@ -264,7 +253,6 @@ public:
   std::vector<Tensor<1, dim>>      phase_gradients;
   std::vector<double>              phase_laplacians;
   std::vector<std::vector<double>> previous_phase_values;
-  std::vector<std::vector<double>> stages_phase_values;
 
   // Shape functions
   std::vector<std::vector<double>>         phi;
