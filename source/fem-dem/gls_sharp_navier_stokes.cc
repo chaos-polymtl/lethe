@@ -370,6 +370,11 @@ void
 GLSSharpNavierStokesSolver<dim>::refinement_control(
   const bool initial_refinement)
 {
+  // We add a post-refinement check to update precalculations only if needed
+  bool triangulation_modified = false;
+  this->triangulation->signals.post_refinement.connect(
+    [&triangulation_modified]() { triangulation_modified = true; });
+
   //  This function applies the various refinement steps depending on the
   //  parameters and the state.
   if (initial_refinement)
@@ -399,6 +404,7 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
            this->simulation_parameters.particlesParameters->initial_refinement;
            ++i)
         {
+          triangulation_modified = false;
           this->pcout << "Initial refinement around IB particles - Step : "
                       << i + 1 << " of "
                       << this->simulation_parameters.particlesParameters
@@ -407,7 +413,8 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          update_precalculations_for_ib();
+          if (triangulation_modified)
+            update_precalculations_for_ib();
         }
       this->simulation_parameters.mesh_adaptation.variables.begin()
         ->second.refinement_fraction = temp_refine;
@@ -416,10 +423,12 @@ GLSSharpNavierStokesSolver<dim>::refinement_control(
     }
   if (initial_refinement == false)
     {
+      triangulation_modified = false;
       refine_ib();
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
-      update_precalculations_for_ib();
+      if (triangulation_modified)
+        update_precalculations_for_ib();
     }
 }
 
