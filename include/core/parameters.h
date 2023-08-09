@@ -1209,6 +1209,7 @@ namespace Parameters
 
     double      particle_nonlinear_tolerance;
     double      length_ratio;
+    bool        enable_extrapolation;
     double      alpha;
     bool        print_dem;
     std::string ib_particles_pvd_file;
