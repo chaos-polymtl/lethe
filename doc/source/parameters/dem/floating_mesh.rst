@@ -8,7 +8,7 @@ Floating meshes (solid objects) are finite (limited) auxiliary objects that can 
 3. floating wall is stationary while floating mesh may be stationary or moving.
 
 .. note:: 
-    At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in the dem_3d solver are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment.
+    At the moment, solid objects (floating meshes) in Lethe have to be defined using triangular (simplex) meshes. Only triangular 2D meshes of 3D surfaces in 3D DEM simulations are presently supported. Quadrilateral 2D meshes of 3D surfaces and 1D mesh of 2D surfaces are not supported at the moment.
 
 This subsection explains the solid objects (floating meshes) information. First of all, the ``number of solids`` is specified. Then, for each solid object, we need a ``mesh`` subsection. In these subsections, the ``type``, ``initial refinement``, and other properties of the objects are defined. Note that ``simplex`` must be ``true`` for all the objects since the solid objects are defined using simplex meshes. For more information on mesh subsection, visit `CFD mesh <https://lethe-cfd.github.io/lethe/parameters/cfd/mesh.html>`_
 

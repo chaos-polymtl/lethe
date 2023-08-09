@@ -25,7 +25,7 @@ There are three choices of stabilization strategy:
 
 * ``stabilization=gls`` assembles a full GLS stabilization for the Navier-Stokes equations. This stabilization is similar to the ``pspg-supg``, but adds the term :math:`\nu \nabla^2 \mathbf{v}` to the test function. This stabilization should only be used with the monolithic GLS solver.
 
-* ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div Navier-Stokes solver (``gd_navier_stokes_2d`` and ``gd_navier_stokes_3d``)
+* ``stabilization=grad_div`` assembles a grad-div penalization term in the momentum equation to ensure mass conservation. This is not a stabilization method per-say and should not be used with elements that are not LBB stable. This stabilization should only be used with the grad-div Navier-Stokes solver (``gd_navier_stokes`` and ``gd_navier_stokes``)
 
 The ``pressure scaling factor`` parameter is used as a multiplier for the pressure in the momentum equation; the inverse of the factor is applied to the pressure after solving. It helps the convergence of the linear solver  by decreasing the condition number for cases where pressure and velocity have very different scales.
 

@@ -7,7 +7,7 @@ This example simulates a triangulation (box) rotation. It is recommended to visi
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Rotating a triangulation
 
 
@@ -135,7 +135,7 @@ This simulation can be launched by:
 
 .. code-block:: text
 
-  dem_3d grid-rotation-box.prm
+  dem grid-rotation-box.prm
 
 
 ---------

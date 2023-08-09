@@ -8,7 +8,7 @@ This example introduces the concept of parameter files to parametrize Lethe simu
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_2d``
+- Solvers: ``dem``
 - Two-dimensional problem
 - Displays the selection of models and physical properties
 
@@ -197,11 +197,11 @@ The last subsection, which is generally the one we put at the top of the paramet
 ----------------------
 Running the Simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem_2d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``dem`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-  dem_2d packing-in-circle.prm
+  dem packing-in-circle.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 

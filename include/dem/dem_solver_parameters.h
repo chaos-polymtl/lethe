@@ -53,6 +53,10 @@ public:
   void
   declare(ParameterHandler &prm)
   {
+    prm.declare_entry("dimension",
+                      "0",
+                      Patterns::Integer(),
+                      "Dimension of the problem");
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);

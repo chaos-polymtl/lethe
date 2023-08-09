@@ -9,7 +9,7 @@ This example corresponds to a flow around a fixed cylinder. This is a classical 
 Features
 ---------
 
-- Solver: ``gls_navier_stokes_2d`` (with Q1-Q1) 
+- Solver: ``gls_navier_stokes`` (with Q1-Q1) 
 - Steady-state problem
 - Shows how to import a gmsh file
 - Explains how to set a manifold
@@ -205,11 +205,11 @@ To print the values of the forces in the terminal we set ``verbosity`` to ``verb
 ----------------------
 Running the Simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes_2d`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_navier_stokes`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-  gls_navier_stokes_2d cylinder.prm
+  gls_navier_stokes cylinder.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 

@@ -1,0 +1,100 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step         = 1.5e-6
+  set time end          = 1.5e-6
+  set log frequency     = 1
+  set output frequency  = 1
+  set output boundaries = true
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = constant
+    set neighborhood threshold   = 1.5
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = 0
+  set gy                       = 0
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 2e-4
+    set number                            = 3
+    set density particles                 = 1020
+    set young modulus particles           = 1000000
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.3
+  end
+  set young modulus wall           = 1000000
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.2
+  set friction coefficient wall    = 0.1
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 10
+  set list x              = 0.01, 0.005, 0.002
+  set list y              = 0.002, 0.002, 0.002
+  set list z              = 0.005, 0.005, 0.005
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set expand particle-wall contact search = false
+  set type                                = gmsh
+  set file name                           = ./pipe.msh
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 5
+    set periodic id 1      = 6
+    set periodic direction = 0
+  end
+end

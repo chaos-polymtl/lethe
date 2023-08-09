@@ -1,3 +1,0 @@
-add_executable(gd_navier_stokes_2d gd_navier_stokes_2d.cc)
-deal_ii_setup_target(gd_navier_stokes_2d)
-target_link_libraries(gd_navier_stokes_2d lethe-solvers)

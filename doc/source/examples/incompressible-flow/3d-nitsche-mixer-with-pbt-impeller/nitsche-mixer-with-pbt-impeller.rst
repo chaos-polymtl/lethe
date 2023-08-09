@@ -14,7 +14,7 @@ This example illustrates how the transient flow in a stirred-tank can be simulat
 Features
 --------
 
-- Solvers: ``gls_nitsche_navier_stokes_33``
+- Solvers: ``nitsche_navier_stokes``
 - Transient problem
 - Rotating complex solid modeled with Nitsche immersed boundary
 - Calculation of the average velocity
@@ -315,7 +315,7 @@ Launching the simulation is as simple as specifying the executable name and the 
 
 .. code-block:: text
 
-  mpirun -np <np> </path/to/the/build/applications/gls_nitsche_navier_stokes_33/gls_nitsche_navier_stokes_33 mixer.prm>
+  mpirun -np <np> </path/to/the/build/applications/nitsche_navier_stokes/nitsche_navier_stokes mixer.prm>
 
 Lethe generates a larger number of files when the Nitsche immersed boundary is used:
 

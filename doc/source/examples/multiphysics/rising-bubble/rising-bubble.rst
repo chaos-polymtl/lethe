@@ -11,7 +11,7 @@ This example simulates a `two-dimensional rising bubble`_.
 Features
 --------
 
-- Solver: ``gls_navier_stokes_2d`` 
+- Solver: ``gls_navier_stokes`` 
 - Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, phase sharpening, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
@@ -241,9 +241,9 @@ To compare our simulation results to the literature, we extract the position and
 Running the Simulation
 ---------------------------
 
-Call the gls_navier_stokes_2d by invoking:  
+Call the gls_navier_stokes by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_2d rising-bubble.prm``
+``mpirun -np 8 gls_navier_stokes rising-bubble.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

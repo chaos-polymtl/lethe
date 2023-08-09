@@ -10,7 +10,7 @@ now using immersed boundaries to represent the inner cylinder. This example demo
 Features
 ---------
 
-- Solvers: ``gls_nitsche_navier_stokes_22`` (with Q1-Q1, Q2-Q1 and Q2-Q2)
+- Solvers: ``nitsche_navier_stokes`` (with Q1-Q1, Q2-Q1 and Q2-Q2)
 
 .. note:: 
 
@@ -269,17 +269,17 @@ The ``non-linear solver`` and ``linear solver`` subsections do not contain any n
 ----------------------
 Running the Simulation
 ----------------------
-Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``gls_nitsche_navier_stokes_22`` executable is within your path, the simulation can be launched by typing:
+Launching the simulation is as simple as specifying the executable name and the parameter file. Assuming that the ``nitsche_navier_stokes`` executable is within your path, the simulation can be launched by typing:
 
 .. code-block:: text
 
-  gls_nitsche_navier_stokes_22 uniform-nitsche-taylor-couette.prm
+  nitsche_navier_stokes uniform-nitsche-taylor-couette.prm
 
 or 
 
 .. code-block:: text
 
-  gls_nitsche_navier_stokes_22 adaptative-nitsche-taylor-couette.prm
+  nitsche_navier_stokes adaptative-nitsche-taylor-couette.prm
 
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by popular visualization programs such as `Paraview <https://www.paraview.org/>`_. 
 

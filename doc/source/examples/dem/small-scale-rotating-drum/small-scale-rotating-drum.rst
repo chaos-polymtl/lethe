@@ -8,7 +8,7 @@ This example of Lethe-DEM simulates dry granular flow behaviour in a small scale
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Three-dimensional problem
 - Rotational boundary
 - Load-balancing
@@ -26,7 +26,7 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example simulates a rolling regime in a small scale rotating drum. First, we use Lethe-DEM to fill the bed with 20000 particles. We enable check-pointing in order to write the DEM checkpoint files for the packing which then will be used as the starting point of the DEM simulation of the rotating drum. The solver ``dem_3d`` is used to simulate the behaviour of dry granular flow within the rotating drum.
+This example simulates a rolling regime in a small scale rotating drum. First, we use Lethe-DEM to fill the bed with 20000 particles. We enable check-pointing in order to write the DEM checkpoint files for the packing which then will be used as the starting point of the DEM simulation of the rotating drum. The solver ``dem`` is used to simulate the behaviour of dry granular flow within the rotating drum.
 
 
 --------------
@@ -185,8 +185,8 @@ The simulation is launched in two steps: the first step packs the particle in th
 
 .. code-block:: text
 
-   mpirun -np 8 dem_3d packing-rotating-drum.prm
-   mpirun -np 8 dem_3d small-rotating-drum-dem.prm
+   mpirun -np 8 dem packing-rotating-drum.prm
+   mpirun -np 8 dem small-rotating-drum-dem.prm
 
 
 .. note::

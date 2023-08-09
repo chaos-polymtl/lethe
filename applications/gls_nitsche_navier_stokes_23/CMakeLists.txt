@@ -1,3 +1,0 @@
-add_executable(gls_nitsche_navier_stokes_23 gls_nitsche_navier_stokes_23.cc)
-deal_ii_setup_target(gls_nitsche_navier_stokes_23)
-target_link_libraries(gls_nitsche_navier_stokes_23 lethe-solvers)

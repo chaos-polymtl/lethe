@@ -9,7 +9,7 @@ This example simulates a three-dimensional solid block heated with a laser beam 
 Features
 ----------------------------------
 
-- Solver: ``gls_navier_stokes_3d`` 
+- Solver: ``gls_navier_stokes`` 
 - Laser heat source
 - Convection-radiation heat transfer boundary condition
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
@@ -155,9 +155,9 @@ In the ``mesh adaptation`` subsection, we choose a mesh refinement based on the 
 Running the Simulation
 ----------------------
 
-Call the gls_navier_stokes_3d by invoking:  
+Call the gls_navier_stokes by invoking:  
 
-``mpirun -np 8 gls_navier_stokes_3d laser-heating.prm``
+``mpirun -np 8 gls_navier_stokes laser-heating.prm``
 
 to run the simulation using eight CPU cores. Feel free to use more.
 

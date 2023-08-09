@@ -10,7 +10,7 @@ The main example does not use periodic boundary conditions in the depth of the h
 ----------------------------------
 Features
 ----------------------------------
-- Solvers: ``dem_3d``
+- Solvers: ``dem``
 - Floating walls
 - `GMSH <https://gmsh.info/>`_ grids
 - Python post-processing script using `PyVista <https://docs.pyvista.org/>`_
@@ -205,7 +205,7 @@ This simulation can be launched by
 
 .. code-block:: text
 
-  mpirun -np 8 dem_3d hopper.prm
+  mpirun -np 8 dem hopper.prm
 
 
 ---------------
