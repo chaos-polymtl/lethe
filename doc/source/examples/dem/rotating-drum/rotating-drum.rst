@@ -32,7 +32,7 @@ Parameter File
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell. Between two consecutive contact search steps, where the containing cells of the particles are updated (i.e. particles are mapped into cells), particles located close to the cell boundaries may change cells. If this situation occurs for a particle on a boundary, the particle-wall collision is calculated using the information (normal vector and location of the vertices) of the previous boundary cell. Hence, when the containing cell of the particle updates, the particle may already have a large overlap with the new cell that leads to a large contact force/velocity of the particles. We use ``expand particle-wall contact search`` to avoid this undesired situation.
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell. 
 
 .. code-block:: text
 
@@ -164,11 +164,16 @@ This simulation can be launched in two steps. First the particles need to be loa
 
 .. code-block:: text
 
-  mpirun -np 64 dem_3d rotating-drum.prm
+  mpirun -np 8 dem load-rotating-drum.prm
 
+Then we run the simulation with the rotating walls:
+
+.. code-block:: text
+
+  mpirun -np 8 dem rotating-drum.prm
 
 .. warning::
-	This example needs a simulation time of approximately 48 hours 64 cores. This high computational cost is because of the large number of particles.
+	This example needs a simulation time of approximately 12 hours 8 cores. 
 
 
 ---------
@@ -179,8 +184,7 @@ Animation of the rotating drum simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/krM_rFIDHAA" frameborder="0" allowfullscreen></iframe>
-
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/ReGd7qOrz_E" frameborder="0" allowfullscreen></iframe>
 
 ---------
 Reference
