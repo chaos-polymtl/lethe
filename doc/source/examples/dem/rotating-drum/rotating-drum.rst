@@ -147,6 +147,24 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The parameter file for the loading and for the simulation have different simulation control. We load for two seconds, then simulate for 10 secondes (reaching a final time of 12 seconds).
+
+For the loading the simulation control is:
+
+.. code-block:: text
+
+    subsection simulation control
+      set time step         = 1e-5
+      set time end          = 2
+      set log frequency     = 1000
+      set output frequency  = 1000
+      set output boundaries = true
+      set output path       = ./output/
+    end
+
+
+For the simulation it is:
+
 .. code-block:: text
 
     subsection simulation control
@@ -154,6 +172,8 @@ Simulation Control
       set time end         = 12
       set log frequency    = 1000
       set output frequency = 1000
+      set output boundaries = false
+      set output path       = ./output/
     end
 
 
