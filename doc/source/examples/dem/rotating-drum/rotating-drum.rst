@@ -173,7 +173,7 @@ Then we run the simulation with the rotating walls:
   mpirun -np 8 dem rotating-drum.prm
 
 .. warning::
-  Loading the particles in this example requires approximately 50 minutes on 8 cores. Simulating the motion of the particles requires an additional 8 hours. This high computational cost is because of the large number of particles and the long duration of the simulation.
+  In this example, particles insertion requires approximately 50 minutes, while simulating their motion requires additional 8 hours on 8 cores. The high computational cost is due to the large number of particles and the long duration of the simulation.
 
 
 ---------
