@@ -79,27 +79,6 @@ test()
         else if (simulation_control.get_assembly_method() ==
                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
           method = "bdf3";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
-          method = "sdirk22";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-          method = "sdirk22_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-          method = "sdirk22_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
-          method = "sdirk33";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-          method = "sdirk33_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-          method = "sdirk33_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-          method = "sdirk33_3";
         else
           method = "the assembly method is not initialized";
 
@@ -141,27 +120,6 @@ test()
         else if (simulation_control.get_assembly_method() ==
                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
           method = "bdf3";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
-          method = "sdirk22";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-          method = "sdirk22_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-          method = "sdirk22_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
-          method = "sdirk33";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-          method = "sdirk33_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-          method = "sdirk33_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-          method = "sdirk33_3";
         else
           method = "the assembly method is not initialized";
 
@@ -171,7 +129,7 @@ test()
       }
   }
   simulation_control_parameters.bdf_startup_method =
-    Parameters::SimulationControl::BDFStartupMethods::sdirk_step;
+    Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf;
   {
     simulation_control_parameters.method =
       Parameters::SimulationControl::TimeSteppingMethod::bdf2;
@@ -205,27 +163,6 @@ test()
         else if (simulation_control.get_assembly_method() ==
                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
           method = "bdf3";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
-          method = "sdirk22";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-          method = "sdirk22_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-          method = "sdirk22_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
-          method = "sdirk33";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-          method = "sdirk33_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-          method = "sdirk33_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-          method = "sdirk33_3";
         else
           method = "the assembly method is not initialized";
 
@@ -267,27 +204,6 @@ test()
         else if (simulation_control.get_assembly_method() ==
                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
           method = "bdf3";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
-          method = "sdirk22";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-          method = "sdirk22_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-          method = "sdirk22_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
-          method = "sdirk33";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-          method = "sdirk33_1";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-          method = "sdirk33_2";
-        else if (simulation_control.get_assembly_method() ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-          method = "sdirk33_3";
         else
           method = "the assembly method is not initialized";
 

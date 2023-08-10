@@ -22,15 +22,18 @@ DEAL::*************************************************
 DEAL::Constant time stepping - constant output
 DEAL::*************************************************
 DEAL::Iteration : 0    Time : 0.00000
-DEAL::Iteration : 1    Time : 1.00000 Assembly method : sdirk22
-DEAL::Iteration : 2    Time : 2.00000 Assembly method : bdf2
-DEAL::Iteration : 3    Time : 3.00000 Assembly method : bdf2
-DEAL::Iteration : 4    Time : 4.00000 Assembly method : bdf2
+DEAL::Iteration : 1    Time : 0.400000 Assembly method : bdf1
+DEAL::Iteration : 2    Time : 1.00000 Assembly method : bdf2
+DEAL::Iteration : 3    Time : 2.00000 Assembly method : bdf2
+DEAL::Iteration : 4    Time : 3.00000 Assembly method : bdf2
+DEAL::Iteration : 5    Time : 4.00000 Assembly method : bdf2
 DEAL::*************************************************
 DEAL::Constant time stepping - constant output
 DEAL::*************************************************
 DEAL::Iteration : 0    Time : 0.00000
-DEAL::Iteration : 1    Time : 1.00000 Assembly method : sdirk33
-DEAL::Iteration : 2    Time : 2.00000 Assembly method : sdirk33
-DEAL::Iteration : 3    Time : 3.00000 Assembly method : bdf3
-DEAL::Iteration : 4    Time : 4.00000 Assembly method : bdf3
+DEAL::Iteration : 1    Time : 0.400000 Assembly method : bdf1
+DEAL::Iteration : 2    Time : 0.800000 Assembly method : bdf2
+DEAL::Iteration : 3    Time : 1.00000 Assembly method : bdf3
+DEAL::Iteration : 4    Time : 2.00000 Assembly method : bdf3
+DEAL::Iteration : 5    Time : 3.00000 Assembly method : bdf3
+DEAL::Iteration : 6    Time : 4.00000 Assembly method : bdf3

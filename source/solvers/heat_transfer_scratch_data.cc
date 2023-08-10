@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 #include <core/utilities.h>
 
 #include <solvers/heat_transfer_scratch_data.h>
@@ -47,11 +46,6 @@ HeatTransferScratchData<dim>::allocate()
     std::vector<std::vector<Tensor<1, dim>>>(
       maximum_number_of_previous_solutions(),
       std::vector<Tensor<1, dim>>(n_q_points));
-
-  // Velocity for SDIRK schemes
-  this->stages_temperature_values =
-    std::vector<std::vector<double>>(max_number_of_intermediary_stages(),
-                                     std::vector<double>(n_q_points));
 
   // Initialize arrays related to shape functions
   // Velocity shape functions

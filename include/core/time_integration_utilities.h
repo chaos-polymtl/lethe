@@ -14,53 +14,6 @@ is_steady(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (method == Parameters::SimulationControl::TimeSteppingMethod::steady);
 }
-/**
- * @brief Determines if the time integration method is within the sdirk family
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
-}
-
-/**
- * @brief Determines if the time integration method is within the sdirk22 family
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk2(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
-}
-
-/**
- * @brief Determines if the time integration method is within the sdirk33 family
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk3(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
-}
-
 
 /**
  * @brief Determines if the time integration method is within the bdf-1 family
@@ -101,41 +54,6 @@ is_bdf_high_order(
 {
   return (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
           method == Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-}
-
-/**
- * @brief Determines if the time integration method requires an additional array
- *
- * @param method A time integration method
- */
-inline bool
-time_stepping_method_has_two_stages(
-  const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
-}
-
-/**
- * @brief Determines if the time integration method requires two additional arrays
- *
- * @param method A time integration method
- */
-inline bool
-time_stepping_method_has_three_stages(
-  const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
 }
 
 

@@ -17,7 +17,6 @@
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/lethe_grid_tools.h>
-#include <core/sdirk.h>
 #include <core/solutions_output.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 #include <core/time_integration_utilities.h>
@@ -3706,12 +3705,6 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
             std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
               this->simulation_control));
         }
-      else if (is_sdirk(this->simulation_control->get_assembly_method()))
-        {
-          this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
-              this->simulation_control));
-        }
 
       // Velocity sources term
       if (this->simulation_parameters.velocity_sources.type ==
@@ -3775,7 +3768,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -3794,8 +3786,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -3871,7 +3862,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
@@ -3890,8 +3880,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
         phase_cell,
         *this->multiphysics->get_solution(PhysicsID::VOF),
         *this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        *this->multiphysics->get_previous_solutions(PhysicsID::VOF),
-        std::vector<TrilinosWrappers::MPI::Vector>());
+        *this->multiphysics->get_previous_solutions(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();

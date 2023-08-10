@@ -1,6 +1,5 @@
 #include <core/bdf.h>
 #include <core/dem_properties.h>
-#include <core/sdirk.h>
 #include <core/utilities.h>
 
 #include <solvers/navier_stokes_scratch_data.h>
@@ -40,11 +39,6 @@ NavierStokesScratchData<dim>::allocate()
   // Velocity for BDF schemes
   this->previous_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
     maximum_number_of_previous_solutions(),
-    std::vector<Tensor<1, dim>>(n_q_points));
-
-  // Velocity for SDIRK schemes
-  this->stages_velocity_values = std::vector<std::vector<Tensor<1, dim>>>(
-    max_number_of_intermediary_stages(),
     std::vector<Tensor<1, dim>>(n_q_points));
 
   // Pressure

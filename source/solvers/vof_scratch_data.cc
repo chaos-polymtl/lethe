@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 
 #include <solvers/vof_scratch_data.h>
 
@@ -32,11 +31,6 @@ VOFScratchData<dim>::allocate()
   // Velocity for BDF schemes
   this->previous_phase_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
-                                     std::vector<double>(this->n_q_points));
-
-  // Velocity for SDIRK schemes
-  this->stages_phase_values =
-    std::vector<std::vector<double>>(max_number_of_intermediary_stages(),
                                      std::vector<double>(this->n_q_points));
 
   // Initialize arrays related to shape functions

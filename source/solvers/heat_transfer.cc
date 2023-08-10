@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -421,7 +420,6 @@ HeatTransfer<dim>::assemble_local_system_matrix(
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      this->solution_stages,
                       &source_term);
 
   const DoFHandler<dim> *dof_handler_fluid =
@@ -478,10 +476,8 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_filtered_solution(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();
@@ -574,7 +570,6 @@ HeatTransfer<dim>::assemble_local_system_rhs(
   scratch_data.reinit(cell,
                       this->evaluation_point,
                       this->previous_solutions,
-                      this->solution_stages,
                       &source_term);
 
   const DoFHandler<dim> *dof_handler_fluid =
@@ -636,10 +631,8 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         cell->index(),
         dof_handler_vof);
 
-      scratch_data.reinit_vof(phase_cell,
-                              *this->multiphysics->get_filtered_solution(
-                                PhysicsID::VOF),
-                              std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_vof(
+        phase_cell, *this->multiphysics->get_filtered_solution(PhysicsID::VOF));
     }
 
   scratch_data.calculate_physical_properties();

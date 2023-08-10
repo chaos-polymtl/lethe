@@ -153,8 +153,8 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content of the solutions, previous solutions and
-   * solutions stages, fills all of the class member of the scratch
+   * Using the FeValues and the content of the solutions and previous solutions
+   * , fills all of the class member of the scratch
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
@@ -162,8 +162,6 @@ public:
    * @param current_solution The present value of the solution for [Phi,eta]
    *
    * @param previous_solutions The solutions at the previous time steps
-   *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
    *
    * @param source_function The function describing the source term in Cahn-Hilliard
    * equations
@@ -175,7 +173,6 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const std::vector<VectorType> &solution_stages,
          Function<dim> *                source_function,
          Parameters::CahnHilliard       cahn_hilliard_parameters)
   {
@@ -223,27 +220,12 @@ public:
           previous_solutions[p], previous_phase_order_values[p]);
       }
 
-    // Gather phase order stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values_cahn_hilliard[phase_order].get_function_values(
-          solution_stages[s], stages_phase_order_values[s]);
-      }
-
     // Gather previous chemical potential values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         this->fe_values_cahn_hilliard[chemical_potential].get_function_values(
           previous_solutions[p], previous_chemical_potential_values[p]);
       }
-
-    // Gather chemical potential stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values_cahn_hilliard[chemical_potential].get_function_values(
-          solution_stages[s], stages_chemical_potential_values[s]);
-      }
-
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
@@ -376,13 +358,10 @@ public:
   std::vector<Tensor<1, dim>>      phase_order_gradients;
   std::vector<double>              phase_order_laplacians;
   std::vector<std::vector<double>> previous_phase_order_values;
-  std::vector<std::vector<double>> stages_phase_order_values;
-
   std::vector<double>              chemical_potential_values;
   std::vector<Tensor<1, dim>>      chemical_potential_gradients;
   std::vector<double>              chemical_potential_laplacians;
   std::vector<std::vector<double>> previous_chemical_potential_values;
-  std::vector<std::vector<double>> stages_chemical_potential_values;
 
   // Source term
   std::vector<double> source_phase_order;

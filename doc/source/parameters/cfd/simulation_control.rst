@@ -95,8 +95,6 @@ This subsection contains the general information of the simulation, including th
 	* ``bdf1``: 1st order backward differentiation
 	* ``bdf2``: 2nd order backward differentiation
 	* ``bdf3``: 3rd order backward differentiation
-	* ``sdirk2``: 2nd order singly diagonally implicit Runge Kutta
-	* ``sdirk3``: 3rd order singly diagonally implicit Runge Kutta
 
 * ``number mesh adapt``: number of mesh adaptations during the steady-sate simulation
 
@@ -107,7 +105,6 @@ This subsection contains the general information of the simulation, including th
 
 * ``bdf startup method``: scheme used to start a high order bdf scheme (2nd order and above). The available options are: 
 	* ``multiple step bdf``
-	* ``sdirk step``
 	* ``initial solution``
 
 * ``startup time scaling``: scaling factor used in the iterations necessary to startup the BDF schemes

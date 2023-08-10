@@ -123,26 +123,6 @@ SimulationControl::update_assembly_method()
       assembly_method = Parameters::SimulationControl::TimeSteppingMethod::bdf3;
       set_suggested_time_step(initial_time_step);
     }
-  else if (iteration_number <= 1 &&
-           (method ==
-            Parameters::SimulationControl::TimeSteppingMethod::bdf2) &&
-           bdf_start_method ==
-             Parameters::SimulationControl::BDFStartupMethods::sdirk_step)
-    {
-      assembly_method =
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22;
-      set_suggested_time_step(initial_time_step);
-    }
-  else if (iteration_number <= 2 &&
-           (method ==
-            Parameters::SimulationControl::TimeSteppingMethod::bdf3) &&
-           bdf_start_method ==
-             Parameters::SimulationControl::BDFStartupMethods::sdirk_step)
-    {
-      assembly_method =
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33;
-      set_suggested_time_step(initial_time_step);
-    }
   else
     {
       assembly_method = method;
