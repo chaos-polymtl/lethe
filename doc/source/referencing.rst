@@ -45,4 +45,4 @@ Non-Newtonian Fluids
 Radioactive Particle Tracking
 -------------------------------
 
-*  `G. Mirakhori, A. Collard-Daigneault, A. Alphonius, J. Doucet, B. Blais, and J. Chaouki, “An improved position reconstruction method for radioactive particle tracking,” Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip., vol. 1055, p. 168504, 2023 <https://doi.org/10.1016/j.nima.2023.168504>`_.
+*  `G. Mirakhori, A. Collard-Daigneault, A. Alphonius, J. Doucet, B. Blais, and J. Chaouki, “An improved position reconstruction method for radioactive particle tracking”, Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip., vol. 1055, p. 168504, 2023 <https://doi.org/10.1016/j.nima.2023.168504>`_.
