@@ -2,9 +2,7 @@
 Dam-Break
 ==========================
 
-This example simulates the dam break experiments of `Martin and Moyce (1952)`_. 
-
-.. _Martin and Moyce (1952): https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1952.0006
+This example simulates the dam break experiments of Martin and Moyce `[1] <https://doi.org/10.1098/rsta.1952.0006>`_.
 
 
 ----------------------------------
@@ -21,7 +19,8 @@ Features
 Files Used in This Example
 ---------------------------
 
-``examples/multiphysics/dam-break/``
+- Parameter file: ``examples/multiphysics/dam-break/``
+- Python script for postprocessing: ``examples/multiphysics/dam-break/dam-break-2d.py``
 
 
 ---------------------------
@@ -35,10 +34,9 @@ the liquid is released into the total simulation domain.
 
 The following schematic describes the geometry and dimensions of the simulation in the :math:`(x,y)` plane:
 
-.. image:: images/VOF-dam-break-configuration.png
+.. image:: images/VOF-dam-break-initial-configuration.svg
     :alt: Schematic
     :align: center
-    :width: 400
 
 .. note:: 
     All the four boundary conditions are ``slip``, and an external 
@@ -65,7 +63,7 @@ time step of :math:`0.01` seconds.
 
     subsection simulation control
       set method           = bdf1
-      set time end         = 4.1
+      set time end         = 4
       set time step        = 0.01
       set adapt            = true
       set max cfl          = 0.5
@@ -88,7 +86,7 @@ and off `(false)` the physics of interest. Here ``VOF`` is chosen.
     end 
 
 
-Interface sharpening parameters
+Interface Sharpening Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 VOF
@@ -103,7 +101,7 @@ If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters
         set enable              = true
         set threshold           = 0.5
         set interface sharpness = 2
-        set frequency           = 10
+        set frequency           = 20
       end
 
       subsection phase filtration
@@ -113,7 +111,7 @@ If the interface sharpening is not enabled in the :doc:`VOF <../../../parameters
       end
     end
 
-Fluid phase parameters
+Fluid Phase Parameters
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Initial Conditions
@@ -161,12 +159,12 @@ properties`` subsection, their physical properties should be defined:
     subsection physical properties
       set number of fluids = 2
       subsection fluid 0
-        set density             = 0.02
-        set kinematic viscosity = 0.1
+        set density             = 1.2
+        set kinematic viscosity = 0.01516
       end
       subsection fluid 1
-        set density             = 0.9982
-        set kinematic viscosity = 0.01
+        set density             = 1000
+        set kinematic viscosity = 0.000001
       end
     end
 
@@ -236,7 +234,7 @@ to run the simulation using two CPU cores. Feel free to use more.
 Results and Discussion
 -----------------------
 
-The following image shows the screenshots of the simulation at :math:`0`, :math:`1.1`, :math:`3`, and :math:`4` seconds,
+The following image shows the screenshots of the simulation at :math:`0`, :math:`1`, :math:`2`, :math:`3`, and :math:`4` seconds,
 of the phase results without and with phase filtering.
 The red area corresponds to the liquid phase and the blue area corresponds to the air phase.
 
@@ -273,4 +271,4 @@ and refines the meshes on the interface.
 References
 ----------------------------
 
-`[1] <https://doi.org/10.1098/rsta.1952.0006>`_ Martin, J. C., Moyce, W. J., Martin, J. C., Moyce, W. J., Penney, W. G., Price, A. T., & Thornhill, C. K. (1952). Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane. Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences, 244(882), 312-324.
+`[1] <https://doi.org/10.1098/rsta.1952.0006>`_ J. C. Martin *et al.*, “Part IV. An experimental study of the collapse of liquid columns on a rigid horizontal plane,” Philos. *Trans. R. Soc. Lond. Ser. Math. Phys. Sci.*, vol. 244, no. 882, pp. 312–324, Mar. 1952, doi: 10.1098/rsta.1952.0006.

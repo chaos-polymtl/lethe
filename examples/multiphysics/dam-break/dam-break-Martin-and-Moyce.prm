@@ -9,7 +9,7 @@ set dimension = 2
 
 subsection simulation control
   set method           = bdf1
-  set time end         = 4.1
+  set time end         = 4
   set time step        = 0.01
   set adapt            = true
   set max cfl          = 0.5
@@ -35,7 +35,7 @@ subsection VOF
     set enable              = true
     set threshold           = 0.5
     set interface sharpness = 2
-    set frequency           = 10
+    set frequency           = 20
   end
 
   subsection phase filtration
@@ -77,12 +77,12 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-    set density             = 0.02
-    set kinematic viscosity = 0.1
+    set density             = 1.2
+    set kinematic viscosity = 0.01516
   end
   subsection fluid 1
-    set density             = 0.9982
-    set kinematic viscosity = 0.01
+    set density             = 1000
+    set kinematic viscosity = 0.000001
   end
 end
 
