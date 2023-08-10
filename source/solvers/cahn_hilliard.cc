@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -113,7 +112,6 @@ CahnHilliard<dim>::assemble_local_system_matrix(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     &source_term,
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 
@@ -208,7 +206,6 @@ CahnHilliard<dim>::assemble_local_system_rhs(
     cell,
     this->evaluation_point,
     this->previous_solutions,
-    this->solution_stages,
     &source_term,
     this->simulation_parameters.multiphysics.cahn_hilliard_parameters);
 

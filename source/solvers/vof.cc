@@ -1,5 +1,4 @@
 #include <core/bdf.h>
-#include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
@@ -52,12 +51,8 @@ VolumeOfFluid<dim>::setup_assemblers()
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      if (is_sdirk(this->simulation_control->get_assembly_method()))
-        throw std::invalid_argument(
-          "SDIRK time-stepping scheme is not supported in the VOF solver ");
-      else
-        this->assemblers.push_back(
-          std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
+      this->assemblers.push_back(
+        std::make_shared<VOFAssemblerBDF<dim>>(this->simulation_control));
     }
 
   // Core assembler
@@ -108,10 +103,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
     return;
 
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages);
+  scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
 
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -230,10 +222,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
   if (!cell->is_locally_owned())
     return;
 
-  scratch_data.reinit(cell,
-                      this->evaluation_point,
-                      this->previous_solutions,
-                      this->solution_stages);
+  scratch_data.reinit(cell, this->evaluation_point, this->previous_solutions);
 
   const DoFHandler<dim> *dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);

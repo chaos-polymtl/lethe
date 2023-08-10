@@ -78,14 +78,7 @@ namespace Parameters
       steady_bdf,
       bdf1,
       bdf2,
-      bdf3,
-      sdirk22,
-      sdirk22_1,
-      sdirk22_2,
-      sdirk33,
-      sdirk33_1,
-      sdirk33_2,
-      sdirk33_3
+      bdf3
     } method;
 
     // Method used for time progression (steady, unsteady)
@@ -135,7 +128,6 @@ namespace Parameters
     enum class BDFStartupMethods
     {
       initial_solution,
-      sdirk_step,
       multiple_step_bdf,
     } bdf_startup_method;
 

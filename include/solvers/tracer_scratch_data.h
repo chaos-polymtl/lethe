@@ -132,8 +132,8 @@ public:
 
   /** @brief Reinitialize the content of the scratch
    *
-   * Using the FeValues and the content ofthe solutions, previous solutions and
-   * solutions stages, fills all of the class member of the scratch
+   * Using the FeValues and the content ofthe solutions and previous solutions,
+   * fills all of the class member of the scratch
    *
    * @param cell The cell over which the assembly is being carried.
    * This cell must be compatible with the fe which is used to fill the FeValues
@@ -141,8 +141,6 @@ public:
    * @param current_solution The present value of the solution for [u,p]
    *
    * @param previous_solutions The solutions at the previous time steps
-   *
-   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
    *
    * @param source_function The function describing the tracer source term
    *
@@ -153,7 +151,6 @@ public:
   reinit(const typename DoFHandler<dim>::active_cell_iterator &cell,
          const VectorType &                                    current_solution,
          const std::vector<VectorType> &previous_solutions,
-         const std::vector<VectorType> &solution_stages,
          Function<dim> *                source_function)
   {
     this->fe_values_tracer.reinit(cell);
@@ -184,14 +181,6 @@ public:
         this->fe_values_tracer.get_function_values(previous_solutions[p],
                                                    previous_tracer_values[p]);
       }
-
-    // Gather tracer stages
-    for (unsigned int s = 0; s < solution_stages.size(); ++s)
-      {
-        this->fe_values_tracer.get_function_values(solution_stages[s],
-                                                   stages_tracer_values[s]);
-      }
-
 
     for (unsigned int q = 0; q < n_q_points; ++q)
       {
@@ -250,7 +239,6 @@ public:
   std::vector<Tensor<1, dim>>      tracer_gradients;
   std::vector<double>              tracer_laplacians;
   std::vector<std::vector<double>> previous_tracer_values;
-  std::vector<std::vector<double>> stages_tracer_values;
 
   // Source term
   std::vector<double> source;

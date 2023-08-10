@@ -301,7 +301,7 @@ Possibilities for Extension
 - Study the vortex shedding of other bluff bodies.
 - Increase the Reynolds number to study a completely turbulent wake and the drag crisis phenomenon.
 - Repeat the same example in 3D for a cylinder/sphere and study the effect on the drag and lift forces.
-- Investigate the impact of the time-step and the time-stepping scheme (e.g., sdirk 3 or bdf 3)
+- Investigate the impact of the time-step and the time-stepping scheme (e.g., bdf 3)
 
 
 ----------
