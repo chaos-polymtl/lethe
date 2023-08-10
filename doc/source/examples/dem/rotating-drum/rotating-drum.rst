@@ -18,7 +18,6 @@ Files Used in This Example
 - Parameter file to load particles: ``/examples/dem/3d-rotating-drum/load-rotating-drum.prm``
 - Parameter file for the simulation: ``/examples/dem/3d-rotating-drum/rotating-drum.prm``
 
-
 -----------------------
 Description of the Case
 -----------------------
@@ -33,16 +32,16 @@ Parameter File
 Mesh
 ~~~~~
 
-In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell. Between two consecutive contact search steps, where the containing cells of the particles are updated (i.e. particles are mapped into cells), particles located close to the cell boundaries may change cells. If this situation occurs for a particle on a boundary, the particle-wall collision is calculated using the information (normal vector and location of the vertices) of the previous boundary cell. Hence, when the containing cell of the particle updates, the particle may already have a large overlap with the new cell that leads to a large contact force/velocity of the particles. We use ``expand particle-wall contact search`` to avoid this undesired situation.
+In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid arguments are the radius and half-length, respectively. Therefore, the specified grid arguments create a cylinder with a diameter of 0.24 m and a length of 0.36 m. The grid is refined 4 times to reach the desired cell size to particle diameter ratio (see packing in ball example for more details). The ``expand particle-wall contact search`` is used in concave geometries to enable extended particle-wall contact search with boundary faces of neighbor cells for particles located in each boundary cell. 
 
 .. code-block:: text
 
     subsection mesh
-      set type                                = dealii
-      set grid type                           = cylinder
-      set grid arguments                      = 0.12:0.18
-      set initial refinement                  = 4
-      set expand particle-wall contact search = true
+  set type                                = dealii
+  set grid type                           = subdivided_cylinder
+  set grid arguments                      = 4: 0.12:0.18
+  set initial refinement                  = 4
+  set expand particle-wall contact search = true
     end
 
 
@@ -86,12 +85,12 @@ The particles (226080 particles) are monodispersed, their diameter and density a
         set diameter                          = 0.003
         set number                            = 226080
         set density particles                 = 2500
-        set young modulus particles           = 100000000
+        set young modulus particles           = 1e7
         set poisson ratio particles           = 0.24
         set restitution coefficient particles = 0.97
         set friction coefficient particles    = 0.3
       end
-      set young modulus wall           = 100000000
+      set young modulus wall           = 1e7
       set poisson ratio wall           = 0.24
       set restitution coefficient wall = 0.85
       set friction coefficient wall    = 0.35
@@ -148,6 +147,24 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The parameter file for the loading and for the simulation have different simulation control. We load for two seconds, then simulate for 10 secondes (reaching a final time of 12 seconds).
+
+For the loading the simulation control is:
+
+.. code-block:: text
+
+    subsection simulation control
+      set time step         = 1e-5
+      set time end          = 2
+      set log frequency     = 1000
+      set output frequency  = 1000
+      set output boundaries = true
+      set output path       = ./output/
+    end
+
+
+For the simulation it is:
+
 .. code-block:: text
 
     subsection simulation control
@@ -155,6 +172,8 @@ Simulation Control
       set time end         = 12
       set log frequency    = 1000
       set output frequency = 1000
+      set output boundaries = false
+      set output path       = ./output/
     end
 
 
@@ -167,14 +186,14 @@ This simulation can be launched in two steps. First the particles need to be loa
 
   mpirun -np 8 dem load-rotating-drum.prm
 
-Then the rotation of the drum is started in a second simulation:
+Then we run the simulation with the rotating walls:
 
 .. code-block:: text
 
-  mpirun -np 8 dem load-rotating-drum.prm
+  mpirun -np 8 dem rotating-drum.prm
 
 .. warning::
-	Loading the particles in this example requires approximately 50 minutes on 8 cores. Simulating the motion of the particles requires an additional 8 hours. This high computational cost is because of the large number of particles and the long duration of the simulation.
+  In this example, particles insertion requires approximately 50 minutes, while simulating their motion requires additional 8 hours on 8 cores. The high computational cost is due to the large number of particles and the long duration of the simulation.
 
 
 ---------
@@ -185,8 +204,7 @@ Animation of the rotating drum simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/krM_rFIDHAA" frameborder="0" allowfullscreen></iframe>
-
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/ReGd7qOrz_E" frameborder="0" allowfullscreen></iframe>
 
 ---------
 Reference
