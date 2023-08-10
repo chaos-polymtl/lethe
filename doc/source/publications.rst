@@ -23,6 +23,8 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 
 * `T. El Geitani, S. Golshan and B. Blais, "Toward High-Order CFD-DEM: Development and Validation", Industrial & Engineering Chemistry Research 62, 1141-1159, 2023 <https://doi.org/10.1021/acs.iecr.2c03546>`_.
 
+*  `G. Mirakhori, A. Collard-Daigneault, A. Alphonius, J. Doucet, B. Blais, and J. Chaouki, “An improved position reconstruction method for radioactive particle tracking”, Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip., vol. 1055, p. 168504, 2023 <https://doi.org/10.1016/j.nima.2023.168504>`_.
+
 2022
 ----
 
