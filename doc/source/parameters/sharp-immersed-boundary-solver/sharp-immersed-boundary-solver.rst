@@ -111,7 +111,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     * The ``enable extrapolation`` parameter controls if extrapolation is used to impose the immersed boundary condition. For debugging purposes, this parameter can be set to ``false``; the particle velocity will then be imposed on velocity degrees of freedom of cells cut by the particle directly, which effectively amplifies the volume occupied by the solid.
 
     .. warning::
-    	Disabling the extrapolation is not recommended since it makes the Sharp-IB solver lose its high-order capabilities, akin to more basic IB methods.
+    	Disabling the extrapolation is not recommended since it makes the Sharp-IB solver first-order accurate in space.
 
 * The ``output`` subsection contains the parameters controlling the information printed in the terminal and output files.
     * The ``calculate force`` parameter controls if the force is evaluated on each particle.
