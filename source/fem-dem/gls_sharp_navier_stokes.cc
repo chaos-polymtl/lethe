@@ -1678,11 +1678,6 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 {
-  if (this->simulation_control->is_output_iteration())
-    {
-      this->write_output_results(this->present_solution);
-    }
-
   bool enable =
     this->simulation_parameters.analytical_solution->calculate_error();
   this->simulation_parameters.analytical_solution->set_enable(false);
