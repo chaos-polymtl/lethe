@@ -37,11 +37,11 @@ In this example, we choose a ``cylinder`` grid type to create a cylinder. Grid a
 .. code-block:: text
 
     subsection mesh
-      set type                                = dealii
-      set grid type                           = cylinder
-      set grid arguments                      = 0.12:0.18
-      set initial refinement                  = 4
-      set expand particle-wall contact search = true
+  set type                                = dealii
+  set grid type                           = subdivided_cylinder
+  set grid arguments                      = 4: 0.12:0.18
+  set initial refinement                  = 4
+  set expand particle-wall contact search = true
     end
 
 
@@ -85,12 +85,12 @@ The particles (226080 particles) are monodispersed, their diameter and density a
         set diameter                          = 0.003
         set number                            = 226080
         set density particles                 = 2500
-        set young modulus particles           = 100000000
+        set young modulus particles           = 1e7
         set poisson ratio particles           = 0.24
         set restitution coefficient particles = 0.97
         set friction coefficient particles    = 0.3
       end
-      set young modulus wall           = 100000000
+      set young modulus wall           = 1e7
       set poisson ratio wall           = 0.24
       set restitution coefficient wall = 0.85
       set friction coefficient wall    = 0.35
