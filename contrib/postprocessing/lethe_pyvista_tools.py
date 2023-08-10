@@ -121,14 +121,34 @@ class lethe_pyvista_tools():
                     # dictionary
                     # If 'set' is a 'Function expression' or 'type'
                     if clean_line[0] == 'Function expression' or clean_line[0] == 'type':
+
+                        # If attribute already exists, create a list
+                        # Otherwise, create key-value
+                        if subsection_clean_line in self.prm_dict.keys():
+                            if type(self.prm_dict[subsection_clean_line]) is list:
+                                self.prm_dict[subsection_clean_line].append(clean_line[1])
+                            
+                            else:
+                                self.prm_dict[subsection_clean_line] = [self.prm_dict[subsection_clean_line]]
+                                self.prm_dict[subsection_clean_line].append(clean_line[1])
                     
-                        # Attribute the name of the subsection above
-                        self.prm_dict[subsection_clean_line] = clean_line[1]
+                        else:
+                            self.prm_dict[subsection_clean_line] = clean_line[1]
                     
                     else:
                     
-                        # Otherwise, attribute the set name
-                        self.prm_dict[clean_line[0]] = clean_line[1]
+                        # If attribute already exists, create a list
+                        # Otherwise, create key-value
+                        if clean_line[0] in self.prm_dict.keys():
+                            if type(self.prm_dict[clean_line[0]]) is list:
+                                self.prm_dict[clean_line[0]].append(clean_line[1])
+                            
+                            else:
+                                self.prm_dict[clean_line[0]] = [self.prm_dict[clean_line[0]]]
+                                self.prm_dict[clean_line[0]].append(clean_line[1])
+                    
+                        else:
+                            self.prm_dict[clean_line[0]] = clean_line[1]
 
             print(f'Successfully constructed. To see the .prm dictionary, print($NAME.prm_dict)')
         
