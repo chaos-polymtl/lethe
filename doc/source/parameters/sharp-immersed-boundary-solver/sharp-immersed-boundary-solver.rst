@@ -12,8 +12,9 @@ This subsection contains the parameters related to the sharp immersed boundary s
       set number of particles                     = 1
       
       subsection extrapolation function
-        set length ratio  = 4
-        set stencil order = 2
+        set length ratio         = 4
+        set stencil order        = 2
+        set enable extrapolation = true
       end
       
       subsection output
@@ -106,6 +107,11 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     .. tip::
 	    A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.
+
+    * The ``enable extrapolation`` parameter controls if extrapolation is used to impose the immersed boundary condition. For debugging purposes, this parameter can be set to ``false``; the particle velocity will then be imposed on velocity degrees of freedom of cells cut by the particle directly, which effectively amplifies the volume occupied by the solid.
+
+    .. warning::
+    	Disabling the extrapolation is not recommended since it makes the Sharp-IB solver first-order accurate in space.
 
 * The ``output`` subsection contains the parameters controlling the information printed in the terminal and output files.
     * The ``calculate force`` parameter controls if the force is evaluated on each particle.

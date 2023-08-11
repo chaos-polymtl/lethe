@@ -3281,11 +3281,20 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // used for the definition of the stencil
                           // ("stencil_cell") is on a face between the cell_cut
                           // that is cut ("cell_cut") and the "stencil_cell".
-                          bool point_in_cell = cell_cut->point_inside(
-                            interpolation_points
-                              [stencil.number_of_interpolation_support_points(
-                                 order) -
-                               1]);
+                          bool point_in_cell;
+                          // The extrapolation can be disabled for debugging
+                          // purposes, although in most cases it shouldn't since
+                          // it is a core part of this solver
+                          if (this->simulation_parameters.particlesParameters
+                                ->enable_extrapolation)
+                            point_in_cell = cell_cut->point_inside(
+                              interpolation_points
+                                [stencil.number_of_interpolation_support_points(
+                                   order) -
+                                 1]);
+                          else
+                            point_in_cell = cell_cut->point_inside(
+                              support_points[local_dof_indices[i]]);
 
                           bool         dof_is_dummy = false;
                           bool         cell2_is_cut;
@@ -3338,9 +3347,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               stencil_cell, point);
                           for (unsigned int j = 1; j < ib_coef.size(); ++j)
                             {
-                              unite_cell_interpolation_points[j] =
-                                this->mapping->transform_real_to_unit_cell(
-                                  stencil_cell, interpolation_points[j - 1]);
+                              // The extrapolation can be disabled for debugging
+                              // purposes, although in most cases it shouldn't
+                              // since it is a core part of this solver
+                              if (this->simulation_parameters
+                                    .particlesParameters->enable_extrapolation)
+                                unite_cell_interpolation_points[j] =
+                                  this->mapping->transform_real_to_unit_cell(
+                                    stencil_cell, interpolation_points[j - 1]);
+                              else
+                                unite_cell_interpolation_points[j] =
+                                  this->mapping->transform_real_to_unit_cell(
+                                    stencil_cell,
+                                    support_points[local_dof_indices[i]]);
                             }
 
                           std::vector<double> local_interp_sol(ib_coef.size());

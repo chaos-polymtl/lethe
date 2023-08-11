@@ -2570,6 +2570,14 @@ namespace Parameters
           "4",
           Patterns::Double(),
           "The length ratio used to define the points for the IB stencil. See definition of epsilon_n in the paper on sharp IB.");
+        prm.declare_entry(
+          "enable extrapolation",
+          "true",
+          Patterns::Bool(),
+          "Bool to define if extrapolation should be enabled (default). If disabled, all velocity degrees of freedom "
+          "in a cell will be set to the particle velocity if that cell is cut. Setting to false is intended for "
+          "debugging purposes.");
+
         prm.leave_subsection();
       }
 
@@ -2752,8 +2760,9 @@ namespace Parameters
     {
       prm.enter_subsection("extrapolation function");
       {
-        order        = prm.get_integer("stencil order");
-        length_ratio = prm.get_double("length ratio");
+        order                = prm.get_integer("stencil order");
+        length_ratio         = prm.get_double("length ratio");
+        enable_extrapolation = prm.get_bool("enable extrapolation");
         prm.leave_subsection();
       }
 
