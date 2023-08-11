@@ -5,7 +5,7 @@ Discrete Element Method (DEM)
 .. warning::
   *This page is under construction*
 
-In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Golshan, Munch, Gassmöller, Kronbichler & Blais (2022) `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
+In this guide, we summarize the theory behind DEM. For further details, we refer the reader to the article by Golshan *et al.* `[1] <https://doi.org/10.1007/s40571-022-00478-6>`_
 
 .. math::
     m_i\frac{d\mathbf{v_i}}{dt} &= \sum_{j\in \mathcal C_i} (\mathbf{F}_{ij}^n + \mathbf{F}_{ij}^t) + m_i\mathbf{g} + \mathbf{F}_i^\text{ext} \\
@@ -188,7 +188,7 @@ And velocity Verlet method is calculated with half-step velocity as:
 References
 -------------
 
-`[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ Golshan et al. "Lethe-DEM: An open-source parallel discrete element solver with load balancing." Computational Particle Mechanics (2022) p.1-20
+`[1] <https://doi.org/10.1007/s40571-022-00478-6>`_ S. Golshan, P. Munch, R. Gassmöller, M. Kronbichler, and B. Blais, “Lethe-DEM: an open-source parallel discrete element solver with load balancing,” *Comput. Part. Mech.*, vol. 10, no. 1, pp. 77–96, Feb. 2023, doi: 10.1007/s40571-022-00478-6.
 
 `[2] <https://mfix.netl.doe.gov/doc/mfix-archive/mfix_current_documentation/dem_doc_2012-1.pdf>`_ R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p. 10, Sep. 2012.
 
