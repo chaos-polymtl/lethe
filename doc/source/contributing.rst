@@ -162,7 +162,7 @@ Throughout the documentation, you may notice that the different pages follow a c
           When citing, the "*et al.*" notation is used in:
 
           - In-text citation if there are three or more authors for a given reference.
-          - The ``References`` list if there are six or more authors for a given reference.
+          - The ``References`` list if there are more than six authors for a given reference.
 
   .. note::
 

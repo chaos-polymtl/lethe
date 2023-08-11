@@ -1,23 +1,26 @@
 ==================================================
-Particle FEM reconstruction
+Particle FEM Reconstruction
 ==================================================
 In this example, we use the inverse of Finite Element Method (FEM) to reconstruct positions from a radioactive particle tracking experiment.
 The calculation is performed for a given set of positions inside a square.
 
+----------------------------------
 Features
 ----------------------------------
 - Solver: ``rpt_l2_projection_3d``
 - Solver: ``rpt_fem_reconstruction_3d``
 - Displays the use of the inverse FEM in reconstruction of the radioactive particle positions
 
-Files used in this example
+---------------------------
+Files Used in This Example
 ---------------------------
 - Parameter file: ``examples/rpt/particle-fem-reconstruction/rpt-fem-reconstruction.prm``
 - File containing detectors positions: ``examples/rpt/particle-fem-reconstruction/positions.detector``
 - File containing the experimental counts: ``examples/rpt/particle-fem-reconstruction/experimental-counts.txt``
 - File containing the real particle positions: ``examples/rpt/particle-fem-reconstruction/real-positions.txt``
 
-Description of the case
+-------------------------
+Description of the Case
 -------------------------
 The purpose of the Finite Element Method based Position Reconstruction (FEM-PR) is to filter the noise resulting from the Monte Carlo model by using an
 orthogonal projection of the Monte Carlo model onto the domain. Then, the algorithm searches through the cells and it
@@ -57,19 +60,15 @@ This example shows how using the tuned parameters of each detector we generate t
     :width: 380
 
 
-
-Parameter file
 ----------------
-RPT parameters
+Parameter File
+----------------
+RPT Parameters
 ^^^^^^^^^^^^^^^^
 
 As seen in the previous examples (:doc:`../photon-count-calculation-in-a-cylindrical-vessel/photon-count-calculation-in-a-cylindrical-vessel` and :doc:`../tuning-parameters-with-nomad/tuning-parameters-with-nomad`), in the subsection ``rpt parameters``, we define the values of the set of parameter necessary for calculating the counts using the Monte Carlo method. These common parameters used for the RPT simulation are described in the :doc:`../../../parameters/rpt/rpt_parameters` documentation page.
 
 .. code-block:: text
-
-    # --------------------------------------------------
-    # RPT Monte Carlo technique
-    #---------------------------------------------------
 
     subsection rpt parameters
         set verbosity                        = quiet
@@ -83,16 +82,12 @@ As seen in the previous examples (:doc:`../photon-count-calculation-in-a-cylindr
         set attenuation coefficient detector = 21.477
     end
 
-Detector parameters
+Detector Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
 In the subsection ``detector parameters``, we specify the file that contains the position of the detectors' face center and the position of a point inside the detectors on their axis. The detector parameters are described in the :doc:`../../../parameters/rpt/detector_parameters` documentation page.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # Detector parameters
-    #---------------------------------------------------
 
     subsection detector parameters
       set detector positions file         = positions.detector
@@ -103,16 +98,12 @@ In the subsection ``detector parameters``, we specify the file that contains the
       set attenuation coefficient reactor = 0,0.50377,0,0.95902
     end
 
-FEM reconstruction parameters
+FEM Reconstruction Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the subsection ``FEM reconstruction parameters``, we specify the file that contains the experimental counts and the export file for the reconstructed positions. Parameters used for the FEM reconstruction are described in the :doc:`../../../parameters/rpt/fem_reconstruction` documentation page.
 
 .. code-block:: text
-
-    #---------------------------------------------------
-    # FEM reconstruction parameters
-    #---------------------------------------------------
 
     subsection fem reconstruction
       set mesh type                = dealii
@@ -126,7 +117,7 @@ In the subsection ``FEM reconstruction parameters``, we specify the file that co
     end
 
 
-Running the simulation
+Running the Simulation
 ----------------------------------
 Assuming that ``rpt_l2_projection_3d`` and ``rpt_fem_reconstruction_3d`` executables are within your path, you can start launching FEM-PR by typing :
 
@@ -155,4 +146,4 @@ With the figure shown below we assess the validity of the reconstruction algorit
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.nima.2023.168504>`_  Mirakhori, G., Collard-Daigneault, A., Alphonius, A., Doucet, J., Blais, B., & Chaouki, J. (2023a). An improved position reconstruction method for radioactive particle tracking. *Nuclear Instruments and Methods in Physics Research*. 168504. 
+`[1] <https://doi.org/10.1016/j.nima.2023.168504>`_  G. Mirakhori, A. Collard-Daigneault, A. Alphonius, J. Doucet, B. Blais, and J. Chaouki, “An improved position reconstruction method for radioactive particle tracking,” *Nucl. Instrum. Methods Phys. Res. Sect. Accel. Spectrometers Detect. Assoc. Equip.*, vol. 1055, p. 168504, Oct. 2023, doi: 10.1016/j.nima.2023.168504.

@@ -2,9 +2,7 @@
 Rayleigh-Taylor Instability
 ============================
 
-This example simulates the dynamic evolution of the single-mode `Rayleigh-Taylor instability`_ by density contrast. 
-
-.. _Rayleigh-Taylor instability: https://www.sciencedirect.com/science/article/pii/S0021999199962575
+This example simulates the dynamic evolution of the single-mode Rayleigh-Taylor instability `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ by density contrast.
 
 
 --------
@@ -56,7 +54,7 @@ which result in Reynolds and Atwood numbers equal to
         At = \frac{\rho_r - 1}{\rho_r + 1} = 0.5
 
 
-A perturbed interface defined as :math:`2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a no-slip boundary condition is applied, while on the left and right walls, a periodic boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman (2022) `<[2]_>`_ at dimensionless times (:math:`t^* = t \sqrt{\bf{g} / H}`) of 1.5, 2.5, 3.5, 4.0 and 4.5. The temporal evolution of the spike and the bubble positions are then compared to the results of He et al (1999) `<[1]_>`_. The term "spike" refers to the lowest point of fluid 1 and the term "bubble" refers to the highest point of fluid 0. 
+A perturbed interface defined as :math:`2H + 0.1 H \cos{(2 \pi x / H)}` separates the fluids. At the top and bottom boundaries, a no-slip boundary condition is applied, while on the left and right walls, a periodic boundary condition is used. The temporal evolution of the interface is visually compared with the simulations of Garoosi and Hooman `[2] <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_ at dimensionless times (:math:`t^* = t \sqrt{\bf{g} / H}`) of 1.5, 2.5, 3.5, 4.0 and 4.5. The temporal evolution of the spike and the bubble positions are then compared to the results of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ The term "spike" refers to the lowest point of fluid 1 and the term "bubble" refers to the highest point of fluid 0.
 
 
 --------------
@@ -332,7 +330,7 @@ In the following figure, we compare the simulation results with that of Garoosi 
     :width: 400
 
 
-In the figure below, we compare the position of the spike and the bubble with the results of He et al (1999) `<[1]_>`_. It can be seen that as :math:`t^*` increases, there is a growing difference between the spike position of the current simulation and that of He et al (1999) `<[1]_>`_. Nevertheless, the bubble position follows the same evolution as the reference.
+In the figure below, we compare the position of the spike and the bubble with the results of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_ It can be seen that as :math:`t^*` increases, there is a growing difference between the spike position of the current simulation and that of He *et al.* `[1] <https://doi.org/10.1006/jcph.1999.6257>`_  Nevertheless, the bubble position follows the same evolution as the reference.
 
 .. image:: images/spike_and_bubble_evolution_He_et_al_comparison.png
     :alt: Comparison of the spike and bubble positions with He et al (1999) values.
@@ -365,10 +363,6 @@ The following figures shows the mass of fluid 1 throughout the simulation with a
 References
 -----------
 
-.. _[1]:
+`[1] <https://doi.org/10.1006/jcph.1999.6257>`_ X. He, S. Chen, and R. Zhang, “A Lattice Boltzmann Scheme for Incompressible Multiphase Flow and Its Application in Simulation of Rayleigh–Taylor Instability,” *J. Comput. Phys.*, vol. 152, no. 2, pp. 642–663, Jul. 1999, doi: 10.1006/jcph.1999.6257.
 
-[1] He, X., Chen, S. and Zhang, R., 1999. A lattice Boltzmann scheme for incompressible multiphase flow and its application in simulation of Rayleigh–Taylor instability. Journal of computational physics, 152(2), pp.642-663. https://doi.org/10.1006/jcph.1999.6257
-
-.. _[2]:
-
-[2] Garoosi, F. and Hooman, K., 2022. Numerical simulation of multiphase flows using an enhanced Volume-of-Fluid (VOF) method. International Journal of Mechanical Sciences, 215, p.106956. https://doi.org/10.1016/j.ijmecsci.2021.106956
+`[2] <https://doi.org/10.1016/j.ijmecsci.2021.106956>`_ F. Garoosi and K. Hooman, “Numerical simulation of multiphase flows using an enhanced Volume-of-Fluid (VOF) method,” *Int. J. Mech. Sci.*, vol. 215, p. 106956, Feb. 2022, doi: 10.1016/j.ijmecsci.2021.106956.

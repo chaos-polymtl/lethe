@@ -2,7 +2,7 @@
 Melting Cavity
 ==========================
 
-This example simulates a `two-dimensional gallium melting cavity`_. 
+This example simulates a two-dimensional gallium melting cavity `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_.
 
 .. _two-dimensional gallium melting cavity: https://www.sciencedirect.com/science/article/pii/S0045793018301415
 
@@ -48,7 +48,7 @@ where :math:`\beta` and :math:`T_0` denote thermal expansion coefficient and a r
 
 A two-dimensional block of gallium (initially in solid phase) is heated from its left wall at :math:`t = 0` s. Its initial temperature is close to (but slightly smaller than) the melting point and the temperature of the left wall is higher than the melting point. Hence, the block starts melting from the left wall. In the melted zone, close to the left wall, the buoyant force (natural convection) creates vortices inside the liquid.
 
-The simulation parameters are selected according to the references [`1 <https://doi.org/10.1016/j.compfluid.2018.03.037>`_, `2 <https://doi.org/10.1115/1.3246884>`_] to satisfy the desired values for the dimensionless numbers
+The simulation parameters are selected according to the references `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_, `[2] <https://doi.org/10.1115/1.3246884>`_ to satisfy the desired values for the dimensionless numbers
     .. math::
         \text{Ra} = \frac{\rho^2 \beta g (T_w - T_m) L^3 c_p}{k \mu} = 10^5
 
@@ -221,7 +221,7 @@ A python post-processing code `(melting-cavity.py)`
 is added to the example folder to post-process the results.
 Run ``python3 ./melting-cavity.py ./output`` to execute this 
 post-processing code, where ``./output`` is the directory that 
-contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta `[2] <https://doi.org/10.1115/1.3246884>`_. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais et al. `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_.
+contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta `[2] <https://doi.org/10.1115/1.3246884>`_. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais and Ilinca `[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_.
 
 
 .. image:: images/xmax-t.png
@@ -239,6 +239,6 @@ contains the simulation results. In post-processing, the position of the solid-l
 References
 -----------
 
-`[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ Blais, B. and Ilinca, F., 2018. Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection. Computers & Fluids, 172, pp.564-581.
+`[1] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.
 
-`[2] <https://doi.org/10.1115/1.3246884>`_ Gau, C. and Viskanta, R., 1986. Melting and solidification of a pure metal on a vertical wall.
+`[2] <https://doi.org/10.1115/1.3246884>`_ C. Gau and R. Viskanta, “Melting and Solidification of a Pure Metal on a Vertical Wall,” *J. Heat Transf.*, vol. 108, no. 1, pp. 174–181, Feb. 1986, doi: 10.1115/1.3246884.

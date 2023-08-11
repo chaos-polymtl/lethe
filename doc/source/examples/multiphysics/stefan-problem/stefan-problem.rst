@@ -2,10 +2,7 @@
 Stefan Problem: Melting of a Solid
 ====================================
 
-This example simulates the `Stefan`_ problem following the approach taken by `Blais & Ilinca (2018)`_
-
-.. _Stefan: https://en.wikipedia.org/wiki/Stefan_problem
-.. _Blais & Ilinca (2018): https://doi.org/10.1016/j.compfluid.2018.03.037
+This example simulates the Stefan `[1] <https://en.wikipedia.org/wiki/Stefan_problem>`_ problem following the approach taken by Blais and Ilinca (2018) `[2] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_.
 
 
 ----------------------------------
@@ -29,7 +26,7 @@ Files Used in This Example
 Description of the Case
 -------------------------
 
-The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature `[1] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:
+The Stefan problem describes the melting or the solidification of a pure substance by conduction in a 1D semi-infinite domain. This classical problem, extensively described in the literature `[3] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_, is often used as the core test case to establish the accuracy and the robustness of numerical models for phase change. Although it is established for a semi-infinite domain, it can be solved on a finite domain provided that it is sufficiently long. This problem is illustrated in the following figure:
 
 .. image:: images/stefan-problem-illustration.png
     :alt: problem_illustration
@@ -67,7 +64,7 @@ the diffusivity coefficient in the liquid phase and :math:`\delta (t)` the melti
 
 Although simple, this problem can be challenging to solve numerically because of the sharp impact of the phase change on the specific heat within the solidification interval. Even if this problem is inherently a 1D problem, we analyse it in 2D by generating structured quadrilateral meshes on a [0, 0]X[1, 0.1] domain. The number of nodes in the y direction is kept at 2 (one cell), but it is adjusted to 101 in the x direction which is the direction in which the heat transfer occurs and in which the interface displaces. 
 
-Lethe uses a specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by `Blais & Ilinca (2018)`_. It is also described in the :doc:`../../../parameters/cfd/physical_properties` section of the documentation.
+Lethe uses a specific heat phase change model to solve this type of problem. This model is quasi-identical to the one described by Blais and Ilinca (2018) `[2] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_. It is also described in the :doc:`../../../parameters/cfd/physical_properties` section of the documentation.
 
 
 --------------
@@ -146,7 +143,7 @@ Next, we define the physical properties:
       end
     end
 
-This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by `Blais & Ilinca (2018)`_.
+This subsection defines the various parameters of the specific heat model for phase change. Key parameters to note are the solidus and liquidus temperatures. These parameters define the phase change interval, that is the temperature interval over which the phase change occurs. For pure substance, this interval should, in theory, be infinitely small. However, this leads to a numerically unstable solution. Consequently, we set a finite value which should be relatively small, but not too small as to lead to numerical instabilities. In the present case, we set this interval to 0.02C, which is sufficient to guarantee a high degree of accuracy while maintaining numerical stability. The impact of this parameter on the stability and the accuracy of the model has been studied in depth by Blais and Ilinca (2018) `[2] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
@@ -191,4 +188,8 @@ Possibilities for Extension
 References
 ----------------------------
 
-`[1] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_ aus der Wiesche, Stefan. "Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction." Applied Thermal Engineering 27.11-12 (2007): 1790-1798.
+`[1] <https://en.wikipedia.org/wiki/Stefan_problem>`_ “Stefan problem,” Wikipedia. Jul. 29, 2023. Accessed: Feb. 19, 2022. [Online]. Available: https://en.wikipedia.org/wiki/Stefan_problem
+
+`[2] <https://doi.org/10.1016/j.compfluid.2018.03.037>`_ B. Blais and F. Ilinca, “Development and validation of a stabilized immersed boundary CFD model for freezing and melting with natural convection,” *Comput. Fluids*, vol. 172, pp. 564–581, Aug. 2018, doi: 10.1016/j.compfluid.2018.03.037.
+
+`[3] <https://doi.org/10.1016/j.applthermaleng.2007.01.008>`_ S. aus der Wiesche, “Numerical heat transfer and thermal engineering of AdBlue (SCR) tanks for combustion engine emission reduction,” *Appl. Therm. Eng.*, vol. 27, no. 11, pp. 1790–1798, Aug. 2007, doi: 10.1016/j.applthermaleng.2007.01.008.

@@ -272,4 +272,4 @@ References
 -----------
 
 
-`[1] <https://www.spheric-sph.org/tests/test-02>`_ Issa, R., & Violeau, D. (2006). Test-case 2, 3D dambreaking, Release 1.1. ERCOFTAC, SPH European Research Interest Community SIG, Électricité de France, Laboratoire National d’Hydraulique et Environnement. 
+`[1] <https://www.spheric-sph.org/tests/test-02>`_ R. Issa and D. Violeau, “Test-case 2, 3D dambreaking, Release 1.1,” *ERCOFTAC SPH Eur. Res. Interest Community SIG Électricité Fr. Lab. Natl. Hydraul. Environ.*, 2006, Accessed: Dec. 07, 2022. [Online]. Available: https://www.spheric-sph.org/tests/test-02
