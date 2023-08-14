@@ -13,3 +13,4 @@ VOF
     rising-bubble/rising-bubble
     sloshing-in-rectangular-tank/sloshing-in-rectangular-tank
     3d-dam-break/3d-dam-break
+    air-bubble-compression/air-bubble-compression
