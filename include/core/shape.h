@@ -1002,11 +1002,13 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param updated_dof_handler the reference to the new dof_handler
+   * @param levels_not_precalculated the number of finer levels that won't be precalculated
    * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
-  update_precalculations(DoFHandler<dim> &updated_dof_handler,
-                         const bool       mesh_based_precalculations);
+  update_precalculations(DoFHandler<dim> &  updated_dof_handler,
+                         const unsigned int levels_not_precalculated,
+                         const bool         mesh_based_precalculations);
 
   /**
    * @brief Computes the assigned boolean operations
@@ -1427,11 +1429,13 @@ public:
    * @brief Sets the proper dof handler, then computes/updates the map of cells
    * and their likely non-null nodes
    * @param dof_handler the reference to the new dof_handler
+   * @param levels_not_precalculated the number of finer levels that won't be precalculated
    * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    * */
   void
-  update_precalculations(DoFHandler<dim> &updated_dof_handler,
-                         const bool       mesh_based_precalculations);
+  update_precalculations(DoFHandler<dim> &  updated_dof_handler,
+                         const unsigned int levels_not_precalculated,
+                         const bool         mesh_based_precalculations);
 
   /**
    * @brief Rotate RBF nodes in the global reference frame (the reference frame of the triangulation).

@@ -8,6 +8,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     subsection particles
       set assemble Navier-Stokes inside particles = false
+      set levels not precalculated                = 0
       set number of particles                     = 1
       
       subsection extrapolation function
@@ -92,6 +93,8 @@ This subsection contains the parameters related to the sharp immersed boundary s
   end
 
 * The ``number of particles`` is the number of particles simulated by the sharp-edge IB.
+
+* The ``levels not precalculated`` parameter controls the number of layers of the hierarchical grid used by Lethe that are ignored by precalculations. It allows to reduce the memory footprint at the cost of an increased computing time. At the moment, this is used only for RBF shapes. The value should be increased when the RBF contains a lot of nodes and/or the grid is extremely fine.
 
 * The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure.
 

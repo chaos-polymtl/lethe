@@ -1288,8 +1288,9 @@ CompositeShape<dim>::static_copy() const
 template <int dim>
 void
 CompositeShape<dim>::update_precalculations(
-  DoFHandler<dim> &updated_dof_handler,
-  const bool       mesh_based_precalculations)
+  DoFHandler<dim> &  updated_dof_handler,
+  const unsigned int levels_not_precalculated,
+  const bool         mesh_based_precalculations)
 {
   if (!mesh_based_precalculations)
     return;
@@ -1297,10 +1298,12 @@ CompositeShape<dim>::update_precalculations(
     if (typeid(*component) == typeid(RBFShape<dim>))
       std::static_pointer_cast<RBFShape<dim>>(component)
         ->update_precalculations(updated_dof_handler,
+                                 levels_not_precalculated,
                                  mesh_based_precalculations);
     else if (typeid(*component) == typeid(CompositeShape<dim>))
       std::static_pointer_cast<CompositeShape<dim>>(component)
         ->update_precalculations(updated_dof_handler,
+                                 levels_not_precalculated,
                                  mesh_based_precalculations);
 }
 
@@ -1767,8 +1770,10 @@ RBFShape<dim>::determine_likely_nodes_for_one_cell(
 
 template <int dim>
 void
-RBFShape<dim>::update_precalculations(DoFHandler<dim> &dof_handler,
-                                      const bool mesh_based_precalculations)
+RBFShape<dim>::update_precalculations(
+  DoFHandler<dim> &  dof_handler,
+  const unsigned int levels_not_precalculated,
+  const bool         mesh_based_precalculations)
 {
   if (!mesh_based_precalculations)
     return;

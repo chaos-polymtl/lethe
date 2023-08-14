@@ -226,10 +226,12 @@ public:
    * @param updated_dof_handler the reference to the new dof_handler
    * @param levels_not_precalculated the number of finer levels that won't be
    * precalculated
+   * @param mesh_based_precalculations mesh based precalculations that can lead to slight shape misrepresentation (if RBF typed)
    */
   void
   update_precalculations(DoFHandler<dim> &  updated_dof_handler,
-                         const unsigned int levels_not_precalculated);
+                         const unsigned int levels_not_precalculated,
+                         const bool         mesh_based_precalculations);
 
 
   // This class defines values related to a particle used in the sharp interface
