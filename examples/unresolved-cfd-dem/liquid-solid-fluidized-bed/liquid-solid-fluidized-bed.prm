@@ -1,0 +1,229 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set number mesh adapt = 0
+  set output name       = cfd_dem
+  set output frequency  = 100
+  set time end          = 20
+  set time step         = 0.001
+  set output path       = ./output/
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  subsection fluid 0
+    set kinematic viscosity = 0.0000008379
+    set density             = 996.7775
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 33:0.05:0.55
+  set initial refinement = 2
+  set expand particle-wall contact search = true
+end
+
+#---------------------------------------------------
+# Void Fraction
+#---------------------------------------------------
+
+subsection void fraction
+  set mode                = pcm
+  set read dem            = true
+  set dem file name       = dem
+  set l2 smoothing factor = 0.000028387584
+  set bound void fraction = false
+end
+
+#---------------------------------------------------
+# CFD-DEM
+#---------------------------------------------------
+
+subsection cfd-dem
+  set vans model         = modelA
+  set grad div           = true
+  set drag model         = rong
+  set buoyancy force     = true
+  set shear force        = true
+  set pressure force     = true
+  set saffman lift force = true
+  set coupling frequency = 100
+  set void fraction time derivative = false
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection uvwp
+    set Function expression = 0; 0; 0; 0
+  end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type = slip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = function
+    subsection u
+      set Function expression = 0.157033
+    end
+    subsection v
+      set Function expression = 0
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+end
+
+# --------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  set enable = false
+  subsection xyz
+    set Function expression = 0; 0; 0; 0
+  end
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = none
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = dynamic
+    set neighborhood threshold   = 1.5
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = -9.81
+  set gy                       = 0
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.003087
+    set number                            = 72400
+    set density particles                 = 3585.9
+    set young modulus particles           = 1e7
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1e7
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.2
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.3
+end
+
+#---------------------------------------------------
+# Floating walls
+#---------------------------------------------------
+
+subsection floating walls
+  set number of floating walls = 1
+  subsection wall 0
+    subsection point on wall
+      set x = -0.45
+      set y = 0
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 1
+      set ny = 0
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 50
+  end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set solver           = inexact_newton
+  set tolerance        = 1e-10
+  set max iterations   = 10
+  set verbosity        = verbose
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-11
+  set ilu preconditioner fill               = 1
+  set ilu preconditioner absolute tolerance = 1e-14
+  set ilu preconditioner relative tolerance = 1.00
+  set verbosity                             = verbose
+end
