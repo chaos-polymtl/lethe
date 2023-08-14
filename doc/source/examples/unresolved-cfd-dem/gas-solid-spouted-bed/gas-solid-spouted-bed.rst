@@ -93,15 +93,19 @@ The section on model parameters is explained in the DEM examples. We show the ch
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method                = dynamic
-      set dynamic contact search size coefficient = 0.9
-      set load balance method                     = dynamic
-      set load balance threshold                  = 0.5
-      set dynamic load balance check frequency    = 10000
-      set neighborhood threshold                  = 1.3
-      set particle particle contact force method  = hertz_mindlin_limit_overlap
-      set particle wall contact force method      = nonlinear
-      set integration method                      = velocity_verlet
+      subsection contact detection
+        set contact detection method                = dynamic
+        set dynamic contact search size coefficient = 0.9
+        set neighborhood threshold                  = 1.3
+      end
+      subsection load balancing
+        set load balance method     = dynamic
+        set threshold               = 0.5
+        set dynamic check frequency = 10000
+      end
+      set particle particle contact force method = hertz_mindlin_limit_overlap
+      set particle wall contact force method     = nonlinear
+      set integration method                     = velocity_verlet
     end
 
 We enable dynamic load balancing in order to fully take advantage of the parallelization of the code.
@@ -202,7 +206,7 @@ or in parallel (where 8 represents the number of processors)
   mpirun -np 8 dem dem-packing-in-spouted-bed.prm
 
 .. note::
-    Running the packing should take approximatively 10-15 minutes on 8 cores.
+    Running the packing should take approximately 10-15 minutes on 8 cores.
 
 After the particles have been packed inside the square bed, it is now possible to simulate the fluidization of particles.
 
