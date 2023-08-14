@@ -147,7 +147,7 @@ Do not forget the ``.`` at the end of the command, which means "here".
 	+--------+------------------------------------------+----------------------------------------+
 	|     86 | ``# PACKAGES="${PACKAGES} once:netcdf"`` | ``PACKAGES="${PACKAGES} once:netcdf"`` |
 	+--------+------------------------------------------+----------------------------------------+
-	|     97 | ``DEAL_II_VERSION=v9.4.0``               | ``DEAL_II_VERSION=master``             |
+	|     97 | ``DEAL_II_VERSION=v9.5.0``               | ``DEAL_II_VERSION=master``             |
 	+--------+------------------------------------------+----------------------------------------+
 
 	* save and close 
@@ -155,18 +155,18 @@ Do not forget the ``.`` at the end of the command, which means "here".
 	* open the ``trilinos.package`` file with notepad and change the following lines:
 
 	.. tip::
-		The prefix ``#`` is used to comment a line. Here we are simply commenting lines 19 and 20, and uncommenting lines 25 and 26, to change the trilinos version.
+		The prefix ``#`` is used to comment a line. Here we are simply commenting lines 44 and 45, and uncommenting lines 50 and 51, to change the trilinos version.
 
 	+--------+------------------------------------------------+-----------------------------------------------+
 	| line # | initial parameter                              | changed parameter                             |
 	+========+================================================+===============================================+
-	|     19 | ``VERSION=12-18-1``                            | ``#VERSION=12-18-1``                          |
+	|     44 | ``VERSION=12-18-1``                            | ``#VERSION=12-18-1``                          |
 	+--------+------------------------------------------------+-----------------------------------------------+
-	|     20 | ``CHECKSUM=9c1d151169949bca6cf203831e4d6aee``  | ``#CHECKSUM=9c1d151169949bca6cf203831e4d6aee``|
+	|     45 | ``CHECKSUM=9c1d151169949bca6cf203831e4d6aee``  | ``#CHECKSUM=9c1d151169949bca6cf203831e4d6aee``|
 	+--------+------------------------------------------------+-----------------------------------------------+
-	|     25 | ``#VERSION=12-12-1``                           | ``VERSION=12-12-1``                           |
+	|     50 | ``#VERSION=12-12-1``                           | ``VERSION=12-12-1``                           |
 	+--------+------------------------------------------------+-----------------------------------------------+
-	|     26 | ``#CHECKSUM=ecd4606fa332212433c98bf950a69cc7`` | ``CHECKSUM=ecd4606fa332212433c98bf950a69cc7`` |
+	|     51 | ``#CHECKSUM=ecd4606fa332212433c98bf950a69cc7`` | ``CHECKSUM=ecd4606fa332212433c98bf950a69cc7`` |
 	+--------+------------------------------------------------+-----------------------------------------------+
 
 	* save and close 
@@ -221,7 +221,7 @@ Where ``$numprocs`` corresponds to the number of processors used for the compila
 .. code-block:: text
   :class: copy-button
 
-  echo "export DEAL_II_DIR=$HOME/deal.ii-candi/deal.II-master" >> ~/.bashrc
+  echo "export DEAL_II_DIR=$HOME/dealii-candi/deal.II-master" >> ~/.bashrc
 
 .. note::
 
