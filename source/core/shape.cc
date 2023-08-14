@@ -1797,7 +1797,8 @@ RBFShape<dim>::update_precalculations(
            std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
     temporary_nodes_portions_map;
   temporary_nodes_portions_map.clear();
-  for (unsigned int level = 0; level < maximal_level; level++)
+  for (unsigned int level = 0; level + levels_not_precalculated < maximal_level;
+       level++)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
@@ -1885,7 +1886,8 @@ RBFShape<dim>::update_precalculations(
         {
           temp_cell = it->first;
           if (temp_cell->is_active() ||
-              static_cast<unsigned int>(temp_cell->level() + 1) ==
+              static_cast<unsigned int>(temp_cell->level() + 1 +
+                                        levels_not_precalculated) >=
                 maximal_level)
             {
               if (cell->point_inside(temp_cell->barycenter()))
