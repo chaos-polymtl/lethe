@@ -105,7 +105,7 @@ We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` doc
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions``, we define the initial air bubble with a radius of :math:`D/2=0.03` surrounded by water.
+In the ``initial conditions`` subsection, we define the initial air bubble with a radius of :math:`D/2=0.03` surrounded by water.
 An initial velocity field is used to avoid discontinuities in the solution.
 
 .. code-block:: text
@@ -243,7 +243,7 @@ In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`7` and :math:`9`, respectively. Since the size of the bubble changes, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
+In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`7` and :math:`9`, respectively. Since the size of the bubble changes, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
 To capture the bubble adequately, we set ``initial refinement steps = 8`` to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
 
 .. code-block:: text

@@ -105,7 +105,7 @@ We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` doc
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions``, we define a cell filled with air (:math:`\phi=0`) at rest.
+In the ``initial conditions`` subsection, we define a cell filled with air (:math:`\phi=0`) at rest.
 
 .. code-block:: text
 
@@ -212,7 +212,7 @@ In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are set to :math:`6` and :math:`8`, respectively.
+In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are set to :math:`6` and :math:`8`, respectively.
 
 .. code-block:: text
 
