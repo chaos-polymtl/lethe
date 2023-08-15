@@ -51,7 +51,8 @@ MFNavierStokesSolver<dim>::MFNavierStokesSolver(
   if ((nsparam.stabilization.use_default_stabilization == true) ||
       nsparam.stabilization.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
-    system_operator = new NavierStokesSUPGPSPGOperator<dim, double>();
+    system_operator =
+      std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
   else
     throw std::runtime_error(
       "Only SUPG/PSPG stabilization is supported at the moment.");
@@ -245,7 +246,7 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::assemble_system_matrix()
 {
-  // TODO
+  // Required for compilation but not used for matrix free solvers.
 }
 
 template <int dim>
@@ -453,7 +454,7 @@ MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
       Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
   else
-    throw(std::runtime_error("This solver is not allowed"));
+    AssertThrow(false, ExcMessage("This solver is not allowed"));
   this->rescale_pressure_dofs_in_newton_update();
 }
 

@@ -165,7 +165,7 @@ private:
 
 protected:
   // Matrix-free operator
-  NavierStokesOperatorBase<dim, double> *system_operator;
+  std::shared_ptr<NavierStokesOperatorBase<dim, double>> system_operator;
 };
 
 #endif

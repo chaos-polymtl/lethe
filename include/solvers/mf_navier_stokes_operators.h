@@ -239,7 +239,9 @@ protected:
   do_cell_integral_local(FECellIntegrator &integrator) const;
 
   /**
-   * @brief Loop over all cell batches withing certain range and perform a cell integral with access to global vectors, i.e., gathering and scattering values.
+   * @brief Loop over all cell batches withing certain range and perform a cell
+   * integral with access to global vectors, i.e., gathering and scattering
+   * values.
    *
    * @param matrix_free Object that contains all data.
    * @param dst Global vector where the final result is added.
@@ -292,7 +294,7 @@ protected:
   const Function<dim> *                  forcing_function;
   double                                 viscosity;
 
-  // Variables needed from the last newton step vector
+  // Variables needed from the last Newton step vector
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     nonlinear_previous_values;
   Table<2, Tensor<1, dim + 1, Tensor<1, dim, VectorizedArray<number>>>>

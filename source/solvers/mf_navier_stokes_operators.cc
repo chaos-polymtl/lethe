@@ -177,6 +177,9 @@ NavierStokesOperatorBase<dim, number>::reinit(
                   }
             }
 
+#ifdef DEBUG
+          // The following lines are used when locally refined meshes are used
+          // to verify the number of edge constrained cells
           unsigned int count = 0;
           for (const auto i : edge_constrained_cell)
             if (i)
@@ -192,6 +195,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
           if (Utilities::MPI::this_mpi_process(
                 dof_handler.get_communicator()) == 0)
             std::cout << count_global << " " << count_cells_global << std::endl;
+#endif
         }
     }
 }
@@ -202,7 +206,7 @@ NavierStokesOperatorBase<dim, number>::compute_element_size()
 {
   FECellIntegrator phi(matrix_free);
 
-  unsigned int n_cells =
+  const unsigned int n_cells =
     matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
   element_size.resize(n_cells);
 
@@ -212,7 +216,8 @@ NavierStokesOperatorBase<dim, number>::compute_element_size()
            lane < matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          double h_k = matrix_free.get_cell_iterator(cell, lane)->measure();
+          const double h_k =
+            matrix_free.get_cell_iterator(cell, lane)->measure();
 
           if (dim == 2)
             element_size[cell][lane] = std::sqrt(4. * h_k / M_PI) / fe_degree;
@@ -587,10 +592,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::do_cell_integral_local(
       // Calculate tau
       VectorizedArray<number> u_mag = VectorizedArray<number>(0.0);
       VectorizedArray<number> tau   = VectorizedArray<number>(0.0);
+
       for (unsigned int k = 0; k < dim; ++k)
-        {
-          u_mag += previous_values[k];
-        }
+        u_mag += previous_values[k];
 
       for (unsigned int v = 0; v < VectorizedArray<number>::size(); ++v)
         {
@@ -726,10 +730,9 @@ NavierStokesSUPGPSPGOperator<dim, number>::local_evaluate_residual(
           // Calculate tau
           VectorizedArray<double> tau   = VectorizedArray<double>(0.0);
           VectorizedArray<double> u_mag = VectorizedArray<double>(0.0);
+
           for (unsigned int k = 0; k < dim; ++k)
-            {
-              u_mag += value[k];
-            }
+            u_mag += value[k];
 
           for (unsigned int v = 0; v < VectorizedArray<double>::size(); ++v)
             {
