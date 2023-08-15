@@ -8,7 +8,7 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set time end         = 0.49
   set time step        = 0.005
   set adapt            = true

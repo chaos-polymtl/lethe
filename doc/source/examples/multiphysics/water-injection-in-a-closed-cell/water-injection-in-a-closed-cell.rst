@@ -13,6 +13,7 @@ Features
 - Solver: ``gls_navier_stokes`` (with Q1-Q1)
 - Volume of fluid (VOF)
 - Isothermal compressible fluid
+- Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Usage of a python script for post-processing data
 
 
@@ -52,13 +53,13 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 1st-order backward differentiation scheme (``bdf1``) with a variable time step is used for time integration.
+The time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time step is used for time integration.
 The initial time step is set to :math:`0.005 \, \text{s}` and the simulation ends at :math:`t_{end} = 0.49 \, \text{s}`.
 
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
+      set method           = bdf2
       set time end         = 0.49
       set time step        = 0.005
       set adapt            = true
