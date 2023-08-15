@@ -121,6 +121,8 @@ template <int dim>
 void
 MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
+  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
+
   // Clear matrix free operator
   this->system_operator->clear();
 
@@ -247,12 +249,15 @@ void
 MFNavierStokesSolver<dim>::assemble_system_matrix()
 {
   // Required for compilation but not used for matrix free solvers.
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 }
 
 template <int dim>
 void
 MFNavierStokesSolver<dim>::assemble_system_rhs()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
 
