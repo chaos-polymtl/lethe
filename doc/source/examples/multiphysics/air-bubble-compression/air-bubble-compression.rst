@@ -245,7 +245,7 @@ In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are 7 and 9, respectively. Since the size of the bubble changes, we choose a rather large ``fraction refinement`` (0.99) and moderate ``fraction coarsening`` (0.01).
+In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`7` and :math:`9`, respectively. Since the size of the bubble changes, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
 To capture the bubble adequately, we set ``initial refinement steps = 8`` to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
 
 .. code-block:: text
@@ -267,7 +267,7 @@ To capture the bubble adequately, we set ``initial refinement steps = 8`` to ens
 Running the Simulation
 -----------------------
 
-We can call the gls_navier_stokes by invoking the following command:
+We can call the ``gls_navier_stokes`` by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
@@ -277,7 +277,7 @@ We can call the gls_navier_stokes by invoking the following command:
 to run the simulation using eight CPU cores. Feel free to use more.
 
 .. warning:: 
-    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\approx` 3 minutes on 8 processes.
+    Make sure to compile lethe in `Release` mode and run in parallel using mpirun. This simulation takes :math:`\sim` 3 minutes on 8 processes.
 
 
 -------

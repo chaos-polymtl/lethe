@@ -214,7 +214,7 @@ In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are set to 6 and 8, respectively.
+In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are set to :math:`6` and :math:`8`, respectively.
 
 .. code-block:: text
 
@@ -234,7 +234,7 @@ In the ``mesh adaptation subsection``, adaptive mesh refinement is defined for t
 Running the Simulation
 -----------------------
 
-We can call the gls_navier_stokes by invoking the following command:
+We can call the ``gls_navier_stokes`` by invoking the following command:
 
 .. code-block:: text
   :class: copy-button
