@@ -85,7 +85,7 @@ VOF
 In the ``VOF`` subsection, the ``interface sharpening`` and the ``phase filtration`` features are enabled.
 The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
 The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` documentation for further explanation on the phase filtration.
+We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the phase filtration.
 
 .. code-block:: text
 
@@ -229,7 +229,7 @@ The properties of air and water at :math:`25 \, \text{°C}` are used in this exa
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined :math:`8` times to ensure adequate definition of the interface.
+In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined :math:`7` times to ensure adequate definition of the interface.
 
 .. code-block:: text
 
@@ -237,14 +237,13 @@ In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. 
     set type               = dealii
     set grid type          = hyper_cube
     set grid arguments     = -0.05 : 0.05 : true
-    set initial refinement = 8
+    set initial refinement = 7
   end
 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
 In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for the ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`7` and :math:`9`, respectively. Since the size of the bubble changes, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
-To capture the bubble adequately, we set ``initial refinement steps = 8`` to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
 
 .. code-block:: text
 
@@ -257,7 +256,7 @@ To capture the bubble adequately, we set ``initial refinement steps = 8`` to ens
       set frequency                = 1
       set fraction refinement      = 0.99
       set fraction coarsening      = 0.01
-      set initial refinement steps = 8
+      set initial refinement steps = 6
     end
 
 

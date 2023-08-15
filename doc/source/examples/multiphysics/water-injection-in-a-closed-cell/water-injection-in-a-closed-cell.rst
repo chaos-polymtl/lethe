@@ -84,7 +84,7 @@ VOF
 In the ``VOF`` subsection, the ``interface sharpening`` and the ``phase filtration`` features are enabled.
 The interface sharpening method and its parameters are explained in the :doc:`../dam-break/dam-break` example.
 The phase filtration filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` documentation for further explanation on the phase filtration.
+We refer the reader to :doc:`../../../../theory/multiphysics/vof` theory guide for further explanation on the phase filtration.
 
 .. code-block:: text
 
@@ -198,7 +198,7 @@ The properties of air and water at :math:`25 \, \text{°C}` are used in this exa
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined :math:`7` times to ensure adequate definition of the interface.
+In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined :math:`6` times to ensure adequate definition of the interface.
 
 .. code-block:: text
 
@@ -206,7 +206,7 @@ In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. 
     set type               = dealii
     set grid type          = hyper_cube
     set grid arguments     = -0.05 : 0.05 : true
-    set initial refinement = 7
+    set initial refinement = 6
   end
 
 Mesh Adaptation
@@ -225,7 +225,7 @@ In the ``mesh adaptation`` subsection, adaptive mesh refinement is defined for t
       set frequency                = 1
       set fraction refinement      = 0.99
       set fraction coarsening      = 0.01
-      set initial refinement steps = 7
+      set initial refinement steps = 5
     end
 
 -----------------------
