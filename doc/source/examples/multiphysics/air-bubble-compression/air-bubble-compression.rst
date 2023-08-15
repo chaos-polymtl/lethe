@@ -40,8 +40,6 @@ The initial configuration of this example is illustrated below.
 |     :width: 800                                                                                                   |
 |     :name: Air bubble initial configuration                                                                       |
 |                                                                                                                   |
-|     Initial configuration                                                                                         |
-|                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
 .. note::
@@ -231,7 +229,7 @@ The properties of air and water at :math:`25 \, \text{°C}` are used in this exa
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined 8 times to ensure adequate definition of the interface.
+In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined :math:`8` times to ensure adequate definition of the interface.
 
 .. code-block:: text
 
@@ -319,8 +317,6 @@ The following figures present the comparison between the analytical results and 
 |     :width: 800                                                                                                   |
 |     :name: Air bubble density evolution                                                                           |
 |                                                                                                                   |
-|     Density evolution                                                                                             |
-|                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
 |
@@ -330,8 +326,6 @@ The following figures present the comparison between the analytical results and 
 |     :align: center                                                                                                |
 |     :width: 800                                                                                                   |
 |     :name: Air bubble pressure evolution                                                                          |
-|                                                                                                                   |
-|     Pressure evolution                                                                                            |
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 

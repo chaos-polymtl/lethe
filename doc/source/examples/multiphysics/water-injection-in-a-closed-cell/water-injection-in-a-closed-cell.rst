@@ -39,8 +39,6 @@ The initial configuration of this example is illustrated below.
 |     :width: 700                                                                                                   |
 |     :name: Water injection initial configuration                                                                  |
 |                                                                                                                   |
-|     Initial configuration                                                                                         |
-|                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
 .. note::
@@ -53,7 +51,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time step is used for time integration.
+The time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time step.
 The initial time step is set to :math:`0.005 \, \text{s}` and the simulation ends at :math:`t_{end} = 0.49 \, \text{s}`.
 
 .. code-block:: text
@@ -200,7 +198,7 @@ The properties of air and water at :math:`25 \, \text{°C}` are used in this exa
 Mesh
 ~~~~
 
-In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined 7 times to ensure adequate definition of the interface.
+In the ``mesh`` subsection, we define a hyper cube with appropriate dimensions. The mesh is initially refined :math:`7` times to ensure adequate definition of the interface.
 
 .. code-block:: text
 
@@ -285,8 +283,6 @@ The following figures present the comparison between the analytical results and 
 |     :width: 800                                                                                                   |
 |     :name: Air density evolution                                                                                  |
 |                                                                                                                   |
-|     Density evolution                                                                                             |
-|                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
 |
@@ -296,8 +292,6 @@ The following figures present the comparison between the analytical results and 
 |     :align: center                                                                                                |
 |     :width: 800                                                                                                   |
 |     :name: Air pressure evolution                                                                                 |
-|                                                                                                                   |
-|     Pressure evolution                                                                                            |
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
