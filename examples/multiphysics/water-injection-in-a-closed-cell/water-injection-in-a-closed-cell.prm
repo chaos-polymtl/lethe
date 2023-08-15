@@ -1,0 +1,185 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = bdf1
+  set time end         = 0.49
+  set time step        = 0.005
+  set adapt            = true
+  set max cfl          = 0.5
+  set output name      = water-injection-in-a-closed-cell
+  set output frequency = 5
+  set output path      = ./output/
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection interface sharpening
+    set enable              = true
+    set threshold           = 0.5
+    set interface sharpness = 2
+    set frequency           = 50
+  end
+
+  subsection phase filtration
+    set type = tanh
+    set beta = 10
+  end
+end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function expression = 0
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 0 #air
+    set density model = isothermal_ideal_gas
+    subsection isothermal_ideal_gas
+      set density_ref = 1.18
+      set R           = 287.05
+      set T           = 298.15
+    end
+    set kinematic viscosity = 0.0000156
+  end
+  subsection fluid 1 #water
+    set density             = 1000
+    set kinematic viscosity = 0.000001
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -0.05 : 0.05 : true
+  set initial refinement = 7
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase
+  set fraction type            = fraction
+  set max refinement level     = 8
+  set min refinement level     = 6
+  set frequency                = 1
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
+  set initial refinement steps = 7
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = function
+    subsection v
+      set Function expression = 0.1
+    end
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+# --------------------------------------------------
+# VOF Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions VOF
+  set number = 1
+  subsection bc 0
+    set id   = 2
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 1
+    end
+  end
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 1
+  set pressure order = 1
+  set VOF order      = 1
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  set tolerance      = 1e-4
+  set max iterations = 20
+  set verbosity      = verbose
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  set verbosity                             = verbose
+  set method                                = gmres
+  set max iters                             = 1000
+  set relative residual                     = 1e-3
+  set minimum residual                      = 1e-6
+  set ilu preconditioner fill               = 0
+  set ilu preconditioner absolute tolerance = 1e-12
+  set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors                    = 500
+end
