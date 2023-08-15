@@ -125,7 +125,7 @@ An initial velocity field is used to avoid discontinuities in the solution.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-On all fours sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is inputted.
+On all fours sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
 This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions VOF`` subsection with a ``dirichlet`` boundary condition on the phase fraction as shown below.
 
 Boundary Conditions - Fluid Dynamics
