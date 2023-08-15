@@ -335,7 +335,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           // required property
           const auto rheology_model = properties_manager.get_rheology();
           rheology_model->vector_value(fields, viscosity);
-          viscosity_scale = rheology_model->get_viscosity_scale();
+          viscosity_scale = rheology_model->get_kinematic_viscosity_scale();
 
           // For a weakly compressible flow, density variations will play a role
           const auto density_model = properties_manager.get_density();

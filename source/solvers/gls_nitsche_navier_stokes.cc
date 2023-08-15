@@ -73,8 +73,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
     RequiresConstantViscosity("assemble_nitsche_restriction"));
 
   // Viscosity for stabilization constant
-  const double viscosity = this->simulation_parameters
-                             .physical_properties_manager.get_viscosity_scale();
+  const double viscosity =
+    this->simulation_parameters.physical_properties_manager
+      .get_kinematic_viscosity_scale();
 
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
@@ -266,8 +267,9 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
     !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
     RequiresConstantViscosity("assemble_nitsche_restriction"));
 
-  const double viscosity = this->simulation_parameters
-                             .physical_properties_manager.get_viscosity_scale();
+  const double viscosity =
+    this->simulation_parameters.physical_properties_manager
+      .get_kinematic_viscosity_scale();
 
   // Loop over all local particles
   auto particle = solid_ph->begin();

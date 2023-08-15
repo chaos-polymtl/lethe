@@ -1070,7 +1070,7 @@ GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions(
     RequiresConstantViscosity(
       "GLSVansAssemblerKochHill<dim>::calculate_particle_fluid_interactions"));
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -1162,7 +1162,7 @@ GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions(
     RequiresConstantViscosity(
       "GLSVansAssemblerBeetstra<dim>::calculate_particle_fluid_interactions"));
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -1243,7 +1243,7 @@ GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions(
     RequiresConstantViscosity(
       "GLSVansAssemblerGidaspow<dim>::calculate_particle_fluid_interactions"));
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -1351,7 +1351,7 @@ GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
     RequiresConstantViscosity(
       "GLSVansAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions"));
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),
@@ -1630,7 +1630,7 @@ GLSVansAssemblerViscousTorque<dim>::calculate_particle_fluid_interactions(
 
   const double density = scratch_data.properties_manager.get_density_scale();
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   const auto pic = scratch_data.pic;
 
@@ -1684,7 +1684,7 @@ GLSVansAssemblerVorticalTorque<dim>::calculate_particle_fluid_interactions(
 
   const double density = scratch_data.properties_manager.get_density_scale();
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   auto &vorticity_3d =
     scratch_data.fluid_velocity_curls_at_particle_location_3d;
@@ -1830,7 +1830,7 @@ GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions(
     RequiresConstantViscosity(
       "GLSVansAssemblerShearForce<dim>::calculate_particle_fluid_interactions"));
   const double viscosity =
-    scratch_data.properties_manager.get_viscosity_scale();
+    scratch_data.properties_manager.get_kinematic_viscosity_scale();
 
   Assert(
     scratch_data.properties_manager.density_is_constant(),

@@ -774,7 +774,7 @@ public:
     // Relative velocity and particle Reynolds
     unsigned int particle_no                 = 0;
     average_fluid_particle_relative_velocity = 0;
-    double viscosity = properties_manager.get_viscosity_scale();
+    double viscosity = properties_manager.get_kinematic_viscosity_scale();
 
     for (auto &particle : pic)
       {

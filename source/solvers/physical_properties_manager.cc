@@ -55,8 +55,8 @@ PhysicalPropertiesManager::initialize(
   fluid_solid_interactions_with_material_interaction_ids =
     physical_properties.fluid_solid_interactions_with_material_interaction_ids;
 
-  viscosity_scale = physical_properties.fluids[0].viscosity;
-  density_scale   = physical_properties.fluids[0].density;
+  kinematic_viscosity_scale = physical_properties.fluids[0].kinematic_viscosity;
+  density_scale             = physical_properties.fluids[0].density;
 
   non_newtonian_flow = false;
   constant_density   = true;

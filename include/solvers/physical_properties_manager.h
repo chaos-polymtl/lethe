@@ -219,9 +219,9 @@ public:
   }
 
   double
-  get_viscosity_scale() const
+  get_kinematic_viscosity_scale() const
   {
-    return viscosity_scale;
+    return kinematic_viscosity_scale;
   }
 
   double
@@ -330,7 +330,7 @@ private:
 
   // Temporary scaling variable are overly used right now. They will eventually
   // be deprecated for the majority of places they are used.
-  double viscosity_scale;
+  double kinematic_viscosity_scale;
   double density_scale;
 
   unsigned int number_of_fluids;

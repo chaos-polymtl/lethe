@@ -1086,7 +1086,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
 
       // Gather n and viscosity final paramerters
       const double n_end         = viscosity_model->get_n();
-      const double viscosity_end = viscosity_model->get_viscosity();
+      const double viscosity_end = viscosity_model->get_kinematic_viscosity();
 
       // n ramp parameters
       double n =
@@ -1108,7 +1108,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
 
-      viscosity_model->set_viscosity(viscosity);
+      viscosity_model->set_kinematic_viscosity(viscosity);
 
       // Ramp on n
       for (int i = 0; i < n_iter_n; ++i)
@@ -1142,7 +1142,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
                            " *********"
                       << std::endl;
 
-          viscosity_model->set_viscosity(viscosity);
+          viscosity_model->set_kinematic_viscosity(viscosity);
 
           this->simulation_control->set_assembly_method(
             Parameters::SimulationControl::TimeSteppingMethod::steady);
@@ -1154,7 +1154,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         }
 
       // Reset viscosity to simulation parameters
-      viscosity_model->set_viscosity(viscosity_end);
+      viscosity_model->set_kinematic_viscosity(viscosity_end);
     }
   else
     {
