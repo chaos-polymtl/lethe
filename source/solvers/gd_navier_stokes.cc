@@ -517,7 +517,7 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::setup_dofs_fd()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
+  TimerOutput::Scope t(this->computing_timer, "Setup dofs");
 
   system_matrix.clear();
 
@@ -1058,7 +1058,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     setup_ILU();
 
   {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+    TimerOutput::Scope t(this->computing_timer, "Solve linear system");
     solver.solve(this->system_matrix,
                  this->newton_update,
                  this->system_rhs,
@@ -1112,7 +1112,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
 
   {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+    TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
     solver.solve(this->system_matrix,
                  this->newton_update,
@@ -1138,7 +1138,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
-  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+  TimerOutput::Scope t(this->computing_timer, "Solve linear system");
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =

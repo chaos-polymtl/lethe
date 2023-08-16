@@ -71,7 +71,7 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_dofs_fd()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
+  TimerOutput::Scope t(this->computing_timer, "Setup dofs");
 
   // Clear the preconditioner before the matrix they are associated with is
   // cleared
@@ -1291,7 +1291,7 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_ILU()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_ILU");
+  TimerOutput::Scope t(this->computing_timer, "Setup ILU");
 
   const double ilu_atol =
     this->simulation_parameters.linear_solver.ilu_precond_atol;
@@ -1432,7 +1432,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                solver_parameters);
 
           {
-            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+            TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
             solver.solve(system_matrix,
                          completely_distributed_solution,
@@ -1519,7 +1519,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             setup_preconditioner();
 
           {
-            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+            TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
             solver.solve(system_matrix,
                          completely_distributed_solution,
@@ -1605,7 +1605,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
             setup_preconditioner();
 
           {
-            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+            TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
             solver.solve(system_matrix,
                          completely_distributed_solution,

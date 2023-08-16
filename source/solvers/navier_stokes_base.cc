@@ -536,6 +536,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
     {
+      announce_string(this->pcout, "Fluid Dynamics");
       this->computing_timer.print_summary();
       this->computing_timer.reset();
     }
@@ -735,7 +736,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         this->triangulation.get());
 
       // Time monitoring
-      TimerOutput::Scope t(this->computing_timer, "box refine");
+      TimerOutput::Scope t(this->computing_timer, "Box refine");
       this->pcout
         << "Initial refinement in box - Step  " << i + 1 << " of "
         << this->simulation_parameters.mesh_box_refinement->initial_refinement
@@ -848,7 +849,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     this->triangulation.get());
 
   // Time monitoring
-  TimerOutput::Scope t(this->computing_timer, "refine");
+  TimerOutput::Scope t(this->computing_timer, "Refine");
 
   Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
@@ -1054,7 +1055,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
-  TimerOutput::Scope t(this->computing_timer, "refine");
+  TimerOutput::Scope t(this->computing_timer, "Refine");
 
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
@@ -1807,7 +1808,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const VectorType &solution)
 {
-  TimerOutput::Scope t(this->computing_timer, "output");
+  TimerOutput::Scope t(this->computing_timer, "Output VTU");
 
   const std::string  folder        = simulation_control->get_output_path();
   const std::string  solution_name = simulation_control->get_output_name();
