@@ -17,39 +17,54 @@ Flow control summary
 ---------------------
 Space-average velocity: 3.20803
 Beta force:  25.9192
+---------------
+Fluid Dynamics
+---------------
 
 *******************************************************************************
-Transient iteration: 17       Time: 1.7      Time step: 0.1      CFL: 5.91618
+Transient iteration: 17       Time: 1.7      Time step: 0.1      CFL: 5.91618 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.20638
 Beta force:  25.9083
+---------------
+Fluid Dynamics
+---------------
 
 *******************************************************************************
-Transient iteration: 18       Time: 1.8      Time step: 0.1      CFL: 5.91426
+Transient iteration: 18       Time: 1.8      Time step: 0.1      CFL: 5.91426 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.20498
 Beta force:  25.9088
+---------------
+Fluid Dynamics
+---------------
 
 *******************************************************************************
-Transient iteration: 19       Time: 1.9      Time step: 0.1      CFL: 5.91281
+Transient iteration: 19       Time: 1.9      Time step: 0.1      CFL: 5.91281 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.20418
 Beta force:  25.9114
+---------------
+Fluid Dynamics
+---------------
 
 *******************************************************************************
-Transient iteration: 20       Time: 2        Time step: 0.1      CFL: 5.91201
+Transient iteration: 20       Time: 2        Time step: 0.1      CFL: 5.91201 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.20381
 Beta force:  25.9134
+---------------
+Fluid Dynamics
+---------------

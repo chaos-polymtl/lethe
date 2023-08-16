@@ -12,6 +12,9 @@ Temperature statistics on fluid :
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dynamics
+---------------
 L2 error velocity : 0
 L2 error temperature : 0.000338465
 Temperature statistics on fluid : 

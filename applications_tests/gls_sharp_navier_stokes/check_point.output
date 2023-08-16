@@ -15,6 +15,9 @@ Transient iteration: 2        Time: 0.005    Time step: 0.0025   CFL: 0.00378095
    Number of active cells:       6815
    Number of degrees of freedom: 33652
    Volume of triangulation:      1600
+---------------
+Fluid Dynamics
+---------------
 particle 0 position 5 12.7483 5
 particle 0 velocity -8.48408e-07 -0.452212 -0.000338752
 +------------------------------------------+

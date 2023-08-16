@@ -10,8 +10,11 @@ Initial refinement around IB particles - Step : 1 of 1
 *****************************
 Steady iteration:        1/1
 *****************************
+---------------
+Fluid Dynamics
+---------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_x    T_y     T_z     f_x    f_y    f_z    f_xv    f_yv   f_zv   f_xp    f_yp   f_zp
-          0 1.0000 0.0000 0.4104 -0.4104 46.8604 0.1184 0.1184 20.3187 0.1184 0.1184 26.5416 0.0000 0.0000
+particle_ID  time    T_x    T_y     T_z     f_x    f_y    f_z    f_xv    f_yv   f_zv   f_xp    f_yp   f_zp  
+          0 1.0000 0.0000 0.4104 -0.4104 46.8604 0.1184 0.1184 20.3187 0.1184 0.1184 26.5416 0.0000 0.0000 

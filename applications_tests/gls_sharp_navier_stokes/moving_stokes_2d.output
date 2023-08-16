@@ -6,6 +6,9 @@ Running on 1 MPI rank(s)...
 *******************************************************************************
 Transient iteration: 1        Time: 1        Time step: 1        CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dynamics
+---------------
 div u : -3.39516e-06
 error at the weak BC : 0.00206288
 L2 error velocity : 0.0398486 L2 error pressure: 1.5449
@@ -13,6 +16,9 @@ L2 error velocity : 0.0398486 L2 error pressure: 1.5449
 *******************************************************************************
 Transient iteration: 2        Time: 2        Time step: 1        CFL: 5.96587 
 *******************************************************************************
+---------------
+Fluid Dynamics
+---------------
 div u : 3.48646e-06
 error at the weak BC : 0.00345113
 L2 error velocity : 0.03886 L2 error pressure: 1.87087
@@ -20,6 +26,9 @@ L2 error velocity : 0.03886 L2 error pressure: 1.87087
 *******************************************************************************
 Transient iteration: 3        Time: 3        Time step: 1        CFL: 6.44675 
 *******************************************************************************
+---------------
+Fluid Dynamics
+---------------
 div u : -1.01856e-06
 error at the weak BC : 0.0004696
 L2 error velocity : 0.00661858 L2 error pressure: 0.238988
