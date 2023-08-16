@@ -8,9 +8,9 @@ find_particle_contact_detection_step(
   Particles::ParticleHandler<dim> &particle_handler,
   const double                     dt,
   const double                     smallest_contact_search_criterion,
-  MPI_Comm                        &mpi_communicator,
+  MPI_Comm &                       mpi_communicator,
   const bool                       sorting_in_subdomains_step,
-  std::vector<double>             &displacement,
+  std::vector<double> &            displacement,
   const bool                       parallel_update)
 {
   if (sorting_in_subdomains_step)
@@ -61,9 +61,9 @@ find_particle_contact_detection_step(
   Particles::ParticleHandler<2> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,
-  MPI_Comm                      &mpi_communicator,
+  MPI_Comm &                     mpi_communicator,
   bool                           sorting_in_subdomains_step,
-  std::vector<double>           &displacement,
+  std::vector<double> &          displacement,
   const bool                     parallel_update);
 
 template bool
@@ -71,9 +71,9 @@ find_particle_contact_detection_step(
   Particles::ParticleHandler<3> &particle_handler,
   const double                   dt,
   const double                   smallest_contact_search_criterion,
-  MPI_Comm                      &mpi_communicator,
+  MPI_Comm &                     mpi_communicator,
   const bool                     sorting_in_subdomains_step,
-  std::vector<double>           &displacement,
+  std::vector<double> &          displacement,
   const bool                     parallel_update);
 
 

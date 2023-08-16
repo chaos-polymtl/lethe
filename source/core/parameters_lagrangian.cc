@@ -59,7 +59,7 @@ namespace Parameters
     void
     LagrangianPhysicalProperties::parse_particle_properties(
       const unsigned int &particle_type,
-      ParameterHandler   &prm)
+      ParameterHandler &  prm)
     {
       const std::string size_distribution_type =
         prm.get("size distribution type");
@@ -228,7 +228,7 @@ namespace Parameters
     LagrangianPhysicalProperties::initialize_containers(
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
-      std::unordered_map<unsigned int, int>    &number,
+      std::unordered_map<unsigned int, int> &   number,
       std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
       std::unordered_map<unsigned int, double> &poisson_ratio_particle,
@@ -1119,10 +1119,10 @@ namespace Parameters
     void
     BCDEM::initialize_containers(
       std::unordered_map<unsigned int, Tensor<1, 3>>
-                                               &boundary_translational_velocity,
+        &                                       boundary_translational_velocity,
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
       std::unordered_map<unsigned int, Tensor<1, 3>>
-                                &boundary_rotational_vector,
+        &                        boundary_rotational_vector,
       std::vector<unsigned int> &outlet_boundaries)
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
