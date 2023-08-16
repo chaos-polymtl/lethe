@@ -27,15 +27,15 @@ Description of the Case
 
 This example simulates the fluidization of spherical particles in water. It is meant to reproduce the behavior observed experimentally in a pilot-scale equipment with the same characteristics of the simulations.
 
-We use two different types of particles [1]: alginate (:math:`d_p = 2.66 \: mm`, :math:`\rho_p = 1029 \: kg \cdot m^{-3}`) and alumina (:math:`d_p = 3.09 \: mm`, :math:`\rho_p = 3586 \: kg \cdot m^{-3}`).
+We use two different types of particles `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_: alginate (:math:`d_p = 2.66 \: mm`, :math:`\rho_p = 1029 \: kg \cdot m^{-3}`) and alumina (:math:`d_p = 3.09 \: mm`, :math:`\rho_p = 3586 \: kg \cdot m^{-3}`).
 
-A representation of this equipment is presented. The fluidization region comprises a 1.0 m height, 10 cm diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. [1] and Ferreira *et al* [2].
+A representation of this equipment is presented. The fluidization region comprises a 1.0 m height, 10 cm diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ and Ferreira *et al* `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_.
 
 .. figure:: images/experimental_setup.png
     :alt: particle packing
     :align: center
 
-    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in oparation. Adapted from Ferreira *et al*. [1].
+    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in oparation. Adapted from Ferreira *et al* [1].
 
 -------------------
 DEM Parameter File
@@ -163,7 +163,7 @@ The subsection on model parameters is explained in the `DEM model parameters gui
 Lagrangian Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The lagrangian properties were taken from Ferreira *et al*. [1].
+The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_.
 
 .. code-block:: text
 
@@ -264,7 +264,7 @@ The long simulation is due to the small difference between particles and liquid 
       set output path       = ./output/
     end
 
-Since the alumina particles are more than 3 times denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al*. [1] 4 and 10 seconds of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
+Since the alumina particles are more than 3 times denser than alginate particles, the pseudo-steady state is reached after very different times (according to Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ 4 and 10 seconds of real time, respectively). Because of this, we use ``set time end = 35`` for the alginate.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -349,7 +349,7 @@ CFD-DEM
 
 Different from gas-solid fluidized beds, buoyancy, pressure force, shear stress are not negligible. All these forces are considered in this example.
 
-Saffman lift force is proven to be very important to properly reproduce particles' dynamics in the liquid-fluidized bed [1].
+Saffman lift force is proven to be very important to properly reproduce particles' dynamics in the liquid-fluidized bed `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_.
 
 .. code-block:: text
 
@@ -423,40 +423,69 @@ Side view
 
 Here we show comparison between the experimentally observed and simulated behavior of the liquid-solid fluidized bed with alumina.
 
+The void fraction and velocity profile of the fluid are also shown.
+
 .. raw:: html
 
     <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 
+Total pressure drop and bed expansion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-Total pressure drop
-~~~~~~~~~~~~~~~~~~~~
-
-In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed [3].
+In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed `[3] <https://doi.org/10.1201/9780203912744>`_.
 
 .. math::
 
-    H(1 - \bar{\varepsilon}_f) = \frac{- \Delta p}{(\rho_p - \rho_f)g} = \frac{M}{\rho_p A} = \mathrm{const.}
+    H(1 - \bar{\varepsilon}_f) = \frac{- \Delta p}{(\rho_p - \rho_f)g} = \frac{M}{\rho_p A} = \mathrm{constant}
 
 where :math:`H` is the total bed height, :math:`\bar{\varepsilon}_f` is the average fluid fraction (void fraction) at the bed region, :math:`\rho_p` and :math:`\rho_f` are the densities of the particles and the fluid (respectively), and :math:`A` is the cross-section area of the equipment.
 
-Liquid fluidized beds are very uniform in terms of particles distribution, resulting in an uniform distribution of  :math:`\varepsilon_f` along the be height. From this hypothesis, we can conclude that
+Liquid fluidized beds are very uniform in terms of particles distribution, resulting in an uniform distribution of  :math:`\varepsilon_f` along the be height. From this hypothesis, we can conclude that, for a constant and uniform fluid inlet flow rate, the pressure slope is:
 
 .. math::
 
     \left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H}  \approx \mathrm{constant}
 
-The results of the pressure profile with time as the bed expands are following
+With the pressure slope, it is also possible to determine the bed void fraction manipulating the first equation, which gives:
 
+.. math::
 
+    \bar{\varepsilon}_f = 1 - \frac{\left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H} }{(\rho_p - \rho_f)g}
 
-Bed expansion
-~~~~~~~~~~~~~~
+The resulting behavior of the pressure along the bed height and the void fraction with time is shown in the following animation.
+
+.. image:: images/pressure_time.gif
+    :alt: Pressure drop as a function of time
+    :align: center
+    :name: press_t
+
 
 Particles dynamics
 ~~~~~~~~~~~~~~~~~~~~
 
+Since the fluidization occurs in a high density fluid, the density difference between alginate and alumina particles have a significant impact on the velocity of the particles inside the bed.
+
+The following animation is in real time. It is possible to notice that, for a similar bed height, the bed of alumina particles expands way faster than the alginate.
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kMp86PdZ6tU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 Notes on performance
 ~~~~~~~~~~~~~~~~~~~~~~
     
+The 20 second simulations with alumina took approximately 24 hours and 30 minutes on 16 core and 8 hours and 44 minutes on 32 core.
+
+The 35 second simulations with alginate particles took about 28 hours on 16 core.
+
+
+-----------
+References
+-----------
+
+`[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ V. O. Ferreira, T. El Geitani, D. Silva Junior, B. Blais, and G. C. Lopes, "In-depth validation of unresolved CFD-DEM simulations of liquid fluidized beds", Powder Technology, 2023.
+
+`[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_ V. O. Ferreira, D. Silva Junior, K. R. B. Melo, B. Blais, and G. C. Lopes, "Prediction of the bed expansion of a liquid fluidized bed bioreactor applied to wastewater treatment and biogas production", Energy Conversion and Management, 2023.
+
+`[3] <https://doi.org/10.1201/9780203912744>`_ Norman Epstein. "Handbook of fluidization and fluid-particle systems". CRC Press, 2003. ISBN 0-8247-0259-X.
