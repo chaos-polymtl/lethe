@@ -9,7 +9,7 @@ Kinetic energy : 0.25
 Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0.902264
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.347222
 Kinetic energy : 0.173611
@@ -19,7 +19,7 @@ L2 error velocity : 0.0648759
 Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.751882
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.241126
 Kinetic energy : 0.120563
@@ -29,7 +29,7 @@ L2 error velocity : 0.107179
 Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 0.626568
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.167449
 Kinetic energy : 0.0837242
@@ -39,7 +39,7 @@ L2 error velocity : 0.132803
 Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 0.52214 
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.116284
 Kinetic energy : 0.0581418
@@ -49,7 +49,7 @@ L2 error velocity : 0.146274
 Transient iteration: 5        Time: 0.5      Time step: 0.1      CFL: 0.435116
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.0807525
 Kinetic energy : 0.0403762
@@ -59,7 +59,7 @@ L2 error velocity : 0.151045
 Transient iteration: 6        Time: 0.6      Time step: 0.1      CFL: 0.362597
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.056078
 Kinetic energy : 0.028039
@@ -69,7 +69,7 @@ L2 error velocity : 0.149737
 Transient iteration: 7        Time: 0.7      Time step: 0.1      CFL: 0.302164
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.038943
 Kinetic energy : 0.0194715
@@ -79,7 +79,7 @@ L2 error velocity : 0.144321
 Transient iteration: 8        Time: 0.8      Time step: 0.1      CFL: 0.251803
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.0270438
 Kinetic energy : 0.0135219
@@ -89,7 +89,7 @@ L2 error velocity : 0.136266
 Transient iteration: 9        Time: 0.9      Time step: 0.1      CFL: 0.209836
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.0187804
 Kinetic energy : 0.00939017
@@ -99,7 +99,7 @@ L2 error velocity : 0.126653
 Transient iteration: 10       Time: 1        Time step: 0.1      CFL: 0.174863
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 Enstrophy  : 0.0130419
 Kinetic energy : 0.00652095

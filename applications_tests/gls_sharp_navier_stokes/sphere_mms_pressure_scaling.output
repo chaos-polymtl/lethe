@@ -7,7 +7,7 @@ Running on 1 MPI rank(s)...
 Steady iteration:        1/2
 *****************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 div u : -5.575e-10
 error at the weak BC : 0.1168
@@ -20,7 +20,7 @@ Steady iteration:        2/2
    Number of degrees of freedom: 19652
    Volume of triangulation:      8
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 div u : 4.15e-10
 error at the weak BC : 0.03903

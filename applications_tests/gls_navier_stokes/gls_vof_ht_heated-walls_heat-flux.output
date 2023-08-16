@@ -21,7 +21,7 @@ Thermal energy in fluid_1 : 0.015625
 Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.413192
@@ -43,7 +43,7 @@ L2 error phase : 0.00208465
 Transient iteration: 2        Time: 0.4      Time step: 0.2      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.0934075
@@ -65,7 +65,7 @@ L2 error phase : 0.00208505
 Transient iteration: 3        Time: 0.6      Time step: 0.2      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.0223097
@@ -87,7 +87,7 @@ L2 error phase : 0.00208424
 Transient iteration: 4        Time: 0.8      Time step: 0.2      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.00467602
@@ -109,7 +109,7 @@ L2 error phase : 0.00208425
 Transient iteration: 5        Time: 1        Time step: 0.2      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.00092359

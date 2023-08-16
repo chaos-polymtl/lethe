@@ -15,7 +15,7 @@ Initial refinement around IB particles - Step : 2 of 2
 Transient iteration: 1        Time: 0.03125  Time step: 0.03125  CFL: 0.221557
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 +------------------------------------------+
 |  Force  summary particles                |
@@ -30,7 +30,7 @@ Transient iteration: 2        Time: 0.0625   Time step: 0.03125  CFL: 0.327597
    Number of degrees of freedom: 1305
    Volume of triangulation:      16
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 +------------------------------------------+
 |  Force  summary particles                |
@@ -45,7 +45,7 @@ Transient iteration: 3        Time: 0.09375  Time step: 0.03125  CFL: 0.302024
    Number of degrees of freedom: 1305
    Volume of triangulation:      16
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 +------------------------------------------+
 |  Force  summary particles                |
@@ -60,7 +60,7 @@ Transient iteration: 4        Time: 0.125    Time step: 0.03125  CFL: 0.286803
    Number of degrees of freedom: 1314
    Volume of triangulation:      16
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 +------------------------------------------+
 |  Force  summary particles                |

@@ -11,7 +11,7 @@ Peeling/wetting correction at step 1
   -number of wet cells: 0
   -number of peeled cells: 0
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 
 *******************************************************************************
@@ -25,7 +25,7 @@ Peeling/wetting correction at step 2
   -number of wet cells: 24
   -number of peeled cells: 0
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 
 *******************************************************************************
@@ -39,7 +39,7 @@ Peeling/wetting correction at step 3
   -number of wet cells: 60
   -number of peeled cells: 0
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 
 *******************************************************************************
@@ -53,7 +53,7 @@ Peeling/wetting correction at step 4
   -number of wet cells: 56
   -number of peeled cells: 0
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 
 *******************************************************************************
@@ -67,5 +67,5 @@ Peeling/wetting correction at step 5
   -number of wet cells: 54
   -number of peeled cells: 0
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------

@@ -16,7 +16,7 @@ Reading heat transfer checkpoint
 Transient iteration: 7        Time: 0.6      Time step: 0.1      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 6.5055e-09
@@ -25,7 +25,7 @@ L2 error temperature : 6.5055e-09
 Transient iteration: 8        Time: 0.7      Time step: 0.1      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 5.83436e-09
@@ -34,7 +34,7 @@ L2 error temperature : 5.83436e-09
 Transient iteration: 9        Time: 0.8      Time step: 0.1      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 5.13781e-09
@@ -43,7 +43,7 @@ L2 error temperature : 5.13781e-09
 Transient iteration: 10       Time: 0.9      Time step: 0.1      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 4.42884e-09
@@ -52,7 +52,7 @@ L2 error temperature : 4.42884e-09
 Transient iteration: 11       Time: 1        Time step: 0.1      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 3.71907e-09

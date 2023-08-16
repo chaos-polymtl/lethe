@@ -14,7 +14,7 @@ Running on 1 MPI rank(s)...
 Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.410732
@@ -29,7 +29,7 @@ Transient iteration: 2        Time: 0.4      Time step: 0.2      CFL: 0
    Number of thermal degrees of freedom: 775
    Number of VOF degrees of freedom: 775
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.0948012
@@ -44,7 +44,7 @@ Transient iteration: 3        Time: 0.6      Time step: 0.2      CFL: 0
    Number of thermal degrees of freedom: 922
    Number of VOF degrees of freedom: 922
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.0237115
@@ -59,7 +59,7 @@ Transient iteration: 4        Time: 0.8      Time step: 0.2      CFL: 0
    Number of thermal degrees of freedom: 922
    Number of VOF degrees of freedom: 922
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.00536548
@@ -74,7 +74,7 @@ Transient iteration: 5        Time: 1        Time step: 0.2      CFL: 0
    Number of thermal degrees of freedom: 922
    Number of VOF degrees of freedom: 922
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.00108963

@@ -11,7 +11,7 @@ Initial refinement around IB particles - Step : 1 of 1
 Steady iteration:        1/2
 *****************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 +------------------------------------------+
 |  Force  summary particles                |
@@ -26,7 +26,7 @@ Steady iteration:        2/2
    Number of degrees of freedom: 8468
    Volume of triangulation:      4096
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 +------------------------------------------+
 |  Force  summary particles                |

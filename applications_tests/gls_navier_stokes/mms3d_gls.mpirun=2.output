@@ -7,7 +7,7 @@ Running on 2 MPI rank(s)...
 Steady iteration:        1/2
 *****************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 
 *****************************
@@ -17,7 +17,7 @@ Steady iteration:        2/2
    Number of degrees of freedom: 2916
    Volume of triangulation:      8
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 cells  error_velocity     error_pressure   
    64 4.185618e-01    - 4.553725e-02     - 

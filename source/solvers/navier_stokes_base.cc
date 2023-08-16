@@ -558,7 +558,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
                           simulation_parameters.simulation_control.method);
       multiphysics->percolate_time_vectors(false);
 
-      announce_string(this->pcout, "Fluid Dymamics");
+      announce_string(this->pcout, "Fluid Dynamics");
       PhysicsSolver<VectorType>::solve_non_linear_system(false);
 
       // Solve and percolate the auxiliary physics that should be treated AFTER

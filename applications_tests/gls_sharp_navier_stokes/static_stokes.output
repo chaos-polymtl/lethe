@@ -19,7 +19,7 @@ Initial refinement in box - Step  3 of 3
 Steady iteration:        1/1
 *****************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 div u : 3.57757e-13
 error at the weak BC : 0.00157712

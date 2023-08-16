@@ -11,7 +11,7 @@ Initial refinement in box - Step  1 of 1
 Transient iteration: 1        Time: 0.05     Time step: 0.05     CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 div u : 1.51112640196e-12
 error at the weak BC : 0.000124532067334
@@ -28,7 +28,7 @@ particle_ID  time       T_x           omega_x          T_y          omega_y     
 Transient iteration: 2        Time: 0.125    Time step: 0.075    CFL: 0.0165057
 ********************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 div u : 2.52622738266e-13
 error at the weak BC : 0.000587329285947

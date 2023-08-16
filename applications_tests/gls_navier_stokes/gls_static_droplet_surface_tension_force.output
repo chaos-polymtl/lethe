@@ -8,7 +8,7 @@ Running on 1 MPI rank(s)...
 Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 5.98125e-08
 L2 error phase : 4.69089e-07
@@ -17,7 +17,7 @@ L2 error phase : 4.69089e-07
 Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 3.48362e-06
 **********************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 8.24745e-08
 L2 error phase : 4.69089e-07
@@ -26,7 +26,7 @@ L2 error phase : 4.69089e-07
 Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 4.48162e-06
 **********************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 9.50934e-08
 L2 error phase : 4.6909e-07
@@ -35,7 +35,7 @@ L2 error phase : 4.6909e-07
 Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 4.90788e-06
 **********************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 1.03111e-07
 L2 error phase : 4.6909e-07
@@ -44,7 +44,7 @@ L2 error phase : 4.6909e-07
 Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 5.13787e-06
 **********************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 1.08398e-07
 L2 error phase : 4.69091e-07

@@ -8,7 +8,7 @@ Running on 1 MPI rank(s)...
 Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 1.98025e-05
 L2 error phase : 0.0104167
@@ -21,7 +21,7 @@ Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 6.16399e-0
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 532
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 3.09876e-06
 L2 error phase : 0.00425663
@@ -34,7 +34,7 @@ Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.6336e-05
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 479
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 2.63117e-06
 L2 error phase : 0.00425685
@@ -47,7 +47,7 @@ Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.41963e-0
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 590
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 2.36786e-06
 L2 error phase : 0.00425704
@@ -60,7 +60,7 @@ Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.62175e-0
    Volume of triangulation:      1
    Number of VOF degrees of freedom: 640
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 2.14813e-06
 L2 error phase : 0.00425722

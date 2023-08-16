@@ -8,7 +8,7 @@ Running on 1 MPI rank(s)...
 Transient iteration: 1        Time: 1        Time step: 1        CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 1.84297
@@ -17,7 +17,7 @@ L2 error temperature : 1.84297
 Transient iteration: 2        Time: 2        Time step: 1        CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.150636
@@ -26,7 +26,7 @@ L2 error temperature : 0.150636
 Transient iteration: 3        Time: 3        Time step: 1        CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.0123688
@@ -35,7 +35,7 @@ L2 error temperature : 0.0123688
 Transient iteration: 4        Time: 4        Time step: 1        CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 0.00101581
@@ -44,7 +44,7 @@ L2 error temperature : 0.00101581
 Transient iteration: 5        Time: 5        Time step: 1        CFL: 0       
 *******************************************************************************
 ---------------
-Fluid Dymamics
+Fluid Dynamics
 ---------------
 L2 error velocity : 0
 L2 error temperature : 8.34265e-05
