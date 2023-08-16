@@ -11,84 +11,114 @@ Flow control summary
 ---------------------
 Space-average velocity: -0
 Beta force:  70
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 2.62632
+Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 2.62632 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.28301
 Beta force:  0
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 1.85109
+Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 1.85109 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 1.94113
 Beta force:  26.6715
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 2.21538
+Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 2.21538 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 2.44061
 Beta force:  29.9347
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.5      Time step: 0.1      CFL: 2.60138
+Transient iteration: 5        Time: 0.5      Time step: 0.1      CFL: 2.60138 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 2.88112
 Beta force:  29.3825
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 6        Time: 0.6      Time step: 0.1      CFL: 2.84266
+Transient iteration: 6        Time: 0.6      Time step: 0.1      CFL: 2.84266 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.12052
 Beta force:  28.4473
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 7        Time: 0.7      Time step: 0.1      CFL: 2.96221
+Transient iteration: 7        Time: 0.7      Time step: 0.1      CFL: 2.96221 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.2249
 Beta force:  27.8185
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 8        Time: 0.8      Time step: 0.1      CFL: 3.01132
+Transient iteration: 8        Time: 0.8      Time step: 0.1      CFL: 3.01132 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.2617
 Beta force:  27.4977
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 9        Time: 0.9      Time step: 0.1      CFL: 3.02742
+Transient iteration: 9        Time: 0.9      Time step: 0.1      CFL: 3.02742 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.27078
 Beta force:  27.363
+---------------
+Fluid Dymamics
+---------------
 
 *******************************************************************************
-Transient iteration: 10       Time: 1        Time step: 0.1      CFL: 3.03076
+Transient iteration: 10       Time: 1        Time step: 0.1      CFL: 3.03076 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
 Space-average velocity: 3.27086
 Beta force:  27.3176
+---------------
+Fluid Dymamics
+---------------

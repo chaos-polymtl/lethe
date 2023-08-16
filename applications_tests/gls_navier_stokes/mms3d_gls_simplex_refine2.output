@@ -6,5 +6,8 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/1
 *****************************
+---------------
+Fluid Dymamics
+---------------
 cells error_velocity error_pressure 
  1536 2.218584e-01 - 7.809472e-01 - 

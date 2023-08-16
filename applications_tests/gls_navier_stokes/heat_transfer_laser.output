@@ -12,6 +12,9 @@ Temperature statistics on fluid :
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 Temperature statistics on fluid : 
 	     Min : 0.000179891
 	     Max : 1540.48
@@ -21,6 +24,9 @@ Temperature statistics on fluid :
 *******************************************************************************
 Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 Temperature statistics on fluid : 
 	     Min : 0.0162123
 	     Max : 1722.86
@@ -30,6 +36,9 @@ Temperature statistics on fluid :
 *******************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 Temperature statistics on fluid : 
 	     Min : 0.0911536
 	     Max : 1726.81
@@ -39,6 +48,9 @@ Temperature statistics on fluid :
 *******************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 Temperature statistics on fluid : 
 	     Min : 0.180836
 	     Max : 1080.52
@@ -48,6 +60,9 @@ Temperature statistics on fluid :
 *******************************************************************************
 Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 Temperature statistics on fluid : 
 	     Min : 0.281314
 	     Max : 789.985

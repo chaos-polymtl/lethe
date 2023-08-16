@@ -10,6 +10,9 @@ Initial refinement in box - Step  1 of 1
 *******************************************************************************
 Transient iteration: 1        Time: 0.125    Time step: 0.125    CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 div u : 1.092e-12
 error at the weak BC : 0.000288
 L2 error velocity : 0.004216 L2 error pressure: 0.0206

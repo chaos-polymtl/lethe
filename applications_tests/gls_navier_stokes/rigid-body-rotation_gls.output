@@ -6,6 +6,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/2
 *****************************
+---------------
+Fluid Dymamics
+---------------
 
 +------------------------------------------+
 |  Torque summary                          |
@@ -20,6 +23,9 @@ Steady iteration:        2/2
    Number of active cells:       256
    Number of degrees of freedom: 864
    Volume of triangulation:      2.93
+---------------
+Fluid Dymamics
+---------------
 
 +------------------------------------------+
 |  Torque summary                          |

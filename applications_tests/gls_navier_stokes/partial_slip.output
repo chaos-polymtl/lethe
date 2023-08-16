@@ -6,6 +6,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/1
 *****************************
-L2 error velocity : 1.40779e-15
+---------------
+Fluid Dymamics
+---------------
+L2 error velocity : 1.41432e-15
 cells error_velocity error_pressure 
-   64 1.407788e-15 - 2.790402e-15 - 
+   64 1.414320e-15 - 2.935676e-15 - 

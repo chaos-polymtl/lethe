@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      0.0064
    Number of VOF degrees of freedom: 1089
-Filtered phase values:
+Filtered phase values: 
 2.06115e-09
 2.06115e-09
 2.06115e-09
@@ -1095,9 +1095,9 @@ Filtered phase values:
 2.06115e-09
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0
+Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0       
 *******************************************************************************
-Filtered phase values:
+Filtered phase values: 
 2.06115e-09
 2.06115e-09
 2.06115e-09
@@ -2187,13 +2187,16 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 1.53677e-07
 L2 error phase : 3.40945e-06
 
 **********************************************************************************
 Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 3.58991e-06
 **********************************************************************************
-Filtered phase values:
+Filtered phase values: 
 2.06115e-09
 2.06115e-09
 2.06115e-09
@@ -3283,13 +3286,16 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 2.07529e-07
 L2 error phase : 3.4095e-06
 
 **********************************************************************************
 Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 4.71979e-06
 **********************************************************************************
-Filtered phase values:
+Filtered phase values: 
 2.06115e-09
 2.06115e-09
 2.06115e-09
@@ -4379,13 +4385,16 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 2.34654e-07
 L2 error phase : 3.40956e-06
 
 **********************************************************************************
 Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 5.20744e-06
 **********************************************************************************
-Filtered phase values:
+Filtered phase values: 
 2.06115e-09
 2.06115e-09
 2.06115e-09
@@ -5475,15 +5484,18 @@ Filtered phase values:
 2.06115e-09
 2.06115e-09
 2.06115e-09
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 2.50907e-07
 L2 error phase : 3.40963e-06
- time  error_velocity error_pressure
-0.0010   1.536766e-07         0.0123
-0.0020   2.075290e-07         0.0123
-0.0030   2.346544e-07         0.0123
-0.0040   2.509068e-07         0.0123
- time  error_phase
-0.0010 3.409448e-06
-0.0020 3.409498e-06
-0.0030 3.409561e-06
-0.0040 3.409631e-06
+ time  error_velocity error_pressure 
+0.0010   1.536766e-07         0.0123 
+0.0020   2.075290e-07         0.0123 
+0.0030   2.346544e-07         0.0123 
+0.0040   2.509068e-07         0.0123 
+ time  error_phase  
+0.0010 3.409448e-06 
+0.0020 3.409498e-06 
+0.0030 3.409561e-06 
+0.0040 3.409631e-06 

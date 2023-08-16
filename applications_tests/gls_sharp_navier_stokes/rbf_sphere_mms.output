@@ -6,6 +6,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/3
 *****************************
+---------------
+Fluid Dymamics
+---------------
 div u : 0
 error at the weak BC : 0
 L2 error velocity : 0 L2 error pressure: 0
@@ -16,6 +19,9 @@ Steady iteration:        2/3
    Number of active cells:       512
    Number of degrees of freedom: 2916
    Volume of triangulation:      8
+---------------
+Fluid Dymamics
+---------------
 div u : 1.002e-10
 error at the weak BC : 0.1423
 L2 error velocity : 0.1033 L2 error pressure: 1.045
@@ -26,6 +32,9 @@ Steady iteration:        3/3
    Number of active cells:       4096
    Number of degrees of freedom: 19652
    Volume of triangulation:      8
+---------------
+Fluid Dymamics
+---------------
 div u : -1.739e-06
 error at the weak BC : 0.03942
 L2 error velocity : 0.04315 L2 error pressure: 0.4822

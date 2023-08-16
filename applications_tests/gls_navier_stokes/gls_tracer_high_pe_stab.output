@@ -7,6 +7,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/3
 *****************************
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0392621
 
@@ -17,6 +20,9 @@ Steady iteration:        2/3
    Number of degrees of freedom: 867
    Volume of triangulation:      1
    Number of tracer degrees of freedom: 289
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 5.55112e-17
 L2 error tracer : 0.011498
 
@@ -27,6 +33,9 @@ Steady iteration:        3/3
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
    Number of tracer degrees of freedom: 1089
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0020271
 cells  error_velocity    error_pressure  

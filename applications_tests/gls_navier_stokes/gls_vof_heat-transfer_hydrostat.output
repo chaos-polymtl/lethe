@@ -6,8 +6,11 @@ Running on 1 MPI rank(s)...
    Number of VOF degrees of freedom: 1089
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0
+Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0       
 *******************************************************************************
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 1.98025e-05
 L2 error temperature : 0
 L2 error phase : 0.0104167
@@ -15,6 +18,9 @@ L2 error phase : 0.0104167
 **********************************************************************************
 Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 6.16399e-05
 **********************************************************************************
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 1.98296e-05
 L2 error temperature : 0
 L2 error phase : 0.0104171
@@ -22,18 +28,21 @@ L2 error phase : 0.0104171
 *********************************************************************************
 Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 6.1725e-05
 *********************************************************************************
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 1.98263e-05
 L2 error temperature : 0
 L2 error phase : 0.0104175
- time  error_velocity error_pressure
-0.0200   1.980252e-05         0.9287
-0.0400   1.982956e-05         0.9288
-0.0600   1.982634e-05         0.9288
-cells error_temperature
- 1024      0.000000e+00
- 1024      0.000000e+00
- 1024      0.000000e+00
- time  error_phase
-0.0200 1.041667e-02
-0.0400 1.041708e-02
-0.0600 1.041750e-02
+ time  error_velocity error_pressure 
+0.0200   1.980252e-05         0.9287 
+0.0400   1.982956e-05         0.9288 
+0.0600   1.982634e-05         0.9288 
+cells error_temperature 
+ 1024      0.000000e+00 
+ 1024      0.000000e+00 
+ 1024      0.000000e+00 
+ time  error_phase  
+0.0200 1.041667e-02 
+0.0400 1.041708e-02 
+0.0600 1.041750e-02 

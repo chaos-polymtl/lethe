@@ -7,6 +7,9 @@ Running on 1 MPI rank(s)...
 *****************************
 Steady iteration:        1/4
 *****************************
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 0
 L2 error temperature : 7.9962e-05
 
@@ -17,6 +20,9 @@ Steady iteration:        2/4
    Number of degrees of freedom: 243
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 81
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 0
 L2 error temperature : 6.02878e-06
 
@@ -27,6 +33,9 @@ Steady iteration:        3/4
    Number of degrees of freedom: 867
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 289
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 0
 L2 error temperature : 4.05691e-07
 
@@ -37,6 +46,9 @@ Steady iteration:        4/4
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
    Number of thermal degrees of freedom: 1089
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 0
 L2 error temperature : 2.59461e-08
 cells  error_velocity   error_pressure  

@@ -19,6 +19,9 @@ Thermal energy in fluid : 0.01875
 *****************************
 Steady iteration:        1/1
 *****************************
+---------------
+Fluid Dymamics
+---------------
 L2 error velocity : 0
 L2 error temperature : 1.31683e-19
 Temperature statistics on fluid : 
