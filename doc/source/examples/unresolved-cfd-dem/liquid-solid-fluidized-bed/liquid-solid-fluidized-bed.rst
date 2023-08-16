@@ -12,6 +12,7 @@ Features
 - Three-dimensional problem
 - Displays the selection of models and physical properties.
 - Simulates a solid-liquid fluidized bed.
+- Post-processing code available.
 
 
 ---------------------------
@@ -19,6 +20,7 @@ Files Used in This Example
 ---------------------------
 ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/liquid-solid-fluidized-bed.prm``
 ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-lsfb.prm``
+``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/lsfb_postprocessing.py``
 
 
 -----------------------
@@ -417,6 +419,13 @@ Results
 --------
 
 We briefly comment on some results that can be extracted from this example.
+
+.. important::
+
+    This example includes a post-processing file written in Python and using `lethe_pyvista_tools <../../dem/rotating-drum/small-scale-rotating-drum-post-processing.html>`_. module.
+
+    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` files with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
+
 
 Side view
 ~~~~~~~~~~~
