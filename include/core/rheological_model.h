@@ -94,6 +94,15 @@ public:
   {}
 
   /**
+   * @brief Sets a new dynamic viscosity value, if the models has a constant
+   * dynamic viscosity value.
+   * @param p_density_ref The density of the fluid at the reference state
+   */
+  virtual void
+  set_dynamic_viscosity(const double & /*p_density_ref*/)
+  {}
+
+  /**
    * @brief Calculates the dynamic viscosity, if a kinematic viscosity
    * and a reference density value is specified.
    * @param p_density_ref The density of the fluid at the reference state
@@ -213,23 +222,45 @@ public:
     kinematic_viscosity = p_kinematic_viscosity;
   }
 
+  void
+  set_dynamic_viscosity(const double &p_density_ref) override
+  {
+    dynamic_viscosity = kinematic_viscosity * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the dynamic viscosity, if a kinematic viscosity
+   * and a reference density value is specified.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param p_shear_rate_magnitude The shear rate magnitude
+   * @param p_temperature The temperature of the fluid
+   *
+   * These parameters are not needed if the model has a constant kinematic
+   * viscosity, since it implies a constant dynamic viscosity also. The value of
+   * the dynamic viscosity needs to be set with
+   * "set_dynamic_viscosity(density_ref)" before calling this function.
+   */
   double
-  get_dynamic_viscosity(const double &p_density_ref,
+  get_dynamic_viscosity(const double & /*p_density_ref*/,
                         const double & /*p_shear_rate_magnitude*/,
                         const double & /*p_temperature*/) const override
   {
-    return kinematic_viscosity * p_density_ref;
+    return dynamic_viscosity;
   }
 
   /**
    * @brief Calculates the vector values of the dynamic viscosity.
-   * @param p_density_ref The density of the fluid at the reference state
+   * @param p_density_ref The density of the fluid at the reference state. This
+   * value is not needed if the model has a constant kinematic viscosity, since
+   * it implies a constant dynamic viscosity also. The value of the dynamic
+   * viscosity needs to be set with "set_dynamic_viscosity(density_ref)"
+   * before calling this function.
    * @param field_vectors Values of the field on which the dynamic viscosity may
    * depend on. These are not used for the constant kinematic viscosity.
    */
   void
   get_dynamic_viscosity_vector(
-    const double &p_density_ref,
+    const double & /*p_density_ref*/,
     const std::map<field, std::vector<double>> & /*field_vectors*/,
     std::vector<double> &property_vector) override
   {
@@ -237,11 +268,12 @@ public:
 
     std::fill(property_vector.begin(),
               property_vector.end(),
-              get_dynamic_viscosity(p_density_ref, dummy_double, dummy_double));
+              get_dynamic_viscosity(dummy_double, dummy_double, dummy_double));
   }
 
 private:
   double kinematic_viscosity;
+  double dynamic_viscosity;
 };
 
 class PowerLaw : public RheologicalModel

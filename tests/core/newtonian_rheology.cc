@@ -32,16 +32,18 @@ test()
   const double dummy_double       = 0;
   field_values[field::shear_rate] = 1;
   double density_ref              = 1;
+  rheology_model.set_dynamic_viscosity(density_ref);
   deallog << " density_ref = 1, nu = " << rheology_model.value(field_values)
           << ", mu = "
           << rheology_model.get_dynamic_viscosity(
-               density_ref, field_values.at(field::shear_rate), dummy_double)
+               dummy_double, field_values.at(field::shear_rate), dummy_double)
           << std::endl;
   density_ref = 2;
+  rheology_model.set_dynamic_viscosity(density_ref);
   deallog << " density_ref = 2, nu = " << rheology_model.value(field_values)
           << ", mu = "
           << rheology_model.get_dynamic_viscosity(
-               density_ref, field_values.at(field::shear_rate), dummy_double)
+               dummy_double, field_values.at(field::shear_rate), dummy_double)
           << std::endl;
 
   deallog << "Dynamic viscosity vector values (density_ref = 1)" << std::endl;
@@ -51,7 +53,8 @@ test()
   unsigned int        n_values     = shear_rate_magnitude_vector.size();
   std::vector<double> dynamic_viscosity_values(n_values);
   density_ref = 1;
-  rheology_model.get_dynamic_viscosity_vector(density_ref,
+  rheology_model.set_dynamic_viscosity(density_ref);
+  rheology_model.get_dynamic_viscosity_vector(dummy_double,
                                               field_vectors,
                                               dynamic_viscosity_values);
   deallog << " gamma = {"

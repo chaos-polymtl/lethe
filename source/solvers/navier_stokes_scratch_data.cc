@@ -349,6 +349,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           density_psi = density_model->get_psi();
           density_ref = density_model->get_density_ref();
           // Dynamic viscosity is also necessary for compressible flows
+          rheology_model->set_dynamic_viscosity(density_ref);
           rheology_model->get_dynamic_viscosity_vector(density_ref,
                                                        fields,
                                                        dynamic_viscosity);
@@ -376,7 +377,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_1 = properties_manager.get_rheology(1);
 
           density_ref_0 = density_model_0->get_density_ref();
+          rheology_model_0->set_dynamic_viscosity(density_ref_0);
           density_ref_1 = density_model_1->get_density_ref();
+          rheology_model_1->set_dynamic_viscosity(density_ref_1);
 
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)
