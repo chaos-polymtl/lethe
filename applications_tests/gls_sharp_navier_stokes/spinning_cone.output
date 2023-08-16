@@ -14,6 +14,9 @@ Initial refinement around IB particles - Step : 2 of 2
 *******************************************************************************
 Transient iteration: 1        Time: 0.03125  Time step: 0.03125  CFL: 0.100749
 *******************************************************************************
+---------------
+Fluid Dynamics
+---------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
@@ -26,6 +29,9 @@ Transient iteration: 2        Time: 0.0625   Time step: 0.03125  CFL: 0.118859
    Number of active cells:       6980
    Number of degrees of freedom: 33756
    Volume of triangulation:      512
+---------------
+Fluid Dynamics
+---------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
