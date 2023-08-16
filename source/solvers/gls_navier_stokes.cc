@@ -71,7 +71,7 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_dofs_fd()
 {
-  TimerOutput::Scope t(this->computing_timer, "Setup dofs");
+  TimerOutput::Scope t(this->computing_timer, "Setup DOFs");
 
   // Clear the preconditioner before the matrix they are associated with is
   // cleared
