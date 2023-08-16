@@ -1836,7 +1836,6 @@ RBFShape<dim>::update_precalculations(
           max_number_of_inside_nodes =
             std::max(max_number_of_inside_nodes, current_cell_nodes->size());
           current_cell_nodes->shrink_to_fit();
-
           if (current_cell_nodes->size() > 0)
             temporary_nodes_portions_map[cell] =
               std::make_tuple(cell->barycenter(),
@@ -1866,7 +1865,6 @@ RBFShape<dim>::update_precalculations(
 
   // We give all the subsets to the 0 level, as an initial partitioning
   const auto &cell_iterator = dof_handler.cell_iterators_on_level(0);
-  double      distance;
   std::shared_ptr<std::vector<size_t>> temp_nodes =
     std::make_shared<std::vector<size_t>>();
   typename DoFHandler<dim>::cell_iterator temp_cell;
@@ -1889,31 +1887,13 @@ RBFShape<dim>::update_precalculations(
               static_cast<unsigned int>(temp_cell->level() + 1 +
                                         levels_not_precalculated) >=
                 maximal_level)
-            {
-              if (cell->point_inside(temp_cell->barycenter()))
-                {
-                  temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
-                                                    temp_cell->diameter(),
-                                                    std::get<2>(it->second));
-                  likely_nodes_map[cell]->push_back(temp_cell_tuple);
-                }
-              else
-                for (const size_t &node_id : *temp_nodes)
-                  {
-                    distance =
-                      (cell->barycenter() - rotated_nodes_positions[node_id])
-                        .norm();
-                    if (distance < support_radii[node_id])
-                      {
-                        temp_cell_tuple =
-                          std::make_tuple(temp_cell->barycenter(),
-                                          temp_cell->diameter(),
-                                          std::get<2>(it->second));
-                        likely_nodes_map[cell]->push_back(temp_cell_tuple);
-                        break;
-                      }
-                  }
-            }
+            if (cell->point_inside(temp_cell->barycenter()))
+              {
+                temp_cell_tuple = std::make_tuple(temp_cell->barycenter(),
+                                                  temp_cell->diameter(),
+                                                  std::get<2>(it->second));
+                likely_nodes_map[cell]->push_back(temp_cell_tuple);
+              }
         }
     }
 
@@ -1932,18 +1912,28 @@ RBFShape<dim>::update_precalculations(
           // or less the same.
           const bool cell_smaller_than_rbf_radius =
             (cell->diameter() < minimal_support_radius);
-          if (cell_smaller_than_rbf_radius)
+          if (cell_smaller_than_rbf_radius ||
+              (level + 1) + levels_not_precalculated >= maximal_level)
             {
-              likely_nodes_map[cell] = std::make_shared<std::vector<
-                std::tuple<Point<dim>,
-                           double,
-                           std::shared_ptr<std::vector<size_t>>>>>();
               likely_nodes_map[cell] = likely_nodes_map[cell->parent()];
-              continue;
             }
-
-          determine_likely_nodes_for_one_cell(cell, cell->barycenter());
+          else
+            determine_likely_nodes_for_one_cell(cell, cell->barycenter());
         }
+    }
+
+  // We need to remove all cells that are not needed anymore
+  // from the map
+  for (auto it = likely_nodes_map.cbegin(); it != likely_nodes_map.cend();)
+    {
+      auto cell              = it->first;
+      bool cell_still_needed = cell->is_active() && !cell->is_artificial();
+      if (!cell_still_needed)
+        {
+          likely_nodes_map.erase(it++->first);
+        }
+      else
+        it++;
     }
 
   position_precalculated    = Point<dim>(this->position);
