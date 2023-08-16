@@ -357,7 +357,8 @@ private:
   write_tracer_statistics();
 
   MultiphysicsInterface<dim> *multiphysics;
-  TimerOutput                 computing_timer;
+
+  TimerOutput computing_timer;
 
   const SimulationParameters<dim> &simulation_parameters;
 

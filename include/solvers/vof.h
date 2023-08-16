@@ -716,7 +716,8 @@ private:
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
   MultiphysicsInterface<dim> *multiphysics;
-  TimerOutput                 computing_timer;
+
+  TimerOutput computing_timer;
 
   const SimulationParameters<dim> &simulation_parameters;
 
