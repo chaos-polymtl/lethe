@@ -91,8 +91,8 @@ subsection mesh adaptation
 end
 
 subsection initial conditions
-  set type      = nodal
-  set viscosity = 0.05
+  set type                = nodal
+  set kinematic viscosity = 0.05
 end
 
 subsection non-linear solver

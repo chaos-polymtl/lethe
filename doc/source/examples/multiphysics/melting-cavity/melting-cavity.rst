@@ -62,7 +62,7 @@ where :math:`\rho` is the fluid density, :math:`\beta` denotes the thermal expan
 
 .. note:: 
     All the four boundary conditions are ``noslip``, and an external 
-    gravity field of :math:`-0.00516` is applied in the :math:`y` direction. For the heat transfer boundary conditions the temperatures of the left (:math:`T_l = 108 ^{\circ} C`) and the right (:math:`T_l = 104.9 ^{\circ} C`) walls are defined.
+    gravity field of :math:`-0.00516` is applied in the :math:`y` direction. For the heat transfer boundary conditions the temperatures of the left (:math:`T_l = 108 \, ^{\circ} \text{C}`) and the right (:math:`T_l = 104.9 \, ^{\circ} \text{C}`) walls are defined.
 
 
 --------------
@@ -113,7 +113,7 @@ The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` th
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial condition``, the initial velocity and initial temperature in the simulation domain are defined. The initial velocity is equal to zero as the block is in the solid phase at :math:`t = 0` s. The initial temperature is chosen slightly (0.1 :math:`^{\circ} C`) smaller than the melting point temperature.
+In the ``initial condition``, the initial velocity and initial temperature in the simulation domain are defined. The initial velocity is equal to zero as the block is in the solid phase at :math:`t = 0` s. The initial temperature is chosen slightly (:math:`0.1 \, ^{\circ} \text{C}`) smaller than the melting point temperature.
 
 .. code-block:: text
 
@@ -144,7 +144,7 @@ The ``source term`` subsection defines the gravitational acceleration. The value
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 ^{\circ} C` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan-problem/stefan-problem>` example. The viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the viscosity of the liquid phase.
+The solid block melts into liquid in this example, hence in the ``physical properties`` subsection, we define the phase change parameters. Similar to gravitational acceleration, the latent enthalphy of phase change is selected to satisfy the value of Stefan number. A :math:`\Delta T = 0.1 \, ^{\circ} \text{C}` is selected between the solidus and liquidus temperatures. For more information about the phase change model in Lethe, visit the :doc:`Stefan problem <../stefan-problem/stefan-problem>` example. The kinematic viscosity of the solid phase is chosen :math:`\approx 10000` times larger than the kinematic viscosity of the liquid phase.
 
 
 .. code-block:: text
@@ -179,10 +179,10 @@ The solid block melts into liquid in this example, hence in the ``physical prope
           # Specific heat of the solid phase
           set specific heat solid = 200
     
-          # viscosity of the liquid phase
+          # Kinematic viscosity of the liquid phase
           set viscosity liquid = 0.00000075
     
-          # viscosity of the solid phase
+          # Kinematic viscosity of the solid phase
           set viscosity solid = 0.008
         end
       end

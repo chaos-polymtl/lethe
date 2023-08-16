@@ -206,10 +206,10 @@ The laser heat source locally melts the material, which is initially in the soli
           # Specific heat of the solid phase
           set specific heat solid = 670
     
-          # viscosity of the liquid phase
+          # Kinematic viscosity of the liquid phase
           set viscosity liquid = 0.00000069
     
-          # viscosity of the solid phase
+          # Kinematic viscosity of the solid phase
           set viscosity solid = 0.008
     
           set thermal conductivity solid  = 33.4

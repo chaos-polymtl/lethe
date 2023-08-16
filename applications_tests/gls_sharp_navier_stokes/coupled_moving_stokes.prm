@@ -266,8 +266,8 @@ subsection initial conditions
     set Function expression = 0; 0; 0; 0
   end
 
-  # viscosity for viscous initial conditions
-  set viscosity = 0.05
+  # Kinematic viscosity for viscous initial conditions
+  set kinematic viscosity = 0.05
 end
 
 # --------------------------------------------------

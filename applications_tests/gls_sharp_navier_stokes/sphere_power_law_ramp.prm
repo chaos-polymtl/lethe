@@ -43,10 +43,10 @@ subsection initial conditions
       set iterations = 1
       set alpha      = 0.5
     end
-    subsection viscosity
-      set initial viscosity = 1.0
-      set iterations        = 1
-      set alpha             = 0.5
+    subsection kinematic viscosity
+      set initial kinematic viscosity = 1.0
+      set iterations                  = 1
+      set alpha                       = 0.5
     end
   end
 end

@@ -54,7 +54,7 @@ namespace Parameters
 
   struct Ramp_viscosity
   {
-    double viscosity_init;
+    double kinematic_viscosity_init;
     int    n_iter;
     double alpha;
 
@@ -88,8 +88,8 @@ namespace Parameters
     // Velocity components
     Functions::ParsedFunction<dim> uvwp;
 
-    // Artificial viscosity
-    double viscosity;
+    // Artificial kinematic viscosity
+    double kinematic_viscosity;
 
     // Temperature
     Functions::ParsedFunction<dim> temperature;
@@ -132,7 +132,7 @@ namespace Parameters
       uvwp.declare_parameters(prm, dim + 1);
       prm.leave_subsection();
 
-      prm.declare_entry("viscosity",
+      prm.declare_entry("kinematic viscosity",
                         "1",
                         Patterns::Double(),
                         "Kinematic viscosity for viscous initial conditions");
@@ -187,7 +187,7 @@ namespace Parameters
       else if (op == "ramp")
         type = InitialConditionType::ramp;
 
-      viscosity = prm.get_double("viscosity");
+      kinematic_viscosity = prm.get_double("kinematic viscosity");
       prm.enter_subsection("uvwp");
       uvwp.parse_parameters(prm);
       prm.leave_subsection();

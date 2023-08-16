@@ -89,10 +89,10 @@ subsection physical properties
       # Specific heat of the solid phase
       set specific heat solid = 200
 
-      # viscosity of the liquid phase
+      # Kinematic viscosity of the liquid phase
       set viscosity liquid = 0.00000075
 
-      # viscosity of the solid phase
+      # Kinematic viscosity of the solid phase
       set viscosity solid = 0.008
     end
   end

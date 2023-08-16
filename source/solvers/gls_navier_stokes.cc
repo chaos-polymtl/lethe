@@ -1057,7 +1057,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
       // Temporarily set the rheology to be newtonian with predefined viscosity
       std::shared_ptr<Newtonian> temporary_rheology =
         std::make_shared<Newtonian>(
-          this->simulation_parameters.initial_condition->viscosity);
+          this->simulation_parameters.initial_condition->kinematic_viscosity);
 
       this->simulation_parameters.physical_properties_manager.set_rheology(
         temporary_rheology);
@@ -1101,9 +1101,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .n_iter;
       double kinematic_viscosity =
-        n_iter_viscosity > 0 ? this->simulation_parameters.initial_condition
-                                 ->ramp.ramp_viscosity.viscosity_init :
-                               viscosity_end;
+        n_iter_viscosity > 0 ?
+          this->simulation_parameters.initial_condition->ramp.ramp_viscosity
+            .kinematic_viscosity_init :
+          viscosity_end;
       const double alpha_viscosity =
         this->simulation_parameters.initial_condition->ramp.ramp_viscosity
           .alpha;
