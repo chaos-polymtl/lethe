@@ -44,7 +44,7 @@ using namespace dealii;
  * @param displacement Displacement of particles since last sorting step
  * @param parallel_update Update the identification of the contact detection step in parallel.
  * If this parameter is set to false, the distance will be calculated but the
- * logical OR statement won't be call and a false value will be returned. In
+ * logical OR statement won't be called and a false value will be returned. In
  * essence, this will only update the displacement.
  * @return Returns true if the maximum cumulative
  * displacement of particles exceeds the threshold and false otherwise
