@@ -16,7 +16,7 @@ In this subsection, contact detection, force models, time integration, load bala
       set neighborhood threshold                  = 1.3
 
       set dynamic contact search size coefficient = 0.8
-      set frequency                               = 10
+      set frequency                               = 1
     end
 
     subsection load balancing
@@ -78,7 +78,7 @@ where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon
 
 ``contact detection method = constant``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Contact search will be carried out at constant frequency
+Contact search will be carried out at constant frequency. For most case (99%), ``dynamic`` contact detection should be used instead of ``constant``.
 
 * ``frequency`` is the frequency at which the contact list is renewed. It should be a value between 5 and 50 iterations. Small values of ``frequency`` lead to long simulation times, while large values of ``frequency`` may lead to late detection of collisions. Late detection of collisions can result in very large particles velocities (popcorn jump of particles in a simulation) or particles leaving the simulation domain.
 
