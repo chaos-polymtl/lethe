@@ -100,7 +100,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -317,7 +317,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -755,7 +755,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
       const Tensor<1, dim> dynamic_viscosity_gradient =
         density_eq * kinematic_viscosity_gradient;
 
@@ -991,7 +991,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
       const Tensor<1, dim> dynamic_viscosity_gradient =
         density_eq * kinematic_viscosity_gradient;
 
