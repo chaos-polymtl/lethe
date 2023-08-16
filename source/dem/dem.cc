@@ -135,7 +135,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   triangulation.signals.weight.connect(
     [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-          &              cell,
+                        &cell,
         const CellStatus status) -> unsigned int {
       return this->cell_weight(cell, status);
     });
@@ -717,7 +717,8 @@ DEMSolver<dim>::check_contact_search_step_dynamic()
     smallest_contact_search_criterion,
     mpi_communicator,
     sorting_in_subdomains_step,
-    displacement);
+    displacement,
+    (simulation_control->get_step_number() % contact_detection_frequency) == 0);
 
   return contact_detection_step;
 }
@@ -746,7 +747,7 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<double> &                    MOI)
+  std::vector<double>                     &MOI)
 {
   MOI.resize(torque.size());
 
