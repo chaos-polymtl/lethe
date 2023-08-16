@@ -1139,7 +1139,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   auto &nonzero_constraints = this->nonzero_constraints;
 
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
-  
+
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
