@@ -13,8 +13,6 @@
  *
  * ---------------------------------------------------------------------*/
 
-#include "solvers/mf_gls_navier_stokes.h"
-
 #include <core/bdf.h>
 #include <core/grids.h>
 #include <core/manifolds.h>
@@ -22,38 +20,53 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/mf_gls_navier_stokes.h>
+#include <solvers/mf_navier_stokes.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/vector.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
-// Constructor for class MFGLSNavierStokesSolver
 template <int dim>
-MFGLSNavierStokesSolver<dim>::MFGLSNavierStokesSolver(
-  SimulationParameters<dim> &p_nsparam)
-  : NavierStokesBase<dim, LinearAlgebra::distributed::Vector<double>, IndexSet>(
-      p_nsparam)
+MFNavierStokesSolver<dim>::MFNavierStokesSolver(
+  SimulationParameters<dim> &nsparam)
+  : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
 {
-  // TODO
+  AssertThrow(
+    nsparam.fem_parameters.velocity_order ==
+      nsparam.fem_parameters.pressure_order,
+    dealii::ExcMessage(
+      "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
+
+  this->fe = std::make_shared<FESystem<dim>>(
+    FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
+
+  if ((nsparam.stabilization.use_default_stabilization == true) ||
+      nsparam.stabilization.stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::pspg_supg)
+    system_operator =
+      std::make_shared<NavierStokesSUPGPSPGOperator<dim, double>>();
+  else
+    throw std::runtime_error(
+      "Only SUPG/PSPG stabilization is supported at the moment.");
 }
 
 template <int dim>
-MFGLSNavierStokesSolver<dim>::~MFGLSNavierStokesSolver()
+MFNavierStokesSolver<dim>::~MFNavierStokesSolver()
 {
   this->dof_handler.clear();
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::solve()
+MFNavierStokesSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
     *this->triangulation,
@@ -93,9 +106,7 @@ MFGLSNavierStokesSolver<dim>::solve()
         }
       else
         {
-          NavierStokesBase<dim,
-                           LinearAlgebra::distributed::Vector<double>,
-                           IndexSet>::refine_mesh();
+          NavierStokesBase<dim, VectorType, IndexSet>::refine_mesh();
           this->iterate();
         }
 
@@ -108,8 +119,13 @@ MFGLSNavierStokesSolver<dim>::solve()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
+MFNavierStokesSolver<dim>::setup_dofs_fd()
 {
+  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
+
+  // Clear matrix free operator
+  this->system_operator->clear();
+
   // Fill the dof handler and initialize vectors
   this->dof_handler.distribute_dofs(*this->fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
@@ -124,26 +140,31 @@ MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
   // Zero constraints
   define_zero_constraints();
 
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+  // Initialize matrix-free object
+  unsigned int mg_level = numbers::invalid_unsigned_int;
+  this->system_operator->reinit(
+    *this->mapping,
+    this->dof_handler,
+    this->zero_constraints,
+    *this->cell_quadrature,
+    this->forcing_function,
+    this->simulation_parameters.physical_properties_manager
+      .get_viscosity_scale(),
+    mg_level);
 
-  this->evaluation_point.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
 
-  // Initialize vector of previous solutions
+  // Initialize vectors using operator
+  this->system_operator->initialize_dof_vector(this->present_solution);
+  this->system_operator->initialize_dof_vector(this->evaluation_point);
+  this->system_operator->initialize_dof_vector(this->newton_update);
+  this->system_operator->initialize_dof_vector(this->system_rhs);
+  this->system_operator->initialize_dof_vector(this->local_evaluation_point);
+
+  // Initialize vectors of previous solutions
   for (auto &solution : this->previous_solutions)
     {
-      solution.reinit(this->locally_owned_dofs,
-                      this->locally_relevant_dofs,
-                      this->mpi_communicator);
+      this->system_operator->initialize_dof_vector(solution);
     }
-
-  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
@@ -175,7 +196,7 @@ MFGLSNavierStokesSolver<dim>::setup_dofs_fd()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::update_boundary_conditions()
+MFNavierStokesSolver<dim>::update_boundary_conditions()
 {
   double time = this->simulation_control->get_current_time();
   for (unsigned int i_bc = 0;
@@ -198,49 +219,68 @@ MFGLSNavierStokesSolver<dim>::update_boundary_conditions()
   this->present_solution = this->local_evaluation_point;
 }
 
-/**
- * Set the initial condition using a L2 or a viscous solver
- **/
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::set_initial_condition_fd(
-  Parameters::InitialConditionType /* initial_condition_type */,
-  bool /* restart */)
+MFNavierStokesSolver<dim>::set_initial_condition_fd(
+  Parameters::InitialConditionType initial_condition_type,
+  bool                             restart)
+{
+  if (restart)
+    {
+      this->pcout << "************************" << std::endl;
+      this->pcout << "---> Simulation Restart " << std::endl;
+      this->pcout << "************************" << std::endl;
+      this->read_checkpoint();
+    }
+  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
+    {
+      this->set_nodal_values();
+      this->finish_time_step();
+    }
+  else
+    {
+      throw std::runtime_error(
+        "Type of initial condition is not supported by MF Navier-Stokes");
+    }
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::assemble_system_matrix()
+{
+  // Required for compilation but not used for matrix free solvers.
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::assemble_system_rhs()
+{
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
+  this->system_operator->evaluate_residual(this->system_rhs,
+                                           this->evaluation_point);
+
+  this->system_rhs *= -1.0;
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::assemble_system_matrix()
+MFNavierStokesSolver<dim>::setup_preconditioner()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::assemble_system_rhs()
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::update_multiphysics_time_average_solution()
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::setup_preconditioner()
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::define_non_zero_constraints()
+MFNavierStokesSolver<dim>::define_non_zero_constraints()
 {
   double time = this->simulation_control->get_current_time();
   FEValuesExtractors::Vector velocities(0);
@@ -328,7 +368,7 @@ MFGLSNavierStokesSolver<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::define_zero_constraints()
+MFNavierStokesSolver<dim>::define_zero_constraints()
 {
   FEValuesExtractors::Vector velocities(0);
   FEValuesExtractors::Scalar pressure(dim);
@@ -407,46 +447,111 @@ MFGLSNavierStokesSolver<dim>::define_zero_constraints()
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::setup_operator()
+MFNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
+                                               const bool /* renewed_matrix */)
+{
+  const double absolute_residual =
+    this->simulation_parameters.linear_solver.minimum_residual;
+  const double relative_residual =
+    this->simulation_parameters.linear_solver.relative_residual;
+
+  if (this->simulation_parameters.linear_solver.solver ==
+      Parameters::LinearSolver::SolverType::gmres)
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+  else
+    AssertThrow(false, ExcMessage("This solver is not allowed"));
+  this->rescale_pressure_dofs_in_newton_update();
+}
+
+template <int dim>
+void
+MFNavierStokesSolver<dim>::assemble_L2_projection()
 {
   // TODO
 }
 
 template <int dim>
 void
-MFGLSNavierStokesSolver<dim>::solve_linear_system(
-  const bool /* initial_step */,
-  const bool /* renewed_matrix */)
+MFNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
+                                              const double absolute_residual,
+                                              const double relative_residual)
 {
-  // TODO
+  const unsigned int max_iter = 3;
+  unsigned int       iter     = 0;
+  bool               success  = false;
+
+
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+
+  SolverGMRES<VectorType>::AdditionalData solver_parameters;
+
+  solver_parameters.max_n_tmp_vectors =
+    this->simulation_parameters.linear_solver.max_krylov_vectors;
+
+  while (success == false and iter < max_iter)
+    {
+      try
+        {
+          SolverGMRES<VectorType> solver(solver_control, solver_parameters);
+
+          {
+            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+
+            this->present_solution.update_ghost_values();
+
+            this->system_operator->evaluate_non_linear_term(
+              this->present_solution);
+
+            this->newton_update = 0.0;
+
+            PreconditionIdentity preconditioner;
+            solver.solve(*(system_operator),
+                         this->newton_update,
+                         system_rhs,
+                         preconditioner);
+
+            if (this->simulation_parameters.linear_solver.verbosity !=
+                Parameters::Verbosity::quiet)
+              {
+                this->pcout
+                  << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+              }
+          }
+
+          constraints_used.distribute(this->newton_update);
+          success = true;
+        }
+      catch (std::exception &e)
+        {
+          this->pcout << " GMRES solver failed!" << std::endl;
+
+          if (iter == max_iter - 1 && !this->simulation_parameters.linear_solver
+                                         .force_linear_solver_continuation)
+            throw e;
+        }
+      iter += 1;
+    }
 }
 
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::assemble_L2_projection()
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::solve_system_GMRES(
-  const bool /* initial_step */,
-  const double /* absolute_residual */,
-  const double /* relative_residual */)
-{
-  // TODO
-}
-
-template <int dim>
-void
-MFGLSNavierStokesSolver<dim>::setup_GMG()
-{
-  // TODO
-}
-
-// Pre-compile the 2D and 3D MF Navier-Stokes solver to ensure that the library
-// is valid before we actually compile the solver This greatly helps with
-// debugging
-template class MFGLSNavierStokesSolver<2>;
-template class MFGLSNavierStokesSolver<3>;
+template class MFNavierStokesSolver<2>;
+template class MFNavierStokesSolver<3>;
