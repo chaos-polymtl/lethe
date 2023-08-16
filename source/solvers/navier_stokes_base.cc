@@ -1405,6 +1405,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           // Update the time of the exact solution to the actual time
           this->exact_solution->set_time(
             simulation_control->get_current_time());
+
+          present_solution.update_ghost_values();
+
           const std::pair<double, double> errors =
             calculate_L2_error(dof_handler,
                                present_solution,
