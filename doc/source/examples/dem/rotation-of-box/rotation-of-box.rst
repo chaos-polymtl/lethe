@@ -146,4 +146,4 @@ Animation of the rotating box simulation:
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/zGjEVskObIc" frameborder="0" allowfullscreen></iframe>
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/zGjEVskObIc" frameborder="0" allowfullscreen></iframe>

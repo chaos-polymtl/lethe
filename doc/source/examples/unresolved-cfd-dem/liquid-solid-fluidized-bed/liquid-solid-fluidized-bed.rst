@@ -237,7 +237,7 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 
 .. note:: 
-    Running the packing of alumina particles should take approximately 4 hours and 15 minutes on 16 cores.
+    Running the packing of alumina particles should take approximately 4 hours and 15 minutes on 16 cores. For the alginate particles, it takes approximately 5 hours and 52 minutes (``time end = 9.9``).
 
 After the particles have been packed inside the cylinder, it is now possible to simulate the fluidization of particles.
 
@@ -409,11 +409,54 @@ The simulation is run (on 8 core) using the ``cfd_dem_coupling`` application as 
 
     mpirun -np 8 cfd_dem_coupling dem-packing-in-fluidized-bed.prm
 
+.. note::
+    Running the packing of alumina particles should take approximately 4 hours and 15 minutes on 16 cores.
+
 --------
 Results
 --------
 
+We briefly comment on some results that can be extracted from this example.
 
-    
+Side view
+~~~~~~~~~~~
 
+Here we show comparison between the experimentally observed and simulated behavior of the liquid-solid fluidized bed with alumina.
+
+.. raw:: html
+
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/Ra7d-p7wD8Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+
+
+
+Total pressure drop
+~~~~~~~~~~~~~~~~~~~~
+
+In fluidized beds, the total pressure drop (:math:`- \Delta p`) reflects the total weight of particles (:math:`M`). The following equation is derived from a force balance inside the fluidized bed [3].
+
+.. math::
+
+    H(1 - \bar{\varepsilon}_f) = \frac{- \Delta p}{(\rho_p - \rho_f)g} = \frac{M}{\rho_p A} = \mathrm{const.}
+
+where :math:`H` is the total bed height, :math:`\bar{\varepsilon}_f` is the average fluid fraction (void fraction) at the bed region, :math:`\rho_p` and :math:`\rho_f` are the densities of the particles and the fluid (respectively), and :math:`A` is the cross-section area of the equipment.
+
+Liquid fluidized beds are very uniform in terms of particles distribution, resulting in an uniform distribution of  :math:`\varepsilon_f` along the be height. From this hypothesis, we can conclude that
+
+.. math::
+
+    \left.- \frac{\mathrm{d} p }{\mathrm{d} z}\right|_{z = 0}^{z = H}  \approx \mathrm{constant}
+
+The results of the pressure profile with time as the bed expands are following
+
+
+
+Bed expansion
+~~~~~~~~~~~~~~
+
+Particles dynamics
+~~~~~~~~~~~~~~~~~~~~
+
+Notes on performance
+~~~~~~~~~~~~~~~~~~~~~~
     
