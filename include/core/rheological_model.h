@@ -94,16 +94,28 @@ public:
   {}
 
   /**
-   * @brief Returns the value of the dynamic viscosity, if a kinematic viscosity
+   * @brief Calculates the dynamic viscosity, if a kinematic viscosity
    * and a reference density value is specified.
    * @param p_density_ref The density of the fluid at the reference state
    * @param p_shear_rate_magnitude The shear rate magnitude
    * @param p_temperature The temperature of the fluid
    */
   virtual double
-  get_dynamic_viscosity(const double & /*p_density_ref*/,
-                        const double & /*p_shear_rate_magnitude*/,
-                        const double & /*p_temperature*/) const = 0;
+  get_dynamic_viscosity(const double &p_density_ref,
+                        const double &p_shear_rate_magnitude,
+                        const double &p_temperature) const = 0;
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  virtual void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) = 0;
 };
 
 class Newtonian : public RheologicalModel
@@ -206,7 +218,26 @@ public:
                         const double & /*p_shear_rate_magnitude*/,
                         const double & /*p_temperature*/) const override
   {
-    return kinematic_viscosity / p_density_ref;
+    return kinematic_viscosity * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on. These are not used for the constant kinematic viscosity.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &p_density_ref,
+    const std::map<field, std::vector<double>> & /*field_vectors*/,
+    std::vector<double> &property_vector) override
+  {
+    const double dummy_double = 0;
+
+    std::fill(property_vector.begin(),
+              property_vector.end(),
+              get_dynamic_viscosity(p_density_ref, dummy_double, dummy_double));
   }
 
 private:
@@ -321,8 +352,30 @@ public:
                         const double &p_shear_rate_magnitude,
                         const double & /*p_temperature*/) const override
   {
-    return calculate_kinematic_viscosity(p_shear_rate_magnitude) /
+    return calculate_kinematic_viscosity(p_shear_rate_magnitude) *
            p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) override
+  {
+    const double               dummy_double = 0;
+    const std::vector<double> &shear_rate_magnitude =
+      field_vectors.at(field::shear_rate);
+
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] = get_dynamic_viscosity(p_density_ref,
+                                                 shear_rate_magnitude[i],
+                                                 dummy_double);
   }
 
 private:
@@ -460,8 +513,30 @@ public:
                         const double &p_shear_rate_magnitude,
                         const double & /*p_temperature*/) const override
   {
-    return calculate_kinematic_viscosity(p_shear_rate_magnitude) /
+    return calculate_kinematic_viscosity(p_shear_rate_magnitude) *
            p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) override
+  {
+    const double               dummy_double = 0;
+    const std::vector<double> &shear_rate_magnitude =
+      field_vectors.at(field::shear_rate);
+
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] = get_dynamic_viscosity(p_density_ref,
+                                                 shear_rate_magnitude[i],
+                                                 dummy_double);
   }
 
 private:
@@ -530,7 +605,8 @@ public:
   value(const std::map<field, double> & /*field_values*/) override;
 
   /**
-   * @brief vector_value Calculates the vector values of the kinematic viscosity.
+   * @brief vector_value Calculates the vector values of the kinematic
+   * viscosity.
    * @param field_vectors Values of the field on which the kinematic viscosity
    * may depend on. These are not used for the constant kinematic viscosity.
    */
@@ -575,7 +651,28 @@ public:
                         const double & /*p_shear_rate_magnitude*/,
                         const double &p_temperature) const override
   {
-    return kinematic_viscosity(p_temperature) / p_density_ref;
+    return kinematic_viscosity(p_temperature) * p_density_ref;
+  }
+
+  /**
+   * @brief Calculates the vector values of the dynamic viscosity.
+   * @param p_density_ref The density of the fluid at the reference state
+   * @param field_vectors Values of the field on which the dynamic viscosity may
+   * depend on.
+   */
+  void
+  get_dynamic_viscosity_vector(
+    const double &                              p_density_ref,
+    const std::map<field, std::vector<double>> &field_vectors,
+    std::vector<double> &                       property_vector) override
+  {
+    const double               dummy_double = 0;
+    const std::vector<double> &temperature =
+      field_vectors.at(field::temperature);
+
+    for (unsigned int i = 0; i < property_vector.size(); ++i)
+      property_vector[i] =
+        get_dynamic_viscosity(p_density_ref, dummy_double, temperature[i]);
   }
 
 private:

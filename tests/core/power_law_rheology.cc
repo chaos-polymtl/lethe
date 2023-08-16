@@ -11,7 +11,7 @@
 void
 test()
 {
-  deallog << "Beggining" << std::endl;
+  deallog << "Beginning" << std::endl;
 
   PowerLaw rheology_model(5, 0.5, 1e-3);
 
@@ -19,7 +19,7 @@ test()
   // Field values must contain shear rate
   std::map<field, double> field_values;
 
-  deallog << "Testing power law viscosity - nu" << std::endl;
+  deallog << "Testing power law kinematic viscosity - nu" << std::endl;
   field_values[field::shear_rate] = 1;
   deallog << " gamma = 1 , nu = " << rheology_model.value(field_values)
           << " , dnu/dgamma analytical = "
@@ -35,6 +35,47 @@ test()
           << rheology_model.numerical_jacobian(field_values, field::shear_rate)
 
           << std::endl;
+
+  deallog << "Testing power law dynamic viscosity - mu (gamma = 1)"
+          << std::endl;
+  const double dummy_double       = 0;
+  field_values[field::shear_rate] = 1;
+  double density_ref              = 1;
+  deallog << " density_ref = 1, nu = " << rheology_model.value(field_values)
+          << ", mu = "
+          << rheology_model.get_dynamic_viscosity(
+               density_ref, field_values.at(field::shear_rate), dummy_double)
+          << std::endl;
+  density_ref = 2;
+  deallog << " density_ref = 2, nu = " << rheology_model.value(field_values)
+          << ", mu = "
+          << rheology_model.get_dynamic_viscosity(
+               density_ref, field_values.at(field::shear_rate), dummy_double)
+          << std::endl;
+
+  deallog << "Dynamic viscosity vector values (density_ref = 1)" << std::endl;
+  std::vector<double>                  shear_rate_magnitude_vector({1, 2, 3});
+  std::map<field, std::vector<double>> field_vectors;
+  field_vectors[field::shear_rate] = shear_rate_magnitude_vector;
+  unsigned int        n_values     = shear_rate_magnitude_vector.size();
+  std::vector<double> dynamic_viscosity_values(n_values);
+  density_ref = 1;
+  rheology_model.get_dynamic_viscosity_vector(density_ref,
+                                              field_vectors,
+                                              dynamic_viscosity_values);
+  deallog << " gamma = {"
+          << Utilities::to_string(shear_rate_magnitude_vector[0]);
+  for (unsigned int i = 1; i < n_values; ++i)
+    {
+      deallog << ", " << Utilities::to_string(shear_rate_magnitude_vector[i]);
+    }
+  deallog << "}" << std::endl;
+  deallog << " mu = {" << dynamic_viscosity_values[0];
+  for (unsigned int i = 1; i < n_values; ++i)
+    {
+      deallog << ", " << dynamic_viscosity_values[i];
+    }
+  deallog << "}" << std::endl;
 
   deallog << "OK" << std::endl;
 }

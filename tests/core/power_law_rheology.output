@@ -1,6 +1,12 @@
 
-DEAL::Beggining
-DEAL::Testing power law viscosity - nu
+DEAL::Beginning
+DEAL::Testing power law kinematic viscosity - nu
 DEAL:: gamma = 1 , nu = 5.00000 , dnu/dgamma analytical = -2.50000 , dnu/dgamma numerical = -2.50000
 DEAL:: gamma = 2 , nu = 3.53553 , dnu/dgamma analytical = -0.883883 , dnu/dgamma numerical = -0.883883
+DEAL::Testing power law dynamic viscosity - mu (gamma = 1)
+DEAL:: density_ref = 1, nu = 5.00000, mu = 5.00000
+DEAL:: density_ref = 2, nu = 5.00000, mu = 10.0000
+DEAL::Dynamic viscosity vector values (density_ref = 1)
+DEAL:: gamma = {1, 2, 3}
+DEAL:: mu = {5.00000, 3.53553, 2.88675}
 DEAL::OK
