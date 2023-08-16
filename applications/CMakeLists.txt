@@ -7,7 +7,7 @@ foreach(_target IN ITEMS
     nitsche_navier_stokes
     gls_sharp_navier_stokes
     gls_vans
-    mf_gls_navier_stokes
+    mf_navier_stokes
     initial_conditions
     navier_stokes_parameter_template
     rpt_3d
