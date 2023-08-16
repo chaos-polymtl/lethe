@@ -980,6 +980,7 @@ public:
   std::vector<double>                  density;
   double                               density_ref;
   double                               density_psi;
+  std::vector<double>                  dynamic_viscosity;
   std::vector<double>                  kinematic_viscosity;
   double                               kinematic_viscosity_scale;
   std::vector<double>                  thermal_expansion;
@@ -999,6 +1000,8 @@ public:
   double              density_psi_0;
   double              density_psi_1;
   std::vector<double> compressibility_multiplier;
+  std::vector<double> dynamic_viscosity_0;
+  std::vector<double> dynamic_viscosity_1;
   std::vector<double> kinematic_viscosity_0;
   std::vector<double> kinematic_viscosity_1;
   std::vector<double> thermal_expansion_0;
