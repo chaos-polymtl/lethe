@@ -135,7 +135,7 @@ namespace Parameters
       prm.declare_entry("viscosity",
                         "1",
                         Patterns::Double(),
-                        "viscosity for viscous initial conditions");
+                        "Kinematic viscosity for viscous initial conditions");
 
 
       prm.enter_subsection("temperature");

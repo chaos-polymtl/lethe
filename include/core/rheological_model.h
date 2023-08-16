@@ -596,7 +596,8 @@ private:
                         0.),
                1.);
 
-    return param.kinematic_viscosity_l * l_frac + param.kinematic_viscosity_s * (1. - l_frac);
+    return param.kinematic_viscosity_l * l_frac +
+           param.kinematic_viscosity_s * (1. - l_frac);
   }
 
   Parameters::PhaseChange param;

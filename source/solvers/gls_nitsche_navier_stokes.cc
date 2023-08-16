@@ -73,7 +73,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
     RequiresConstantViscosity("assemble_nitsche_restriction"));
 
   // Viscosity for stabilization constant
-  const double viscosity =
+  const double kinematic_viscosity =
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale();
 
@@ -166,12 +166,15 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
               const double tau =
                 this->simulation_control->get_assembly_method() ==
                     Parameters::SimulationControl::TimeSteppingMethod::steady ?
-                  1. / std::sqrt(
-                         std::pow(2. * u_mag / h_cell, 2) +
-                         9 * std::pow(4 * viscosity / (h_cell * h_cell), 2)) :
-                  1. / std::sqrt(
-                         std::pow(sdt, 2) + std::pow(2. * u_mag / h_cell, 2) +
-                         9 * std::pow(4 * viscosity / (h_cell * h_cell), 2));
+                  1. / std::sqrt(std::pow(2. * u_mag / h_cell, 2) +
+                                 9 * std::pow(4 * kinematic_viscosity /
+                                                (h_cell * h_cell),
+                                              2)) :
+                  1. /
+                    std::sqrt(
+                      std::pow(sdt, 2) + std::pow(2. * u_mag / h_cell, 2) +
+                      9 * std::pow(4 * kinematic_viscosity / (h_cell * h_cell),
+                                   2));
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -267,7 +270,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
     !this->simulation_parameters.physical_properties_manager.is_non_newtonian(),
     RequiresConstantViscosity("assemble_nitsche_restriction"));
 
-  const double viscosity =
+  const double kinematic_viscosity =
     this->simulation_parameters.physical_properties_manager
       .get_kinematic_viscosity_scale();
 
@@ -327,9 +330,9 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
               fluid_pressure[d][d] = pressure;
             }
 
-          fluid_stress =
-            viscosity * (velocity_gradient + transpose(velocity_gradient)) -
-            fluid_pressure;
+          fluid_stress = kinematic_viscosity *
+                           (velocity_gradient + transpose(velocity_gradient)) -
+                         fluid_pressure;
           force += fluid_stress * normal_vector * JxW;
         }
 

@@ -303,11 +303,11 @@ namespace Parameters
       prm.declare_entry("viscosity_0",
                         "1.0",
                         Patterns::Double(),
-                        "Viscosity at rest");
+                        "Kinematic viscosity at rest");
       prm.declare_entry("viscosity_inf",
                         "1.0",
                         Patterns::Double(),
-                        "Viscosity for an infinite shear rate");
+                        "Kinematic viscosity for an infinite shear rate");
       prm.declare_entry("lambda", "1.0", Patterns::Double(), "Relaxation time");
       prm.declare_entry("a", "2.0", Patterns::Double(), "Carreau parameter");
       prm.declare_entry("n", "0.5", Patterns::Double(), "Power parameter");
@@ -598,12 +598,12 @@ namespace Parameters
       prm.declare_entry("viscosity liquid",
                         "1",
                         Patterns::Double(),
-                        "Viscosity of the liquid phase");
+                        "Kinematic viscosity of the liquid phase");
 
       prm.declare_entry("viscosity solid",
                         "1",
                         Patterns::Double(),
-                        "Viscosity of the solid phase");
+                        "Kinematic viscosity of the solid phase");
     }
     prm.leave_subsection();
   }
@@ -847,7 +847,7 @@ namespace Parameters
       isothermal_ideal_gas_density_parameters.parse_parameters(prm, dimensions);
 
       //---------------------------------------------------
-      // Viscosity and Rheology
+      // Kinematic viscosity and Rheology
       //---------------------------------------------------
       op = prm.get("rheological model");
       if (op == "power-law")

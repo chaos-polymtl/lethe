@@ -75,10 +75,10 @@ NavierStokesScratchData<dim>::allocate()
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
 
-  density                   = std::vector<double>(n_q_points);
-  viscosity                 = std::vector<double>(n_q_points);
-  thermal_expansion         = std::vector<double>(n_q_points);
-  grad_viscosity_shear_rate = std::vector<double>(n_q_points);
+  density                             = std::vector<double>(n_q_points);
+  kinematic_viscosity                 = std::vector<double>(n_q_points);
+  thermal_expansion                   = std::vector<double>(n_q_points);
+  grad_kinematic_viscosity_shear_rate = std::vector<double>(n_q_points);
 
   previous_density =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
@@ -111,8 +111,8 @@ NavierStokesScratchData<dim>::enable_vof(
   // Allocate physical properties
   density_0                  = std::vector<double>(n_q_points);
   density_1                  = std::vector<double>(n_q_points);
-  viscosity_0                = std::vector<double>(n_q_points);
-  viscosity_1                = std::vector<double>(n_q_points);
+  kinematic_viscosity_0      = std::vector<double>(n_q_points);
+  kinematic_viscosity_1      = std::vector<double>(n_q_points);
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
@@ -149,8 +149,8 @@ NavierStokesScratchData<dim>::enable_vof(
   // Allocate physical properties
   density_0                  = std::vector<double>(n_q_points);
   density_1                  = std::vector<double>(n_q_points);
-  viscosity_0                = std::vector<double>(n_q_points);
-  viscosity_1                = std::vector<double>(n_q_points);
+  kinematic_viscosity_0      = std::vector<double>(n_q_points);
+  kinematic_viscosity_1      = std::vector<double>(n_q_points);
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
@@ -191,8 +191,8 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   // Allocate physical properties
   density_0              = std::vector<double>(n_q_points);
   density_1              = std::vector<double>(n_q_points);
-  viscosity_0            = std::vector<double>(n_q_points);
-  viscosity_1            = std::vector<double>(n_q_points);
+  kinematic_viscosity_0  = std::vector<double>(n_q_points);
+  kinematic_viscosity_1  = std::vector<double>(n_q_points);
   thermal_expansion_0    = std::vector<double>(n_q_points);
   thermal_expansion_1    = std::vector<double>(n_q_points);
   surface_tension        = std::vector<double>(n_q_points);
@@ -334,8 +334,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           // In the case of an incompressible flow, viscosity is the only
           // required property
           const auto rheology_model = properties_manager.get_rheology();
-          rheology_model->vector_value(fields, viscosity);
-          viscosity_scale = rheology_model->get_kinematic_viscosity_scale();
+          rheology_model->vector_value(fields, kinematic_viscosity);
+          kinematic_viscosity_scale =
+            rheology_model->get_kinematic_viscosity_scale();
 
           // For a weakly compressible flow, density variations will play a role
           const auto density_model = properties_manager.get_density();
@@ -346,9 +347,8 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           if (properties_manager.is_non_newtonian())
             {
               // Calculate derivative of viscosity with respect to shear rate
-              rheology_model->vector_jacobian(fields,
-                                              field::shear_rate,
-                                              grad_viscosity_shear_rate);
+              rheology_model->vector_jacobian(
+                fields, field::shear_rate, grad_kinematic_viscosity_shear_rate);
             }
 
           if (gather_temperature)
@@ -379,10 +379,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
 
           density_model_0->vector_value(fields, density_0);
-          rheology_model_0->vector_value(fields, viscosity_0);
+          rheology_model_0->vector_value(fields, kinematic_viscosity_0);
 
           density_model_1->vector_value(fields, density_1);
-          rheology_model_1->vector_value(fields, viscosity_1);
+          rheology_model_1->vector_value(fields, kinematic_viscosity_1);
 
           if (gather_temperature)
             {
@@ -406,9 +406,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                         this->density_0[q],
                                                         this->density_1[q]);
 
-                  viscosity[q] = calculate_point_property(filtered_phase_value,
-                                                          this->viscosity_0[q],
-                                                          this->viscosity_1[q]);
+                  kinematic_viscosity[q] =
+                    calculate_point_property(filtered_phase_value,
+                                             this->kinematic_viscosity_0[q],
+                                             this->kinematic_viscosity_1[q]);
 
                   thermal_expansion[q] =
                     calculate_point_property(filtered_phase_value,
@@ -475,10 +476,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     this->density_0[q],
                     this->density_1[q]);
 
-                  viscosity[q] = calculate_point_property_cahn_hilliard(
-                    phase_order_cahn_hilliard_value,
-                    this->viscosity_0[q],
-                    this->viscosity_1[q]);
+                  kinematic_viscosity[q] =
+                    calculate_point_property_cahn_hilliard(
+                      phase_order_cahn_hilliard_value,
+                      this->kinematic_viscosity_0[q],
+                      this->kinematic_viscosity_1[q]);
 
                   thermal_expansion[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,

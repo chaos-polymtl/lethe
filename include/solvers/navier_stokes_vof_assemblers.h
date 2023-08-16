@@ -240,10 +240,11 @@ public:
      viscosity variation with a slight change in the shear_rate magnitude
    */
   inline Tensor<1, dim>
-  get_viscosity_gradient(const Tensor<2, dim> &velocity_gradient,
-                         const Tensor<3, dim> &velocity_hessians,
-                         const double          shear_rate_magnitude,
-                         const double          grad_viscosity_shear_rate) const
+  get_kinematic_viscosity_gradient(
+    const Tensor<2, dim> &velocity_gradient,
+    const Tensor<3, dim> &velocity_hessians,
+    const double          shear_rate_magnitude,
+    const double          grad_kinematic_viscosity_shear_rate) const
   {
     // Calculates an approximation of the shear rate magnitude gradient using
     // the derived form, since it does not change with rheological models
@@ -278,7 +279,7 @@ public:
               }
           }
       }
-    return grad_shear_rate * grad_viscosity_shear_rate;
+    return grad_shear_rate * grad_kinematic_viscosity_shear_rate;
   };
 
   /**

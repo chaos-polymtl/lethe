@@ -27,24 +27,24 @@ using namespace dealii;
  *
  * @param u_mag Magnitude of the velocity
  *
- * @param viscosity Kinematic viscosity
+ * @param kinematic_viscosity Kinematic viscosity
  *
  * @param h Cell size. Should be calculated using the diameter of a sphere of equal volume to that of the cell
  *
  * @param density Density of the fluid, assumed to be 1 by default.
  * This is because most of Lethe simulations (except the VOF ones) assume a
- * density of 1 and use the kinetic viscosity to set the Reynolds number
+ * density of 1 and use the kinematic viscosity to set the Reynolds number
  *
  */
 inline double
 calculate_navier_stokes_gls_tau_steady(const double u_mag,
-                                       const double viscosity,
+                                       const double kinematic_viscosity,
                                        const double h,
                                        const double density = 1)
 {
   return 1. / std::sqrt(Utilities::fixed_power<2>(2. * density * u_mag / h) +
-                        9 * Utilities::fixed_power<2>(4 * density * viscosity /
-                                                      (h * h)));
+                        9 * Utilities::fixed_power<2>(
+                              4 * density * kinematic_viscosity / (h * h)));
 }
 
 /**
@@ -53,7 +53,7 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
  *
  * @param u_mag Magnitude of the velocity
  *
- * @param viscosity Kinematic viscosity
+ * @param kinematic_viscosity Kinematic viscosity
  *
  * @param h Cell size. Should be calculated using the diameter of a sphere of equal volume to that of the cell
  *
@@ -61,18 +61,18 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
  *
  * @param density Density of the fluid, assumed to be 1 by default.
  * This is because most of Lethe simulations (except the VOF ones) assume a
- * density of 1 and use the kinetic viscosity to set the Reynolds number
+ * density of 1 and use the kinematic viscosity to set the Reynolds number
  */
 
 inline double
 calculate_navier_stokes_gls_tau_transient(const double u_mag,
-                                          const double viscosity,
+                                          const double kinematic_viscosity,
                                           const double h,
                                           const double sdt,
                                           const double density = 1)
 {
   return 1. / std::sqrt(Utilities::fixed_power<2>(density * sdt) +
                         Utilities::fixed_power<2>(2. * density * u_mag / h) +
-                        9 * Utilities::fixed_power<2>(4 * density * viscosity /
-                                                      (h * h)));
+                        9 * Utilities::fixed_power<2>(
+                              4 * density * kinematic_viscosity / (h * h)));
 }

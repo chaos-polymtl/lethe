@@ -98,9 +98,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent properties at the quadrature point
-      double       density_eq           = scratch_data.density[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_eq * viscosity_eq;
+      double       density_eq             = scratch_data.density[q];
+      double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
+      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -109,9 +109,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1) :
+          calculate_navier_stokes_gls_tau_steady(u_mag,
+                                                 kinematic_viscosity_eq,
+                                                 h,
+                                                 1) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, 1);
+            u_mag, kinematic_viscosity_eq, h, sdt, 1);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -312,9 +315,9 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent properties at the quadrature point
-      double       density_eq           = scratch_data.density[q];
-      double       viscosity_eq         = scratch_data.viscosity[q];
-      const double dynamic_viscosity_eq = density_eq * viscosity_eq;
+      double       density_eq             = scratch_data.density[q];
+      double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
+      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -323,9 +326,12 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
-          calculate_navier_stokes_gls_tau_steady(u_mag, viscosity_eq, h, 1.) :
+          calculate_navier_stokes_gls_tau_steady(u_mag,
+                                                 kinematic_viscosity_eq,
+                                                 h,
+                                                 1.) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, 1.);
+            u_mag, kinematic_viscosity_eq, h, sdt, 1.);
 
 
       // Calculate the strong residual for GLS stabilization
@@ -728,12 +734,13 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       shear_rate_magnitude =
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
-      // Calculate viscosity gradient
-      const Tensor<1, dim> viscosity_gradient =
-        this->get_viscosity_gradient(velocity_gradient,
-                                     velocity_hessian,
-                                     shear_rate_magnitude,
-                                     scratch_data.grad_viscosity_shear_rate[q]);
+      // Calculate kinematic viscosity gradient
+      const Tensor<1, dim> kinematic_viscosity_gradient =
+        this->get_kinematic_viscosity_gradient(
+          velocity_gradient,
+          velocity_hessian,
+          shear_rate_magnitude,
+          scratch_data.grad_kinematic_viscosity_shear_rate[q]);
 
       // Forcing term
       Tensor<1, dim> force = scratch_data.force[q];
@@ -746,11 +753,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent properties at the quadrature point
-      double               density_eq           = scratch_data.density[q];
-      double               viscosity_eq         = scratch_data.viscosity[q];
-      const double         dynamic_viscosity_eq = density_eq * viscosity_eq;
+      double       density_eq             = scratch_data.density[q];
+      double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
+      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
       const Tensor<1, dim> dynamic_viscosity_gradient =
-        density_eq * viscosity_gradient;
+        density_eq * kinematic_viscosity_gradient;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -760,11 +767,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_eq,
+                                                 kinematic_viscosity_eq,
                                                  h,
                                                  density_eq) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, density_eq);
+            u_mag, kinematic_viscosity_eq, h, sdt, density_eq);
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = density_eq * velocity_gradient * velocity +
@@ -838,7 +845,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
               double local_matrix_ij =
                 dynamic_viscosity_eq *
                   scalar_product(grad_phi_u_j_non_newtonian, grad_phi_u_i) +
-                0.5 * scratch_data.grad_viscosity_shear_rate[q] /
+                0.5 * scratch_data.grad_kinematic_viscosity_shear_rate[q] /
                   shear_rate_magnitude *
                   scalar_product(grad_phi_u_j_non_newtonian, shear_rate) *
                   scalar_product(shear_rate, grad_phi_u_i) +
@@ -958,12 +965,13 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       shear_rate_magnitude =
         shear_rate_magnitude > 1e-12 ? shear_rate_magnitude : 1e-12;
 
-      // Calculate viscosity gradient
-      const Tensor<1, dim> viscosity_gradient =
-        this->get_viscosity_gradient(velocity_gradient,
-                                     velocity_hessian,
-                                     shear_rate_magnitude,
-                                     scratch_data.grad_viscosity_shear_rate[q]);
+      // Calculate kinematic viscosity gradient
+      const Tensor<1, dim> kinematic_viscosity_gradient =
+        this->get_kinematic_viscosity_gradient(
+          velocity_gradient,
+          velocity_hessian,
+          shear_rate_magnitude,
+          scratch_data.grad_kinematic_viscosity_shear_rate[q]);
 
       // Pressure
       const double         pressure = scratch_data.pressure_values[q];
@@ -981,11 +989,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
 
       // Calculation of the equivalent properties at the quadrature point
-      double               density_eq           = scratch_data.density[q];
-      double               viscosity_eq         = scratch_data.viscosity[q];
-      const double         dynamic_viscosity_eq = density_eq * viscosity_eq;
+      double       density_eq             = scratch_data.density[q];
+      double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
+      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
       const Tensor<1, dim> dynamic_viscosity_gradient =
-        density_eq * viscosity_gradient;
+        density_eq * kinematic_viscosity_gradient;
 
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
@@ -995,11 +1003,11 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 viscosity_eq,
+                                                 kinematic_viscosity_eq,
                                                  h,
                                                  density_eq) :
           calculate_navier_stokes_gls_tau_transient(
-            u_mag, viscosity_eq, h, sdt, density_eq);
+            u_mag, kinematic_viscosity_eq, h, sdt, density_eq);
 
 
       // Calculate the strong residual for GLS stabilization
