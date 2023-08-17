@@ -944,6 +944,62 @@ namespace Parameters
     // Block linear solver to throw error.
     bool force_linear_solver_continuation;
 
+    // Maps of parameters to account for the different physics
+
+    // Type of linear solver
+    std::map<PhysicsID, SolverType> _solver;
+
+    // Verbosity
+    std::map<PhysicsID, Verbosity> _verbosity;
+
+    // Relative residuals of the iterative solver
+    std::map<PhysicsID, double> _relative_residual;
+
+    // Minimum residual of the iterative solver
+    std::map<PhysicsID, double> _minimum_residual;
+
+    // Maximum number of iterations
+    std::map<PhysicsID, int> _max_iterations;
+
+    // Maximum number of krylov vectors
+    std::map<PhysicsID, int> _max_krylov_vectors;
+
+    // ILU or ILUT fill
+    std::map<PhysicsID, double> _ilu_precond_fill;
+
+    // ILU or ILUT absolute tolerance
+    std::map<PhysicsID, double> _ilu_precond_atol;
+
+    // ILU or ILUT relative tolerance
+    std::map<PhysicsID, double> _ilu_precond_rtol;
+
+    // ILU or ILUT fill
+    std::map<PhysicsID, double> _amg_precond_ilu_fill;
+
+    // ILU or ILUT absolute tolerance
+    std::map<PhysicsID, double> _amg_precond_ilu_atol;
+
+    // ILU or ILUT relative tolerance
+    std::map<PhysicsID, double> _amg_precond_ilu_rtol;
+
+    // AMG aggregation threshold
+    std::map<PhysicsID, double> _amg_aggregation_threshold;
+
+    // AMG number of cycles
+    std::map<PhysicsID, int> _amg_n_cycles;
+
+    // AMG W_cycle
+    std::map<PhysicsID, bool> _amg_w_cycles;
+
+    // AMG Smoother sweeps
+    std::map<PhysicsID, int> _amg_smoother_sweeps;
+
+    // AMG Smoother overalp
+    std::map<PhysicsID, int> _amg_smoother_overlap;
+
+    // Block linear solver to throw error.
+    std::map<PhysicsID, bool> _force_linear_solver_continuation;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
