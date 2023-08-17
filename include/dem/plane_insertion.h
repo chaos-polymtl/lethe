@@ -68,23 +68,20 @@ public:
          const DEMSolverParameters<dim> &dem_parameters) override;
 
 private:
+  /**
+   * @brief Store the cells that are cut by the plane.
+   *
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
+   * @param plane_point Point which define the plane
+   * @param plane_normal_vector Vector which define the normal direction of
+   * the plane.
+   */
   void
-  create_random_number_container(std::vector<double> &random_container,
-                                 const double         random_number_range)
-
-    /**
-     * @brief Store the cells that are cut by the place.
-     *
-     * @param triangulation Triangulation to access the cells in which the
-     * particles are inserted
-     * @param plane_point Point which define the mathematical plane
-     * @param plane_normal_vector Vector which define the normal direction of
-     * the plane.
-     */
-    void find_inplane_cells(
-      const parallel::distributed::Triangulation<dim> &triangulation,
-      Point<3>                                         plane_point,
-      Tensor<1, 3>                                     plane_normal_vector);
+  find_inplane_cells(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    Point<3>                                         plane_point,
+    Tensor<1, 3>                                     plane_normal_vector);
 
   /**
    * @brief Store the location of the centers of all the cells that are in the plane
@@ -95,7 +92,6 @@ private:
 
   std::set<typename Triangulation<dim>::active_cell_iterator>
                                                plane_cells_for_insertion;
-  unsigned int                                 particle_counter;
   int                                          remained_particles_of_each_type;
   unsigned int                                 current_inserting_particle_type;
   std::unordered_map<unsigned int, Point<dim>> cells_centers;

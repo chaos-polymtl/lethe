@@ -16,38 +16,16 @@ PlaneInsertion<dim>::PlaneInsertion(
 {
   // Initializing current inserting particle type
   current_inserting_particle_type = 0;
-  particle_counter                = 0;
 
   // Finding which cells are inplane
   this->find_inplane_cells(
     triangulation,
     dem_parameters.insertion_info.insertion_plane_point,
     dem_parameters.insertion_info.insertion_plane_normal_vector);
-
   // // Finding the center of those cells
   this->find_centers_of_inplane_cells();
 }
 
-// This function creates a vector of random doubles using the input paramteres
-// in the parameter handler
-template <int dim>
-void
-PlaneInsertion<dim>::create_random_offset_container(
-  std::vector<Point<dim>> &random_container,
-  const double             random_number_range)
-{
-  for (unsigned int i = 0; i < this->inserted_this_step; ++i)
-    {
-      Point<dim> insertion_off_set;
-      for (unsigned int j = 0; j < dim; ++j)
-        {
-          insertion_offset(j) += static_cast<double>(rand()) /
-                                 static_cast<double>(RAND_MAX) *
-                                 random_number_range;
-        }
-      random_container.emplace_back(insertion_off_set);
-    }
-}
 
 template <int dim>
 void
@@ -136,8 +114,10 @@ PlaneInsertion<dim>::insert(
       ConditionalOStream pcout(
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);
 
-      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
-
+      unsigned int this_mpi_process =
+        Utilities::MPI::this_mpi_process(communicator);
+      unsigned int total_mpi_process =
+        Utilities::MPI::n_mpi_processes(communicator);
       // List of the empty cells at this time step
       std::set<typename Triangulation<dim>::active_cell_iterator>
         empty_cells_on_proc;
@@ -157,7 +137,8 @@ PlaneInsertion<dim>::insert(
       auto number_of_particles_to_insert_per_core =
         Utilities::MPI::gather(communicator, empty_cells_on_proc.size(), 0);
 
-      std::vector<int> starting_IDs_on_every_proc;
+      std::vector<int> starting_IDs_on_every_proc(total_mpi_process);
+      std::vector<int> remained_particles_for_every_proc(total_mpi_process);
       // Only processor zero does this
       if (this_mpi_process == 0)
         {
@@ -167,9 +148,7 @@ PlaneInsertion<dim>::insert(
           // we loop over the vector that we have created using the gather.
           // Every integer in that vector gives the number of empty_cell of a
           // certain processor.
-          for (unsigned int i = 0;
-               i < number_of_particles_to_insert_per_core.size();
-               ++i)
+          for (unsigned int i = 0; i < total_mpi_process; ++i)
             {
               // We subtract those integer from the following variable
               remained_particles_of_each_type -=
@@ -202,84 +181,141 @@ PlaneInsertion<dim>::insert(
                   // available on this processor by the exceeding amount.
                   remained_particles_of_each_type = 0;
 
+                  starting_IDs_on_every_proc[i] = starting_id_on_proc;
+                  starting_id_on_proc +=
+                    number_of_particles_to_insert_per_core[i];
+
                   // Loop over the remaining processor and put their number of
                   // available cell to zero.
-                  for (unsigned int j = i + 1;
-                       j < number_of_particles_to_insert_per_core.size();
-                       ++j)
+                  for (unsigned int j = i + 1; j < (total_mpi_process); ++j)
                     {
                       number_of_particles_to_insert_per_core[j] = 0;
+                      starting_IDs_on_every_proc[j]             = 0;
                     }
                   break;
                 }
-              starting_IDs_on_every_proc.emplace_back(starting_id_on_proc);
+              starting_IDs_on_every_proc[i] = starting_id_on_proc;
               starting_id_on_proc += number_of_particles_to_insert_per_core[i];
             }
+          std::fill(remained_particles_for_every_proc.begin(),
+                    remained_particles_for_every_proc.end(),
+                    remained_particles_of_each_type);
         }
+
       // Now, processor zero knows how many particles will be inserted by every
       // processor without exceeding the maximum number of particles.
 
-      // We now need to scatter two details to every processor, first how
-      // many particles it needs to insert and second what is the ID of the
-      // first particle it will insert at this insertion step.
-
-      // The transmission of the starting ID is mandatory, since we don't
-      // want two particles to have the same ID, and we don't want to use the
-      // global_insertion method because it uses an all_gather, which has a
-      // high computational cost.
+      // We now need to scatter 3 information processor, first how
+      // many particles it needs to insert. Second what is the ID of the
+      // first particle it will insert at this insertion step. The starting ID
+      // is mandatory, since we don't want two particles to have the same ID,
+      // and we don't want to use the global_insertion method because it uses an
+      // all_gather, which has a high computational cost. Third, the
+      // remained_particles_of_each_type variable need to be updated proc other
+      // than proc 0 will enter the insert function dans the simulation will
+      // stop.
 
       // This scatters the number of particles to insert
-      int number_of_particles_to_insert_on_this_core =
+      unsigned int number_of_particles_to_insert_on_this_core =
         Utilities::MPI::scatter(communicator,
                                 number_of_particles_to_insert_per_core,
                                 0);
 
       // This scatters the starting ID on every proc for the insertion
-      int starting_ID_on_proc =
+      unsigned int starting_ID_on_proc =
         Utilities::MPI::scatter(communicator, starting_IDs_on_every_proc, 0);
 
-      // Every processor knows how many particles it needs to insert at this
-      // insertion this time step. Next step is to generate a vector Point<dim>
-      // and a list of IDs to insert particle using the insert_particles
-      // function.
+      // This scatters remained_particles_of_each_type on every proc 
+      remained_particles_of_each_type =
+        Utilities::MPI::scatter(communicator,
+                                remained_particles_for_every_proc,
+                                0);
 
-      // Created the vectors of IDs with the right size
-      std::vector<int> vector_IDs(number_of_particles_to_insert_on_this_core);
-      std::vector<Point<dim>> vector_insertion_point(
-        number_of_particles_to_insert_on_this_core);
-      // For the IDs, goes from starting_ID_on_proc to starting_ID_on_proc +
-      // number_of_particles_to_insert_on_this_core
-      std::iota(vector_IDs.begin(), vector_IDs.end(), starting_ID_on_proc);
+      // We yet didn't say which empty cells won't be use anymore.
+      // empty_cells_on_proc needs to be shorter for some processor.
 
-      // Create the offset Point<dim> vector
-      std::vector<Point<dim>> random_insert_offset_vector;
-      random_number_vector.reserve(number_of_particles_to_insert_on_this_core);
-
-      // Call random Point generator
-      this->create_random_offset_container(
-        random_insert_offset_vector,
-        dem_parameters.insertion_info.random_number_range);
-
-      // Create the final insertion location vector
-      std::vector<Point<dim>> insertion_location;
-      insertion_location.reserve(number_of_particles_to_insert_on_this_core);
-
-      while (empty_cells_on_proc.size() <
-             number_of_particles_to_insert_per_core[this_mpi_process])
+      // There's probably a better way without using a while loop, but we enter
+      // in this while only once.
+      while (empty_cells_on_proc.size() >
+             number_of_particles_to_insert_on_this_core)
         {
-          auto it = empty_cells_on_proc.end();
-          empty_cells_on_proc.erase(it);
+          auto it =
+            empty_cells_on_proc.end();   // Get an iterator to the last element
+          std::advance(it, -1);          // Move the iterator back by one step
+          empty_cells_on_proc.erase(it); // Erase the last element
         }
 
-      int i = 0;
+      // There's probably a better ways to define the properties of a particle,
+      // but for now it works...
+      double type     = this->current_inserting_particle_type;
+      double diameter = dem_parameters.lagrangian_physical_properties
+                          .particle_average_diameter.at(type);
+      double density =
+        dem_parameters.lagrangian_physical_properties.density_particle.at(type);
+      double vel_x        = dem_parameters.insertion_info.vel_x;
+      double vel_y        = dem_parameters.insertion_info.vel_y;
+      double vel_z        = dem_parameters.insertion_info.vel_z;
+      double omega_x      = dem_parameters.insertion_info.omega_x;
+      double omega_y      = dem_parameters.insertion_info.omega_y;
+      double omega_z      = dem_parameters.insertion_info.omega_z;
+      double fem_force_x  = 0.;
+      double fem_force_y  = 0.;
+      double fem_force_z  = 0.;
+      double fem_torque_x = 0.;
+      double fem_torque_y = 0.;
+      double fem_torque_z = 0.;
+      double mass         = density * 4. / 3. * M_PI *
+                    Utilities::fixed_power<3, double>(diameter * 0.5);
+      double volumetric_contribution = 0.;
+
+      std::vector<double> properties_of_one_particle{type,
+                                                     diameter,
+                                                     vel_x,
+                                                     vel_y,
+                                                     vel_z,
+                                                     omega_x,
+                                                     omega_y,
+                                                     omega_z,
+                                                     fem_force_x,
+                                                     fem_force_y,
+                                                     fem_force_z,
+                                                     fem_torque_x,
+                                                     fem_torque_y,
+                                                     fem_torque_z,
+                                                     mass,
+                                                     volumetric_contribution};
+
+      // Loop over the empty cells we have kept.
       for (const auto &cell : empty_cells_on_proc)
         {
-          insertion_location[i] = cells_centers.at(cell->active_cell_index()) +
-                                  random_insert_offset_vector[i++];
-        }
+          // Position of the center of the cell
+          Point<dim> insertion_location =
+            cells_centers.at(cell->active_cell_index());
 
-      particle_handler.insert_particles( insertion_location);
-      // ICI OLIVIER!!!
+          // Generate the random point of insertion
+          insertion_location(0) +=
+            static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+            dem_parameters.insertion_info.random_number_range;
+
+          insertion_location(1) +=
+            static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+            dem_parameters.insertion_info.random_number_range;
+
+          if constexpr (dim == 3)
+            {
+              insertion_location(2) +=
+                static_cast<double>(rand()) / static_cast<double>(RAND_MAX) *
+                dem_parameters.insertion_info.random_number_range;
+            }
+
+          // Insertion
+          Point<dim> ref_point;
+          particle_handler.insert_particle(insertion_location,
+                                           ref_point,
+                                           starting_ID_on_proc++,
+                                           cell,
+                                           properties_of_one_particle);
+        }
     }
 }
 template class PlaneInsertion<2>;
