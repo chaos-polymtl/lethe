@@ -46,6 +46,8 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_matrix()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
+
   this->system_matrix = 0;
   setup_assemblers();
 
@@ -165,6 +167,8 @@ template <int dim>
 void
 Tracer<dim>::assemble_system_rhs()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
   // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
   this->system_rhs = 0;
   setup_assemblers();
@@ -396,6 +400,13 @@ Tracer<dim>::postprocess(bool first_iteration)
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_tracer_statistics();
+    }
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::iteration)
+    {
+      announce_string(this->pcout, "Tracer");
+      this->computing_timer.print_summary();
+      this->computing_timer.reset();
     }
 }
 
@@ -711,6 +722,8 @@ void
 Tracer<dim>::solve_linear_system(const bool initial_step,
                                  const bool /*renewed_matrix*/)
 {
+  TimerOutput::Scope t(this->computing_timer, "Solve linear system");
+
   auto mpi_communicator = triangulation->get_communicator();
 
   const AffineConstraints<double> &constraints_used =
