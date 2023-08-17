@@ -225,7 +225,7 @@ PlaneInsertion<dim>::insert(
       unsigned int starting_ID_on_proc =
         Utilities::MPI::scatter(communicator, starting_IDs_on_every_proc, 0);
 
-      // This scatters remained_particles_of_each_type on every proc 
+      // This scatters remained_particles_of_each_type on every proc
       remained_particles_of_each_type =
         Utilities::MPI::scatter(communicator,
                                 remained_particles_for_every_proc,
