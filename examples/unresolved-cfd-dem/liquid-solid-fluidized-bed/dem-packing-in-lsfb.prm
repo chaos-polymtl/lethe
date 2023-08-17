@@ -9,8 +9,8 @@ set dimension = 3
 
 subsection simulation control
   set time step        = 0.000005
-  set time end         = 10.5
-  set log frequency    = 1000
+  set time end         = 2.5
+  set log frequency    = 20000
   set output frequency = 20000
   set output path      = ./output_dem/
 end
@@ -29,7 +29,7 @@ end
 
 subsection restart
   set checkpoint = true
-  set frequency  = 100000
+  set frequency  = 20000
   set restart    = false
   set filename   = dem
 end
@@ -86,15 +86,15 @@ end
 
 subsection insertion info
   set insertion method                               = non_uniform
-  set inserted number of particles at each time step = 7240
-  set insertion frequency                            = 100000
-  set insertion box minimum x                        = 0
-  set insertion box minimum y                        = -0.030
-  set insertion box minimum z                        = -0.030
+  set inserted number of particles at each time step = 48841 # for alginate, we recommend 79600
+  set insertion frequency                            = 200000
+  set insertion box minimum x                        = -0.15
+  set insertion box minimum y                        = -0.035
+  set insertion box minimum z                        = -0.035
   set insertion box maximum x                        = 0.53
-  set insertion box maximum y                        = 0.030
-  set insertion box maximum z                        = 0.030
-  set insertion distance threshold                   = 1.8
+  set insertion box maximum y                        = 0.035
+  set insertion box maximum z                        = 0.035
+  set insertion distance threshold                   = 1.3
   set insertion random number range                  = 0.3
   set insertion random number seed                   = 19
 end

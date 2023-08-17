@@ -17,8 +17,10 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.prm``
-``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/dem-packing-in-spouted-bed.prm``
+
+- Parameters file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/dem-packing-in-spouted-bed.prm``
+- Parameters file of CFD-DEM simulation of the spouted bed: ``/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.prm``
+
 
 
 -----------------------
@@ -392,7 +394,7 @@ Linear Solver
       set verbosity                             = verbose
     end
 
-For more information about the non-linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
+For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
 
 
 ------------------------------

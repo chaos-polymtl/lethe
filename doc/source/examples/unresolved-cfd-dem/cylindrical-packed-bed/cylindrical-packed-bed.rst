@@ -16,9 +16,9 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``/examples/unresolved-cfd-dem/cylindrical-packed-bed/flow-in-bed.prm``
-``/examples/unresolved-cfd-dem/cylindrical-packed-bed/packing-in-cylinder.prm``
 
+- Parameters file of particles generation and packing: ``/examples/unresolved-cfd-dem/cylindrical-packed-bed/packing-in-cylinder.prm``
+- Parameters file of CFD-DEM simulation of the packed bed: ``/examples/unresolved-cfd-dem/cylindrical-packed-bed/flow-in-bed.prm``
 
 -----------------------
 Description of the Case

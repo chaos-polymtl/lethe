@@ -18,9 +18,10 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/liquid-solid-fluidized-bed.prm``
-``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-lsfb.prm``
-``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/lsfb_postprocessing.py``
+
+- Parameters file of particles generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-lsfb.prm``
+- Parameters file for the liquid-solid fluidized bed unresolved CFD-DEM simulation: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/liquid-solid-fluidized-bed.prm``
+- Post-processing Python code: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/lsfb_postprocessing.py``
 
 
 -----------------------
@@ -50,8 +51,6 @@ All parameter subsections are described in the `parameter section <../../../para
 To set-up the cylinder fluidized bed case, we first fill the bed with particles.
 
 We first introduce the different sections of the parameter file ``dem-packing-in-lsfb.prm`` needed to run this simulation.
-
-The parameter is divided into `subsections`, presented individually as follows.
 
 Mesh
 ~~~~~
@@ -94,13 +93,13 @@ A floating wall is added 10 cm above the bottom of the mesh, so that void fracti
           set y = 0
           set z = 0
         end
-      subsection normal vector
-        set nx = 1
-        set ny = 0
-        set nz = 0
-      end
-      set start time = 0
-      set end time   = 50
+        subsection normal vector
+          set nx = 1
+          set ny = 0
+          set nz = 0
+        end
+        set start time = 0
+        set end time   = 50
       end
     end
 
@@ -116,13 +115,14 @@ Here, we define the time-step and the simulation end time.
 
     subsection simulation control
       set time step        = 0.000005
-      set time end         = 10.5
-      set log frequency    = 1000
+      set time end         = 2.5
+      set log frequency    = 20000
       set output frequency = 20000
       set output path      = ./output_dem/
     end
 
-It is important to define ``time end`` according to particles insertion (explained further in this example).
+.. important::
+    It is important to define the ``time end`` to include the time required to insert the particles and the time the it takes for particles to settle.
 
 Restart
 ~~~~~~~~
@@ -133,7 +133,7 @@ The ``cfd_dem_coupling`` solver requires reading several DEM files to start the 
 
     subsection restart
       set checkpoint = true
-      set frequency  = 100000
+      set frequency  = 20000
       set restart    = false
       set filename   = dem
     end
@@ -203,21 +203,21 @@ The volume of the insertion box should be large enough to fit all particles. Als
 
     subsection insertion info
       set insertion method                               = non_uniform
-      set inserted number of particles at each time step = 7240
-      set insertion frequency                            = 100000
-      set insertion box minimum x                        = 0
-      set insertion box minimum y                        = -0.030
-      set insertion box minimum z                        = -0.030
+      set inserted number of particles at each time step = 48841 # for alginate, we recommend 79600
+      set insertion frequency                            = 200000
+      set insertion box minimum x                        = -0.15
+      set insertion box minimum y                        = -0.035
+      set insertion box minimum z                        = -0.035
       set insertion box maximum x                        = 0.53
-      set insertion box maximum y                        = 0.030
-      set insertion box maximum z                        = 0.030
-      set insertion distance threshold                   = 1.8
+      set insertion box maximum y                        = 0.035
+      set insertion box maximum z                        = 0.035
+      set insertion distance threshold                   = 1.3
       set insertion random number range                  = 0.3
       set insertion random number seed                   = 19
     end
 
 .. note::
-    At each time-step, 7240 particles are inserted. This means that, to reach the full amount of particles (72400), 10 insertion time steps are needed. Additionally, particles need to be fully settled before the fluid injection. Hence, ``time end`` in ``subsection simulation control`` needs to be chosen accordingly.
+    Particles need to be fully settled before the fluid injection. Hence, ``time end`` in ``subsection simulation control`` needs to be chosen accordingly.
 
 
 ---------------------------
@@ -239,7 +239,7 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 
 .. note:: 
-    Running the packing of alumina particles should take approximately 4 hours and 15 minutes on 16 cores. For the alginate particles, it takes approximately 5 hours and 52 minutes (``time end = 9.9``).
+    Running the packing of alumina particles should take approximately 57 minutes on 16 cores. For the alginate particles, it takes approximately 1 hour and 32 minutes.
 
 Now that the particles have been packed inside the cylinder, it is possible to simulate the fluidization of particles.
 

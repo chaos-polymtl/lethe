@@ -16,9 +16,9 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
-``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
 
+- Parameters file of particles generation and packing:``/examples/unresolved-cfd-dem/boycott-effect/particle_generator.prm``
+- Parameters file of CFD-DEM simulation of the Boycot effect: ``/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.prm``
 
 -----------------------
 Description of the Case
@@ -85,18 +85,6 @@ Model Parameters
 ~~~~~~~~~~~~~~~~~
 
 The section on model parameters is explained in the DEM examples. We show the chosen parameters for this section:
-
-.. code-block:: text
-
-    subsection model parameters
-      set contact detection method               = dynamic
-      set contact detection frequency            = 10
-      set neighborhood threshold                 = 1.3
-      set rolling resistance torque method       = constant_resistance
-      set particle particle contact force method = hertz_mindlin_limit_force
-      set particle wall contact force method     = nonlinear
-      set integration method                     = velocity_verlet
-    end
 
 .. code-block:: text
 
@@ -358,7 +346,7 @@ Linear Solver
       set max krylov vectors                    = 200
     end
 
-For more information about the non-linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
+For more information about the linear solver, please refer to the `Linear Solver Section <../../../parameters/cfd/linear_solver_control.html>`_
 
 
 ------------------------------
