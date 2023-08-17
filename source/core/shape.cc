@@ -1800,7 +1800,8 @@ RBFShape<dim>::update_precalculations(
   for (unsigned int level = 0; level + levels_not_precalculated < maximal_level;
        level++)
     {
-      const auto &cell_iterator = dof_handler.cell_iterators_on_level(level);
+      max_number_of_inside_nodes = 1;
+      const auto &cell_iterator  = dof_handler.cell_iterators_on_level(level);
       for (const auto &cell : cell_iterator)
         {
           if (cell->is_artificial_on_level())
