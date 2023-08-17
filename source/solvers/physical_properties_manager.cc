@@ -92,6 +92,7 @@ PhysicalPropertiesManager::initialize(
       rheology.push_back(
         RheologicalModel::model_cast(physical_properties.fluids[f]));
       this->establish_fields_required_by_model(*rheology[f]);
+      rheology[f]->set_dynamic_viscosity(density[f]->get_density_ref());
 
       tracer_diffusivity.push_back(
         TracerDiffusivityModel::model_cast(physical_properties.fluids[f]));

@@ -119,7 +119,6 @@ NavierStokesScratchData<dim>::enable_vof(
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
-  density_ref_eq             = std::vector<double>(n_q_points);
   compressibility_multiplier = std::vector<double>(n_q_points);
 
   // Create filter
@@ -159,7 +158,6 @@ NavierStokesScratchData<dim>::enable_vof(
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
-  density_ref_eq             = std::vector<double>(n_q_points);
   compressibility_multiplier = std::vector<double>(n_q_points);
 
   // Create filter
@@ -349,7 +347,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           density_psi = density_model->get_psi();
           density_ref = density_model->get_density_ref();
           // Dynamic viscosity is also necessary for compressible flows
-          rheology_model->set_dynamic_viscosity(density_ref);
           rheology_model->get_dynamic_viscosity_vector(density_ref,
                                                        fields,
                                                        dynamic_viscosity);
@@ -377,9 +374,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           const auto rheology_model_1 = properties_manager.get_rheology(1);
 
           density_ref_0 = density_model_0->get_density_ref();
-          rheology_model_0->set_dynamic_viscosity(density_ref_0);
           density_ref_1 = density_model_1->get_density_ref();
-          rheology_model_1->set_dynamic_viscosity(density_ref_1);
 
           // Gather properties from material interactions if necessary
           if (properties_manager.get_number_of_material_interactions() > 0)
@@ -394,16 +389,16 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
 
           density_model_0->vector_value(fields, density_0);
+          rheology_model_0->vector_value(fields, kinematic_viscosity_0);
           rheology_model_0->get_dynamic_viscosity_vector(density_ref_0,
                                                          fields,
                                                          dynamic_viscosity_0);
-          rheology_model_0->vector_value(fields, kinematic_viscosity_0);
 
           density_model_1->vector_value(fields, density_1);
+          rheology_model_1->vector_value(fields, kinematic_viscosity_1);
           rheology_model_1->get_dynamic_viscosity_vector(density_ref_1,
                                                          fields,
                                                          dynamic_viscosity_1);
-          rheology_model_1->vector_value(fields, kinematic_viscosity_1);
 
           if (gather_temperature)
             {
@@ -443,27 +438,16 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                              this->thermal_expansion_1[q]);
                 }
 
-              // Gather density_ref and density_psi for isothermal compressible
-              // NS equations
+              // Gather density_psi for isothermal compressible NS equations
               if (!properties_manager.density_is_constant())
                 {
-                  //                  density_ref_0 =
-                  //                  density_model_0->get_density_ref();
                   density_psi_0 = density_model_0->get_psi();
-                  //                  density_ref_1 =
-                  //                  density_model_1->get_density_ref();
                   density_psi_1 = density_model_1->get_psi();
 
                   for (unsigned int q = 0; q < this->n_q_points; ++q)
                     {
                       double filtered_phase_value =
                         this->filtered_phase_values[q];
-                      // To be able to calculate the equivalent dynamic
-                      // viscosity
-                      density_ref_eq[q] =
-                        calculate_point_property(filtered_phase_value,
-                                                 this->density_ref_0,
-                                                 this->density_ref_1);
                       // To avoid calculating twice in the assemblers
                       compressibility_multiplier[q] =
                         filtered_phase_value *

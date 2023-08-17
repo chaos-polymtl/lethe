@@ -996,7 +996,6 @@ public:
   std::vector<double> density_1;
   double              density_ref_0;
   double              density_ref_1;
-  std::vector<double> density_ref_eq;
   double              density_psi_0;
   double              density_psi_1;
   std::vector<double> compressibility_multiplier;

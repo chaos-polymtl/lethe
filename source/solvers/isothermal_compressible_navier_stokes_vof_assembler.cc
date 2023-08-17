@@ -68,10 +68,8 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       density_0              = scratch_data.density_0[q];
-      double       density_ref_eq         = scratch_data.density_ref_eq[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq =
-        density_ref_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
 
       double compressibility_multiplier =
         scratch_data.compressibility_multiplier[q];
@@ -249,10 +247,8 @@ GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       density_0              = scratch_data.density_0[q];
-      double       density_ref_eq         = scratch_data.density_ref_eq[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq =
-        density_ref_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
 
       double compressibility_multiplier =
         scratch_data.compressibility_multiplier[q];
