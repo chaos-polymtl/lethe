@@ -15,8 +15,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   const std::vector<double> &kinematic_viscosity_vector =
     scratch_data.kinematic_viscosity;
   const std::vector<double> &density_vector = scratch_data.density;
-  const double               density_psi    = scratch_data.density_psi;
-  const double               density_ref    = scratch_data.density_ref;
+  const std::vector<double> &dynamic_viscosity_vector =
+    scratch_data.dynamic_viscosity;
+  const double density_psi = scratch_data.density_psi;
 
   // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -44,7 +45,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const double kinematic_viscosity = kinematic_viscosity_vector[q];
       const double density             = density_vector[q];
-      const double dynamic_viscosity   = density_ref * kinematic_viscosity;
+      const double dynamic_viscosity   = dynamic_viscosity_vector[q];
 
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
@@ -207,8 +208,9 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   const std::vector<double> &kinematic_viscosity_vector =
     scratch_data.kinematic_viscosity;
   const std::vector<double> &density_vector = scratch_data.density;
-  const double               density_psi    = scratch_data.density_psi;
-  const double               density_ref    = scratch_data.density_ref;
+  const std::vector<double> &dynamic_viscosity_vector =
+    scratch_data.dynamic_viscosity;
+  const double density_psi = scratch_data.density_psi;
 
   // Loop and quadrature information
   const auto &       JxW_vec    = scratch_data.JxW;
@@ -232,7 +234,7 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Physical properties
       const double kinematic_viscosity = kinematic_viscosity_vector[q];
       const double density             = density_vector[q];
-      const double dynamic_viscosity   = density_ref * kinematic_viscosity;
+      const double dynamic_viscosity   = dynamic_viscosity_vector[q];
 
       // Velocity
       const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
