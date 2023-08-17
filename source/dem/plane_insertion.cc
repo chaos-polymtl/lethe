@@ -111,11 +111,12 @@ PlaneInsertion<dim>::insert(
     }
   if (remained_particles_of_each_type > 0)
     {
-      if(load_balancing_was_done)
+      if (load_balancing_was_done)
         {
-          find_inplane_cells(triangulation,
-                             dem_parameters.insertion_info.insertion_plane_point,
-                             dem_parameters.insertion_info.insertion_plane_normal_vector);
+          find_inplane_cells(
+            triangulation,
+            dem_parameters.insertion_info.insertion_plane_point,
+            dem_parameters.insertion_info.insertion_plane_normal_vector);
           find_centers_of_inplane_cells();
           load_balancing_was_done = false;
         }
