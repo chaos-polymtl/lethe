@@ -24,6 +24,7 @@ PlaneInsertion<dim>::PlaneInsertion(
     dem_parameters.insertion_info.insertion_plane_normal_vector);
   // // Finding the center of those cells
   this->find_centers_of_inplane_cells();
+  load_balancing_was_done = false;
 }
 
 
@@ -110,6 +111,15 @@ PlaneInsertion<dim>::insert(
     }
   if (remained_particles_of_each_type > 0)
     {
+      if(load_balancing_was_done)
+        {
+          find_inplane_cells(triangulation,
+                             dem_parameters.insertion_info.insertion_plane_point,
+                             dem_parameters.insertion_info.insertion_plane_normal_vector);
+          find_centers_of_inplane_cells();
+          load_balancing_was_done = false;
+        }
+
       MPI_Comm           communicator = triangulation.get_communicator();
       ConditionalOStream pcout(
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0);

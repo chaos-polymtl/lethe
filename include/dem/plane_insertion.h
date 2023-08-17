@@ -28,11 +28,16 @@
 #  define plane_insertion_h
 
 /**
- * Insertion of particles using cells cut by a mathematical plane
+ * Insertion of particles using cells cut by a plane
  *
  * @note
  *
  * @author Olivier Gaboriault, Polytechnique Montreal 2023-
+ * Paticle insertion using cells cut by a plane. Locally own cells that are
+ * cut by the plane are flag. From those flag cells, we insert a particle at
+ * their center's if they are individually empty (contain no particle). This
+ * way, no significant overlap is occurring on the insertion of new particle
+ * which can occur with other insertion method.
  */
 
 template <int dim>
@@ -40,7 +45,7 @@ class PlaneInsertion : public Insertion<dim>
 {
 public:
   /**
-   * The plane insertion class insert particles using a mathematical plane
+   * The plane insertion class insert particles using a plane
    * define by a point an a normal vector. This method of insertion can be
    * useful when dealing with a domain close to be fully filled with particle.
    * In this situation, other insertion method have a high risk to create a big
@@ -97,6 +102,7 @@ private:
   std::unordered_map<unsigned int, Point<dim>> cells_centers;
   std::unordered_map<unsigned int, double>     number_particles_to_insert;
   std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
+  bool                                         load_balancing_was_done;
 };
 
 

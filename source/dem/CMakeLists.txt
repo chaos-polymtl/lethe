@@ -18,7 +18,6 @@ add_library(lethe-dem
   lagrangian_post_processing.cc
   list_insertion.cc
   non_uniform_insertion.cc
-  plane_insertion.cc
   output_force_torque_calculation.cc
   particle_particle_broad_search.cc
   particle_particle_contact_force.cc
@@ -32,6 +31,7 @@ add_library(lethe-dem
   particle_wall_linear_force.cc
   particle_wall_nonlinear_force.cc
   periodic_boundaries_manipulator.cc
+  plane_insertion.cc
   post_processing.cc
   read_checkpoint.cc
   read_mesh.cc
@@ -63,7 +63,6 @@ add_library(lethe-dem
   ../../include/dem/lagrangian_post_processing.h
   ../../include/dem/list_insertion.h
   ../../include/dem/non_uniform_insertion.h
-  ../../include/dem/plane_insertion.h
   ../../include/dem/output_force_torque_calculation.h
   ../../include/dem/particle_particle_broad_search.h
   ../../include/dem/particle_particle_contact_force.h
@@ -80,6 +79,7 @@ add_library(lethe-dem
   ../../include/dem/particle_wall_linear_force.h
   ../../include/dem/particle_wall_nonlinear_force.h
   ../../include/dem/periodic_boundaries_manipulator.h
+  ../../include/dem/plane_insertion.h
   ../../include/dem/post_processing.h
   ../../include/dem/read_checkpoint.h
   ../../include/dem/read_mesh.h
