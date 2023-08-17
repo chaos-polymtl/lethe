@@ -90,7 +90,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_matrix(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
       double       curvature_cahn_hilliard =
         3 * scratch_data.surface_tension[q] /
         (4 * std::sqrt(2 * well_height) * epsilon);
@@ -288,7 +288,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
       // Calculation of the equivalent properties at the quadrature point
       double       density_eq             = scratch_data.density[q];
       double       kinematic_viscosity_eq = scratch_data.kinematic_viscosity[q];
-      const double dynamic_viscosity_eq   = density_eq * kinematic_viscosity_eq;
+      const double dynamic_viscosity_eq   = scratch_data.dynamic_viscosity[q];
       double       curvature_cahn_hilliard =
         3 * scratch_data.surface_tension[q] /
         (4 * std::sqrt(2 * well_height) * epsilon);
