@@ -426,7 +426,6 @@ public:
   double        cell_size;
 
 
-
   // Quadrature
   std::vector<double>     JxW;
   std::vector<Point<dim>> quadrature_points;

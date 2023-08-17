@@ -66,10 +66,6 @@ HeatTransferScratchData<dim>::allocate()
                                           n_q_points));
   fields.insert(
     std::pair<field, std::vector<double>>(field::shear_rate, n_q_points));
-  specific_heat        = std::vector<double>(n_q_points);
-  density              = std::vector<double>(n_q_points);
-  thermal_conductivity = std::vector<double>(n_q_points);
-  dynamic_viscosity    = std::vector<double>(n_q_points);
 }
 
 template <int dim>
