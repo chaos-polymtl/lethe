@@ -73,7 +73,8 @@ Lethe rebuilds the contact lists automatically. In this mode, Lethe stores the d
 
 where :math:`{\phi}`, :math:`{d_c^{min}}`, :math:`{r_p^{max}}`, :math:`{\epsilon}`, and :math:`{\alpha}` denote smallest contact search criterion, minimum cell size (in the triangulation), maximum particle radius (in polydisperse simulations), ``dynamic contact search size coefficient``, and ``neighborhood threshold``.
 
-* ``dynamic contact search size coefficient`` is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value.
+* ``dynamic contact search size coefficient`` is a safety factor to ensure the late detection of particles will not happen in the simulations with ``dynamic`` contact search; and its value should be defined generally in the range of 0.5-1. 0.5 is a rather conservative value. The default value of 0.8 is adequate for most simulations.
+* ``frequency`` controls the frequency at which the dynamic contact search is carried out. For most cases, the default value of 1 should be maintained to ensure that the dynamic contact detection is refreshed accurately. Increasing this value between 2 and 5 can decrease the computational cost when a large (>16) number of cores is used since this diminishes the number of MPI communications.
 
 
 ``contact detection method = constant``

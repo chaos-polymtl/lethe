@@ -42,6 +42,10 @@ using namespace dealii;
  * @param sorting_in_subdomains_step True if it is insertion, load-
  * balance or contact detection step
  * @param displacement Displacement of particles since last sorting step
+ * @param parallel_update Update the identification of the contact detection step in parallel.
+ * If this parameter is set to false, the distance will be calculated but the
+ * logical OR statement won't be called and a false value will be returned. In
+ * essence, this will only update the displacement.
  * @return Returns true if the maximum cumulative
  * displacement of particles exceeds the threshold and false otherwise
  *
@@ -54,8 +58,9 @@ find_particle_contact_detection_step(
   const double                     dt,
   const double                     smallest_contact_search_criterion,
   MPI_Comm &                       mpi_communicator,
-  bool                             sorting_in_subdomains_step,
-  std::vector<double> &            displacement);
+  const bool                       sorting_in_subdomains_step,
+  std::vector<double> &            displacement,
+  const bool                       parallel_update = true);
 
 /**
  * @brief Carries out finding steps for dynamic contact search in particle-floating
