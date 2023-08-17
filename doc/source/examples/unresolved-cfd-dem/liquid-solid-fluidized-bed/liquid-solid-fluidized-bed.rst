@@ -10,9 +10,9 @@ Features
 ----------------------------------
 - Solvers: ``dem`` and ``cfd_dem_coupling``
 - Three-dimensional problem
-- Displays the selection of models and physical properties.
-- Simulates a solid-liquid fluidized bed.
-- Post-processing code available.
+- Displays the selection of models and physical properties
+- Simulates a solid-liquid fluidized bed
+- Post-processing code available
 
 
 ---------------------------
@@ -27,17 +27,17 @@ Files Used in This Example
 Description of the Case
 -----------------------
 
-This example simulates the fluidization of spherical particles in water. It is meant to reproduce the behavior observed experimentally in a pilot-scale equipment with the same characteristics of the simulations.
+This example simulates the fluidization of spherical particles in water. It is meant to reproduce the behavior observed experimentally in a pilot-scale equipment with the same characteristics as the simulations.
 
 We use two different types of particles `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_: alginate (:math:`d_p = 2.66 \: mm`, :math:`\rho_p = 1029 \: kg \cdot m^{-3}`) and alumina (:math:`d_p = 3.09 \: mm`, :math:`\rho_p = 3586 \: kg \cdot m^{-3}`).
 
-A representation of this equipment is presented. The fluidization region comprises a 1.0 m height, 10 cm diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ and Ferreira *et al* `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_.
+A representation of this equipment is shown. The fluidization region comprises a 1.0 m height, 10 cm diameter cylinder made of acrylic. More details about the experimental setup can be found in Ferreira *et al*. `[1] <https://doi.org/10.1016/j.powtec.2023.118652>`_ and Ferreira *et al* `[2] <https://doi.org/10.1016/j.enconman.2023.117224>`_.
 
 .. figure:: images/experimental_setup.png
     :alt: particle packing
     :align: center
 
-    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in oparation. Adapted from Ferreira *et al* [1].
+    Pilot-scale fluidized bed used as reference for simulations in this example. Image includes (a) schematic representation of the bed and (b) picture of the equipment in operation. Adapted from Ferreira *et al* [1].
 
 -------------------
 DEM Parameter File
@@ -56,7 +56,7 @@ The parameter is divided into `subsections`, presented individually as follows.
 Mesh
 ~~~~~
 
-In this example, we are simulating a cylindrical fluidized bed that has a half length of 0.55 m (10 cm higher than the fluidization region in the experimental setup), and a diameter of 10 cm. We use the `subdivided_cylinder GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a95f6e6a7ae2fe3a862df035dd2cb4467:~:text=%E2%97%86-,subdivided_cylinder,-()>`_  in order to generate the mesh. The square bed is divided 132 times in the x direction (height) and 12 times in y and z directions (6 times in the radius). The following portion of the DEM parameter file shows the function called:
+In this example, we are simulating a cylindrical fluidized bed that has a half length of 0.55 m (10 cm higher than the fluidization region in the experimental setup), and a diameter of 10 cm. We use the `subdivided_cylinder GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html#a95f6e6a7ae2fe3a862df035dd2cb4467:~:text=%E2%97%86-,subdivided_cylinder,-()>`_  in order to generate the mesh. The cylindrical bed is divided 132 times in the x direction (height) and 12 times in y and z directions (6 times in the radius). The following portion of the DEM parameter file shows the function called:
 
 .. code-block:: text
 
@@ -69,9 +69,9 @@ In this example, we are simulating a cylindrical fluidized bed that has a half l
     end
 
 .. note::
-    Note that, since the mesh is cylindrical, ``set expand particle-wall contact search = true``. Details in the `DEM mesh parameters guide <../../../parameters/dem/mesh.html>`_.
+    Note that, since the mesh is cylindrical, ``set expand particle-wall contact search = true``. Details on this in the `DEM mesh parameters guide <../../../parameters/dem/mesh.html>`_.
 
-A cross section of the resulting mesh is presented in the following figure.
+A cross-section of the resulting mesh is presented in the following figure.
 
 .. figure:: images/mesh_cross_sec.png
     :alt: Mesh cross-section.
@@ -105,7 +105,7 @@ A floating wall is added 10 cm above the bottom of the mesh, so that void fracti
     end
 
 .. note::
-    Note that ``end time`` is higher than ``time end`` in ``simulation control``, so that the floating wall does not disappear in the middle of the simulation.
+    Note that ``end time`` is higher than ``time end`` in ``simulation control``, so that the floating wall remains for the whole simulation.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,7 +192,7 @@ The lagrangian properties were taken from Ferreira *et al*. `[1] <https://doi.or
       set rolling friction wall        = 0.3
     end
 
-The amount of particles used for alginate particles is 107960.
+The number of particles used for alginate particles is 107960.
     
 Insertion Info
 ~~~~~~~~~~~~~~~~~~~
@@ -241,13 +241,13 @@ Lethe will generate a number of files. The most important one bears the extensio
 .. note:: 
     Running the packing of alumina particles should take approximately 4 hours and 15 minutes on 16 cores. For the alginate particles, it takes approximately 5 hours and 52 minutes (``time end = 9.9``).
 
-After the particles have been packed inside the cylinder, it is now possible to simulate the fluidization of particles.
+Now that the particles have been packed inside the cylinder, it is possible to simulate the fluidization of particles.
 
 -----------------------
 CFD-DEM Parameter File
 -----------------------
 
-The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown here.
+The CFD simulation is to be carried out using the packed bed simulated in the previous step. We will discuss the different parameter file sections. The mesh section is identical to that of the DEM so it will not be shown again.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -326,7 +326,7 @@ For the boundary conditions, we choose a slip boundary condition on the walls (I
       end
     end
 
-The additional sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are described in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
+The following sections for the CFD-DEM simulations are the void fraction subsection and the CFD-DEM subsection. These subsections are described in detail in the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
 Void Fraction
 ~~~~~~~~~~~~~~~
@@ -344,7 +344,7 @@ We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cf
     end
 
 .. note::
-    Note that void fraction is not bound in this case. The particles used in this example obligates us to use a very coarse mesh. Bounding void fraction lead to instability in the present case.
+    Note that void fraction is not bound in this case. The size of the particles used in this example forces us to use a very coarse mesh. Bounding void fraction would lead to instability in the present case.
 
 CFD-DEM
 ~~~~~~~~~~
@@ -405,7 +405,7 @@ Linear Solver
 Running the CFD-DEM Simulation
 ------------------------------
 
-The simulation is run (on 8 core) using the ``cfd_dem_coupling`` application as following:
+The simulation is run (on 8 core) using the ``cfd_dem_coupling`` application as follows:
 
 .. code-block:: text
 
@@ -422,9 +422,9 @@ We briefly comment on some results that can be extracted from this example.
 
 .. important::
 
-    This example includes a post-processing file written in Python and using `lethe_pyvista_tools <../../dem/rotating-drum/small-scale-rotating-drum-post-processing.html>`_. module.
+    This example includes a post-processing file written in Python and using `lethe_pyvista_tools <../../dem/small-scale-rotating-drum-post-processing/small-scale-rotating-drum-post-processing.html>`_. module.
 
-    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` files with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
+    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
 
 
 Side view

@@ -18,7 +18,7 @@ path_to_module = '$LETHE_PATH/contrib/postprocessing/'
 sys.path.append(path_to_module)
 
 # or even put the "lethe_pyvista_tools.py" file inside
-# the same directory as your python script and procceed as follows
+# the same directory as your python script and proceed as follows
 
 # This line imports all lethe_pyvista_tools functionalities
 from lethe_pyvista_tools import *
