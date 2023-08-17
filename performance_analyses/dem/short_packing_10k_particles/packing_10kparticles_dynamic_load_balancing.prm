@@ -1,5 +1,6 @@
 # Listing of Parameters
 # ---------------------
+set dimension = 3
 # --------------------------------------------------
 # Simulation and IO Control
 #---------------------------------------------------
@@ -37,6 +38,7 @@ subsection model parameters
     set contact detection method                = dynamic
     set dynamic contact search size coefficient = 0.90
     set neighborhood threshold                  = 1.3
+    set frequency = 1
   end
   subsection load balancing
     set load balance method = frequent

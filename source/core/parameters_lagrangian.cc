@@ -491,7 +491,7 @@ namespace Parameters
                             "Choices are <constant|dynamic>.");
 
           prm.declare_entry("frequency",
-                            "10",
+                            "1",
                             Patterns::Integer(),
                             "Particle-particle contact list");
 
@@ -644,25 +644,20 @@ namespace Parameters
 
         prm.enter_subsection("contact detection");
         {
+          contact_detection_frequency = prm.get_integer("frequency");
+          dynamic_contact_search_factor =
+            prm.get_double("dynamic contact search size coefficient");
+          neighborhood_threshold = prm.get_double("neighborhood threshold");
+
           const std::string contact_search =
             prm.get("contact detection method");
-          if (contact_search == "constant")
-            {
-              contact_detection_method    = ContactDetectionMethod::constant;
-              contact_detection_frequency = prm.get_integer("frequency");
-            }
-          else if (contact_search == "dynamic")
-            {
-              contact_detection_method = ContactDetectionMethod::dynamic;
-              dynamic_contact_search_factor =
-                prm.get_double("dynamic contact search size coefficient");
-            }
-          else
-            {
-              throw(std::runtime_error("Invalid contact detection method "));
-            }
 
-          neighborhood_threshold = prm.get_double("neighborhood threshold");
+          if (contact_search == "constant")
+            contact_detection_method = ContactDetectionMethod::constant;
+          else if (contact_search == "dynamic")
+            contact_detection_method = ContactDetectionMethod::dynamic;
+          else
+            throw(std::runtime_error("Invalid contact detection method "));
         }
         prm.leave_subsection();
 
