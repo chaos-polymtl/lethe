@@ -140,11 +140,13 @@ end
 #---------------------------------------------------
 
 subsection linear solver
-  set method                                = gmres
-  set max iters                             = 1000
-  set relative residual                     = 1e-4
-  set minimum residual                      = 1e-11
-  set verbosity                             = quiet
-  set ilu preconditioner fill               = 0
-  set ilu preconditioner absolute tolerance = 1e-10
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-11
+    set verbosity                             = quiet
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-10
+  end
 end
