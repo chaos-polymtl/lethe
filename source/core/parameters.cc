@@ -1951,104 +1951,6 @@ namespace Parameters
   {
     prm.enter_subsection("linear solver");
     {
-      prm.declare_entry(
-        "verbosity",
-        "verbose",
-        Patterns::Selection("quiet|verbose|extra verbose"),
-        "State whether output from solver runs should be printed. "
-        "Choices are <quiet|verbose|extra verbose>.");
-      prm.declare_entry(
-        "method",
-        "gmres",
-        Patterns::Selection("gmres|bicgstab|amg|direct"),
-        "The iterative solver for the linear system of equations. "
-        "Choices are <gmres|bicgstab|amg|tfqmr|direct>. gmres is a GMRES iterative "
-        "solver "
-        "with ILU preconditioning. bicgstab is a BICGSTAB iterative solver "
-        "with ILU preconditioning. "
-        "amg is GMRES + AMG preconditioning with an ILU coarsener and "
-        "smoother. On coarse meshes, the gmres/bicgstab solver with ILU "
-        "preconditioning is more efficient. "
-        "As the number of mesh elements increase, the amg solver is the most "
-        "efficient. Generally, at 1M elements, the amg solver always "
-        "outperforms the gmres or bicgstab");
-      prm.declare_entry("relative residual",
-                        "1e-3",
-                        Patterns::Double(),
-                        "Linear solver residual");
-      prm.declare_entry("minimum residual",
-                        "1e-12",
-                        Patterns::Double(),
-                        "Linear solver minimum residual");
-      prm.declare_entry("max iters",
-                        "1000",
-                        Patterns::Integer(),
-                        "Maximum solver iterations");
-
-      prm.declare_entry("max krylov vectors",
-                        "100",
-                        Patterns::Integer(),
-                        "Maximum number of krylov vectors for GMRES");
-
-      prm.declare_entry("ilu preconditioner fill",
-                        "0",
-                        Patterns::Double(),
-                        "Ilu preconditioner fill");
-
-      prm.declare_entry("ilu preconditioner absolute tolerance",
-                        "1e-12",
-                        Patterns::Double(),
-                        "Ilu preconditioner tolerance");
-
-      prm.declare_entry("ilu preconditioner relative tolerance",
-                        "1.00",
-                        Patterns::Double(),
-                        "Ilu relative tolerance");
-
-      prm.declare_entry("amg preconditioner ilu fill",
-                        "0",
-                        Patterns::Double(),
-                        "amg preconditioner ilu smoother/coarsener fill");
-
-      prm.declare_entry(
-        "amg preconditioner ilu absolute tolerance",
-        "1e-12",
-        Patterns::Double(),
-        "amg preconditioner ilu smoother/coarsener absolute tolerance");
-
-      prm.declare_entry(
-        "amg preconditioner ilu relative tolerance",
-        "1.00",
-        Patterns::Double(),
-        "amg preconditioner ilu smoother/coarsener relative tolerance");
-
-      prm.declare_entry("amg aggregation threshold",
-                        "1e-14",
-                        Patterns::Double(),
-                        "amg aggregation threshold");
-      prm.declare_entry("amg n cycles",
-                        "1",
-                        Patterns::Integer(),
-                        "amg number of cycles");
-      prm.declare_entry("amg w cycles",
-                        "false",
-                        Patterns::Bool(),
-                        "amg w cycling. If this is set to true, W cycling is "
-                        "used. Otherwise, V cycling is used.");
-      prm.declare_entry("amg smoother sweeps",
-                        "2",
-                        Patterns::Integer(),
-                        "amg smoother sweeps");
-      prm.declare_entry("amg smoother overlap",
-                        "1",
-                        Patterns::Integer(),
-                        "amg smoother overlap");
-      prm.declare_entry(
-        "force linear solver continuation",
-        "false",
-        Patterns::Bool(),
-        "A boolean that will force the linear solver to continue even if it fails");
-
       std::vector<std::string> physics_names = {
         "fluid dynamics", "heat transfer", "tracer", "VOF", "cahn hilliard"};
 
@@ -2166,54 +2068,6 @@ namespace Parameters
   {
     prm.enter_subsection("linear solver");
     {
-      const std::string op = prm.get("verbosity");
-      if (op == "verbose")
-        verbosity = Parameters::Verbosity::verbose;
-      else if (op == "quiet")
-        verbosity = Parameters::Verbosity::quiet;
-      else if (op == "extra verbose")
-        verbosity = Parameters::Verbosity::extra_verbose;
-      else
-        throw(
-          std::runtime_error("Unknown verbosity mode for the linear solver"));
-
-      const std::string sv = prm.get("method");
-      if (sv == "amg")
-        solver = SolverType::amg;
-      else if (sv == "gmres")
-        solver = SolverType::gmres;
-      else if (sv == "bicgstab")
-        solver = SolverType::bicgstab;
-      else if (sv == "direct")
-        solver = SolverType::direct;
-      else
-        throw std::logic_error(
-          "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
-
-      relative_residual  = prm.get_double("relative residual");
-      minimum_residual   = prm.get_double("minimum residual");
-      max_iterations     = prm.get_integer("max iters");
-      max_krylov_vectors = prm.get_integer("max krylov vectors");
-
-      ilu_precond_fill = prm.get_double("ilu preconditioner fill");
-      ilu_precond_atol =
-        prm.get_double("ilu preconditioner absolute tolerance");
-      ilu_precond_rtol =
-        prm.get_double("ilu preconditioner relative tolerance");
-      amg_precond_ilu_fill = prm.get_double("amg preconditioner ilu fill");
-      amg_precond_ilu_atol =
-        prm.get_double("amg preconditioner ilu absolute tolerance");
-      amg_precond_ilu_rtol =
-        prm.get_double("amg preconditioner ilu relative tolerance");
-      amg_aggregation_threshold = prm.get_double("amg aggregation threshold");
-      amg_n_cycles              = prm.get_integer("amg n cycles");
-      amg_w_cycles              = prm.get_bool("amg w cycles");
-      amg_smoother_sweeps       = prm.get_integer("amg smoother sweeps");
-      amg_smoother_overlap      = prm.get_integer("amg smoother overlap");
-      force_linear_solver_continuation =
-        prm.get_bool("force linear solver continuation");
-
-
       std::vector<std::string> physics_names = {
         "fluid dynamics", "heat transfer", "tracer", "VOF", "cahn hilliard"};
 
@@ -2235,56 +2089,55 @@ namespace Parameters
           {
             const std::string sv = prm.get("method");
             if (sv == "amg")
-              _solver[physics_id] = SolverType::amg;
+              solver[physics_id] = SolverType::amg;
             else if (sv == "gmres")
-              _solver[physics_id] = SolverType::gmres;
+              solver[physics_id] = SolverType::gmres;
             else if (sv == "bicgstab")
-              _solver[physics_id] = SolverType::bicgstab;
+              solver[physics_id] = SolverType::bicgstab;
             else if (sv == "direct")
-              _solver[physics_id] = SolverType::direct;
+              solver[physics_id] = SolverType::direct;
             else
               throw std::logic_error(
                 "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
 
             const std::string op = prm.get("verbosity");
             if (op == "verbose")
-              _verbosity[physics_id] = Parameters::Verbosity::verbose;
+              verbosity[physics_id] = Parameters::Verbosity::verbose;
             else if (op == "quiet")
-              _verbosity[physics_id] = Parameters::Verbosity::quiet;
+              verbosity[physics_id] = Parameters::Verbosity::quiet;
             else if (op == "extra verbose")
-              _verbosity[physics_id] = Parameters::Verbosity::extra_verbose;
+              verbosity[physics_id] = Parameters::Verbosity::extra_verbose;
             else
               throw(std::runtime_error(
                 "Unknown verbosity mode for the linear solver"));
 
-            _relative_residual[physics_id] =
-              prm.get_double("relative residual");
-            _minimum_residual[physics_id] = prm.get_double("minimum residual");
-            _max_iterations[physics_id]   = prm.get_integer("max iters");
-            _max_krylov_vectors[physics_id] =
+            relative_residual[physics_id] = prm.get_double("relative residual");
+            minimum_residual[physics_id]  = prm.get_double("minimum residual");
+            max_iterations[physics_id]    = prm.get_integer("max iters");
+            max_krylov_vectors[physics_id] =
               prm.get_integer("max krylov vectors");
 
-            _ilu_precond_fill[physics_id] =
+            ilu_precond_fill[physics_id] =
               prm.get_double("ilu preconditioner fill");
-            _ilu_precond_atol[physics_id] =
+            ilu_precond_atol[physics_id] =
               prm.get_double("ilu preconditioner absolute tolerance");
-            _ilu_precond_rtol[physics_id] =
+            ilu_precond_rtol[physics_id] =
               prm.get_double("ilu preconditioner relative tolerance");
-            _amg_precond_ilu_fill[physics_id] =
+            amg_precond_ilu_fill[physics_id] =
               prm.get_double("amg preconditioner ilu fill");
-            _amg_precond_ilu_atol[physics_id] =
+            amg_precond_ilu_atol[physics_id] =
               prm.get_double("amg preconditioner ilu absolute tolerance");
-            _amg_precond_ilu_rtol[physics_id] =
+            amg_precond_ilu_rtol[physics_id] =
               prm.get_double("amg preconditioner ilu relative tolerance");
-            _amg_aggregation_threshold[physics_id] =
+            amg_aggregation_threshold[physics_id] =
               prm.get_double("amg aggregation threshold");
-            _amg_n_cycles[physics_id] = prm.get_integer("amg n cycles");
-            _amg_w_cycles[physics_id] = prm.get_bool("amg w cycles");
-            _amg_smoother_sweeps[physics_id] =
+            amg_n_cycles[physics_id] = prm.get_integer("amg n cycles");
+            amg_w_cycles[physics_id] = prm.get_bool("amg w cycles");
+            amg_smoother_sweeps[physics_id] =
               prm.get_integer("amg smoother sweeps");
-            _amg_smoother_overlap[physics_id] =
+            amg_smoother_overlap[physics_id] =
               prm.get_integer("amg smoother overlap");
-            _force_linear_solver_continuation[physics_id] =
+            force_linear_solver_continuation[physics_id] =
               prm.get_bool("force linear solver continuation");
           }
           prm.leave_subsection();

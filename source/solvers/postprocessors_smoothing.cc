@@ -111,11 +111,11 @@ PostProcessorSmoothing<dim, VectorType>::solve_L2_projection()
     TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
                                   this->mpi_communicator);
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .max_iterations[PhysicsID::fluid_dynamics],
+                               linear_solver_tolerance,
+                               true,
+                               true);
 
   TrilinosWrappers::SolverCG solver(solver_control);
 

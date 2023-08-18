@@ -1113,23 +1113,28 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
     initial_step ? nonzero_constraints : this->zero_constraints;
 
   const double absolute_residual =
-    simulation_parameters.linear_solver.minimum_residual;
+    simulation_parameters.linear_solver
+      .minimum_residual[PhysicsID::heat_transfer];
   const double relative_residual =
-    simulation_parameters.linear_solver.relative_residual;
+    simulation_parameters.linear_solver
+      .relative_residual[PhysicsID::heat_transfer];
 
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver
+        .verbosity[PhysicsID::heat_transfer] != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
-  const double ilu_fill = simulation_parameters.linear_solver.ilu_precond_fill;
-  const double ilu_atol = simulation_parameters.linear_solver.ilu_precond_atol;
-  const double ilu_rtol = simulation_parameters.linear_solver.ilu_precond_rtol;
+  const double ilu_fill = simulation_parameters.linear_solver
+                            .ilu_precond_fill[PhysicsID::heat_transfer];
+  const double ilu_atol = simulation_parameters.linear_solver
+                            .ilu_precond_atol[PhysicsID::heat_transfer];
+  const double ilu_rtol = simulation_parameters.linear_solver
+                            .ilu_precond_rtol[PhysicsID::heat_transfer];
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
 
@@ -1140,14 +1145,16 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs, mpi_communicator);
 
-  SolverControl solver_control(
-    simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+  SolverControl solver_control(simulation_parameters.linear_solver
+                                 .max_iterations[PhysicsID::heat_transfer],
+                               linear_solver_tolerance,
+                               true,
+                               true);
 
   TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-    false, simulation_parameters.linear_solver.max_krylov_vectors);
+    false,
+    simulation_parameters.linear_solver
+      .max_krylov_vectors[PhysicsID::heat_transfer]);
 
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
@@ -1158,7 +1165,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
                system_rhs,
                ilu_preconditioner);
 
-  if (simulation_parameters.linear_solver.verbosity !=
+  if (simulation_parameters.linear_solver.verbosity[PhysicsID::heat_transfer] !=
       Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()

@@ -1285,7 +1285,7 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   const double linear_solver_tolerance = 1e-15;
 
   if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-        .verbosity != Parameters::Verbosity::quiet)
+        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1297,23 +1297,27 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs_voidfraction, this->mpi_communicator);
 
-  SolverControl solver_control(this->cfd_dem_simulation_parameters
-                                 .cfd_parameters.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
+  SolverControl solver_control(
+    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+      .max_iterations[PhysicsID::fluid_dynamics],
+    linear_solver_tolerance,
+    true,
+    true);
 
   TrilinosWrappers::SolverCG solver(solver_control);
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = this->cfd_dem_simulation_parameters.cfd_parameters
-                            .linear_solver.ilu_precond_fill;
-  const double ilu_atol = this->cfd_dem_simulation_parameters.cfd_parameters
-                            .linear_solver.ilu_precond_atol;
-  const double ilu_rtol = this->cfd_dem_simulation_parameters.cfd_parameters
-                            .linear_solver.ilu_precond_rtol;
+  const double ilu_fill =
+    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+      .ilu_precond_fill[PhysicsID::fluid_dynamics];
+  const double ilu_atol =
+    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+      .ilu_precond_atol[PhysicsID::fluid_dynamics];
+  const double ilu_rtol =
+    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+      .ilu_precond_rtol[PhysicsID::fluid_dynamics];
 
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -1329,7 +1333,7 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
                *ilu_preconditioner);
 
   if (this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
-        .verbosity != Parameters::Verbosity::quiet)
+        .verbosity[PhysicsID::fluid_dynamics] != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;

@@ -360,7 +360,7 @@ private:
 
   TimerOutput computing_timer;
 
-  const SimulationParameters<dim> &simulation_parameters;
+  SimulationParameters<dim> simulation_parameters;
 
 
   // Core elements for the tracer
