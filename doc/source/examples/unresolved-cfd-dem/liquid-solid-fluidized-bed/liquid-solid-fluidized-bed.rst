@@ -239,7 +239,7 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 
 .. note:: 
-    Running the packing of alumina particles should take approximately 57 minutes on 16 cores. For the alginate particles, it takes approximately 1 hour and 32 minutes.
+    Running the packing of alumina particles should take approximately 57 minutes on 16 cores. For the alginate particles, it takes approximately 1 hour and 53 minutes.
 
 Now that the particles have been packed inside the cylinder, it is possible to simulate the fluidization of particles.
 
@@ -394,7 +394,7 @@ Linear Solver
       set max iters                             = 5000
       set relative residual                     = 1e-3
       set minimum residual                      = 1e-11
-      set ilu preconditioner fill               = 1
+      set ilu preconditioner fill               = 0
       set ilu preconditioner absolute tolerance = 1e-14
       set ilu preconditioner relative tolerance = 1.00
       set verbosity                             = verbose
@@ -409,10 +409,8 @@ The simulation is run (on 8 core) using the ``cfd_dem_coupling`` application as 
 
 .. code-block:: text
 
-    mpirun -np 8 cfd_dem_coupling dem-packing-in-fluidized-bed.prm
+    mpirun -np 8 cfd_dem_coupling liquid-solid-fluidized-bed.prm
 
-.. note::
-    Running the packing of alumina particles should take approximately 4 hours and 15 minutes on 16 cores.
 
 --------
 Results
