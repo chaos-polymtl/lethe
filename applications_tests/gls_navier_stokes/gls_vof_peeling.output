@@ -15,7 +15,7 @@ Fluid Dynamics
 ---------------
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 0.346442
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 0.350295
 *******************************************************************************
 Peeling/wetting correction at step 2
   -number of wet cells: 0

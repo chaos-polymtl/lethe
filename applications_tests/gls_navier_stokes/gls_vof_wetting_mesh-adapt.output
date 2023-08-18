@@ -15,7 +15,7 @@ Fluid Dynamics
 ---------------
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.12882
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.13395
 *******************************************************************************
    Number of active cells:       1210
    Number of degrees of freedom: 4026
@@ -29,7 +29,7 @@ Fluid Dynamics
 ---------------
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.72506
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.6936
 *******************************************************************************
    Number of active cells:       3058
    Number of degrees of freedom: 9987
@@ -43,12 +43,12 @@ Fluid Dynamics
 ---------------
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 3.78098
+Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 3.78458
 *******************************************************************************
-   Number of active cells:       5374
-   Number of degrees of freedom: 16947
+   Number of active cells:       5401
+   Number of degrees of freedom: 17010
    Volume of triangulation:      0.04
-   Number of VOF degrees of freedom: 5649
+   Number of VOF degrees of freedom: 5670
 Peeling/wetting correction at step 4
   -number of wet cells: 72
   -number of peeled cells: 0
@@ -57,14 +57,14 @@ Fluid Dynamics
 ---------------
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 4.2236
+Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 4.20293
 *******************************************************************************
    Number of active cells:       5830
-   Number of degrees of freedom: 18267
+   Number of degrees of freedom: 18243
    Volume of triangulation:      0.04
-   Number of VOF degrees of freedom: 6089
+   Number of VOF degrees of freedom: 6081
 Peeling/wetting correction at step 5
-  -number of wet cells: 70
+  -number of wet cells: 72
   -number of peeled cells: 0
 ---------------
 Fluid Dynamics

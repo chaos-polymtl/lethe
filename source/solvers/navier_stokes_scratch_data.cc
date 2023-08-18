@@ -114,8 +114,6 @@ NavierStokesScratchData<dim>::enable_vof(
   density_1                  = std::vector<double>(n_q_points);
   dynamic_viscosity_0        = std::vector<double>(n_q_points);
   dynamic_viscosity_1        = std::vector<double>(n_q_points);
-  kinematic_viscosity_0      = std::vector<double>(n_q_points);
-  kinematic_viscosity_1      = std::vector<double>(n_q_points);
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
@@ -153,8 +151,6 @@ NavierStokesScratchData<dim>::enable_vof(
   density_1                  = std::vector<double>(n_q_points);
   dynamic_viscosity_0        = std::vector<double>(n_q_points);
   dynamic_viscosity_1        = std::vector<double>(n_q_points);
-  kinematic_viscosity_0      = std::vector<double>(n_q_points);
-  kinematic_viscosity_1      = std::vector<double>(n_q_points);
   thermal_expansion_0        = std::vector<double>(n_q_points);
   thermal_expansion_1        = std::vector<double>(n_q_points);
   surface_tension            = std::vector<double>(n_q_points);
@@ -194,8 +190,8 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
   // Allocate physical properties
   density_0              = std::vector<double>(n_q_points);
   density_1              = std::vector<double>(n_q_points);
-  kinematic_viscosity_0  = std::vector<double>(n_q_points);
-  kinematic_viscosity_1  = std::vector<double>(n_q_points);
+  dynamic_viscosity_0    = std::vector<double>(n_q_points);
+  dynamic_viscosity_1    = std::vector<double>(n_q_points);
   thermal_expansion_0    = std::vector<double>(n_q_points);
   thermal_expansion_1    = std::vector<double>(n_q_points);
   surface_tension        = std::vector<double>(n_q_points);
@@ -341,15 +337,19 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
           kinematic_viscosity_scale =
             rheology_model->get_kinematic_viscosity_scale();
 
-          // For a weakly compressible flow, density variations will play a role
-          const auto density_model = properties_manager.get_density();
-          density_model->vector_value(fields, density);
-          density_psi = density_model->get_psi();
-          density_ref = density_model->get_density_ref();
-          // Dynamic viscosity is also necessary for compressible flows
-          rheology_model->get_dynamic_viscosity_vector(density_ref,
-                                                       fields,
-                                                       dynamic_viscosity);
+          if (!properties_manager.density_is_constant())
+            {
+              // For a weakly compressible flow, density variations will play a
+              // role
+              const auto density_model = properties_manager.get_density();
+              density_model->vector_value(fields, density);
+              density_psi = density_model->get_psi();
+              density_ref = density_model->get_density_ref();
+              // Dynamic viscosity is also necessary for compressible flows
+              rheology_model->get_dynamic_viscosity_vector(density_ref,
+                                                           fields,
+                                                           dynamic_viscosity);
+            }
 
           if (properties_manager.is_non_newtonian())
             {
@@ -389,13 +389,11 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
             }
 
           density_model_0->vector_value(fields, density_0);
-          rheology_model_0->vector_value(fields, kinematic_viscosity_0);
           rheology_model_0->get_dynamic_viscosity_vector(density_ref_0,
                                                          fields,
                                                          dynamic_viscosity_0);
 
           density_model_1->vector_value(fields, density_1);
-          rheology_model_1->vector_value(fields, kinematic_viscosity_1);
           rheology_model_1->get_dynamic_viscosity_vector(density_ref_1,
                                                          fields,
                                                          dynamic_viscosity_1);
@@ -421,11 +419,6 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                   density[q] = calculate_point_property(filtered_phase_value,
                                                         this->density_0[q],
                                                         this->density_1[q]);
-
-                  kinematic_viscosity[q] =
-                    calculate_point_property(filtered_phase_value,
-                                             this->kinematic_viscosity_0[q],
-                                             this->kinematic_viscosity_1[q]);
 
                   dynamic_viscosity[q] =
                     calculate_point_property(filtered_phase_value,
@@ -488,11 +481,10 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     this->density_0[q],
                     this->density_1[q]);
 
-                  kinematic_viscosity[q] =
-                    calculate_point_property_cahn_hilliard(
-                      phase_order_cahn_hilliard_value,
-                      this->kinematic_viscosity_0[q],
-                      this->kinematic_viscosity_1[q]);
+                  dynamic_viscosity[q] =
+                    calculate_point_property(phase_order_cahn_hilliard_value,
+                                             this->dynamic_viscosity_0[q],
+                                             this->dynamic_viscosity_1[q]);
 
                   thermal_expansion[q] = calculate_point_property_cahn_hilliard(
                     phase_order_cahn_hilliard_value,

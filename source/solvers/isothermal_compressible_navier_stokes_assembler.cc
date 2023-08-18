@@ -12,8 +12,6 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
-  const std::vector<double> &kinematic_viscosity_vector =
-    scratch_data.kinematic_viscosity;
   const std::vector<double> &density_vector = scratch_data.density;
   const std::vector<double> &dynamic_viscosity_vector =
     scratch_data.dynamic_viscosity;
@@ -43,9 +41,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double kinematic_viscosity = kinematic_viscosity_vector[q];
-      const double density             = density_vector[q];
-      const double dynamic_viscosity   = dynamic_viscosity_vector[q];
+      const double density           = density_vector[q];
+      const double dynamic_viscosity = dynamic_viscosity_vector[q];
 
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
@@ -75,10 +72,10 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_matrix(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 kinematic_viscosity,
+                                                 dynamic_viscosity / density,
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    kinematic_viscosity,
+                                                    dynamic_viscosity / density,
                                                     h,
                                                     sdt);
 
@@ -205,8 +202,6 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // Physical properties
-  const std::vector<double> &kinematic_viscosity_vector =
-    scratch_data.kinematic_viscosity;
   const std::vector<double> &density_vector = scratch_data.density;
   const std::vector<double> &dynamic_viscosity_vector =
     scratch_data.dynamic_viscosity;
@@ -232,9 +227,8 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Physical properties
-      const double kinematic_viscosity = kinematic_viscosity_vector[q];
-      const double density             = density_vector[q];
-      const double dynamic_viscosity   = dynamic_viscosity_vector[q];
+      const double density           = density_vector[q];
+      const double dynamic_viscosity = dynamic_viscosity_vector[q];
 
       // Velocity
       const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
@@ -267,10 +261,10 @@ GLSIsothermalCompressibleNavierStokesAssemblerCore<dim>::assemble_rhs(
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
           calculate_navier_stokes_gls_tau_steady(u_mag,
-                                                 kinematic_viscosity,
+                                                 dynamic_viscosity / density,
                                                  h) :
           calculate_navier_stokes_gls_tau_transient(u_mag,
-                                                    kinematic_viscosity,
+                                                    dynamic_viscosity / density,
                                                     h,
                                                     sdt);
 

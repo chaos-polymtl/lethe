@@ -11,64 +11,64 @@ Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 1.11831
 ---------------
 Fluid Dynamics
 ---------------
-L2 error velocity : 0.991522
-L2 error temperature : 3.90847e-13
+L2 error velocity : 0.99151
+L2 error temperature : 4.95887e-13
 L2 error phase : 0.00279114
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.25787
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 1.25786
 *******************************************************************************
 ---------------
 Fluid Dynamics
 ---------------
-L2 error velocity : 1.09096
-L2 error temperature : 3.2755e-12
-L2 error phase : 0.00286038
+L2 error velocity : 1.091
+L2 error temperature : 4.71044e-12
+L2 error phase : 0.00285941
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.28682
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 1.28679
 *******************************************************************************
 ---------------
 Fluid Dynamics
 ---------------
-L2 error velocity : 1.12479
-L2 error temperature : 1.2033e-11
-L2 error phase : 0.00295064
+L2 error velocity : 1.12492
+L2 error temperature : 2.14804e-11
+L2 error phase : 0.00294816
 
 *******************************************************************************
-Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.29509
+Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 1.29508
 *******************************************************************************
 ---------------
 Fluid Dynamics
 ---------------
-L2 error velocity : 1.13477
-L2 error temperature : 2.97485e-11
-L2 error phase : 0.00305448
+L2 error velocity : 1.13496
+L2 error temperature : 6.36837e-11
+L2 error phase : 0.00305005
 
 *******************************************************************************
-Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.29745
+Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 1.29744
 *******************************************************************************
 ---------------
 Fluid Dynamics
 ---------------
-L2 error velocity : 1.13626
-L2 error temperature : 6.00875e-11
-L2 error phase : 0.00316774
+L2 error velocity : 1.13648
+L2 error temperature : 1.41437e-10
+L2 error phase : 0.00316107
  time  error_velocity error_pressure
-0.0200   9.915219e-01        12.1881
-0.0400   1.090963e+00        11.8003
-0.0600   1.124791e+00        11.7589
-0.0800   1.134770e+00        11.8851
-0.1000   1.136260e+00        12.0057
+0.0200   9.915105e-01        12.1545
+0.0400   1.091002e+00        11.7606
+0.0600   1.124916e+00        11.7088
+0.0800   1.134960e+00        11.8296
+0.1000   1.136482e+00        11.9482
 cells error_temperature
-  256      3.908465e-13
-  256      3.275504e-12
-  256      1.203304e-11
-  256      2.974849e-11
-  256      6.008748e-11
+  256      4.958868e-13
+  256      4.710442e-12
+  256      2.148037e-11
+  256      6.368368e-11
+  256      1.414370e-10
  time  error_phase
 0.0200 2.791137e-03
-0.0400 2.860385e-03
-0.0600 2.950643e-03
-0.0800 3.054480e-03
-0.1000 3.167735e-03
+0.0400 2.859409e-03
+0.0600 2.948163e-03
+0.0800 3.050050e-03
+0.1000 3.161074e-03
