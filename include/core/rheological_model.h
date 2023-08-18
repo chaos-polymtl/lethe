@@ -124,6 +124,21 @@ public:
     const double &                              p_density_ref,
     const std::map<field, std::vector<double>> &field_vectors,
     std::vector<double> &                       property_vector) = 0;
+
+  /**
+   * @brief is_non_newtonian_rheological_model Returns a boolean indicating if
+   * the model is a non newtonian rheological model.
+   * @return Boolean value of if the model corresponds to a non newtonian
+   * rheological model.
+   */
+  bool
+  is_non_newtonian_rheological_model() const
+  {
+    return non_newtonian_rheological_model;
+  }
+
+protected:
+  bool non_newtonian_rheological_model = false;
 };
 
 class Newtonian : public RheologicalModel
@@ -286,7 +301,8 @@ public:
     , n(n)
     , shear_rate_min(shear_rate_min)
   {
-    this->model_depends_on[shear_rate] = true;
+    this->model_depends_on[shear_rate]    = true;
+    this->non_newtonian_rheological_model = true;
   }
 
   /**
@@ -454,7 +470,8 @@ public:
     , a(p_a)
     , n(p_n)
   {
-    this->model_depends_on[shear_rate] = true;
+    this->model_depends_on[shear_rate]    = true;
+    this->non_newtonian_rheological_model = true;
   }
 
   /**

@@ -122,7 +122,7 @@ public:
    * @brief Generates the right hand side based on the fluid's solution.
    *
    * @param solution The fluid's solution
-   * @param dof_hanfler_fluid The dof_handler of the fluid solution
+   * @param dof_handler_fluid The dof_handler of the fluid solution
    * @param mapping_fluid The mapping of the fluid
    */
   void
@@ -153,7 +153,7 @@ public:
    * @brief Generates the right hand side based on the fluid dynamics solution.
    *
    * @param solution The fluid's solution
-   * @param dof_hanfler_fluid The dof_handler of the fluid dynamics solution
+   * @param dof_handler_fluid The dof_handler of the fluid dynamics solution
    * @param mapping_fluid The mapping of the fluid
    */
   void
