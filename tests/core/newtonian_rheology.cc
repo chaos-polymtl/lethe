@@ -1,5 +1,6 @@
 /**
- * @brief Tests the constant viscosity rheology model. This model should always return a constant.
+ * @brief Tests the constant viscosity rheology model. This model should always
+ * return a constant.
  */
 
 // Lethe
@@ -21,10 +22,10 @@ test()
   std::map<field, double> field_values;
 
   field_values[field::shear_rate] = 1;
-  deallog << " gamma = 1 , nu = " << rheology_model.value(field_values)
+  deallog << " gamma = 1, nu = " << rheology_model.value(field_values)
           << std::endl;
   field_values[field::shear_rate] = 2;
-  deallog << " gamma = 2 , nu = " << rheology_model.value(field_values)
+  deallog << " gamma = 2, nu = " << rheology_model.value(field_values)
           << std::endl;
 
   deallog << "Testing newtonian dynamic viscosity - mu (gamma = 1)"
@@ -35,15 +36,13 @@ test()
   rheology_model.set_dynamic_viscosity(density_ref);
   deallog << " density_ref = 1, nu = " << rheology_model.value(field_values)
           << ", mu = "
-          << rheology_model.get_dynamic_viscosity(
-               dummy_double, field_values.at(field::shear_rate), dummy_double)
+          << rheology_model.get_dynamic_viscosity(dummy_double, field_values)
           << std::endl;
   density_ref = 2;
   rheology_model.set_dynamic_viscosity(density_ref);
   deallog << " density_ref = 2, nu = " << rheology_model.value(field_values)
           << ", mu = "
-          << rheology_model.get_dynamic_viscosity(
-               dummy_double, field_values.at(field::shear_rate), dummy_double)
+          << rheology_model.get_dynamic_viscosity(dummy_double, field_values)
           << std::endl;
 
   deallog << "Dynamic viscosity vector values (density_ref = 1)" << std::endl;

@@ -1,6 +1,7 @@
 /**
- * @brief Tests the Power law rheology model. This model should always return
- * K*gamma^{n-1}.
+ * @brief Tests the phase change viscosity rheology model. If T_liquidus > T > T_solidus this model should
+ * always return (T-T_solidus)/(T_liquidus-T_solidus) * kinematic_viscosity_l +
+ * [1 - (T-T_solidus)/(T_liquidus-T_solidus)] * kinematic_viscosity_s.
  */
 
 // Lethe
@@ -14,33 +15,47 @@ test()
 {
   deallog << "Beginning" << std::endl;
 
-  PowerLaw rheology_model(5, 0.5, 1e-3);
+  Parameters::PhaseChange phase_change_parameters;
+
+  // initialise necessary parameters
+  phase_change_parameters.kinematic_viscosity_l = 1.0;
+  phase_change_parameters.kinematic_viscosity_s = 10.0;
+  phase_change_parameters.T_liquidus            = 100.5;
+  phase_change_parameters.T_solidus             = 100;
+
+  PhaseChangeRheology rheology_model(phase_change_parameters);
 
 
-  // Field values must contain shear rate
+  // Field values must contain temperature
   std::map<field, double> field_values;
 
-  deallog << "Testing power law kinematic viscosity - nu" << std::endl;
-  field_values[field::shear_rate] = 1;
-  deallog << " gamma = 1, nu = " << rheology_model.value(field_values)
-          << ", dnu/dgamma analytical = "
+  deallog << "Testing phase change kinematic viscosity - nu" << std::endl;
+  field_values[field::temperature] = 100.1;
+  deallog << " T = 100.1, nu = " << rheology_model.value(field_values)
+          << ", dnu/dT analytical = "
           << rheology_model.jacobian(field_values, field::shear_rate)
-          << ", dnu/dgamma numerical = "
+          << ", dnu/dT numerical = "
           << rheology_model.numerical_jacobian(field_values, field::shear_rate)
           << std::endl;
-  field_values[field::shear_rate] = 2;
-  deallog << " gamma = 2, nu = " << rheology_model.value(field_values)
-          << ", dnu/dgamma analytical = "
+  field_values[field::temperature] = 100.2;
+  deallog << " T = 100.2, nu = " << rheology_model.value(field_values)
+          << ", dnu/dT analytical = "
           << rheology_model.jacobian(field_values, field::shear_rate)
-          << ", dnu/dgamma numerical = "
+          << ", dnu/dT numerical = "
           << rheology_model.numerical_jacobian(field_values, field::shear_rate)
-
+          << std::endl;
+  field_values[field::temperature] = 100.3;
+  deallog << " T = 100.3, nu = " << rheology_model.value(field_values)
+          << ", dnu/dT analytical = "
+          << rheology_model.jacobian(field_values, field::shear_rate)
+          << ", dnu/dT numerical = "
+          << rheology_model.numerical_jacobian(field_values, field::shear_rate)
           << std::endl;
 
-  deallog << "Testing power law dynamic viscosity - mu (gamma = 1)"
+  deallog << "Testing phase change dynamic viscosity - mu (T = 100.2)"
           << std::endl;
-  field_values[field::shear_rate] = 1;
-  double density_ref              = 1;
+  field_values[field::temperature] = 100.2;
+  double density_ref               = 1;
   deallog << " density_ref = 1, nu = " << rheology_model.value(field_values)
           << ", mu = "
           << rheology_model.get_dynamic_viscosity(density_ref, field_values)
@@ -50,22 +65,26 @@ test()
           << ", mu = "
           << rheology_model.get_dynamic_viscosity(density_ref, field_values)
           << std::endl;
+  density_ref = 3;
+  deallog << " density_ref = 3, nu = " << rheology_model.value(field_values)
+          << ", mu = "
+          << rheology_model.get_dynamic_viscosity(density_ref, field_values)
+          << std::endl;
 
   deallog << "Dynamic viscosity vector values (density_ref = 1)" << std::endl;
-  std::vector<double>                  shear_rate_magnitude_vector({1, 2, 3});
+  std::vector<double> temperature_vector({100.1, 100.2, 100.3});
   std::map<field, std::vector<double>> field_vectors;
-  field_vectors[field::shear_rate] = shear_rate_magnitude_vector;
-  unsigned int        n_values     = shear_rate_magnitude_vector.size();
+  field_vectors[field::temperature] = temperature_vector;
+  unsigned int        n_values      = temperature_vector.size();
   std::vector<double> dynamic_viscosity_values(n_values);
   density_ref = 1;
   rheology_model.get_dynamic_viscosity_vector(density_ref,
                                               field_vectors,
                                               dynamic_viscosity_values);
-  deallog << " gamma = {"
-          << Utilities::to_string(shear_rate_magnitude_vector[0]);
+  deallog << " T = {" << Utilities::to_string(temperature_vector[0]);
   for (unsigned int i = 1; i < n_values; ++i)
     {
-      deallog << ", " << Utilities::to_string(shear_rate_magnitude_vector[i]);
+      deallog << ", " << Utilities::to_string(temperature_vector[i]);
     }
   deallog << "}" << std::endl;
   deallog << " mu = {" << dynamic_viscosity_values[0];

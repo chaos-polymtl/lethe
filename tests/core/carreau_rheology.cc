@@ -1,5 +1,7 @@
 /**
- * @brief Tests the constant viscosity rheology model. This model should always return a constant.
+ * @brief Tests the Carreau viscosity rheology model. This model should always
+ * return kinematic_viscosity_inf + (kinematic_viscosity_0 -
+ * kinematic_viscosity_inf)*[1+(gamma*lambda)^a]^{(n-1)/a}.
  */
 
 // Lethe
@@ -21,47 +23,43 @@ test()
 
   deallog << "Testing Carreau kinematic viscosity - nu" << std::endl;
   field_values[field::shear_rate] = 1;
-  deallog << " gamma = 1 , nu = " << rheology_model.value(field_values)
-          << " , dnu/dgamma analytical = "
+  deallog << " gamma = 1, nu = " << rheology_model.value(field_values)
+          << ", dnu/dgamma analytical = "
           << rheology_model.jacobian(field_values, field::shear_rate)
-          << " , dnu/dgamma numerical = "
+          << ", dnu/dgamma numerical = "
           << rheology_model.numerical_jacobian(field_values, field::shear_rate)
           << std::endl;
   field_values[field::shear_rate] = 2;
-  deallog << " gamma = 2 , nu = " << rheology_model.value(field_values)
-          << " , dnu/dgamma analytical = "
+  deallog << " gamma = 2, nu = " << rheology_model.value(field_values)
+          << ", dnu/dgamma analytical = "
           << rheology_model.jacobian(field_values, field::shear_rate)
-          << " , dnu/dgamma numerical = "
+          << ", dnu/dgamma numerical = "
           << rheology_model.numerical_jacobian(field_values, field::shear_rate)
           << std::endl;
   field_values[field::shear_rate] = 3;
-  deallog << " gamma = 3 , nu = " << rheology_model.value(field_values)
-          << " , dnu/dgamma analytical = "
+  deallog << " gamma = 3, nu = " << rheology_model.value(field_values)
+          << ", dnu/dgamma analytical = "
           << rheology_model.jacobian(field_values, field::shear_rate)
-          << " , dnu/dgamma numerical = "
+          << ", dnu/dgamma numerical = "
           << rheology_model.numerical_jacobian(field_values, field::shear_rate)
           << std::endl;
 
   deallog << "Testing Carreau dynamic viscosity - mu (gamma = 1)" << std::endl;
-  const double dummy_double       = 0;
   field_values[field::shear_rate] = 1;
   double density_ref              = 1;
   deallog << " density_ref = 1, nu = " << rheology_model.value(field_values)
           << ", mu = "
-          << rheology_model.get_dynamic_viscosity(
-               density_ref, field_values.at(field::shear_rate), dummy_double)
+          << rheology_model.get_dynamic_viscosity(density_ref, field_values)
           << std::endl;
   density_ref = 2;
   deallog << " density_ref = 2, nu = " << rheology_model.value(field_values)
           << ", mu = "
-          << rheology_model.get_dynamic_viscosity(
-               density_ref, field_values.at(field::shear_rate), dummy_double)
+          << rheology_model.get_dynamic_viscosity(density_ref, field_values)
           << std::endl;
   density_ref = 3;
   deallog << " density_ref = 3, nu = " << rheology_model.value(field_values)
           << ", mu = "
-          << rheology_model.get_dynamic_viscosity(
-               density_ref, field_values.at(field::shear_rate), dummy_double)
+          << rheology_model.get_dynamic_viscosity(density_ref, field_values)
           << std::endl;
 
   deallog << "Dynamic viscosity vector values (density_ref = 1)" << std::endl;

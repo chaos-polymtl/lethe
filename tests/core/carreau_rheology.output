@@ -1,9 +1,9 @@
 
 DEAL::Beginning
 DEAL::Testing Carreau kinematic viscosity - nu
-DEAL:: gamma = 1 , nu = 4.20448 , dnu/dgamma analytical = -1.05112 , dnu/dgamma numerical = -1.05112
-DEAL:: gamma = 2 , nu = 3.34370 , dnu/dgamma analytical = -0.668740 , dnu/dgamma numerical = -0.668740
-DEAL:: gamma = 3 , nu = 2.81171 , dnu/dgamma analytical = -0.421756 , dnu/dgamma numerical = -0.421756
+DEAL:: gamma = 1, nu = 4.20448, dnu/dgamma analytical = -1.05112, dnu/dgamma numerical = -1.05112
+DEAL:: gamma = 2, nu = 3.34370, dnu/dgamma analytical = -0.668740, dnu/dgamma numerical = -0.668740
+DEAL:: gamma = 3, nu = 2.81171, dnu/dgamma analytical = -0.421756, dnu/dgamma numerical = -0.421756
 DEAL::Testing Carreau dynamic viscosity - mu (gamma = 1)
 DEAL:: density_ref = 1, nu = 4.20448, mu = 4.20448
 DEAL:: density_ref = 2, nu = 4.20448, mu = 8.40896
