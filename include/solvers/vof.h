@@ -62,6 +62,10 @@ public:
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
+    , computing_timer(p_triangulation->get_communicator(),
+                      this->pcout,
+                      TimerOutput::summary,
+                      TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
@@ -129,6 +133,12 @@ public:
         << std::endl
         << "The interface sharpness value should be set between 1 and 2"
         << std::endl;
+
+
+    // Change the behavior of the timer for situations when you don't want
+    // outputs
+    if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
+      this->computing_timer.disable_output();
   }
 
   /**
@@ -705,7 +715,10 @@ private:
 
   TrilinosWrappers::MPI::Vector nodal_phase_fraction_owned;
 
-  MultiphysicsInterface<dim> *     multiphysics;
+  MultiphysicsInterface<dim> *multiphysics;
+
+  TimerOutput computing_timer;
+
   const SimulationParameters<dim> &simulation_parameters;
 
   // Core elements for the VOF simulation

@@ -10,11 +10,14 @@ Initial refinement around IB particles - Step : 1 of 1
 *****************************
 Steady iteration:        1/2
 *****************************
+---------------
+Fluid Dynamics
+---------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time    T_x      T_y       T_z        f_x        f_y      f_z      f_xv      f_yv     f_zv      f_xp      f_yp      f_zp
-          0 1.0000 2.894139 9.766354 117.029334 321.990870 12.004375 4.059887 29.605125 0.495729 0.015537 292.385745 11.508646 4.044350
+particle_ID  time    T_x      T_y       T_z        f_x        f_y      f_z      f_xv      f_yv     f_zv      f_xp      f_yp      f_zp   
+          0 1.0000 2.894139 9.766354 117.029334 321.990870 12.004375 4.059887 29.605125 0.495729 0.015537 292.385745 11.508646 4.044350 
 
 *****************************
 Steady iteration:        2/2
@@ -22,8 +25,11 @@ Steady iteration:        2/2
    Number of active cells:       1597
    Number of degrees of freedom: 8468
    Volume of triangulation:      4096
+---------------
+Fluid Dynamics
+---------------
 +------------------------------------------+
 |  Force  summary particles                |
 +------------------------------------------+
-particle_ID  time     T_x      T_y       T_z       f_x       f_y       f_z      f_xv      f_yv      f_zv      f_xp      f_yp     f_zp
-          0 2.0000 -5.892127 4.167713 49.214558 101.737292 5.530502 -1.637036 62.065099 -1.767011 -0.074418 39.672193 7.297513 -1.562618
+particle_ID  time     T_x      T_y       T_z       f_x       f_y       f_z      f_xv      f_yv      f_zv      f_xp      f_yp     f_zp    
+          0 2.0000 -5.892127 4.167713 49.214558 101.737292 5.530502 -1.637036 62.065099 -1.767011 -0.074418 39.672193 7.297513 -1.562618 

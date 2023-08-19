@@ -363,6 +363,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_system_matrix()
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
+
   this->system_matrix = 0;
   setup_assemblers();
 
@@ -512,7 +514,8 @@ template <int dim>
 void
 HeatTransfer<dim>::assemble_system_rhs()
 {
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+
   this->system_rhs = 0;
   setup_assemblers();
 
@@ -852,6 +855,14 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
           0)
         this->write_heat_flux(domain_name);
     }
+
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::iteration)
+    {
+      announce_string(this->pcout, "Heat Transfer");
+      this->computing_timer.print_summary();
+      this->computing_timer.reset();
+    }
 }
 
 template <int dim>
@@ -1094,6 +1105,8 @@ void
 HeatTransfer<dim>::solve_linear_system(const bool initial_step,
                                        const bool /*renewed_matrix*/)
 {
+  TimerOutput::Scope t(this->computing_timer, "Solve linear system");
+
   auto mpi_communicator = triangulation->get_communicator();
 
   const AffineConstraints<double> &constraints_used =
