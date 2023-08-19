@@ -83,17 +83,12 @@ namespace Parameters
 
       prm.enter_subsection("solid velocity");
       solid_velocity.declare_parameters(prm, dim);
-      if (dim == 2)
-        prm.set("Function expression", "0; 0");
-      if (dim == 3)
-        prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
 
 
       prm.enter_subsection("solid temperature");
       solid_temperature.declare_parameters(prm, 1);
-      prm.set("Function expression", "0");
       prm.leave_subsection();
 
       prm.declare_entry("enable particles motion",
@@ -309,15 +304,10 @@ namespace Parameters
 
       prm.enter_subsection("translational velocity");
       translational_velocity.declare_parameters(prm, dim);
-      if (dim == 2)
-        prm.set("Function expression", "0; 0");
-      if (dim == 3)
-        prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
 
       prm.enter_subsection("angular velocity");
-      angular_velocity.declare_parameters(prm, dim);
-      prm.set("Function expression", "0; 0; 0");
+      angular_velocity.declare_parameters(prm, 3);
       prm.leave_subsection();
 
 

@@ -47,37 +47,29 @@ namespace AnalyticalSolutions
 
     {
       prm.enter_subsection("uvwp");
-      uvwp.declare_parameters(prm, dim);
-      if (dim == 2)
-        prm.set("Function expression", "0; 0; 0;");
-      if (dim == 3)
-        prm.set("Function expression", "0; 0; 0; 0;");
+      uvwp.declare_parameters(prm, dim + 1);
       prm.leave_subsection();
     }
     {
       prm.enter_subsection("temperature");
       temperature.declare_parameters(prm);
-      prm.set("Function expression", "0");
       prm.leave_subsection();
     }
 
     {
       prm.enter_subsection("tracer");
       tracer.declare_parameters(prm);
-      prm.set("Function expression", "0");
       prm.leave_subsection();
     }
     {
       prm.enter_subsection("VOF");
       phase.declare_parameters(prm);
-      prm.set("Function expression", "0");
       prm.leave_subsection();
     }
 
     {
       prm.enter_subsection("cahn hilliard");
-      cahn_hilliard.declare_parameters(prm);
-      prm.set("Function expression", "0; 0;");
+      cahn_hilliard.declare_parameters(prm, 2);
       prm.leave_subsection();
     }
 
