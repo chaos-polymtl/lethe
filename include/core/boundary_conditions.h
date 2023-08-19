@@ -227,19 +227,19 @@ namespace BoundaryConditions
                       "Direction for periodic boundary condition");
 
     prm.enter_subsection("u");
-    bcFunctions[i_bc].u.declare_parameters(prm, 1);
+    bcFunctions[i_bc].u.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("v");
-    bcFunctions[i_bc].v.declare_parameters(prm, 1);
+    bcFunctions[i_bc].v.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("w");
-    bcFunctions[i_bc].w.declare_parameters(prm, 1);
+    bcFunctions[i_bc].w.declare_parameters(prm);
     prm.leave_subsection();
 
     prm.enter_subsection("p");
-    bcPressureFunction[i_bc].p.declare_parameters(prm, 1);
+    bcPressureFunction[i_bc].p.declare_parameters(prm);
     prm.leave_subsection();
 
     // Center of rotation of the boundary condition for torque calculation
@@ -818,7 +818,7 @@ namespace BoundaryConditions
       "Inner angle of contact between the fluid 1 and the boundary (in degrees)");
 
     prm.enter_subsection("phi");
-    bcFunctions[i_bc].phi.declare_parameters(prm, 1);
+    bcFunctions[i_bc].phi.declare_parameters(prm);
     prm.leave_subsection();
 
     return;

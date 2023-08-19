@@ -88,7 +88,7 @@ namespace Parameters
 
 
       prm.enter_subsection("solid temperature");
-      solid_temperature.declare_parameters(prm, 1);
+      solid_temperature.declare_parameters(prm);
       prm.leave_subsection();
 
       prm.declare_entry("enable particles motion",
