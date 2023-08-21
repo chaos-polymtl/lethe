@@ -38,8 +38,7 @@ public:
 
   /**
    * @brief Instanciates and returns a pointer to a RheologicalModel object by
-   * casting it to
-   * the proper child class
+   * casting it to the proper child class
    *
    * @param material_properties Parsed physical properties that will provide
    * either the model rheological model being used or say it is a
