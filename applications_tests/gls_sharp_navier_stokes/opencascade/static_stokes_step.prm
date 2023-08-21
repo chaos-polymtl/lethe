@@ -310,6 +310,7 @@ end
 #---------------------------------------------------
 
 subsection linear solver
+subsection fluid dynamics
   set method                                    = gmres
   set max iters                                 = 1000
   set relative residual                         = 1e-3
@@ -327,4 +328,5 @@ subsection linear solver
   set amg w cycles                              = false
   set verbosity                                 = quiet
   set max krylov vectors                        = 1000
+  end
 end

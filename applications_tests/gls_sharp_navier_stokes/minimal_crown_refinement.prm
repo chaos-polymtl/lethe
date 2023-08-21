@@ -104,6 +104,8 @@ subsection non-linear solver
 end
 
 subsection linear solver
-  set method    = gmres
-  set verbosity = quiet
+  subsection fluid dynamics
+    set method    = gmres
+    set verbosity = quiet
+  end
 end
