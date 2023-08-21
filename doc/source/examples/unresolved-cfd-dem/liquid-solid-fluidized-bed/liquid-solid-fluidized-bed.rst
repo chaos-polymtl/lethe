@@ -260,7 +260,6 @@ The long simulation is due to the small difference between particles and liquid 
 
     subsection simulation control
       set method            = bdf1
-      set number mesh adapt = 0
       set output name       = cfd_dem
       set output frequency  = 100
       set time end          = 20
@@ -341,7 +340,7 @@ We choose the `particle centroid method (PCM) <../../../parameters/unresolved-cf
       set mode                = pcm
       set read dem            = true
       set dem file name       = dem
-      set l2 smoothing factor = 0.000028387584
+      set l2 smoothing factor = 2.8387584e-5
       set bound void fraction = false
     end
 
