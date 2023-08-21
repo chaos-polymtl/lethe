@@ -205,8 +205,11 @@ private:
 };
 
 /**
- * @class Calculates the kinematic viscosity on each quadrature point of a flow.
- * The equation of the viscosity depends on the used rheological model.
+ * @class Calculates the kinematic viscosity of a fluid on each quadrature point
+ * of a flow. The equation of the viscosity depends on the used rheological
+ * model.
+ * @param rheological_model Rheological model of the fluid
+ * @param fluid_id ID corresponding to the fluid
  */
 template <int dim>
 class KinematicViscosityPostprocessor : public DataPostprocessorScalar<dim>
@@ -214,9 +217,9 @@ class KinematicViscosityPostprocessor : public DataPostprocessorScalar<dim>
 public:
   KinematicViscosityPostprocessor(
     std::shared_ptr<RheologicalModel> rheological_model,
-    const unsigned int                material_id = 0)
+    const unsigned int                fluid_id = 0)
     : DataPostprocessorScalar<dim>("kinematic_viscosity" +
-                                     Utilities::to_string(material_id, 2),
+                                     Utilities::to_string(fluid_id, 2),
                                    update_gradients)
     , rheological_model(rheological_model)
   {}
@@ -254,9 +257,11 @@ private:
 };
 
 /**
- * @class Calculates the kinematic viscosity on each quadrature point for a non
- * Newtonian flow or multiphase flows. The equation of the viscosity depends on
- * the used rheological model.
+ * @class Calculates the dynamic viscosity of a fluid on each quadrature point
+ * of a flow. The equation of the viscosity depends on the used rheological
+ * model.
+ * @param rheological_model Rheological model of the fluid
+ * @param fluid_id ID corresponding to the fluid
  */
 template <int dim>
 class DynamicViscosityPostprocessor : public DataPostprocessorScalar<dim>
@@ -265,9 +270,9 @@ public:
   DynamicViscosityPostprocessor(
     std::shared_ptr<RheologicalModel> rheological_model,
     const double                      density_ref,
-    const unsigned int                material_id = 0)
+    const unsigned int                fluid_id = 0)
     : DataPostprocessorScalar<dim>("dynamic_viscosity_" +
-                                     Utilities::to_string(material_id, 2),
+                                     Utilities::to_string(fluid_id, 2),
                                    update_gradients)
     , rheological_model(rheological_model)
     , density_ref(density_ref)
@@ -468,10 +473,8 @@ private:
 
 /**
  * @class Calculates the density on post-processing points this is used when the
- * density isn't considered constant
- *
+ * density isn't considered constant.
  * @param p_density_model Density model of the material
- *
  * @param material_id ID corresponding to the material (fluid or solid)
  */
 template <int dim>
