@@ -1406,9 +1406,10 @@ RBFShape<dim>::RBFShape(const std::string   shape_arguments_str,
   , useful_rbf_node_map()
   , max_number_of_inside_nodes(1)
   , minimal_support_radius(1)
-  , nodes_id(1)
   , weights(1)
-  , nodes_positions(1)
+  , nodes_positions_x(1)
+  , nodes_positions_y(1)
+  , nodes_positions_z(1)
   , support_radii(1)
   , basis_functions(1)
 {
@@ -1424,7 +1425,9 @@ RBFShape<dim>::load_data_from_file()
   weights.clear();
   support_radii.clear();
   basis_functions.clear();
-  nodes_positions.clear();
+  nodes_positions_x.clear();
+  nodes_positions_y.clear();
+  nodes_positions_z.clear();
 
   // The following lines retrieve information regarding an RBF
   // with a given file name. Then, it converts the information
@@ -1435,38 +1438,21 @@ RBFShape<dim>::load_data_from_file()
   fill_vectors_from_file(rbf_data, filename, " ");
   number_of_nodes       = rbf_data["weight"].size();
   total_number_of_nodes = number_of_nodes;
-  weights.resize(number_of_nodes);
-  support_radii.resize(number_of_nodes);
-  basis_functions.resize(number_of_nodes);
-  nodes_positions.resize(number_of_nodes);
-  for (size_t n_i = 0; n_i < number_of_nodes; n_i++)
-    {
-      weights[n_i]         = rbf_data["weight"][n_i];
-      support_radii[n_i]   = rbf_data["support_radius"][n_i];
-      basis_functions[n_i] = static_cast<enum RBFShape<dim>::RBFBasisFunction>(
-        round(rbf_data["basis_function"][n_i]));
-      nodes_positions[n_i][0] = rbf_data["node_x"][n_i];
-      nodes_positions[n_i][1] = rbf_data["node_y"][n_i];
-      nodes_positions[n_i][2] = rbf_data["node_z"][n_i];
-    }
 
-  std::shared_ptr<std::vector<size_t>> temp_nodes_id_1 =
+  weights.swap(rbf_data["weight"]);
+  support_radii.swap(rbf_data["support_radius"]);
+  basis_functions.swap(rbf_data["basis_function"]);
+  nodes_positions_x.swap(rbf_data["node_x"]);
+  nodes_positions_y.swap(rbf_data["node_y"]);
+  nodes_positions_z.swap(rbf_data["node_z"]);
+
+  std::shared_ptr<std::vector<size_t>> temp_nodes_id =
     std::make_shared<std::vector<size_t>>(number_of_nodes);
-  std::shared_ptr<std::vector<size_t>> temp_nodes_id_2 =
-    std::make_shared<std::vector<size_t>>(number_of_nodes);
-  for (size_t i = 0; i < number_of_nodes; i++)
-    {
-      (*temp_nodes_id_1)[i] = i;
-      (*temp_nodes_id_2)[i] = i;
-    }
-  nodes_id.resize(1);
+  std::iota(std::begin(*temp_nodes_id), std::end(*temp_nodes_id), 0);
   iterable_nodes.resize(1);
-  nodes_id[0]       = {Point<dim>{},
-                 std::numeric_limits<double>::max(),
-                 temp_nodes_id_1};
   iterable_nodes[0] = {Point<dim>{},
                        std::numeric_limits<double>::max(),
-                       temp_nodes_id_2};
+                       temp_nodes_id};
 
   minimal_support_radius =
     *std::min_element(std::begin(support_radii), std::end(support_radii));
@@ -1504,10 +1490,10 @@ RBFShape<dim>::remove_superfluous_data()
       reset_iterable_nodes(cell);
     }
 
-  std::vector<double>           temp_weights;
-  std::vector<Point<dim>>       temp_rotated_nodes_positions;
-  std::vector<double>           temp_support_radii;
-  std::vector<RBFBasisFunction> temp_basis_functions;
+  std::vector<double>     temp_weights;
+  std::vector<Point<dim>> temp_rotated_nodes_positions;
+  std::vector<double>     temp_support_radii;
+  std::vector<double>     temp_basis_functions;
 
   // Here we treat all vectors separately to keep the maximum memory low
   // Weights treatment
@@ -1627,7 +1613,8 @@ RBFShape<dim>::value(const Point<dim> &evaluation_point,
               .norm() /
             support_radii[useful_rbf_node_map.find(node_id)->second];
           basis = evaluate_basis_function(
-            basis_functions[useful_rbf_node_map.find(node_id)->second],
+            static_cast<enum RBFShape<dim>::RBFBasisFunction>(round(
+              basis_functions[useful_rbf_node_map.find(node_id)->second])),
             normalized_distance);
           value += basis * weights[useful_rbf_node_map.find(node_id)->second];
         }
@@ -1696,7 +1683,8 @@ RBFShape<dim>::gradient(const Point<dim> &evaluation_point,
             1.0 / support_radii[useful_rbf_node_map.find(node_id)->second];
           // Calculation of the d(basis)/dr
           dbasis_drnorm_derivative = evaluate_basis_function_derivative(
-            basis_functions[useful_rbf_node_map.find(node_id)->second],
+            static_cast<enum RBFShape<dim>::RBFBasisFunction>(round(
+              basis_functions[useful_rbf_node_map.find(node_id)->second])),
             normalized_distance);
           // Sum
           gradient += dbasis_drnorm_derivative * drnorm_dr_derivative *
@@ -1732,6 +1720,7 @@ RBFShape<dim>::initialize_bounding_box()
   Point<dim>     high_bounding_point{};
   Point<dim>     low_bounding_point{};
   Point<dim>     bounding_box_center{};
+  Point<dim>     temp_point{};
   Tensor<1, dim> half_lengths = Tensor<1, dim>();
   for (int d = 0; d < dim; d++)
     {
@@ -1739,10 +1728,13 @@ RBFShape<dim>::initialize_bounding_box()
       low_bounding_point[d]  = std::numeric_limits<double>::max();
       for (size_t i = 0; i < number_of_nodes; i++)
         {
+          temp_point[0]       = nodes_positions_x[i];
+          temp_point[1]       = nodes_positions_y[i];
+          temp_point[dim - 1] = nodes_positions_z[i];
           low_bounding_point[d] =
-            std::min(low_bounding_point[d], nodes_positions[i][d]);
+            std::min(low_bounding_point[d], temp_point[d]);
           high_bounding_point[d] =
-            std::max(high_bounding_point[d], nodes_positions[i][d]);
+            std::max(high_bounding_point[d], temp_point[d]);
         }
       bounding_box_center[d] =
         0.5 * (low_bounding_point[d] + high_bounding_point[d]);
@@ -2001,13 +1993,18 @@ void
 RBFShape<dim>::rotate_nodes()
 {
   rotated_nodes_positions.clear();
-  rotated_nodes_positions.resize(nodes_positions.size());
-  for (unsigned int i = 0; i < nodes_positions.size(); ++i)
+  Point<dim> temp_point{};
+  rotated_nodes_positions.resize(weights.size());
+  for (unsigned int i = 0; i < weights.size(); ++i)
     {
-      rotated_nodes_positions[i] =
-        this->reverse_align_and_center(nodes_positions[i]);
+      temp_point[0]              = nodes_positions_x[i];
+      temp_point[1]              = nodes_positions_y[i];
+      temp_point[dim - 1]        = nodes_positions_z[i];
+      rotated_nodes_positions[i] = this->reverse_align_and_center(temp_point);
     }
-  nodes_positions.clear();
+  nodes_positions_x.clear();
+  nodes_positions_y.clear();
+  nodes_positions_z.clear();
 }
 
 
@@ -2101,8 +2098,6 @@ RBFShape<dim>::prepare_iterable_nodes(
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
     iterable_nodes.swap(*likely_nodes_map[cell]);
-  else
-    iterable_nodes.swap(nodes_id);
 }
 
 template <int dim>
@@ -2114,8 +2109,6 @@ RBFShape<dim>::reset_iterable_nodes(
   auto iterator = likely_nodes_map.find(cell);
   if (iterator != likely_nodes_map.end())
     iterable_nodes.swap(*likely_nodes_map[cell]);
-  else
-    iterable_nodes.swap(nodes_id);
 }
 
 template <int dim>

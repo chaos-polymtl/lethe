@@ -1804,12 +1804,14 @@ private:
 public:
   std::vector<
     std::tuple<Point<dim>, double, std::shared_ptr<std::vector<size_t>>>>
-                                nodes_id;
-  std::vector<double>           weights;
-  std::vector<Point<dim>>       nodes_positions;
-  std::vector<Point<dim>>       rotated_nodes_positions;
-  std::vector<double>           support_radii;
-  std::vector<RBFBasisFunction> basis_functions;
+                          nodes_id;
+  std::vector<double>     weights;
+  std::vector<double>     nodes_positions_x;
+  std::vector<double>     nodes_positions_y;
+  std::vector<double>     nodes_positions_z;
+  std::vector<Point<dim>> rotated_nodes_positions;
+  std::vector<double>     support_radii;
+  std::vector<double>     basis_functions;
 };
 
 
