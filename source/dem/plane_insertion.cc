@@ -25,8 +25,19 @@ PlaneInsertion<dim>::PlaneInsertion(
   // // Finding the center of those cells
   this->find_centers_of_inplane_cells();
   load_balancing_was_done = false;
+
+  change_to_triangulation = triangulation.signals.any_change.connect(
+    [&]() { load_balancing_was_done = true; });
+  
 }
 
+
+template <int dim>
+void
+PlaneInsertion<dim>::mark_for_update()
+{
+  load_balancing_was_done = true;
+}
 
 template <int dim>
 void

@@ -24,6 +24,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+
 #ifndef plane_insertion_h
 #  define plane_insertion_h
 
@@ -88,6 +89,9 @@ private:
     Point<3>                                         plane_point,
     Tensor<1, 3>                                     plane_normal_vector);
 
+  void
+  mark_for_update();
+
   /**
    * @brief Store the location of the centers of all the cells that are in the plane
    */
@@ -103,6 +107,7 @@ private:
   std::unordered_map<unsigned int, double>     number_particles_to_insert;
   std::unordered_map<unsigned int, double>     type_of_particle_left_to_insert;
   bool                                         load_balancing_was_done;
+  boost::signals2::connection                  change_to_triangulation;
 };
 
 
