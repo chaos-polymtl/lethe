@@ -92,27 +92,19 @@ namespace SourceTerms
                       "Enable the calculation of a source term");
 
     prm.enter_subsection("xyz");
-    navier_stokes_source.declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0; 0");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0; 0;");
+    navier_stokes_source.declare_parameters(prm, dim + 1);
     prm.leave_subsection();
-
 
     prm.enter_subsection("heat transfer");
     heat_transfer_source.declare_parameters(prm);
-    prm.set("Function expression", "0");
     prm.leave_subsection();
 
     prm.enter_subsection("tracer");
     tracer_source.declare_parameters(prm);
-    prm.set("Function expression", "0");
     prm.leave_subsection();
 
     prm.enter_subsection("cahn hilliard");
-    cahn_hilliard_source.declare_parameters(prm);
-    prm.set("Function expression", "0; 0;");
+    cahn_hilliard_source.declare_parameters(prm, 2);
     prm.leave_subsection();
 
     prm.leave_subsection();
