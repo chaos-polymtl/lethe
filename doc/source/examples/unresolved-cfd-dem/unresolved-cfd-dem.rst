@@ -2,7 +2,7 @@
 Unresolved CFD-DEM
 ****************************
 
-This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (Packed Bed Example) to multiphase flows (Fluidized Solid-Gas Beds). The packed bed example uses the gls_vans solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed and the Boycott effect example use the cfd_dem_coupling solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.
+This section includes examples related to multiphase fluid-solid flows. We organize the examples from the single phase flow in porous media (packed bed example) to multiphase flows (solid-gas and solid-liquid fluidized beds). The packed bed example uses the ``gls_vans`` solver which solves the Volume Average Navier Stokes (VANS) equations. The fluidized bed, the spouted bed and the Boycott effect examples use the ``cfd_dem_coupling`` solver which solves the VANS equations for the fluid phase coupled with the DEM equations for the solid phase.
 
 .. toctree::
     :hidden:
@@ -12,6 +12,7 @@ This section includes examples related to multiphase fluid-solid flows. We organ
     cylindrical-packed-bed/cylindrical-packed-bed
     gas-solid-fluidized-bed/gas-solid-fluidized-bed
     gas-solid-spouted-bed/gas-solid-spouted-bed
+    liquid-solid-fluidized-bed/liquid-solid-fluidized-bed
     boycott-effect/boycott-effect
 
 .. graphviz:: 
@@ -31,10 +32,13 @@ This section includes examples related to multiphase fluid-solid flows. We organ
 
       cfd_dem_3 [label="Gas-Solid Spouted Bed", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/gas-solid-spouted-bed/gas-solid-spouted-bed.html"];
 
-      cfd_dem_4 [label="Boycott Effect", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
+      cfd_dem_4 [label="Liquid-Solid Fluidized Bed", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/liquid-solid-fluidized-bed/liquid-solid-fluidized-bed.html"];
+
+      cfd_dem_5 [label="Boycott Effect", href="https://lethe-cfd.github.io/lethe/examples/unresolved-cfd-dem/boycott-effect/boycott-effect.html"];
       
       unresolved_cfd_dem -> cfd_dem_1:w;
       unresolved_cfd_dem -> cfd_dem_2:w;
       unresolved_cfd_dem -> cfd_dem_3:w;
       unresolved_cfd_dem -> cfd_dem_4:w;
+      unresolved_cfd_dem -> cfd_dem_5:w;
     }

@@ -17,8 +17,10 @@ Features
 ---------------------------
 Files Used in This Example
 ---------------------------
-``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
-``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
+
+- Parameter file for particle generation and packing: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/dem-packing-in-fluidized-bed.prm``
+- Parameter file for CFD-DEM simulation of the gas-solid fluidized bed: ``/examples/unresolved-cfd-dem/gas-solid-fluidized-bed/gas-solid-fluidized-bed.prm``
+
 
 
 -----------------------
@@ -71,7 +73,7 @@ Another subsection, which is generally the one we put at the top of the paramete
 Restart
 ~~~~~~~~~~~~~~~~~~~
 
-The ``cfd_dem_coupling`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical proprties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ . 
+The ``cfd_dem_coupling`` solver requires reading several DEM files to start the simulation. For this, we have to write the DEM simulation information. This is done by enabling the check-pointing option in the restart subsection. We give the written files a prefix "dem" set in the "set filename" option. The DEM parameter file is initialized exactly as the cylindrical packed bed example. The difference is in the number of particles, their physical properties, and the insertion box defined based on the new geometry. For more explanation about the individual subsections, refer to the `DEM parameters <../../../parameters/dem/dem.html>`_ and the `CFD-DEM parameters <../../../parameters/unresolved-cfd-dem/unresolved-cfd-dem.html>`_ .
 
 .. code-block:: text
 
@@ -90,11 +92,15 @@ The section on model parameters is explained in the DEM examples. We show the ch
 .. code-block:: text
 
     subsection model parameters
-      set contact detection method               = dynamic
-      set load balance method                    = dynamic
-      set load balance threshold                 = 0.5
-      set dynamic load balance check frequency   = 10000
-      set neighborhood threshold                 = 1.3
+      subsection contact detection
+        set contact detection method = dynamic
+        set neighborhood threshold   = 1.3
+      end
+      subsection load balancing
+        set load balance method     = dynamic
+        set threshold               = 0.5
+        set dynamic check frequency = 10000
+      end
       set particle particle contact force method = hertz_mindlin_limit_overlap
       set particle wall contact force method     = nonlinear
       set integration method                     = velocity_verlet
@@ -201,7 +207,7 @@ Lethe will generate a number of files. The most important one bears the extensio
 
 
 .. note:: 
-    Running the packing should take approximatively 20 minutes on 8 cores.
+    Running the packing should take approximately 20 minutes on 8 cores.
 
 After the particles have been packed inside the square bed, it is now possible to simulate the fluidization of particles.
 

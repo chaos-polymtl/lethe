@@ -1,0 +1,134 @@
+# Listing of Parameters
+# ---------------------
+
+set dimension = 3
+
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 0.000005
+  set time end         = 2.5
+  set log frequency    = 20000
+  set output frequency = 20000
+  set output path      = ./output_dem/
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = none
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set checkpoint = true
+  set frequency  = 20000
+  set restart    = false
+  set filename   = dem
+end
+
+# --------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method = dynamic
+    set neighborhood threshold   = 1.5
+  end
+  subsection load balancing
+    set load balance method     = dynamic
+    set threshold               = 0.5
+    set dynamic check frequency = 10000
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set gx                       = -9.81
+  set gy                       = 0
+  set gz                       = 0
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.003087
+    set number                            = 72400
+    set density particles                 = 3585.9
+    set young modulus particles           = 1e7
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.1
+    set rolling friction particles        = 0.2
+  end
+  set young modulus wall           = 1e7
+  set poisson ratio wall           = 0.3
+  set restitution coefficient wall = 0.2
+  set friction coefficient wall    = 0.1
+  set rolling friction wall        = 0.3
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+subsection insertion info
+  set insertion method                               = non_uniform
+  set inserted number of particles at each time step = 48841 # for alginate, we recommend 79600
+  set insertion frequency                            = 200000
+  set insertion box minimum x                        = -0.15
+  set insertion box minimum y                        = -0.035
+  set insertion box minimum z                        = -0.035
+  set insertion box maximum x                        = 0.53
+  set insertion box maximum y                        = 0.035
+  set insertion box maximum z                        = 0.035
+  set insertion distance threshold                   = 1.3
+  set insertion random number range                  = 0.3
+  set insertion random number seed                   = 19
+end
+
+#---------------------------------------------------
+# Floating walls
+#---------------------------------------------------
+
+subsection floating walls
+  set number of floating walls = 1
+  subsection wall 0
+    subsection point on wall
+      set x = -0.45 
+      set y = 0
+      set z = 0
+    end
+    subsection normal vector
+      set nx = 1
+      set ny = 0
+      set nz = 0
+    end
+    set start time = 0
+    set end time   = 50
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_cylinder
+  set grid arguments     = 33:0.05:0.55
+  set initial refinement = 2
+  set expand particle-wall contact search = true
+end
